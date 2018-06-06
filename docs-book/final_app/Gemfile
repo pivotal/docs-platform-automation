@@ -1,0 +1,10 @@
+source 'http://rubygems.org'
+
+ruby '~> 2.3.0'
+
+gem 'rack'
+gem 'rack-rewrite'
+gem 'puma'
+gem 'therubyracer'
+gem 'sendgrid-ruby', '< 3.0'
+gem 'elasticsearch'

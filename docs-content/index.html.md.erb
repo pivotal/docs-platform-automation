@@ -1,0 +1,38 @@
+---
+title: Ops Blocks for PCF
+owner: PCF Norm
+---
+
+Ops Blocks for Pivotal Cloud Foundry (PCF) is a set of commands that extend [om](https://github.com/pivotal-cf/om), a command-line interface to the [Ops Manager API](http://opsman-dev-api-docs.cfapps.io/).
+
+Ops Blocks, om, and the Ops Manager API enable command-line and programmatic interaction with Ops Manager, a dashboard for installing, configuring, and updating software products on PCF.
+
+## <a id='overview'></a>Overview
+
+What it's for / how it helps
+automated process(e.g. Concourse pipelines), and provides some extra functionality to install and upgrade OpsMan.
+
+
+## <a id='design'></a>Design
+
+Ops Blocks commands are:
+
+* **Action-oriented**: You can embed them in automated workflows such as build, test, and upgrade pipelines.
+
+* **Modular**: They operate on individual products. They upload and install products individually. You can store and retrieve their configuration settings separately, and store and retrieve them using version control systems. 
+
+* **Readable**: They store configuration settings as human-readable YAML files.
+
+* **Stateless**: 
+
+
+
+These characteristics differentiate Ops Blocks from om, which reads and writes configuration settings in [JSON format](https://github.com/pivotal-cf/om/blob/master/docs/configure-product/README.md#configuring-the---product-properties), and Ops Manager's built-in [https://docs.pivotal.io/pivotalcf/2-1/customizing/backup-restore/backup-pcf-bbr.html#export] and [import](https://docs.pivotal.io/pivotalcf/customizing/backup-restore/restore-pcf-bbr.html#deploy-import) facilities, which dump all deployed product settings into a single unreadable file, and only import them when you start up Ops Manager for the first time after an upgrade.
+
+### <a id='tasks'></a>Commands and Tasks
+
+
+## <a id='pipelines'></a> How it's useful for Concourse or other CI/CD
+
+## <a id='contents'></a>Documentation
+

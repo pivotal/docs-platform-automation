@@ -1,0 +1,23 @@
+---
+query:
+  bool:
+    must:
+      simple_query_string:
+        query: ''
+        fields:
+          - text
+          - title^20
+          - h2^10
+          - h3^10
+from: 0
+size: 10
+_source:
+- url
+- title
+- summary
+- product_name
+- product_version
+highlight:
+  fields:
+    text:
+      type: plain

@@ -1,0 +1,21 @@
+---
+:archive_menu:
+  ".": 
+:production_host: hello
+:subnav_templates:
+  ops-blocks: ops-blocks_subnav
+:template_variables: 
+:local_repo_dir: "/Users/pspinrad/workspace/docs-ops-blocks"
+:workspace: !ruby/object:Pathname
+  path: "/Users/pspinrad/workspace/docs-ops-blocks/docs-book/output/master_middleman/source"
+:feedback_enabled: 
+:repo_link_enabled: true
+:repo_links:
+  ops-blocks:
+    repo: docs-content
+    ref: master
+    at_path: 
+:product_info:
+  ops-blocks: {}
+:elastic_search: false
+:proof: false
