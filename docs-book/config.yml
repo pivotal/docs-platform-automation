@@ -16,8 +16,8 @@ public_host: hello
 sections:
   - repository:
       name: docs-content
-    directory: ops-blocks
-    subnav_template: ops-blocks_subnav.erb       
+    directory: tippo
+    subnav_template: tippo_subnav.erb       
 
 template_variables:                             # optional
 
