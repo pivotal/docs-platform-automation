@@ -3,19 +3,19 @@
   ".": 
 :production_host: hello
 :subnav_templates:
-  ops-blocks: ops-blocks_subnav
+  tippo: tippo_subnav
 :template_variables: 
-:local_repo_dir: "/Users/pspinrad/workspace/docs-ops-blocks"
+:local_repo_dir: "/Users/pspinrad/workspace/docs-tippo"
 :workspace: !ruby/object:Pathname
-  path: "/Users/pspinrad/workspace/docs-ops-blocks/docs-book/output/master_middleman/source"
+  path: "/Users/pspinrad/workspace/docs-tippo/docs-book/output/master_middleman/source"
 :feedback_enabled: 
 :repo_link_enabled: true
 :repo_links:
-  ops-blocks:
+  tippo:
     repo: docs-content
     ref: master
     at_path: 
 :product_info:
-  ops-blocks: {}
+  tippo: {}
 :elastic_search: false
 :proof: false
