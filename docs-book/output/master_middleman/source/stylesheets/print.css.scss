@@ -38,12 +38,15 @@ pre, pre code {
   overflow: visible;
 }
 
+.pivotalcf .logo {
+  background: none;
+  padding-left: 0;
+}
 
 .quick-links,
 .nav-container,
 .header,
 .site-footer-links,
-#repo-link,
 #feedback {
   display: none;
 }
@@ -53,5 +56,3 @@ h1 {
   font-size: $font-size-l;
 }
 
-@import "print-layout-styles";
-@import "print-book-styles";

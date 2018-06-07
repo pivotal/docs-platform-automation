@@ -1,5 +1,4 @@
 require 'erb'
-require 'rack/utils'
 
 module Bookbinder
   module Search

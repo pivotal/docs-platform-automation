@@ -9,14 +9,14 @@ require_relative 'quicklinks_renderer'
 I18n.enforce_available_locales = false
 
 module Bookbinder
-  class Helpers < ::Middleman::Extension
-    # class << self
-    #   def registered(app)
-    #     app.helpers HelperMethods
-    #   end
+  module Navigation
+    class << self
+      def registered(app)
+        app.helpers HelperMethods
+      end
 
-    #   alias :included :registered
-    # end
+      alias :included :registered
+    end
 
     module HelperMethods
 
@@ -72,7 +72,7 @@ module Bookbinder
 
       def render_repo_link
         if config[:repo_link_enabled] && repo_url && !current_page.metadata[:page][:repo_link_disabled]
-          "<a id='repo-link' href='#{repo_url}'>Create a pull request or raise an issue on the source for this page in GitHub</a>"
+          "<a id='repo-link' href='#{repo_url}'>View the source for this page in GitHub</a>"
         end
       end
 
@@ -103,28 +103,8 @@ module Bookbinder
         OpenStruct.new config[:template_variables]
       end
 
-      def product_name
-        return vars.product_name
-      end
-
-      def product_name_long
-        return vars.product_name_long
-      end
-
-      def product_version
-        return vars.product_version
-      end
-
-      def set_title(*args)
-        current_page.data.title= args.join(' ')
-      end
-
       def product_info
         config[:product_info].fetch(template_key, {})
-      end
-
-      def production_host
-        config[:production_host]
       end
 
       def quick_links
@@ -159,7 +139,11 @@ module Bookbinder
       private
 
       def subnav_template_name
-        config[:subnav_templates][template_key] || 'default'
+        if current_path == 'search.html'
+          config[:subnav_templates].values.first
+        else
+          config[:subnav_templates][template_key] || 'default'
+        end
       end
 
       def decreasingly_specific_namespaces
@@ -270,9 +254,6 @@ module Bookbinder
         content_tag :li, link, :class => css_class
       end
     end
-    
-    helpers HelperMethods
-    
   end
 end
-::Middleman::Extensions.register(:bookbinder, Bookbinder::Helpers)
+::Middleman::Extensions.register(:navigation, Bookbinder::Navigation)
