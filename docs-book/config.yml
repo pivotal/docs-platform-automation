@@ -19,9 +19,9 @@ sections:
   directory: tippo
   subnav_template: tippo_subnav.erb       
   dependent_sections:
-  - repository:
-      name: pivotal-cf/pcf-installer
-    no-docs: true
+#  - repository:
+#      name: pivotal-cf/pcf-installer
+#    no-docs: true
   - repository:
       name: cloudfoundry-samples/pong_matcher_spring
     no_docs: true
