@@ -14,16 +14,17 @@ pcf_header: &local_pcf
 public_host: hello
 
 sections:
+- repository:
+    name: docs-content
+  directory: tippo
+  subnav_template: tippo_subnav.erb       
+  dependent_sections:
   - repository:
-      name: docs-content
-    directory: tippo
-    subnav_template: tippo_subnav.erb       
-    dependent_sections:
-    - repository:
-        name: pivotal-cf/pcf-installer
-        no-docs: true
-
-template_variables:                             # optional
+      name: pivotal-cf/pcf-installer
+    no-docs: true
+  - repository:
+      name: cloudfoundry-samples/pong_matcher_spring
+    no_docs: true
 
 book_title: Partner Services Template
 book_repo: docs-book

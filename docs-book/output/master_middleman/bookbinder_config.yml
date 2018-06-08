@@ -4,7 +4,7 @@
 :production_host: hello
 :subnav_templates:
   tippo: tippo_subnav
-:template_variables: 
+:template_variables: {}
 :local_repo_dir: "/Users/pspinrad/workspace/docs-tippo"
 :workspace: !ruby/object:Pathname
   path: "/Users/pspinrad/workspace/docs-tippo/docs-book/output/master_middleman/source"
