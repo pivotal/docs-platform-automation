@@ -1,0 +1,96 @@
+---
+title: Using Ops Blocks
+owner: PCF Norm
+---
+
+This topic describes when and how to use Ops Blocks, and provides an example pipeline that uses Ops Blocks commands.
+
+##<a id='after-first'></a> Ops Manager, Then Ops Blocks
+
+<table id='TK-NAME' border="1" class="nice" >
+  <tr>
+    <th></th>
+    <th>Ops Manager</th>
+    <th>Ops Blocks</th>
+  </tr><tr>
+    <th>When</th>
+    <td>First install and minor upgrades</td>
+    <td>Config changes and patch upgrades</td>
+  </tr><tr>
+    <th>1. Create Ops Manager VM</th>
+    <td>Manually prepare IaaS and create Ops Manager VM</td>
+    <td><code>install-opsman</code> (supported on vSphere)</td>
+  </tr><tr>
+    <th>2. Configure Who Can Run Ops</th>
+    <td>Manually configure internal UAA or external identity provider</td>
+    <td><code>configure-authentication</code> or <code>configure-saml-authentication</code></td>
+  </tr><tr>
+    <th>3. Configure BOSH</th>
+    <td>Manually configure BOSH Director</td>
+    <td><code>configure-director</code> with settings saved from BOSH Director with same version</td>
+  </tr><tr>
+    <th>4. Add Products</th>
+    <td>Click <strong>Import a Product</strong> to upload file, then <strong>+</strong> to add tile to Installation Dashboard</td>
+    <td><code>upload-and-stage-product</code></td>
+  </tr><tr>
+    <th>5. Configure Products</th>
+    <td>Manually configure product tiles</td>
+    <td><code>configure-product</code> with settings saved from tiles with same version</td>
+  </tr><tr>
+    <th>6. Deploy Products</th>
+    <td>Click <strong>Apply Changes</strong></td>
+    <td><code>apply-changes</code></td>
+  </tr>
+</table>
+
+<table id='TK-NAME' border="1" class="nice" >
+  <tr>
+    <th></th>
+    <th>Ops Manager</th>
+    <th>Ops Blocks</th>
+  </tr><tr>
+    <th>When</th>
+    <td>First install and minor upgrades</td>
+    <td>Config changes and patch upgrades</td>
+  </tr><tr>
+    <th>7. Export Complete State</th>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+<table id='TK-NAME' border="1" class="nice" >
+  <tr>
+    <th></th>
+    <th>Ops Manager</th>
+    <th>Ops Blocks</th>
+  </tr><tr>
+    <th>When</th>
+    <td>First install and minor upgrades</td>
+    <td>Config changes and patch upgrades</td>
+  </tr><tr>
+    <th>8. Destroy Ops Manager VM</th>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+
+##<a id='integrate'></a> Integrate Non-Portable Settings
+
+###<a id='local'></a> Include Local Parameters
+
+How users need to handle deployment-specific / double-parens properties
+
+###<a id='creds'></a> Include Stored Credentials
+
+How users need to handle CredHub (BOSH and runtime) cred's
+What else is in the documentation - e.g. command reference, example script
+
+##<a id='pipeline'></a> Create a Pipeline
+
+
+###<a id='tasks'></a> Inject Tasks into a Pipeline
+
+
+###<a id='example'></a> Pipeline Example

@@ -1,0 +1,120 @@
+---
+title: Ops Blocks Command and Task Reference
+owner: PCF Norm
+---
+
+## <a id='commands'></a> Ops Blocks Commands and Tasks
+
+Each of the following Ops Blocks commands is demonstrated with code that defines working Concourse tasks that invoke the command. 
+
+The tasks show the arguments and flags of the Ops Blocks commands.
+Tasks that read from a file find it inside the directory listed as an `input`.
+Similarly, tasks that output information that needs to persist write it into an directory listed as an `output`.
+
+All the tasks use the same platform and docker image.
+Most of the tasks correspond to a single Ops Blocks command.
+
+The example code comes from the [PCF Installer repo](https://github.com/pivotal-cf/pcf-installer).
+
+### <a id='apply-changes'></a>apply-changes
+
+Triggers an install on the Ops Manager targeted.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'apply-changes' %>
+
+Source: [apply-changes task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/apply-changes.yml).
+
+### <a id='configure-authentication'></a>configure-authentication
+
+Configures Ops Manager with an internal userstore and admin user account. See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'configure-authentication' %>
+
+Source: [configure-authentication task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-authentication.yml).
+
+### <a id='configure-director'></a>configure-director
+Configures the BOSH Director with settings from a config file.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'configure-director' %>
+
+Source: [configure-director task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-director.yml).
+
+### <a id='configure-product'></a>configure-product
+Configures a product with settings from a config file.
+
+Not to be confused with Ops Manager's built-in [import](https://docs.pivotal.io/pivotalcf/customizing/backup-restore/restore-pcf-bbr.html#deploy-import),
+which reads all deployed product settings from a single opaque file,
+intended for import as part of backup/restore and upgrade lifecycle processes.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'configure-product' %>
+
+Source: [configure-product task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-product.yml).
+
+The `configure-product` command also supports loading variables from a file.
+While the above task doesn't use that capability,
+the following task does:
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'configure-product-with-vars' %>
+
+Source: [configure-product-with-vars task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-product-with-vars.yml).
+
+### <a id='configure-saml-authentication'></a>configure-saml-authentication
+
+Configures Ops Manager with an external SAML user store and admin user account. See [configure-authentication](#configure-authentication) to configure an internal user store.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'configure-saml-authentication' %>
+
+Source: [configure-saml-authentication task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-saml-authentication.yml).
+
+### <a id='install-opsman'></a>install-opsman
+Creates an unconfigured Ops Manager VM. 
+Currently vSphere-only.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'install-opsman' %>
+
+Source: [install-opsman task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/install-opsman.yml).
+
+### <a id='stage-product'></a>stage-product
+Stages an uploaded product.
+Unstaged products cannot be configured or installed.
+
+In our example task,
+this command is used immediately after `upload-product`.
+The two commands are usually used together,
+though it is possible to invoke them separately.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'upload-and-stage-product' %>
+
+Source: [upload-and-stage-product task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml).
+
+### <a id='staged-config'></a>staged-config
+
+Not to be confused with Ops Manager's built-in [export](https://docs.pivotal.io/pivotalcf/2-1/customizing/backup-restore/backup-pcf-bbr.html#export), 
+which puts all deployed product settings into a single opaque file,
+intended for import as part of backup/restore and upgrade lifecycle processes.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'staged-config' %>
+
+Source: [staged-config task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/staged-config.yml).
+
+### <a id='upload-product'></a>upload-product
+Uploads a product to the Ops Manager specified in the config file.
+After upload, product needs to be staged before it can be configured or installed.
+
+In our example task,
+this command is used immediately before `stage-product`.
+The two commands are usually used together,
+though it is possible to invoke them separately.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'upload-and-stage-product' %>
+
+Source: [upload-and-stage-product task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml).
+
+### <a id='upload-stemcell'></a>upload-stemcell
+Uploads a given stemcell to the Ops Manager specified in the config file.
+
+This example assumes there is exactly one stemcell in the `stemcell` directory, with the filename exactly as downloaded from Pivnet. Ops Manager parses this filename to determine the version and OS of the stemcell.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/pcf-installer', at: 'upload-stemcell' %>
+
+Source: [upload-stemcell task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-stemcell.yml).
