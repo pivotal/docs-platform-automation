@@ -5,17 +5,44 @@ owner: PCF Norm
 
 This topic describes when and how to use Ops Blocks, and provides an example pipeline that uses Ops Blocks commands.
 
-##<a id='after-first'></a> Ops Manager, Then Ops Blocks
+##<a id='mgr-vs-blocks'></a>Ops Manager vs Ops Blocks
 
-<table id='TK-NAME' border="1" class="nice" >
+Ops Manager manages PCF operations manually. Ops Blocks lets you automate them.
+
+###<a id='opsman'></a>Ops Manager
+
+Ops Manager lets you install and configure PCF and PCF products manually. Its UI takes you through the configuration decisions or changes that you need to make in situations such as:
+
+* Installing PCF for the first time.
+
+* Changing product configurations as a result of human decisions.
+
+* Running major or minor version upgrades of PCF or PCF products.
+
+###<a id='opsblocks'></a>Ops Blocks
+
+You can run Ops Blocks manually from a command line. But you can also embed them in scripts and pipelines to perform Ops Manager functions when human attention is not needed, such as:
+
+* Upgrading products to new patch versions.
+  - Configuration settings should not differ between successive patch versions within the same minor version line. Underlying properties or property names may change, but the tile's upgrade process automatically translates properties to the new fields and values.
+  - Pivotal cannot guarantee the functionality of upgrade scripts in third-party PCF product tiles.
+
+* Replicating configuration settings from one product tile to the same product tile on a different foundation.
+  - Because properties and property names can change between patch versions of a product, you can only safely apply configuration settings across product tiles if their versions exactly match.
+
+###<a id='compare'></a>Ops Comparison
+
+The following table compares how Ops Manager and Ops Blocks might run a typical sequence of PCF operations:
+
+<table id='compare' border="1" class="nice" >
   <tr>
     <th></th>
     <th>Ops Manager</th>
     <th>Ops Blocks</th>
   </tr><tr>
-    <th>When</th>
-    <td>First install and minor upgrades</td>
-    <td>Config changes and patch upgrades</td>
+    <th>When to Use</th>
+    <th>First install and minor upgrades</th>
+    <th>Config changes and patch upgrades</th>
   </tr><tr>
     <th>1. Create Ops Manager VM</th>
     <td>Manually prepare IaaS and create Ops Manager VM</td>
@@ -43,40 +70,11 @@ This topic describes when and how to use Ops Blocks, and provides an example pip
   </tr>
 </table>
 
-<table id='TK-NAME' border="1" class="nice" >
-  <tr>
-    <th></th>
-    <th>Ops Manager</th>
-    <th>Ops Blocks</th>
-  </tr><tr>
-    <th>When</th>
-    <td>First install and minor upgrades</td>
-    <td>Config changes and patch upgrades</td>
-  </tr><tr>
-    <th>7. Export Complete State</th>
-    <td></td>
-    <td></td>
-  </tr>
-</table>
-
-<table id='TK-NAME' border="1" class="nice" >
-  <tr>
-    <th></th>
-    <th>Ops Manager</th>
-    <th>Ops Blocks</th>
-  </tr><tr>
-    <th>When</th>
-    <td>First install and minor upgrades</td>
-    <td>Config changes and patch upgrades</td>
-  </tr><tr>
-    <th>8. Destroy Ops Manager VM</th>
-    <td></td>
-    <td></td>
-  </tr>
-</table>
-
-
 ##<a id='integrate'></a> Integrate Non-Portable Settings
+
+Some PCF product settings, such as local machine-specific properties and secure credentials, cannot be transferred between different BOSH Directors or PCF product tiles.
+
+The following procedures explain how to account for and apply these settings when you use Ops Blocks to configure a tile's portable settings.
 
 ###<a id='local'></a> Include Local Parameters
 
