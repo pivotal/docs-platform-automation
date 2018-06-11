@@ -8,3 +8,4 @@ cached_shas.yml
 bin
 [#]*[#]
 .DS_Store
+pcf-installer
