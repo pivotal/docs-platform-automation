@@ -15,6 +15,8 @@ The example tasks come from the [PCF Installer repo](https://github.com/pivotal-
 All commands use an auth file, given in these examples as `auth.yml`.
 This auth file controls the target of the command.
 
+The auth file looks like this if you're using internal auth:
+
 ```yaml
 opsman_url: opsman.example.com
 skip_ssl_validation: true
@@ -24,6 +26,16 @@ credentials:
 decryption_passphrase: example-passphrase
 ```
 
+The auth file looks like this if you're using external/SAML auth:
+
+```yaml
+opsman_url: opsman.example.com
+skip_ssl_validation: true
+credentials:
+  client_id: example-client-id
+  client_secret: example-secret
+decryption_passphrase: example-passphrase
+```
 
 ### <a id='apply-changes'></a>apply-changes
 
@@ -51,7 +63,6 @@ installer configure-authentication --config path/to/auth.yml
 Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
-
 
 ```bash
 installer configure-director \
