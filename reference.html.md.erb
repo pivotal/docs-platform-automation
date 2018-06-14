@@ -47,6 +47,17 @@ installer apply-changes --auth-file path/to/auth.yml
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/apply-changes.yml).
 
+`apply-changes` can also be used to trigger an install for just the BOSH Director
+with the `--skip-deploy-products`/`-sdp` flag.
+While the above task and example don't use this capability,
+the following do:
+
+```bash
+installer apply-changes --auth-file path/to/auth.yml --skip-deploy-products
+```
+
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/apply-director-changes.yml).
+
 ### <a id='configure-authentication'></a>configure-authentication
 
 Configures Ops Manager with an internal userstore and admin user account.
