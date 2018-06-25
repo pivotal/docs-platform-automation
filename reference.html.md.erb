@@ -150,6 +150,21 @@ installer configure-saml-authentication \
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-saml-authentication.yml).
 
+### <a id='export-installation'></a>export-installation
+Exports a an existing Ops Manager to a file.
+
+This is the first part of the backup/restore and upgrade lifecycle processes.
+This command is used on a fully installed and healthy Ops Manager to export
+settings to a upgraded version of Ops Manager.
+
+```bash
+installer export-installation \
+  --auth-file path/to/auth.yml \
+  --output-file path/to/installation.zip
+```
+
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/export-installation.yml).
+
 ### <a id='import-installation'></a>import-installation
 Imports a previously exported installation to Ops Manager.
 
