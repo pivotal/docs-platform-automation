@@ -149,6 +149,19 @@ installer configure-saml-authentication --config path/to/external-auth-config.ym
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-saml-authentication.yml).
 
+### <a id='import-installation'></a>import-installation
+Imports a previously exported installation to Ops Manager.
+
+This is a part of the backup/restore and upgrade lifecycle processes.
+This command is used after an installation has been exported and a new Ops Manager
+has been deployed, but before the new Ops Manager is configured.
+
+```bash
+installer import-installation --auth-file path/to/auth.yml --installation path/to/installation.zip
+```
+
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/import-installation.yml).
+
 ### <a id='install-opsman'></a>install-opsman
 Creates an unconfigured Ops Manager VM. 
 Currently **vSphere-only**.
