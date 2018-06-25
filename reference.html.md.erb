@@ -144,7 +144,8 @@ please refer to the Ops Manager documentation [here][saml-docs]
 [saml-docs]:
 
 ```bash
-installer configure-saml-authentication --config path/to/external-auth-config.yml
+installer configure-saml-authentication \
+  --config path/to/external-auth-config.yml
 ```
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-saml-authentication.yml).
@@ -157,7 +158,9 @@ This command is used after an installation has been exported and a new Ops Manag
 has been deployed, but before the new Ops Manager is configured.
 
 ```bash
-installer import-installation --auth-file path/to/auth.yml --installation path/to/installation.zip
+installer import-installation \
+  --auth-file path/to/auth.yml \
+  --installation path/to/installation.zip
 ```
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/import-installation.yml).
@@ -169,7 +172,7 @@ Currently **vSphere-only**.
 ```bash
 installer install-opsman \
   --auth-file path/to/auth.yml \
-  --config path/to/opsman-config.yml \
+  --config path/to/opsman-config.yml
 ```
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/install-opsman.yml).
@@ -187,7 +190,9 @@ The two commands are usually used together,
 though it is possible to invoke them separately.
 
 ```bash
-installer stage-product --auth-file path/to/auth.yml --product path/to/product.pivotal
+installer stage-product \
+  --auth-file path/to/auth.yml \
+  --product path/to/product.pivotal
 ```
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml).
@@ -236,7 +241,9 @@ The two commands are usually used together,
 though it is possible to invoke them separately.
 
 ```bash
-installer upload-product --auth-file path/to/auth.yml --product path/to/product.pivotal
+installer upload-product \
+  --auth-file path/to/auth.yml \
+  --product path/to/product.pivotal
 ```
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml).
@@ -248,7 +255,9 @@ Note that the filename of the stemcell must be exactly as downloaded from Pivnet
 Ops Manager parses this filename to determine the version and OS of the stemcell.
 
 ```bash
-installer upload-stemcell --auth-file path/to/auth.yml --stemcell path/to/stemcell.tgz
+installer upload-stemcell \
+  --auth-file path/to/auth.yml \
+  --stemcell path/to/stemcell.tgz
 ```
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-stemcell.yml).
