@@ -45,7 +45,7 @@ Triggers an install on the Ops Manager described by the auth file.
 installer apply-changes --auth-file path/to/auth.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/apply-changes.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/apply-changes.yml)
 
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
@@ -56,7 +56,7 @@ the following do:
 installer apply-changes --auth-file path/to/auth.yml --skip-deploy-products
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/apply-director-changes.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/apply-director-changes.yml)
 
 ### <a id='configure-authentication'></a>configure-authentication
 
@@ -68,7 +68,7 @@ Note that this takes `auth.yml` with a `-c`/`--config` rather than the typical `
 installer configure-authentication --config path/to/auth.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-authentication.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-authentication.yml)
 
 ### <a id='configure-director'></a>configure-director
 Configures the BOSH Director with settings from a config file.
@@ -81,7 +81,7 @@ installer configure-director \
   --config path/to/director-config.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-director.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-director.yml)
 
 ### <a id='configure-product'></a>configure-product
 Configures an individual, staged product with settings from a config file.
@@ -102,7 +102,7 @@ installer configure-product \
   --config path/to/example-product-config.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-product.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-product.yml)
 
 `configure-product` also supports loading variables from a file.
 While the above task and example don't use that capability,
@@ -116,7 +116,7 @@ installer configure-product \
   --vars-file path/to/more-example-vars.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-product-with-vars.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-product-with-vars.yml)
 
 ### <a id='configure-saml-authentication'></a>configure-saml-authentication
 
@@ -148,7 +148,7 @@ installer configure-saml-authentication \
   --config path/to/external-auth-config.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-saml-authentication.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/configure-saml-authentication.yml)
 
 ### <a id='export-installation'></a>export-installation
 Exports a an existing Ops Manager to a file.
@@ -163,7 +163,7 @@ installer export-installation \
   --output-file path/to/installation.zip
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/export-installation.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/export-installation.yml)
 
 ### <a id='import-installation'></a>import-installation
 Imports a previously exported installation to Ops Manager.
@@ -178,7 +178,7 @@ installer import-installation \
   --installation path/to/installation.zip
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/import-installation.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/import-installation.yml)
 
 ### <a id='install-opsman'></a>install-opsman
 Creates an unconfigured Ops Manager VM. 
@@ -190,7 +190,7 @@ installer install-opsman \
   --config path/to/opsman-config.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/install-opsman.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/install-opsman.yml)
 
 ### <a id='stage-product'></a>stage-product
 
@@ -210,7 +210,7 @@ installer stage-product \
   --product path/to/product.pivotal
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml)
 
 ### <a id='staged-config'></a>staged-config
 Downloads the configuration for a product from Ops Manager.
@@ -230,7 +230,7 @@ installer staged-config \
 Note that the `--output-file` argument is optional.
 If it's excluded, the downloaded config will be written to stdout.
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/staged-config.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/staged-config.yml)
 
 ### <a id='staged-director-config'></a>staged-director-config
 Downloads configuration for the BOSH director from Ops Manager.
@@ -241,7 +241,7 @@ installer staged-director-config \
   --output-file path/to/director-config.yml
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/staged-director-config.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/staged-director-config.yml)
 
 
 ### <a id='upload-product'></a>upload-product
@@ -261,7 +261,7 @@ installer upload-product \
   --product path/to/product.pivotal
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml)
 
 ### <a id='upload-stemcell'></a>upload-stemcell
 Uploads a stemcell to Ops Manager.
@@ -275,4 +275,4 @@ installer upload-stemcell \
   --stemcell path/to/stemcell.tgz
 ```
 
-[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-stemcell.yml).
+[Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-stemcell.yml)
