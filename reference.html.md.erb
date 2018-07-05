@@ -247,6 +247,35 @@ installer staged-director-config \
 ### <a id='upload-product'></a>upload-product
 Uploads a product to the Ops Manager specified in the config file.
 
+```bash
+installer upload-product \
+  --auth-file path/to/auth.yml \
+  --product path/to/product.pivotal
+```
+
+Optionally, consumes a yaml config file specifying
+`version` and/or `shasum`.
+
+If either is specified,
+any values provided will be checked against the product file provided,
+and upload will fail if any don't match.
+
+```bash
+installer upload-product \
+  --auth-file path/to/auth.yml \
+  --product path/to/product.pivotal
+  --config path/to/product-config.yml
+```
+
+Here's an example of the values
+this command uses from the product config file:
+
+```yaml
+---
+version: 1.2.3-build.4
+shasum: 7B9C0389ACF248FB9759B3A84CE52AD361B120714E408A0F9F8EBC88462873E6
+```
+
 After upload, product needs to be [staged](#stage-product)
 before it can be configured or installed.
 
@@ -254,12 +283,6 @@ In our example task,
 this command is used immediately before `stage-product`.
 The two commands are usually used together,
 though it is possible to invoke them separately.
-
-```bash
-installer upload-product \
-  --auth-file path/to/auth.yml \
-  --product path/to/product.pivotal
-```
 
 [Example Task](https://github.com/pivotal-cf/pcf-installer/blob/master/tasks/upload-and-stage-product.yml)
 
