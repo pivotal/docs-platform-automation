@@ -1,17 +1,17 @@
 ---
-title: Ops Blocks for PCF
+title: Platform Automation for PCF
 owner: PCF Norm
 ---
 
-Ops Blocks for Pivotal Cloud Foundry (PCF)
+Platform Automation for Pivotal Cloud Foundry (PCF)
 is a set of commands that wrap and extend [om](https://github.com/pivotal-cf/om),
 a command-line interface to Ops Manager.
 
-Ops Blocks uses `om`,
+Platform Automation for PCF uses `om`,
 (and by extension, the Ops Manager API)
 to enable command-line interaction with Ops Manager,
 a dashboard for installing, configuring, and updating software products on PCF.
-Ops Blocks comes bundled with Concourse tasks
+Platform Automation for PCF comes bundled with Concourse tasks
 that demonstrate how to use these commands
 in a containerized Continuous Integration (CI) system,
 and a reference pipeline
@@ -21,11 +21,11 @@ To learn more about Ops Manager,
 see [Understanding the Ops Manager Interface](http://docs.pivotal.io/pivotalcf/customizing/pcf-interface.html).
 
 ## <a id='overview'></a>Overview
-Ops Blocks commands enable PCF operators
+Platform Automation for PCF commands enable PCF operators
 to script and automate Ops Manager actions.
-Ops Blocks commands are:
+Platform Automation for PCF commands are:
 
-* **Legible**: They use configuration from 
+* **Legible**: They use configuration from
 human-readable YAML files,
 which users can edit,
 and manage in version control.
@@ -46,15 +46,15 @@ which machines can easily pass around.
 They're available in a Docker container,
 which makes the tools easy to use in CI.
 
-* **Not Comprehensive**: Workflows that use Ops Blocks
+* **Not Comprehensive**: Workflows that use Platform Automation for PCF
 typically also contain `om` commands, custom tasks,
 and even interactions with the Ops Manager user interface.
-Ops Blocks are tools to use alongside other tools,
+Platform Automation for PCF are tools to use alongside other tools,
 rather than a comprehensive solution.
 
-## <a id='commands'></a> Ops Blocks Commands
+## <a id='commands'></a> Platform Automation for PCF Commands
 
-The following table lists all Ops Blocks commands. See the [Command and Task Reference][command-reference] for a complete explanation of each:
+The following table lists all Platform Automation for PCF commands. See the [Command and Task Reference][command-reference] for a complete explanation of each:
 
 | Command | Description |
 | ------------- | ------------- |
@@ -71,9 +71,9 @@ The following table lists all Ops Blocks commands. See the [Command and Task Ref
 | import-installation |  imports an existing installation (if present)to the Ops Manager targeted
 | version |  prints the release version
 
-## <a id='pipelines'></a> Using Ops Blocks in Pipelines
-Ops Blocks comes bundled with Concourse [tasks][concourse-task-definition].
-These task files wrap one or two Ops Blocks commands
+## <a id='pipelines'></a> Using Platform Automation for PCF in Pipelines
+Platform Automation for PCF comes bundled with Concourse [tasks][concourse-task-definition].
+These task files wrap one or two Platform Automation for PCF commands
 and their input and output definitions
 in the YAML format that Concourse uses to build pipelines.
 If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
@@ -82,11 +82,11 @@ The [Command Reference][command-reference] topic discusses these example tasks f
 
 ## <a id='contents'></a>Documentation
 
-* **Ops Blocks for PCF** - High-level introduction to Ops Blocks (this topic).
+* **Platform Automation for PCF for PCF** - High-level introduction to Platform Automation for PCF (this topic).
 
-* **[Setting Up Ops Blocks](./setup.html)** - How to get what you need to use Ops Blocks
+* **[Setting Up Platform Automation for PCF](./setup.html)** - How to get what you need to use Platform Automation for PCF
 
-* **[Using Ops Blocks](./using.html)** - How to use Ops Blocks by themselves and within Concourse or other CI systems. Includes an example pipeline.
+* **[Using Platform Automation for PCF](./using.html)** - How to use Platform Automation for PCF by themselves and within Concourse or other CI systems. Includes an example pipeline.
 
 * **[Command Reference][command-reference]**
 
