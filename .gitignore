@@ -9,4 +9,5 @@ bin
 [#]*[#]
 .DS_Store
 pcf-automation
+platform-automation
 .idea
