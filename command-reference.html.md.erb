@@ -43,7 +43,7 @@ Triggers an install on the Ops Manager described by the auth file.
 p-automator apply-changes --auth-file path/to/auth.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/apply-changes.yml) %>
+[Example Task](task-reference.html#apply-changes)
 
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
@@ -54,7 +54,7 @@ the following do:
 p-automator apply-changes --auth-file path/to/auth.yml --skip-deploy-products
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/apply-director-changes.yml) %>
+[Example Task](task-reference.html#apply-director-changes)
 
 ### <a id='configure-authentication'></a>configure-authentication
 
@@ -66,7 +66,7 @@ Note that this takes `auth.yml` with a `-c`/`--config` rather than the typical `
 p-automator configure-authentication --config path/to/auth.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/configure-authentication.yml) %>
+[Example Task](task-reference.html#configure-authentication)
 
 ### <a id='configure-director'></a>configure-director
 Configures the BOSH Director with settings from a config file.
@@ -79,7 +79,7 @@ p-automator configure-director \
   --config path/to/director-config.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/configure-director.yml) %>
+[Example Task](task-reference.html#configure-director)
 
 ### <a id='configure-product'></a>configure-product
 Configures an individual, staged product with settings from a config file.
@@ -100,8 +100,6 @@ p-automator configure-product \
   --config path/to/example-product-config.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/configure-product.yml) %>
-
 `configure-product` also supports loading variables from a file.
 While the above task and example don't use that capability,
 the following do:
@@ -114,7 +112,7 @@ p-automator configure-product \
   --vars-file path/to/more-example-vars.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/configure-product-with-vars.yml) %>
+[Example Task](task-reference.html#configure-product)
 
 ### <a id='configure-saml-authentication'></a>configure-saml-authentication
 
@@ -126,7 +124,6 @@ it can't just draw them from `auth.yml` like `configure-authentication` does.
 It uses these properties, instead:
 
 ```yaml
----
 opsman_url: opsman.example.com
 decryption_passphrase: example-passphrase
 saml-configuration:
@@ -146,7 +143,7 @@ p-automator configure-saml-authentication \
   --config path/to/external-auth-config.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/configure-saml-authentication.yml) %>
+[Example Task](task-reference.html#configure-saml-authentication)
 
 ### <a id='export-installation'></a>export-installation
 Exports an existing Ops Manager to a file.
@@ -161,7 +158,7 @@ p-automator export-installation \
   --output-file path/to/installation.zip
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/export-installation.yml) %>
+[Example Task](task-reference.html#export-installation)
 
 ### <a id='import-installation'></a>import-installation
 Imports a previously exported installation to Ops Manager.
@@ -176,7 +173,7 @@ p-automator import-installation \
   --installation path/to/installation.zip
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/import-installation.yml) %>
+[Example Task](task-reference.html#import-installation)
 
 ### <a id='install-opsman'></a>install-opsman
 Creates an unconfigured Ops Manager VM. 
@@ -188,7 +185,7 @@ p-automator install-opsman \
   --config path/to/opsman-config.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/install-opsman.yml) %>
+[Example Task](task-reference.html#install-opsman)
 
 ### <a id='stage-product'></a>stage-product
 
@@ -208,7 +205,7 @@ p-automator stage-product \
   --product path/to/product.pivotal
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/upload-and-stage-product.yml) %>
+[Example Task](task-reference.html#upload-and-stage-product)
 
 ### <a id='staged-config'></a>staged-config
 Downloads the configuration for a product from Ops Manager.
@@ -228,7 +225,7 @@ p-automator staged-config \
 Note that the `--output-file` argument is optional.
 If it's excluded, the downloaded config will be written to stdout.
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/staged-config.yml) %>
+[Example Task](task-reference.html#staged-config)
 
 ### <a id='staged-director-config'></a>staged-director-config
 Downloads configuration for the BOSH director from Ops Manager.
@@ -239,7 +236,7 @@ p-automator staged-director-config \
   --output-file path/to/director-config.yml
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/staged-director-config.yml) %>
+[Example Task](task-reference.html#staged-director-config)
 
 
 ### <a id='upload-product'></a>upload-product
@@ -269,7 +266,6 @@ Here's an example of the values
 this command uses from the product config file:
 
 ```yaml
----
 version: 1.2.3-build.4
 shasum: 7B9C0389ACF248FB9759B3A84CE52AD361B120714E408A0F9F8EBC88462873E6
 ```
@@ -282,7 +278,7 @@ this command is used immediately before `stage-product`.
 The two commands are usually used together,
 though it is possible to invoke them separately.
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/upload-and-stage-product.yml) %>
+[Example Task](task-reference.html#upload-and-stage-product)
 
 ### <a id='upload-stemcell'></a>upload-stemcell
 Uploads a stemcell to Ops Manager.
@@ -296,4 +292,4 @@ p-automator upload-stemcell \
   --stemcell path/to/stemcell.tgz
 ```
 
-<%# [Example Task](https://github.com/pivotal-cf/platform-automation/blob/master/tasks/upload-stemcell.yml) %>
+[Example Task](task-reference.html#upload-stemcell)
