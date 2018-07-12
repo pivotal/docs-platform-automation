@@ -177,7 +177,7 @@ p-automator import-installation \
 
 ### <a id='install-opsman'></a>install-opsman
 Creates an unconfigured Ops Manager VM. 
-Currently **vSphere-only**.
+Currently **vSphere, GCP**.
 
 ```bash
 p-automator install-opsman \
@@ -186,6 +186,9 @@ p-automator install-opsman \
 ```
 
 [Example Task](task-reference.html#install-opsman)
+
+This Command requires a config file specific to the IaaS being deployed to.
+Please see the [configuration](configuration.html#install-opsman) page for more specific examples
 
 ### <a id='stage-product'></a>stage-product
 
