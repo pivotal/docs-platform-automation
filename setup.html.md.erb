@@ -54,19 +54,3 @@ redirect uri (list):
 autoapprove (list):
 signup redirect url (url):
 ```
-
-## <a id=''></a>Ops Manager Configuration
-
-### Exporting
-
-Assuming that an Ops Manager has been previous deployed, the configuration can be extracted out for CLI or task consumption.
-
-Running the following command will extract a parameterized configuration.
-
-```
-p-automator staged-director-config --auth-file auth.yml --output-file director.yml
-```
-
-The configuration does not extract credentials from Ops Manager.
-This is to ensure that credentials are never written to disk.
-The credentials need to be provided from an external configuration when invoking [configure-director](command-reference.html#configure-director).
