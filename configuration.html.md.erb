@@ -3,7 +3,7 @@ title: Platform Automation for PCF Configuration
 owner: PCF Platform Automation
 ---
 
-## <a id='configuration'></a> Platform Automation for PCF Configuration
+## <a id=''></a> Platform Automation for PCF Configuration
 This document lists each Platform Automation for PCF command,
 and provides information about their intentions, inputs, and outputs.
 
@@ -16,12 +16,10 @@ This auth file controls the target of the command.
 The auth file looks like this if you're using internal auth:
 
 
-### <a id=''></a>Creating an OpsMan VM
+### <a id='install-opsman'></a>Creating an Ops Manager VM
 
 If using the `install-opsman` task in the reference pipeline, providing a configuration file
-with IaaS specific properties will be required. The required properties are adapted from the 
-instructions outlined in
-[Deploying BOSH and Ops Manager to vSphere](https://docs.pivotal.io/pivotalcf/customizing/deploying-vm.html)
+with IaaS specific properties will be required. 
 
 The IaaS-specific config file must be provided to the [install-opsman](task-reference.html#install-opsman) task
 in order to successfully deploy a VM. 
@@ -29,7 +27,29 @@ in order to successfully deploy a VM.
 Specific examples for each IaaS are as follows:
 
 ##### <a id='vsphere-configuration'></a> vSphere
+These required properties are adapted from the instructions outlined in
+[Deploying BOSH and Ops Manager to vSphere](https://docs.pivotal.io/pivotalcf/customizing/deploying-vm.html)
+
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'vsphere-configuration' %>
 
 ##### <a id='gcp-configuration'></a> GCP
+These required properties are adapted from the instructions outlined in
+[Launching an Ops Manager Director Instance on GCP](https://docs.pivotal.io/pivotalcf/customizing/gcp-om-deploy.html)
+
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'gcp-configuration' %>
+
+### <a id='generate-config'></a>Generating Config from an existing Ops Manager
+
+Assuming that an Ops Manager has been previous deployed, the configuration can be extracted out for CLI or task consumption.
+
+Running the following command will extract a parameterized configuration.
+
+```
+p-automator staged-director-config --auth-file auth.yml --output-file director.yml
+```
+
+The configuration does not extract credentials from Ops Manager.
+This is to ensure that credentials are never written to disk.
+The credentials need to be provided from an external configuration when invoking [configure-director](command-reference.html#configure-director).
