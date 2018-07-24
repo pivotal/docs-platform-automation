@@ -1,0 +1,78 @@
+---
+title: Getting Started with Platform Automation for PCF
+owner: PCF Platform Automation
+---
+
+This topic describes how to install Platform Automation for PCF.
+
+## <a id='reqs'></a>Requirements
+
+To install and use Platform Automation for PCF you need:
+
+* A running Pivotal Cloud Foundry (PCF) environment
+* The following tools with most recent releases installed on your local workstation:
+  - [om][om-docs]
+  - [p-automator][pcf-automation-pivnet]
+  - User Authorization and Authentication CLI ([UAAC][uaac]) - if using SAML authentication
+  
+[om-docs]: https://github.com/pivotal-cf/om/releases
+[pcf-automation-pivnet]: https://network.pivotal.io/products/pcf-automation
+[uaac]: https://github.com/cloudfoundry/cf-uaac
+
+## <a id='prerequisites'></a> Assumptions and Prerequisites
+Platform Automation for PCF assumes access to:
+
+- a [supported infrastructure][install-pcf-docs] (and admin credentials to an account on that infrastructure)
+- a network environment configured to support Ops Manager
+
+Platform Automation for PCF is also designed to be able to "take over"
+management of an existing Ops Manager,
+regardless of how it was deployed.
+
+One way to deploy an Ops Manager
+is [terraform][terraform].
+For an example, see the docs for deploying Ops Manager with Terraform
+on [AWS][aws-terraform-docs] and [GCP][gcp-terraform-docs].
+
+If you wish to use terraform within a Concourse pipeline,
+there is a community-supported [terraform concourse resource][terraform-resource].
+
+[aws-terraform-docs]: https://docs.pivotal.io/pivotalcf/2-1/customizing/aws-terraform.html
+[gcp-terraform-docs]: https://docs.pivotal.io/pivotalcf/2-1/customizing/gcp-terraform.html
+[terraform-resource]: https://github.com/ljfranklin/terraform-resource
+[terraform]: https://terraform.io
+[install-pcf-docs]: https://docs.pivotal.io/pivotalcf/installing/index.html#overview
+
+##<a id='authenticate'></a> Authentication with Platform Automation for PCF
+
+Most of the commands require authentication, which could be supplied by `--auth-file` or `-a` for short.
+
+The format of the authentication file is as follows:
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth' %>
+
+If you are using internal authentication, you can choose to provide:
+`username & password` OR `client-id & client-secret` in the `credentials` section of `--auth-file`
+
+If you are using SAML authentication, you are required to provide `client-id & client-secret`
+
+###<a id='generate'></a> Generate a New Client ID and Client Secret
+
+1. `uaac target https://YOUR_OPSMANAGER/uaa`
+1. `uaac token sso get` if using SAML or `uaac token owner get` if using internal auth. Specify the Client ID as `opsman` and leave Client Secret **blank**.
+1. Generate a client ID and secret:
+
+```
+uaac client add -i
+Client ID:  NEW_CLIENT_NAME
+New client secret:  DESIRED_PASSWORD
+Verify new client secret:  DESIRED_PASSWORD
+scope (list):  opsman.admin
+authorized grant types (list):  client_credentials
+authorities (list):  opsman.admin
+access token validity (seconds):  43200
+refresh token validity (seconds):  43200
+redirect uri (list):
+autoapprove (list):
+signup redirect url (url):
+```
