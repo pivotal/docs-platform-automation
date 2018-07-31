@@ -175,20 +175,20 @@ p-automator import-installation \
 
 [Example Task](task-reference.html#import-installation)
 
-### <a id='install-opsman'></a>install-opsman
+### <a id='create-vm'></a>create-vm
 Creates an unconfigured Ops Manager VM. 
 Currently **vSphere, GCP, AWS, Azure**.
 
 ```bash
-p-automator install-opsman \
+p-automator create-vm \
   --auth-file path/to/auth.yml \
   --config path/to/opsman-config.yml
 ```
 
-[Example Task](task-reference.html#install-opsman)
+[Example Task](task-reference.html#create-vm)
 
 This Command requires a config file specific to the IaaS being deployed to.
-Please see the [configuration](configuration.html#install-opsman) page for more specific examples
+Please see the [configuration](configuration.html#create-vm) page for more specific examples
 
 ### <a id='stage-product'></a>stage-product
 
