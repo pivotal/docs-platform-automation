@@ -145,6 +145,34 @@ p-automator configure-saml-authentication \
 
 [Example Task](task-reference.html#configure-saml-authentication)
 
+### <a id='create-vm'></a>create-vm
+Creates an unconfigured Ops Manager VM. 
+Currently **vSphere, GCP, AWS, Azure, and Openstack**.
+
+```bash
+p-automator create-vm \
+  --config path/to/opsman-config.yml
+```
+
+[Example Task](task-reference.html#create-vm)
+
+This command requires a config file specific to the IaaS being deployed to.
+Please see the [configuration](configuration.html#create-vm) page for more specific examples.
+
+### <a id='delete-vm'></a>delete-vm
+Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
+Currently **vSphere, GCP, AWS, Azure, and Openstack**.
+
+```bash
+p-automator delete-vm \
+  --state path/to/state.yml \
+  --config path/to/opsman-config.yml
+```
+
+[Example Task](task-reference.html#delete-vm)
+
+This command requires the state file generated [create-vm](#create-vm).
+
 ### <a id='export-installation'></a>export-installation
 Exports an existing Ops Manager to a file.
 
@@ -174,21 +202,6 @@ p-automator import-installation \
 ```
 
 [Example Task](task-reference.html#import-installation)
-
-### <a id='create-vm'></a>create-vm
-Creates an unconfigured Ops Manager VM. 
-Currently **vSphere, GCP, AWS, Azure**.
-
-```bash
-p-automator create-vm \
-  --auth-file path/to/auth.yml \
-  --config path/to/opsman-config.yml
-```
-
-[Example Task](task-reference.html#create-vm)
-
-This Command requires a config file specific to the IaaS being deployed to.
-Please see the [configuration](configuration.html#create-vm) page for more specific examples
 
 ### <a id='stage-product'></a>stage-product
 
