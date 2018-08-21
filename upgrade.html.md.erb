@@ -15,7 +15,7 @@ This topic describes how to upgrade an Ops Manager using Platform Automation.
 
 ###<a id='requirements'></a>Command Requirements
 
-The [`upgrade-opsman`](commands.html#upgrade-opsman) will delete the previous VM, create a new VM, and import
+The [`upgrade-opsman`](command-reference.html#upgrade-opsman) will delete the previous VM, create a new VM, and import
 a previous installation. It requires the following to perform this operations: 
 
 * a valid state file from the currently deployed Ops Manager
@@ -29,7 +29,7 @@ IAAS resource requirements
 command requirements
 
 ##<a id='upgrade'></a>Upgrading Ops Manager
-The [`upgrade-opsman`](commands.html#upgrade-opsman) command follows the flow based on state of an OpsManager VM.
+The [`upgrade-opsman`](command-reference.html#upgrade-opsman) command follows the flow based on state of an OpsManager VM.
 This flowchart gives a high level overview of how the command makes decisions for an upgrade.
 
 <%= partial 'upgrade-flowchart.mmd' %>
