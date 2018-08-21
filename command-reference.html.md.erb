@@ -265,6 +265,20 @@ p-automator staged-director-config \
 [Example Task](task-reference.html#staged-director-config)
 
 ### <a id='upgrade-opsman'></a>upgrade-opsman
+Upgrades an existing Ops Manager to a new given Ops Manager version
+
+```bash
+p-automator upgrade-opsman \
+  --state-file path/to/state.yml \ #from create-vm
+  --image-file path/to/pivnet/image \
+  --config path/to/opsman-config.yml \
+  --installation path/to/installation.zip \
+  --auth-file path/to/auth.yml
+```
+
+For more information about this command and how it works, see the [upgrade](upgrade.html) page.
+
+[Example Task](task-reference.html#upgrade-opsman)
 
 ### <a id='upload-product'></a>upload-product
 Uploads a product to the Ops Manager specified in the config file.

@@ -5,9 +5,63 @@ owner: PCF Platform Automation
 
 This topic describes how to upgrade an Ops Manager using Platform Automation.
 
+* always perform an export installation
+* persist that exported installation
+* installation is separate from upgrade
+* an initial installation is done, which maintains state 
+
 ##<a id='export-installation'></a>Always export your installation
 <%= partial 'export_installation_note' %>
 
-##<a id='upgrade'></a>Upgrading Ops Manager
+###<a id='requirements'></a>Command Requirements
 
-This is a feature in progress! Check back soon for more information and updates regarding this feature
+The [`upgrade-opsman`](commands.html#upgrade-opsman) will delete the previous VM, create a new VM, and import
+a previous installation. It requires the following to perform this operations: 
+
+* a valid state file from the currently deployed Ops Manager
+* a valid image file for the new Ops Manager to install
+* a [configuration file](configuration.html) for IAAS specific details
+* an exported installation from a currently deployed Ops Manager
+* the [auth file](getting-started.html#authenticate) for a currently deployed Ops Manager
+* (Optional) a vars file to replace ((interpolatable variables)) from the config file
+
+IAAS resource requirements
+command requirements
+
+##<a id='upgrade'></a>Upgrading Ops Manager
+The [`upgrade-opsman`](commands.html#upgrade-opsman) command follows the flow based on state of an OpsManager VM.
+This flowchart gives a high level overview of how the command makes decisions for an upgrade.
+
+<%= partial 'upgrade-flowchart.mmd' %>
+
+On successive invocations of command, it will offer different behaviour of the previous run.
+This aids in recovering from failures (ie: from an IAAS) that occur.
+
+###<a id='version-errors'></a>Version Check Errors:
+1) <b>downgrading is not supported by Ops Manager</b> (Manual Intervention Required)
+
+* Ops Manager does not support downgrading to a lower version. Try the upgrade again with a newer
+version of Ops Manager 
+
+2) <b>could not authenticate with Ops Manager</b> (Manual Intervention Required)
+
+* Credentials provided in the auth file do not match the credentials of an already deployed Ops Manager
+* SOLUTION: To change the credentials when upgrading an Ops Manager, you must first change the 
+  [`auth.yml`](getting-started.html#authenticate) and update the director appropriately
+  
+3) <b>The Ops Manager API is inaccessible</b> (Recoverable)
+
+* This error is fixed within the command. The command will assume that the Ops Manager VM is not 
+created, and will run the [`create-vm`](task-reference.html#create-vm) and 
+[`import-installation`](task-reference.html#import-installation) commands
+  
+###<a id='cli-errors'></a>IAAS CLI Errors
+
+4) When the CLI for a supported IAAS fails for any reason (i.e., bad network, outage, etc) we treat this as 
+an IAAS CLI error. The specific error will be returned as output, but <i><b>most errors can simply be fixed by 
+re-running the `upgrade-opsman` command.</b></i> 
+
+The following tasks can return an error from the IAAS's CLI:
+
+* Delete the current Ops Manager VM
+* Create a new Ops Manager VM
