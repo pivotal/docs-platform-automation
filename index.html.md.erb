@@ -8,7 +8,7 @@ owner: PCF Platform Automation
    and is intended for evaluation and test purposes only.</p>
 
 Platform Automation for Pivotal Cloud Foundry (PCF)
-is a set of commands that wrap and extend [om](https://github.com/pivotal-cf/om),
+is a set of commands that wrap and extend [om][om],
 a command-line interface to Ops Manager.
 
 Platform Automation for PCF uses `om`,
@@ -22,7 +22,7 @@ and a reference pipeline
 showing one possible configuration of these tasks.
 
 To learn more about Ops Manager,
-see [Understanding the Ops Manager Interface](http://docs.pivotal.io/pivotalcf/customizing/pcf-interface.html).
+see [Understanding the Ops Manager Interface][understanding-opsman].
 
 ## <a id='overview'></a>Overview
 Platform Automation for PCF commands enable PCF operators
@@ -61,7 +61,10 @@ Platform Automation for PCF comes bundled with Concourse [tasks][concourse-task-
 These task files wrap one or two Platform Automation for PCF commands
 and their input and output definitions
 in the YAML format that Concourse uses to build pipelines.
-If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
+If you use a different CI/CD platform, you can use these Concourse files as examples
+of the inputs, outputs, and arguments used in each step in the workflow.
+
+The [Getting Started][getting-started] topic is a great place to start.
 
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
@@ -70,4 +73,7 @@ and link to the tasks that use each command.
 
 [command-reference]: ./command-reference.html
 [concourse-task-definition]: https://concourse-ci.org/tasks.html
+[getting-started]: ./getting-started.html
+[om]: https://github.com/pivotal-cf/om
 [task-reference]: ./task-reference.html
+[understanding-opsman]: http://docs.pivotal.io/pivotalcf/customizing/pcf-interface.html
