@@ -3,76 +3,253 @@ title: Getting Started with Platform Automation for PCF
 owner: PCF Platform Automation
 ---
 
-This topic describes how to install Platform Automation for PCF.
+## <a id='up-front'></a>What do I need to understand up front?
+If you’ve just downloaded Platform Automation for PCF,
+it will be helpful to understand some things before you get started.
+We recommend you read over this whole document before you dive into anything.
 
-## <a id='reqs'></a>Requirements
+### <a id='toolkit'></a>This is a Toolkit
+Platform Automation for PCF is a collection of tools and documentation.
+It’s not a simple solution that can be “installed.”
+It is intended to facilitate operator-owned automation 
+of both common and advanced workflows around Pivotal Ops Manager.
+Ultimately, the resulting automation is a product of the operator.
 
-To install and use Platform Automation for PCF you need:
+### <a id='intended-for-concourse'></a>It Is Intended for Concourse
+Platform Automation for PCF is principally designed
+to help operators create Concourse pipelines that suit their needs.
+This means you’ll need Concourse deployed, and that you’ll need to setup some Concourse resources.
+See the [Preparing Concourse](#preparing-concourse) section for more details.
 
-* A running Pivotal Cloud Foundry (PCF) environment
-* The following tools with most recent releases installed on your local workstation:
-  - [om][om-docs]
-  - [p-automator][pcf-automation-pivnet]
-  - User Authorization and Authentication CLI ([UAAC][uaac]) - if using SAML authentication
-  
-[om-docs]: https://github.com/pivotal-cf/om/releases
-[pcf-automation-pivnet]: https://network.pivotal.io/products/pcf-automation
-[uaac]: https://github.com/cloudfoundry/cf-uaac
+### <a id='ops-man-flexibility'></a>It Can Work With An Ops Manager You Already Have, or Help You Get One
+While Platform Automation for PCF _can_ deploy an Ops Manager VM, it doesn’t _have to_.
+You can use it to automate an Ops Manager you already have.
 
-## <a id='prerequisites'></a> Assumptions and Prerequisites
-Platform Automation for PCF assumes access to:
+TODO: link to further documentation for using an existing or creating a new ops manager
 
-- a [supported infrastructure][install-pcf-docs] (and admin credentials to an account on that infrastructure)
-- a network environment configured to support Ops Manager
+### <a id='preparing-concourse'></a>Preparing Concourse
+It will be very helpful to be familiar with Concourse configuration
+and troubleshooting basics.
+This documentation doesn’t cover things like
+how to set up S3-compatible buckets to back your Concourse resources,
+or how to deploy Concourse itself.
+At minimum, you will need:
 
-Platform Automation for PCF is also designed to be able to "take over"
-management of an existing Ops Manager,
-regardless of how it was deployed.
+1. A deployed and working instance of Concourse
+1. An S3-compatible blob store
 
-One way to deploy an Ops Manager
-is [terraform][terraform].
-For an example, see the docs for deploying Ops Manager with Terraform
-on [AWS][aws-terraform-docs] and [GCP][gcp-terraform-docs].
+Platform Automation for PCF has Concourse tasks
+that use text-file-based outputs and inputs
+such as configuration and auth files.
+It also has some tasks that require larger binary blobs
+such as VM images and product tiles.
+Concourse has many resource types.
+There might be a better choice than an S3-compatible blobstore
+for any particular input,
+and it’s fine to use those if you’ve got them.
+A blobstore will work for anything,
+it’s enough to get started,
+and it’s what we use in our examples.
 
-If you wish to use terraform within a Concourse pipeline,
-there is a community-supported [terraform concourse resource][terraform-resource].
+### <a id='existing-pipelines'></a>How Does This Relate To My Existing Pipeline?
+Platform Automation for PCF provides a set of tasks which you can use to build your own pipeline.
+If you have a pipeline already,
+you may be able to replace some steps within it with tasks from Platform Automation for PCF,
+or you may find you’d prefer to build a full replacement.
 
-[aws-terraform-docs]: https://docs.pivotal.io/pivotalcf/2-1/customizing/aws-terraform.html
-[gcp-terraform-docs]: https://docs.pivotal.io/pivotalcf/2-1/customizing/gcp-terraform.html
-[terraform-resource]: https://github.com/ljfranklin/terraform-resource
-[terraform]: https://terraform.io
-[install-pcf-docs]: https://docs.pivotal.io/pivotalcf/installing/index.html#overview
+Platform Automation for PCF includes an example pipeline.
+The purpose of the example pipeline is to demonstrate one workable way to arrange the tasks,
+and to create an opportunity to discuss how the tasks relate to one another.
+Using the example pipeline out-of-the-box might not work for you -
+each environment and context calls for slightly different pipeline choices.
+When you construct your own pipeline,
+you’ll be trying to achieve a particular outcome.
+You might just be automating tile patch-version upgrades.
+You might be automating opsman patch-version upgrades,
+or automating the deployment of your entire foundation.
+You can pick which tasks you need to compose a pipeline that fits your specific needs.
+It’s up to you to decide if any existing pipeline you may have makes sense as a starting point!
 
-##<a id='authenticate'></a> Authentication with Platform Automation for PCF
+#### <a id='what-about-pcf-pipelines'></a>Okay Yes, But What About PCF Pipelines Specifically?
+There was a beta product from Pivotal called
+“PCF Platform Automation with Concourse (PCF Pipelines)”.
+It was never made publicly available and is deprecated.
+If your current pipeline is based on PCF Pipelines,
+we recommend building a replacement pipeline with the new tooling,
+as opposed to trying to modify your existing pipeline to use the new tools.
+Since Platform Automation for PCF can easily take over management of an existing Ops Manager,
+this should be fairly straightforward.
+Still, we may offer more detailed documentation support for this specific workflow in the future,
+and would like to hear from you if you feel that would be helpful.
 
-Most of the commands require authentication, which could be supplied by `--auth-file` or `-a` for short.
+## <a id='first-steps'></a>First Steps
+This section can help you make sure your Concourse is ready
+to use with Platform Automation for PCF.
+It’ll just take a few minutes.
+When you’re finished,
+you’ll have an almost-empty pipeline with a test task
+to validate that you’ve got everything set up correctly.
 
-The format of the authentication file is as follows:
+Please note that if your Concourse has internet access,
+or if you have a separate Concourse that has access to both the internet and your blobstore,
+there is an example pipeline that can be used to get these resources in their buckets.
+If you don’t have a Concourse setup that can use the example resources pipeline,
+or you don’t want to do that right now, you can use the following, more manual, process.
 
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth' %>
+### <a id='download-and-setup'></a>Initial Download and Setup
+The Platform Automation for PCF page on Pivnet has two files you’ll need to download:
 
-If you are using internal authentication, you can choose to provide:
-`username & password` OR `client-id & client-secret` in the `credentials` section of `--auth-file`
+1. Concourse Tasks, a zip file containing Platform Automation for PCF's concourse tasks.
+1. Self-Service Image Resources, a zip file containing the resources to build a Docker image for use with the tasks.
 
-If you are using SAML authentication, you are required to provide `client-id & client-secret`
+Download both.
+Don’t extract/unpack the tasks zip file,
+as it will need to be uploaded to a blobstore bucket for use as a Concourse resource.
+**Don’t change the filename.**
 
-###<a id='generate'></a> Generate a New Client ID and Client Secret
+Extract the self-service image resources zip file,
+`cd` into the resulting directory,
+and run `docker build .`.
 
-1. `uaac target https://YOUR_OPSMANAGER/uaa`
-1. `uaac token sso get` if using SAML or `uaac token owner get` if using internal auth. Specify the Client ID as `opsman` and leave Client Secret **blank**.
-1. Generate a client ID and secret:
+This should produce a docker image. You can save the built image for later use,
+run `docker save $(docker images -q | head -n1) > image.tar`. You will need to put the generated `image.tar` in
+a blobstore service that can be consumed by concourse.
+You will also need to upload the task zip to the blobstore as well.
+
+Put the details and credentials for the bucket in a secrets.yml file structured like so:
 
 ```
-uaac client add -i
-Client ID:  NEW_CLIENT_NAME
-New client secret:  DESIRED_PASSWORD
-Verify new client secret:  DESIRED_PASSWORD
-scope (list):  opsman.admin
-authorized grant types (list):  client_credentials
-authorities (list):  opsman.admin
-access token validity (seconds):  43200
-refresh token validity (seconds):  43200
-redirect uri (list):
-autoapprove (list):
-signup redirect url (url):
+s3:
+  access_key_id:
+  secret_access_key:
+  region_name:
+  buckets:
+    pcf_automation:
 ```
+
+Note that Concourse has CredHub integration you can use to store these secrets if you prefer.
+We’ll continue assuming you’re using a secrets file.
+
+Once you’ve uploaded these resources, you’re ready to begin.
+You’ll probably need buckets for config and auth,
+but you can wait to create those until you know which resources you actually need.
+
+Create a `pipeline.yml` file referencing your buckets:
+
+```
+resources:
+- name: pcf-automation-tasks-s3
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pcf_automation))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: tasks-(.*).zip
+- name: pcf-automation-image-s3
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pcf_automation))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: image-(.*).tgz
+```
+
+Note that you’ll need to add the `endpoint` parameter to the source section if you’re using a blobstore other than S3.
+Don’t forget to add it to your `secrets.yml` too!
+You may also need other S3 resource parameters in such a case.
+See the [documentation][concourse-documentation] for the resource.
+
+Now, add the test task to your `pipeline.yml`:
+
+```
+jobs:
+- name: test-resources
+  plan:
+  - aggregate:
+    - get: platform-automation-task-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+  - task: test-resources
+    image: platform-automation-image-s3
+    file: pcf-automation-tasks/test.yml
+```
+
+Set the pipeline (don’t forget to load variables from `secrets.yml` with `-l`) and trigger the test-resources job.
+It should validate you’re using the correct image and the tasks.
+
+### <a id='generate-configuration'></a>Generating Configuration
+Many of the tasks in Platform Automation for PCF require configuration.
+There are four types of config file used by Platform Automation for PCF:
+For the Ops Manager VM itself, there’s:
+
+* Ops Manager VM Configuration
+* Ops Manager Authentication Configuration
+
+For the things deployed by Ops Manager, there’s:
+
+* Director Configuration
+* Product Configuration
+
+Which of these you’ll need depends on what you’re automating.
+How you generate them depends on what situation you’re working with.
+In general, if you already have an Ops Manager, you won’t need Authentication Configuration,
+as it’s only necessary upon initial deployment of an Ops Manager.
+If your pipeline won’t be managing the Ops Manager VM itself, you don’t need Ops Manager Configuration either.
+
+Both VM and Authentication config need to be created manually.
+You can see the format and options for each file in the [`create-vm`][create-vm] and
+[`configure-authentication`][configure-authentication] documentation, respectively.
+
+Configuration for the director and other tiles is different,
+in that their format and options varies by tile, and can be drawn from Ops Manager.
+
+If you’re writing automation for an existing PCF Foundation
+(or have access to one you want to base your configuration on),
+you can extract Ops Manager Director and Product configuration from that foundation.
+See the documentation for the [`staged-director-config`][staged-director-config] and [`staged-config`][staged-config] commands.
+
+If you don’t have an existing foundation to base your configuration on,
+we recommend you manually configure your foundation through the GUI the first time,
+then extract that configuration for future use.
+
+### <a id='generate-auth-file'></a>Generating an Auth File
+Almost all [`om`][om] commands require an auth file.
+This isn’t necessarily the same as your Ops Manager Authentication Configuration!
+The format and values will vary based on your configuration choices.
+See the documentation for the [`configure-authentication`][configure-authentication] command for details.
+
+### <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
+To use all these files with the Concourse tasks that require them,
+you need to make them available as Concourse Resources.
+They’re all text files, and there are many resource types that can work for this - in our examples,
+we use s3 compatible blobstores. As with the tasks and image,
+you’ll need to upload them to a bucket and declare a resource in your pipeline for each file you need.
+
+## <a id='your-own-pipeline'></a>Making Your Own Pipeline
+If the example pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
+You know your environment and constraints, and we don’t.
+We recommend you look at the tasks that make up the pipeline,
+and see if they can be arranged such that they do what you need. 
+If you have Platform Architects available, they can help you look at this problem.
+
+Our example just illustrates the tasks and provides one possible starting place
+- the suggested starting projects provide other starting places that make different choices.
+Your pipeline is yours, not a fork of something we wrote.
+
+If the tasks themselves don’t work for you, we’d like to hear from you.
+We might be able to help you figure out how to make it work,
+or we can use the feedback to improve the tasks so they’re a better fit for what you need.
+If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
+and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
+
+[concourse-documentation]: https://github.com/concourse/s3-resource
+[om]: https://github.com/pivotal-cf/om
+[create-vm]: ./command-reference.html#create-vm
+[staged-director-config]: ./command-reference.html#staged-director-config
+[staged-config]: ./command-reference.html#staged-config
+[configure-authentication]: ./command-reference.html#configure-authentication
