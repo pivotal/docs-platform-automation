@@ -112,7 +112,7 @@ Extract the self-service image resources zip file,
 and run `docker build .`.
 
 This should produce a docker image. You can save the built image for later use,
-run `docker save $(docker images -q | head -n1) > image.tar`. You will need to put the generated `image.tar` in
+run `docker save $(docker images -q | head -n1) > raw-image.tar && tar zcf image.tgz raw-image.tar`. You will need to put the generated `image.tgz` in
 a blobstore service that can be consumed by concourse.
 You will also need to upload the task zip to the blobstore as well.
 
