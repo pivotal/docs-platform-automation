@@ -218,10 +218,17 @@ we recommend you manually configure your foundation through the GUI the first ti
 then extract that configuration for future use.
 
 ### <a id='generate-auth-file'></a>Generating an Auth File
-Almost all [`om`][om] commands require an auth file.
-This isn’t necessarily the same as your Ops Manager Authentication Configuration!
-The format and values will vary based on your configuration choices.
-See the documentation for the [`configure-authentication`][configure-authentication] command for details.
+Almost all [`om`][om] commands require an auth file
+to hit authenticated API endpoints.
+
+The configuration for authentication has a dependency on either username/password
+or client SAML setup.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
+
+This configuration format matches the configuration for setting up authentication.
+See the documentation for the [`configure-authentication`][configure-authentication]
+or [`configure-saml-authentication`][configure-saml-authentication] command for details.
 
 ### <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
@@ -253,3 +260,4 @@ and should be able to coexist in a pipeline with tasks from other sources, or cu
 [staged-director-config]: ./command-reference.html#staged-director-config
 [staged-config]: ./command-reference.html#staged-config
 [configure-authentication]: ./command-reference.html#configure-authentication
+[configure-saml-authentication]: ./command-reference.html#configure-saml-authentication
