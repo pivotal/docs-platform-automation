@@ -69,6 +69,10 @@ Note that this takes `auth.yml` with a `-c`/`--config` rather than the typical `
 p-automator configure-authentication --config path/to/auth.yml
 ```
 
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
+
+Setting `username` and `password` will be the authentication used for the Ops Manager UI.
+
 [Example Task](task-reference.html#configure-authentication)
 
 ### <a id='configure-director'></a>configure-director
@@ -129,17 +133,12 @@ See [configure-authentication](#configure-authentication) to configure an intern
 
 Because configuring an external auth source does not use the actual credentials,
 it can't just draw them from `auth.yml` like `configure-authentication` does.
-It uses these properties, instead:
 
-```yaml
-opsman_url: opsman.example.com
-decryption_passphrase: example-passphrase
-saml-configuration:
-  idp_metadata: <XML>
-  bosh_idp_metadata: https://example.com/some-xml-that-has-metadata
-  rbac_admin_group: example-group-name
-  rbac_groups_attribute: example-groups-attribute
-```
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
+
+Configuring SAML has two different auth flows for the UI and the command.
+The UI will have a browser based login flow.
+The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
 please refer to the Ops Manager documentation [here][saml-docs]
