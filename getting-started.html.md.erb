@@ -109,11 +109,10 @@ as it will need to be uploaded to a blobstore bucket for use as a Concourse reso
 
 Extract the self-service image resources zip file,
 `cd` into the resulting directory,
-and run `docker build .`.
+and run the following script, which generates a `tgz` of the docker image.
 
-This should produce a docker image. You can save the built image for later use,
-run `docker save $(docker images -q | head -n1) > raw-image.tar && tar zcf image.tgz raw-image.tar`. You will need to put the generated `image.tgz` in
-a blobstore service that can be consumed by concourse.
+<%= partial 'docker-build' %>
+
 You will also need to upload the task zip to the blobstore as well.
 
 Put the details and credentials for the bucket in a secrets.yml file structured like so:
