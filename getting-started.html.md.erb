@@ -221,9 +221,12 @@ Almost all [`om`][om] commands require an auth file
 to hit authenticated API endpoints.
 
 The configuration for authentication has a dependency on either username/password
-or client SAML setup.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
+
+or client SAML setup.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
 This configuration format matches the configuration for setting up authentication.
 See the documentation for the [`configure-authentication`][configure-authentication]

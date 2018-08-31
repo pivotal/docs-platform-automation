@@ -15,25 +15,11 @@ This auth file controls the target of the command.
 
 The auth file looks like this if you're using internal auth:
 
-```yaml
-opsman_url: opsman.example.com
-skip_ssl_validation: true
-credentials:
-  username: example-username
-  password: example-password
-decryption_passphrase: example-passphrase
-```
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
 
 The auth file looks like this if you're using external/SAML auth:
 
-```yaml
-opsman_url: opsman.example.com
-skip_ssl_validation: true
-credentials:
-  client_id: example-client-id
-  client_secret: example-secret
-decryption_passphrase: example-passphrase
-```
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
 The `--help` flag is global,
 and can be used to see useage information for each command.
@@ -134,7 +120,7 @@ See [configure-authentication](#configure-authentication) to configure an intern
 Because configuring an external auth source does not use the actual credentials,
 it can't just draw them from `auth.yml` like `configure-authentication` does.
 
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
 Configuring SAML has two different auth flows for the UI and the command.
 The UI will have a browser based login flow.
