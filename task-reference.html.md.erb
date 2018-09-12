@@ -3,57 +3,163 @@ title: Platform Automation for PCF Task Reference
 owner: PCF Platform Automation
 ---
 
-## <a id='commands'></a> Platform Automation for PCF Tasks
-The Concourse tasks made available in Platform Automation for PCF
-are here listed alphabetically.
+## <a id='tasks'></a> Platform Automation for PCF Tasks
+This document lists each Platform Automation for PCF task,
+and provides information about their intentions, inputs, and outputs.
+
 The tasks are presented, in their entirety,
 as they are found in the product.
 
+The docker image can be used to invoke the commands in each task locally.
+Use `--help` for more information.
+
 ### <a id='apply-changes'></a> apply-changes
+
+Triggers an install on the Ops Manager described by the auth file.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'apply-changes' %>
 
 ### <a id='apply-director-changes'></a> apply-director-changes
+`apply-changes` can also be used to trigger an install for just the BOSH Director
+with the `--skip-deploy-products`/`-sdp` flag.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'apply-director-changes' %>
 
 ### <a id='configure-authentication'></a> configure-authentication
+Configures Ops Manager with an internal userstore and admin user account.
+See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store.
+Note that this takes `auth.yml` with a `-c`/`--config` rather than the typical `--auth-file`.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'configure-authentication' %>
 
 ### <a id='configure-director'></a> configure-director
+Configures the BOSH Director with settings from a config file.
+See [staged-director-config](#staged-director-config),
+which can extract a config file.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'configure-director' %>
 
+<p class="note warning">
+    <strong>NOTE:</strong>
+    For GCP, if service account is used, the property associated_service_account has to be set explicitly in the iaas-configuration section.
+</p>
+
 ### <a id='configure-product'></a> configure-product
+Configures an individual, staged product with settings from a config file.
+
+Not to be confused with Ops Manager's
+built-in [import](https://docs.pivotal.io/pivotalcf/customizing/backup-restore/restore-pcf-bbr.html#deploy-import),
+which reads all deployed products and configurations from a single opaque file,
+intended for import as part of backup/restore and upgrade lifecycle processes.
+
+See [staged-config](#staged-config),
+which can extract a config file,
+and [stage-product](#stage-product),
+which can stage a product that's been uploaded.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'configure-product' %>
 
 ### <a id='configure-saml-authentication'></a> configure-saml-authentication
+Configures Ops Manager with an external SAML user store and admin user account.
+See [configure-authentication](#configure-authentication) to configure an internal user store.
+
+Because configuring an external auth source does not use the actual credentials,
+it can't just draw them from `auth.yml` like `configure-authentication` does.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'configure-saml-authentication' %>
 
+Configuring SAML has two different auth flows for the UI and the command.
+The UI will have a browser based login flow.
+The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
+
+For more details on using SAML,
+please refer to the Ops Manager documentation [here][saml-docs]
+
+[saml-docs]:
+
 ### <a id='create-vm'></a> create-vm
+Creates an unconfigured Ops Manager VM.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'create-vm' %>
 
+This command requires a config file specific to the IaaS being deployed to.
+Please see the [configuration](configuration.html#create-vm) page for more specific examples.
+
 ### <a id='delete-vm'></a> delete-vm
+Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'delete-vm' %>
 
+This command requires the state file generated [create-vm](#create-vm).
+
 ### <a id='export-installation'></a> export-installation
+Exports an existing Ops Manager to a file.
+
+This is the first part of the backup/restore and upgrade lifecycle processes.
+This command is used on a fully installed and healthy Ops Manager to export
+settings to an upgraded version of Ops Manager.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'export-installation' %>
 <%= partial 'export_installation_note' %>
 
 ### <a id='import-installation'></a> import-installation
+Imports a previously exported installation to Ops Manager.
+
+This is a part of the backup/restore and upgrade lifecycle processes.
+This command is used after an installation has been exported and a new Ops Manager
+has been deployed, but before the new Ops Manager is configured.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'import-installation' %>
 
+### <a id='staged-product'></a> staged-product
+Stages an uploaded product.
+(Unstaged products cannot be configured or installed.)
+While this command takes a product path,
+it does not upload the product.
+
+In our example task,
+this command is used immediately after `upload-product`.
+The two commands are usually used together,
+though it is possible to invoke them separately.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-config' %>
+
 ### <a id='staged-config'></a> staged-config
+Downloads the configuration for a product from Ops Manager.
+
+Not to be confused with Ops Manager's
+built-in [export](https://docs.pivotal.io/pivotalcf/2-1/customizing/backup-restore/backup-pcf-bbr.html#export),
+which puts all deployed products and configurations into a single file,
+intended for import as part of backup/restore and upgrade lifecycle processes.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-config' %>
 
 ### <a id='staged-director-config'></a> staged-director-config
+Downloads configuration for the BOSH director from Ops Manager.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-director-config' %>
 
 ### <a id='test'></a> test
+An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'test' %>
 
 ### <a id='upgrade-opsman'></a> upgrade-opsman
+Upgrades an existing Ops Manager to a new given Ops Manager version
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'upgrade-opsman' %>
 
+For more information about this command and how it works, see the [upgrade](upgrade.html) page.
+
 ### <a id='upload-and-stage-product'></a> upload-and-stage-product
+Uploads and stages product to the Ops Manager specified in the config file.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'upload-and-stage-product' %>
 
 ### <a id='upload-stemcell'></a> upload-stemcell
+Uploads a stemcell to Ops Manager.
+
+Note that the filename of the stemcell must be exactly as downloaded from Pivnet.
+Ops Manager parses this filename to determine the version and OS of the stemcell.
+
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'upload-stemcell' %>
