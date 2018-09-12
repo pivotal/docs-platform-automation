@@ -24,41 +24,6 @@ with IaaS specific properties will be required.
 The IaaS-specific config file must be provided to the [create-vm](task-reference.html#create-vm) task
 in order to successfully deploy a VM. 
 
-Specific examples for each IaaS are as follows:
-
-##### <a id='aws-configuration'></a> AWS
-These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on AWS](https://docs.pivotal.io/pivotalcf/customizing/pcf-aws-manual-config.html)
-
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'aws-configuration' %>
-
-##### <a id='azure-configuration'></a> Azure
-These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure.html)
-
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'azure-configuration' %>
-
-
-##### <a id='gcp-configuration'></a> GCP
-These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on GCP](https://docs.pivotal.io/pivotalcf/customizing/gcp-om-deploy.html)
-
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'gcp-configuration' %>
-
-
-##### <a id='openstack-configuration'></a> Openstack
-These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Openstack](https://docs.pivotal.io/pivotalcf/customizing/openstack-om-config.html)
-
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'openstack-configuration' %>
-
-
-##### <a id='vsphere-configuration'></a> vSphere
-These required properties are adapted from the instructions outlined in
-[Deploying BOSH and Ops Manager to vSphere](https://docs.pivotal.io/pivotalcf/customizing/deploying-vm.html)
-
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'vsphere-configuration' %>
-
 
 ### <a id='generate-config'></a>Generating Config from an existing Ops Manager
 
