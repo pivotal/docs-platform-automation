@@ -18,12 +18,11 @@ This topic describes how to upgrade an Ops Manager using Platform Automation.
 The [`upgrade-opsman`](task-reference.html#upgrade-opsman) will delete the previous VM, create a new VM, and import
 a previous installation. It requires the following to perform this operations: 
 
-* a valid state file from the currently deployed Ops Manager
-* a valid image file for the new Ops Manager to install
-* a [configuration file](configuration.html) for IAAS specific details
-* an exported installation from a currently deployed Ops Manager
-* the [auth file](getting-started.html#authenticate) for a currently deployed Ops Manager
-* (Optional) a vars file to replace ((interpolatable variables)) from the config file
+* a valid [state file](task-reference.html#state) from the currently deployed Ops Manager
+* a valid [image file](task-reference.html#opsman-image) for the new Ops Manager to install
+* a [configuration file](task-reference.html#opsman-config) for IAAS specific details
+* an [exported installation](task-reference.html#installation) from a currently deployed Ops Manager
+* the [auth file](task-reference.html#auth) for a currently deployed Ops Manager
 
 IAAS resource requirements
 command requirements
