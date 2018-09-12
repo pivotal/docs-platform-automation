@@ -293,6 +293,16 @@ and a link to the API documentation explaining any IAAS specific properties.
 
 ### <a id="product-config"></a> product config
 ### <a id="state"></a> state
+This file contains that meta-information needed to manage the Ops Manager VM.
+The `state` input for a opsman VM task expects to have a `state.yml` file.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'state' %>
+
+The file contains two properties:
+
+1. `iaas` is the iaas the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
+2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the vm ID is the VM name.
+
 ### <a id="opsman-image"></a> opsman image
 ### <a id="installation"></a> installation
 ### <a id="stemcell"></a> stemcell
