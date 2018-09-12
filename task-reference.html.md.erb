@@ -10,7 +10,7 @@ and provides information about their intentions, inputs, and outputs.
 The tasks are presented, in their entirety,
 as they are found in the product.
 
-The docker image can be used to invoke the commands in each task locally.
+The docker image can be used to invoke the tasks in each task locally.
 Use `--help` for more information.
 
 ### <a id='apply-changes'></a> apply-changes
@@ -68,7 +68,7 @@ it can't just draw them from `auth.yml` like `configure-authentication` does.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'configure-saml-authentication' %>
 
-Configuring SAML has two different auth flows for the UI and the command.
+Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
@@ -82,7 +82,7 @@ Creates an unconfigured Ops Manager VM.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'create-vm' %>
 
-This command requires a config file specific to the IaaS being deployed to.
+This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration](configuration.html#create-vm) page for more specific examples.
 
 ### <a id='delete-vm'></a> delete-vm
@@ -90,13 +90,13 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'delete-vm' %>
 
-This command requires the state file generated [create-vm](#create-vm).
+This task requires the state file generated [create-vm](#create-vm).
 
 ### <a id='export-installation'></a> export-installation
 Exports an existing Ops Manager to a file.
 
 This is the first part of the backup/restore and upgrade lifecycle processes.
-This command is used on a fully installed and healthy Ops Manager to export
+This task is used on a fully installed and healthy Ops Manager to export
 settings to an upgraded version of Ops Manager.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'export-installation' %>
@@ -106,7 +106,7 @@ settings to an upgraded version of Ops Manager.
 Imports a previously exported installation to Ops Manager.
 
 This is a part of the backup/restore and upgrade lifecycle processes.
-This command is used after an installation has been exported and a new Ops Manager
+This task is used after an installation has been exported and a new Ops Manager
 has been deployed, but before the new Ops Manager is configured.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'import-installation' %>
@@ -114,12 +114,12 @@ has been deployed, but before the new Ops Manager is configured.
 ### <a id='staged-product'></a> staged-product
 Stages an uploaded product.
 (Unstaged products cannot be configured or installed.)
-While this command takes a product path,
+While this task takes a product path,
 it does not upload the product.
 
 In our example task,
-this command is used immediately after `upload-product`.
-The two commands are usually used together,
+this task is used immediately after `upload-product`.
+The two tasks are usually used together,
 though it is possible to invoke them separately.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-config' %>
@@ -149,7 +149,7 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'upgrade-opsman' %>
 
-For more information about this command and how it works, see the [upgrade](upgrade.html) page.
+For more information about this task and how it works, see the [upgrade](upgrade.html) page.
 
 ### <a id='upload-and-stage-product'></a> upload-and-stage-product
 Uploads and stages product to the Ops Manager specified in the config file.

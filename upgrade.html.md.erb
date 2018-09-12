@@ -15,7 +15,7 @@ This topic describes how to upgrade an Ops Manager using Platform Automation.
 
 ###<a id='requirements'></a>Command Requirements
 
-The [`upgrade-opsman`](command-reference.html#upgrade-opsman) will delete the previous VM, create a new VM, and import
+The [`upgrade-opsman`](task-reference.html#upgrade-opsman) will delete the previous VM, create a new VM, and import
 a previous installation. It requires the following to perform this operations: 
 
 * a valid state file from the currently deployed Ops Manager
@@ -29,12 +29,12 @@ IAAS resource requirements
 command requirements
 
 ##<a id='upgrade'></a>Upgrading Ops Manager
-The [`upgrade-opsman`](command-reference.html#upgrade-opsman) command follows the flow based on state of an OpsManager VM.
-This flowchart gives a high level overview of how the command makes decisions for an upgrade.
+The [`upgrade-opsman`](task-reference.html#upgrade-opsman) task follows the flow based on state of an OpsManager VM.
+This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 <%= partial 'upgrade-flowchart.mmd' %>
 
-On successive invocations of command, it will offer different behaviour of the previous run.
+On successive invocations of task, it will offer different behaviour of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
 
 ###<a id='version-errors'></a>Version Check Errors:
@@ -51,15 +51,15 @@ version of Ops Manager
   
 3) <b>The Ops Manager API is inaccessible</b> (Recoverable)
 
-* This error is fixed within the command. The command will assume that the Ops Manager VM is not 
+* This error is fixed within the task. The task will assume that the Ops Manager VM is not 
 created, and will run the [`create-vm`](task-reference.html#create-vm) and 
-[`import-installation`](task-reference.html#import-installation) commands
+[`import-installation`](task-reference.html#import-installation) tasks
   
 ###<a id='cli-errors'></a>IAAS CLI Errors
 
 4) When the CLI for a supported IAAS fails for any reason (i.e., bad network, outage, etc) we treat this as 
 an IAAS CLI error. The specific error will be returned as output, but <i><b>most errors can simply be fixed by 
-re-running the `upgrade-opsman` command.</b></i> 
+re-running the `upgrade-opsman` task.</b></i> 
 
 The following tasks can return an error from the IAAS's CLI:
 
