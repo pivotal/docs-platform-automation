@@ -163,3 +163,60 @@ Note that the filename of the stemcell must be exactly as downloaded from Pivnet
 Ops Manager parses this filename to determine the version and OS of the stemcell.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'upload-stemcell' %>
+
+## <a id="inputs"></a> Inputs
+testing
+
+### <a id="auth"></a> auth
+#### basic auth
+#### saml
+
+### <a id="opsman-config"></a> opsman config
+The config for an Ops Manager described IAAS specific information for creating the VM.
+These properties are different per IAAS.
+
+Specific examples for each IaaS are as follows:
+
+#### <a id='aws-configuration'></a> AWS
+These required properties are adapted from the instructions outlined in
+[Launching an Ops Manager Director Instance on AWS](https://docs.pivotal.io/pivotalcf/customizing/pcf-aws-manual-config.html)
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'aws-configuration' %>
+
+#### <a id='azure-configuration'></a> Azure
+These required properties are adapted from the instructions outlined in
+[Launching an Ops Manager Director Instance on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure.html)
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'azure-configuration' %>
+
+
+#### <a id='gcp-configuration'></a> GCP
+These required properties are adapted from the instructions outlined in
+[Launching an Ops Manager Director Instance on GCP](https://docs.pivotal.io/pivotalcf/customizing/gcp-om-deploy.html)
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'gcp-configuration' %>
+
+
+#### <a id='openstack-configuration'></a> Openstack
+These required properties are adapted from the instructions outlined in
+[Launching an Ops Manager Director Instance on Openstack](https://docs.pivotal.io/pivotalcf/customizing/openstack-om-config.html)
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'openstack-configuration' %>
+
+
+#### <a id='vsphere-configuration'></a> vSphere
+These required properties are adapted from the instructions outlined in
+[Deploying BOSH and Ops Manager to vSphere](https://docs.pivotal.io/pivotalcf/customizing/deploying-vm.html)
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'vsphere-configuration' %>
+
+### <a id="director-config"></a> director config
+### <a id="product-config"></a> product config
+### <a id="state"></a> state
+### <a id="opsman-image"></a> opsman image
+### <a id="installation"></a> installation
+### <a id="stemcell"></a> stemcell
+This input contains stemcell tarball (`.tgz`) as downloaded from Pivnet.
+It must be in the original filename as that is used by Ops Manager to parse metadata.
+ 
+### <a id="product"></a> product
