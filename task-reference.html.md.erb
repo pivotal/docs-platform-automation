@@ -73,9 +73,7 @@ The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the Ops Manager documentation [here][saml-docs]
-
-[saml-docs]:
+please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/2-2/opsguide/config-rbac.html#enable-saml)
 
 ### <a id='create-vm'></a> create-vm
 Creates an unconfigured Ops Manager VM.
@@ -183,14 +181,14 @@ There are two different authentication methods that Ops Manager supports.
 #### basic authentication
 The configuration for authentication has a dependency on username/password.
 This configuration format matches the configuration for setting up authentication.
-See the task for the [`configure-authentication`][#configure-authentication] for details.
+See the task for the [`configure-authentication`](#configure-authentication) for details.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
 
 #### saml authentication
 The configuration for authentication has a dependency on SAML.
 This configuration format matches the configuration for setting up authentication.
-See the task for the [`configure-saml-authentication`][#configure-saml-authentication] for details.
+See the task for the [`configure-saml-authentication`](#configure-saml-authentication) for details.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
