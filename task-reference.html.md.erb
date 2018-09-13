@@ -273,7 +273,7 @@ There are two ways to build a director config.
 1. Using an already deployed Ops Manager, you can extract the config using [staged-director-config](#staged-director-config).
 2. Deploying a brand new Ops Manager requires more effort for a `director.yml`.
    The configuration of director is variables based on the features enabled.
-   For  brevity, this `director.yml` is a basic example for vsphere.
+   For brevity, this `director.yml` is a basic example for vsphere.
    
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'director-configuration' %>
 
@@ -292,8 +292,20 @@ and a link to the API documentation explaining any IAAS specific properties.
 * `syslog-configuration` - configure the syslog sinks for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
 
 ### <a id="product-config"></a> product config
+There are two ways to build a product config.
 
+1. Using an already deployed product (tile), you can extract the config using [staged-config](#staged-config).
+1. Use an example and fill in the values based on the meta information from the tile.
+For brevity, this `product.yml` is a basic example for `healthwatch`.
+  
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'product-configuration' %>
 
+Included below is a list of properties that can be set in the `product.yml`
+and a link to the API documentation explaining the properties.
+
+* `product-properties` - properties for the tile [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-a-selector-property)
+* `network-properties` - a list of named networks to deploy the VMs to [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#configuring-networks-and-azs)
+* `resource-config` - for the jobs of the tile [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#configuring-resources-for-a-job)
 
 ### <a id="state"></a> state
 This file contains that meta-information needed to manage the Ops Manager VM.
