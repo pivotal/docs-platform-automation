@@ -334,6 +334,16 @@ jobs:
 ```
 
 ### <a id="installation"></a> installation
+The file contains the information to restore an Ops Manager VM.
+The `installation` input for a opsman VM task expects to have a `installation.zip` file.
+
+This file can be exported from an Ops Manager VM using the [export-installation](#export-installation).
+This file can be imported to an Ops Manager VM using the [import-installation](#import-installation).
+
+<p class="note ">
+    <strong>NOTE:</strong>
+    This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
+</p>
 
 
 ### <a id="stemcell"></a> stemcell
