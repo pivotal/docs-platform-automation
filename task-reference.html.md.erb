@@ -292,6 +292,9 @@ and a link to the API documentation explaining any IAAS specific properties.
 * `syslog-configuration` - configure the syslog sinks for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
 
 ### <a id="product-config"></a> product config
+
+
+
 ### <a id="state"></a> state
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
@@ -323,10 +326,10 @@ resources:
   source:
     api_token: ((pivnet_token))
     product_slug: ops-manager
-    product_version: ((opsman_version))
+    product_version: 2.*
     sort_by: semver
 jobs:
-- name: get the resource
+- name: get-the-resource
   plan:
   - get: opsman-image
     params:
@@ -340,14 +343,75 @@ The `installation` input for a opsman VM task expects to have a `installation.zi
 This file can be exported from an Ops Manager VM using the [export-installation](#export-installation).
 This file can be imported to an Ops Manager VM using the [import-installation](#import-installation).
 
-<p class="note ">
+<p class="note warning">
     <strong>NOTE:</strong>
     This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
 </p>
 
-
 ### <a id="stemcell"></a> stemcell
-This input contains stemcell tarball (`.tgz`) as downloaded from Pivnet.
+This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Pivnet.
 It must be in the original filename as that is used by Ops Manager to parse metadata.
+The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-go_agent.tgz`.
+
+<p class="note warning">
+    <strong>NOTE:</strong>
+    This file cannot be manually created. It is a file that must retrieved from Pivnet.
+</p>
+
+An example on how to pull the vSphere stemcell using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
+
+```yaml
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+resources:
+- name: stemcell
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: stemcells
+    product_version: 3541.*
+    sort_by: semver
+jobs:
+- name: get-the-resource
+  plan:
+  - get: stemcell
+    params:
+      globs: ["*vsphere*.tgz"]
+```
  
 ### <a id="product"></a> product
+The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
+
+An example on how to pull the PAS tile using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
+
+```yaml
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+resources:
+- name: stemcell
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: elastic-runtime
+    product_version: 2.*
+    sort_by: semver
+jobs:
+- name: get-the-resource
+  plan:
+  - get: product
+    params:
+      globs: ["*cf*.pivotal"]
+```
+
+<p class="note warning">
+    <strong>NOTE:</strong>
+    This file cannot be manually created. It is a file that must retrieved from Pivnet.
+</p>
