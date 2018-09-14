@@ -5,7 +5,8 @@ owner: PCF Platform Automation
 
 <p class="note warning">
   <strong>WARNING</strong>: The Platform Automation for Pivotal Cloud Foundry (PCF) is currently in alpha
-   and is intended for evaluation and test purposes only.</p>
+   and is intended for evaluation and test purposes only.
+</p>
 
 Platform Automation for Pivotal Cloud Foundry (PCF)
 is a set of tasks that wrap and extend [om][om],
@@ -55,6 +56,36 @@ typically also contain `om` commands, custom tasks,
 and even interactions with the Ops Manager user interface.
 Platform Automation for PCF is a set of tools to use alongside other tools,
 rather than a comprehensive solution.
+
+## <a id='up-front'></a>What do I need to understand up front?
+If you’ve just downloaded Platform Automation for PCF,
+it will be helpful to understand some things before you get started.
+We recommend you read over this whole document before you dive into anything.
+
+Platform Automation for PCF is a collection of tools and documentation.
+It’s not a simple solution that can be “installed.”
+It is intended to facilitate operator-owned automation
+of both common and advanced workflows around Pivotal Ops Manager.
+Ultimately, the resulting automation is a product of the operator.
+
+Platform Automation for PCF is principally designed
+to help operators create Concourse pipelines that suit their needs.
+This means you’ll need Concourse deployed, and that you’ll need to setup some Concourse resources.
+See the [Preparing Concourse](#preparing-concourse) section for more details.
+
+While Platform Automation for PCF _can_ deploy an Ops Manager VM, it doesn’t _have to_.
+You can use it to automate an Ops Manager you already have.
+
+There was a beta product from Pivotal called
+“PCF Platform Automation with Concourse (PCF Pipelines)”.
+It was never made publicly available and is deprecated.
+If your current pipeline is based on PCF Pipelines,
+we recommend building a replacement pipeline with the new tooling,
+as opposed to trying to modify your existing pipeline to use the new tools.
+Since Platform Automation for PCF can easily take over management of an existing Ops Manager,
+this should be fairly straightforward.
+Still, we may offer more detailed documentation support for this specific workflow in the future,
+and would like to hear from you if you feel that would be helpful.
 
 ## <a id='pipelines'></a> Using Platform Automation for PCF in Pipelines
 Platform Automation for PCF comes bundled with Concourse [tasks][concourse-task-definition].
