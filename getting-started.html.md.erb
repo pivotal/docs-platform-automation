@@ -7,7 +7,7 @@ owner: PCF Platform Automation
 
 * Deployed Concourse
 * Docker to build a docker image
-* Persisted datastore that can be accessed by concourse resource (e.g. s3, gcs, minio)
+* Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation](https://network.pivotal.io/products/platform-automation/)
 
 <p class="note">
@@ -38,11 +38,11 @@ owner: PCF Platform Automation
     
     This created a file named `platform-automation-image-*.tgz`.
     
-    Store the above file in a blobstore that can be access via a concourse pipeline.
+    Store the above file in a blobstore that can be access via a Concourse pipeline.
     It does not require a local docker registry.
     It can be accessed via a blobstore, too.
    
-1. Store the `platform-automation-tasks-*.zip` in a blobstore that can be access via a concourse pipeline.
+1. Store the `platform-automation-tasks-*.zip` in a blobstore that can be accessed via a Concourse pipeline.
 
 1. Next we'll create a test pipeline to see if the assets can be accessed correctly.
    This pipeline runs a test task, which ensures that all the parts work correctly. 
@@ -83,7 +83,7 @@ owner: PCF Platform Automation
         file: platform-automation-tasks-s3/tasks/test.yml
     ```
     
-    Fill in the S3 resource credentials and set the above pipeline on your concourse instance.
+    Fill in the S3 resource credentials and set the above pipeline on your Concourse instance.
 <p class="note">
   <strong>Note</strong>: The pipeline can use any blobstore.
   We choose S3 because the resource natively supported by Concourse.
@@ -95,7 +95,7 @@ owner: PCF Platform Automation
 
 # <a id='generate-configuration'></a>Generating Configuration
 Many of the tasks in Platform Automation for PCF require configuration.
-There are four types of config file used by Platform Automation for PCF:
+There are four types of config files used by Platform Automation for PCF:
 For the Ops Manager VM itself, there’s:
 
 * Ops Manager VM Configuration
