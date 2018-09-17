@@ -45,8 +45,10 @@ version of Ops Manager
 2) <b>could not authenticate with Ops Manager</b> (Manual Intervention Required)
 
 * Credentials provided in the auth file do not match the credentials of an already deployed Ops Manager
-* SOLUTION: To change the credentials when upgrading an Ops Manager, you must first change the 
-  [`auth.yml`](getting-started.html#authenticate) and update the director appropriately
+* SOLUTION: To change the credentials when upgrading an Ops Manager, you must update the password in your
+Account Settings. Then, you will need to update the following two files with the changes:
+  [`auth.yml`](task-reference.html#auth)
+  [`env.yml`](task-reference.html#env)
   
 3) <b>The Ops Manager API is inaccessible</b> (Recoverable)
 
