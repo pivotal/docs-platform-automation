@@ -28,7 +28,6 @@ with the `--skip-deploy-products`/`-sdp` flag.
 ### <a id='configure-authentication'></a> configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store.
-Note that this takes `auth.yml` with a `-c`/`--config` rather than the typical `--auth-file`.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'configure-authentication' %>
 
@@ -62,9 +61,6 @@ which can stage a product that's been uploaded.
 ### <a id='configure-saml-authentication'></a> configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store.
-
-Because configuring an external auth source does not use the actual credentials,
-it can't just draw them from `auth.yml` like `configure-authentication` does.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'configure-saml-authentication' %>
 
@@ -171,29 +167,17 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
 These are the inputs that can be provided to the tasks.
 Each task can only take a specific set, indicated under the `inputs` property of the YAML.
 
-### <a id="auth"></a> auth
+### <a id="env"></a> env
 
-The `auth` input for a task expects to have a `auth.yml` file.
+The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Ops Manager API.
 
-There are two different authentication methods that Ops Manager supports.
+#### <a id="basic-env"></a>env file for basic authentication
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'env' %>
 
-#### basic authentication
-The configuration for authentication has a dependency on username/password.
-This configuration format matches the configuration for setting up authentication.
-See the task for the [`configure-authentication`](#configure-authentication) for details.
+#### <a id="uaa-env"></a>env file for uaa authentication
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'env-uaa' %>
 
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
-
-#### saml authentication
-The configuration for authentication has a dependency on SAML.
-This configuration format matches the configuration for setting up authentication.
-See the task for the [`configure-saml-authentication`](#configure-saml-authentication) for details.
-
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
-
-The `saml-configuration` properties configures the SAML provider.
-The [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#setting-up-with-saml) has more information about the values
 
 ##### Getting the `client-id` and `client-secret`
 
@@ -201,7 +185,7 @@ Ops Manager will by preference use Client ID and Client Secret if provided.
 To create a Client ID and Client Secret
 
 1. `uaac target https://YOUR_OPSMANAGER/uaa`
-1. `uaac token sso get` if using SAML or `uaac token owner get` if using internal auth. Specify the Client ID as `opsman` and leave Client Secret blank.
+1. `uaac token sso get` if using SAML or `uaac token owner get` if using basic auth. Specify the Client ID as `opsman` and leave Client Secret blank.
 1. Generate a client ID and secret
 
 ```bash
@@ -218,6 +202,37 @@ redirect uri (list):
 autoapprove (list):
 signup redirect url (url):
 ```
+
+### <a id="auth"></a> auth
+
+There are two different authentication methods that Ops Manager supports.
+
+#### basic authentication
+The configuration for authentication has a dependency on username/password.
+This configuration format matches the configuration for setting up authentication.
+See the task for the [`configure-authentication`](#configure-authentication) for details.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
+
+<p class="note">
+    <strong>NOTE:</strong>
+    basic authentication supports both <a href="#basic-env">basic env</a> and  <a href="#uaa-env">uaa env</a> formats
+</p>
+
+#### saml authentication
+The configuration for authentication has a dependency on SAML.
+This configuration format matches the configuration for setting up authentication.
+See the task for the [`configure-saml-authentication`](#configure-saml-authentication) for details.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
+
+<p class="note">
+    <strong>NOTE:</strong>
+    saml authentication requires the <a href="#uaa-env">uaa env</a> format
+</p>
+
+The `saml-configuration` properties configures the SAML provider.
+The [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#setting-up-with-saml) has more information about the values
 
 ### <a id="opsman-config"></a> opsman config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
