@@ -79,6 +79,11 @@ Creates an unconfigured Ops Manager VM.
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration](#opsman-config) page for more specific examples.
 
+### <a id='delete-installation'></a> delete-installation
+Delete the Ops Manager Installation
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'delete-installation' %>
+
 ### <a id='delete-vm'></a> delete-vm
 Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
