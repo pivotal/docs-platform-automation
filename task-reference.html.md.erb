@@ -139,7 +139,8 @@ Downloads configuration for the BOSH director from Ops Manager.
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-director-config' %>
 
 The configuration is exported to the `generated-config` output.
-It does not extract credentials from Ops Manager.
+It does not extract credentials from Ops Manager
+and replaced them all with YAML interpolation `(())` placeholders.
 This is to ensure that credentials are never written to disk.
 The credentials need to be provided from an external configuration when invoking [configure-director](#configure-director).
 
