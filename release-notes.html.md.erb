@@ -5,6 +5,22 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+##<a id="ver"></a> v0.0.1-rc174
+
+**Release Date:** September 21, 2018
+
+Features included in this release:
+
+* cleaning up resources in Azure, GCP, OpenStack when deleting the vm
+
+* the latest `om` which includes the ability to specify `vm-extensions` key in the director config file. 
+
+* a script for building a Docker image 
+
+Breaking changes in this release:
+
+* The auth resource has been split into two pieces, an `auth` file and an `env` file. The `auth` resource is now referred to as the `env` resource, and the `auth` file is now going to exist in the config resource. You can see how to create those inputs in the task reference of the documentation. This breaking changes effects existing rcs but should only involve changes to the pipeline.yml if you are using the new tasks. 
+
 ##<a id="ver"></a> v0.0.1-rc146
 
 **Release Date:** September 12, 2018
