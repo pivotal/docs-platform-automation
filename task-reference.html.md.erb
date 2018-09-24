@@ -267,6 +267,13 @@ These required properties are adapted from the instructions outlined in
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'gcp-configuration' %>
 
+Support for Shared VPC is done via
+[configuring the `vpc_subnet` path](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#creating_an_instance_in_a_shared_subnet)
+to include the host project id, region of the subnet, and the subnet name.
+
+For example:
+
+`projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]` 
 
 #### <a id='openstack-configuration'></a> Openstack
 These required properties are adapted from the instructions outlined in
@@ -310,6 +317,15 @@ and a link to the API documentation explaining any IAAS specific properties.
 * `security-configuration` - security properties for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
 * `syslog-configuration` - configure the syslog sinks for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
 * `vmextensions-configuration` - create/update/delete vm extensions [Ops Manager API](http://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-or-creating-a-new-vm-extension)
+
+#### GCP
+
+Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet](https://docs.pivotal.io/pivotalcf/customizing/gcp-prepare-env.html#create_network),
+which includes the host project id, region of the subnet, and the subnet name.
+
+For example:
+
+`[HOST_PROJECT_ID]/[NETWORK]/[SUBNET]/[REGION]`
 
 ### <a id="product-config"></a> product config
 There are two ways to build a product config.
