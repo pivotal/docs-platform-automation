@@ -5,7 +5,26 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
-##<a id="ver"></a> v0.0.1-rc174
+##<a id="v0.0.1-rc181"></a> v0.0.1-rc181
+
+**Release Date:** September 27, 2018
+
+### Features
+* `create-vm`: Shared VPC support for GCP. See [docs](task-reference.html#gcp-configuration) about the configuration.
+* `create-vm`: Able to specify private IP for all supported IAASs (aws, azure, gcp, openstack, vsphere).
+* `create-vm`: Able specify private IP and/or public IP. Only one is required to be set.
+* `staged-config`: Able to pull errand config.
+* `configure-director`: Able to configure bosh vm extensions
+
+### Bug Fixes:
+* `configure-product`: Fix a non-deterministic behavior regarding collection type properties due to inconsistency in guid.
+* `upgrade-opsman`: Fix a failure in argument parsing causing upgrade fails silently.
+
+### Breaking:
+* `staged-config`: flag change from `--include-placeholder` --> `--include-placeholders` (pluralize).
+  The task has been updated and usage should be unaffected. 
+
+##<a id="v0.0.1-rc174"></a> v0.0.1-rc174
 
 **Release Date:** September 21, 2018
 
@@ -21,7 +40,7 @@ Breaking changes in this release:
 
 * The auth resource has been split into two pieces, an `auth` file and an `env` file. The `auth` resource is now referred to as the `env` resource, and the `auth` file is now going to exist in the config resource. You can see how to create those inputs in the task reference of the documentation. This breaking changes effects existing rcs but should only involve changes to the pipeline.yml if you are using the new tasks. 
 
-##<a id="ver"></a> v0.0.1-rc146
+##<a id="v0.0.1-rc146"></a> v0.0.1-rc146
 
 **Release Date:** September 12, 2018
 
@@ -31,7 +50,7 @@ Features included in this release:
 
 * `staged-director-config` is now being invoked directly be `om` in the staged director task
 
-##<a id="ver"></a> v0.0.1-rc138 
+##<a id="v0.0.1-rc138"></a> v0.0.1-rc138 
 
 **Release Date:** August 31, 2018
 
@@ -39,7 +58,7 @@ Features included in this release:
 
 * Includes the latest `om` version
 
-##<a id="ver"></a> v0.0.1-rc130 
+##<a id="v0.0.1-rc130"></a> v0.0.1-rc130 
 
 **Release Date:** August 22, 2018
 
@@ -47,7 +66,7 @@ Features included in this release:
 
 * Includes the ability to do patch upgrades for OpsMan
 
-##<a id="ver"></a> v0.0.1-rc123 
+##<a id="v0.0.1-rc123"></a> v0.0.1-rc123 
 
 **Release Date:** August 17, 2018
 
