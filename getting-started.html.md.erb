@@ -6,7 +6,6 @@ owner: PCF Platform Automation
 ## <a id='requirements'></a> Requirements
 
 * Deployed Concourse
-* Docker to build a docker image
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation](https://network.pivotal.io/products/platform-automation/)
 
@@ -21,27 +20,11 @@ owner: PCF Platform Automation
 1. Download the latest version of [Platform Automation](https://network.pivotal.io/products/platform-automation/) from Pivnet.
    You will need:
    * `Concourse Tasks`
-   * `Self-Service Image Resources`
+   * `Docker Image for Concourse Tasks`
    
-1. Unzip the `Self-Service Image Resources` file.
+   
+1. Store the `platform-automation-image-*.tgz` in a blobsotre that can be accessed via a Concourse pipeline.
 
-    ```bash
-    unzip platform-automation-image-resources-*.zip
-    cd image-resources/
-    ```
-   
-1. Build the docker image for Concourse CI.
-
-    ```bash
-    ./create-docker-image.sh
-    ```
-    
-    This created a file named `platform-automation-image-*.tgz`.
-    
-    Store the above file in a blobstore that can be access via a Concourse pipeline.
-    It does not require a local docker registry.
-    It can be accessed via a blobstore, too.
-   
 1. Store the `platform-automation-tasks-*.zip` in a blobstore that can be accessed via a Concourse pipeline.
 
 1. Next we'll create a test pipeline to see if the assets can be accessed correctly.
