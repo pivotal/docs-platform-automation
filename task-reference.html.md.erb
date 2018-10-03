@@ -110,19 +110,6 @@ has been deployed, but before the new Ops Manager is configured.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'import-installation' %>
 
-### <a id='staged-product'></a> staged-product
-Stages an uploaded product.
-(Unstaged products cannot be configured or installed.)
-While this task takes a product path,
-it does not upload the product.
-
-In our example task,
-this task is used immediately after `upload-product`.
-The two tasks are usually used together,
-though it is possible to invoke them separately.
-
-<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-config' %>
-
 ### <a id='staged-config'></a> staged-config
 Downloads the configuration for a product from Ops Manager.
 
