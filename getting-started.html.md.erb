@@ -106,8 +106,36 @@ or client SAML setup.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
-## <a id='generate-configuration'></a>Generating Configuration
-The
+## <a id='generate-product-configuration'></a>Generating Product Configuration
+To generate the configuration for a tile, you will need the following:
+
+1. a running Ops Manager
+  - this is accomplished by running the following tasks:
+      - [create-vm]
+      - [configure-authentication] or [configure-saml-authentication]
+      - [configure-director]
+      - [apply-director-changes]
+  
+1. The tile you wish to have a config file for needs to be [uploaded and staged] in the Ops Manager
+environment
+
+1. Configure the tile _manually_ within the Ops Manager UI (Instructions for PAS can be found
+using the [Official PCF Documentation])
+
+1. Run the following command to get the staged config:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+om --env ${ENV_FILE} staged-config --product-name ${PRODUCT_SLUG} --include-credentials
+```
+
+Where `${ENV_FILE}` is the [env file] required for all tasks, and `${PRODUCT_SLUG}` is the name of the product
+downloaded from [pivnet]. The resulting file can then be parameterized, saved, and uploaded to a 
+persistent blobstore(i.e. s3, gcs, azure blobstore, etc).
+
+Alternatively, you can add the following task to your pipeline to generate and persist this for you:
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-config' %>
 
 ## <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
@@ -133,10 +161,16 @@ or we can use the feedback to improve the tasks so they’re a better fit for wh
 If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
-[concourse-documentation]: https://github.com/concourse/s3-resource
-[om]: https://github.com/pivotal-cf/om
-[create-vm]: ./task-reference.html#create-vm
-[staged-director-config]: ./task-reference.html#staged-director-config
-[staged-config]: ./task-reference.html#staged-config
+[apply-director-changes]: ./task-reference.html#apply-director-changes
 [configure-authentication]: ./task-reference.html#configure-authentication
+[configure-director]: ./task-reference.html#configure-director
+[concourse-documentation]: https://github.com/concourse/s3-resource
 [configure-saml-authentication]: ./task-reference.html#configure-saml-authentication
+[create-vm]: ./task-reference.html#create-vm
+[env file]: ./#generate-env-file
+[Official PCF Documentation]: https://docs.pivotal.io/pivotalcf/installing/index.html
+[om]: https://github.com/pivotal-cf/om
+[pivnet]: https://network.pivotal.io
+[staged-config]: ./task-reference.html#staged-config
+[staged-director-config]: ./task-reference.html#staged-director-config
+[uploaded-and-staged]: ./task-reference.html#upload-and-stage-product
