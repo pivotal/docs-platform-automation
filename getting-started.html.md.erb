@@ -76,44 +76,22 @@ owner: PCF Platform Automation
    <a href="https://concourse-ci.org/resource-types.html">resource type</a> .
 </p>
 
-# <a id='generate-configuration'></a>Generating Configuration
-Many of the tasks in Platform Automation for PCF require configuration.
-There are four types of config files used by Platform Automation for PCF:
-For the Ops Manager VM itself, there’s:
-
-* Ops Manager VM Configuration
-* Ops Manager Authentication Configuration
-
-For the things deployed by Ops Manager, there’s:
-
-* Director Configuration
-* Product Configuration
-
-Which of these you’ll need depends on what you’re automating.
-How you generate them depends on what situation you’re working with.
-In general, if you already have an Ops Manager, you won’t need Authentication Configuration,
-as it’s only necessary upon initial deployment of an Ops Manager.
-If your pipeline won’t be managing the Ops Manager VM itself, you don’t need Ops Manager Configuration either.
-
-Both VM and Authentication config need to be created manually.
-You can see the format and options for each file in the [`create-vm`][create-vm] and
-[`configure-authentication`][configure-authentication] documentation, respectively.
-
-Configuration for the director and other tiles is different,
-in that their format and options varies by tile, and can be drawn from Ops Manager.
-
-If you’re writing automation for an existing PCF Foundation
-(or have access to one you want to base your configuration on),
-you can extract Ops Manager Director and Product configuration from that foundation.
-See the documentation for the [`staged-director-config`][staged-director-config] and [`staged-config`][staged-config] tasks.
-
-If you don’t have an existing foundation to base your configuration on,
-we recommend you manually configure your foundation through the GUI the first time,
-then extract that configuration for future use.
-
-# <a id='generate-auth-file'></a>Generating an Auth File
-Almost all [`om`][om] commands require an auth file
+## <a id='generate-env-file'></a>Generating an Env File
+Almost all [`om`][om] commands require an env file
 to hit authenticated API endpoints.
+
+The configuration for authentication has a dependency on either username/password
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'env' %>
+
+or client SAML setup.
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'env-uaa' %>
+
+## <a id='generate-auth-file'></a>Generating an Auth File
+These configuration formats match the configuration for setting up authentication.
+See the documentation for the [`configure-authentication`][configure-authentication]
+or [`configure-saml-authentication`][configure-saml-authentication] task for details.
 
 The configuration for authentication has a dependency on either username/password
 
@@ -123,18 +101,17 @@ or client SAML setup.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
-This configuration format matches the configuration for setting up authentication.
-See the documentation for the [`configure-authentication`][configure-authentication]
-or [`configure-saml-authentication`][configure-saml-authentication] task for details.
+## <a id='generate-configuration'></a>Generating Configuration
+The
 
-# <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
+## <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
 you need to make them available as Concourse Resources.
 They’re all text files, and there are many resource types that can work for this - in our examples,
 we use s3 compatible blobstores. As with the tasks and image,
 you’ll need to upload them to a bucket and declare a resource in your pipeline for each file you need.
 
-# <a id='your-own-pipeline'></a>Making Your Own Pipeline
+## <a id='your-own-pipeline'></a>Making Your Own Pipeline
 If the example pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
 You know your environment and constraints, and we don’t.
 We recommend you look at the tasks that make up the pipeline,
