@@ -15,6 +15,22 @@ owner: PCF Platform Automation
   <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start.
 </p>
 
+* a valid [env file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI. 
+It is used by every task within Platform Automation for PCF
+* a valid [auth file]: this file will contain the credentials necessary to create the Ops Manager login the first time
+the VM is created. The choices for this file are simple or saml authentication.  
+
+<p class="note">
+  <strong>Note</strong>: There will be some crossover between the auth file and the env file due to how om is 
+  setup and how the system works. It is highly recommended to parameterize these values, and let a credential
+  management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
+</p>
+
+* a [director configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
+a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one. 
+* a set of valid [product configuration] files: Each product configuration is a yaml file that contains the properties
+necessary to configure an Ops Manager product tile using the `om` tool. This can be used during install or update. 
+
 ## <a id='setup'></a> Setup
 
 1. Download the latest version of [Platform Automation](https://network.pivotal.io/products/platform-automation/) from Pivnet.
@@ -106,6 +122,39 @@ or client SAML setup.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
+## <a id='generate-director-configuration'></a>Generating Director Configuration
+To generate the configuration for an Ops Manager, you will need the following (Just like a tile):
+
+1. a running Ops Manager
+  - this is accomplished by running the following tasks:
+      - [create-vm]
+      - [configure-authentication] or [configure-saml-authentication]
+      - [configure-director]
+      - [apply-director-changes]
+
+1. Configure Ops Manager _manually_ within the Ops Manager UI (Instructions for doing so can be found
+using the [Official PCF Documentation])
+
+1. Run the following command to get the staged config:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+om --env ${ENV_FILE} staged-director-config --include-placeholders
+```
+
+Where `${ENV_FILE}` is the [env file] required for all tasks. The resulting file can then be parameterized, saved, 
+and uploaded to a persistent blobstore(i.e. s3, gcs, azure blobstore, etc).
+
+Alternatively, you can add the following task to your pipeline to generate and persist this for you:
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-director-config' %>
+
+<p class="note">
+  <strong>Note</strong>: staged-director-config will not be able to grab all sensitive fields in your Ops Manager 
+  installation (for example: vcenter_username and vcenter_password if using vsphere). To find these missing fields,
+  please refer to the <a href="https://docs.pivotal.io/pivotalcf/opsman-api/">Ops Manager API Documentation</a>
+</p>
+
 ## <a id='generate-product-configuration'></a>Generating Product Configuration
 To generate the configuration for a tile, you will need the following:
 
@@ -137,6 +186,7 @@ Alternatively, you can add the following task to your pipeline to generate and p
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-config' %>
 
+
 ## <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
 you need to make them available as Concourse Resources.
@@ -162,15 +212,18 @@ If you need to write your own tasks in the meantime, our tasks are designed with
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
 [apply-director-changes]: ./task-reference.html#apply-director-changes
+[auth file]: ./getting-started.html#generate-auth-file
 [configure-authentication]: ./task-reference.html#configure-authentication
 [configure-director]: ./task-reference.html#configure-director
 [concourse-documentation]: https://github.com/concourse/s3-resource
 [configure-saml-authentication]: ./task-reference.html#configure-saml-authentication
 [create-vm]: ./task-reference.html#create-vm
-[env file]: ./#generate-env-file
+[director configuration]: ./getting-started.html#generate-director-configuration
+[env file]: ./getting-started.html#generate-env-file
 [Official PCF Documentation]: https://docs.pivotal.io/pivotalcf/installing/index.html
 [om]: https://github.com/pivotal-cf/om
 [pivnet]: https://network.pivotal.io
+[product configuration]: ./getting-started.html#generate-product-configuration
 [staged-config]: ./task-reference.html#staged-config
 [staged-director-config]: ./task-reference.html#staged-director-config
 [uploaded-and-staged]: ./task-reference.html#upload-and-stage-product
