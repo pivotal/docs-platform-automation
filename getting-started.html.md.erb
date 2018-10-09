@@ -105,11 +105,15 @@ The configuration for authentication has a dependency on either username/passwor
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'env' %>
 
-or client SAML setup.
+or, if using SAML, a client-id and client-secret.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'env-uaa' %>
 
-## <a id='generate-auth-file'></a>Generating an Auth File
+While `decryption-passphrase` is nominally optional,
+if you intend to use a single `env.yml` for an entire pipeline,
+it will be necessary to include for use with the `import-installation` step.
+
+## <a id='generate-auth-file'></a>Generating an Auth Config File
 These configuration formats match the configuration for setting up authentication.
 See the documentation for the [`configure-authentication`][configure-authentication]
 or [`configure-saml-authentication`][configure-saml-authentication] task for details.
@@ -118,7 +122,7 @@ The configuration for authentication has a dependency on either username/passwor
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'auth-configuration' %>
 
-or client SAML setup.
+or SAML configuration information.
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'saml-auth-configuration' %>
 
