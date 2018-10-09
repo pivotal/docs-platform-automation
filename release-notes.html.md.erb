@@ -5,6 +5,23 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+##<a id="v0.0.1-rc214"></a> v0.0.1-rc214
+
+**Release Date:** October 9, 2018
+
+### Features
+* the docker image is now both a concourse `garden-runc` and `docker import`able image
+* added support to choose the Azure Cloud by setting `cloud_name` in your Ops Man VM config.
+  The default is AzureCloud for the Americas. Other clouds can be found by running `az cloud list`.
+* `om staged-config` now returns any vm-extensions set for a product
+* `om configure-product` will now associate vm-extensions with a product
+
+
+### Bug Fixes:
+* `create-vm`, `upgrade-opsman`, and `delete-vm`: Will output the correct `ipath` for VSphere created VMs.
+  The pattern is `/datacenter/vm/folder/vm-name` if you would like to backfix your state file.
+* `om staged-director-config` works with Azure Ops Man Vms as they don't have availability zones 
+
 ##<a id="v0.0.1-rc194"></a> v0.0.1-rc194
 
 **Release Date:** October 3, 2018
