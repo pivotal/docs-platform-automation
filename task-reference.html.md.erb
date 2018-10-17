@@ -79,6 +79,14 @@ Creates an unconfigured Ops Manager VM.
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration](#opsman-config) page for more specific examples.
 
+### <a id='credhub-interpolate'></a> credhub-interpolate
+Interpolate credhub entries into configuration files
+
+<%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'credhub-interpolate' %>
+
+This task requires a valid credhub with UAA client and secret. For information on how to 
+set this up, see [Getting Started](./getting-started.html#credhub)
+
 ### <a id='delete-installation'></a> delete-installation
 Delete the Ops Manager Installation
 

@@ -20,7 +20,7 @@ retrieve task dependencies.
 ### <a id='installing-opsman'></a>Installing Ops Manager and tiles
 
 The pipeline shows how compose the tasks to install Ops Manager and the PCF and Healthwatch tiles.
-Its dependencies are coming from a trusted s3-like storage provider,
+Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline](#retrieving-external-deps).
 
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'pipeline' %>

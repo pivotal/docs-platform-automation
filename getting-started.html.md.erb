@@ -26,10 +26,13 @@ the VM is created. The choices for this file are simple or saml authentication.
   management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
 </p>
 
+* a [opsmanager configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
+ of the Ops Manager VM
 * a [director configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
 a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one. 
 * a set of valid [product configuration] files: Each product configuration is a yaml file that contains the properties
 necessary to configure an Ops Manager product tile using the `om` tool. This can be used during install or update. 
+* (Optional) a working [credhub] setup with its own UAA client and secret
 
 ## <a id='setup'></a> Setup
 
@@ -44,7 +47,7 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
    </p>
    
    
-1. Store the `platform-automation-image-*.tgz` in a blobsotre that can be accessed via a Concourse pipeline.
+1. Store the `platform-automation-image-*.tgz` in a blobstore that can be accessed via a Concourse pipeline.
 
 1. Store the `platform-automation-tasks-*.zip` in a blobstore that can be accessed via a Concourse pipeline.
 
@@ -194,11 +197,31 @@ Alternatively, you can add the following task to your pipeline to generate and p
 <%= yield_for_code_snippet from: 'pivotal-cf/platform-automation', at: 'staged-config' %>
 
 
+## <a id='credhub'></a> Setting up Your Credhub
+Credhub can be used to store secure properties that you don't want committed into a config file.
+Within your pipeline, the config file can then reference that Credhub value for runtime evaluation.
+
+An example workflow would be storing an SSH key.
+
+Let's use the `credhub` CLI to store that value.
+1. Authenticate with your credhub instance.
+2. `credhub generate --name="/private-foundation/opsman_ssh_key" --type=ssh`
+
+Create an [opsmanager configuration] file that references the name of the property.
+
+```yaml
+opsman-configuration:
+  azure:
+    ssh_public_key: ((opsman_ssh_key.public_key))
+```
+
+
+
 ## <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
 you need to make them available as Concourse Resources.
 They’re all text files, and there are many resource types that can work for this - in our examples,
-we use s3 compatible blobstores. As with the tasks and image,
+we use git repository. As with the tasks and image,
 you’ll need to upload them to a bucket and declare a resource in your pipeline for each file you need.
 
 ## <a id='your-own-pipeline'></a>Making Your Own Pipeline
@@ -225,10 +248,12 @@ and should be able to coexist in a pipeline with tasks from other sources, or cu
 [concourse-documentation]: https://github.com/concourse/s3-resource
 [configure-saml-authentication]: ./task-reference.html#configure-saml-authentication
 [create-vm]: ./task-reference.html#create-vm
+[credhub]: ./getting-started.html#credhub
 [director configuration]: ./getting-started.html#generate-director-configuration
 [env file]: ./getting-started.html#generate-env-file
 [Official PCF Documentation]: https://docs.pivotal.io/pivotalcf/installing/index.html
 [om]: https://github.com/pivotal-cf/om
+[opsmanager configuration]:
 [pivnet]: https://network.pivotal.io
 [product configuration]: ./getting-started.html#generate-product-configuration
 [staged-config]: ./task-reference.html#staged-config
