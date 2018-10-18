@@ -15,7 +15,7 @@ and places them into a trusted s3-like storage provider.
 This helps other concourse deployments without internet access
 retrieve task dependencies.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'put-resources-pipeline' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'put-resources-pipeline' %>
 
 ### <a id='installing-opsman'></a>Installing Ops Manager and tiles
 
@@ -23,4 +23,4 @@ The pipeline shows how compose the tasks to install Ops Manager and the PCF and 
 Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline](#retrieving-external-deps).
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'pipeline' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'pipeline' %>
