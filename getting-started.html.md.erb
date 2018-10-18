@@ -106,11 +106,11 @@ to hit authenticated API endpoints.
 
 The configuration for authentication has a dependency on either username/password
 
-<%= yield_for_code_snippet from: 'platform-automation', at: 'env' %>
+<%= yield_for_code_snippet from: 'platform-automation-release', at: 'env' %>
 
 or, if using SAML, a client-id and client-secret.
 
-<%= yield_for_code_snippet from: 'platform-automation', at: 'env-uaa' %>
+<%= yield_for_code_snippet from: 'platform-automation-release', at: 'env-uaa' %>
 
 While `decryption-passphrase` is nominally optional,
 if you intend to use a single `env.yml` for an entire pipeline,
