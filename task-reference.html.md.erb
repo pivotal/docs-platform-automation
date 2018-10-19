@@ -17,26 +17,26 @@ Use `--help` for more information.
 
 Triggers an install on the Ops Manager described by the auth file.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'apply-changes' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'apply-changes' %>
 
 ### <a id='apply-director-changes'></a> apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'apply-director-changes' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'apply-director-changes' %>
 
 ### <a id='configure-authentication'></a> configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'configure-authentication' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'configure-authentication' %>
 
 ### <a id='configure-director'></a> configure-director
 Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'configure-director' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'configure-director' %>
 
 <p class="note warning">
     <strong>NOTE:</strong>
@@ -56,13 +56,13 @@ which can extract a config file,
 and [stage-product](#stage-product),
 which can stage a product that's been uploaded.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'configure-product' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'configure-product' %>
 
 ### <a id='configure-saml-authentication'></a> configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'configure-saml-authentication' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'configure-saml-authentication' %>
 
 Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
@@ -74,7 +74,7 @@ please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalc
 ### <a id='create-vm'></a> create-vm
 Creates an unconfigured Ops Manager VM.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'create-vm' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'create-vm' %>
 
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration](#opsman-config) page for more specific examples.
@@ -82,7 +82,7 @@ Please see the [configuration](#opsman-config) page for more specific examples.
 ### <a id='credhub-interpolate'></a> credhub-interpolate
 Interpolate credhub entries into configuration files
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'credhub-interpolate' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'credhub-interpolate' %>
 
 This task requires a valid credhub with UAA client and secret. For information on how to 
 set this up, see [Getting Started](./getting-started.html#credhub)
@@ -90,12 +90,12 @@ set this up, see [Getting Started](./getting-started.html#credhub)
 ### <a id='delete-installation'></a> delete-installation
 Delete the Ops Manager Installation
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'delete-installation' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'delete-installation' %>
 
 ### <a id='delete-vm'></a> delete-vm
 Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'delete-vm' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'delete-vm' %>
 
 This task requires the [state file](#state) generated [create-vm](#create-vm).
 
@@ -106,7 +106,7 @@ This is the first part of the backup/restore and upgrade lifecycle processes.
 This task is used on a fully installed and healthy Ops Manager to export
 settings to an upgraded version of Ops Manager.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'export-installation' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'export-installation' %>
 <%= partial 'export_installation_note' %>
 
 ### <a id='import-installation'></a> import-installation
@@ -116,7 +116,7 @@ This is a part of the backup/restore and upgrade lifecycle processes.
 This task is used after an installation has been exported and a new Ops Manager
 has been deployed, but before the new Ops Manager is configured.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'import-installation' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'import-installation' %>
 
 ### <a id='staged-config'></a> staged-config
 Downloads the configuration for a product from Ops Manager.
@@ -126,12 +126,12 @@ built-in [export](https://docs.pivotal.io/pivotalcf/2-1/customizing/backup-resto
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'staged-config' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'staged-config' %>
 
 ### <a id='staged-director-config'></a> staged-director-config
 Downloads configuration for the BOSH director from Ops Manager.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'staged-director-config' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'staged-director-config' %>
 
 The configuration is exported to the `generated-config` output.
 It does not extract credentials from Ops Manager
@@ -142,19 +142,19 @@ The credentials need to be provided from an external configuration when invoking
 ### <a id='test'></a> test
 An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'test' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'test' %>
 
 ### <a id='upgrade-opsman'></a> upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'upgrade-opsman' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'upgrade-opsman' %>
 
 For more information about this task and how it works, see the [upgrade](upgrade.html) page.
 
 ### <a id='upload-and-stage-product'></a> upload-and-stage-product
 Uploads and stages product to the Ops Manager specified in the config file.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'upload-and-stage-product' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'upload-and-stage-product' %>
 
 ### <a id='upload-stemcell'></a> upload-stemcell
 Uploads a stemcell to Ops Manager.
@@ -162,7 +162,7 @@ Uploads a stemcell to Ops Manager.
 Note that the filename of the stemcell must be exactly as downloaded from Pivnet.
 Ops Manager parses this filename to determine the version and OS of the stemcell.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'upload-stemcell' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'upload-stemcell' %>
 
 ## <a id="inputs"></a> Inputs
 These are the inputs that can be provided to the tasks.
@@ -174,10 +174,10 @@ The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Ops Manager API.
 
 #### <a id="basic-env"></a>env file for basic authentication
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'env' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'env' %>
 
 #### <a id="uaa-env"></a>env file for uaa authentication
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'env-uaa' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'env-uaa' %>
 
 
 ##### Getting the `client-id` and `client-secret`
@@ -213,7 +213,7 @@ The configuration for authentication has a dependency on username/password.
 This configuration format matches the configuration for setting up authentication.
 See the task for the [`configure-authentication`](#configure-authentication) for details.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'auth-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'auth-configuration' %>
 
 <p class="note">
     <strong>NOTE:</strong>
@@ -225,7 +225,7 @@ The configuration for authentication has a dependency on SAML.
 This configuration format matches the configuration for setting up authentication.
 See the task for the [`configure-saml-authentication`](#configure-saml-authentication) for details.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'saml-auth-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'saml-auth-configuration' %>
 
 <p class="note">
     <strong>NOTE:</strong>
@@ -247,20 +247,20 @@ Specific examples for each IaaS are as follows:
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on AWS](https://docs.pivotal.io/pivotalcf/customizing/pcf-aws-manual-config.html)
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'aws-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'aws-configuration' %>
 
 #### <a id='azure-configuration'></a> Azure
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure.html)
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'azure-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'azure-configuration' %>
 
 
 #### <a id='gcp-configuration'></a> GCP
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP](https://docs.pivotal.io/pivotalcf/customizing/gcp-om-deploy.html)
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'gcp-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'gcp-configuration' %>
 
 Support for Shared VPC is done via
 [configuring the `vpc_subnet` path](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#creating_an_instance_in_a_shared_subnet)
@@ -274,14 +274,14 @@ For example:
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack](https://docs.pivotal.io/pivotalcf/customizing/openstack-om-config.html)
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'openstack-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'openstack-configuration' %>
 
 
 #### <a id='vsphere-configuration'></a> vSphere
 These required properties are adapted from the instructions outlined in
 [Deploying BOSH and Ops Manager to vSphere](https://docs.pivotal.io/pivotalcf/customizing/deploying-vm.html)
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'vsphere-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'vsphere-configuration' %>
 
 ### <a id="director-config"></a> director config
 The config director will set the bosh tile (director) on Ops Manager.
@@ -296,7 +296,7 @@ There are two ways to build a director config.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
    
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'director-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'director-configuration' %>
 
 The IAAS specific configuration can be found in the Ops Manager API documentation.
 
@@ -329,7 +329,7 @@ There are two ways to build a product config.
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
   
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'product-configuration' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'product-configuration' %>
 
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
@@ -342,7 +342,7 @@ and a link to the API documentation explaining the properties.
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
 
-<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'state' %>
+<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'state' %>
 
 The file contains two properties:
 
