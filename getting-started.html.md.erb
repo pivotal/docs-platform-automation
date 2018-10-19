@@ -106,11 +106,11 @@ to hit authenticated API endpoints.
 
 The configuration for authentication has a dependency on either username/password
 
-<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'env' %>
+<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'env' %>
 
 or, if using SAML, a client-id and client-secret.
 
-<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'env-uaa' %>
+<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'env-uaa' %>
 
 While `decryption-passphrase` is nominally optional,
 if you intend to use a single `env.yml` for an entire pipeline,
@@ -123,11 +123,11 @@ or [`configure-saml-authentication`][configure-saml-authentication] task for det
 
 The configuration for authentication has a dependency on either username/password
 
-<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'auth-configuration' %>
+<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'auth-configuration' %>
 
 or SAML configuration information.
 
-<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'saml-auth-configuration' %>
+<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'saml-auth-configuration' %>
 
 ## <a id='generate-director-configuration'></a>Generating Director Configuration
 To generate the configuration for an Ops Manager, you will need the following (Just like a tile):
@@ -156,7 +156,7 @@ blobstore(i.e. s3, gcs, azure blobstore, etc).
 
 Alternatively, you can add the following task to your pipeline to generate and persist this for you:
 
-<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'staged-director-config' %>
+<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'staged-director-config' %>
 
 <p class="note">
   <strong>Note</strong>: staged-director-config will not be able to grab all sensitive fields in your Ops Manager 
@@ -194,7 +194,7 @@ persistent blobstore(i.e. s3, gcs, azure blobstore, etc).
 
 Alternatively, you can add the following task to your pipeline to generate and persist this for you:
 
-<%= yield_for_code_snippet from: 'platform-automation-develop', at: 'staged-config' %>
+<%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'staged-config' %>
 
 
 ## <a id='credhub'></a> Setting up Your Credhub
