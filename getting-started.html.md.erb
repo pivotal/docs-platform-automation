@@ -55,42 +55,43 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
    This pipeline runs a test task, which ensures that all the parts work correctly. 
    (the example pipeline assumes s3 as the blobstore)
    
-    ```
-    resources:
-    - name: platform-automation-tasks-s3
-      type: s3
-      source:
-        access_key_id: ((access_key_id))
-        secret_access_key: ((secret_access_key))
-        region_name: ((region))
-        bucket: ((bucket))
-        regexp: platform-automation-tasks-(.*).zip
-    
-    - name: platform-automation-image-s3
-      type: s3
-      source:
-        access_key_id: ((access_key_id))
-        secret_access_key: ((secret_access_key))
-        region_name: ((region))
-        bucket: ((bucket))
-        regexp: platform-automation-image-(.*).tgz
-    
-    jobs:
-    - name: test-resources
-      plan:
-      - aggregate:
-        - get: platform-automation-tasks-s3
-          params:
-            unpack: true
-        - get: platform-automation-image-s3
-          params:
-            unpack: true
-      - task: test-resources
-        image: platform-automation-image-s3
-        file: platform-automation-tasks-s3/tasks/test.yml
-    ```
-    
-    Fill in the S3 resource credentials and set the above pipeline on your Concourse instance.
+```yaml
+resources:
+- name: platform-automation-tasks-s3
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    regexp: platform-automation-tasks-(.*).zip
+
+- name: platform-automation-image-s3
+  type: s3
+  source:
+    access_key_id: ((access_key_id))
+    secret_access_key: ((secret_access_key))
+    region_name: ((region))
+    bucket: ((bucket))
+    regexp: platform-automation-image-(.*).tgz
+
+jobs:
+- name: test-resources
+  plan:
+  - aggregate:
+    - get: platform-automation-tasks-s3
+      params:
+        unpack: true
+    - get: platform-automation-image-s3
+      params:
+        unpack: true
+  - task: test-resources
+    image: platform-automation-image-s3
+    file: platform-automation-tasks-s3/tasks/test.yml
+```
+
+Fill in the S3 resource credentials and set the above pipeline on your Concourse instance.
+
 <p class="note">
   <strong>Note</strong>: The pipeline can use any blobstore.
   We choose S3 because the resource natively supported by Concourse.
@@ -207,52 +208,52 @@ An example workflow would be storing an SSH key.
 2. Generate an ssh key: `credhub generate --name="/private-foundation/opsman_ssh_key" --type=ssh`
 3. Create an [opsmanager configuration] file that references the name of the property.
 
-    ```yaml
-    opsman-configuration:
-      azure:
-        ssh_public_key: ((opsman_ssh_key.public_key))
-    ```
+```yaml
+opsman-configuration:
+  azure:
+    ssh_public_key: ((opsman_ssh_key.public_key))
+```
 
 4. Configure your pipeline to use the [credhub interpolate](./task-reference.html#credhub-interpolate) task.
    It takes an input `files`, which should contain your configuration file from (3).
    
    The declaration within a pipeline might look like:
    
-   ```yaml
-    jobs:
-    - name: example-job
-      plan:
-      - get: platform-automation-tasks
-      - get: platform-automation-image
-      - get: config
-      - task: credhub-interpolate
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/credhub-interpolate.yml
-        input_mapping:
-          files: config
-        params:
-          # all required
-          CREDHUB_CA_CERT: ((credhub_ca_cert))
-          CREDHUB_CLIENT: ((credhub_client))
-          CREDHUB_SECRET: ((credhub_secret))
-          CREDHUB_SERVER: ((credhub_server))
-          PREFIX: /private-foundation  
-   ```
-   
-   Notice the `PREFIX` has been set to `/private-foundation`, the path prefix defined for your cred in (2).
-   This allows the config file to have values scoped, for example, per foundation.
-   `params` should be filled in by the credhub created with your Concourse instance.
-   
-   This task will reach out to the deployed credhub and fill in your entry references and return an output
-   named `interpolated-files` that can then be read as an input to any following tasks. 
-   
-   Our configuration will now look like
-   
-   ```yaml
-   opsman-configuration:
-     azure:
-       ssh_public_key: ssh-rsa AAAAB3Nz...
-   ```
+```yaml
+jobs:
+- name: example-job
+  plan:
+  - get: platform-automation-tasks
+  - get: platform-automation-image
+  - get: config
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    input_mapping:
+      files: config
+    params:
+      # all required
+      CREDHUB_CA_CERT: ((credhub_ca_cert))
+      CREDHUB_CLIENT: ((credhub_client))
+      CREDHUB_SECRET: ((credhub_secret))
+      CREDHUB_SERVER: ((credhub_server))
+      PREFIX: /private-foundation  
+```
+
+Notice the `PREFIX` has been set to `/private-foundation`, the path prefix defined for your cred in (2).
+This allows the config file to have values scoped, for example, per foundation.
+`params` should be filled in by the credhub created with your Concourse instance.
+
+This task will reach out to the deployed credhub and fill in your entry references and return an output
+named `interpolated-files` that can then be read as an input to any following tasks. 
+
+Our configuration will now look like
+
+```yaml
+opsman-configuration:
+ azure:
+   ssh_public_key: ssh-rsa AAAAB3Nz...
+```
 
 ## <a id='manage-configration'></a>Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
