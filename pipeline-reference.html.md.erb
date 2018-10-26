@@ -8,7 +8,7 @@ These Concourse pipelines are examples
 on how to use the [tasks](task-reference.html).
 
 
-### <a id='retrieving-external-deps'></a>Retrieving external dependencies
+### <a id='retrieving-external-dependencies'></a>Retrieving external dependencies
 
 The pipeline downloads dependencies consumed by the tasks
 and places them into a trusted s3-like storage provider.
@@ -21,6 +21,6 @@ retrieve task dependencies.
 
 The pipeline shows how compose the tasks to install Ops Manager and the PCF and Healthwatch tiles.
 Its dependencies are coming from a trusted git repository,
-which can be retrieved using [this pipeline](#retrieving-external-deps).
+which can be retrieved using [this pipeline](#retrieving-external-dependencies).
 
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'pipeline' %>

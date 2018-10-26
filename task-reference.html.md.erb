@@ -53,7 +53,7 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
 
 See [staged-config](#staged-config),
 which can extract a config file,
-and [stage-product](#stage-product),
+and [upload-and-stage-product](#upload-and-stage-product),
 which can stage a product that's been uploaded.
 
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'configure-product' %>
@@ -85,7 +85,7 @@ Interpolate credhub entries into configuration files
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'credhub-interpolate' %>
 
 This task requires a valid credhub with UAA client and secret. For information on how to 
-set this up, see [Getting Started](./getting-started.html#credhub)
+set this up, see [Getting Started](./getting-started.html#using-your-credhub)
 
 ### <a id='delete-installation'></a> delete-installation
 Delete the Ops Manager Installation
@@ -173,10 +173,10 @@ Each task can only take a specific set, indicated under the `inputs` property of
 The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Ops Manager API.
 
-#### <a id="basic-env"></a>env file for basic authentication
+#### <a id="basic-authentication"></a>basic authentication
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'env' %>
 
-#### <a id="uaa-env"></a>env file for uaa authentication
+#### <a id="uaa-authentication"></a>uaa authentication
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'env-uaa' %>
 
 
@@ -217,7 +217,7 @@ See the task for the [`configure-authentication`](#configure-authentication) for
 
 <p class="note">
     <strong>NOTE:</strong>
-    basic authentication supports both <a href="#basic-env">basic env</a> and  <a href="#uaa-env">uaa env</a> formats
+    basic authentication supports both <a href="#basic-authentication">basic env</a> and  <a href="#uaa-authentication">uaa env</a> formats
 </p>
 
 #### saml authentication
@@ -229,7 +229,7 @@ See the task for the [`configure-saml-authentication`](#configure-saml-authentic
 
 <p class="note">
     <strong>NOTE:</strong>
-    saml authentication requires the <a href="#uaa-env">uaa env</a> format
+    saml authentication requires the <a href="#uaa-authentication">uaa env</a> format
 </p>
 
 The `saml-configuration` properties configures the SAML provider.
@@ -256,7 +256,7 @@ These required properties are adapted from the instructions outlined in
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'azure-configuration' %>
 
 
-#### <a id='gcp-configuration'></a> GCP
+#### <a id='gcp'></a> GCP
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP](https://docs.pivotal.io/pivotalcf/customizing/gcp-om-deploy.html)
 
@@ -313,7 +313,7 @@ and a link to the API documentation explaining any IAAS specific properties.
 * `syslog-configuration` - configure the syslog sinks for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
 * `vmextensions-configuration` - create/update/delete vm extensions [Ops Manager API](http://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-or-creating-a-new-vm-extension)
 
-#### GCP
+#### GCP Shared VPC
 
 Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet](https://docs.pivotal.io/pivotalcf/customizing/gcp-prepare-env.html#create_network),
 which includes the host project id, region of the subnet, and the subnet name.
