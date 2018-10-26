@@ -32,7 +32,7 @@ the VM is created. The choices for this file are simple or saml authentication.
 a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one. 
 * a set of valid [product configuration] files: Each product configuration is a yaml file that contains the properties
 necessary to configure an Ops Manager product tile using the `om` tool. This can be used during install or update. 
-* (Optional) a working [credhub] setup with its own UAA client and secret
+* (Optional) a working [credhub] setup with its own UAA client and secret.
 
 ## <a id='setup'></a> Setup
 
@@ -101,7 +101,7 @@ Fill in the S3 resource credentials and set the above pipeline on your Concourse
    <a href="https://concourse-ci.org/resource-types.html">resource type</a> .
 </p>
 
-## <a id='generate-env-file'></a>Generating an Env File
+## <a id='generating-an-env-file'></a>Generating an Env File
 Almost all [`om`][om] commands require an env file
 to hit authenticated API endpoints.
 
@@ -117,7 +117,7 @@ While `decryption-passphrase` is nominally optional,
 if you intend to use a single `env.yml` for an entire pipeline,
 it will be necessary to include for use with the `import-installation` step.
 
-## <a id='generate-auth-file'></a>Generating an Auth Config File
+## <a id='generating-an-auth-file'></a>Generating an Auth File
 These configuration formats match the configuration for setting up authentication.
 See the documentation for the [`configure-authentication`][configure-authentication]
 or [`configure-saml-authentication`][configure-saml-authentication] task for details.
@@ -130,7 +130,7 @@ or SAML configuration information.
 
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'saml-auth-configuration' %>
 
-## <a id='generate-director-configuration'></a>Generating Director Configuration
+## <a id='generating-director-configuration'></a>Generating Director Configuration
 To generate the configuration for an Ops Manager, you will need the following (Just like a tile):
 
 1. a running Ops Manager
@@ -165,7 +165,7 @@ Alternatively, you can add the following task to your pipeline to generate and p
   please refer to the <a href="https://docs.pivotal.io/pivotalcf/opsman-api/">Ops Manager API Documentation</a>
 </p>
 
-## <a id='generate-product-configuration'></a>Generating Product Configuration
+## <a id='generating-product-configuration'></a>Generating Product Configuration
 To generate the configuration for a tile, you will need the following:
 
 1. a running Ops Manager
@@ -198,7 +198,7 @@ Alternatively, you can add the following task to your pipeline to generate and p
 <%= yield_for_code_snippet from: 'pivotal/platform-automation', at: 'staged-config' %>
 
 
-## <a id='credhub'></a> Setting up Your Credhub
+## <a id='using-your-credhub'></a> Using Your Credhub
 Credhub can be used to store secure properties that you don't want committed into a config file.
 Within your pipeline, the config file can then reference that Credhub value for runtime evaluation.
 
@@ -280,20 +280,20 @@ If you need to write your own tasks in the meantime, our tasks are designed with
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
 [apply-director-changes]: ./task-reference.html#apply-director-changes
-[auth file]: ./getting-started.html#generate-auth-file
+[auth file]: ./getting-started.html#generating-an-auth-file
 [configure-authentication]: ./task-reference.html#configure-authentication
 [configure-director]: ./task-reference.html#configure-director
 [concourse-documentation]: https://github.com/concourse/s3-resource
 [configure-saml-authentication]: ./task-reference.html#configure-saml-authentication
 [create-vm]: ./task-reference.html#create-vm
-[credhub]: ./getting-started.html#credhub
-[director configuration]: ./getting-started.html#generate-director-configuration
-[env file]: ./getting-started.html#generate-env-file
+[credhub]: https://docs.pivotal.io/pivotalcf/credhub/
+[director configuration]: ./getting-started.html#generating-director-configuration
+[env file]: ./getting-started.html#generating-an-env-file
 [Official PCF Documentation]: https://docs.pivotal.io/pivotalcf/installing/index.html
 [om]: https://github.com/pivotal-cf/om
 [opsmanager configuration]: ./task-reference.html#opsman-config
 [pivnet]: https://network.pivotal.io
-[product configuration]: ./getting-started.html#generate-product-configuration
+[product configuration]: ./getting-started.html#generating-product-configuration
 [staged-config]: ./task-reference.html#staged-config
 [staged-director-config]: ./task-reference.html#staged-director-config
 [uploaded-and-staged]: ./task-reference.html#upload-and-stage-product
