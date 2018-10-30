@@ -97,6 +97,18 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 This task requires the [state file](#state) generated [create-vm](#create-vm).
 
+###  download-product
+Downloads a product specified in a config file from Pivnet.
+Optionally, also downloads the latest stemcell for that product.
+
+Outputs can be persisted to a blobstore,
+or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
+and [upload-stemcell](#upload-stemcell) tasks.
+
+This task requires a [download-product config file](#download-product-config).
+
+{% code_snippet 'pivotal/platform-automation', 'download-product' %}
+
 ###  export-installation
 Exports an existing Ops Manager to a file.
 
@@ -447,3 +459,8 @@ jobs:
 !!! warning ""
      <strong>NOTE:</strong> This file cannot be manually created. It is a file that must retrieved from Pivnet. 
 
+### download-product-config
+The `config` input for a download product task expects to have a `download-config.yml` file
+The configuration of the `download-config.yml` looks like this:
+
+{% code_snippet 'pivotal/platform-automation', 'download-product-config' %}
