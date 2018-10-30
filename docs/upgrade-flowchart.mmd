@@ -1,0 +1,16 @@
+<div class="mermaid">
+graph TD;
+  versionChk[Is the existing OpsManager version less than the OpsManager image?];
+  versionError[Version Check Error];
+  delete[Delete the existing Ops Manager VM];
+  create[Create a new Ops Manager VM];
+  iaasErr[IAAS CLI error];
+  import[Import the provided Installation];
+  iaasErr2[IAAS CLI error];
+  versionChk -- No --> versionError;
+  versionChk -- Yes --> delete;
+  delete -- Success --> create;
+  delete -- Failure --> iaasErr;
+  create -- Success --> import ;
+  create -- Failure --> iaasErr2;
+</div>

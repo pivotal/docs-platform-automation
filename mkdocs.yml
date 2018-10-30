@@ -1,0 +1,34 @@
+# Example: https://github.com/squidfunk/mkdocs-material/blob/master/mkdocs.yml
+---
+site_name: Platform Automation
+site_url: https://docs.pivotal.io
+theme:
+  logo: https://docs.pivotal.io/images/icon-p-green.jpg
+  name: material
+  favicon: https://docs.pivotal.io/images/favicon.ico
+  font:
+    code: Ubuntu Mono
+    text: Source Sans Pro
+  palette:
+    accent: teal
+    primary: teal
+strict: true
+use_directory_urls: false
+plugins:
+- search: {}
+- jinja2:
+    dependent_sections:
+      pivotal/platform-automation: "../platform-automation"
+markdown_extensions:
+- codehilite
+- admonition
+extra_javascript:
+- https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
+nav:
+- Platform Automation for PCF (Unreleased): index.md
+- 'Getting Started: Generating Configs and Inputs': getting-started.md
+- Upgrading PCF using Platform Automation: upgrade.md
+- Using Platform Automation for PCF: using.md
+- Task Reference: task-reference.md
+- Pipeline Reference: pipeline-reference.md
+- Release Notes: release-notes.md
