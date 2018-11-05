@@ -4,6 +4,7 @@ site_name: Platform Automation
 site_url: https://docs.pivotal.io
 repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!
+edit_uri: edit/develop/docs/
 theme:
   logo: https://docs.pivotal.io/images/icon-p-green.jpg
   name: material
