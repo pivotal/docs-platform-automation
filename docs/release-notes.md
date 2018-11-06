@@ -5,7 +5,7 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
-## v0.0.1-rc249
+## v0.0.1-rc248
 
 **Release Date:** November 6, 2018
 
