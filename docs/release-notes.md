@@ -1,5 +1,5 @@
 ---
-title: Release Notes for Platform Automation for PCF
+title: Release Notes
 owner: PCF Platform Automation
 ---
 
@@ -92,7 +92,7 @@ These are release notes for Platform Automation for PCF.
 **Release Date:** September 27, 2018
 
 ### Features
-* `create-vm`: Shared VPC support for GCP. See [docs](task-reference.md#gcp) about the configuration.
+* `create-vm`: Shared VPC support for GCP. See [docs](reference/task.md#gcp) about the configuration.
 * `create-vm`: Able to specify private IP for all supported IAASs (aws, azure, gcp, openstack, vsphere).
 * `create-vm`: Able specify private IP and/or public IP. Only one is required to be set.
 * `staged-config`: Able to pull errand config.

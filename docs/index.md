@@ -96,7 +96,7 @@ The [Getting Started][getting-started] topic is a great place to start.
 
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
-[task-reference]: ./task-reference.md
+[task-reference]: reference/task.md
 [concourse-task-definition]: https://concourse-ci.org/tasks.html
 [getting-started]: ./getting-started.md
 [om]: https://github.com/pivotal-cf/om

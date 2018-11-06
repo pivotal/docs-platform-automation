@@ -15,20 +15,20 @@ This topic describes how to upgrade an Ops Manager using Platform Automation.
 
 ###Command Requirements
 
-The [`upgrade-opsman`](task-reference.md#upgrade-opsman) will delete the previous VM, create a new VM, and import
+The [`upgrade-opsman`](reference/task.md#upgrade-opsman) will delete the previous VM, create a new VM, and import
 a previous installation. It requires the following to perform this operations: 
 
-* a valid [state file](task-reference.md#state) from the currently deployed Ops Manager
-* a valid [image file](task-reference.md#opsman-image) for the new Ops Manager to install
-* a [configuration file](task-reference.md#opsman-config) for IAAS specific details
-* an [exported installation](task-reference.md#installation) from a currently deployed Ops Manager
-* the [auth file](task-reference.md#auth) for a currently deployed Ops Manager
+* a valid [state file](reference/task.md#state) from the currently deployed Ops Manager
+* a valid [image file](reference/task.md#opsman-image) for the new Ops Manager to install
+* a [configuration file](reference/task.md#opsman-config) for IAAS specific details
+* an [exported installation](reference/task.md#installation) from a currently deployed Ops Manager
+* the [auth file](reference/task.md#auth) for a currently deployed Ops Manager
 
 IAAS resource requirements
 command requirements
 
 ##Upgrading Ops Manager
-The [`upgrade-opsman`](task-reference.md#upgrade-opsman) task follows the flow based on state of an OpsManager VM.
+The [`upgrade-opsman`](reference/task.md#upgrade-opsman) task follows the flow based on state of an OpsManager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}
@@ -47,14 +47,14 @@ version of Ops Manager
 * Credentials provided in the auth file do not match the credentials of an already deployed Ops Manager
 * SOLUTION: To change the credentials when upgrading an Ops Manager, you must update the password in your
 Account Settings. Then, you will need to update the following two files with the changes:
-  [`auth.yml`](task-reference.md#auth)
-  [`env.yml`](task-reference.md#env)
+  [`auth.yml`](reference/task.md#auth)
+  [`env.yml`](reference/task.md#env)
   
 3) <b>The Ops Manager API is inaccessible</b> (Recoverable)
 
 * This error is fixed within the task. The task will assume that the Ops Manager VM is not 
-created, and will run the [`create-vm`](task-reference.md#create-vm) and 
-[`import-installation`](task-reference.md#import-installation) tasks
+created, and will run the [`create-vm`](reference/task.md#create-vm) and 
+[`import-installation`](reference/task.md#import-installation) tasks
   
 ###IAAS CLI Errors
 
