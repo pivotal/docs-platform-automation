@@ -5,6 +5,34 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+## v0.0.1-rc249
+
+**Release Date:** November 6, 2018
+
+### Features
+* Documentation engine has been changed to mkdocs. Please give us feedback on the [new documentation](https://docs.pivotal.io/pcf-automation/alpha/index.html)! 
+* [New Task](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#credhub-interpolate) 
+  Credhub interpolation is now supported by the tasks
+* [New Task](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#download-product)
+  A product can now be downloaded directly from pivnet. This task will also download the latest stemcell available
+  for that tile and both will be provided as outputs for following tasks. 
+* `om` and `p-automator` are now fully separate CLIs. `om` is responsible for interacting with Ops Manager, and 
+  `p-automator` is responsible for interacting with the IaaS to manage the Ops Manager VM.
+* `public_ssh_key` is now a configurable key for [vsphere]((https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#public_ssh_key)
+* The reference pipeline now has an example to apply changes after an upgrade of Ops Manager.
+
+### Bug fix
+* `om configure-product` used to fail with tiles featuring collections without `name` properties. 
+  It doesn't fail any more. However, users should be aware that in non-named collections, 
+  colliding collections may be overwritten, not updated, unless a guid is included in the config. 
+  This is of particular concern if the collection has state associated with it in the tile, 
+  as in the case of service plans. We are not aware of any service plan collections without a `name` field, 
+  but they may exist. Please file an issue in [om](https://github.com/pivotal-cf/om/issues/) if a problem occurs.
+  See [om issue](https://github.com/pivotal-cf/om/issues/274) for the original bug report.
+  
+!!! warning
+    URLs for docs will be changing in the next release. Please note that any saved/bookmarked links for specific pages in our documentation may not work in the future.  
+
 ## v0.0.1-rc229
 
 **Release Date:** October 12, 2018
@@ -18,7 +46,7 @@ These are release notes for Platform Automation for PCF.
 ### Breaking Changes
 * `import-installation` no longer takes an `auth.yml`, which used to contain `decryption-passphrase`.
   Now it is required to set the `decryption-passphrase` in the `env.yml` when using the task. See
-  [env file](http://docs-platform-automation.cfapps.io/pcf-automation/alpha/task-reference.html#env)
+  [env file](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#env)
 * `upgrade-opsman` invokes `import-installation` behind the scene, so the breaking change applies to this
   command as well. This mean that `upgrade-opsman` task no longer requires the `auth.yml`, but requires
   `decryption-passphrase` to be in the `env.yml`.
