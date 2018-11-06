@@ -1,11 +1,11 @@
 ---
-title: Platform Automation for PCF Pipeline Reference
+title: Pipeline Reference
 owner: PCF Platform Automation
 ---
 
 ##  Platform Automation for PCF Pipelines
 These Concourse pipelines are examples
-on how to use the [tasks](task-reference.md).
+on how to use the [tasks](task.md).
 
 
 ### Retrieving external dependencies

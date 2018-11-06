@@ -1,0 +1,7 @@
+label.md-nav__link {
+    font-weight: bold;
+}
+
+label.md-nav__title.md-nav__title--site {
+    display: none;
+}

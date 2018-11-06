@@ -6,6 +6,7 @@ repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!
 edit_uri: edit/develop/docs/
 theme:
+  custom_dir: theme
   logo: https://docs.pivotal.io/images/icon-p-green.jpg
   name: material
   favicon: https://docs.pivotal.io/images/favicon.ico
@@ -25,13 +26,27 @@ plugins:
 markdown_extensions:
 - codehilite
 - admonition
+extra_css:
+- assets/custom.css
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
-- Platform Automation for PCF (Unreleased): index.md
-- 'Getting Started: Generating Configs and Inputs': getting-started.md
-- Upgrading PCF using Platform Automation: upgrade.md
-- Using Platform Automation for PCF: using.md
-- Task Reference: task-reference.md
-- Pipeline Reference: pipeline-reference.md
+- Introduction: index.md
 - Release Notes: release-notes.md
+- References:
+  - Tasks: reference/task.md
+  - 'Inputs/Outputs': reference/inputs-outputs.md
+  - Pipeline Reference: reference/pipeline.md
+- Configuration Management:
+  - Configure auth: getting-started.md
+  - Configure a director: getting-started.md
+  - Configure a product: getting-started.md
+  - Configuring env: getting-started.md
+  - Secrets Handling: getting-started.md
+- Pipeline Design:
+  - Externalized Config: index.md
+  - Variables: index.md
+- Upgrading Opsman: upgrade.md
+- Report an Issue: report-an-issue.md
+
+
