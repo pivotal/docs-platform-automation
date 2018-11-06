@@ -101,7 +101,7 @@ This task requires the [state file](#state) generated [create-vm](#create-vm).
 Downloads a product specified in a config file from Pivnet.
 Optionally, also downloads the latest stemcell for that product.
 
-Each downloads are cached, so they are not hitting Pivnet each time.
+Downloads are cached, so they are not hitting Pivnet each time.
 When a file is downloaded, integrity is ensured by using the SHA256 from Pivnet.
 
 Outputs can be persisted to a blobstore,
