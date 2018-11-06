@@ -1,5 +1,5 @@
 to download dependencies:
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 brew install ripgrep 
 
 to build the mkdocs "final_app" (`site` in the mkdocs repo), run `mkdocs build` in the new docs directory
