@@ -38,8 +38,8 @@ which can extract a config file.
 
 {% code_snippet 'pivotal/platform-automation', 'configure-director' %}
 
-!!! warning ""
-     <strong>NOTE:</strong> For GCP, if service account is used, the property associated_service_account has to be set explicitly in the iaas-configuration section. 
+!!! warning
+    For GCP, if service account is used, the property associated_service_account has to be set explicitly in the iaas-configuration section. 
 
 ### configure-product
 Configures an individual, staged product with settings from a config file.
