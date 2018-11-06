@@ -11,9 +11,9 @@ These are release notes for Platform Automation for PCF.
 
 ### Features
 * Documentation engine has been changed to mkdocs. Please give us feedback on the [new documentation](https://docs.pivotal.io/pcf-automation/alpha/index.html)! 
-* [New Task](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#credhub-interpolate) 
+* [New Task](https://docs.pivotal.io/pcf-automation/alpha/task-reference.html#credhub-interpolate) 
   Credhub interpolation is now supported by the tasks
-* [New Task](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#download-product)
+* [New Task](https://docs.pivotal.io/pcf-automation/alpha/task-reference.html#download-product)
   A product can now be downloaded directly from pivnet. This task will also download the latest stemcell available
   for that tile and both will be provided as outputs for following tasks. 
 * `om` and `p-automator` are now fully separate CLIs. `om` is responsible for interacting with Ops Manager, and 
