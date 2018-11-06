@@ -54,8 +54,8 @@ See the task for the [`configure-authentication`](#configure-authentication) for
 
 {% code_snippet 'pivotal/platform-automation', 'auth-configuration' %}
 
-!!! note ""
-     <strong>NOTE:</strong> basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats 
+!!! note
+    basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats 
 
 #### saml authentication
 The configuration for authentication has a dependency on SAML.
@@ -64,8 +64,8 @@ See the task for the [`configure-saml-authentication`](#configure-saml-authentic
 
 {% code_snippet 'pivotal/platform-automation', 'saml-auth-configuration' %}
 
-!!! note ""
-     <strong>NOTE:</strong> saml authentication requires the <a href="#uaa-authentication">uaa env</a> format 
+!!! note
+    saml authentication requires the <a href="#uaa-authentication">uaa env</a> format 
 
 The `saml-configuration` properties configures the SAML provider.
 The [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#setting-up-with-saml) has more information about the values
@@ -221,16 +221,16 @@ The `installation` input for a opsman VM task expects to have a `installation.zi
 This file can be exported from an Ops Manager VM using the [export-installation](#export-installation).
 This file can be imported to an Ops Manager VM using the [import-installation](#import-installation).
 
-!!! warning ""
-     <strong>NOTE:</strong> This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager. 
+!!! warning
+    This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager. 
 
 ### stemcell
 This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Pivnet.
 It must be in the original filename as that is used by Ops Manager to parse metadata.
 The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-go_agent.tgz`.
 
-!!! warning ""
-     <strong>NOTE:</strong> This file cannot be manually created. It is a file that must retrieved from Pivnet. 
+!!! warning
+    This file cannot be manually created. It is a file that must retrieved from Pivnet. 
 
 An example on how to pull the vSphere stemcell using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
 
@@ -285,8 +285,8 @@ jobs:
       globs: ["*cf*.pivotal"]
 ```
 
-!!! warning ""
-     <strong>NOTE:</strong> This file cannot be manually created. It is a file that must retrieved from Pivnet. 
+!!! warning
+    This file cannot be manually created. It is a file that must retrieved from Pivnet. 
 
 ### download-product-config
 The `config` input for a download product task expects to have a `download-config.yml` file

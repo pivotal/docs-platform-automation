@@ -9,16 +9,16 @@ owner: PCF Platform Automation
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation](https://network.pivotal.io/products/platform-automation/)
 
-!!! note ""
-     <strong>Note</strong>: The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start. 
+!!! note
+    The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start. 
 
 * a valid [env file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI. 
 It is used by every task within Platform Automation for PCF
 * a valid [auth file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
-!!! note ""
-     <strong>Note</strong>: There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files. 
+!!! note
+    There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files. 
 
 * a [opsmanager configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Ops Manager VM
@@ -35,8 +35,8 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
    * `Concourse Tasks`
    * `Docker Image for Concourse Tasks`
 
-!!! note ""
-     <strong>Note</strong>: If the pivnet link does not work for you, you might not have access to the product! Please communicate this in the #pcf-automation slack channel until the project is GA 
+!!! note
+    If the pivnet link does not work for you, you might not have access to the product! Please communicate this in the #pcf-automation slack channel until the project is GA 
 
 1. Store the `platform-automation-image-*.tgz` in a blobstore that can be accessed via a Concourse pipeline.
 
@@ -83,8 +83,8 @@ jobs:
 
 Fill in the S3 resource credentials and set the above pipeline on your Concourse instance.
 
-!!! note ""
-     <strong>Note</strong>: The pipeline can use any blobstore. We choose S3 because the resource natively supported by Concourse. S3 resource also supports S3-compatible blobstores (e.g. minio). See <a href="https://github.com/concourse/s3-resource#source-configuration">S3 Resource</a> for more information. If you want to use other blobstore, you need to provide a custom <a href="https://concourse-ci.org/resource-types.html">resource type</a> . 
+!!! note
+    The pipeline can use any blobstore. We choose S3 because the resource natively supported by Concourse. S3 resource also supports S3-compatible blobstores (e.g. minio). See <a href="https://github.com/concourse/s3-resource#source-configuration">S3 Resource</a> for more information. If you want to use other blobstore, you need to provide a custom <a href="https://concourse-ci.org/resource-types.html">resource type</a> . 
 
 ## Generating an Env File
 Almost all [`om`][om] commands require an env file
@@ -144,8 +144,8 @@ Alternatively, you can add the following task to your pipeline to generate and p
 
 {% code_snippet 'pivotal/platform-automation', 'staged-director-config' %}
 
-!!! note ""
-     <strong>Note</strong>: staged-director-config will not be able to grab all sensitive fields in your Ops Manager installation (for example: vcenter_username and vcenter_password if using vsphere). To find these missing fields, please refer to the <a href="https://docs.pivotal.io/pivotalcf/opsman-api/">Ops Manager API Documentation</a> 
+!!! note
+    staged-director-config will not be able to grab all sensitive fields in your Ops Manager installation (for example: vcenter_username and vcenter_password if using vsphere). To find these missing fields, please refer to the <a href="https://docs.pivotal.io/pivotalcf/opsman-api/">Ops Manager API Documentation</a> 
 
 ## Generating Product Configuration
 To generate the configuration for a tile, you will need the following:
