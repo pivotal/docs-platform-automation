@@ -77,28 +77,3 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
     <td><code>apply-changes</code></td>
   </tr>
 </table>
-
-## Integrate Non-Portable Settings
-
-Some PCF product settings,
-such as local machine-specific properties and secure credentials,
-cannot be transferred between different BOSH Directors or PCF product tiles.
-
-The following procedures explain how to account for and apply these settings
-when you use Platform Automation for PCF to configure a tile's portable settings.
-
-### Include Local Parameters
-
-How users need to handle deployment-specific / double-parens properties
-
-### Include Stored Credentials
-
-How users need to handle CredHub (BOSH and runtime) cred's.
-
-## Create a Pipeline
-
-
-### Inject Tasks into a Pipeline
-
-
-### Pipeline Example

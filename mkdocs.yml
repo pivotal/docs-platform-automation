@@ -46,13 +46,13 @@ nav:
   - 'Inputs/Outputs': reference/inputs-outputs.md
   - Pipeline Reference: reference/pipeline.md
 - Configuration Management:
-  - Configure auth: getting-started.md
-  - Configure a director: getting-started.md
-  - Configure a product: getting-started.md
-  - Configuring env: getting-started.md
-  - Secrets Handling: getting-started.md
+  - Configure auth: configure-auth.md
+  - Configure a director: configure-director.md
+  - Configure a product: configure-product.md
+  - Configuring env: configure-env.md
+  - Secrets Handling: secrets-handling.md
 - Pipeline Design:
-  - Externalized Config: index.md
-  - Variables: index.md
+  - Externalized Config: externalized-config.md
+  - Variables: variables.md
 - Upgrading Opsman: upgrade.md
 - Report an Issue: report-an-issue.md
