@@ -21,7 +21,7 @@ extra:
   versions:
     alpha: /pcf-automation/alpha
     unreleased: /pcf-automation/unreleased
-  current_version: alpha
+  current_version: unreleased
 strict: true
 use_directory_urls: false
 plugins:
