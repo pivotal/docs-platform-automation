@@ -16,11 +16,11 @@ theme:
   palette:
     accent: teal
     primary: teal
-#define versions of the product and the unique version URL associated.
+# #define versions of the product and the unique version URL associated.
 extra:
   versions:
-    alpha: /alpha
-    unreleased: /unreleased
+    alpha: /pcf-automation/alpha
+    unreleased: /pcf-automation/unreleased
   current_version: alpha
 strict: true
 use_directory_urls: false

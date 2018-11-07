@@ -37,9 +37,9 @@
               {% block versions %}
               {% for key, value in config.extra.versions.items() %}
                 {% if key == config.extra.current_version %}
-                  <option value="{{ value }}" selected="selected" >{{ key }}</option>
+                  <option value="{{ value }}/{{ page.url }}" selected="selected" >{{ key }}</option>
                 {% else %}
-                  <option value="{{ value }}">{{ key }}</option>
+                  <option value="{{ value }}/{{ page.url }}">{{ key }}</option>
                 {% endif %}
               {% endfor %}
               {% endblock %}
