@@ -39,7 +39,7 @@ which can extract a config file.
 {% code_snippet 'pivotal/platform-automation', 'configure-director' %}
 
 !!! warning
-    For GCP, if service account is used, the property associated_service_account has to be set explicitly in the iaas-configuration section. 
+    For GCP, if service account is used, the property associated_service_account has to be set explicitly in the iaas-configuration section.
 
 ### configure-product
 Configures an individual, staged product with settings from a config file.
@@ -82,7 +82,7 @@ Interpolate credhub entries into configuration files
 
 {% code_snippet 'pivotal/platform-automation', 'credhub-interpolate' %}
 
-This task requires a valid credhub with UAA client and secret. For information on how to 
+This task requires a valid credhub with UAA client and secret. For information on how to
 set this up, see [Getting Started](../getting-started.md#using-your-credhub)
 
 ### delete-installation
