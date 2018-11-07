@@ -2,10 +2,7 @@
 title: Platform Automation for PCF
 owner: PCF Platform Automation
 ---
-<<<<<<< HEAD
-=======
 
->>>>>>> update to left hand nav and content placeholders
 !!! warning
     The Platform Automation for Pivotal Cloud Foundry (PCF) is currently in alpha and is intended for evaluation and test purposes only.
 
