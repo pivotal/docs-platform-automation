@@ -50,7 +50,7 @@ There are two different authentication methods that Ops Manager supports.
 #### basic authentication
 The configuration for authentication has a dependency on username/password.
 This configuration format matches the configuration for setting up authentication.
-See the task for the [`configure-authentication`](#configure-authentication) for details.
+See the task for the [`configure-authentication`][configure-authentication] for details.
 
 {% code_snippet 'pivotal/platform-automation', 'auth-configuration' %}
 
@@ -60,7 +60,7 @@ See the task for the [`configure-authentication`](#configure-authentication) for
 #### saml authentication
 The configuration for authentication has a dependency on SAML.
 This configuration format matches the configuration for setting up authentication.
-See the task for the [`configure-saml-authentication`](#configure-saml-authentication) for details.
+See the task for the [`configure-saml-authentication`][configure-saml-authentication] for details.
 
 {% code_snippet 'pivotal/platform-automation', 'saml-auth-configuration' %}
 
@@ -68,7 +68,7 @@ See the task for the [`configure-saml-authentication`](#configure-saml-authentic
     saml authentication requires the <a href="#uaa-authentication">uaa env</a> format 
 
 The `saml-configuration` properties configures the SAML provider.
-The [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#setting-up-with-saml) has more information about the values
+The [Ops Manager API][opsman-api-saml] has more information about the values
 
 ### opsman config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
@@ -80,25 +80,24 @@ Specific examples for each IaaS are as follows:
 
 #### AWS
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on AWS](https://docs.pivotal.io/pivotalcf/customizing/pcf-aws-manual-config.html)
+[Launching an Ops Manager Director Instance on AWS][pivotalcf-aws]
 
 {% code_snippet 'pivotal/platform-automation', 'aws-configuration' %}
 
 #### Azure
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Azure](https://docs.pivotal.io/pivotalcf/customizing/azure.html)
+[Launching an Ops Manager Director Instance on Azure][pivotalcf-azure]
 
 {% code_snippet 'pivotal/platform-automation', 'azure-configuration' %}
 
-
 #### GCP
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on GCP](https://docs.pivotal.io/pivotalcf/customizing/gcp-om-deploy.html)
+[Launching an Ops Manager Director Instance on GCP][pivotalcf-gcp]
 
 {% code_snippet 'pivotal/platform-automation', 'gcp-configuration' %}
 
 Support for Shared VPC is done via
-[configuring the `vpc_subnet` path](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#creating_an_instance_in_a_shared_subnet)
+[configuring the `vpc_subnet` path][gcp-shared-vpc]
 to include the host project id, region of the subnet, and the subnet name.
 
 For example:
@@ -107,14 +106,13 @@ For example:
 
 #### Openstack
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Openstack](https://docs.pivotal.io/pivotalcf/customizing/openstack-om-config.html)
+[Launching an Ops Manager Director Instance on Openstack][pivotalcf-openstack]
 
 {% code_snippet 'pivotal/platform-automation', 'openstack-configuration' %}
 
-
 #### vSphere
 These required properties are adapted from the instructions outlined in
-[Deploying BOSH and Ops Manager to vSphere](https://docs.pivotal.io/pivotalcf/customizing/deploying-vm.html)
+[Deploying BOSH and Ops Manager to vSphere][pivotalcf-vsphere]
 
 {% code_snippet 'pivotal/platform-automation', 'vsphere-configuration' %}
 
@@ -126,7 +124,7 @@ The configuration of the `director.yml` is IAAS specific for some properties -- 
 
 There are two ways to build a director config.
 
-1. Using an already deployed Ops Manager, you can extract the config using [staged-director-config](#staged-director-config).
+1. Using an already deployed Ops Manager, you can extract the config using [staged-director-config].
 2. Deploying a brand new Ops Manager requires more effort for a `director.yml`.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
@@ -138,15 +136,15 @@ The IAAS specific configuration can be found in the Ops Manager API documentatio
 Included below is a list of properties that can be set in the `director.yml`
 and a link to the API documentation explaining any IAAS specific properties.
 
-* `az-configuration` - a list of availability zones [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-availability-zones-experimental)
-* `iaas-configuration` - configuration for the bosh IAAS CPI [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
-* `network-assignment` - the network the bosh director is deployed to [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-network-and-availability-zone-assignments)
-* `networks-configuration` - a list of named networks [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-networks-experimental)
-* `director-configuration` - properties for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
-* `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#configuring-resources-for-a-job)
-* `security-configuration` - security properties for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
-* `syslog-configuration` - configure the syslog sinks for the bosh director [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-director-and-iaas-properties-experimental)
-* `vmextensions-configuration` - create/update/delete vm extensions [Ops Manager API](http://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-or-creating-a-new-vm-extension)
+* `az-configuration` - a list of availability zones [Ops Manager API][opsman-api-azs]
+* `iaas-configuration` - configuration for the bosh IAAS CPI [Ops Manager API][opsman-api-director-properties]
+* `network-assignment` - the network the bosh director is deployed to [Ops Manager API][opsman-api-network-az-assignment]
+* `networks-configuration` - a list of named networks [Ops Manager API][opsman-api-networks]
+* `director-configuration` - properties for the bosh director [Ops Manager API][opsman-api-director-properties]
+* `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-resource-config]
+* `security-configuration` - security properties for the bosh director [Ops Manager API][opsman-api-director-properties]
+* `syslog-configuration` - configure the syslog sinks for the bosh director [Ops Manager API][opsman-api-director-properties]
+* `vmextensions-configuration` - create/update/delete vm extensions [Ops Manager API][opsman-api-vm-extension]
 
 #### GCP Shared VPC
 
@@ -160,7 +158,7 @@ For example:
 ### product config
 There are two ways to build a product config.
 
-1. Using an already deployed product (tile), you can extract the config using [staged-config](#staged-config).
+1. Using an already deployed product (tile), you can extract the config using [staged-config].
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
   
@@ -293,3 +291,10 @@ The `config` input for a download product task expects to have a `download-confi
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'pivotal/platform-automation', 'download-product-config' %}
+
+[configure-authentication]: task.md#configure-authentication
+[configure-saml-authentication]: task.md#configure-saml-authentication
+[staged-config]: task.md#staged-config
+[staged-director-config]: task.md#staged-director-config
+
+{% include "_external_link_url.md" %}

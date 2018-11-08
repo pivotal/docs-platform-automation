@@ -7,7 +7,7 @@ owner: PCF Platform Automation
 
 * Deployed Concourse
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
-* Pivnet access to [Platform Automation](https://network.pivotal.io/products/platform-automation/)
+* Pivnet access to [Platform Automation][pivnet-platform-automation]
 
 !!! note
     The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start. 
@@ -30,7 +30,7 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
 
 ##  Setup
 
-1. Download the latest version of [Platform Automation](https://network.pivotal.io/products/platform-automation/) from Pivnet.
+1. Download the latest version of [Platform Automation][pivnet-platform-automation] from Pivnet.
    You will need:
    * `Concourse Tasks`
    * `Docker Image for Concourse Tasks`
@@ -196,7 +196,7 @@ opsman-configuration:
     ssh_public_key: ((opsman_ssh_key.public_key))
 ```
 
-4. Configure your pipeline to use the [credhub interpolate](reference/task.md#credhub-interpolate) task.
+4. Configure your pipeline to use the [credhub interpolate] task.
    It takes an input `files`, which should contain your configuration file from (3).
    
    The declaration within a pipeline might look like:
@@ -261,21 +261,5 @@ or we can use the feedback to improve the tasks so they’re a better fit for wh
 If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
-[apply-director-changes]: reference/task.md#apply-director-changes
-[auth file]: ./getting-started.md#generating-an-auth-file
-[configure-authentication]: reference/task.md#configure-authentication
-[configure-director]: reference/task.md#configure-director
-[concourse-documentation]: https://github.com/concourse/s3-resource
-[configure-saml-authentication]: reference/task.md#configure-saml-authentication
-[create-vm]: reference/task.md#create-vm
-[credhub]: https://docs.pivotal.io/pivotalcf/credhub/
-[director configuration]: ./getting-started.md#generating-director-configuration
-[env file]: ./getting-started.md#generating-an-env-file
-[Official PCF Documentation]: https://docs.pivotal.io/pivotalcf/installing/index.html
-[om]: https://github.com/pivotal-cf/om
-[opsmanager configuration]: reference/task.md#opsman-config
-[pivnet]: https://network.pivotal.io
-[product configuration]: ./getting-started.md#generating-product-configuration
-[staged-config]: reference/task.md#staged-config
-[staged-director-config]: reference/task.md#staged-director-config
-[uploaded-and-staged]: reference/task.md#upload-and-stage-product
+{% include "_internal_link_url.md" %}
+{% include "_external_link_url.md" %}

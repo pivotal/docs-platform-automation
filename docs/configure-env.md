@@ -13,3 +13,6 @@ or, if using SAML, a client-id and client-secret.
 While `decryption-passphrase` is nominally optional,
 if you intend to use a single `env.yml` for an entire pipeline,
 it will be necessary to include for use with the `import-installation` step.
+
+{% include "_internal_link_url.md" %}
+{% include "_external_link_url.md" %}

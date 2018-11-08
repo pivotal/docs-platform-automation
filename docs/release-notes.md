@@ -18,7 +18,7 @@ These are release notes for Platform Automation for PCF.
   for that tile and both will be provided as outputs for following tasks.
 * `om` and `p-automator` are now fully separate CLIs. `om` is responsible for interacting with Ops Manager, and
   `p-automator` is responsible for interacting with the IaaS to manage the Ops Manager VM.
-* `public_ssh_key` is now a configurable key for [vsphere]((https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#public_ssh_key)
+* `public_ssh_key` is now a configurable key for [vsphere](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#public_ssh_key)
 * The reference pipeline now has an example to apply changes after an upgrade of Ops Manager.
 
 ### Bug Fixes
