@@ -216,8 +216,8 @@ jobs:
 The file contains the information to restore an Ops Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
 
-This file can be exported from an Ops Manager VM using the [export-installation](#export-installation).
-This file can be imported to an Ops Manager VM using the [import-installation](#import-installation).
+This file can be exported from an Ops Manager VM using the [export-installation][export-installation].
+This file can be imported to an Ops Manager VM using the [import-installation][import-installation].
 
 !!! warning
     This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager. 
@@ -294,6 +294,8 @@ The configuration of the `download-config.yml` looks like this:
 
 [configure-authentication]: task.md#configure-authentication
 [configure-saml-authentication]: task.md#configure-saml-authentication
+[export-installation]: task.md#export-installation
+[import-installation]: task.md#import-installation
 [staged-config]: task.md#staged-config
 [staged-director-config]: task.md#staged-director-config
 

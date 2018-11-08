@@ -75,7 +75,7 @@ Creates an unconfigured Ops Manager VM.
 {% code_snippet 'pivotal/platform-automation', 'create-vm' %}
 
 This task requires a config file specific to the IaaS being deployed to.
-Please see the [configuration](#opsman-config) page for more specific examples.
+Please see the [configuration][opsman-config] page for more specific examples.
 
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
@@ -95,7 +95,7 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 {% code_snippet 'pivotal/platform-automation', 'delete-vm' %}
 
-This task requires the [state file](#state) generated [create-vm](#create-vm).
+This task requires the [state file][state] generated [create-vm](#create-vm).
 
 ### download-product
 Downloads a product specified in a config file from Pivnet.
@@ -108,7 +108,7 @@ Outputs can be persisted to a blobstore,
 or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
-This task requires a [download-product config file](#download-product-config).
+This task requires a [download-product config file][download-product-config].
 
 {% code_snippet 'pivotal/platform-automation', 'download-product' %}
 
@@ -176,3 +176,8 @@ Note that the filename of the stemcell must be exactly as downloaded from Pivnet
 Ops Manager parses this filename to determine the version and OS of the stemcell.
 
 {% code_snippet 'pivotal/platform-automation', 'upload-stemcell' %}
+
+[opsman-config]: ./inputs-outputs.md#opsman-config
+[state]: ./inputs-outputs.md#state
+[download-product-config]: ./inputs-outputs.md#download-product-config
+[gcp]: ./inputs-outputs.md#gcp
