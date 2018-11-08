@@ -180,4 +180,3 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
 [opsman-config]: ./inputs-outputs.md#opsman-config
 [state]: ./inputs-outputs.md#state
 [download-product-config]: ./inputs-outputs.md#download-product-config
-[gcp]: ./inputs-outputs.md#gcp
