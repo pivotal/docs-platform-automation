@@ -21,7 +21,7 @@ and a reference pipeline
 showing one possible configuration of these tasks.
 
 To learn more about Ops Manager,
-see [Understanding the Ops Manager Interface][understanding-opsman].
+see [Understanding the Ops Manager Interface][pivotalcf-understanding-opsman].
 
 ## What is Platform Automation for PCF
 Platform Automation for PCF commands enable PCF operators
@@ -102,7 +102,7 @@ Requirements
 
 * Deployed Concourse
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
-* Pivnet access to [Platform Automation](https://network.pivotal.io/products/platform-automation/)
+* Pivnet access to [Platform Automation][pivnet-platform-automation]
 
 !!! note
     The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start.
@@ -125,7 +125,7 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
 
 Setup
 
-1. Download the latest version of [Platform Automation](https://network.pivotal.io/products/platform-automation/) from Pivnet.
+1. Download the latest version of [Platform Automation][pivnet-platform-automation] from Pivnet.
    You will need:
    * `Concourse Tasks`
    * `Docker Image for Concourse Tasks`
@@ -180,15 +180,6 @@ Fill in the S3 resource credentials and set the above pipeline on your Concourse
 
 !!! note
     The pipeline can use any blobstore. We choose S3 because the resource natively supported by Concourse. S3 resource also supports S3-compatible blobstores (e.g. minio). See <a href="https://github.com/concourse/s3-resource#source-configuration">S3 Resource</a> for more information. If you want to use other blobstore, you need to provide a custom <a href="https://concourse-ci.org/resource-types.html">resource type</a> .
-
-
-
-
-[task-reference]: reference/task.md
-[concourse-task-definition]: https://concourse-ci.org/tasks.html
-[getting-started]: ./getting-started.md
-[om]: https://github.com/pivotal-cf/om
-[understanding-opsman]: http://docs.pivotal.io/pivotalcf/customizing/pcf-interface.html
 
 ## Making Your Own Pipeline
 If the example pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
@@ -279,3 +270,6 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
     <td><code>apply-changes</code></td>
   </tr>
 </table>
+
+{% include "_internal_link_url.md" %}
+{% include "_external_link_url.md" %}

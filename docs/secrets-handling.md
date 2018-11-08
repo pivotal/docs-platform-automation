@@ -14,7 +14,7 @@ opsman-configuration:
     ssh_public_key: ((opsman_ssh_key.public_key))
 ```
 
-4. Configure your pipeline to use the [credhub interpolate](reference/task.md#credhub-interpolate) task.
+4. Configure your pipeline to use the [credhub interpolate] task.
    It takes an input `files`, which should contain your configuration file from (3).
 
    The declaration within a pipeline might look like:
@@ -54,3 +54,6 @@ opsman-configuration:
  azure:
    ssh_public_key: ssh-rsa AAAAB3Nz...
 ```
+
+{% include "_internal_link_url.md" %}
+{% include "_external_link_url.md" %}

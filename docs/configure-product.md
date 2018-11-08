@@ -8,7 +8,7 @@ To generate the configuration for a tile, you will need the following:
       - [configure-director]
       - [apply-director-changes]
 
-1. The tile you wish to have a config file for needs to be [uploaded and staged] in the Ops Manager
+1. The tile you wish to have a config file for needs to be [uploaded and staged][uploaded-and-staged] in the Ops Manager
 environment
 
 1. Configure the tile _manually_ within the Ops Manager UI (Instructions for PAS can be found
@@ -29,3 +29,6 @@ persistent blobstore(i.e. s3, gcs, azure blobstore, etc).
 Alternatively, you can add the following task to your pipeline to generate and persist this for you:
 
 {% code_snippet 'pivotal/platform-automation', 'staged-config' %}
+
+{% include "_internal_link_url.md" %}
+{% include "_external_link_url.md" %}
