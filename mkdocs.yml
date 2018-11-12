@@ -16,12 +16,6 @@ theme:
   palette:
     accent: teal
     primary: teal
-# #define versions of the product and the unique version URL associated.
-extra:
-  versions:
-    alpha: /pcf-automation/alpha
-    unreleased: /pcf-automation/unreleased
-  current_version: unreleased
 strict: true
 use_directory_urls: false
 plugins:
@@ -34,10 +28,8 @@ markdown_extensions:
 - admonition
 extra_css:
 - assets/custom.css
-- https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
-- https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js
 nav:
 - Introduction: index.md
 - Release Notes: release-notes.md
