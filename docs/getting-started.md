@@ -10,7 +10,7 @@ owner: PCF Platform Automation
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
 
 !!! note
-    The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start. 
+    The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Concourse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start. 
 
 * a valid [env file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI. 
 It is used by every task within Platform Automation for PCF
