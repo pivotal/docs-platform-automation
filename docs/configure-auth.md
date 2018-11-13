@@ -18,5 +18,5 @@ They’re all text files, and there are many resource types that can work for th
 we use git repository. As with the tasks and image,
 you’ll need to upload them to a bucket and declare a resource in your pipeline for each file you need.
 
-{% include "_internal_link_url.md" %}
-{% include "_external_link_url.md" %}
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}

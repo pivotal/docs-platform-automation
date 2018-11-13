@@ -261,5 +261,5 @@ or we can use the feedback to improve the tasks so they’re a better fit for wh
 If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
-{% include "_internal_link_url.md" %}
-{% include "_external_link_url.md" %}
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}

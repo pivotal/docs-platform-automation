@@ -11,7 +11,7 @@ This topic describes how to upgrade an Ops Manager using Platform Automation.
 * an initial installation is done, which maintains state 
 
 ##Always export your installation
-{% include "./_export_installation_note.md" %}
+{% include "./.export_installation_note.md" %}
 
 ###Command Requirements
 
@@ -67,5 +67,5 @@ The following tasks can return an error from the IAAS's CLI:
 * Delete the current Ops Manager VM
 * Create a new Ops Manager VM
 
-{% include "_internal_link_url.md" %}
-{% include "_external_link_url.md" %}
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}

@@ -55,5 +55,5 @@ opsman-configuration:
    ssh_public_key: ssh-rsa AAAAB3Nz...
 ```
 
-{% include "_internal_link_url.md" %}
-{% include "_external_link_url.md" %}
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}
