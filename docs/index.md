@@ -271,5 +271,5 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
   </tr>
 </table>
 
-{% include "_internal_link_url.md" %}
-{% include "_external_link_url.md" %}
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}

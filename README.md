@@ -14,9 +14,6 @@ to run the app, run `mkdocs serve` from the same directory
 INFO    -  Building documentation...
 INFO    -  Cleaning site directory
 INFO    -  The following pages exist in the docs directory, but are not included in the "nav" configuration:
-  - _docker-build.md
-  - _export_installation_note.md
-  - style-guide.md
 WARNING -  Documentation file 'task-reference.md' contains a link to 'asdfasdf.html' which is not found in the documentation files.
 
 Exited with 1 warnings in strict mode.

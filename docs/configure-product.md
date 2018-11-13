@@ -30,5 +30,5 @@ Alternatively, you can add the following task to your pipeline to generate and p
 
 {% code_snippet 'pivotal/platform-automation', 'staged-config' %}
 
-{% include "_internal_link_url.md" %}
-{% include "_external_link_url.md" %}
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}

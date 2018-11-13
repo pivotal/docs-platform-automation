@@ -120,7 +120,7 @@ This task is used on a fully installed and healthy Ops Manager to export
 settings to an upgraded version of Ops Manager.
 
 {% code_snippet 'pivotal/platform-automation', 'export-installation' %}
-{% include "./_export_installation_note.md" %}
+{% include "./.export_installation_note.md" %}
 
 ### import-installation
 Imports a previously exported installation to Ops Manager.
