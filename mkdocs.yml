@@ -24,7 +24,8 @@ plugins:
     dependent_sections:
       pivotal/platform-automation: "../platform-automation"
 markdown_extensions:
-- codehilite
+- codehilite:
+    linenums: true
 - admonition
 extra_css:
 - assets/custom.css
