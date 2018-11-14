@@ -45,7 +45,7 @@ nav:
   - Configuring env: configure-env.md
   - Secrets Handling: secrets-handling.md
 - Pipeline Design:
-  - Externalized Config: externalized-config.md
+  - Externalized OpsManager Config: externalized-opsman-config.md
   - Variables: variables.md
 - Upgrading Opsman: upgrade.md
 - Report an Issue: report-an-issue.md
