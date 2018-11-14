@@ -131,6 +131,11 @@ has been deployed, but before the new Ops Manager is configured.
 
 {% code_snippet 'pivotal/platform-automation', 'import-installation' %}
 
+### stage-product
+Staged a product to the Ops Manager specified in the config file.
+
+{% code_snippet 'pivotal/platform-automation', 'stage-product' %}
+
 ### staged-config
 Downloads the configuration for a product from Ops Manager.
 
@@ -168,6 +173,11 @@ For more information about this task and how it works, see the [upgrade](../upgr
 Uploads and stages product to the Ops Manager specified in the config file.
 
 {% code_snippet 'pivotal/platform-automation', 'upload-and-stage-product' %}
+
+### upload-product
+Uploads a product to the Ops Manager specified in the config file.
+
+{% code_snippet 'pivotal/platform-automation', 'upload-product' %}
 
 ### upload-stemcell
 Uploads a stemcell to Ops Manager.
