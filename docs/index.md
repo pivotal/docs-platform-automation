@@ -4,7 +4,8 @@ owner: PCF Platform Automation
 ---
 
 !!! warning
-    The Platform Automation for Pivotal Cloud Foundry (PCF) is currently in alpha and is intended for evaluation and test purposes only.
+    The Platform Automation for Pivotal Cloud Foundry (PCF)
+    is currently in alpha and is intended for evaluation and test purposes only.
 
 Platform Automation for Pivotal Cloud Foundry (PCF)
 is a set of tasks that wrap and extend [om][om],
@@ -79,9 +80,11 @@ Ultimately, the resulting automation is a product of the operator.
 
 Platform Automation for PCF is principally designed
 to help operators create Concourse pipelines that suit their needs.
-This means you’ll need Concourse deployed, and that you’ll need to setup some Concourse resources.
+This means you’ll need Concourse deployed,
+and that you’ll need to setup some Concourse resources.
 
-While Platform Automation for PCF _can_ deploy an Ops Manager VM, it doesn’t _have to_.
+While Platform Automation for PCF _can_ deploy an Ops Manager VM,
+it doesn’t _have to_.
 You can use it to automate an Ops Manager you already have.
 
 There was a beta product from Pivotal called
@@ -92,7 +95,7 @@ we recommend building a replacement pipeline with the new tooling,
 as opposed to trying to modify your existing pipeline to use the new tools.
 Since Platform Automation for PCF can easily take over management of an existing Ops Manager,
 this should be fairly straightforward.
-Still, we may offer more detailed documentation support for this specific workflow in the future,
+Still, we may offer more detailed documentation for this workflow in the future,
 and would like to hear from you if you feel that would be helpful.
 
 Requirements
@@ -102,7 +105,9 @@ Requirements
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
 
 !!! note
-    The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start.
+    Platform Automation for PCF is based on Concourse CI.
+    We recommend that you have some familiarity with Conocurse before getting started.
+    If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start.
 
 * a valid [env file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
 It is used by every task within Platform Automation for PCF
@@ -122,17 +127,22 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
 
 Setup
 
-1. Download the latest version of [Platform Automation][pivnet-platform-automation] from Pivnet.
+1. Download the latest[Platform Automation][pivnet-platform-automation] from Pivnet.
    You will need:
-   * `Concourse Tasks`
-   * `Docker Image for Concourse Tasks`
+ * `Concourse Tasks`
+ * `Docker Image for Concourse Tasks`
 
 !!! note
-    If the pivnet link does not work for you, you might not have access to the product! Please communicate this in the #pcf-automation slack channel until the project is GA
+    If the pivnet link does not work for you,
+    you might not have access to the product!
+    Please communicate this in the #pcf-automation slack channel
+    until the project is GA
 
-1. Store the `platform-automation-image-*.tgz` in a blobstore that can be accessed via a Concourse pipeline.
+1. Store the `platform-automation-image-*.tgz`
+   in a blobstore that can be accessed via a Concourse pipeline.
 
-1. Store the `platform-automation-tasks-*.zip` in a blobstore that can be accessed via a Concourse pipeline.
+1. Store the `platform-automation-tasks-*.zip`
+   in a blobstore that can be accessed via a Concourse pipeline.
 
 1. Next we'll create a test pipeline to see if the assets can be accessed correctly.
    This pipeline runs a test task, which ensures that all the parts work correctly.
@@ -173,10 +183,15 @@ jobs:
     file: platform-automation-tasks-s3/tasks/test.yml
 ```
 
-Fill in the S3 resource credentials and set the above pipeline on your Concourse instance.
+Fill in the S3 resource credentials
+and set the above pipeline on your Concourse instance.
 
 !!! note
-    The pipeline can use any blobstore. We choose S3 because the resource natively supported by Concourse. S3 resource also supports S3-compatible blobstores (e.g. minio). See <a href="https://github.com/concourse/s3-resource#source-configuration">S3 Resource</a> for more information. If you want to use other blobstore, you need to provide a custom <a href="https://concourse-ci.org/resource-types.html">resource type</a> .
+    The pipeline can use any blobstore.
+    We choose S3 because the resource natively supported by Concourse.
+    The S3 Concourse resource also supports S3-compatible blobstores (e.g. minio).
+    See <a href="https://github.com/concourse/s3-resource#source-configuration">S3 Resource</a> for more information.
+    If you want to use other blobstore, you need to provide a custom <a href="https://concourse-ci.org/resource-types.html">resource type</a> .
 
 ## Making Your Own Pipeline
 If the example pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
@@ -195,12 +210,11 @@ or we can use the feedback to improve the tasks so they’re a better fit for wh
 If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
----
-##Ops Manager vs Platform Automation for PCF
+## Ops Manager vs Platform Automation for PCF
 
 Ops Manager manages PCF operations manually. Platform Automation for PCF lets you automate them.
 
-Ops Manager
+### Ops Manager
 
 Ops Manager lets you install and configure PCF and PCF products manually.
 Its UI takes you through the configuration decisions or changes that you need to make in situations such as:
@@ -211,7 +225,7 @@ Its UI takes you through the configuration decisions or changes that you need to
 
 * Running major or minor version upgrades of PCF or PCF products.
 
-Platform Automation for PCF
+### Platform Automation for PCF
 
 You can run Platform Automation for PCF manually from a command line.
 But you can also embed them in scripts and pipelines
@@ -227,7 +241,7 @@ to perform Ops Manager functions when human attention is not needed, such as:
 - Because properties and property names can change between patch versions of a product,
   you can only safely apply configuration settings across product tiles if their versions exactly match.
 
-Ops Comparison
+### Ops Comparison
 
 The following table compares how Ops Manager
 and Platform Automation for PCF might run a typical sequence of PCF operations:
