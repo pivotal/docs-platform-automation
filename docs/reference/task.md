@@ -162,6 +162,12 @@ An example task to ensure the assets and docker image are setup correctly in you
 
 {% code_snippet 'pivotal/platform-automation', 'test' %}
 
+### test-interpolate
+An example task to ensure that all required vars are present when interpolating into a base file.
+For more instruction on this topic, see the [variables](../variables.md) section
+
+{% code_snippet 'pivotal/platform-automation', 'test-interpolate' %}
+
 ### upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
 
