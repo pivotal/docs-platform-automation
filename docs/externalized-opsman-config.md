@@ -20,12 +20,9 @@ High-levelly, an externalized config is a configuration file lives
 outside of OpsManager. Because the configuration file essentially 
 configures OpsManager to a known state, it implies the configuration
 file is the source of truth. And since the file is just a plain-text
-documentation, it can be easily versioned using VCS (e.g. git). For
+documentation, it can be easily versioned using a Version Control System (VCS) like git. For
 multiple foundations, one approach is to promote the entire configuration
 file 
-
-The following is an example configuration file for OpsManager:
-{% code_snippet 'pivotal/platform-automation', 'director-configuration' %}
 
 ## Why using externalized config
 ### Traceability
@@ -45,7 +42,7 @@ files can be centralized and structured to ease the management.
 ### Configuration promotion
 Since the configuration file is the source of truth, if it is tested on
 the sandbox/dev environment, it can be promoted to production environment
-easily. [TODO] section will talk in more detail about how to apply the
+easily. [Promote to another foundation](#promote-to-another-foundation) section will talk in more detail about how to apply the
 configuration file to an foundation.
 
 ## How to use externalized config
@@ -62,6 +59,10 @@ will give you the whole configuration of OpsManager in a single yml file.
 It will look more or less the same as the example above. You can check it
 in to your VCS.
 
+The following is an example configuration file for OpsManager that might return
+after running this command:
+{% code_snippet 'pivotal/platform-automation', 'director-configuration' %}
+
 ### Configure using configuration file
 Now you can modify the settings in the configuration file directly instead of
 operating in the web ui. After you finish editing the file, the configuration
@@ -70,8 +71,7 @@ file will need to apply back to the OpsManager instance. The command
 
 Sample usage:  
 `om --env env.yml configure-director --config director.yml`  
-will configure the OpsManager to the state you specified in the configuration
-file.
+
 
 ### Promote to another foundation
 The configuration file is the exact state of a given foundation, it contains
