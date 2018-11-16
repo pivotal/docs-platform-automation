@@ -83,18 +83,21 @@ These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on AWS][pivotalcf-aws]
 
 {% code_snippet 'pivotal/platform-automation', 'aws-configuration' %}
+{% include '.ip-addresses.md' %}
 
 #### Azure
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][pivotalcf-azure]
 
 {% code_snippet 'pivotal/platform-automation', 'azure-configuration' %}
+{% include '.ip-addresses.md' %}
 
 #### GCP
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP][pivotalcf-gcp]
 
 {% code_snippet 'pivotal/platform-automation', 'gcp-configuration' %}
+{% include '.ip-addresses.md' %}
 
 Support for Shared VPC is done via
 [configuring the `vpc_subnet` path][gcp-shared-vpc]
@@ -109,6 +112,7 @@ These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack][pivotalcf-openstack]
 
 {% code_snippet 'pivotal/platform-automation', 'openstack-configuration' %}
+{% include '.ip-addresses.md' %}
 
 #### vSphere
 These required properties are adapted from the instructions outlined in
