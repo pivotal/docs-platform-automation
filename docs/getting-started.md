@@ -10,7 +10,8 @@ owner: PCF Platform Automation
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
 
 !!! note
-    The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started. If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start. 
+    The Platform Automation for PCF is based on Concourse CI, it is recommended that you have some familiarity with Conocurse before getting started.
+    If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/3-0/guides.html) would be a good place to start. 
 
 * a valid [env file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI. 
 It is used by every task within Platform Automation for PCF
@@ -84,7 +85,10 @@ jobs:
 Fill in the S3 resource credentials and set the above pipeline on your Concourse instance.
 
 !!! note
-    The pipeline can use any blobstore. We choose S3 because the resource natively supported by Concourse. S3 resource also supports S3-compatible blobstores (e.g. minio). See <a href="https://github.com/concourse/s3-resource#source-configuration">S3 Resource</a> for more information. If you want to use other blobstore, you need to provide a custom <a href="https://concourse-ci.org/resource-types.html">resource type</a> . 
+    The pipeline can use any blobstore. We choose S3 because the resource natively supported by Concourse.
+    S3 resource also supports S3-compatible blobstores (e.g. minio).
+    See [S3 Resource](https://github.com/concourse/s3-resource#source-configuration) for more information.
+    If you want to use other blobstore, you need to provide a custom [resource type](https://concourse-ci.org/resource-types.html). 
 
 ## Generating an Env File
 Almost all [`om`][om] commands require an env file
@@ -145,7 +149,9 @@ Alternatively, you can add the following task to your pipeline to generate and p
 {% code_snippet 'pivotal/platform-automation', 'staged-director-config' %}
 
 !!! note
-    staged-director-config will not be able to grab all sensitive fields in your Ops Manager installation (for example: vcenter_username and vcenter_password if using vsphere). To find these missing fields, please refer to the <a href="https://docs.pivotal.io/pivotalcf/opsman-api/">Ops Manager API Documentation</a> 
+    staged-director-config will not be able to grab all sensitive fields in your Ops Manager installation
+    (for example: vcenter_username and vcenter_password if using vsphere).
+    To find these missing fields, please refer to the [Ops Manager API Documentation](https://docs.pivotal.io/pivotalcf/opsman-api/) 
 
 ## Generating Product Configuration
 To generate the configuration for a tile, you will need the following:

@@ -107,7 +107,7 @@ Requirements
 !!! note
     Platform Automation for PCF is based on Concourse CI.
     We recommend that you have some familiarity with Conocurse before getting started.
-    If you are new to Concourse, <a href="https://docs.pivotal.io/p-concourse/3-0/guides.html">Concourse CI Tutorials</a> would be a good place to start.
+    If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/3-0/guides.html) would be a good place to start.
 
 * a valid [env file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
 It is used by every task within Platform Automation for PCF
@@ -190,8 +190,8 @@ and set the above pipeline on your Concourse instance.
     The pipeline can use any blobstore.
     We choose S3 because the resource natively supported by Concourse.
     The S3 Concourse resource also supports S3-compatible blobstores (e.g. minio).
-    See <a href="https://github.com/concourse/s3-resource#source-configuration">S3 Resource</a> for more information.
-    If you want to use other blobstore, you need to provide a custom <a href="https://concourse-ci.org/resource-types.html">resource type</a> .
+    See [S3 Resource](https://github.com/concourse/s3-resource#source-configuration) for more information.
+    If you want to use other blobstore, you need to provide a custom [resource type](https://concourse-ci.org/resource-types.html).
 
 ## Making Your Own Pipeline
 If the example pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
