@@ -79,7 +79,7 @@ jobs:
       unpack: true
   - task: interpolate
     image: pcf-automation-image
-    file: pcf-automation-tasks/test-interpolate.yml
+    file: pcf-automation-tasks/tasks/test-interpolate.yml
     input_mapping:
       config: <the-resource-contain-base-config-file>
       vars: <the-resource-contain-vars-file>
