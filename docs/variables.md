@@ -4,12 +4,12 @@
 Variables provide a way to define parameters for a YAML document. Each variable has a value
 and can be referenced in one or more locations. Variables are used in the Platform Automation
 [tasks][task-reference]. One example usage is in [configure director][configure-director]. A 
-more detailed usage will be in the [How to use Platform Automation variable](#how-to-use-platform-automation-variables) section. 
+more detailed usage is in the [How to use Platform Automation variable](#how-to-use-platform-automation-variables) section. 
 
 ## Why use Platform Automation variables
 It's typically necessary to separate passwords, certificates, S3 bucket names etc. from YAML 
 documents for security or multi-foundation purposes. Even though the structure 
-of a YAML document (manifest) does not change these values are typically different. Variables
+of a YAML document (manifest) does not change, these values are typically different. Variables
 require special syntax in the configuration files which need them. The resulting config file is then a 
 parameterized template for use.
 
@@ -44,7 +44,7 @@ could not execute "interpolate": Expected to find variables: ((missing-value))
 ```
 
 ## Why use variables if already using a secrets manager
-[secrets handling] requires that all parameterized values be included in your secrets manager (i.e. credhub)
+[Secrets handling] requires that all parameterized values be included in your secrets manager (i.e. credhub).
 Because of this, vars files and secrets handling have to be used a little differently. 
 For example, rather than having credhub interpolate directly into a base.yml, credhub could replace the values of
 a vars.yml.
