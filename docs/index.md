@@ -65,6 +65,63 @@ of the inputs, outputs, and arguments used in each step in the workflow.
 
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
+## Compatibility and Dependencies
+
+**External dependencies**
+
+We have tested Platform Automation with these dependencies.
+
+<table>
+<thead>
+    <tr>
+        <th>Platform Automation</th>
+        <th>Concourse</th>
+        <th>OpsManager</th>
+        <th>Pivnet Resource</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>latest version</td>
+        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1+</a></td>
+        <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
+    </tr>
+</tbody>
+</table>
+
+**Docker Image dependencies**
+
+These dependencies are installed on the docker image distributed on Pivnet.
+The IaaS CLIs are used by and tested with `p-automator`,
+and `om` is invoked directly in many tasks.
+
+<table>
+<thead>
+    <tr>
+        <th>p-automator</th>
+        <th>om</th>
+        <th>gcloud</th>
+        <th>az</th>
+        <th>openstack</th>
+        <th>govc</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>latest version</td>
+        <td><a href="https://github.com/pivotal-cf/om">v0.44.0+</a></td>
+        <td><a href="https://cloud.google.com/sdk/gcloud/">v225.0.0</a></td>
+        <td><a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest/">v2.0.50</a></td>
+        <td><a href="https://docs.openstack.org/python-openstackclient/">v3.17.0</a></td>
+        <td><a href="https://github.com/vmware/govmomi/releases">v0.19.0</a></td>
+    </tr>
+</tbody>
+</table>
+
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}
+
 ## Before you begin
 What do I need to understand up front?
 
@@ -127,7 +184,7 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
 
 Setup
 
-1. Download the latest[Platform Automation][pivnet-platform-automation] from Pivnet.
+1. Download the latest [Platform Automation][pivnet-platform-automation] from Pivnet.
    You will need:
  * `Concourse Tasks`
  * `Docker Image for Concourse Tasks`
@@ -193,7 +250,8 @@ and set the above pipeline on your Concourse instance.
     See [S3 Resource](https://github.com/concourse/s3-resource#source-configuration) for more information.
     If you want to use other blobstore, you need to provide a custom [resource type](https://concourse-ci.org/resource-types.html).
 
-## Making Your Own Pipeline
+**Making Your Own Pipeline**
+
 If the example pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
 You know your environment and constraints, and we don’t.
 We recommend you look at the tasks that make up the pipeline,
@@ -214,7 +272,7 @@ and should be able to coexist in a pipeline with tasks from other sources, or cu
 
 Ops Manager manages PCF operations manually. Platform Automation for PCF lets you automate them.
 
-### Ops Manager
+**Ops Manager**
 
 Ops Manager lets you install and configure PCF and PCF products manually.
 Its UI takes you through the configuration decisions or changes that you need to make in situations such as:
@@ -225,7 +283,7 @@ Its UI takes you through the configuration decisions or changes that you need to
 
 * Running major or minor version upgrades of PCF or PCF products.
 
-### Platform Automation for PCF
+**Platform Automation for PCF**
 
 You can run Platform Automation for PCF manually from a command line.
 But you can also embed them in scripts and pipelines
@@ -241,7 +299,7 @@ to perform Ops Manager functions when human attention is not needed, such as:
 - Because properties and property names can change between patch versions of a product,
   you can only safely apply configuration settings across product tiles if their versions exactly match.
 
-### Ops Comparison
+**Ops Comparison**
 
 The following table compares how Ops Manager
 and Platform Automation for PCF might run a typical sequence of PCF operations:
@@ -281,60 +339,3 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
     <td><code>apply-changes</code></td>
   </tr>
 </table>
-
-## Compatibility and Dependencies
-
-### External dependencies
-
-We have tested Platform Automation with these dependencies.
-
-<table>
-<thead>
-    <tr>
-        <th>Platform Automation</th>
-        <th>Concourse</th>
-        <th>OpsManager</th>
-        <th>Pivnet Resource</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-        <td>latest version</td>
-        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
-        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1+</a></td>
-        <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
-    </tr>
-</tbody>
-</table>
-
-### Docker Image dependencies
-
-These dependencies are installed on the docker image distributed on Pivnet.
-The IaaS CLIs are used by and tested with `p-automator`,
-and `om` is invoked directly in many tasks.
-
-<table>
-<thead>
-    <tr>
-        <th>p-automator</th>
-        <th>om</th>
-        <th>gcloud</th>
-        <th>az</th>
-        <th>openstack</th>
-        <th>govc</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-        <td>latest version</td>
-        <td><a href="https://github.com/pivotal-cf/om">v0.44.0+</a></td>
-        <td><a href="https://cloud.google.com/sdk/gcloud/">v225.0.0</a></td>
-        <td><a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest/">v2.0.50</a></td>
-        <td><a href="https://docs.openstack.org/python-openstackclient/">v3.17.0</a></td>
-        <td><a href="https://github.com/vmware/govmomi/releases">v0.19.0</a></td>
-    </tr>
-</tbody>
-</table>
-
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
