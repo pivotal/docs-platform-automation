@@ -25,6 +25,11 @@ with the `--skip-deploy-products`/`-sdp` flag.
 
 {% code_snippet 'pivotal/platform-automation', 'apply-director-changes' %}
 
+### assign-stemcell
+`assign-stemcell` assigns a stemcell to a provided product.
+
+{% code_snippet 'pivotal/platform-automation', 'assign-stemcell' %}
+
 ### configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store.
