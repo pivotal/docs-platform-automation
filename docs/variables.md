@@ -44,7 +44,7 @@ could not execute "interpolate": Expected to find variables: ((missing-value))
 ```
 
 ## Why use variables if already using a secrets manager
-[Secrets handling] requires that all parameterized values be included in your secrets manager (i.e. credhub).
+[secrets handling] requires that all parameterized values be included in your secrets manager (i.e. credhub).
 Because of this, vars files and secrets handling have to be used a little differently. 
 For example, rather than having credhub interpolate directly into a base.yml, credhub could replace the values of
 a vars.yml.
