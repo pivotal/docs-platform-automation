@@ -3,8 +3,7 @@
 ## What are Platform Automation variables?
 Variables provide a way to define parameters for a YAML document. Each variable has a value
 and can be referenced in one or more locations. Variables are used in the Platform Automation
-[tasks][task-reference]. One example usage is in [configure director][configure-director]. A
-more detailed usage is in the [How to use Platform Automation variable](#how-to-use-platform-automation-variables) section.
+[tasks][task-reference]. One example usage is in [configure director][configure-director]. 
 
 ## Why use variables?
 It's typically necessary to separate passwords, certificates, S3 bucket names etc. from YAML
