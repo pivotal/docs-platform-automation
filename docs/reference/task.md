@@ -26,7 +26,8 @@ with the `--skip-deploy-products`/`-sdp` flag.
 {% code_snippet 'pivotal/platform-automation', 'apply-director-changes' %}
 
 ### assign-stemcell
-`assign-stemcell` assigns a stemcell to a provided product.
+`assign-stemcell` assigns a stemcell to a provided product. For more information on how to utilize
+this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
 {% code_snippet 'pivotal/platform-automation', 'assign-stemcell' %}
 

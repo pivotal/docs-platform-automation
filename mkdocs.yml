@@ -49,5 +49,6 @@ nav:
 - Pipeline Design:
   - Externalized OpsManager Config: pipeline-design/externalized-opsman-config.md
   - Variables: pipeline-design/variables.md
+  - Stemcell Handling: pipeline-design/stemcell-handling.md
 - Upgrading Opsman: upgrade.md
 - Report an Issue: report-an-issue.md
