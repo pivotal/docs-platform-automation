@@ -1,7 +1,4 @@
----
-title: Upgrading PCF using Platform Automation
-owner: PCF Platform Automation
----
+
 
 This topic describes how to upgrade an Ops Manager using Platform Automation. It's important to note when upgrading your Ops Manager:
 
