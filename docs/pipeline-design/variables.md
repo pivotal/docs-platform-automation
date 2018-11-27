@@ -62,7 +62,7 @@ foundations. More common shared settings could be included in the `vars_file.yml
 Some Platform Automation tasks have an optional vars input. Using the flow described above, these files can
 be plugged in to the tasks.
 
-An Example [Task](reference/task.md#test-interpolate) has been provided to allow pipeline testing before
+An Example [Task](../reference/task.md#test-interpolate) has been provided to allow pipeline testing before
 installing OpsManager and PCF.
 An example pipeline for this is below:
 
@@ -93,5 +93,7 @@ jobs:
 
 
 
-{% include ".internal_link_url.md" %}
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
 {% include ".external_link_url.md" %}

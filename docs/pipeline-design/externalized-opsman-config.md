@@ -91,5 +91,7 @@ to apply the configuration: `om --env some-other-env.yml configure-director --co
 
 
 
-{% include ".internal_link_url.md" %}
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
 {% include ".external_link_url.md" %}
