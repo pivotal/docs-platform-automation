@@ -31,5 +31,7 @@ Alternatively, you can add the following task to your pipeline to generate and p
     staged-director-config will not be able to grab all sensitive fields in your Ops Manager installation
     (for example: vcenter_username and vcenter_password if using vsphere). To find these missing fields, please refer to the [Ops Manager API Documentation](https://docs.pivotal.io/pivotalcf/opsman-api/)
 
-{% include ".internal_link_url.md" %}
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
 {% include ".external_link_url.md" %}

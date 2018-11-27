@@ -88,7 +88,7 @@ Interpolate credhub entries into configuration files
 {% code_snippet 'pivotal/platform-automation', 'credhub-interpolate' %}
 
 This task requires a valid credhub with UAA client and secret. For information on how to
-set this up, see [Getting Started](../getting-started.md#using-your-credhub)
+set this up, see [Secrets Handling][secrets-handling]
 
 ### delete-installation
 Delete the Ops Manager Installation
@@ -169,7 +169,7 @@ An example task to ensure the assets and docker image are setup correctly in you
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
-For more instruction on this topic, see the [variables](../variables.md) section
+For more instruction on this topic, see the [variables](../pipeline-design/variables.md) section
 
 {% code_snippet 'pivotal/platform-automation', 'test-interpolate' %}
 
@@ -198,6 +198,6 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
 
 {% code_snippet 'pivotal/platform-automation', 'upload-stemcell' %}
 
-[opsman-config]: ./inputs-outputs.md#opsman-config
-[state]: ./inputs-outputs.md#state
-[download-product-config]: ./inputs-outputs.md#download-product-config
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}

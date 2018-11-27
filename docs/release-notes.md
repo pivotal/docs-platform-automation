@@ -78,7 +78,8 @@ These are release notes for Platform Automation for PCF.
 
 ### What's New
 * `create-vm`: Configurable instance type on AWS, see https://aws.amazon.com/ec2/instance-types/ for supported instance types.
-* docker-image: Now shipping with docker image instead of self-service buildpack. See [Getting-Started](getting-started.md)
+* docker-image: Now shipping with docker image instead of self-service buildpack. See [Introduction][introduction]
+* docker-image: Now shipping with docker image instead of self-service buildpack. See [Introduction][introduction]
   about how to use the image. It is based off the `cflinuxfs3` image.
 * `staged-config` includes the errands and vm-extensions of the specified product
 
