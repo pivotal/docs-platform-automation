@@ -20,7 +20,7 @@ These are all documented for each task within the task files themselves.
 Additionally, the minimum compatible version
 of Concourse and Ops Manager
 are part of the API,
-and are specified in [our documentation][external-deps].
+and are specified [below][external-deps].
 
 The following are NOT covered:
 
@@ -60,10 +60,7 @@ Automatic consumption of major versions should be limited
 to test/staging environments
 intended to endure and detect such breakage.
 
-[semver]: https://semver.org
-[external-deps]: index.md#external-dependencies
-
-## External dependencies
+## External Dependencies
 We have tested Platform Automation with these dependencies.
 
 <table>
@@ -85,7 +82,7 @@ We have tested Platform Automation with these dependencies.
 </tbody>
 </table>
 
-## Docker Image dependencies
+## Docker Image Dependencies
 These dependencies are installed on the docker image distributed on Pivnet.
 The IaaS CLIs are used by and tested with `p-automator`,
 and `om` is invoked directly in many tasks.
@@ -115,3 +112,6 @@ and `om` is invoked directly in many tasks.
 
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
+
+[semver]: https://semver.org
+[external-deps]: #external-dependencies
