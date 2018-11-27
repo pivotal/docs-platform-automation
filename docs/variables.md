@@ -18,13 +18,14 @@ file, by using the `((parameterized-value))` syntax, and then defining the `para
 separate variable file.
 For example, to add two variables to a YAML document (base.yml):
 
-```
+```yaml
 s3_access_key_id: ((access_key_id))
 s3_access_secret_key: ((access_secret_key))
 ```
 
 In your vars.yml file, define the parameterized values (vars.yml):
-```
+
+```yaml
 access_key_id: Secret-Access-ID
 access_secret_key: Secret-Access-Key
 ```
@@ -32,7 +33,8 @@ access_secret_key: Secret-Access-Key
 To check the base.yml has the variables definied in vars.yml, you can run:  
 `om interpolate --config base.yml --vars-file vars.yml`  
 If everything works as exepceted, you should see the following output:
-```
+
+```yaml
 s3_access_key_id: Secret-Access-ID
 s3_access_secret_key: Secret-Access-Key
 ```
