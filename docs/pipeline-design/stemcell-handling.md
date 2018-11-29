@@ -33,10 +33,12 @@ Ops Manager. These tasks, in order, are:
    The task will put a config file with two values, `product` and `stemcell` into the `assign-stemcell-config`
    output directory.
 
-2. Run the [upload-product][upload-product] and [upload-stemcell][upload-stemcell] tasks to get the 
+2. Run the [upload-product][upload-product] and [stage-product][stage-product] tasks to get the 
    resources into Ops Manager.
 
-    To upload the stemcell to Ops Manager without associating it with any product, the 
+3. Run the [upload-stemcell][upload-stemcell] task.
+
+To upload the stemcell to Ops Manager without associating it with any product, the 
     [`upload-stemcell`][upload-stemcell] task will need to be executed with the `FLOATING_STEMCELL: false` 
     flag set.
     
@@ -54,7 +56,10 @@ Ops Manager. These tasks, in order, are:
     FLOATING_STEMCELL: false
 ```
 
-3. Run the [stage-product][stage-product] task.
+!!! warning
+    `upload-stemcell` should not be run until after the `stage-product` has completed. When the two tasks are run in the 
+    opposite order, the stemcell will still auto-associate with the product.
+
 
 4. Run the [assign-stemcell][assign-stemcell] task to associate the stemcell with the staged product.
    If using the `download-product` task before doing this within the same job, you must assign the config
