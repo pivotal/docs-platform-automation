@@ -19,8 +19,8 @@ Ops Manager. These tasks, in order, are:
 
 - [download-product][download-product]
 - [upload-product][upload-product]
-- [upload-stemcell][upload-stemcell]
 - [stage-product][stage-product]
+- [upload-stemcell][upload-stemcell]
 - [assign-stemcell][assign-stemcell]
 
 1. `download-product`: 
