@@ -163,6 +163,8 @@ and replaced them all with YAML interpolation `(())` placeholders.
 This is to ensure that credentials are never written to disk.
 The credentials need to be provided from an external configuration when invoking [configure-director](#configure-director).
 
+{% include ".missing_fields_opsman_director.md" %}
+
 ### test
 An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
 

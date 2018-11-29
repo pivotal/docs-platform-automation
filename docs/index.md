@@ -22,10 +22,10 @@ In this introduction we'll cover more about:
 Platform Automation for PCF commands enable PCF operators
 to script and automate Ops Manager actions.
 
-Platform Automation for PCF uses `om`,
+Platform Automation for PCF uses om,
 (and by extension, the Ops Manager API)
-to enable command-line interaction with Ops Manager,
-a dashboard for installing, configuring, and updating software products on PCF.
+to enable command-line interaction with Ops Manager
+(a dashboard for installing, configuring, and updating software products on PCF).
 Platform Automation for PCF comes bundled with Concourse tasks
 that demonstrate how to use these tasks
 in a containerized Continuous Integration (CI) system,
@@ -82,7 +82,7 @@ The [Task Reference][task-reference] topic discusses these example tasks further
 
 ## Ops Manager vs Platform Automation for PCF
 
-Ops Manager manages PCF operations manually. Platform Automation for PCF lets you automate them.
+Ops Manager manages PCF operations manually. Platform Automation for PCF lets you automate the process.
 
 **Ops Manager**
 
@@ -116,7 +116,7 @@ to perform Ops Manager functions when human attention is not needed, such as:
 The following table compares how Ops Manager
 and Platform Automation for PCF might run a typical sequence of PCF operations:
 
-<table id='compare' border="1" class="nice" >
+<table border="1">
   <tr>
     <th></th>
     <th>Ops Manager</th>
@@ -149,6 +149,11 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
     <th>6. Deploy Products</th>
     <td>Click <strong>Apply Changes</strong></td>
     <td><code>apply-changes</code></td>
+  </tr><tr>
+    <th>7. Upgrade</th>
+    <td>Manually export existing Ops Manager settings, power off the VM, then create a new, updated
+    Ops Manager VM</td>
+    <td><code>export-installation</code> then <code>upgrade-opsman</code></td>
   </tr>
 </table>
 
@@ -166,7 +171,7 @@ You'll need the following in order to setup Platform Automation.
 !!! note
     Platform Automation for PCF is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
-    If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/3-0/guides.html) would be a good place to start.
+    If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/guides.html) would be a good place to start.
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
@@ -174,7 +179,7 @@ You'll need the following in order to setup Platform Automation.
 ###Download Platform Automation###
 
 1. Download the latest [Platform Automation][pivnet-platform-automation] from Pivnet.
-   You will need:
+   This includes:
     * `Concourse Tasks`
     * `Docker Image for Concourse Tasks`
 
