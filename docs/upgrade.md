@@ -1,6 +1,8 @@
 
 
-This topic describes how to upgrade an Ops Manager using Platform Automation. It's important to note when upgrading your Ops Manager:
+This topic provides a high level overview of upgrading an Ops Manager using Platform Automation, including command requirements and common version check and IaaS CLI errors.
+
+It's important to note when upgrading your Ops Manager:
 
 * always perform an export installation
 * persist that exported installation
@@ -9,6 +11,15 @@ This topic describes how to upgrade an Ops Manager using Platform Automation. It
 
 ##Always export your installation
 {% include "./.export_installation_note.md" %}
+
+###Upgrade Flowchart
+The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an OpsManager VM.
+This flowchart gives a high level overview of how the task makes decisions for an upgrade.
+
+{% include "./upgrade-flowchart.mmd" %}
+
+On successive invocations of the task, it will offer different behaviour of the previous run.
+This aids in recovering from failures (ie: from an IAAS) that occur.
 
 ###Command Requirements
 
@@ -21,14 +32,8 @@ a previous installation. It requires the following to perform this operations:
 * an [exported installation][installation] from a currently deployed Ops Manager
 * the [auth file][auth file] for a currently deployed Ops Manager
 
-###Upgrading Ops Manager
-The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an OpsManager VM.
-This flowchart gives a high level overview of how the task makes decisions for an upgrade.
-
-{% include "./upgrade-flowchart.mmd" %}
-
-On successive invocations of the task, it will offer different behaviour of the previous run.
-This aids in recovering from failures (ie: from an IAAS) that occur.
+##Troubleshooting
+When you are upgrading your Ops Manager you may get version check or IaaS CLI errors. For information about troubleshooting these errors, see [`Version Check Errors`][version-check-errors] and [`IaaS CLI Errors`][iaas-cli-errors] below.
 
 ###Version Check Errors
 1) <b>Downgrading is not supported by Ops Manager</b> (Manual Intervention Required)
