@@ -54,7 +54,7 @@ Ops Manager. These tasks, in order, are:
     FLOATING_STEMCELL: false
 ```
 
-3. Run the [staged-product][stage-product] task.
+3. Run the [stage-product][stage-product] task.
 
 4. Run the [assign-stemcell][assign-stemcell] task to associate the stemcell with the staged product.
    If using the `download-product` task before doing this within the same job, you must assign the config

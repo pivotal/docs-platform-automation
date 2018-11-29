@@ -55,6 +55,8 @@ file from an existing foundation.
 [om] has a command called [staged-director-config], which is used to extract
 the OpsManager and the BOSH director configuration from the targeted foundation.
 
+{% include ".missing_fields_opsman_director.md" %}
+
 Sample usage:  
 `om --env env.yml staged-director-config > director.yml`  
 will give you the whole configuration of OpsManager in a single yml file.
@@ -85,11 +87,6 @@ ease the process of adapt for another foundation.
 
 After you are satisfied with the configuration change, you can use [om]
 to apply the configuration: `om --env some-other-env.yml configure-director --config adapted-director.yml`
-
-
-
-
-
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
