@@ -55,6 +55,12 @@ opsman-configuration:
    ssh_public_key: ssh-rsa AAAAB3Nz...
 ```
 
+!!! note
+    If using this you need to ensure concourse worker can talk to credhub so depending
+    on how you deployed credhub and/or worker this may or may not be possible.
+    This inverts control that now workers need to access credhub vs
+    default is atc injects secrets and passes them to the worker.
+
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
 {% endwith %}
