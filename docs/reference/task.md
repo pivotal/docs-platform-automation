@@ -33,7 +33,8 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
 ### configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
-See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store.
+See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
+and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
 {% code_snippet 'pivotal/platform-automation', 'configure-authentication' %}
 
@@ -46,6 +47,16 @@ which can extract a config file.
 
 !!! warning
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the iaas-configuration section.
+    
+### configure-ldap-authentication
+Configures Ops Manager with an external LDAP user store and admin user account.
+See [configure-authentication](#configure-authentication) to configure an internal user store,
+and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
+
+{% code_snippet 'pivotal/platform-automation', 'configure-ldap-authentication' %}
+
+For more details on using LDAP,
+please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/opsguide/auth-sso.html#configure-ldap)
 
 ### configure-product
 Configures an individual, staged product with settings from a config file.
@@ -64,7 +75,8 @@ which can stage a product that's been uploaded.
 
 ### configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
-See [configure-authentication](#configure-authentication) to configure an internal user store.
+See [configure-authentication](#configure-authentication) to configure an internal user store,
+and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
 {% code_snippet 'pivotal/platform-automation', 'configure-saml-authentication' %}
 
