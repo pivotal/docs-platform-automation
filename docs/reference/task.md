@@ -149,6 +149,26 @@ has been deployed, but before the new Ops Manager is configured.
 
 {% code_snippet 'pivotal/platform-automation', 'import-installation' %}
 
+### make-git-commit
+Copies a single file into a repo and makes a commit.
+Useful for persisting the state output of tasks that manage the vm, such as:
+
+- [create-vm](#create-vm)
+- [upgrade-opsman](#upgrade-opsman)
+- [delete-vm](#delete-vm)
+
+Also useful for persisting the configuration output from:
+
+- [staged-config](#staged-config)
+- [staged-director-config](#staged-director-config)
+
+!!! note
+    This commits **all changes** present
+    in the repo used for the `repository` input,
+    in addition to copying in a single file.
+
+{% code_snippet 'pivotal/platform-automation', 'make-git-commit' %}
+
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
 
