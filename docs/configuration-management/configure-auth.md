@@ -1,19 +1,16 @@
 ## Generating an Auth File
-These configuration formats match the configuration for setting up authentication.
-See the documentation for the [`configure-authentication`][configure-authentication]
-or [`configure-saml-authentication`][configure-saml-authentication] task for details.
+Ops Manager's authentication system can be configured several ways.
+The format of the configuration file varies
+according to the authentication method to be used.
 
-The configuration for authentication has a dependency on either username/password,
-
+### [configure-authentication]:
 {% code_snippet 'pivotal/platform-automation', 'auth-configuration' %}
 
-SAML configuration information,
-
-{% code_snippet 'pivotal/platform-automation', 'saml-auth-configuration' %}
-
-or LDAP configuration information.
-
+### [configure-ldap-authentication]:
 {% code_snippet 'pivotal/platform-automation', 'ldap-auth-configuration' %}
+
+### [configure-saml-authentication]:
+{% code_snippet 'pivotal/platform-automation', 'saml-auth-configuration' %}
 
 ## Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
