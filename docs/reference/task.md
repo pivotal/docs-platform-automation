@@ -38,6 +38,9 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 
 {% code_snippet 'pivotal/platform-automation', 'configure-authentication' %}
 
+For details on the config file expected in the `config` input,
+please see [Generating an Auth File][generating-an-auth-file].
+
 ### configure-director
 Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
@@ -58,7 +61,8 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
 For more details on using LDAP,
 please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/opsguide/auth-sso.html#configure-ldap).
 
-For details on the config file expected in the `config` input, please see [Generating an Auth File][generating-an-auth-file].
+For details on the config file expected in the `config` input,
+please see [Generating an Auth File][generating-an-auth-file].
 
 ### configure-product
 Configures an individual, staged product with settings from a config file.
@@ -88,6 +92,9 @@ The CLI will require `client-id` and `client-secret` as it cannot do a browser l
 
 For more details on using SAML,
 please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/2-2/opsguide/config-rbac.html#enable-saml)
+
+For details on the config file expected in the `config` input,
+please see [Generating an Auth File][generating-an-auth-file].
 
 ### create-vm
 Creates an unconfigured Ops Manager VM.
