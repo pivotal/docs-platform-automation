@@ -56,7 +56,9 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
 {% code_snippet 'pivotal/platform-automation', 'configure-ldap-authentication' %}
 
 For more details on using LDAP,
-please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/opsguide/auth-sso.html#configure-ldap)
+please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/opsguide/auth-sso.html#configure-ldap).
+
+For details on the config file expected in the `config` input, please see [Generating an Auth File][generating-an-auth-file].
 
 ### configure-product
 Configures an individual, staged product with settings from a config file.
