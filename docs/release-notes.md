@@ -7,41 +7,7 @@ These are release notes for Platform Automation for PCF.
 
 ## v1.0.0-beta.1
 
-**Release Date:** December 5, 2018
-
-### BREAKING
-- Fix: the `staged-config` task had a lamentable typo, which we have now corrected.
-  We had `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS`
-  (note the missing third T in "substitute") when we meant (and now have)
-  `SUBSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS`.
-    
-!!! warning
-    Any uses of `staged-config` in your pipelines will need to be updated
-    if you were using the `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS` param.
-
-- Feature: `configure-product` now fails if your configuration is incomplete.
-  Previously, it would turn green, and you wouldn't learn of incomplete configuration
-  until `apply-changes` failed.
-  If you were intentionally using partial configurations,
-  that won't work anymore.
-  If you'd like to keep doing this,
-  please contact your Pivotal representative
-  and explain what you're trying to accomplish
-  so we can make sure your use case gets covered.
-- Feature: multi-resource group configurations now supported on Azure.
-  The `vpc_network` property has been removed in Azure Ops Manager config,
-  as it can be entirely determined from the `vpc_subnet` property.
-  `vpc_subnet` now requires the resource id instead of its name.
-  The format _must_ now match the following: 
-  `/subscriptions/<MY_SUBSCRIPTION_ID>/resourceGroups/<MY_RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<MY_VNET>/subnets/<MY_SUBNET>`.
-  This matches the terraforming-azure output `management_subnet_id`.
-  This has been reflected in the [opsman.yml](./reference/inputs-outputs.md#azure) for Azure.
-- Feature: if a configuration file for `configure-product` or `upgrade-vm` has a key that is unrecognized,
-  the task will now fail and alert you as to which key is incorrect.
-  As an example, if you accidentally use `product_properties` instead of `product-properties`,
-  the task will now fail.
-
-  
+**Release Date:** December 5, 2018  
 
 ### What's New
 * This product is now [semantically versioned](./compatibility-and-versioning.md#semantic-versioning)!
@@ -74,6 +40,39 @@ These are release notes for Platform Automation for PCF.
   Upload product is now available independently from upload-and-stage-product.
 * [New Task](./reference/task.md#stage-product)
   Stage product is now available independently from upload-and-stage-product.
+  
+### Breaking Changes
+- Fix: the `staged-config` task had a lamentable typo, which we have now corrected.
+  We had `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS`
+  (note the missing third T in "substitute") when we meant (and now have)
+  `SUBSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS`.
+    
+!!! warning
+    Any uses of `staged-config` in your pipelines will need to be updated
+    if you were using the `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS` param.
+
+- Feature: `configure-product` now fails if your configuration is incomplete.
+  Previously, it would turn green, and you wouldn't learn of incomplete configuration
+  until `apply-changes` failed.
+  If you were intentionally using partial configurations,
+  that won't work anymore.
+  If you'd like to keep doing this,
+  please contact your Pivotal representative
+  and explain what you're trying to accomplish
+  so we can make sure your use case gets covered.
+- Feature: multi-resource group configurations now supported on Azure.
+  The `vpc_network` property has been removed in Azure Ops Manager config,
+  as it can be entirely determined from the `vpc_subnet` property.
+  `vpc_subnet` now requires the resource id instead of its name.
+  The format _must_ now match the following: 
+  `/subscriptions/<MY_SUBSCRIPTION_ID>/resourceGroups/<MY_RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<MY_VNET>/subnets/<MY_SUBNET>`.
+  This matches the terraforming-azure output `management_subnet_id`.
+  This has been reflected in the [opsman.yml](./reference/inputs-outputs.md#azure) for Azure.
+- Feature: if a configuration file for `configure-product` or `upgrade-vm` has a key that is unrecognized,
+  the task will now fail and alert you as to which key is incorrect.
+  As an example, if you accidentally use `product_properties` instead of `product-properties`,
+  the task will now fail.
+
 
 ### Bug Fixes
 We fixed several distinct errors around VM state and management
