@@ -44,7 +44,7 @@ These are release notes for Platform Automation for PCF.
   
 
 ### What's New
-* This product is now [semantically versioned](./compatability-and-versioning.md#semantic-versioning)!
+* This product is now [semantically versioned](./compatibility-and-versioning.md#semantic-versioning)!
   We know there are a lot of breaking changes in this release.
   In the future, we'll try and keep that to a minimum - 
   but we'll also communicate the presence of breaking changes
