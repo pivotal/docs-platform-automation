@@ -5,6 +5,105 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+## v1.0.0-beta.1
+
+**Release Date:** December 5, 2018
+
+### BREAKING
+- Fix: the `staged-config` task had a lamentable typo, which we have now corrected.
+  We had `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS`
+  (note the missing third T in "substitute") when we meant (and now have)
+  `SUBSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS`.
+    
+!!! warning
+    Any uses of `staged-config` in your pipelines will need to be updated
+    if you were using the `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS` param.
+
+- Feature: `configure-product` now fails if your configuration is incomplete.
+  Previously, it would turn green, and you wouldn't learn of incomplete configuration
+  until `apply-changes` failed.
+  If you were intentionally using partial configurations,
+  that won't work anymore.
+  If you'd like to keep doing this,
+  please contact your Pivotal representative
+  and explain what you're trying to accomplish
+  so we can make sure your use case gets covered.
+- Feature: multi-resource group configurations now supported on Azure.
+  The `vpc_network` property has been removed in Azure Ops Manager config,
+  as it can be entirely determined from the `vpc_subnet` property.
+  `vpc_subnet` now requires the resource id instead of its name.
+  The format _must_ now match the following: 
+  `/subscriptions/<MY_SUBSCRIPTION_ID>/resourceGroups/<MY_RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<MY_VNET>/subnets/<MY_SUBNET>`.
+  This matches the terraforming-azure output `management_subnet_id`.
+  This has been reflected in the [opsman.yml](./reference/inputs-outputs.md#azure) for Azure.
+- Feature: if a configuration file for `configure-product` or `upgrade-vm` has a key that is unrecognized,
+  the task will now fail and alert you as to which key is incorrect.
+  As an example, if you accidentally use `product_properties` instead of `product-properties`,
+  the task will now fail.
+
+  
+
+### What's New
+* This product is now [semantically versioned](./compatability-and-versioning.md#semantic-versioning)!
+  We know there are a lot of breaking changes in this release.
+  In the future, we'll try and keep that to a minimum - 
+  but we'll also communicate the presence of breaking changes
+  with a major version bump.
+* We've made major improvements and additions to our documentation.
+  If you would like to give us feedback, 
+  open an issue on the github repo.
+* Documentation is now versioned.
+  If you would like to have a sneak peek on what we will be releasing next,
+  check out the `develop` version of the documentation.
+* Feature: tasks that configure the director or stage/configure a product
+  will now fail if Ops Manager is Applying Changes.
+  Previously, they would "succeed,"
+  but when Ops Manager _finished_ Applying Changes,
+  it would wipe out all the changes made by the "successful" tasks,
+  which could lead to green pipelines that didn't _do_ anything.
+  Ops Manager itself will enforce this restriction at some point in the future.
+* [New Task](./reference/task.md#configure-ldap-authentication)
+  LDAP authentication configuration is now supported.
+* [New Task](./reference/task.md#assign-stemcell)
+  This task will support the `floating-stemcell=false` workflow
+  previously supported by `om`. 
+  To see if this workflow is right for you,
+  please reference the [Stemcell Handling](./pipeline-design/stemcell-handling.md)
+  section of the documentation. 
+* [New Task](./reference/task.md#upload-product)
+  Upload product is now available independently from upload-and-stage-product.
+* [New Task](./reference/task.md#stage-product)
+  Stage product is now available independently from upload-and-stage-product.
+
+### Bug Fixes
+We fixed several distinct errors around VM state and management
+based on user feedback. Thanks for the bug reports!
+
+* `upgrade-opsman` used to fail in vsphere
+   when the VM was powered off.
+   Now, it just deletes it and moves on.
+*  we improved the error message on vSphere when the VM specified
+   in the config file cannot be found.
+*  we improved timeouts in the underlying `om` tool.
+   Tasks that previously hung for a half hour by default
+   in the event that the Ops Manager VM was unreachable
+   will now fail in a few seconds, instead.
+* `upgrade-opsman` on GCP used to fail
+  when used on VMs not created by our tooling.
+  It would fail to delete the image it expected
+  as a result of our `create-vm` workflow.
+  This task will now only report the absence of the expected image,
+  and continue with the upgrade process.
+* `delete-vm` would sometimes fail on AWS if the VM was already terminated.
+  AWS cleans up terminated VMs eventually,
+  so we just leave it alone.
+
+
+!!! warning
+    URLs for docs have changed.
+    Please note that any saved/bookmarked links
+    for specific pages in our documentation may no longer work.
+      
 ## v0.0.1-rc248
 
 **Release Date:** November 6, 2018
