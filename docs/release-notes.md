@@ -5,6 +5,20 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+# v1.0.1-beta.1
+
+**Release Date:** December 5, 2018  
+
+### What's New
+None
+
+### Breaking Changes
+None
+
+### Bug Fixes
+* when using the docker image outside of concourse
+  `docker import` will now be supported again
+
 ## v1.0.0-beta.1
 
 **Release Date:** December 5, 2018  
