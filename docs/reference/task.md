@@ -176,6 +176,10 @@ Also useful for persisting the configuration output from:
     in the repo used for the `repository` input,
     in addition to copying in a single file.
 
+!!! note
+    This does not perform a `git push`!
+    You will need to `put` the output of this task to a git resource to persist it.
+
 {% code_snippet 'pivotal/platform-automation', 'make-git-commit' %}
 
 ### stage-product
