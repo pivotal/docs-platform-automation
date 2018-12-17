@@ -5,19 +5,24 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
-# v1.0.1-beta.1
+## v1.0.1-beta.1
 
-**Release Date:** December 5, 2018  
-
-### What's New
-None
-
-### Breaking Changes
-None
+**Release Date** Monday December 17, 2018
 
 ### Bug Fixes
-* when using the docker image outside of concourse
-  `docker import` will now be supported again
+- The ability to use our image with Docker broke in 1.0.0.
+  We had changed the details of how we construct our image,
+  and this was an unintended side-effect.
+  `docker import` works again now. Sorry!
+- There was a new task to make git commits
+  in the previous release, but it wasn't in the release notes.
+  We've gone back and added it.
+- The previously-unnanounced git-commit task didn't work!
+  The git cli wasn't respecting the env vars
+  used to configure author name and email,
+  so we had to change to explicitly configuring it.
+  Maybe it's for the best we didn't announce it.
+  Now, it works.
 
 ## v1.0.0-beta.1
 
@@ -54,6 +59,11 @@ None
   Upload product is now available independently from upload-and-stage-product.
 * [New Task](./reference/task.md#stage-product)
   Stage product is now available independently from upload-and-stage-product.
+* [New Task](./reference/task.md#make-git-commit)
+  The code to make git commits was previously hidden away in our example pipeline.
+  We've extracted it into its own task.
+  This should be useful for persisting state files
+  and downloaded configs with git.
   
 ### Breaking Changes
 - Fix: the `staged-config` task had a lamentable typo, which we have now corrected.
