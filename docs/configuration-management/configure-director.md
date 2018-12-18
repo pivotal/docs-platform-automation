@@ -13,11 +13,7 @@ using the [Official PCF Documentation])
 
 1. Run the following command to get the staged config:
 
-```bash
-docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} pcf-automation-image
-docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
-om --env ${ENV_FILE} staged-director-config --include-placeholders
-```
+{% include ".docker-import-director.md" %}
 
 Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet, and `${ENV_FILE}` is the [env file]
 required for all tasks. The resulting file can then be parameterized, saved, and uploaded to a persistent

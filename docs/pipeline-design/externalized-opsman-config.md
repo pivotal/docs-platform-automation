@@ -1,6 +1,5 @@
 # Externalized OpsManager Config
 
-
 ## Introduction
 Usually, the operator configures the OpsManager through the web UI.
 The targeted OpsManager is considered as the source of truth, meaning
@@ -47,11 +46,11 @@ the sandbox/dev environment, it can be promoted to a production environment
 easily. [Promote to another foundation](#promote-to-another-foundation) section will talk in more detail about how to apply the
 configuration file to an foundation.
 
-## Using externalized configuration
+## Using externalized OpsManager configuration
 To get started with externalized config, you would first extract a configuration
 file from an existing foundation.
 
-### Extract configuration
+### Extract configuration for OpsManager
 [om] has a command called [staged-director-config], which is used to extract
 the OpsManager and the BOSH director configuration from the targeted foundation.
 
