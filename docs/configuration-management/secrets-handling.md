@@ -6,7 +6,7 @@ An example workflow would be storing an SSH key.
 
 1. Authenticate with your credhub instance.
 2. Generate an ssh key: `credhub generate --name="/private-foundation/opsman_ssh_key" --type=ssh`
-3. Create an [opsmanager configuration] file that references the name of the property.
+3. Create an [OpsManager configuration][opsmanager configuration] file that references the name of the property.
 
 ```yaml
 opsman-configuration:
@@ -60,6 +60,16 @@ opsman-configuration:
     on how you deployed credhub and/or worker this may or may not be possible.
     This inverts control that now workers need to access credhub vs
     default is atc injects secrets and passes them to the worker.
+    
+
+## How to Store Values for Multi Foundation with Credhub
+If using credhub in a multi-foundation way, reference the [Externalized Tile Config][externalized-tile-config]
+section for more information.
+
+Stay Tuned for More Information!
+
+
+
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
