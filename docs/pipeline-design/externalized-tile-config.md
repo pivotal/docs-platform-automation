@@ -137,8 +137,8 @@ for fields marked as "secrets", and replace those values with
 `((placeholder_credentials))`.
 
 In order to fully support multiple foundations, however, a bit more work is
-necessary. For each tile that will be shared across foundations, you will have
-to create [ops files][ops-files] to replace the fields unique to the foundations.
+necessary. There are two ways to do this: using [secrets management][multi-foundation-secrets-handling] or ops files. 
+This section will explain how to support multiple foundations using ops files.
 
 Starting with an **incomplete** [PAS][PAS] config from **vSphere** as an example:
 
@@ -163,7 +163,7 @@ Using the example above, let's try filling in the existing placeholder for
 
 To test that the ops file will work in your `base.yml`, this can be done locally using `bosh int`:
 ```bash
- bosh int base.yml -o replace-domain.yml
+ om interpolate -c base.yml -o replace-domain.yml
 ```
 
 This will output `base.yml` with the replaced(interpolated) values:
@@ -172,7 +172,7 @@ This will output `base.yml` with the replaced(interpolated) values:
 
 Anything that needs to be different per deployment can be replaced via ops files as long as the `path:` is correct. 
 
-### Using Ops Files with Secrets Handling
+### Multiple Foundations Using Secrets Handling
 
 #### Credhub
 In the example above, `bosh int` did not replace the ((placeholder_credential)): `((cloud_controller_encrypt_key.secret))`. 
