@@ -163,7 +163,7 @@ Using the example above, let's try filling in the existing placeholder for
 
 To test that the ops file will work in your `base.yml`, this can be done locally using `bosh int`:
 ```bash
- om interpolate -c base.yml -o replace-domain.yml
+ bosh int base.yml -o replace-domain.yml
 ```
 
 This will output `base.yml` with the replaced(interpolated) values:
