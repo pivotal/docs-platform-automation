@@ -47,8 +47,7 @@ nav:
   - Configuring env: configuration-management/configure-env.md
   - Secrets Handling: configuration-management/secrets-handling.md
 - Pipeline Design:
-  - Externalized OpsManager Config: pipeline-design/externalized-opsman-config.md
-  - Externalized Tile Config: pipeline-design/externalized-tile-config.md
+  - Externalized Config: pipeline-design/externalized-configuration.md 
   - Variables: pipeline-design/variables.md
   - Stemcell Handling: pipeline-design/stemcell-handling.md
 - About Upgrading OpsManager: upgrade.md
