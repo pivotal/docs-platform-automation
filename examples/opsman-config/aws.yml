@@ -1,0 +1,18 @@
+# code_snippet aws-configuration start yaml
+---
+opsman-configuration:
+  aws:
+    access_key_id: sample-access-id
+    secret_access_key: sample-secret-access-key
+    region: us-west-2
+    vm_name: ops-manager-vm                           # default: OpsManager-vm
+    boot_disk_size: 100                               # default 200
+    vpc_subnet_id: subnet-0292bc845215c2cbf
+    security_group_id: sg-0354f804ba7c4bc41
+    key_pair_name: ops-manager-key
+    iam_instance_profile_name: ops-manager-iam
+    instance_type: m5.large
+    # At least one IP address (public or private) needs to be assigned to the VM.
+    public_ip: 1.2.3.4
+    private_ip: 10.0.0.2
+# code_snippet aws-configuration end

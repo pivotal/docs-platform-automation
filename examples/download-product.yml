@@ -1,0 +1,8 @@
+# code_snippet download-product-config start yaml
+---
+pivnet-api-token: "token"
+pivnet-file-glob: "*pivotal"
+pivnet-product-slug: "product-slugs"
+product-version: "1.2.3"
+stemcell-iaas: "google"
+# code_snippet download-product-config end

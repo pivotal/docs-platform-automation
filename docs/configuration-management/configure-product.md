@@ -28,7 +28,7 @@ persistent blobstore(i.e. s3, gcs, azure blobstore, etc).
 
 Alternatively, you can add the following task to your pipeline to generate and persist this for you:
 
-{% code_snippet 'pivotal/platform-automation', 'staged-config' %}
+{% code_snippet 'tasks', 'staged-config' %}
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

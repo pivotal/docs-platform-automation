@@ -1,0 +1,13 @@
+# code_snippet ldap-auth-configuration start yaml
+decryption-passphrase: some-passphrase
+server-url: ldap://example.com
+ldap-username: cn=admin,dc=opsmanager,dc=com
+ldap-password: some-password
+user-search-base: ou=users,dc=opsmanager,dc=com
+user-search-filter: cn={0}
+group-search-base: ou=groups,dc=opsmanager,dc=com
+group-search-filter: member={0}
+ldap-rbac-admin-group-name: cn=opsmgradmins,ou=groups,dc=opsmanager,dc=com
+email-attribute: mail
+ldap-referrals: follow
+# code_snippet ldap-auth-configuration end

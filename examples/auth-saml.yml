@@ -1,0 +1,8 @@
+# code_snippet saml-auth-configuration start yaml
+---
+decryption-passphrase: decryption-passphrase
+saml-idp-metadata: https://saml.example.com:8080
+saml-bosh-idp-metadata: https://bosh-saml.example.com:8080
+saml-rbac-admin-group: opsman.full_control
+saml-rbac-groups-attribute: myenterprise
+# code_snippet saml-auth-configuration end

@@ -28,7 +28,7 @@ Ops Manager. These tasks, in order, are:
 
     After running the task, the following snippet of code will run:
 
-{% code_snippet 'pivotal/platform-automation', 'assign-stemcell-support' %}
+{% code_snippet 'tasks', 'assign-stemcell-support' %}
 
    The task will put a config file with two values, `product` and `stemcell` into the `assign-stemcell-config`
    output directory.

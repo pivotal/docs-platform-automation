@@ -13,10 +13,10 @@ The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Ops Manager API.
 
 #### basic authentication
-{% code_snippet 'pivotal/platform-automation', 'env' %}
+{% code_snippet 'examples', 'env' %}
 
 #### uaa authentication
-{% code_snippet 'pivotal/platform-automation', 'env-uaa' %}
+{% code_snippet 'examples', 'env-uaa' %}
 
 
 ##### Getting the `client-id` and `client-secret`
@@ -52,7 +52,7 @@ The configuration for authentication has a dependency on username/password.
 This configuration format matches the configuration for setting up authentication.
 See the task for the [`configure-authentication`][configure-authentication] for details.
 
-{% code_snippet 'pivotal/platform-automation', 'auth-configuration' %}
+{% code_snippet 'examples', 'auth-configuration' %}
 
 !!! note
     basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats 
@@ -62,7 +62,7 @@ The configuration for authentication has a dependency on SAML.
 This configuration format matches the configuration for setting up authentication.
 See the task for the [`configure-saml-authentication`][configure-saml-authentication] for details.
 
-{% code_snippet 'pivotal/platform-automation', 'saml-auth-configuration' %}
+{% code_snippet 'examples', 'saml-auth-configuration' %}
 
 !!! note
     saml authentication requires the <a href="#uaa-authentication">uaa env</a> format 
@@ -82,21 +82,21 @@ Specific examples for each IaaS are as follows:
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on AWS][pivotalcf-aws]
 
-{% code_snippet 'pivotal/platform-automation', 'aws-configuration' %}
+{% code_snippet 'examples', 'aws-configuration' %}
 {% include '.ip-addresses.md' %}
 
 #### Azure
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][pivotalcf-azure]
 
-{% code_snippet 'pivotal/platform-automation', 'azure-configuration' %}
+{% code_snippet 'examples', 'azure-configuration' %}
 {% include '.ip-addresses.md' %}
 
 #### GCP
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP][pivotalcf-gcp]
 
-{% code_snippet 'pivotal/platform-automation', 'gcp-configuration' %}
+{% code_snippet 'examples', 'gcp-configuration' %}
 {% include '.ip-addresses.md' %}
 
 Support for Shared VPC is done via
@@ -111,14 +111,14 @@ For example:
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack][pivotalcf-openstack]
 
-{% code_snippet 'pivotal/platform-automation', 'openstack-configuration' %}
+{% code_snippet 'examples', 'openstack-configuration' %}
 {% include '.ip-addresses.md' %}
 
 #### vSphere
 These required properties are adapted from the instructions outlined in
 [Deploying BOSH and Ops Manager to vSphere][pivotalcf-vsphere]
 
-{% code_snippet 'pivotal/platform-automation', 'vsphere-configuration' %}
+{% code_snippet 'examples', 'vsphere-configuration' %}
 
 ### director config
 The config director will set the bosh tile (director) on Ops Manager.
@@ -133,7 +133,7 @@ There are two ways to build a director config.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
    
-{% code_snippet 'pivotal/platform-automation', 'director-configuration' %}
+{% code_snippet 'examples', 'director-configuration' %}
 
 The IAAS specific configuration can be found in the Ops Manager API documentation.
 
@@ -166,7 +166,7 @@ There are two ways to build a product config.
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
   
-{% code_snippet 'pivotal/platform-automation', 'product-configuration' %}
+{% code_snippet 'examples', 'product-configuration' %}
 
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
@@ -179,7 +179,7 @@ and a link to the API documentation explaining the properties.
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
 
-{% code_snippet 'pivotal/platform-automation', 'state' %}
+{% code_snippet 'examples', 'state' %}
 
 The file contains two properties:
 
@@ -294,7 +294,7 @@ jobs:
 The `config` input for a download product task expects to have a `download-config.yml` file
 The configuration of the `download-config.yml` looks like this:
 
-{% code_snippet 'pivotal/platform-automation', 'download-product-config' %}
+{% code_snippet 'examples', 'download-product-config' %}
 
 [configure-authentication]: task.md#configure-authentication
 [configure-saml-authentication]: task.md#configure-saml-authentication

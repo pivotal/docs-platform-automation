@@ -1,0 +1,63 @@
+# code_snippet product-configuration start yaml
+---
+product-properties:
+  .healthwatch-forwarder.bosh_taskcheck_username:
+    value: admin
+  .healthwatch-forwarder.boshhealth_instance_count:
+    value: 1
+  .healthwatch-forwarder.boshtasks_instance_count:
+    value: 2
+  .healthwatch-forwarder.canary_instance_count:
+    value: 2
+  .healthwatch-forwarder.cli_instance_count:
+    value: 2
+  .healthwatch-forwarder.health_check_az:
+    value: AZ01
+  .healthwatch-forwarder.ingestor_instance_count:
+    value: 4
+  .healthwatch-forwarder.opsman_instance_count:
+    value: 2
+  .healthwatch-forwarder.publish_to_eva:
+    value: true
+  .healthwatch-forwarder.worker_instance_count:
+    value: 4
+  .mysql.skip_name_resolve:
+    value: true
+  .properties.opsman:
+    value: enable
+  .properties.opsman.enable.url:
+    value: https://pcf.example.com/
+network-properties:
+  network:
+    name: DEPLOYMENT
+  other_availability_zones:
+  - name: AZ01
+  - name: AZ02
+  service_network:
+    name: SERVICES
+  singleton_availability_zone:
+    name: AZ01
+resource-config:
+  healthwatch-forwarder:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+  migrate-v1.1-v1.2:
+    instances: automatic
+    instance_type:
+      id: automatic
+  mysql:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+  redis:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+# code_snippet product-configuration end yaml
