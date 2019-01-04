@@ -22,9 +22,11 @@ opsman-configuration:
     # For SharedVPC: projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]
     vpc_subnet: infrastructure-subnet
     tags: ops-manager
-    custom_cpu: 8                         # default:  8
-    custom_memory: 16                     # default: 16
-    boot_disk_size: 100                   # default: 400
+    # This CPU, Memory and disk size demonstrated here
+    # match the defaults, and needn't be included if these are the desired values
+    custom_cpu: 2
+    custom_memory: 8
+    boot_disk_size: 100
     # At least one IP address (public or private) needs to be assigned to the VM.
     public_ip: 1.2.3.4.
     private_ip: 10.0.0.2
