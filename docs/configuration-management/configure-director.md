@@ -21,7 +21,7 @@ blobstore(i.e. s3, gcs, azure blobstore, etc).
 
 Alternatively, you can add the following task to your pipeline to generate and persist this for you:
 
-{% code_snippet 'pivotal/platform-automation', 'staged-director-config' %}
+{% code_snippet 'tasks', 'staged-director-config' %}
 
 {% include ".missing_fields_opsman_director.md" %}
 

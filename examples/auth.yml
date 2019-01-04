@@ -1,0 +1,6 @@
+# code_snippet auth-configuration start yaml
+---
+username: username
+password: password
+decryption-passphrase: decryption-passphrase
+# code_snippet auth-configuration end

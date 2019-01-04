@@ -17,26 +17,26 @@ Use `--help` for more information.
 
 Triggers an install on the Ops Manager described by the auth file.
 
-{% code_snippet 'pivotal/platform-automation', 'apply-changes' %}
+{% code_snippet 'tasks', 'apply-changes' %}
 
 ### apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
 
-{% code_snippet 'pivotal/platform-automation', 'apply-director-changes' %}
+{% code_snippet 'tasks', 'apply-director-changes' %}
 
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product. For more information on how to utilize
 this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
-{% code_snippet 'pivotal/platform-automation', 'assign-stemcell' %}
+{% code_snippet 'tasks', 'assign-stemcell' %}
 
 ### configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
-{% code_snippet 'pivotal/platform-automation', 'configure-authentication' %}
+{% code_snippet 'tasks', 'configure-authentication' %}
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
@@ -46,7 +46,7 @@ Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
 
-{% code_snippet 'pivotal/platform-automation', 'configure-director' %}
+{% code_snippet 'tasks', 'configure-director' %}
 
 !!! warning
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the iaas-configuration section.
@@ -56,7 +56,7 @@ Configures Ops Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
 
-{% code_snippet 'pivotal/platform-automation', 'configure-ldap-authentication' %}
+{% code_snippet 'tasks', 'configure-ldap-authentication' %}
 
 For more details on using LDAP,
 please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/opsguide/auth-sso.html#configure-ldap).
@@ -77,14 +77,14 @@ which can extract a config file,
 and [upload-and-stage-product](#upload-and-stage-product),
 which can stage a product that's been uploaded.
 
-{% code_snippet 'pivotal/platform-automation', 'configure-product' %}
+{% code_snippet 'tasks', 'configure-product' %}
 
 ### configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
-{% code_snippet 'pivotal/platform-automation', 'configure-saml-authentication' %}
+{% code_snippet 'tasks', 'configure-saml-authentication' %}
 
 Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
@@ -99,7 +99,7 @@ please see [Generating an Auth File][generating-an-auth-file].
 ### create-vm
 Creates an unconfigured Ops Manager VM.
 
-{% code_snippet 'pivotal/platform-automation', 'create-vm' %}
+{% code_snippet 'tasks', 'create-vm' %}
 
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration][opsman-config] page for more specific examples.
@@ -107,7 +107,7 @@ Please see the [configuration][opsman-config] page for more specific examples.
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
 
-{% code_snippet 'pivotal/platform-automation', 'credhub-interpolate' %}
+{% code_snippet 'tasks', 'credhub-interpolate' %}
 
 This task requires a valid credhub with UAA client and secret. For information on how to
 set this up, see [Secrets Handling][secrets-handling]
@@ -115,12 +115,12 @@ set this up, see [Secrets Handling][secrets-handling]
 ### delete-installation
 Delete the Ops Manager Installation
 
-{% code_snippet 'pivotal/platform-automation', 'delete-installation' %}
+{% code_snippet 'tasks', 'delete-installation' %}
 
 ### delete-vm
 Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
-{% code_snippet 'pivotal/platform-automation', 'delete-vm' %}
+{% code_snippet 'tasks', 'delete-vm' %}
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
@@ -137,7 +137,7 @@ and [upload-stemcell](#upload-stemcell) tasks.
 
 This task requires a [download-product config file][download-product-config].
 
-{% code_snippet 'pivotal/platform-automation', 'download-product' %}
+{% code_snippet 'tasks', 'download-product' %}
 
 ### export-installation
 Exports an existing Ops Manager to a file.
@@ -146,7 +146,7 @@ This is the first part of the backup/restore and upgrade lifecycle processes.
 This task is used on a fully installed and healthy Ops Manager to export
 settings to an upgraded version of Ops Manager.
 
-{% code_snippet 'pivotal/platform-automation', 'export-installation' %}
+{% code_snippet 'tasks', 'export-installation' %}
 {% include "./.export_installation_note.md" %}
 
 ### import-installation
@@ -156,7 +156,7 @@ This is a part of the backup/restore and upgrade lifecycle processes.
 This task is used after an installation has been exported and a new Ops Manager
 has been deployed, but before the new Ops Manager is configured.
 
-{% code_snippet 'pivotal/platform-automation', 'import-installation' %}
+{% code_snippet 'tasks', 'import-installation' %}
 
 ### make-git-commit
 Copies a single file into a repo and makes a commit.
@@ -180,12 +180,12 @@ Also useful for persisting the configuration output from:
     This does not perform a `git push`!
     You will need to `put` the output of this task to a git resource to persist it.
 
-{% code_snippet 'pivotal/platform-automation', 'make-git-commit' %}
+{% code_snippet 'tasks', 'make-git-commit' %}
 
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
 
-{% code_snippet 'pivotal/platform-automation', 'stage-product' %}
+{% code_snippet 'tasks', 'stage-product' %}
 
 ### staged-config
 Downloads the configuration for a product from Ops Manager.
@@ -195,12 +195,12 @@ built-in [export](https://docs.pivotal.io/pivotalcf/2-1/customizing/backup-resto
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
-{% code_snippet 'pivotal/platform-automation', 'staged-config' %}
+{% code_snippet 'tasks', 'staged-config' %}
 
 ### staged-director-config
 Downloads configuration for the BOSH director from Ops Manager.
 
-{% code_snippet 'pivotal/platform-automation', 'staged-director-config' %}
+{% code_snippet 'tasks', 'staged-director-config' %}
 
 The configuration is exported to the `generated-config` output.
 It does not extract credentials from Ops Manager
@@ -213,30 +213,30 @@ The credentials need to be provided from an external configuration when invoking
 ### test
 An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
 
-{% code_snippet 'pivotal/platform-automation', 'test' %}
+{% code_snippet 'tasks', 'test' %}
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
 For more instruction on this topic, see the [variables](../pipeline-design/variables.md) section
 
-{% code_snippet 'pivotal/platform-automation', 'test-interpolate' %}
+{% code_snippet 'tasks', 'test-interpolate' %}
 
 ### upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
 
-{% code_snippet 'pivotal/platform-automation', 'upgrade-opsman' %}
+{% code_snippet 'tasks', 'upgrade-opsman' %}
 
 For more information about this task and how it works, see the [upgrade](../upgrade.md) page.
 
 ### upload-and-stage-product
 Uploads and stages product to the Ops Manager specified in the config file.
 
-{% code_snippet 'pivotal/platform-automation', 'upload-and-stage-product' %}
+{% code_snippet 'tasks', 'upload-and-stage-product' %}
 
 ### upload-product
 Uploads a product to the Ops Manager specified in the config file.
 
-{% code_snippet 'pivotal/platform-automation', 'upload-product' %}
+{% code_snippet 'tasks', 'upload-product' %}
 
 ### upload-stemcell
 Uploads a stemcell to Ops Manager.
@@ -244,7 +244,7 @@ Uploads a stemcell to Ops Manager.
 Note that the filename of the stemcell must be exactly as downloaded from Pivnet.
 Ops Manager parses this filename to determine the version and OS of the stemcell.
 
-{% code_snippet 'pivotal/platform-automation', 'upload-stemcell' %}
+{% code_snippet 'tasks', 'upload-stemcell' %}
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

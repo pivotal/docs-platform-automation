@@ -22,7 +22,8 @@ plugins:
 - search: {}
 - jinja2:
     dependent_sections:
-      pivotal/platform-automation: "../platform-automation"
+      tasks: "../platform-automation"
+      examples: "./examples"
 markdown_extensions:
 - codehilite:
     linenums: true

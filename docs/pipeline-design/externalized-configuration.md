@@ -86,7 +86,7 @@ in to your VCS.
 
 The following is an example configuration file for OpsManager that might return
 after running this command:
-{% code_snippet 'pivotal/platform-automation', 'director-configuration' %}
+{% code_snippet 'examples', 'director-configuration' %}
 
 ### Configure OpsManager using configuration file
 Now you can modify the settings in the configuration file directly instead of

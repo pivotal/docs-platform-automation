@@ -1,0 +1,191 @@
+# The following line helps maintain current documentation at http://docs.pivotal.io.
+# code_snippet put-resources-pipeline start yaml
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tags: latest-final
+
+resources:
+- name: daily
+  type: time
+  source:
+    interval: 24h
+
+- name: config
+  type: git
+  source:
+    private_key: ((configuration.private_key))
+    uri: ((configuration.uri))
+    branch: master
+    paths: [download-product-configs/*]
+
+- name: healthwatch-product
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: p-healthwatch-(.*).pivotal
+
+- name: healthwatch-stemcell
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: healthwatch-stemcell/bosh-stemcell-(.*)-vsphere.*\.tgz
+
+- name: opsman-product
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: pcf-vsphere-(.*).ova
+
+- name: pas-product
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: cf-(.*).pivotal
+
+- name: pas-stemcell
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: pas-stemcell/bosh-stemcell-(.*)-vsphere.*\.tgz
+
+- name: platform-automation-pivnet
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: platform-automation
+    product_version: 1\.(.*) # pin to major version 1
+    sort_by: semver
+
+- name: platform-automation-tasks
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: platform-automation-tasks-(.*).zip
+
+- name: platform-automation-image
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: platform-automation-image-(.*).tgz
+
+jobs:
+- name: fetch-healthwatch
+  plan:
+  - aggregate:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      passed: [fetch-platform-automation]
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      passed: [fetch-platform-automation]
+      params:
+        unpack: true
+    - get: config
+  - task: download-healthwatch-product-and-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-configs/healthwatch.yml
+    output_mapping: {downloaded-stemcell: healthwatch-stemcell}
+  - aggregate:
+    - put: healthwatch-product
+      params:
+        file: downloaded-product/*.pivotal
+    - put: healthwatch-stemcell
+      params:
+        file: healthwatch-stemcell/*.tgz
+
+- name: fetch-opsman
+  plan:
+  - aggregate:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      passed: [fetch-platform-automation]
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      passed: [fetch-platform-automation]
+      params:
+        unpack: true
+    - get: config
+  - task: download-opsman-image
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-configs/opsman.yml
+  - aggregate:
+    - put: opsman-product
+      params:
+        file: downloaded-product/*
+
+- name: fetch-pas
+  plan:
+  - aggregate:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      passed: [fetch-platform-automation]
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      passed: [fetch-platform-automation]
+      params:
+        unpack: true
+    - get: config
+  - task: download-pas-product-and-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-configs/pas.yml
+    output_mapping: {downloaded-stemcell: pas-stemcell}
+  - aggregate:
+    - put: pas-product
+      params:
+        file: downloaded-product/*.pivotal
+    - put: pas-stemcell
+      params:
+        file: pas-stemcell/*.tgz
+
+- name: fetch-platform-automation
+  # We use the pivnet resource to bootstrap the pipeline,
+  # and because this product is part of the pipeline, not the foundation
+  plan:
+  - get: platform-automation-pivnet
+    trigger: true
+  - aggregate:
+    - put: platform-automation-tasks
+      params:
+        file: platform-automation-pivnet/*tasks*.zip
+    - put: platform-automation-image
+      params:
+        file: platform-automation-pivnet/*image*.tgz
+
+# code_snippet put-resources-pipeline end
+# The previous line helps maintain current documentation at http://docs.pivotal.io.

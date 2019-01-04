@@ -4,13 +4,13 @@ The format of the configuration file varies
 according to the authentication method to be used.
 
 ### [configure-authentication]:
-{% code_snippet 'pivotal/platform-automation', 'auth-configuration' %}
+{% code_snippet 'examples', 'auth-configuration' %}
 
 ### [configure-ldap-authentication]:
-{% code_snippet 'pivotal/platform-automation', 'ldap-auth-configuration' %}
+{% code_snippet 'examples', 'ldap-auth-configuration' %}
 
 ### [configure-saml-authentication]:
-{% code_snippet 'pivotal/platform-automation', 'saml-auth-configuration' %}
+{% code_snippet 'examples', 'saml-auth-configuration' %}
 
 ## Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,
