@@ -60,13 +60,78 @@ opsman-configuration:
     on how you deployed credhub and/or worker this may or may not be possible.
     This inverts control that now workers need to access credhub vs
     default is atc injects secrets and passes them to the worker.
-    
 
-## How to Store Values for Multi Foundation with Credhub
-If using credhub in a multi-foundation way, reference the [Externalized Tile Config][externalized-tile-config]
-section for more information.
 
-Stay Tuned for More Information!
+## Storing values for Multi-foundation 
+### Credhub
+In the example above, `bosh int` did not replace the ((placeholder_credential)): `((cloud_controller_encrypt_key.secret))`.
+For security, values such as secrets and keys should not be saved off in static files (such as an ops file). In order to
+rectify this, you can use a secret management tool, such as Credhub, to sub in the necessary values to the deployment
+manifest.  
+
+Let's assume basic knowledge and understanding of the
+[`credhub-interpolate`][credhub interpolate] task described in the [Secrets Handling][secrets handling] section
+of the documentation.
+
+For multiple foundations, [`credhub-interpolate`][credhub interpolate] will work the same, but `PREFIX` param will
+differ per foundation. This will allow you to keep your `base.yml` the same for each foundation with the same
+((placeholder_credential)) reference. Each foundation will require a separate [`credhub-interpolate`][credhub interpolate]
+task call with a unique prefix to fill out the missing pieces of the template.
+
+### Vars Files
+Alternatively, vars files can be used for your secrets handling.
+
+Take the same example from above:
+
+{% include ".cf-partial-config.md" %}
+
+In our first foundation, we have the following `vars.yml`, optional for the [`configure-product`][configure-product] task.
+```yaml
+# vars.yml
+cloud_controller_encrypt_key.secret: super-secret-encryption-key
+```
+
+The `vars.yml` could then be passed to [`configure-product`][configure-product] with `base.yml` as the config file.
+The task will then sub the `((cloud_controller_encrypt_key.secret))` specified in `vars.yml` and configure the product as normal.
+
+An example of how this might look in a pipeline(resources not listed):
+```yaml
+jobs:
+- name: configure-product
+  plan:
+  - aggregate:
+    - get: pcf-automation-image
+      params:
+        unpack: true
+    - get: pcf-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+    - get: variable
+  - task: configure-product
+    image: pcf-automation-image
+    file: pcf-automation-tasks/tasks/configure-product.yml
+    input_mapping:
+      config: configuration
+      env: configuration
+      vars: variable
+    params:
+      CONFIG_FILE: base.yml
+      VARS_FILES: vars.yml
+      ENV_FILE: env.yml
+```
+
+
+
+
+
+
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
+{% include ".external_link_url.md" %}
+
+
 
 
 
