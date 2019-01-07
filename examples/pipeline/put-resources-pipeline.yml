@@ -19,7 +19,8 @@ resources:
     private_key: ((configuration.private_key))
     uri: ((configuration.uri))
     branch: master
-    paths: [download-product-configs/*]
+    submodules: all
+    depth: 1
 
 - name: healthwatch-product
   type: s3
@@ -99,14 +100,25 @@ jobs:
     - get: daily
       trigger: true
     - get: platform-automation-image
-      passed: [fetch-platform-automation]
       params:
         unpack: true
     - get: platform-automation-tasks
-      passed: [fetch-platform-automation]
       params:
         unpack: true
     - get: config
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    params:
+      CREDHUB_CLIENT: ((credhub-client))
+      CREDHUB_SECRET: ((credhub-secret))
+      CREDHUB_SERVER: ((credhub-server))
+      PREFIX: '/pipeline/vsphere'
+      INTERPOLATION_PATH: "download-product-configs"
+    input_mapping:
+      files: config
+    output_mapping:
+      interpolated-files: config
   - task: download-healthwatch-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
@@ -127,14 +139,25 @@ jobs:
     - get: daily
       trigger: true
     - get: platform-automation-image
-      passed: [fetch-platform-automation]
       params:
         unpack: true
     - get: platform-automation-tasks
-      passed: [fetch-platform-automation]
       params:
         unpack: true
     - get: config
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    params:
+      CREDHUB_CLIENT: ((credhub-client))
+      CREDHUB_SECRET: ((credhub-secret))
+      CREDHUB_SERVER: ((credhub-server))
+      PREFIX: '/pipeline/vsphere'
+      INTERPOLATION_PATH: "download-product-configs"
+    input_mapping:
+      files: config
+    output_mapping:
+      interpolated-files: config
   - task: download-opsman-image
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
@@ -151,14 +174,25 @@ jobs:
     - get: daily
       trigger: true
     - get: platform-automation-image
-      passed: [fetch-platform-automation]
       params:
         unpack: true
     - get: platform-automation-tasks
-      passed: [fetch-platform-automation]
       params:
         unpack: true
     - get: config
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    params:
+      CREDHUB_CLIENT: ((credhub-client))
+      CREDHUB_SECRET: ((credhub-secret))
+      CREDHUB_SERVER: ((credhub-server))
+      PREFIX: '/pipeline/vsphere'
+      INTERPOLATION_PATH: "download-product-configs"
+    input_mapping:
+      files: config
+    output_mapping:
+      interpolated-files: config
   - task: download-pas-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
@@ -186,6 +220,5 @@ jobs:
     - put: platform-automation-image
       params:
         file: platform-automation-pivnet/*image*.tgz
-
 # code_snippet put-resources-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.
