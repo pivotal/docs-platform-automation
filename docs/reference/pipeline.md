@@ -70,3 +70,8 @@ Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline](#retrieving-external-dependencies).
 
 {% code_snippet 'examples', 'pipeline' %}
+
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
+{% include ".external_link_url.md" %}
