@@ -63,6 +63,21 @@ retrieve task dependencies.
 
 {% code_snippet 'examples', 'put-resources-pipeline' %}
 
+This pipeline requires configuration for the [download-product](task.md#download-product) task.
+Below are examples that can be used.
+
+``` yaml tab="Healthwatch"
+{% include './examples/download-product-configs/healthwatch.yml' %}
+```
+
+``` yaml tab="PAS"
+{% include './examples/download-product-configs/pas.yml' %}
+```
+
+``` yaml tab="OpsMan"
+{% include './examples/download-product-configs/opsman.yml' %}
+```
+
 ## Installing Ops Manager and tiles
 
 The pipeline shows how compose the tasks to install Ops Manager and the PCF and Healthwatch tiles.

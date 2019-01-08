@@ -23,12 +23,13 @@ plugins:
 - jinja2:
     dependent_sections:
       tasks: "../platform-automation"
-      examples: "./examples"
+      examples: "./docs/examples"
 markdown_extensions:
 - codehilite:
     linenums: true
 - sane_lists
 - admonition
+- pymdownx.superfences
 extra_css:
 - assets/custom.css
 extra_javascript:
