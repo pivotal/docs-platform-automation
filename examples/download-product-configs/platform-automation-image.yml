@@ -1,5 +1,0 @@
----
-pivnet-api-token: ((pivnet-token))
-pivnet-file-glob: "platform-automation-image*tgz"
-pivnet-product-slug: platform-automation
-product-version: 1.0.0-beta.1
