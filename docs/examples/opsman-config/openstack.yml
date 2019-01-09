@@ -10,8 +10,12 @@ opsman-configuration:
     key_pair_name: opsman-keypair
     security_group_name: opsman-sec-group
     vm_name: ops-manager-vm      # default: OpsManager-vm
-    flavor: m1.xlarge            # default: m1.xlarge
     # At least one IP address (public or private) needs to be assigned to the VM.
     public_ip: 1.2.3.4
     private_ip: 10.0.0.3
+    flavor: m1.xlarge            # default: m1.xlarge
+    project_domain_name: default
+    identity_api_version: 3 # default: 2
+    insecure: true # default: false
+    availability_zone: zone-01
 # code_snippet openstack-configuration end
