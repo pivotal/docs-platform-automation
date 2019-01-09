@@ -3,6 +3,7 @@
 pivnet-api-token: "token"
 pivnet-file-glob: "*pivotal"
 pivnet-product-slug: "product-slugs"
-product-version: "1.2.3"
+# product-version: "1.2.3" # use either product-version OR product-version-regex
+product-version-regex: "^1\.2\..*$"
 stemcell-iaas: "google"
 # code_snippet download-product-config end
