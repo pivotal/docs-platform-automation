@@ -5,6 +5,32 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+## v1.1.0-beta.1
+
+**Release Date** Monday January 9, 2018
+
+### What's New
+- the [`bosh-cli`](https://bosh.io/docs/cli-v2/) is now included in the docker image.
+- Large files now have retry logic in `om` to help prevent timeouts during upload.
+- Azure now has support for unmanaged disks. By default, `p-automator` will use
+  managed disks. To use an unmanaged disk, set `use_unmanaged_disk` to `true` in
+  your [`opsman.yml`](./reference/inputs-outputs.md#azure)
+- The reference pipeline now includes an example of how to use credhub interpolate
+- GCP defaults have been changed to match Pivotal 
+  [recommendations](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/deploy-manual.html#start-vm)
+- The following params were added as optional arguments to the [OpenStack 
+  opsman configuration](./reference/inputs-outputs.md#openstack): `project_domain_name`,
+  `identity_api_version`,`insecure`,`availability_zone`
+- [Download Product](./reference/inputs-outputs.md#download-product-config) will now 
+  accept a regex for the product version
+
+
+### Bug Fixes
+- The `staged-config` task had another typo that made
+  `SUSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS` unusable.
+  This has been corrected
+- `staged-config` is now able to work with runtime-configs (e.g. NSX-T plugin)
+  
 ## v1.0.1-beta.1
 
 **Release Date** Monday December 17, 2018
