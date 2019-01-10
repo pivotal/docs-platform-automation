@@ -5,6 +5,18 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+## TBD
+
+**Release Date** TBD
+
+### What's New
+
+
+### Bug Fixes
+- [`import-installation`](./reference/task.md#import-installation) was not able to connect
+  Ops Manager when an installation had a custom SSL cert. This has been fixed, and the 
+  command will now retry. 
+
 ## v1.1.0-beta.1
 
 **Release Date** Monday January 9, 2018
