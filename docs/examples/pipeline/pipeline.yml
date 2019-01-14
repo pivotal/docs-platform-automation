@@ -1,6 +1,5 @@
 # The following line helps maintain current documentation at http://docs.pivotal.io.
 # code_snippet pipeline start yaml
-
 resources:
   - name: pcf-automation-tasks
     type: s3
@@ -27,7 +26,7 @@ resources:
       secret_access_key: ((s3.secret_access_key))
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.installation))
-      versioned_file: installation.zip
+      regexp: installation-(.*).zip
 
   - name: opsman-image
     type: s3
@@ -75,7 +74,6 @@ resources:
       regexp: p-healthwatch-(.*).pivotal
 
   # configurations
-
   - name: configuration
     type: git
     source:
@@ -91,7 +89,6 @@ resources:
       branch: master
 
   # triggers used to have jobs do something in a timely manner
-
   - name: one-time-trigger
     type: time
     source:
@@ -218,9 +215,10 @@ jobs:
           env: configuration
         params:
           ENV_FILE: ((foundation))/env/env.yml
+          INSTALLATION_FILE: installation-$timestamp.zip
       - put: installation
         params:
-          file: installation/installation.zip
+          file: installation/installation*.zip
 
   - name: upgrade-opsman
     serial: true
@@ -474,6 +472,5 @@ jobs:
         params:
           PRODUCT_NAME: p-healthwatch
           ENV_FILE: ((foundation))/env/env.yml
-
 # code_snippet pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.
