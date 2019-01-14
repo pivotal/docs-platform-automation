@@ -182,12 +182,6 @@ Also useful for persisting the configuration output from:
 
 {% code_snippet 'tasks', 'make-git-commit' %}
 
-### prepend-timestamp
-Prepend a timestamp to the input file so they can be stored in a non-versioned blobstore using regex.
-The format of the timestamp is `YearMonthDate.HourMinute.Second`, so they can be semver sorted.
-
-{% code_snippet 'tasks', 'prepend-timestamp' %}
-
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
 
