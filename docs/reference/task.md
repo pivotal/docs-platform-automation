@@ -146,6 +146,16 @@ This is the first part of the backup/restore and upgrade lifecycle processes.
 This task is used on a fully installed and healthy Ops Manager to export
 settings to an upgraded version of Ops Manager.
 
+To use with non-versioned blobstore, you can override `INSTALLATION_FILE` param
+to include `$timestamp`, then the generated installation file will include a sortable
+timestamp in the filename.
+
+example:
+```yaml
+params:
+  INSTALLATION_FILE: installation-$timestamp.zip
+```
+
 {% code_snippet 'tasks', 'export-installation' %}
 {% include "./.export_installation_note.md" %}
 
