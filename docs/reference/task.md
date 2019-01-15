@@ -156,6 +156,11 @@ params:
   INSTALLATION_FILE: installation-$timestamp.zip
 ```
 
+!!! note
+    The timestamp is generated using the time on concourse worker.
+    If the time is different on different workers, the generated timestamp may fail to sort correctly.
+    Changing the time or timezone on workers might interfere with ordering.
+
 {% code_snippet 'tasks', 'export-installation' %}
 {% include "./.export_installation_note.md" %}
 
