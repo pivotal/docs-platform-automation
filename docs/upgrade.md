@@ -9,10 +9,10 @@ It's important to note when upgrading your Ops Manager:
 * installation is separate from upgrade
 * an initial installation is done, which maintains state
 
-##Always export your installation
+## Always export your installation
 {% include "./.export_installation_note.md" %}
 
-###Upgrade Flowchart
+### Upgrade Flowchart
 The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an OpsManager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
@@ -21,7 +21,7 @@ This flowchart gives a high level overview of how the task makes decisions for a
 On successive invocations of the task, it will offer different behaviour of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
 
-###Command Requirements
+### Command Requirements
 
 The [`upgrade-opsman`][upgrade-opsman] task will delete the previous VM, create a new VM, and import
 a previous installation. It requires the following to perform this operations:
@@ -32,10 +32,10 @@ a previous installation. It requires the following to perform this operations:
 * an [exported installation][installation] from a currently deployed Ops Manager
 * the [auth file][auth file] for a currently deployed Ops Manager
 
-##Troubleshooting
+## Troubleshooting
 When you are upgrading your Ops Manager you may get version check or IaaS CLI errors. For information about troubleshooting these errors, see [`Version Check Errors`][version-check-errors] and [`IaaS CLI Errors`][iaas-cli-errors] below.
 
-###Version Check Errors
+### Version Check Errors
 1) <b>Downgrading is not supported by Ops Manager</b> (Manual Intervention Required)
 
 * Ops Manager does not support downgrading to a lower version.
@@ -56,7 +56,7 @@ Account Settings. Then, you will need to update the following two files with the
 created, and will run the [`create-vm`][create-vm] and
 [`import-installation`][import-installation] tasks.
 
-###IAAS CLI Errors
+### IAAS CLI Errors
 
 1) When the CLI for a supported IAAS fails for any reason (i.e., bad network, outage, etc) we treat this as
 an IAAS CLI error. The following tasks can return an error from the IAAS's CLI: [`delete-vm`][delete-vm], [`create-vm`][create-vm]

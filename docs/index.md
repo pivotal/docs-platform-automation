@@ -158,11 +158,11 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
 </table>
 
 
-##Downloading and Testing Platform Automation##
+## Downloading and Testing Platform Automation
 
 The following describes the procedure for downloading, installing and testing the setup of Platform Automation.
 
-###Prerequisites###
+### Prerequisites
 
 You'll need the following in order to setup Platform Automation.
 
@@ -176,7 +176,7 @@ You'll need the following in order to setup Platform Automation.
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
 
-###Download Platform Automation###
+### Download Platform Automation
 
 1. Download the latest [Platform Automation][pivnet-platform-automation] from Pivnet.
    This includes:
@@ -195,7 +195,7 @@ You'll need the following in order to setup Platform Automation.
 3. Store the `platform-automation-tasks-*.zip`
    in a blobstore that can be accessed via a Concourse pipeline.
 
-###Testing Platform Automation Setup###
+### Testing Platform Automation Setup
 
 Next we'll create a test pipeline to see if the assets can be accessed correctly.
    This pipeline runs a test task, which ensures that all the parts work correctly.
@@ -243,5 +243,54 @@ jobs:
     image: platform-automation-image-s3
     file: platform-automation-tasks-s3/tasks/test.yml
 ```
+
+## Executing Commands Locally with Docker
+If you wish to use the underlying `om` and `p-automator` CLI tools from your local workstation,
+we recommend using docker to execute commands.
+
+With `p-automator` in particular, using Docker is necessary,
+as the IaaS CLIs upon which we depend can be tricky to install.
+With `om` it's more a matter of convenience -
+you can just as easily download the binary if it's available for your system.
+
+To execute commands in docker, first import the image:
+
+```bash
+docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} pcf-automation-image
+```
+
+Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
+
+Then, you can use `docker run` to pass it arbitrary commands.
+Here, we're running the `p-automator` CLI to see what commands are available:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+p-automator -h
+```
+
+Note that this will have access read and write files in your current working directory.
+If you need to mount other directories as well, you can add additional `-v` arguments.
+
+There are a couple of `om` commands useful enough to document here for convenience.
+It can be very useful to pull configuration for the director and tiles locally.
+Run the following command to get the staged config for a product:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+om --env ${ENV_FILE} staged-config --product-name ${PRODUCT_SLUG} --include-placeholders
+```
+
+`${ENV_FILE}` is the [env file] required for all tasks.
+`${PRODUCT_SLUG}` is the name of the product downloaded from [pivnet].
+The resulting file can then be parameterized, saved, and committed to a config repo.
+
+Here's the command to get the director configuration:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+om --env ${ENV_FILE} staged-director-config --include-placeholders
+```
+
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
