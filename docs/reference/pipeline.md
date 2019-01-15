@@ -7,7 +7,7 @@ owner: PCF Platform Automation
 These Concourse pipelines are examples
 on how to use the [tasks](task.md).
 
-###Making Your Own Pipeline###
+### Making Your Own Pipeline
 
 If the reference pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
 You know your environment and constraints, and we don’t.
@@ -25,7 +25,7 @@ or we can use the feedback to improve the tasks so they’re a better fit for wh
 If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
-###Prerequisites###
+### Prerequisites
 
 * Deployed Concourse
 
