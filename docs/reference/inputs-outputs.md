@@ -141,13 +141,14 @@ Included below is a list of properties that can be set in the `director.yml`
 and a link to the API documentation explaining any IAAS specific properties.
 
 * `az-configuration` - a list of availability zones [Ops Manager API][opsman-api-azs]
-* `iaas-configuration` - configuration for the bosh IAAS CPI [Ops Manager API][opsman-api-director-properties]
 * `network-assignment` - the network the bosh director is deployed to [Ops Manager API][opsman-api-network-az-assignment]
 * `networks-configuration` - a list of named networks [Ops Manager API][opsman-api-networks]
-* `director-configuration` - properties for the bosh director [Ops Manager API][opsman-api-director-properties]
+* `properties-configuration`
+    * `iaas_configuration` - configuration for the bosh IAAS CPI [Ops Manager API][opsman-api-director-properties]
+    * `director_configuration` - properties for the bosh director [Ops Manager API][opsman-api-director-properties]
+    * `security_configuration` - security properties for the bosh director [Ops Manager API][opsman-api-director-properties]
+    * `syslog_configuration` - configure the syslog sinks for the bosh director [Ops Manager API][opsman-api-director-properties]
 * `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-resource-config]
-* `security-configuration` - security properties for the bosh director [Ops Manager API][opsman-api-director-properties]
-* `syslog-configuration` - configure the syslog sinks for the bosh director [Ops Manager API][opsman-api-director-properties]
 * `vmextensions-configuration` - create/update/delete vm extensions [Ops Manager API][opsman-api-vm-extension]
 
 #### GCP Shared VPC

@@ -6,11 +6,22 @@ az-configuration:
     resource_pool: resource-pool-name
   name: AZ01
 
-iaas-configuration:
-  vcenter_host: vcenter.example.com
-  vcenter_password: admin
-  vcenter_username: password
-  ......
+properties-configuration:
+  iaas_configuration:
+    vcenter_host: vcenter.example.com
+    vcenter_password: admin
+    vcenter_username: password
+    ......
+  director_configuration:
+    blobstore_type: local
+    bosh_recreate_on_next_deploy: false
+    custom_ssh_banner: null
+    ......
+  security_configuration:
+    generate_vm_passwords: true
+    trusted_certificates:
+  syslog_configuration:
+    enabled: false
 
 network-assignment:
   network:
@@ -25,23 +36,10 @@ networks-configuration:
   - name: NETWORK-NAME
   ......
 
-director-configuration:
-  blobstore_type: local
-  bosh_recreate_on_next_deploy: false
-  custom_ssh_banner: null
-  ......
-
 resource-configuration:
   compilation:
     instance_type:
       id: automatic
     instances: automatic
   ......
-
-security-configuration:
-  generate_vm_passwords: true
-  trusted_certificates:
-
-syslog-configuration:
-  enabled: false
 # code_snippet director-configuration end
