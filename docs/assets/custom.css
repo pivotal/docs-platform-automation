@@ -61,3 +61,7 @@ label.md-nav__link {
 .md-typeset table:not([class]) {
   font-size: 16px
 }
+
+.codehilitetable {
+  overflow: visible;
+}
