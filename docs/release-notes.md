@@ -5,11 +5,14 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
-## TBD
+## v2.0.0-beta.1
 
 **Release Date** TBD
 
 ### What's New
+- **Breaking** [`configure-director`](./reference/task.md#configure-director) uses a new configuration definition.
+  The new format can be found in [inputs](./reference/inputs-outputs.md#director-config). Difference between old and
+  new format can be found [here](https://github.com/pivotal-cf/om/releases/tag/0.50.0)
 
 
 ### Bug Fixes
