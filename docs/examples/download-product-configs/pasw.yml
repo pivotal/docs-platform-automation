@@ -3,4 +3,3 @@ pivnet-api-token: ((pivnet-token))
 pivnet-file-glob: "*.pivotal"
 pivnet-product-slug: pas-windows
 product-version: 2.4.1
-stemcell-iaas: gcp
