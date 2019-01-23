@@ -161,6 +161,7 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
 The task does specific CLI commands for the deletion of the Ops Manager VM and resources on each IAAS.
+
 * AWS 
     1. Deletes the VM
 * Azure
