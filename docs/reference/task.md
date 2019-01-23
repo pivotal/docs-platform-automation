@@ -11,7 +11,7 @@ The tasks are presented, in their entirety,
 as they are found in the product.
 
 The docker image can be used to invoke the commands in each task locally.
-Use `--help` for more information. To learn more see the [Running Commands Locally][running commands locally] section. 
+Use `--help` for more information. To learn more see the [Running Commands Locally][running commands locally] section.
 
 ### apply-changes
 
@@ -104,41 +104,46 @@ Creates an unconfigured Ops Manager VM.
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration][opsman-config] page for more specific examples.
 
-The task does specific CLI commands for the creation of the Ops Manager VM on each IAAS.
+The task does specific CLI commands for the creation of the Ops Manager VM on each IAAS. See below for more information:
 
-* AWS 
-    1. It requires the image YAML file from Pivnet.
-    1. Validates the existence of the VM if defined in the statefile, if so do nothing
-    1. Chooses the correct ami to use based on the provided image YAML file from Pivnet.
-    1. Creates the vm configured via opsman config and the image YAML. This only attaches existing infrastructure to 
-       a newly createdVM. This does not create any new resources.
-    1. The public IP address, if provided, is assigned after successful creation.
-* Azure
-    1. It requires the image YAML file from Pivnet.
-    1. Validates the existence of the VM if defined in the statefile, if so do nothing
-    1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account.
-    1. Creates the OpsManager image 
-    1. Creates a VM from the image. This will use unmanaged disk (if specified), and assign a public and/or private IP.
-       This only attaches existing infrastructure to a newly createdVM. This does not create any new resources.
-* GCP
-    1. It requires the image YAML file from Pivnet.
-    1. Validates the existence of the VM if defined in the statefile, if so do nothing
-    1. Creates a compute image based on the region specific Ops Manager source URI in the specified Ops Manager account.
-    1. Creates a VM from the image. This will assign a public and/or private IP address, VM sizing, and tags. 
-       This does not create any new resources.
-* Openstack
-    1. It requires the image YAML file from Pivnet.
-    1. Validates the existence of the VM if defined in the statefile, if so do nothing
-    1. Recreates the image in openstack if it already exists to validate we are using the correct version of the image
-    1. Creates a VM from the image. This does not create any new resources.
-    1. The public IP address, if provided, is assigned after successful creation.
-* Vsphere
-    1. It requires the image YAML file from Pivnet.
-    1. Validates the existence of the VM if defined in the statefile, if so do nothing
-    1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is 
-       stored on the generated path. If folder is not provided, the vm will be placed in the datacenter.
-    1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources.
-           
+**AWS**
+
+1. Requires the image YAML file from Pivnet
+2. Validates the existence of the VM if defined in the statefile, if so do nothing
+3. Chooses the correct ami to use based on the provided image YAML file from Pivnet
+4. Creates the vm configured via opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
+5. The public IP address, if provided, is assigned after successful creation
+
+**Azure**
+
+1. Requires the image YAML file from Pivnet
+1. Validates the existence of the VM if defined in the statefile, if so do nothing
+1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account
+1. Creates the OpsManager image
+1. Creates a VM from the image. This will use unmanaged disk (if specified), and assign a public and/or private IP. This only attaches existing infrastructure to a newly createdVM. This does not create any new resources.
+
+**GCP**
+
+1. Requires the image YAML file from Pivnet
+1. Validates the existence of the VM if defined in the statefile, if so do nothing
+1. Creates a compute image based on the region specific Ops Manager source URI in the specified Ops Manager account
+1. Creates a VM from the image. This will assign a public and/or private IP address, VM sizing, and tags. This does not create any new resources.
+
+**Openstack**
+
+1. Requires the image YAML file from Pivnet
+1. Validates the existence of the VM if defined in the statefile, if so do nothing
+1. Recreates the image in openstack if it already exists to validate we are using the correct version of the image
+1. Creates a VM from the image. This does not create any new resources
+1. The public IP address, if provided, is assigned after successful creation
+
+**Vsphere**
+
+1. Requires the OVA image from Pivnet
+1. Validates the existence of the VM if defined in the statefile, if so do nothing
+1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is stored on the generated path. If folder is not provided, the vm will be placed in the datacenter.
+1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources
+
 
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
@@ -160,23 +165,32 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
-The task does specific CLI commands for the deletion of the Ops Manager VM and resources on each IAAS.
+The task does specific CLI commands for the deletion of the Ops Manager VM and resources on each IAAS. See below for more information:
 
-* AWS 
-    1. Deletes the VM
-* Azure
-    1. Deletes the VM
-    1. Attempts to delete the associated disk
-    1. Attempts to delete the associated nic
-    1. Attempts to delete the associated image
-* GCP
-    1. Deletes the VM
-    1. Attempts to delete the associated image
-* Openstack
-    1. Deletes the VM
-    1. Attempts to delete the associated image
-* Vsphere
-    1. Deletes the VM
+**AWS**
+
+1. Deletes the VM
+
+**Azure**
+
+1. Deletes the VM
+1. Attempts to delete the associated disk
+1. Attempts to delete the associated nic
+1. Attempts to delete the associated image
+
+**GCP**
+
+1. Deletes the VM
+1. Attempts to delete the associated image
+
+**Openstack**
+
+1. Deletes the VM
+1. Attempts to delete the associated image
+
+**Vsphere**
+
+1. Deletes the VM
 
 ### download-product
 Downloads a product specified in a config file from Pivnet.
