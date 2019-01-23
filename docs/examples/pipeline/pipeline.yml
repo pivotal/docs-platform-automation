@@ -55,6 +55,24 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       regexp: cf-(.*).pivotal
 
+  - name: pas-windows-product
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      bucket: ((s3.buckets.pivnet_products))
+      region_name: ((s3.region_name))
+      secret_access_key: ((s3.secret_access_key))
+      regexp: pas-windows-(.*).pivotal
+
+  - name: pas-windows-stemcell
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      bucket: ((s3.buckets.pivnet_products))
+      region_name: ((s3.region_name))
+      secret_access_key: ((s3.secret_access_key))
+      regexp: pas-windows-stemcell/bosh-stemcell-(.*)-vsphere.*\.tgz
+
   - name: healthwatch-stemcell
     type: s3
     source:
@@ -322,7 +340,67 @@ jobs:
           VARS_FILES: vars/((foundation))/vars/cf-vars.yml
           ENV_FILE: ((foundation))/env/env.yml
 
-  - name: upload-stemcell
+  - name: upload-and-stage-pas-windows
+    serial: true
+    plan:
+      - aggregate:
+          - get: pcf-automation-image
+            params:
+              unpack: true
+            passed:
+              - upgrade-opsman
+            trigger: true
+          - get: pcf-automation-tasks
+            params:
+              unpack: true
+          - get: pas-windows-product
+          - get: configuration
+          - get: variable
+      - task: upload-product
+        image: pcf-automation-image
+        file: pcf-automation-tasks/tasks/upload-product.yml
+        input_mapping:
+          product: pas-windows-product
+          env: configuration
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: stage-product
+        image: pcf-automation-image
+        file: pcf-automation-tasks/tasks/stage-product.yml
+        input_mapping:
+          product: pas-windows-product
+          env: configuration
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: configure-pas-windows
+    serial: true
+    plan:
+      - aggregate:
+          - get: pcf-automation-image
+            params:
+              unpack: true
+            passed:
+              - upload-and-stage-pas-windows
+            trigger: true
+          - get: pcf-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: configure-pas
+        image: pcf-automation-image
+        file: pcf-automation-tasks/tasks/configure-product.yml
+        input_mapping:
+          config: configuration
+          env: configuration
+          vars: variable
+        params:
+          CONFIG_FILE: ((foundation))/config/cf-windows.yml
+          VARS_FILES: vars/((foundation))/vars/cf-vars.yml
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: upload-stemcells
     serial: true
     plan:
       - aggregate:
@@ -337,6 +415,8 @@ jobs:
               unpack: true
           - get: pas-stemcell
             trigger: true
+          - get: pas-windows-stemcell
+            trigger: true
           - get: healthwatch-stemcell
             trigger: true
           - get: configuration
@@ -347,6 +427,14 @@ jobs:
         input_mapping:
           env: configuration
           stemcell: pas-stemcell
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: upload-pas-windows-stemcell
+        image: pcf-automation-image
+        file: pcf-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: configuration
+          stemcell: pas-windows-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
       - task: upload-healthwatch-stemcell
@@ -365,8 +453,6 @@ jobs:
           - get: pcf-automation-image
             params:
               unpack: true
-            passed:
-              - upload-stemcell
             trigger: true
           - get: pcf-automation-tasks
             params:
@@ -419,6 +505,7 @@ jobs:
             passed:
               - configure-healthwatch
               - configure-pas
+              - configure-pas-windows
             trigger: true
           - get: pcf-automation-tasks
             params:
