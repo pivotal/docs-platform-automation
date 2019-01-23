@@ -42,6 +42,7 @@ nav:
   - Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md
   - Pipeline Reference: reference/pipeline.md
+  - Running Commands Locally: reference/running-commands-locally.md
 - Configuration Management:
   - Configure Auth: configuration-management/configure-auth.md
   - Creating a Director Config File: configuration-management/creating-a-director-config-file.md

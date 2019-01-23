@@ -4,74 +4,46 @@ owner: PCF Platform Automation
 ---
 
 !!! warning
-    The Platform Automation for Pivotal Cloud Foundry (PCF)
-    is currently in beta and is intended for evaluation and test purposes only.
+    Platform Automation for Pivotal Cloud Foundry (PCF)
+    is currently in beta. For questions and/or to report an issue please contact your primary Pivotal contact. See release notes for latest information regarding new features and any breaking changes. 
 
-Platform Automation for Pivotal Cloud Foundry (PCF) commands enable PCF operators
-to script and automate Ops Manager actions.
-Platform Automation for PCF is a set of tasks that wrap and extend [om][om],
-a command-line interface to Ops Manager.
+ Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations.
 
-In this introduction we'll cover more about:
+In this introduction we'll cover:
 
-* What Platform Automation is
-* How it compares with Ops Manager
-* Show how to download and test the setup of Platform Automation  
+* About Platform Automation
+* Platform Automation and Ops Manager
+* How to download and test the setup of Platform Automation  
 
-## What is Platform Automation for PCF
-Platform Automation for PCF commands enable PCF operators
-to script and automate Ops Manager actions.
+## About Platform Automation for PCF
 
-Platform Automation for PCF uses om,
+* Platform Automation for PCF uses [om][om],
 (and by extension, the Ops Manager API)
 to enable command-line interaction with Ops Manager
-(a dashboard for installing, configuring, and updating software products on PCF).
-Platform Automation for PCF comes bundled with Concourse tasks
+([Understanding the Ops Manager Interface][pivotalcf-understanding-opsman])
+* Platform Automation for PCF includes a documented reference pipeline
+showing one possible configuration to use tasks
+* Platform Automation for PCF comes bundled with Concourse [tasks][concourse-task-definition]
 that demonstrate how to use these tasks
-in a containerized Continuous Integration (CI) system,
-and a reference pipeline
-showing one possible configuration of these tasks.
+in a containerized Continuous Integration (CI) system. Platform Automation for PCF tasks are:
 
-To learn more about Ops Manager,
-see [Understanding the Ops Manager Interface][pivotalcf-understanding-opsman].
+    * Legible: They use
+human-readable YAML files which can be edited and managed
 
-Platform Automation for PCF commands are:
+    * Modular: Each task has defined inputs and outputs
+that perform granular actions
 
-* **Legible**: They use configuration from
-human-readable YAML files,
-which users can edit,
-and manage in version control.
+    * Built for Automation: Tasks are idempotent,
+so re-running them in a CI won't break builds
 
-* **Modular**: Each command has defined inputs and outputs
-and performs a granular action.
-They're designed to work together
-to enable many different workflows.
-Users can build systems to make changes to all their products together,
-or one at a time.
-Users can extract configuration from one environment
-and use it as a template for configuring many more.
-
-* **Built for Automation** Commands are idempotent,
-so re-running them in a CI won't break builds.
-They read and write config from files,
-which machines can easily pass around.
-They're available in a Docker container,
-which makes the tools easy to use in CI.
-
-* **Not Comprehensive**: Workflows that use Platform Automation for PCF
-typically also contain `om` commands, custom tasks,
+    * Not Comprehensive: Workflows that use Platform Automation for PCF
+may also contain `om` commands, custom tasks,
 and even interactions with the Ops Manager user interface.
 Platform Automation for PCF is a set of tools to use alongside other tools,
 rather than a comprehensive solution.
 
-Platform Automation for PCF comes bundled with Concourse [tasks][concourse-task-definition].
-These task files wrap one or two Platform Automation for PCF commands
-and their input and output definitions
-in the YAML format that Concourse uses to build pipelines.
-If you use a different CI/CD platform, you can use these Concourse files as examples
-of the inputs, outputs, and arguments used in each step in the workflow.
-
 The [Task Reference][task-reference] topic discusses these example tasks further.
+
 
 !!! Info
     If your current pipeline is based on PCF Pipelines,
@@ -80,38 +52,7 @@ The [Task Reference][task-reference] topic discusses these example tasks further
     Since Platform Automation for PCF can easily take over management of an existing Ops Manager,
     this should be fairly straightforward.
 
-## Ops Manager vs Platform Automation for PCF
-
-Ops Manager manages PCF operations manually. Platform Automation for PCF lets you automate the process.
-
-**Ops Manager**
-
-Ops Manager lets you install and configure PCF and PCF products manually.
-Its UI takes you through the configuration decisions or changes that you need to make in situations such as:
-
-* Installing PCF for the first time.
-
-* Changing product configurations as a result of human decisions.
-
-* Running major or minor version upgrades of PCF or PCF products.
-
-**Platform Automation for PCF**
-
-You can run Platform Automation for PCF manually from a command line.
-But you can also embed them in scripts and pipelines
-to perform Ops Manager functions when human attention is not needed, such as:
-
-* Upgrading products to new patch versions.
-  - Configuration settings should not differ between successive patch versions within the same minor version line.
-    Underlying properties or property names may change,
-    but the tile's upgrade process automatically translates properties to the new fields and values.
-  - Pivotal cannot guarantee the functionality of upgrade scripts in third-party PCF product tiles.
-
-* Replicating configuration settings from one product tile to the same product tile on a different foundation.
-- Because properties and property names can change between patch versions of a product,
-  you can only safely apply configuration settings across product tiles if their versions exactly match.
-
-**Ops Comparison**
+## Ops Manager and Platform Automation for PCF
 
 The following table compares how Ops Manager
 and Platform Automation for PCF might run a typical sequence of PCF operations:
@@ -244,53 +185,6 @@ jobs:
     file: platform-automation-tasks-s3/tasks/test.yml
 ```
 
-## Executing Commands Locally with Docker
-If you wish to use the underlying `om` and `p-automator` CLI tools from your local workstation,
-we recommend using docker to execute commands.
-
-With `p-automator` in particular, using Docker is necessary,
-as the IaaS CLIs upon which we depend can be tricky to install.
-With `om` it's more a matter of convenience -
-you can just as easily download the binary if it's available for your system.
-
-To execute commands in docker, first import the image:
-
-```bash
-docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} pcf-automation-image
-```
-
-Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
-
-Then, you can use `docker run` to pass it arbitrary commands.
-Here, we're running the `p-automator` CLI to see what commands are available:
-
-```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
-p-automator -h
-```
-
-Note that this will have access read and write files in your current working directory.
-If you need to mount other directories as well, you can add additional `-v` arguments.
-
-There are a couple of `om` commands useful enough to document here for convenience.
-It can be very useful to pull configuration for the director and tiles locally.
-Run the following command to get the staged config for a product:
-
-```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
-om --env ${ENV_FILE} staged-config --product-name ${PRODUCT_SLUG} --include-placeholders
-```
-
-`${ENV_FILE}` is the [env file] required for all tasks.
-`${PRODUCT_SLUG}` is the name of the product downloaded from [pivnet].
-The resulting file can then be parameterized, saved, and committed to a config repo.
-
-Here's the command to get the director configuration:
-
-```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
-om --env ${ENV_FILE} staged-director-config --include-placeholders
-```
 
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
