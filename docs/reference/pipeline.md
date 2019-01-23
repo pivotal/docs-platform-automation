@@ -5,7 +5,8 @@ owner: PCF Platform Automation
 
 ##  Platform Automation for PCF Pipelines
 These Concourse pipelines are examples
-on how to use the [tasks](task.md).
+on how to use the [tasks](task.md). If you use a different CI/CD platform, you can use these Concourse files as examples
+of the inputs, outputs, and arguments used in each step in the workflow.
 
 ### Making Your Own Pipeline
 

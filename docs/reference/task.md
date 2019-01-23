@@ -10,8 +10,8 @@ and provides information about their intentions, inputs, and outputs.
 The tasks are presented, in their entirety,
 as they are found in the product.
 
-The docker image can be used to invoke the tasks in each task locally.
-Use `--help` for more information.
+The docker image can be used to invoke the commands in each task locally.
+Use `--help` for more information. To learn more see the [Running Commands Locally][running commands locally] section. 
 
 ### apply-changes
 
@@ -50,7 +50,7 @@ which can extract a config file.
 
 !!! warning
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
-    
+
 ### configure-ldap-authentication
 Configures Ops Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
