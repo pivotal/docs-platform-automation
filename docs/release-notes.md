@@ -9,11 +9,15 @@ These are release notes for Platform Automation for PCF.
 
 **Release Date** TBD
 
-### What's New
-- **Breaking** [`configure-director`](./reference/task.md#configure-director) uses a new configuration definition.
+### Breaking Changes
+- [`configure-director`](./reference/task.md#configure-director) uses a new configuration definition.
   The new format can be found in [inputs](./reference/inputs-outputs.md#director-config). Difference between old and
   new format can be found [here](https://github.com/pivotal-cf/om/releases/tag/0.50.0)
 
+### What's New
+- [`upgrade-opsman`](./reference/task.md#upgrade-opsman) has added more comprehensive validation around the required 
+  installation file. The task will now require that the installation provided match the expected exported installation
+  format internally.
 
 ### Bug Fixes
 - [`import-installation`](./reference/task.md#import-installation) was not able to connect
