@@ -124,18 +124,6 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
-### download-pasw
-Downloads the PAS windows tile. The task will run winfs-injector automatically,
-so the output is the patched PAS windows tile.
-
-The inputs is the same as [download-product](#download-product)
-
-!!! warning
-    Only use this task for downloading PAS windows. Downloading other
-    tiles/products will generate an error due to running winfs-injector
-
-{% code_snippet 'tasks', 'download-pasw' %}
-
 ### download-product
 Downloads a product specified in a config file from Pivnet.
 Optionally, also downloads the latest stemcell for that product.
