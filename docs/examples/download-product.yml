@@ -1,9 +1,17 @@
 # code_snippet download-product-config start yaml
 ---
-pivnet-api-token: "token"
-pivnet-file-glob: "*pivotal"
-pivnet-product-slug: "product-slugs"
-# product-version: "1.2.3" # use either product-version OR product-version-regex
-product-version-regex: "^1\.2\..*$"
-stemcell-iaas: "google"
+pivnet-api-token: token
+## Note that file globs must be quoted if they start with *;
+## otherwise they'll be interpreted as a YAML anchor.
+pivnet-file-glob: "*.pivotal"
+pivnet-product-slug: product-slugs
+
+## Either product-version OR product-version-regex is required
+# product-version: 1.2.3
+
+## Note that the regex mustn't be quoted,
+## as escape characters for the regex will confuse yaml parsers.
+# product-version-regex: ^1\.2\..*$
+
+stemcell-iaas: google
 # code_snippet download-product-config end
