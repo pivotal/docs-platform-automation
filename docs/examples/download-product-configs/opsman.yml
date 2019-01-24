@@ -2,4 +2,4 @@
 pivnet-api-token: ((pivnet-token))
 pivnet-file-glob: "*vsphere*ova"
 pivnet-product-slug: ops-manager
-product-version: 2.2.12
+product-version-regex: "^2\.4\..*$"
