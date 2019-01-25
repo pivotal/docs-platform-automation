@@ -18,6 +18,11 @@ These are release notes for Platform Automation for PCF.
 - [`upgrade-opsman`](./reference/task.md#upgrade-opsman) has added more comprehensive validation around the required 
   installation file. The task will now require that the installation provided match the expected exported installation
   format internally.
+- [`export-installation`](./reference/task.md#export-installation) can now have a incrementing number added to the
+  filename. This enables the `installation.zip` to be used on blob stores that don't support s3-like versioned files.
+  This feature is enable by adding the `$timestamp` placeholder in the `INSTALLATION_FILE` param. For example,
+  `INSTALLATION_FILE: installation-$timestamp.zip` will yield a file with the name `installation-20120620.1230.00+00.zip`,
+  which is semver compatible timestamp.
 
 ### Bug Fixes
 - [`import-installation`](./reference/task.md#import-installation) was not able to connect
