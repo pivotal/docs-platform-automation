@@ -11,8 +11,10 @@ These are release notes for Platform Automation for PCF.
 
 ### Breaking Changes
 - [`configure-director`](./reference/task.md#configure-director) uses a new configuration definition.
-  The new format can be found in [inputs](./reference/inputs-outputs.md#director-config). Difference between old and
-  new format can be found [here](https://github.com/pivotal-cf/om/releases/tag/0.50.0)
+  The new format can be found in [inputs](./reference/inputs-outputs.md#director-config). The difference between old and
+  new format can be found [here](https://github.com/pivotal-cf/om/releases/tag/0.50.0).
+  This allows the format to be more stable
+  and cross-version-compatible in the future.
 
 ### What's New
 - [`download-product`](./reference/task.md#download-product) now supports `pas-windows`!
@@ -24,11 +26,15 @@ These are release notes for Platform Automation for PCF.
   This feature is enable by adding the `$timestamp` placeholder in the `INSTALLATION_FILE` param. For example,
   `INSTALLATION_FILE: installation-$timestamp.zip` will yield a file with the name `installation-20120620.1230.00+00.zip`,
   which is semver compatible timestamp.
+- [`upgrade-opsman`](./reference/task.md#upgrade-opsman) has added more comprehensive validation around the required
+  installation file. The task will now require that the installation provided match the expected exported installation
+  format internally.
 
 ### Bug Fixes
-- [`import-installation`](./reference/task.md#import-installation) was not able to connect
-  Ops Manager when an installation had a custom SSL cert. This has been fixed, and the 
-  command will now retry. 
+- [`import-installation`](./reference/task.md#import-installation) always failed
+  if an installation had a custom SSL cert;
+  it now allows for the momentary API downtime from restarting nginx on Ops Manager
+  after configuring the custom cert.
 
 ## v1.1.0-beta.1
 
