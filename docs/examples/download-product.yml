@@ -13,5 +13,8 @@ pivnet-product-slug: product-slugs
 ## as escape characters for the regex will confuse yaml parsers.
 # product-version-regex: ^1\.2\..*$
 
+## Note: the following line must be removed / commented out for 
+## non *.pivotal files.  EG: Pivotal Operations Manager.
+## If you don't then the download-opsmanager task will fail
 stemcell-iaas: google
 # code_snippet download-product-config end
