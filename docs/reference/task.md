@@ -196,14 +196,22 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 Downloads a product specified in a config file from Pivnet.
 Optionally, also downloads the latest stemcell for that product.
 
-Downloads are cached, so they are not hitting Pivnet each time.
-When a file is downloaded, integrity is ensured by using the SHA256 from Pivnet.
+Downloads are cached, so they are not being re-downloaded from Pivnet each time.
 
 Outputs can be persisted to a blobstore,
 or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
 This task requires a [download-product config file][download-product-config].
+
+!!! note
+    This task will automatically download and inject the winfs for pas-windows.
+
+!!! warning
+    This task cannot download the stemcell for pas-windows on vSphere.
+    To build this stemcell manually, please reference the
+    [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
+    in Pivotal Documentation.
 
 {% code_snippet 'tasks', 'download-product' %}
 
@@ -332,3 +340,4 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
 {% endwith %}
+{% include ".external_link_url.md" %}

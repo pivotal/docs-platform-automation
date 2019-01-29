@@ -15,9 +15,10 @@ These are release notes for Platform Automation for PCF.
   new format can be found [here](https://github.com/pivotal-cf/om/releases/tag/0.50.0)
 
 ### What's New
-- [`upgrade-opsman`](./reference/task.md#upgrade-opsman) has added more comprehensive validation around the required 
-  installation file. The task will now require that the installation provided match the expected exported installation
-  format internally.
+- [`download-product`](./reference/task.md#download-product) now supports `pas-windows`!
+  The task will now automatically inject the needed Windows filesystem,
+  meaning it's no longer necessary to run the `winfs-injector` separately.
+  If you're on vSphere, note that the stemcell still needs to be built manually.
 - [`export-installation`](./reference/task.md#export-installation) can now have a incrementing number added to the
   filename. This enables the `installation.zip` to be used on blob stores that don't support s3-like versioned files.
   This feature is enable by adding the `$timestamp` placeholder in the `INSTALLATION_FILE` param. For example,
