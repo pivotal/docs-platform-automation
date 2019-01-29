@@ -81,7 +81,7 @@ resources:
   source:
     api_token: ((pivnet_token))
     product_slug: platform-automation
-    product_version: 2\.(.*) # pin to major version 1
+    product_version: 2\.(.*)
     sort_by: semver
 
 - name: platform-automation-tasks
