@@ -396,7 +396,7 @@ jobs:
           env: configuration
           vars: variable
         params:
-          CONFIG_FILE: ((foundation))/config/cf-windows.yml
+          CONFIG_FILE: ((foundation))/config/pas-windows.yml
           VARS_FILES: vars/((foundation))/vars/cf-vars.yml
           ENV_FILE: ((foundation))/env/env.yml
 
