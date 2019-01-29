@@ -124,12 +124,6 @@ You'll need the following in order to setup Platform Automation.
     * `Concourse Tasks`
     * `Docker Image for Concourse Tasks`
 
-!!! note
-    If the Pivnet link does not work for you,
-    you might not have access to the product.
-    Please communicate this in the #pcf-automation slack channel
-    until the project is GA.
-
 2. Store the `platform-automation-image-*.tgz`
    in a blobstore that can be accessed via a Concourse pipeline.
 
