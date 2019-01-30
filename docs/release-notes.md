@@ -10,11 +10,47 @@ These are release notes for Platform Automation for PCF.
 **Release Date** TBD
 
 ### Breaking Changes
-- [`configure-director`](./reference/task.md#configure-director) uses a new configuration definition.
-  The new format can be found in [inputs](./reference/inputs-outputs.md#director-config). The difference between old and
-  new format can be found [here](https://github.com/pivotal-cf/om/releases/tag/0.50.0).
+- [`configure-director`](./reference/task.md#configure-director) and [`staged-director-config`](./reference/task.md#staged-director-config) both have a new configuration definition.
+  The new format can be found in [inputs](./reference/inputs-outputs.md#director-config).
+  
+    The following keys have recently been removed from the top level configuration: director-configuration, iaas-configuration, security-configuration, syslog-configuration.
+    
+    To fix this error, move the above keys under 'properties-configuration' and change their dashes to underscores.
+    
+    The old configuration file would contain the keys at the top level.
+
+    ```yaml
+    director-configuration: {}
+    iaas-configuration: {}
+    network-assignment: {}
+    networks-configuration: {}
+    resource-configuration: {}
+    security-configuration: {}
+    syslog-configuration: {}
+    vmextensions-configuration: []
+    ```
+  
+    They'll need to be moved to the new 'properties-configuration', with their dashes turn to underscore.
+    For example, 'director-configuration' becomes 'director_configuration'.
+    The new configration file will look like.
+  
+    ```yaml
+    az-configuration: {}
+    network-assignment: {}
+    networks-configuration: {}
+    properties-configuration:
+      director_configuration: {}
+      security_configuration: {}
+      syslog_configuration: {}
+      iaas_configuration: {}
+      dns_configuration: {}
+    resource-configuration: {}
+    vmextensions-configuration: []
+    ```
+  
   This allows the format to be more stable
   and cross-version-compatible in the future.
+  
 
 ### What's New
 - [`download-product`](./reference/task.md#download-product) now supports `pas-windows`!
