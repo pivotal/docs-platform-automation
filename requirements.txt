@@ -2,3 +2,4 @@ mkdocs
 mkdocs-material
 pygments
 git+https://github.com/jtarchie/docs-converter.git#egg=mkdocs-jinja2&subdirectory=mkdocs-plugins/mkdocs-jinja2
+git+https://github.com/jtarchie/mkdocs-pivotal-theme#egg=mkdocs-pivotal
