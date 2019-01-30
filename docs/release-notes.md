@@ -7,7 +7,7 @@ These are release notes for Platform Automation for PCF.
 
 ## v2.0.0-beta.1
 
-**Release Date** TBD
+**Release Date** Wednesday January 30, 2018
 
 ### Breaking Changes
 - [`configure-director`](./reference/task.md#configure-director) and [`staged-director-config`](./reference/task.md#staged-director-config) both have a new configuration definition.
