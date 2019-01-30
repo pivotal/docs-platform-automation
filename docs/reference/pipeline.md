@@ -75,6 +75,10 @@ Below are examples that can be used.
 {% include './examples/download-product-configs/pas.yml' %}
 ```
 
+``` yaml tab="PAS Windows"
+{% include './examples/download-product-configs/pas-windows.yml' %}
+```
+
 ``` yaml tab="OpsMan"
 {% include './examples/download-product-configs/opsman.yml' %}
 ```
