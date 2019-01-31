@@ -10,11 +10,11 @@ These are release notes for Platform Automation for PCF.
 **Release Date** Thursday January 31, 2018
 
 ### What's New
-- [`create-vm`](./reference/task.md#create-vm) for vsphere now supports the configuration of memory in MiB and number of CPUs.
-  To configure these new properties, add the `memory` and|or `cpu` field to your [`opsman.yml`](./reference/inputs-outputs.md#vsphere)
+- [`create-vm`](./reference/task.md#create-vm) for vsphere now supports the configuration of memory in MB and number of CPUs.
+  To configure these new properties, add the `memory` and/or `cpu` field to your [`opsman.yml`](./reference/inputs-outputs.md#vsphere).
   The defaults for these properties are the OVA defaults `memory: 8192` and `cpu: 1`.
 - [`create-vm`](./reference/task.md#create-vm) for vsphere now gives a default vm_name of `Ops_Manager`
-  if `vm_name` is not defined in your [`opsman.yml`](./reference/inputs-outputs.md#vsphere)
+  if `vm_name` is not defined in your [`opsman.yml`](./reference/inputs-outputs.md#vsphere).
 
 ### Bug Fixes
 - [`download-product`](./reference/task.md#download-product) did not pass `vars-files` correctly to all `interpolation` invocations.
