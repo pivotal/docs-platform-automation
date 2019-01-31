@@ -23,7 +23,7 @@ opsman-configuration:
     network: virtual-network                 # vcenter network to deploy to
     netmask: 255.255.255.192
     gateway: 192.168.10.1
-    vm_name: ops-manager-vm                  # default: ops-manager-vm
+    vm_name: Ops_Manager                     # default: Ops_Manager
     memory: 8                                # default: 8 GB
     cpu: 1                                   # default: 1
 # code_snippet vsphere-configuration end
