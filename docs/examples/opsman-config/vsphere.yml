@@ -12,7 +12,7 @@ opsman-configuration:
       datacenter: example-dc
       resource_pool: /example-dc/host/example-host/Resources/ResPool # or /<Data Center Name>/host/<Cluster Name>
       folder: /example-dc/vm/Folder
-      insecure: 1                            # 1 insecure, 0 secure
+      insecure: 1                            # default: 0 secure; 1 insecure
     disk_type: thin                          # example: thin|thick
     private_ip: 10.0.0.2
     dns: 8.8.8.8
@@ -23,7 +23,7 @@ opsman-configuration:
     network: virtual-network                 # vcenter network to deploy to
     netmask: 255.255.255.192
     gateway: 192.168.10.1
-    vm_name: ops-manager-vm
+    vm_name: ops-manager-vm                  # default: ops-manager-vm
     memory: 8                                # default: 8 GB
     cpu: 1                                   # default: 1
 # code_snippet vsphere-configuration end
