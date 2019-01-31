@@ -5,6 +5,19 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+## v2.1.0-beta.1
+
+**Release Date** TBD
+
+### Breaking Changes
+
+### What's New
+- [`create-vm`](./reference/task.md#create-vm) for vsphere now supports the configuration of memory in MiB and number of CPUs.
+  To configure these new properties, add the `memory` and|or `cpu` field to your [`opsman.yml`](./reference/inputs-outputs.md#vsphere)
+  The defaults for these properties are the OVA defaults `memory: 8192` and `cpu: 1`.
+
+### Bug Fixes
+
 ## v2.0.0-beta.1
 
 **Release Date** Wednesday January 30, 2018
