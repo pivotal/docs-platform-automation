@@ -12,7 +12,7 @@ opsman-configuration:
       datacenter: example-dc
       resource_pool: /example-dc/host/example-host/Resources/ResPool # or /<Data Center Name>/host/<Cluster Name>
       folder: /example-dc/vm/Folder
-      insecure: 1                            # default: 0 secure; 1 insecure
+      insecure: 1                            # default: 0 (secure); 1 (insecure)
     disk_type: thin                          # example: thin|thick
     private_ip: 10.0.0.2
     dns: 8.8.8.8
