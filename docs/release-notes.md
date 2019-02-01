@@ -7,7 +7,7 @@ These are release notes for Platform Automation for PCF.
 
 ## v2.1.0-beta.1
 
-**Release Date** Thursday January 31, 2018
+**Release Date** Thursday January 31, 2019
 
 ### What's New
 - [`create-vm`](./reference/task.md#create-vm) for vsphere now supports the configuration of memory in MB and number of CPUs.
