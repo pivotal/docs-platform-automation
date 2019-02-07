@@ -72,15 +72,15 @@ jobs:
   plan:
   - get: <the-resource-contain-base-config-file>
   - get: <the-resource-contain-vars-files>
-  - get: pcf-automation-image
+  - get: platform-automation-image
     params:
       unpack: true
-  - get: pcf-automation-tasks
+  - get: platform-automation-tasks
     params:
       unpack: true
   - task: interpolate
-    image: pcf-automation-image
-    file: pcf-automation-tasks/tasks/test-interpolate.yml
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/test-interpolate.yml
     input_mapping:
       config: <the-resource-contain-base-config-file>
       vars: <the-resource-contain-vars-file>

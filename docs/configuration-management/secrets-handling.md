@@ -100,17 +100,17 @@ jobs:
 - name: configure-product
   plan:
   - aggregate:
-    - get: pcf-automation-image
+    - get: platform-automation-image
       params:
         unpack: true
-    - get: pcf-automation-tasks
+    - get: platform-automation-tasks
       params:
         unpack: true
     - get: configuration
     - get: variable
   - task: configure-product
-    image: pcf-automation-image
-    file: pcf-automation-tasks/tasks/configure-product.yml
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-product.yml
     input_mapping:
       config: configuration
       env: configuration
