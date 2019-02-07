@@ -15,7 +15,7 @@ To execute commands in Docker:
 1. First import the image:
 
 ```bash
-docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} pcf-automation-image
+docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
 ```
 
 Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
@@ -24,7 +24,7 @@ Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivne
 Here, we're running the `p-automator` CLI to see what commands are available:
 
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 p-automator -h
 ```
 
@@ -38,7 +38,7 @@ It can be very useful to pull configuration for the director and tiles locally u
 1. To get the staged config for a product:
 
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 om --env ${ENV_FILE} staged-config --product-name ${PRODUCT_SLUG} --include-placeholders
 ```
 
@@ -49,6 +49,6 @@ The resulting file can then be parameterized, saved, and committed to a config r
 2. To get the director configuration:
 
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace pcf-automation-image \
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 om --env ${ENV_FILE} staged-director-config --include-placeholders
 ```
