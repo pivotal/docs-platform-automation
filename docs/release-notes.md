@@ -239,7 +239,7 @@ based on user feedback. Thanks for the bug reports!
 **Release Date:** November 6, 2018
 
 ### What's New
-* Documentation engine has been changed to mkdocs. Please give us feedback on the [new documentation](https://docs.pivotal.io/pcf-automation/alpha/index.html)!
+* Documentation engine has been changed to mkdocs. Please give us feedback on the [new documentation](https://docs.pivotal.io/platform-automation/alpha/index.html)!
 * [New Task](./reference/task.md#credhub-interpolate)
   Credhub interpolation is now supported by the tasks
 * [New Task](./reference/task.md#download-product)
@@ -247,7 +247,7 @@ based on user feedback. Thanks for the bug reports!
   for that tile and both will be provided as outputs for following tasks.
 * `om` and `p-automator` are now fully separate CLIs. `om` is responsible for interacting with Ops Manager, and
   `p-automator` is responsible for interacting with the IaaS to manage the Ops Manager VM.
-* `public_ssh_key` is now a configurable key for [vsphere](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#public_ssh_key)
+* `public_ssh_key` is now a configurable key for [vsphere](https://docs.pivotal.io/platform-automation/platform-automation/alpha/task-reference.html#public_ssh_key)
 * The reference pipeline now has an example to apply changes after an upgrade of Ops Manager.
 
 ### Bug Fixes
@@ -275,7 +275,7 @@ based on user feedback. Thanks for the bug reports!
 ### Breaking Changes
 * `import-installation` no longer takes an `auth.yml`, which used to contain `decryption-passphrase`.
   Now it is required to set the `decryption-passphrase` in the `env.yml` when using the task. See
-  [env file](https://docs.pivotal.io/pcf-automation/pcf-automation/alpha/task-reference.html#env)
+  [env file](https://docs.pivotal.io/platform-automation/platform-automation/alpha/task-reference.html#env)
 * `upgrade-opsman` invokes `import-installation` behind the scene, so the breaking change applies to this
   command as well. This mean that `upgrade-opsman` task no longer requires the `auth.yml`, but requires
   `decryption-passphrase` to be in the `env.yml`.
