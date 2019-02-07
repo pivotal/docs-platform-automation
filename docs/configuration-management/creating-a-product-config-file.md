@@ -39,17 +39,17 @@ jobs:
 - name: staged-pas-config
   plan:
   - aggregate:
-    - get: pcf-automation-image
+    - get: platform-automation-image
       params:
         unpack: true
-    - get: pcf-automation-tasks
+    - get: platform-automation-tasks
       params:
         unpack: true
     - get: configuration
     - get: variable
   - task: staged-config
-    image: pcf-automation-image
-    file: pcf-automation-tasks/tasks/staged-config.yml
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/staged-config.yml
     input_mapping:
       env: configuration
     params:

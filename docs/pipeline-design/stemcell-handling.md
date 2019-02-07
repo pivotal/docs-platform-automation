@@ -46,8 +46,8 @@ To upload the stemcell to Ops Manager without associating it with any product, t
 
 ```yaml
 - task: upload-stemcell
-  image: pcf-automation-image
-  file: pcf-automation-tasks/tasks/upload-stemcell.yml
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/upload-stemcell.yml
   input_mapping:
     env: configuration
     stemcell: downloaded-stemcell
@@ -71,8 +71,8 @@ To upload the stemcell to Ops Manager without associating it with any product, t
 
 ```yaml
 - task: assign-stemcell
-  image: pcf-automation-image
-  file: pcf-automation-tasks/tasks/assign-stemcell.yml
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-stemcell.yml
   input_mapping:
     env: configuration
     config: assign-stemcell-config
