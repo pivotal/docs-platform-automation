@@ -5,6 +5,16 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+## v2.1.1-beta.1
+
+**Release Date** Thursday, February 7, 2019
+
+### What's New
+- CVE update to container image. Resolves [USN-3882-1](https://usn.ubuntu.com/3882-1/)
+  (This related to vulnerabilities with `curl` and `libcurl`.
+  While none of our code directly used these,
+  they are present on the image.)
+
 ## v2.1.0-beta.1
 
 **Release Date** Thursday January 31, 2019
