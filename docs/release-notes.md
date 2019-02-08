@@ -9,7 +9,7 @@ These are release notes for Platform Automation for PCF.
 
 **Release Date** Thursday, February 7, 2019
 
-### What's New
+### Bug Fixes
 - CVE update to container image. Resolves [USN-3882-1](https://usn.ubuntu.com/3882-1/)
   (This related to vulnerabilities with `curl` and `libcurl`.
   While none of our code directly used these,
