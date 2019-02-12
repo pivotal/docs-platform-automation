@@ -188,7 +188,7 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 1. Deletes the VM
 1. Attempts to delete the associated image
 
-**Vsphere**
+**vSphere**
 
 1. Deletes the VM
 
