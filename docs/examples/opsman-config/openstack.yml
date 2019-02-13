@@ -15,6 +15,7 @@ opsman-configuration:
     private_ip: 10.0.0.3
     flavor: m1.xlarge            # default: m1.xlarge
     project_domain_name: default
+    user_domain_name: default
     identity_api_version: 3 # default: 2
     insecure: true # default: false
     availability_zone: zone-01
