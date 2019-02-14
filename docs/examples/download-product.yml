@@ -14,4 +14,17 @@ pivnet-product-slug: product-slugs
 # product-version-regex: ^1\.2\..*$
 
 stemcell-iaas: google
+
+## Note that the following are required only if using download-product-s3.
+## If using download-product-s3, all of the above are also required.
+## It is recommended to use the same config file for download-product
+## and download-product-s3 to satisfy the file naming constraints.
+s3-access-key-id: aws-or-minio-access-key
+s3-secret-access-key: aws-or-minio-secret-key
+s3-bucket: s3-bucket
+s3-region-name: us-west-1             # required; If not using AWS, this value is 'region'
+s3-endpoint: http://s3.endpoint.com   # if not using an AWS region, this is required
+s3-disable-ssl: false                 # default: false
+s3-enable-v2-signing: false           # default: false; if you do not know what this is, use the default
+
 # code_snippet download-product-config end
