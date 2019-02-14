@@ -17,8 +17,6 @@ stemcell-iaas: google
 
 ## Note that the following are required only if using download-product-s3.
 ## If using download-product-s3, all of the above are also required.
-## It is recommended to use the same config file for download-product
-## and download-product-s3 to satisfy the file naming constraints.
 s3-access-key-id: aws-or-minio-access-key
 s3-secret-access-key: aws-or-minio-secret-key
 s3-bucket: s3-bucket
