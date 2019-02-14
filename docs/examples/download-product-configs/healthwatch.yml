@@ -1,6 +1,11 @@
 ---
 pivnet-api-token: ((pivnet-token))
-pivnet-file-glob: "*pivotal"
+pivnet-file-glob: "*.pivotal"
 pivnet-product-slug: p-healthwatch
 product-version: 1.4.4
 stemcell-iaas: vsphere
+
+s3-access-key-id: ((s3.access_key_id))
+s3-secret-access-key: ((s3.secret_access_key))
+s3-bucket: ((s3.buckets.pivnet_products))
+s3-region-name: ((s3.region_name))
