@@ -15,6 +15,16 @@ These are release notes for Platform Automation for PCF.
 - [`staged-director-config`](./reference/task.md#staged-director-config) will now return placeholders for the secret 
   fields in Ops Manager if the user provided has appropriate permissions to do so. This allows the configuration to 
   have a more complete view of all of the fields available in Ops Manager. 
+- [`download-product-s3`](./reference/task.md#download-product-s3) has been added! This command works very similarly to 
+  [`download-product`](./reference/task.md#download-product), but rather than downloading from pivnet, it will download
+  from an s3 compatible blobstore. An example of this in use can be found in the 
+  [reference pipeline](./reference/pipeline.md#installing-ops-manager-and-tiles). The [config](./reference/inputs-outputs.md#download-product-config)
+  for this command will be shared with `download-product`.
+  `download-product-s3` requires the name of the product to match a `{product-slug}-{semantic-version}` format. To make this easier to
+  consume, if s3 credentials are present in the [config](./reference/inputs-outputs.md#download-product-config) for 
+  `download-product`, the product will download with the appropriate prefix if it does not already exist. This must then
+  be persisted in the desired s3 compatible blobstore. `download-product-s3` will read from the same config, and pull down
+  the product from the specified s3 bucket.
 
 ## v2.1.1-beta.1
 
