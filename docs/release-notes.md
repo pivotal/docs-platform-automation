@@ -5,7 +5,21 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
-## v2.2.0-beta.1 TBD
+## v3.0.0-beta.1 TBD
+### Breaking Changes
+- [`download-product`](./reference/task.md#download-product) will now prepend a product with a `{product-slug}-{semantic-version}`
+  format if it does not already exist in the downloaded file. An example of this for Pivotal Application Service would 
+  look as follows:
+  original-pivnet-filename: `cf-{version}-build.{buildNum}.pivotal`
+  download-product-filename: `elastic-runtime-{version}-cf-{version}-build.{buildNum}.pivotal`
+  This filename will also be present in `download-file.json` outputted by the task. 
+  
+!!! warning
+    If you are using a regex in your pipeline that explicitly requires the pivnet filename to be the _start_ of the 
+    regex, this will no longer work if the slug does not match. In the example above, the original filename will 
+    _still be present_, but will no longer be at the start of the product. 
+                   
+
 ### What's New
 - [`staged-config`](./reference/task.md#staged-config) will now return `selected_option` for selectors. This means 
   that the returned config will filter the selector appropriately and return the correct selected value. 
@@ -21,10 +35,8 @@ These are release notes for Platform Automation for PCF.
   [reference pipeline](./reference/pipeline.md#installing-ops-manager-and-tiles). The [config](./reference/inputs-outputs.md#download-product-config)
   for this command will be shared with `download-product`.
   `download-product-s3` requires the name of the product to match a `{product-slug}-{semantic-version}` format. To make this easier to
-  consume, if s3 credentials are present in the [config](./reference/inputs-outputs.md#download-product-config) for 
-  `download-product`, the product will download with the appropriate prefix if it does not already exist. This must then
-  be persisted in the desired s3 compatible blobstore. `download-product-s3` will read from the same config, and pull down
-  the product from the specified s3 bucket.
+  consume, `download-product` will now put the filename of the downloaded product into `download-file.json`.  The shared 
+  config will also ensure that both tasks consume the same product with the same slug and version. 
 
 ## v2.1.1-beta.1
 
