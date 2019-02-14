@@ -5,6 +5,17 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
+## v2.2.0-beta.1 TBD
+### What's New
+- [`staged-config`](./reference/task.md#staged-config) will now return `selected_option` for selectors. This means 
+  that the returned config will filter the selector appropriately and return the correct selected value. 
+  When using [`configure-product`](./reference/task.md#configure-product), users can now define either 
+  `option_value` or `selected_option` as the machine readable value for the selector, and the product will set the
+  config appropriately in Ops Manager. 
+- [`staged-director-config`](./reference/task.md#staged-director-config) will now return placeholders for the secret 
+  fields in Ops Manager if the user provided has appropriate permissions to do so. This allows the configuration to 
+  have a more complete view of all of the fields available in Ops Manager. 
+
 ## v2.1.1-beta.1
 
 **Release Date** Thursday, February 7, 2019
