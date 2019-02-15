@@ -21,6 +21,8 @@ These are release notes for Platform Automation for PCF.
                    
 
 ### What's New
+- When creating a OpsMan on Openstack, the option for `user_domain_name` has been added.
+  This allows authenticating users on different domains of the Openstack deployment.
 - [`staged-config`](./reference/task.md#staged-config) will now return `selected_option` for selectors. This means 
   that the returned config will filter the selector appropriately and return the correct selected value. 
   When using [`configure-product`](./reference/task.md#configure-product), users can now define either 
