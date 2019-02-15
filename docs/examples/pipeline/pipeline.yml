@@ -35,7 +35,7 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       region_name: ((s3.region_name))
       secret_access_key: ((s3.secret_access_key))
-      regexp: ((opsman_image_s3_versioned_regexp)) # vsphere ex: pcf-vsphere-(.*).ova
+      regexp: ((opsman_image_s3_versioned_regexp)) # vsphere ex: ops-manager-(.*).ova
 
   - name: pas-stemcell
     type: s3
