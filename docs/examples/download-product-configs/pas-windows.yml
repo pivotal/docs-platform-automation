@@ -4,7 +4,7 @@ pivnet-file-glob: "*.pivotal"
 pivnet-product-slug: pas-windows
 product-version-regex: ^2\.4\..*$
 
-s3-access-key-id: ((s3.access_key_id))
-s3-secret-access-key: ((s3.secret_access_key))
-s3-bucket: ((s3.buckets.pivnet_products))
-s3-region-name: ((s3.region_name))
+s3-access-key-id: ((s3_access_key_id))
+s3-secret-access-key: ((s3_secret_access_key))
+s3-bucket: ((s3_pivnet_products_bucket))
+s3-region-name: ((s3_region_name))
