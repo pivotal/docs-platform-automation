@@ -53,7 +53,7 @@ resources:
       secret_access_key: ((s3.secret_access_key))
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.pivnet_products))
-      regexp: cf-(.*).pivotal
+      regexp: elastic-runtime-(.*).pivotal
 
   - name: pas-windows-product
     type: s3
