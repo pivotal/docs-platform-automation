@@ -39,6 +39,20 @@ These are release notes for Platform Automation for PCF.
   `download-product-s3` requires the name of the product to match a `{product-slug}-{semantic-version}` format. To make this easier to
   consume, `download-product` will now put the filename of the downloaded product into `download-file.json`.  The shared 
   config will also ensure that both tasks consume the same product with the same slug and version. 
+  
+### Bug fixes
+- There was a bug in `download-product` that would not quote the stemcell string in 
+  `assign-stemcell-config/config.yml`. This caused `assign-stemcell` to drop the trailing zero
+  when attempting to assign a stemcell to a product. This has now been fixed, and trailing
+  zeroes will now be included. 
+
+- CVE update to container image. Resolves [USN-3891-1](https://usn.ubuntu.com/3891-1/)
+  (related to vulnerabilities with `libsystemd0` and `systemd`. While none of our code directly used these,
+  they are present on the image.)
+  
+- CVE update to container image. Resolves [USN-3885-1](https://usn.ubuntu.com/3885-1/)
+  (related to vulnerabilities with `openssh`. While none of our code directly used these,
+  they are present on the image.)
 
 ## v2.1.1-beta.1
 
