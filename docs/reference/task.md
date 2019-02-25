@@ -196,15 +196,40 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 Downloads a product specified in a config file from Pivnet.
 Optionally, also downloads the latest stemcell for that product.
 
-Downloads are cached, so they are not being re-downloaded from Pivnet each time.
+Downloads are cached, so files are not re-downloaded each time.
 
-Outputs can be persisted to a blobstore,
+Outputs can be persisted to an S3-compatible blobstore using a `put` to an appropriate resource
+for later use with the [`download-product-s3`][download-product-s3],
 or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
-This task requires a [download-product config file][download-product-config]. To use this in conjunction
-with [`download-product-s3`][download-product-s3], share the download-product config file between the two tasks in order
-to enforce the required `{product-slug}-{semantic-version}` file format that `download-product-s3` requires.
+This task requires a [download-product config file][download-product-config].
+
+If S3 configuration is present in the [download-product config file][download-product-config],
+the slug and version of the downloaded product file will be prepended in brackets to the filename.  
+For example:
+- original-pivnet-filenames:
+```
+ops-manager-aws-2.5.0-build.123.yml
+cf-2.5.0-build.45.pivotal
+```
+- download-product-filenames if S3 configuration is present:
+```
+[ops-manager,2.5.0]ops-manager-aws-2.5.0-build.123.yml
+[elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
+```
+This is to allow the same config parameters
+that let us select a file from Pivnet
+select it again when pulling from S3.
+Note that the filename will be unchanged
+if S3 keys are not present in the configuration file.
+This avoids breaking current pipelines.
+
+!!! warning
+    If you are using a regex in your pipeline that explicitly requires the pivnet filename to be the _start_ of the
+    regex, (i.e., the pattern starts with `^`) this won't work when using S3 config.
+    The new file format preserves the original filename, so it is still possible to match on that -
+    but if you need to match from the beginning of the filename, that will have been replaced by the prefix described above.
 
 !!! note
     This task will automatically download and inject the winfs for pas-windows.
@@ -220,14 +245,22 @@ to enforce the required `{product-slug}-{semantic-version}` file format that `do
 ### download-product-s3
 Downloads a product specified in a config file from an S3-compatible blobstore.
 
-Downloads are cached, so they are not being re-downloaded each time.
+Downloads are cached, so files are not re-downloaded each time.
+
+This is intended to be used with files downloaded from Pivnet by [`download-product`][download-product]
+and then persisted to a blobstore using a `put` step.
+
 
 Outputs can be used directly as an input to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
-This task requires a [download-product config file][download-product-config]. This task also requires
-that the product file uploaded to s3 match the format `{product-slug}-{semantic-version}`. To use this in conjunction
-with [`download-product`][download-product], share the download-product config file between the two tasks. 
+This task requires a [download-product config file][download-product-config].
+The same configuration file should be used with both this task and [`download-product`][download-product].
+
+The product files uploaded to s3 for download with this task need a specific prefix:
+`[product-slug,semantic-version]`.
+This prefix is added by the [`download-product`][download-product] task
+when S3 keys are present in the configuration file.
 
 {% code_snippet 'tasks', 'download-product-s3' %}
 
