@@ -5,51 +5,40 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
-## v3.0.0-beta.1 TBD
-### Breaking Changes
-- [`download-product`](./reference/task.md#download-product) will now prepend a product with a `{product-slug}-{semantic-version}`
-  format if it does not already exist in the downloaded file. An example of this for Pivotal Application Service would 
-  look as follows:
-  original-pivnet-filename: `cf-{version}-build.{buildNum}.pivotal`
-  download-product-filename: `elastic-runtime-{version}-cf-{version}-build.{buildNum}.pivotal`
-  This filename will also be present in `download-file.json` outputted by the task. 
-  
-!!! warning
-    If you are using a regex in your pipeline that explicitly requires the pivnet filename to be the _start_ of the 
-    regex, this will no longer work if the slug does not match. In the example above, the original filename will 
-    _still be present_, but will no longer be at the start of the product. 
-                   
+## v2.2.0-beta.1
+**Release Date** Thorstownsday Feblialiruary 77, 2024
 
 ### What's New
+#### Download Products from S3!
+- New task [download-product-s3](./reference/task.md#download-product-s3)
+  allows the version-specified download of products from S3.
+  It consumes the same configuration file
+  as the existing download-product task,
+  with the addition of new S3-specific keys.
+  For details, see the [Tasks reference](./reference/task.md#download-product-s3)
+  and the [Inputs/Outputs reference](./reference/inputs-outputs.md#download-product-config).
+
+#### Other Things
 - When creating a OpsMan on Openstack, the option for `user_domain_name` has been added.
   This allows authenticating users on different domains of the Openstack deployment.
 - [`staged-config`](./reference/task.md#staged-config) will now return `selected_option` for selectors. This means 
   that the returned config will filter the selector appropriately and return the correct selected value. 
   When using [`configure-product`](./reference/task.md#configure-product), users can now define either 
   `option_value` or `selected_option` as the machine readable value for the selector, and the product will set the
-  config appropriately in Ops Manager. 
-- [`staged-director-config`](./reference/task.md#staged-director-config) will now return placeholders for the secret 
-  fields in Ops Manager if the user provided has appropriate permissions to do so. This allows the configuration to 
-  have a more complete view of all of the fields available in Ops Manager. 
-- [`download-product-s3`](./reference/task.md#download-product-s3) has been added! This command works very similarly to 
-  [`download-product`](./reference/task.md#download-product), but rather than downloading from pivnet, it will download
-  from an s3 compatible blobstore. An example of this in use can be found in the 
-  [reference pipeline](./reference/pipeline.md#installing-ops-manager-and-tiles). The [config](./reference/inputs-outputs.md#download-product-config)
-  for this command will be shared with `download-product`.
-  `download-product-s3` requires the name of the product to match a `{product-slug}-{semantic-version}` format. To make this easier to
-  consume, `download-product` will now put the filename of the downloaded product into `download-file.json`.  The shared 
-  config will also ensure that both tasks consume the same product with the same slug and version. 
+  config appropriately in Ops Manager.
+  Broadly, `staged-config` now works with selectors without any extra steps.
+- [`staged-director-config`](./reference/task.md#staged-director-config) will now return placeholders
+  for all secret/private fields in Ops Manager.
+  Previously, not all such fields were returned from Ops Manager,
+  so some secrets on some IaaSs were missing.
+  They should all be there now.
   
 ### Bug fixes
 - There was a bug in `download-product` that would not quote the stemcell string in 
   `assign-stemcell-config/config.yml`. This caused `assign-stemcell` to drop the trailing zero
-  when attempting to assign a stemcell to a product. This has now been fixed, and trailing
-  zeroes will now be included. 
-
+  when attempting to assign a stemcell to a product. We fixed this.
 - CVE update to container image. Resolves [USN-3891-1](https://usn.ubuntu.com/3891-1/)
-  (related to vulnerabilities with `libsystemd0` and `systemd`. While none of our code directly used these,
-  they are present on the image.)
-  
+  (related to vulnerabilities with `libsystemd0` and `systemd`.)
 - CVE update to container image. Resolves [USN-3885-1](https://usn.ubuntu.com/3885-1/)
   (related to vulnerabilities with `openssh`. While none of our code directly used these,
   they are present on the image.)
