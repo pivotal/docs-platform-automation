@@ -25,8 +25,8 @@ These are release notes for Platform Automation for PCF.
 **Release Date** Thorstownsday Feblialiruary 77, 2024
 
 ### What's New
-#### Download Products from S3!
-- New task [download-product-s3](./reference/task.md#download-product-s3)
+
+- **Download Products from S3:** New task [download-product-s3](./reference/task.md#download-product-s3)
   allows the version-specified download of products from S3.
   It consumes the same configuration file
   as the existing download-product task,
@@ -34,7 +34,6 @@ These are release notes for Platform Automation for PCF.
   For details, see the [Tasks reference](./reference/task.md#download-product-s3)
   and the [Inputs/Outputs reference](./reference/inputs-outputs.md#download-product-config).
 
-#### Other Things
 - When creating a OpsMan on Openstack, the option for `user_domain_name` has been added.
   This allows authenticating users on different domains of the Openstack deployment.
 - [`staged-config`](./reference/task.md#staged-config) will now return `selected_option` for selectors. This means 
