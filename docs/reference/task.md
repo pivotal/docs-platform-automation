@@ -193,6 +193,9 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 1. Deletes the VM
 
 ### download-product
+
+{% include "./.opsman_filename_change_note.md" %}
+
 Downloads a product specified in a config file from Pivnet.
 Optionally, also downloads the latest stemcell for that product.
 
@@ -338,6 +341,9 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
 {% code_snippet 'tasks', 'staged-config' %}
 
 ### staged-director-config
+
+{% include "./.opsman_filename_change_note.md" %}
+
 Downloads configuration for the BOSH director from Ops Manager.
 
 {% code_snippet 'tasks', 'staged-director-config' %}

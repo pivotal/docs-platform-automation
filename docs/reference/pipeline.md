@@ -57,6 +57,8 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
 
 ## Retrieving external dependencies
 
+{% include "./.opsman_filename_change_note.md" %}
+
 The pipeline downloads dependencies consumed by the tasks
 and places them into a trusted s3-like storage provider.
 This helps other concourse deployments without internet access
