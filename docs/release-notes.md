@@ -3,8 +3,9 @@ title: Release Notes
 owner: PCF Platform Automation
 ---
 
-!!! warning
-    **_For Azure updating to 2.5_**:
+{% include "./.opsman_filename_change_note.md" %}
+
+!!! warning "For Azure Updating to 2.5"
      Ops Manager will be removing the necessity to provide availability zones for azure.
      If your `director.yml`(see [`staged-director-config`](./reference/task.md#staged-director-config))
      has a block like the following in the networks section:
@@ -448,3 +449,5 @@ Features included in this release:
 Features included in this release:
 
 * First alpha release of Platform Automation for PCF
+
+{% include ".internal_link_url.md" %}
