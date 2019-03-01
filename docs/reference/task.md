@@ -48,7 +48,7 @@ which can extract a config file.
 
 {% code_snippet 'tasks', 'configure-director' %}
 
-!!! warning
+!!! warning "GCP with service account"
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
 
 ### configure-ldap-authentication
@@ -284,7 +284,7 @@ params:
   INSTALLATION_FILE: installation-$timestamp.zip
 ```
 
-!!! note
+!!! Info
     The timestamp is generated using the time on concourse worker.
     If the time is different on different workers, the generated timestamp may fail to sort correctly.
     Changing the time or timezone on workers might interfere with ordering.
@@ -314,12 +314,12 @@ Also useful for persisting the configuration output from:
 - [staged-config](#staged-config)
 - [staged-director-config](#staged-director-config)
 
-!!! note
+!!! Info
     This commits **all changes** present
     in the repo used for the `repository` input,
     in addition to copying in a single file.
 
-!!! note
+!!! Info 
     This does not perform a `git push`!
     You will need to `put` the output of this task to a git resource to persist it.
 

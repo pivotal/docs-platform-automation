@@ -54,8 +54,8 @@ See the task for the [`configure-authentication`][configure-authentication] for 
 
 {% code_snippet 'examples', 'auth-configuration' %}
 
-!!! note
-    basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats 
+!!! Info
+    basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats
 
 #### saml authentication
 The configuration for authentication has a dependency on SAML.
@@ -64,8 +64,8 @@ See the task for the [`configure-saml-authentication`][configure-saml-authentica
 
 {% code_snippet 'examples', 'saml-auth-configuration' %}
 
-!!! note
-    saml authentication requires the <a href="#uaa-authentication">uaa env</a> format 
+!!! Info 
+    saml authentication requires the <a href="#uaa-authentication">uaa env</a> format
 
 The `saml-configuration` properties configures the SAML provider.
 The [Ops Manager API][opsman-api-saml] has more information about the values
@@ -105,7 +105,7 @@ to include the host project id, region of the subnet, and the subnet name.
 
 For example:
 
-`projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]` 
+`projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]`
 
 #### Openstack
 These required properties are adapted from the instructions outlined in
@@ -132,7 +132,7 @@ There are two ways to build a director config.
 2. Deploying a brand new Ops Manager requires more effort for a `director.yml`.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
-   
+
 {% code_snippet 'examples', 'director-configuration' %}
 
 The IAAS specific configuration can be found in the Ops Manager API documentation.
@@ -166,7 +166,7 @@ There are two ways to build a product config.
 1. Using an already deployed product (tile), you can extract the config using [staged-config].
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
-  
+
 {% code_snippet 'examples', 'product-configuration' %}
 
 Included below is a list of properties that can be set in the `product.yml`
@@ -225,7 +225,7 @@ This file can be exported from an Ops Manager VM using the [export-installation]
 This file can be imported to an Ops Manager VM using the [import-installation][import-installation].
 
 !!! warning
-    This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager. 
+    This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
 
 ### stemcell
 This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Pivnet.
@@ -233,7 +233,7 @@ It must be in the original filename as that is used by Ops Manager to parse meta
 The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-go_agent.tgz`.
 
 !!! warning
-    This file cannot be manually created. It is a file that must retrieved from Pivnet. 
+    This file cannot be manually created. It is a file that must retrieved from Pivnet.
 
 An example on how to pull the vSphere stemcell using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
 
@@ -259,7 +259,7 @@ jobs:
     params:
       globs: ["*vsphere*.tgz"]
 ```
- 
+
 ### product
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
 
@@ -289,7 +289,7 @@ jobs:
 ```
 
 !!! warning
-    This file cannot be manually created. It is a file that must retrieved from Pivnet. 
+    This file cannot be manually created. It is a file that must retrieved from Pivnet.
 
 ### download-product-config
 The `config` input for a download product task expects to have a `download-config.yml` file

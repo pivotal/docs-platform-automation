@@ -30,7 +30,7 @@ and should be able to coexist in a pipeline with tasks from other sources, or cu
 
 * Deployed Concourse
 
-!!! note
+!!! Info
     Platform Automation for PCF is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/3-0/guides.html) would be a good place to start.
@@ -42,7 +42,7 @@ It is used by every task within Platform Automation for PCF
 * A valid [auth file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
-!!! note
+!!! Info 
     There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
 
 * An [opsmanager configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
