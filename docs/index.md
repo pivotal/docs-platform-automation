@@ -3,9 +3,9 @@ title: Platform Automation for PCF
 owner: PCF Platform Automation
 ---
 
-!!! warning
+!!! Info
     Platform Automation for Pivotal Cloud Foundry (PCF)
-    is currently in beta. For questions and/or to report an issue please contact your primary Pivotal contact. See release notes for latest information regarding new features and any breaking changes. 
+    is currently in beta. For questions and/or to report an issue please contact your primary Pivotal contact. See release notes for latest information regarding new features and any breaking changes.
 
  Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations.
 
@@ -109,7 +109,7 @@ You'll need the following in order to setup Platform Automation.
 
 * Deployed Concourse
 
-!!! note
+!!! Info
     Platform Automation for PCF is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/guides.html) would be a good place to start.
@@ -135,7 +135,7 @@ You'll need the following in order to setup Platform Automation.
 Next we'll create a test pipeline to see if the assets can be accessed correctly.
    This pipeline runs a test task, which ensures that all the parts work correctly.
 
-!!! note
+!!! Info
        The pipeline can use any blobstore.
        We choose S3 because the resource natively supported by Concourse.
        The S3 Concourse resource also supports S3-compatible blobstores (e.g. minio).

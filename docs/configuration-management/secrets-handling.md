@@ -55,14 +55,14 @@ opsman-configuration:
    ssh_public_key: ssh-rsa AAAAB3Nz...
 ```
 
-!!! note
+!!! Info 
     If using this you need to ensure concourse worker can talk to credhub so depending
     on how you deployed credhub and/or worker this may or may not be possible.
     This inverts control that now workers need to access credhub vs
     default is atc injects secrets and passes them to the worker.
 
 
-## Storing values for Multi-foundation 
+## Storing values for Multi-foundation
 ### Credhub
 In the example above, `bosh int` did not replace the ((placeholder_credential)): `((cloud_controller_encrypt_key.secret))`.
 For security, values such as secrets and keys should not be saved off in static files (such as an ops file). In order to
