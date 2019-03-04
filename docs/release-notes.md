@@ -5,7 +5,7 @@ owner: PCF Platform Automation
 
 {% include "./.opsman_filename_change_note.md" %}
 
-!!! warning "For Azure Updating to 2.5"
+!!! warning "Azure Updating to 2.5"
      Ops Manager will be removing the necessity to provide availability zones for azure.
      If your `director.yml`(see [`staged-director-config`](./reference/task.md#staged-director-config))
      has a block like the following in the networks section:
@@ -17,7 +17,7 @@ owner: PCF Platform Automation
      ```
      {"errors":["Availability zones cannot find availability zone with name null"]}
      ```
-     To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run 
+     To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
 These are release notes for Platform Automation for PCF.
@@ -37,9 +37,9 @@ These are release notes for Platform Automation for PCF.
 
 - When creating a OpsMan on Openstack, the option for `user_domain_name` has been added.
   This allows authenticating users on different domains of the Openstack deployment.
-- [`staged-config`](./reference/task.md#staged-config) will now return `selected_option` for selectors. This means 
-  that the returned config will filter the selector appropriately and return the correct selected value. 
-  When using [`configure-product`](./reference/task.md#configure-product), users can now define either 
+- [`staged-config`](./reference/task.md#staged-config) will now return `selected_option` for selectors. This means
+  that the returned config will filter the selector appropriately and return the correct selected value.
+  When using [`configure-product`](./reference/task.md#configure-product), users can now define either
   `option_value` or `selected_option` as the machine readable value for the selector, and the product will set the
   config appropriately in Ops Manager.
   Broadly, `staged-config` now works with selectors without any extra steps.
@@ -48,9 +48,9 @@ These are release notes for Platform Automation for PCF.
   Previously, not all such fields were returned from Ops Manager,
   so some secrets on some IaaSs were missing.
   They should all be there now.
-  
+
 ### Bug fixes
-- There was a bug in `download-product` that would not quote the stemcell string in 
+- There was a bug in `download-product` that would not quote the stemcell string in
   `assign-stemcell-config/config.yml`. This caused `assign-stemcell` to drop the trailing zero
   when attempting to assign a stemcell to a product. We fixed this.
 - CVE update to container image. Resolves [USN-3891-1](https://usn.ubuntu.com/3891-1/)
@@ -90,11 +90,11 @@ These are release notes for Platform Automation for PCF.
 ### Breaking Changes
 - [`configure-director`](./reference/task.md#configure-director) and [`staged-director-config`](./reference/task.md#staged-director-config) both have a new configuration definition.
   The new format can be found in [inputs](./reference/inputs-outputs.md#director-config).
-  
+
     The following keys have recently been removed from the top level configuration: director-configuration, iaas-configuration, security-configuration, syslog-configuration.
-    
+
     To fix this error, move the above keys under 'properties-configuration' and change their dashes to underscores.
-    
+
     The old configuration file would contain the keys at the top level.
 
     ```yaml
@@ -107,11 +107,11 @@ These are release notes for Platform Automation for PCF.
     syslog-configuration: {}
     vmextensions-configuration: []
     ```
-  
+
     They'll need to be moved to the new 'properties-configuration', with their dashes turn to underscore.
     For example, 'director-configuration' becomes 'director_configuration'.
     The new configration file will look like.
-  
+
     ```yaml
     az-configuration: {}
     network-assignment: {}
@@ -125,10 +125,10 @@ These are release notes for Platform Automation for PCF.
     resource-configuration: {}
     vmextensions-configuration: []
     ```
-  
+
   This allows the format to be more stable
   and cross-version-compatible in the future.
-  
+
 
 ### What's New
 - [`download-product`](./reference/task.md#download-product) now supports `pas-windows`!
@@ -161,12 +161,12 @@ These are release notes for Platform Automation for PCF.
   managed disks. To use an unmanaged disk, set `use_unmanaged_disk` to `true` in
   your [`opsman.yml`](./reference/inputs-outputs.md#azure)
 - The reference pipeline now includes an example of how to use credhub interpolate
-- GCP defaults have been changed to match Pivotal 
+- GCP defaults have been changed to match Pivotal
   [recommendations](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/deploy-manual.html#start-vm)
-- The following params were added as optional arguments to the [OpenStack 
+- The following params were added as optional arguments to the [OpenStack
   opsman configuration](./reference/inputs-outputs.md#openstack): `project_domain_name`,
   `identity_api_version`,`insecure`,`availability_zone`
-- [Download Product](./reference/inputs-outputs.md#download-product-config) will now 
+- [Download Product](./reference/inputs-outputs.md#download-product-config) will now
   accept a regex for the product version
 
 
@@ -175,7 +175,7 @@ These are release notes for Platform Automation for PCF.
   `SUSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS` unusable.
   This has been corrected
 - `staged-config` is now able to work with runtime-configs (e.g. NSX-T plugin)
-  
+
 ## v1.0.1-beta.1
 
 **Release Date** Monday December 17, 2018
@@ -202,11 +202,11 @@ These are release notes for Platform Automation for PCF.
 ### What's New
 * This product is now [semantically versioned](./compatibility-and-versioning.md#semantic-versioning)!
   We know there are a lot of breaking changes in this release.
-  In the future, we'll try and keep that to a minimum - 
+  In the future, we'll try and keep that to a minimum -
   but we'll also communicate the presence of breaking changes
   with a major version bump.
 * We've made major improvements and additions to our documentation.
-  If you would like to give us feedback, 
+  If you would like to give us feedback,
   open an issue on the github repo.
 * Documentation is now versioned.
   If you would like to have a sneak peek on what we will be releasing next,
@@ -222,10 +222,10 @@ These are release notes for Platform Automation for PCF.
   LDAP authentication configuration is now supported.
 * [New Task](./reference/task.md#assign-stemcell)
   This task will support the `floating-stemcell=false` workflow
-  previously supported by `om`. 
+  previously supported by `om`.
   To see if this workflow is right for you,
   please reference the [Stemcell Handling](./pipeline-design/stemcell-handling.md)
-  section of the documentation. 
+  section of the documentation.
 * [New Task](./reference/task.md#upload-product)
   Upload product is now available independently from upload-and-stage-product.
 * [New Task](./reference/task.md#stage-product)
@@ -235,13 +235,13 @@ These are release notes for Platform Automation for PCF.
   We've extracted it into its own task.
   This should be useful for persisting state files
   and downloaded configs with git.
-  
+
 ### Breaking Changes
 - Fix: the `staged-config` task had a lamentable typo, which we have now corrected.
   We had `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS`
   (note the missing third T in "substitute") when we meant (and now have)
   `SUBSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS`.
-    
+
 !!! warning
     Any uses of `staged-config` in your pipelines will need to be updated
     if you were using the `SUBSTITUE_CREDENTIALS_WITH_PLACEHOLDERS` param.
@@ -259,7 +259,7 @@ These are release notes for Platform Automation for PCF.
   The `vpc_network` property has been removed in Azure Ops Manager config,
   as it can be entirely determined from the `vpc_subnet` property.
   `vpc_subnet` now requires the resource id instead of its name.
-  The format _must_ now match the following: 
+  The format _must_ now match the following:
   `/subscriptions/<MY_SUBSCRIPTION_ID>/resourceGroups/<MY_RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<MY_VNET>/subnets/<MY_SUBNET>`.
   This matches the terraforming-azure output `management_subnet_id`.
   This has been reflected in the [opsman.yml](./reference/inputs-outputs.md#azure) for Azure.
@@ -297,7 +297,7 @@ based on user feedback. Thanks for the bug reports!
     URLs for docs have changed.
     Please note that any saved/bookmarked links
     for specific pages in our documentation may no longer work.
-      
+
 ## v0.0.1-rc248
 
 **Release Date:** November 6, 2018
