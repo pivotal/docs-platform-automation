@@ -234,7 +234,7 @@ This avoids breaking current pipelines.
     The new file format preserves the original filename, so it is still possible to match on that -
     but if you need to match from the beginning of the filename, that will have been replaced by the prefix described above.
 
-!!! note
+!!! Info
     This task will automatically download and inject the winfs for pas-windows.
 
 !!! warning
