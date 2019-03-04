@@ -115,7 +115,8 @@ jobs:
       params:
         unpack: true
     - get: config
-  - task: credhub-interpolate
+  - &credhub-interpolate
+    task: credhub-interpolate
     image: platform-automation-image
     file: platform-automation-tasks/tasks/credhub-interpolate.yml
     params:
@@ -154,19 +155,7 @@ jobs:
       params:
         unpack: true
     - get: config
-  - task: credhub-interpolate
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/credhub-interpolate.yml
-    params:
-      CREDHUB_CLIENT: ((credhub-client))
-      CREDHUB_SECRET: ((credhub-secret))
-      CREDHUB_SERVER: ((credhub-server))
-      PREFIX: '/pipeline/vsphere'
-      INTERPOLATION_PATH: "download-product-configs"
-    input_mapping:
-      files: config
-    output_mapping:
-      interpolated-files: config
+  - *credhub-interpolate # this uses the YAML anchor (https://yaml.org/spec/1.2/spec.html#id2785586) previously defined above
   - task: download-opsman-image
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
@@ -189,19 +178,7 @@ jobs:
       params:
         unpack: true
     - get: config
-  - task: credhub-interpolate
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/credhub-interpolate.yml
-    params:
-      CREDHUB_CLIENT: ((credhub-client))
-      CREDHUB_SECRET: ((credhub-secret))
-      CREDHUB_SERVER: ((credhub-server))
-      PREFIX: '/pipeline/vsphere'
-      INTERPOLATION_PATH: "download-product-configs"
-    input_mapping:
-      files: config
-    output_mapping:
-      interpolated-files: config
+  - *credhub-interpolate # this uses the YAML anchor (https://yaml.org/spec/1.2/spec.html#id2785586) previously defined above
   - task: download-pas-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
@@ -228,19 +205,7 @@ jobs:
       params:
         unpack: true
     - get: config
-  - task: credhub-interpolate
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/credhub-interpolate.yml
-    params:
-      CREDHUB_CLIENT: ((credhub-client))
-      CREDHUB_SECRET: ((credhub-secret))
-      CREDHUB_SERVER: ((credhub-server))
-      PREFIX: '/pipeline/vsphere'
-      INTERPOLATION_PATH: "download-product-configs"
-    input_mapping:
-      files: config
-    output_mapping:
-      interpolated-files: config
+  - *credhub-interpolate # this uses the YAML anchor (https://yaml.org/spec/1.2/spec.html#id2785586) previously defined above
   - task: download-pas-windows-product
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
