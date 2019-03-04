@@ -253,7 +253,6 @@ Downloads are cached, so files are not re-downloaded each time.
 This is intended to be used with files downloaded from Pivnet by [`download-product`][download-product]
 and then persisted to a blobstore using a `put` step.
 
-
 Outputs can be used directly as an input to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
@@ -264,6 +263,11 @@ The product files uploaded to s3 for download with this task need a specific pre
 `[product-slug,semantic-version]`.
 This prefix is added by the [`download-product`][download-product] task
 when S3 keys are present in the configuration file.
+
+!!! Info
+    It's possible to use IAM instance credentials
+    instead of providing S3 creds in the config file.
+    See [download-product config file][download-product-config] for details.
 
 {% code_snippet 'tasks', 'download-product-s3' %}
 
