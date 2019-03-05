@@ -26,12 +26,10 @@ Ops Manager. These tasks, in order, are:
 1. `download-product`: 
     Create a `config.yml` for this task using the [example provided][download-product-config]
 
-    After running the task, the following snippet of code will run:
-
-{% code_snippet 'tasks', 'assign-stemcell-support' %}
-
-   The task will put a config file with two values, `product` and `stemcell` into the `assign-stemcell-config`
-   output directory.
+    After running the task, a file named `assign-stemcell.yml` is outputted.
+    The task will put a config file with two values, `product` and `stemcell` into the `assign-stemcell-config`
+    output directory. This can be used with [assign-stemcell][assign-stemcell] to ensure the _latest_ stemcell is
+    used with that product.
 
 2. Run the [upload-product][upload-product] and [stage-product][stage-product] tasks to get the 
    resources into Ops Manager.
