@@ -211,16 +211,19 @@ This task requires a [download-product config file][download-product-config].
 If S3 configuration is present in the [download-product config file][download-product-config],
 the slug and version of the downloaded product file will be prepended in brackets to the filename.  
 For example:
+
 - original-pivnet-filenames:
-```
-ops-manager-aws-2.5.0-build.123.yml
-cf-2.5.0-build.45.pivotal
-```
+  ```
+  ops-manager-aws-2.5.0-build.123.yml
+  cf-2.5.0-build.45.pivotal
+  ```
+
 - download-product-filenames if S3 configuration is present:
-```
-[ops-manager,2.5.0]ops-manager-aws-2.5.0-build.123.yml
-[elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
-```
+  ```
+  [ops-manager,2.5.0]ops-manager-aws-2.5.0-build.123.yml
+  [elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
+  ```
+  
 This is to allow the same config parameters
 that let us select a file from Pivnet
 select it again when pulling from S3.
@@ -228,20 +231,26 @@ Note that the filename will be unchanged
 if S3 keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
-!!! warning
-    If you are using a regex in your pipeline that explicitly requires the pivnet filename to be the _start_ of the
+!!! warning "When using the s3 resource in concourse"
+    If you are using a `regexp` in your s3 resource definition that explicitly requires the pivnet filename to be the _start_ of the
     regex, (i.e., the pattern starts with `^`) this won't work when using S3 config.
     The new file format preserves the original filename, so it is still possible to match on that -
     but if you need to match from the beginning of the filename, that will have been replaced by the prefix described above.
 
-!!! Info
+!!! info "When specifying PAS-Windows"
     This task will automatically download and inject the winfs for pas-windows.
 
-!!! warning
+!!! warning "When specifying PAS-Windows on Vsphere"
     This task cannot download the stemcell for pas-windows on vSphere.
     To build this stemcell manually, please reference the
     [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
     in Pivotal Documentation.
+    
+!!! info "When only downloading from Pivnet"
+    When the download product config only has Pivnet credentials,
+    it will not add the prefix to the downloaded product.
+    For example, `example-product.pivotal` from Pivnet will be outputed
+    as `example-product.pivotal`.
 
 {% code_snippet 'tasks', 'download-product' %}
 
@@ -263,6 +272,15 @@ The product files uploaded to s3 for download with this task need a specific pre
 `[product-slug,semantic-version]`.
 This prefix is added by the [`download-product`][download-product] task
 when S3 keys are present in the configuration file.
+This is the meta information about the product from Pivnet,
+which is not guaranteed to be in the original filename.
+This tasks uses the meta information to be able to perform 
+
+!!! info "When only downloading from Pivnet"
+    When the download product config only has Pivnet credentials,
+    it will not add the prefix to the downloaded product.
+    For example, `example-product.pivotal` from Pivnet will be outputed
+    as `example-product.pivotal`.
 
 !!! Info
     It's possible to use IAM instance credentials

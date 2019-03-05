@@ -292,7 +292,7 @@ jobs:
     This file cannot be manually created. It is a file that must retrieved from Pivnet.
 
 ### download-product-config
-The `config` input for a download product task expects to have a `download-config.yml` file
+The `config` input for a download product task expects to have a `download-config.yml` file.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-product-config' %}
