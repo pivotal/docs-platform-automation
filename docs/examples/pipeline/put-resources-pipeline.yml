@@ -47,7 +47,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: pcf-vsphere-(.*).ova
+    regexp: \[ops-manager,(.*)\].*.ova
 
 - name: pas-product
   type: s3

@@ -35,7 +35,7 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       region_name: ((s3.region_name))
       secret_access_key: ((s3.secret_access_key))
-      regexp: ((opsman_image_s3_versioned_regexp)) # vsphere ex: ops-manager-(.*).ova
+      regexp: \[ops-manager,(.*)\].*.ova # vsphere ex: ops-manager-(.*).ova
 
   - name: pas-stemcell
     type: s3
@@ -123,17 +123,38 @@ jobs:
     serial_groups: [ install ]
     plan:
       - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-          - get: one-time-trigger
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: opsman-image
-          - get: configuration
-          - get: variable
+        - get: platform-automation-image
+          params:
+            unpack: true
+        - get: one-time-trigger
+          trigger: true
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: "download-product-configs"
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: product-configs
+      - task: download-opsman-image
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product-s3.yml
+        params:
+          CONFIG_FILE: download-product-configs/opsman.yml
+        input_mapping:
+          config: product-configs
+        output_mapping:
+          downloaded-product: opsman-image
+      - get: variable
       - task: create-vm
         image: platform-automation-image
         file: platform-automation-tasks/tasks/create-vm.yml
