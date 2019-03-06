@@ -38,7 +38,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: healthwatch-stemcell/\[ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
+    regexp: healthwatch-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
 - name: opsman-product
   type: s3
@@ -65,7 +65,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: pas-stemcell/\[ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
+    regexp: pas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
 - name: pas-windows-product
   type: s3
