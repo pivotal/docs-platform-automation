@@ -54,7 +54,7 @@ See the task for the [`configure-authentication`][configure-authentication] for 
 
 {% code_snippet 'examples', 'auth-configuration' %}
 
-!!! Info
+!!! info
     basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats
 
 #### saml authentication
@@ -64,7 +64,7 @@ See the task for the [`configure-saml-authentication`][configure-saml-authentica
 
 {% code_snippet 'examples', 'saml-auth-configuration' %}
 
-!!! Info 
+!!! info 
     saml authentication requires the <a href="#uaa-authentication">uaa env</a> format
 
 The `saml-configuration` properties configures the SAML provider.

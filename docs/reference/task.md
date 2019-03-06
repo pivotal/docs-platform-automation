@@ -282,7 +282,7 @@ This tasks uses the meta information to be able to perform
     For example, `example-product.pivotal` from Pivnet will be outputed
     as `example-product.pivotal`.
 
-!!! Info
+!!! info
     It's possible to use IAM instance credentials
     instead of providing S3 creds in the config file.
     See [download-product config file][download-product-config] for details.
@@ -306,7 +306,7 @@ params:
   INSTALLATION_FILE: installation-$timestamp.zip
 ```
 
-!!! Info
+!!! info
     The timestamp is generated using the time on concourse worker.
     If the time is different on different workers, the generated timestamp may fail to sort correctly.
     Changing the time or timezone on workers might interfere with ordering.
@@ -336,12 +336,12 @@ Also useful for persisting the configuration output from:
 - [staged-config](#staged-config)
 - [staged-director-config](#staged-director-config)
 
-!!! Info
+!!! info
     This commits **all changes** present
     in the repo used for the `repository` input,
     in addition to copying in a single file.
 
-!!! Info 
+!!! info 
     This does not perform a `git push`!
     You will need to `put` the output of this task to a git resource to persist it.
 
