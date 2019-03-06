@@ -71,7 +71,7 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       region_name: ((s3.region_name))
       secret_access_key: ((s3.secret_access_key))
-      regexp: pas-windows-stemcell/[stemcells-windows-server,(.*)]bosh-stemcell-.*-vsphere.*\.tgz
+      regexp: pas-windows-stemcell/\[stemcells-windows-server,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
   - name: healthwatch-stemcell
     type: s3
