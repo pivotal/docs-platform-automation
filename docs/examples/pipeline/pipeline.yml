@@ -44,7 +44,7 @@ resources:
       secret_access_key: ((s3.secret_access_key))
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.pivnet_products))
-      regexp: pas-stemcell/bosh-stemcell-(.*)-vsphere.*\.tgz
+      regexp: pas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
   - name: pas-product
     type: s3
