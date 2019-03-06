@@ -29,7 +29,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: p-healthwatch-(.*).pivotal
+    regexp: \[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal
 
 - name: healthwatch-stemcell
   type: s3
@@ -38,7 +38,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: healthwatch-stemcell/bosh-stemcell-(.*)-vsphere.*\.tgz
+    regexp: healthwatch-stemcell/\[ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
 - name: opsman-product
   type: s3
@@ -56,7 +56,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: cf-(.*).pivotal
+    regexp: \[elastic-runtime,(.*)\]cf-.*.pivotal
 
 - name: pas-stemcell
   type: s3
@@ -65,7 +65,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: pas-stemcell/bosh-stemcell-(.*)-vsphere.*\.tgz
+    regexp: pas-stemcell/\[ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
 - name: pas-windows-product
   type: s3
@@ -74,7 +74,7 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-    regexp: pas-windows-(.*).pivotal
+    regexp: \[pas-windows,(.*)\]pas-windows-.*.pivotal
 
 - name: platform-automation-pivnet
   type: pivnet
