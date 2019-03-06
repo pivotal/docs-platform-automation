@@ -60,6 +60,12 @@ These are release notes for Platform Automation for PCF.
 - CVE update to container image. Resolves [USN-3885-1](https://usn.ubuntu.com/3885-1/)
   (related to vulnerabilities with `openssh`. While none of our code directly used these,
   they are present on the image.)
+- CVE update to container image. Resolves [USN-3885-2](https://usn.ubuntu.com/3885-2/)
+  (related to vulnerabilities with `openssh-client`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-3899-1](https://usn.ubuntu.com/3899-1/)
+  (related to vulnerabilities with `libssl`. While none of our code directly used these,
+  they are present on the image.)
 - Fixed an issue with how `p-automator` matched file versions. This should not have affected any users.
   The issue was our regex matched the last two digits of a version, and with the update of semver-compatible
   versioning, this would technically be incorrect (even if unlikely).
