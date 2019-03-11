@@ -50,6 +50,12 @@ These are release notes for Platform Automation for PCF.
   Previously, not all such fields were returned from Ops Manager,
   so some secrets on some IaaSs were missing.
   They should all be there now.
+- [download-product](./reference/task.md#download-product) now supports the authentication method of `iam` if it is 
+  available. This will use an instance iam account rather than using access-key/secret-key
+- [aws](./reference/inputs-outputs.md#aws) now supports using 
+  [Instance Profiles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html) 
+  as a means of authentication. If using `download-product`, consider setting `s3-auth-method: iam` in your 
+  [download-product-config](./reference/inputs-outputs.md#download-product-config)
 
 ### Bug fixes
 - There was a bug in `download-product` that would not quote the stemcell string in
