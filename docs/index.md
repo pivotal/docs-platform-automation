@@ -45,11 +45,7 @@ rather than a comprehensive solution.
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
 
-<<<<<<< HEAD
-!!! info
-=======
-!!! Info "Transitioning from PCF Pipelines"
->>>>>>> updating left nav adding upgrading with platform automation section
+!!! info "Transitioning from PCF Pipelines"
     If your current pipeline is based on PCF Pipelines,
     we recommend building a replacement pipeline with the new tooling,
     as opposed to trying to modify your existing pipeline to use the new tools. There is more upfront learning and set-up but in the long term you will have less maintenance with upgrades.
@@ -101,34 +97,35 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
 
 ## Upgrading with Platform Automation for PCF
 
-Successful platform engineering teams know that a platform team that’s always up to date is critical for their business. If they don’t stay up to date, they miss out on the latest platform features and the services that Pivotal delivers, which means their development teams miss out too. By not keeping up to date, platforms could encounter security risks or even application failures.
+Successful platform engineering teams know that a platform team that’s always up to date is critical for their business. 
+If they don’t stay up to date, they miss out on the latest platform features and the services that Pivotal delivers, 
+which means their development teams miss out too. By not keeping up to date, platforms could encounter security risks or 
+even application failures.
 
-Pivotal offers regular updates for PCF, which ensures our customers have access to the latest security patches and new features. For example, Pivotal releases security patches every six days on average.
-
-<<<<<<< HEAD
-* Deployed Concourse
+Pivotal offers regular updates for PCF, which ensures our customers have access to the latest security patches and new features. 
+For example, Pivotal releases security patches every six days on average.
 
 !!! info
     Platform Automation for PCF is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/guides.html) would be a good place to start.
-=======
+
 So how can a platform engineering team simplify the platform upgrade process?
->>>>>>> updating left nav adding upgrading with platform automation section
 
-Small and Constant Upgrades
+**Small and Constant Upgrades**
 
-Adopting the best practice of small and constant platform updates is one of the best ways to simplify the platform upgrade process. This behavior can significantly reduce risk, increase stability with faster troubleshooting, and overall reduce the effort of upgrading. This also creates a culture of continuous iteration and improves feedback loops with the platform teams and the developers - building trust across the organization. A good place start is by consuming every patch.
+Adopting the best practice of small and constant platform updates is one of the best ways to simplify the platform 
+upgrade process. This behavior can significantly reduce risk, increase stability with faster troubleshooting, and 
+overall reduce the effort of upgrading. This also creates a culture of continuous iteration and improves feedback loops 
+with the platform teams and the developers - building trust across the organization. A good place start is by consuming every patch.
 
-How Platform Automation for PCF can help with small and continuous upgrades
+**How Platform Automation for PCF can help with small and continuous upgrades**
 
-With Platform Automation for PCF, platform teams have the tools to create an automated perpetual upgrade machine that can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells, products and services.
+With Platform Automation for PCF, platform teams have the tools to create an automated perpetual upgrade machine that 
+can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells, 
+products and services.
 
-<<<<<<< HEAD
-3. Store the `platform-automation-tasks-*.zip`
-   in a blobstore that can be accessed via a Concourse pipeline.
-
-### Testing Platform Automation Setup
+**Testing Platform Automation Setup**
 
 Next we'll create a test pipeline to see if the assets can be accessed correctly.
    This pipeline runs a test task, which ensures that all the parts work correctly.
@@ -176,9 +173,8 @@ jobs:
     image: platform-automation-image-s3
     file: platform-automation-tasks-s3/tasks/test.yml
 ```
-=======
+
 Check out the [Reference Pipeline][reference-pipeline] to get started.  
->>>>>>> updating left nav adding upgrading with platform automation section
 
 
 {% include ".internal_link_url.md" %}
