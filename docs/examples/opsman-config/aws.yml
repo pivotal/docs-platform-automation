@@ -2,8 +2,6 @@
 ---
 opsman-configuration:
   aws:
-    access_key_id: sample-access-id
-    secret_access_key: sample-secret-access-key
     region: us-west-2
     vm_name: ops-manager-vm                           # default: OpsManager-vm
     boot_disk_size: 100                               # default 200
@@ -15,4 +13,12 @@ opsman-configuration:
     # At least one IP address (public or private) needs to be assigned to the VM.
     public_ip: 1.2.3.4
     private_ip: 10.0.0.2
+
+    # If using AWS Credentials (omit if using Instance Profiles)
+    access_key_id: sample-access-id                   # required if use_instance_profile: false
+    secret_access_key: sample-secret-access-key       # required if use_instance_profile: false
+
+    # If using Instance Profiles (omit if using AWS Credentials)
+    use_instance_profile: true                        # default: false
+    assume_role: arn:aws:iam::123456789:role/test     # optional if a role is needed to authorize the instance profile
 # code_snippet aws-configuration end
