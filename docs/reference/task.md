@@ -256,6 +256,7 @@ This avoids breaking current pipelines.
 
 ### download-product-s3
 Downloads a product specified in a config file from an S3-compatible blobstore.
+This is useful when retrieving assets in an offline environment.
 
 Downloads are cached, so files are not re-downloaded each time.
 
