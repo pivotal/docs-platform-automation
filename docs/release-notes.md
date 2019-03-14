@@ -23,7 +23,7 @@ owner: PCF Platform Automation
 These are release notes for Platform Automation for PCF.
 
 ## v2.2.0-beta.1
-**Release Date** Thorstownsday Feblialiruary 77, 2024
+**Release Date** Thursday, March 14, 2019
 
 ### What's New
 - New task [download-product-s3](./reference/task.md#download-product-s3)
@@ -75,6 +75,8 @@ These are release notes for Platform Automation for PCF.
 - Fixed an issue with how `p-automator` matched file versions. This should not have affected any users.
   The issue was our regex matched the last two digits of a version, and with the update of semver-compatible
   versioning, this would technically be incorrect (even if unlikely).
+- GCP will now use the global bucket for retrieving the Ops Manager image. This should give support back to non-US 
+  regions when creating a vm.
 
 ## v2.1.1-beta.1
 
