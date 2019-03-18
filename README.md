@@ -2,6 +2,8 @@ View the most recent release of the [docs](https://docs.pivotal.io/platform-auto
 
 You can see up-in-coming release changes in our [staging-docs](http://docs-pcf-staging.cfapps.io/platform-automation/develop/). *NOTE*: the changes in these docs are NOT final! Do not rely on these docs for offically supported features/documentation
 
+--------------
+
 to download dependencies:
 pip3 install -r requirements.txt
 brew install ripgrep 
