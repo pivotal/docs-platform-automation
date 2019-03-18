@@ -1,3 +1,7 @@
+View the most recent release of the [docs](https://docs.pivotal.io/platform-automation/)
+
+For internal Pivotal, you can see up-in-coming release changes in our [staging-docs](http://docs-pcf-staging.cfapps.io/platform-automation/develop/)
+
 to download dependencies:
 pip3 install -r requirements.txt
 brew install ripgrep 
