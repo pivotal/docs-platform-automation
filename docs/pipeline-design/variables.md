@@ -44,6 +44,12 @@ Otherwise you will receive an error message indicating missing variables:
 could not execute "interpolate": Expected to find variables: ((missing-value))
 ```
 
+!!! info
+    If you are using an additional credential manager, such as credhub, you can set the flag
+    `--skip-missing` to your `om interpolate` call to allow parameterized variables to 
+    still be present in your config after interpolation, to be later filled in by 
+    interpolating with your credential manager.
+
 ## Why use variables if you're already using a secrets manager?
 [secrets handling] requires that all parameterized values be included in your secrets manager (i.e. credhub).
 Because of this, vars files and secrets handling have to be used a little differently.
@@ -87,6 +93,7 @@ jobs:
     params:
       VARS_FILES: vars/vars.yml # vars/vars2.yml
       CONFIG_FILE: base.yml
+      SKIP_MISSING: false       # true if vars files do not contain all required vars  
 
 ```
 

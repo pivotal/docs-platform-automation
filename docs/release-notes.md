@@ -28,6 +28,10 @@ These are release notes for Platform Automation for PCF.
 ### What's New
 -  On [GCP](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
    one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
+- `om interpolate` (example in the [test task](./reference/task.md#test-interpolate)) now supports
+   the ability to accept partial vars files. This is added support for users who may also be using 
+   credhub-interpolate or who want to mix interpolation methods. To make use of this feature, include
+   the `--skip-missing` flag.
 
 ### Bug Fixes
 TBD
