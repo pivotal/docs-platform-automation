@@ -26,7 +26,7 @@ These are release notes for Platform Automation for PCF.
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
 
 ### What's New
--  On [gcp](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
+-  On [GCP](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
    one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
 
 ### Bug Fixes
