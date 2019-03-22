@@ -49,7 +49,7 @@ could not execute "interpolate": Expected to find variables: ((missing-value))
     `--skip-missing` to your `om interpolate` call to allow parametrized variables to 
     still be present in your config after interpolation, to be later filled in by 
     interpolating with your secrets manager. See the [Secrets Handling][secrets-handling] page for a more
-    detailed explanation
+    detailed explanation.
 
 ## Why use variables if you're already using a secrets manager?
 [Secrets Handling][secrets-handling] is a secure way to store sensitive information about your foundation, such as
