@@ -1,0 +1,8 @@
+<div class="mermaid">
+graph TD;
+  secret_tmpl["#var_template.yml<br/>var_a: non-secret-var<br/>var_b: ((credhub_var))"];
+credhub[#Stored Creds in Credhub<br/>credhub_var: something];
+  vars_2["#interpolated_vars.yml<br/>var_a: non-secret-var<br/>var_b: secret-var"]
+credhub -- Credhub Interpolate --> secret_tmpl;
+secret_tmpl -- Generates --> vars_2;
+</div>
