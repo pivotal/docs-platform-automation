@@ -32,6 +32,9 @@ These are release notes for Platform Automation for PCF.
    the ability to accept partial vars files. This is added support for users who may also be using 
    credhub-interpolate or who want to mix interpolation methods. To make use of this feature, include
    the `--skip-missing` flag.
+- [`credhub-interpolate`](./reference/task.md#credhub-interpolate) now supports the `SKIP_MISSING`
+   parameter. For more information on how to use this feature and if it fits for your foundation(s), see the 
+   [Secrets Handling](./configuration-management/secrets-handling.md#multiple-sources) section.
 
 ### Bug Fixes
 TBD
