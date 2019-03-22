@@ -2,13 +2,13 @@
 graph TD;
 vars_1[#vars_file.yml<br/>var_a: content];
   secret_tmpl["#var_template.yml<br/>var_b: ((credhub_var))"];
-credhub[#Stored Creds in Credhub<br/>credhub_var: something];
-  vars_2["#credhub_vars.yml<br/>var_b: something"]
-base["#base_template.yml<br/>a: ((var_a))<br/>b: ((var_b))"];
-generated["#base.yml<br/>a:content<br/>b:something"];
+credhub[#Stored Creds in Credhub<br/>credhub_var: secret-var];
+  vars_2["#credhub_vars.yml<br/>var_b: secret-var"]
+base["#base_vars_template.yml<br/>a: ((var_a))<br/>b: ((var_b))"];
+generated["#interpolated_vars.yml<br/>a:content<br/>b:secret-var"];
 credhub -- Credhub Interpolate --> secret_tmpl;
 secret_tmpl -- Generates --> vars_2;
 vars_2 -- om Interpolate --> base;
 vars_1 -- om Interpolate --> base;
-base -- Gerenates --> generated;
+base -- Generates --> generated;
 </div>

@@ -37,12 +37,19 @@ jobs:
       CREDHUB_CLIENT: ((credhub_client))
       CREDHUB_SECRET: ((credhub_secret))
       CREDHUB_SERVER: ((credhub_server))
-      PREFIX: /private-foundation  
+      PREFIX: /private-foundation
+      SKIP_MISSING: false  
 ```
 
 Notice the `PREFIX` has been set to `/private-foundation`, the path prefix defined for your cred in (2).
 This allows the config file to have values scoped, for example, per foundation.
 `params` should be filled in by the credhub created with your Concourse instance.
+
+!!! info
+    You can set the param `SKIP_MISSING:true` to allow parametrized variables to 
+    still be present in your config after interpolation. This can allow use of 
+    shared foundation vars files with the foundation-specific secrets. For more
+    information, see the [Multiple Sources](#multiple-sources) section
 
 This task will reach out to the deployed credhub and fill in your entry references and return an output
 named `interpolated-files` that can then be read as an input to any following tasks.
@@ -56,7 +63,7 @@ opsman-configuration:
 ```
 
 !!! info 
-    If using this you need to ensure concourse worker can talk to credhub so depending
+    If using this you need to ensure the concourse worker can talk to credhub so depending
     on how you deployed credhub and/or worker this may or may not be possible.
     This inverts control that now workers need to access credhub vs
     default is atc injects secrets and passes them to the worker.
@@ -79,9 +86,9 @@ differ per foundation. This will allow you to keep your `base.yml` the same for 
 task call with a unique prefix to fill out the missing pieces of the template.
 
 ### Vars Files
-Alternatively, vars files can be used for your secrets handling.
+Vars files can be used for your [Secrets Handling][secrets-handling].
 
-Take the same example from above:
+Take the example below:
 
 {% include ".cf-partial-config.md" %}
 
@@ -89,10 +96,12 @@ In our first foundation, we have the following `vars.yml`, optional for the [`co
 ```yaml
 # vars.yml
 cloud_controller_encrypt_key.secret: super-secret-encryption-key
+cloud_controller_apps_domain: cfapps.domain.com
 ```
 
 The `vars.yml` could then be passed to [`configure-product`][configure-product] with `base.yml` as the config file.
-The task will then sub the `((cloud_controller_encrypt_key.secret))` specified in `vars.yml` and configure the product as normal.
+The task will then sub the `((cloud_controller_encrypt_key.secret))` and `((cloud_controller_apps_domain))` 
+specified in `vars.yml` and configure the product as normal.
 
 An example of how this might look in a pipeline(resources not listed):
 ```yaml
@@ -119,6 +128,59 @@ jobs:
       CONFIG_FILE: base.yml
       VARS_FILES: vars.yml
       ENV_FILE: env.yml
+```
+
+### Multiple Sources
+
+Both vars files and credhub may be used to interpolate variables into `base.yml`.
+Using the same example from above: 
+
+{% include ".cf-partial-config.md" %}
+
+We have one parametrized variable that is secret and might not want to have stored in 
+a plain text vars file, `((cloud_controller_encrypt_key.secret))`, but `((cloud_controller_apps_domain))` 
+is fine in a vars file. In order to support a `base.yml` with credentials from multiple sources (i.e. 
+credhub and vars files), you will need to `SKIP_MISSING: true` in the [`credhub-interpolate`][credhub interpolate] task.
+
+The workflow would be the same as [Credhub](#credhub), but when passing the interpolated `base.yml` as a config into the
+next task, you would add in a [Vars File](#vars-files) to fill in the missing variables.
+
+An example of how this might look in a pipeline (resources not listed), assuming:
+
+- The `((base.yml))` above 
+- `((cloud_controller_encrypt_key.secret))` is stored in credhub
+- `((cloud_controller_apps_domain))` is stored in `director-vars.yml` 
+
+```yaml
+jobs:
+- name: example-credhub-interpolate
+  plan:
+  - get: platform-automation-tasks
+  - get: platform-automation-image
+  - get: config
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    input_mapping:
+      files: config
+    params:
+      # all required
+      CREDHUB_CA_CERT: ((credhub_ca_cert))
+      CREDHUB_CLIENT: ((credhub_client))
+      CREDHUB_SECRET: ((credhub_secret))
+      CREDHUB_SERVER: ((credhub_server))
+      PREFIX: /private-foundation
+      SKIP_MISSING: true  
+- name: example-configure-director
+  plan:
+  - get:   
+  - task: configure-director
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-director.yml
+    params:
+      VARS_FILES: vars/director-vars.yml
+      ENV_FILE: env/env.yml
+      DIRECTOR_CONFIG_FILE: config/director.yml
 ```
 
 {% with path="../" %}
