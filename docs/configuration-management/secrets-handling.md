@@ -38,7 +38,7 @@ jobs:
       CREDHUB_SECRET: ((credhub_secret))
       CREDHUB_SERVER: ((credhub_server))
       PREFIX: /private-foundation
-      SKIP_MISSING: false  
+      SKIP_MISSING: true  
 ```
 
 Notice the `PREFIX` has been set to `/private-foundation`, the path prefix defined for your cred in (2).
@@ -46,10 +46,10 @@ This allows the config file to have values scoped, for example, per foundation.
 `params` should be filled in by the credhub created with your Concourse instance.
 
 !!! info
-    You can set the param `SKIP_MISSING:true` to allow parametrized variables to 
-    still be present in your config after interpolation. This can allow use of 
-    shared foundation vars files with the foundation-specific secrets. For more
-    information, see the [Multiple Sources](#multiple-sources) section
+    You can set the param `SKIP_MISSING:false` to enforce strict checking of 
+    your vars files during intrpolation. This is true by default to support 
+    credential management from multiple sources. For more information, see the 
+    [Multiple Sources](#multiple-sources) section.
 
 This task will reach out to the deployed credhub and fill in your entry references and return an output
 named `interpolated-files` that can then be read as an input to any following tasks.
@@ -141,6 +141,7 @@ We have one parametrized variable that is secret and might not want to have stor
 a plain text vars file, `((cloud_controller_encrypt_key.secret))`, but `((cloud_controller_apps_domain))` 
 is fine in a vars file. In order to support a `base.yml` with credentials from multiple sources (i.e. 
 credhub and vars files), you will need to `SKIP_MISSING: true` in the [`credhub-interpolate`][credhub interpolate] task.
+This is enabled by default by the `credhub-interpolate` task.
 
 The workflow would be the same as [Credhub](#credhub), but when passing the interpolated `base.yml` as a config into the
 next task, you would add in a [Vars File](#vars-files) to fill in the missing variables.

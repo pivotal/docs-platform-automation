@@ -141,6 +141,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           PREFIX: '/pipeline/vsphere'
           INTERPOLATION_PATH: "download-product-configs"
+          SKIP_MISSING: true
         input_mapping:
           files: configuration
         output_mapping:
