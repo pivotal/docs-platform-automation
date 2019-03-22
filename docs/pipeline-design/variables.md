@@ -45,7 +45,7 @@ could not execute "interpolate": Expected to find variables: ((missing-value))
 ```
 
 !!! info
-    If you are using an additional secrets manager, such as credhub, you can set the flag
+    If you are using an additional secrets manager, such as credhub, you can add the flag
     `--skip-missing` to your `om interpolate` call to allow parametrized variables to 
     still be present in your config after interpolation, to be later filled in by 
     interpolating with your secrets manager. See the [Secrets Handling][secrets-handling] page for a more
@@ -99,12 +99,9 @@ jobs:
     params:
       VARS_FILES: vars/vars.yml # vars/vars2.yml
       CONFIG_FILE: base.yml
-      SKIP_MISSING: false       # true if vars files do not contain all required vars  
+      SKIP_MISSING: true       # false to enable strict interpolation  
 
 ```
-
-
-
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
