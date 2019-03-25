@@ -35,6 +35,9 @@ These are release notes for Platform Automation for PCF.
 - [`credhub-interpolate`](./reference/task.md#credhub-interpolate) now supports the `SKIP_MISSING`
    parameter. For more information on how to use this feature and if it fits for your foundation(s), see the 
    [Secrets Handling](./configuration-management/secrets-handling.md#multiple-sources) section.
+- the [reference pipeline](./reference/pipeline.md) has been updated to give an example of 
+  [`credhub-interpolate`](./reference/task.md#credhub-interpolate) in practice. For more information
+  about credhub, see [Secrets Handling](./configuration-management/secrets-handling.md#multiple-sources) 
 
 ### Bug Fixes
 TBD
