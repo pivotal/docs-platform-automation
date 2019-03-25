@@ -132,7 +132,7 @@ jobs:
           params:
             unpack: true
         - get: configuration
-      - task: credhub-interpolate
+      - task: interpolate-download-opsman-image-creds
         image: platform-automation-image
         file: platform-automation-tasks/tasks/credhub-interpolate.yml
         params:
@@ -156,13 +156,41 @@ jobs:
         output_mapping:
           downloaded-product: opsman-image
       - get: variable
+      - task: interpolate-config-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: create-vm
         image: platform-automation-image
         file: platform-automation-tasks/tasks/create-vm.yml
         input_mapping:
           image: opsman-image
           state: configuration
-          config: configuration
+          config: interpolated-configs
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
@@ -194,7 +222,7 @@ jobs:
         attempts: 10
         input_mapping:
           env: configuration
-          config: configuration
+          config: interpolated-configs
         params:
           ENV_FILE: ((foundation))/env/env.yml
           AUTH_CONFIG_FILE: ((foundation))/config/auth.yml
@@ -202,8 +230,8 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
         input_mapping:
-          config: configuration
-          env: configuration
+          config: interpolated-configs
+          env: interpolated-env
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/vars/director-vars.yml
@@ -213,7 +241,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -226,11 +254,25 @@ jobs:
           - get: platform-automation-image
             params: {unpack: true}
           - get: configuration
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: staged-director-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-director-config.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -248,11 +290,25 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
           INSTALLATION_FILE: installation-$timestamp.zip
@@ -279,14 +335,42 @@ jobs:
             passed: [ export-installation ]
           - get: configuration
           - get: variable
+      - task: interpolate-config-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: upgrade-opsman
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upgrade-opsman.yml
         input_mapping:
           image: opsman-image
           state: configuration
-          config: configuration
-          env: configuration
+          config: interpolated-configs
+          env: interpolated-env
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
@@ -298,7 +382,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -318,12 +402,26 @@ jobs:
           - get: pas-product
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-product
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
       - task: stage-product
@@ -331,7 +429,7 @@ jobs:
         file: platform-automation-tasks/tasks/stage-product.yml
         input_mapping:
           product: pas-product
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -350,12 +448,40 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: interpolate-config-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: configure-pas
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: configuration
-          env: configuration
+          config: interpolated-configs
+          env: interpolated-env
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/cf.yml
@@ -378,12 +504,26 @@ jobs:
           - get: pas-windows-product
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-windows-product
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
       - task: stage-product
@@ -391,7 +531,7 @@ jobs:
         file: platform-automation-tasks/tasks/stage-product.yml
         input_mapping:
           product: pas-windows-product
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -410,12 +550,40 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: interpolate-config-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: configure-pas
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: configuration
-          env: configuration
+          config: interpolated-configs
+          env: interpolated-env
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/pas-windows.yml
@@ -443,11 +611,25 @@ jobs:
             trigger: true
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: upload-pas-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
           stemcell: pas-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
@@ -455,7 +637,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
           stemcell: pas-windows-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
@@ -463,7 +645,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
           stemcell: healthwatch-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
@@ -482,12 +664,26 @@ jobs:
           - get: healthwatch-product
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: upload-and-stage-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-and-stage-product.yml
         input_mapping:
           product: healthwatch-product
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -506,12 +702,40 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: interpolate-config-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: configure-healthwatch
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: configuration
-          env: configuration
+          config: interpolated-configs
+          env: interpolated-env
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/healthwatch.yml
@@ -534,11 +758,25 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: apply-product-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -553,11 +791,25 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: staged-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-config.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
         params:
           PRODUCT_NAME: cf
           ENV_FILE: ((foundation))/env/env.yml
@@ -573,11 +825,25 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: interpolate-env
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/env
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-env
       - task: staged-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-config.yml
         input_mapping:
-          env: configuration
+          env: interpolated-env
         params:
           PRODUCT_NAME: p-healthwatch
           ENV_FILE: ((foundation))/env/env.yml
