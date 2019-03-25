@@ -174,7 +174,7 @@ jobs:
     file: platform-automation-tasks-s3/tasks/test.yml
 ```
 
-Check out the [Reference Pipeline][reference-pipeline] to get started.  
+Check out the [Downloading and Testing][downloading-and-testing] to get started.  
 
 
 {% include ".internal_link_url.md" %}
