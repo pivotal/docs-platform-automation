@@ -9,12 +9,12 @@ owner: PCF Platform Automation
      Ops Manager will be removing the necessity to provide availability zones for azure.
      If your `director.yml`(see [`staged-director-config`](./reference/task.md#staged-director-config))
      has a block like the following in the networks section:
-     ```
+     ```yaml
         availability_zone_names:
         - "null"
      ```
      your deployment will have the following error:
-     ```
+     ```json
      {"errors":["Availability zones cannot find availability zone with name null"]}
      ```
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
