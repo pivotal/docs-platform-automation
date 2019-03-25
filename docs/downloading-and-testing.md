@@ -1,20 +1,29 @@
 
 
-The following describes the procedure for downloading, installing and testing the setup of Platform Automation.
+The following describes the procedure for downloading, installing, and confirming your install of Platform Automation.
 
 ### Prerequisites
 
 You'll need the following in order to setup Platform Automation.
 
-* Deployed Concourse
+* Deployed [Concourse][concourse]
 
-!!! Info
     Platform Automation for PCF is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/guides.html) would be a good place to start.
-
+    
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
+* Basic knowledge of [YAML][yaml]
+
+    The Concourse pipelines, tasks, and configuration files all use YAML. There are
+    a number of tutorials online to teach the basics of this format. Additionally, 
+    extensions exist for all major text editors that provide yaml linting, 
+    validation, and editing support.
+
+_If you would like to get started with Platform Automation with a guided How To Guide,
+see [How To Guide: Upgrading an Existing OpsMan][how-to-upgrade-opsman]. Otherwise,
+for a quick start, see the instructions below._
 
 ### Download
 
