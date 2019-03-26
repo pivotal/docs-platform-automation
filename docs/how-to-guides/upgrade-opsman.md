@@ -1,8 +1,8 @@
 # How to: Upgrade an Existing Ops Manager
 
-The following is a How To Guide on setting up and using Platform Automation if you
-already have a foundation that needs to be automated, or if you are coming from a 
-different form of automation (such as `pcf-pipelines`)
+The following is a _How To Guide_ on setting up and using Platform Automation.
+This guide assumes you already have a foundation that needs to be automated, 
+or you are coming from a different form of automation (such as `pcf-pipelines`)
 
 ## Prerequisites
 
@@ -24,7 +24,8 @@ the Platform Automation team recommends the following:
     
 * [Amazon S3][amazon-s3] or [Minio][minio]
     
-    While any blobstore can be used, this How To Guide will be using an s3-compatible blobstore.
+    While any blobstore may be used, this _How To Guide_ will be 
+    using an s3-compatible blobstore.
     
 * A fully installed foundation (either PAS or PKS) with all relevant tiles similarly
   configured and installed
@@ -44,7 +45,9 @@ through the following steps:
 
 * Retrieving Ops Manager, PAS, Healthwatch, and Platform Automation from Pivnet and storing 
   in an s3 blobstore
-* How to setup a sample github repo with a recommended file structure
+* How to setup a sample github repo 
+* Setup recommended file structure
+* Create required files for Upgrade
 * Retrieve the existing config from PAS, Ops Manager, and Healthwatch using `docker run`
 * Persisting the configuration external configuration in github
 * Separating foundation-specific and secret credentials from the existing foundation, and
@@ -475,6 +478,66 @@ Now that we have built up the resources pipeline, you can find this full example
 Windows tile, but if you understand the concepts above, you can use the Windows tile, the mySQL tile, 
 or any other tile you desire for your foundation.
 
+## Sample Github repository and file structure
+
+In this section we will dive into the distributed version control aspects of 
+how state is managed by Platform Automation. We will set up a sample Github repository 
+and go over the recommended folder structure for the repository. 
+
+### Git and Github
+
+Because different tasks update the state and configuration files automatically, 
+some form of version control is required. Git is a commonly used version control tool
+that tracks local history and code changes various users make to files inside a predefined folder
+called a repository (or more often, a repo). To learn more about git, [read this short git handbook][github-git-handbook].
+
+Git is great for working on a local, self hosted repository, but often, it's necessary to
+access repositories from the web or across multiple computers. Github is a distributed
+version control system that provides git functionality across the web. Using a distributed
+system will enable the pipeline we are creating to access and update the state and configuration files
+automatically through Github without manual intervention from the us.
+In this example, we will be using [Github][github], another common version control tool.
+For further reading, [this portion of the handbook][github-git-handbook-github] explains how Github
+fits into the overall version control workflow. 
+
+To create our Github repo:
+
+1. You must have a github account. 
+Login or create an account
+1. Create a new repository
+1. Using the example from the "Example: Start a new repository and publish it to GitHub"
+section of the [Git handbook][github-git-handbook] (about 3/4 down the page), 
+create a local repo and add your first file
+
+### Creating repo folder structure
+
+You now have both a local git repo and a distributed Github repo. Let's cover the recommended 
+folder structure for this repo before we fill it with files:
+
+```bash
+├── foundation
+│   ├── config
+│   ├── env
+│   ├── state
+│   └── vars
+```
+
+Each of the above directories are needed for this How To Guide, and is the recommended starter
+structure for configuration management. The pipeline described in this guide will 
+[map][concourse-input-mapping] files assuming this file structure.
+ 
+* The `config` directory will hold all of the config files for the products installed on your 
+foundation. If using Credhub and/or vars files, these config files should have your 
+((parametrized)) values present in them.
+
+* The `env` directory will hold a single `env.yml`, which will be your environment file used by 
+each task that interacts with Ops Manager.
+
+* The `vars` directory will hold all of the product-specific vars files needed for your foundation.
+
+* The `state` directory will hold a single `state.yml`, which will need to be created manually if 
+upgrading from an existing foundation for the first time, or is created automatically if
+installing from a empty foundation. 
 
 
 {% with path="../" %}
