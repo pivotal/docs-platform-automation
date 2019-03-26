@@ -47,7 +47,7 @@ When you are upgrading your Ops Manager you may get version check or IaaS CLI er
 * SOLUTION: To change the credentials when upgrading an Ops Manager, you must update the password in your
 Account Settings. Then, you will need to update the following two files with the changes:
   [`auth.yml`][auth file]
-  [`env.yml`][env file]
+  [`env.yml`][generating-env-file]
 
 3) <b>The Ops Manager API is inaccessible</b> (Recoverable)
 

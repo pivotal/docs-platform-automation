@@ -60,7 +60,7 @@ jobs:
     params:
       file: generated-config/cf.yml      
 ```
-This task will connect to the OpsManager defined in your [`env.yml`][env file], download the current staged
+This task will connect to the OpsManager defined in your [`env.yml`][generating-env-file], download the current staged
 configuration of your product, and put it into a `generated-config` folder in the concourse job. The `put` in
 concourse allows you to persist this config outside the concourse container.
 

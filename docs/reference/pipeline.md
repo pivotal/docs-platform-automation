@@ -37,7 +37,7 @@ and should be able to coexist in a pipeline with tasks from other sources, or cu
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
-* A valid [env file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
+* A valid [generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
 It is used by every task within Platform Automation for PCF
 * A valid [auth file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.

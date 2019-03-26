@@ -42,7 +42,7 @@ docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 om --env ${ENV_FILE} staged-config --product-name ${PRODUCT_SLUG} --include-placeholders
 ```
 
-`${ENV_FILE}` is the [env file] required for all tasks.
+`${ENV_FILE}` is the [generating-env-file] required for all tasks.
 `${PRODUCT_SLUG}` is the name of the product downloaded from [pivnet].
 The resulting file can then be parameterized, saved, and committed to a config repo.
 
