@@ -43,17 +43,16 @@ and the [Reference Resources Pipeline][reference-resources]
 that is relevant for upgrading Ops Manager for an already existing foundation. This guide will go 
 through the following steps:
 
-* Retrieving Ops Manager, PAS, Healthwatch, and Platform Automation from Pivnet and storing 
+1. Retrieving Ops Manager, PAS, Healthwatch, and Platform Automation from Pivnet and storing 
   in an s3 blobstore
-* How to setup a sample github repo 
-* Setup recommended file structure
-* Create required files for Upgrade
-* Retrieve the existing config from PAS, Ops Manager, and Healthwatch using `docker run`
-* Persisting the configuration external configuration in github
-* Separating foundation-specific and secret credentials from the existing foundation, and
-  when to store in credhub or in a vars file
-* How to interpolate the configs using credhub, and feeding these interpolated configs into 
-  the concourse tasks
+1. How to interpolate the configs using credhub, and feeding these interpolated configs into 
+   the concourse tasks
+1. How to setup a sample github repo 
+1. Setup recommended file structure
+1. Create required files for Upgrade
+1. Retrieve the existing config from Ops Manager using `docker run`
+1. Retrieve the existing config from PAS and Healthwatch using `docker run`
+1. Create a pipeline to upgrade Ops Manager
   
 TODO: link the above to the headers below
 
@@ -319,7 +318,7 @@ of the product and/or stemcell. To add this functionality to your pipeline, you 
 resource in your `resources:` section:
 ```yaml
 resources:
-- name: daily
+- name: daily-trigger
   type: time
   source:
     interval: 24h
@@ -539,7 +538,7 @@ each task that interacts with Ops Manager.
 upgrading from an existing foundation for the first time, or is created automatically if
 installing from a empty foundation. 
 
-### Creating the Required Files
+## Creating the Required Files
 
 Minimal files required for upgrading an Ops Manager VM include:
 
@@ -550,7 +549,7 @@ Minimal files required for upgrading an Ops Manager VM include:
 * (Optional) vars files -- if supporting multiple foundations
 * valid exported Ops Manager installation
 
-**valid state.yml**
+### Valid state.yml
 
 If creating a `state.yml` from an existing foundation, use the following as a template, based
 on your IaaS:
@@ -575,7 +574,7 @@ on your IaaS:
 {% include './examples/state/vsphere.yml' %}
 ```
 
-**valid opsman.yml**
+### Valid opsman.yml
 
 `opsman.yml` is the configuration file required by the `p-automator` tool that exists in the 
 Platform Automation Docker image. `p-automator` is an abstraction that calls out to specific 
@@ -605,7 +604,7 @@ Each field is commented if we believe more info is required:
 {% include './examples/opsman-config/vsphere.yml' %}
 ```
 
-**valid env.yml**
+### Valid env.yml
 
 `env.yml` is a authentication file used by the `om` tool that exists in the Platform Automation
 image. This tool interacts directly with the foundation's Ops Manager and thus, the `env.yml` file 
@@ -620,19 +619,19 @@ is therefore required for `upgrade-opsman`.
 
 {% code_snippet 'examples', 'env' %}
 
-**valid Ops Manager image file**
+### Valid Ops Manager image file
 
 The image file required for `upgrade-opsman` does not have to be downloaded or created manually.
 Instead, it will be included as a resource from an S3 bucket. This resource can also be consumed
 directly from Pivnet, but this _How to Guide_ will not be showing that workflow.
 
-**vars files**
+### Vars files
 
 If using vars files to store secrets or IaaS agnostic credentials, these files should be included in
 your git repo under the `vars` directory. For more information on vars files, see the 
 [Secrets Handling][secrets-handling] page. 
 
-**valid exported Ops Manager installation**
+### Valid exported Ops Manager installation
 
 `upgrade-opsman` will not allow you to execute the task unless the installation 
 provided to the task is a installation provided by Ops Manager itself. In the UI, this is located 
@@ -744,8 +743,9 @@ externally (whether accidentally deleted, or a similar disaster occurs). If some
 happen to the original Ops Manager VM, this installation can be imported by any newly created Ops Manager
 VM.
 
+{% include "./.export_installation_note.md" %}
 
-### Retrieving Existing Ops Manager Director Configuration
+## Retrieving Existing Ops Manager Director Configuration
 If you would like to automate the configuration of your Ops Manager, you first need to externalize
 the director configuration. Using Platform Automation, this is done using Docker or by adding a job to
 the pipeline.
@@ -888,7 +888,7 @@ jobs:
           merge: true
 ```
 
-### Retrieving Existing Product Configurations
+## Retrieving Existing Product Configurations
 
 If you would like to automate the configuration of your product tiles, you first need to externalize
 each product's configuration. Using Platform Automation, this is done using Docker or by adding a job to
@@ -1062,6 +1062,309 @@ jobs:
           repository: configuration-commit
           merge: true
 ```
+
+To retrieve the configuration for Healthwatch, we can simply duplicate the steps used for PAS. The `${SLUG}` 
+for Healthwatch, as we retrieved from `staged-products`, is `p-healthwatch`
+
+## Creating a Pipeline to Upgrade Ops Manager
+
+With the director configuration, product configurations, resources gathered, and config files created, 
+we can finally begin to create a pipeline that will automatically update your Ops Manager. 
+
+At this point, your file tree should now look something like what is shown below. The following tree 
+structure assumes that you are using a mix of vars files and credhub for each of the products used, 
+for the Ops Manager director, and for the `upgrade-opsman` config file.
+
+```
+├── foundation
+│   ├── config
+│   │   ├── cf.yml
+│   │   ├── director.yml
+│   │   ├── healthwatch.yml
+│   │   └── opsman.yml
+│   ├── env
+│   │   └── env.yml
+│   ├── state
+│   │   └── state.yml
+│   └── vars
+│       ├── cf-vars.yml
+│       ├── director-vars.yml
+│       ├── healthwatch-vars.yml
+│       └── opsman-vars.yml
+``` 
+
+Let's review the resources that are required by Concourse for upgrading Ops Manager:
+```yaml
+resources:
+  - name: platform-automation-tasks
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*tasks-(.*).zip
+
+  - name: platform-automation-image
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*image-(.*).tgz
+
+  - name: installation
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.installation))
+      regexp: installation-(.*).zip
+
+  - name: opsman-image
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      bucket: ((s3.buckets.pivnet_products))
+      region_name: ((s3.region_name))
+      secret_access_key: ((s3.secret_access_key))
+      regexp: \[ops-manager,(.*)\].*.ova # vsphere ex: ops-manager-(.*).ova
+      
+  - name: configuration
+    type: git
+    source:
+      private_key: ((configuration.private_key))
+      uri: ((configuration.uri))
+      branch: master
+  
+  - name: daily-trigger   # for exporting installation daily
+    type: time
+    source:
+      interval: 24h
+```
+
+Before we write the jobs portion of the pipeline, let's take a look at the tasks we should run
+in order to function smoothly:
+
+**a passing export installation**
+
+In order for this job to run, a passing `export-installation` job must have been completed.
+Again, by exporting the Ops Manager installation, we can ensure that we have a backup in-case of some
+error. With a backed up installation, `upgrade-opsman` can be run over-and-over regardless of which stage
+the task failed during. This is also important in case something happens to the VM externally (whether accidentally 
+deleted, or a similar disaster occurs). If something _does_ happen to the original Ops Manager VM, this 
+installation can be imported by any newly created Ops Manager VM. Please refer to 
+[the Valid exported Ops Manager installation](#valid-exported-ops-manager-installation) 
+section for details on this job. 
+
+{% include "./.export_installation_note.md" %}
+
+**interpolated env and config**
+
+This job uses a mix of secret and non-secret variables that are interpolated from both Credhub and
+vars files. This can be seen in both the `interpolate-config-creds` and `interpolate-env-creds` tasks.
+These tasks return the `interpolated-config` and `interpolated-env` files that are further used by
+the `upgrade-opsman` task. For further information on how this works and how you can set it up, see the 
+[Parameterizing Secrets](#parametrizing-secrets-and-using-credhub-interpolate) section of this guide
+and the [Secrets Handling][secrets-handling] page.
+
+**ensure commit**
+
+The `ensure` portion of this pipeline is used to ensure that the state file is committed to the repository,
+whether upgrading succeeded or failed. This way, the repository always has the most up to date `state.yml` file
+that reflects the current condition of Ops Manager. This is important so that subsequent runs of this task
+or other tasks don't attempt to target a Ops Manager VM that is deleted or in a bad state.
+
+!!! info
+    When attempting to trouble-shoot the `upgrade-opsman` task, it may be necessary to manually remove
+    the `vm_id` from your `state.yml` file. If the Ops Manager VM is in an unresponsive state or the 
+    `state.yml` file does not reflect the most up to date VM information, (for example, if 
+    the `ensure` fails for some reason) manually removing the `vm_id` will allow the upgrade task to 
+    start in a fresh state and create the VM during the next run. 
+
+**upgrade ops man task**
+
+The `upgrade-opsman` task uses all the inputs provided, including the interpolated files, the 
+Ops Manager image, the `state.yml` file, the `env.yml` file, and the `opsman.yml` file,
+to run. Upon completion, Ops Manager will be upgraded. The following flowchart gives a high level overview
+of how the task makes decisions for an upgrade:
+
+{% include "./upgrade-flowchart.mmd" %}
+
+On successive invocations of the task, it may offer different behaviour than the previous run.
+This aids in recovering from failures (ie: from an IAAS) that occur. For examples on common errors and 
+troubleshooting, see the [Troubleshooting](#troubleshooting) section.
+
+**apply director changes task**
+
+Finally, using the interpolated environment file, the `apply-director-changes` task will apply any remaining upgrade
+changes to Ops Manager. Upon completion of this task, upgrading Ops Manager is now complete. 
+
+By placing all of these tasks into a pipeline, you can get something like the following:
+```yaml
+jobs:
+- name: export-installation
+  serial: true
+  plan:
+    - aggregate:
+        - get: daily-trigger
+          trigger: true
+        - get: platform-automation-image
+          params:
+            unpack: true
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+        - get: variable
+    - task: interpolate-env-creds
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/credhub-interpolate.yml
+      params:
+        CREDHUB_CLIENT: ((credhub-client))
+        CREDHUB_SECRET: ((credhub-secret))
+        CREDHUB_SERVER: ((credhub-server))
+        PREFIX: '/pipeline/vsphere'
+        INTERPOLATION_PATH: ((foundation))/config
+        SKIP_MISSING: true
+      input_mapping:
+        files: configuration
+      output_mapping:
+        interpolated-files: interpolated-configs
+    - task: export-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/export-installation.yml
+      input_mapping:
+        env: interpolated-env
+      params:
+        ENV_FILE: ((foundation))/env/env.yml
+        INSTALLATION_FILE: installation-$timestamp.zip
+    - put: installation
+      params:
+        file: installation/installation*.zip
+- name: upgrade-opsman
+  plan:
+    - aggregate:
+       - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: opsman-image
+      - get: installation
+        passed: [ export-installation ]
+      - get: configuration
+    - task: interpolate-env-creds
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/credhub-interpolate.yml
+      params:
+        CREDHUB_CLIENT: ((credhub-client))
+        CREDHUB_SECRET: ((credhub-secret))
+        CREDHUB_SERVER: ((credhub-server))
+        PREFIX: '/pipeline/vsphere'
+        INTERPOLATION_PATH: ((foundation))/env
+        SKIP_MISSING: true
+      input_mapping:
+        files: configuration
+      output_mapping:
+        interpolated-files: interpolated-env
+    - task: interpolate-config-creds
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/credhub-interpolate.yml
+      params:
+        CREDHUB_CLIENT: ((credhub-client))
+        CREDHUB_SECRET: ((credhub-secret))
+        CREDHUB_SERVER: ((credhub-server))
+        PREFIX: '/pipeline/vsphere'
+        INTERPOLATION_PATH: ((foundation))/config
+        SKIP_MISSING: true
+      input_mapping:
+        files: configuration
+      output_mapping:
+        interpolated-files: interpolated-configs
+    - task: upgrade-opsman
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upgrade-opsman.yml
+      input_mapping:
+        image: opsman-image
+        state: configuration
+        config: interpolated-configs
+        env: interpolated-env
+      params:
+        VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
+        ENV_FILE: ((foundation))/env/env.yml
+        OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
+        STATE_FILE: ((foundation))/state/state.yml
+      ensure:
+        do:
+          - task: make-commit
+            image: platform-automation-image
+            file: platform-automation-tasks/tasks/make-git-commit.yml
+            input_mapping:
+              repository: configuration
+              file-source: configuration/((foundation))/config
+            output_mapping:
+              repository-commit: configuration-commit
+            params:
+              FILE_SOURCE_PATH: cf.yml  # the filename will be called ${SLUG}.yml
+              FILE_DESTINATION_PATH: config/((foundation))/director.yml
+              GIT_AUTHOR_EMAIL: "git-author-email@example.com"
+              GIT_AUTHOR_NAME: "Git Author"
+              COMMIT_MESSAGE: "Update director.yml file"
+          - put: configuration
+            params:
+              repository: configuration-commit
+              merge: true
+        - put: configuration
+          params:
+            repository: configuration-commit
+            merge: true
+    - task: apply-director-changes
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/apply-director-changes.yml
+      input_mapping:
+        env: interpolated-env
+      params:
+        ENV_FILE: ((foundation))/env/env.yml
+```
+
+With your pipeline completed, you are now ready to trigger `export-installation`, and get started!
+
+## Troubleshooting
+When you are upgrading your Ops Manager you may get version check or IaaS CLI errors. For information about troubleshooting these errors, see [`Version Check Errors`][version-check-errors] and [`IaaS CLI Errors`][iaas-cli-errors] below.
+
+### Version Check Errors
+1) <b>Downgrading is not supported by Ops Manager</b> (Manual Intervention Required)
+
+* Ops Manager does not support downgrading to a lower version.
+* SOLUTION: Try the upgrade again with a newer version of Ops Manager.
+
+2) <b>Could not authenticate with Ops Manager</b> (Manual Intervention Required)
+
+* Credentials provided in the auth file do not match the credentials of an already deployed Ops Manager.
+* SOLUTION: To change the credentials when upgrading an Ops Manager, you must update the password in your
+Account Settings. Then, you will need to update the following two files with the changes:
+  [`auth.yml`][auth file]
+  [`env.yml`][generating-env-file]
+
+3) <b>The Ops Manager API is inaccessible</b> (Recoverable)
+
+* The task could not communicate with Ops Manager.
+* SOLUTION: Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Ops Manager VM is not
+created, and will run the [`create-vm`][create-vm] and
+[`import-installation`][import-installation] tasks.
+
+### IAAS CLI Errors
+
+1) When the CLI for a supported IAAS fails for any reason (i.e., bad network, outage, etc) we treat this as
+an IAAS CLI error. The following tasks can return an error from the IAAS's CLI: [`delete-vm`][delete-vm], [`create-vm`][create-vm]
+
+* SOLUTION: The specific error will be returned as output, but <i><b>most errors can simply be fixed by
+re-running the `upgrade-opsman` task.</b></i>
+
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
