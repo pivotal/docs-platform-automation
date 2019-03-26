@@ -1,3 +1,5 @@
+TODO: is this topic still needed?
+
 This topic describes how to execute commands locally with Docker.
 
 If you wish to use the underlying `om` and `p-automator` CLI tools from your local workstation,

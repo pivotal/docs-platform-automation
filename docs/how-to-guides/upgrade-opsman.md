@@ -539,6 +539,529 @@ each task that interacts with Ops Manager.
 upgrading from an existing foundation for the first time, or is created automatically if
 installing from a empty foundation. 
 
+### Creating the Required Files
+
+Minimal files required for upgrading an Ops Manager VM include:
+
+* valid state.yml
+* valid `opsman.yml` (config)
+* valid `env.yml`
+* valid Ops Manager image file
+* (Optional) vars files -- if supporting multiple foundations
+* valid exported Ops Manager installation
+
+**valid state.yml**
+
+If creating a `state.yml` from an existing foundation, use the following as a template, based
+on your IaaS:
+    
+``` yaml tab="AWS"
+{% include './examples/state/aws.yml' %}
+```
+
+``` yaml tab="Azure"
+{% include './examples/state/azure.yml' %}
+```
+
+``` yaml tab="GCP"
+{% include './examples/state/gcp.yml' %}
+```
+
+``` yaml tab="OpenStack"
+{% include './examples/state/openstack.yml' %}
+```
+
+``` yaml tab="vSphere"
+{% include './examples/state/vsphere.yml' %}
+```
+
+**valid opsman.yml**
+
+`opsman.yml` is the configuration file required by the `p-automator` tool that exists in the 
+Platform Automation Docker image. `p-automator` is an abstraction that calls out to specific 
+IaaS CLIs in order to create/update/delete a VM. The optional and required fields detail configurations 
+and interfaces for the VM creation and deletion processes supported by the Platform Automation team.
+
+When creating a valid `opsman.yml`, the fields required differ based on your IaaS.
+Each field is commented if we believe more info is required:
+
+``` yaml tab="AWS"
+{% include './examples/opsman-config/aws.yml' %}
+```
+
+``` yaml tab="Azure"
+{% include './examples/opsman-config/azure.yml' %}
+```
+
+``` yaml tab="GCP"
+{% include './examples/opsman-config/gcp.yml' %}
+```
+
+``` yaml tab="OpenStack"
+{% include './examples/opsman-config/openstack.yml' %}
+```
+
+``` yaml tab="vSphere"
+{% include './examples/opsman-config/vsphere.yml' %}
+```
+
+**valid env.yml**
+
+`env.yml` is a authentication file used by the `om` tool that exists in the Platform Automation
+image. This tool interacts directly with the foundation's Ops Manager and thus, the `env.yml` file 
+holds authentication information for that Ops Manager. This file is required by `upgrade-opsman` 
+because after the vm is recreated, the task will import the existing installation in Ops 
+Manager to finish the process.
+
+An example `env.yml` is shown below. If your foundation uses an authentication other than basic
+auth, please reference [Inputs and Outputs][env] for more detail on UAA-based authentication. 
+As mentioned in the comment, `decryption-passphrase` is required for `import-installation`, and 
+is therefore required for `upgrade-opsman`.
+
+{% code_snippet 'examples', 'env' %}
+
+**valid Ops Manager image file**
+
+The image file required for `upgrade-opsman` does not have to be downloaded or created manually.
+Instead, it will be included as a resource from an S3 bucket. This resource can also be consumed
+directly from Pivnet, but this _How to Guide_ will not be showing that workflow.
+
+**vars files**
+
+If using vars files to store secrets or IaaS agnostic credentials, these files should be included in
+your git repo under the `vars` directory. For more information on vars files, see the 
+[Secrets Handling][secrets-handling] page. 
+
+**valid exported Ops Manager installation**
+
+`upgrade-opsman` will not allow you to execute the task unless the installation 
+provided to the task is a installation provided by Ops Manager itself. In the UI, this is located 
+on the [Settings Page][opsman-settings-page] of Ops Manager.
+
+Platform Automation _**highly recommends**_ automatically exporting and persisting the Ops 
+Manager installation on a regular basis. In order to do so, you can set your pipeline to run the 
+[`export-installation`][export-installation] task on a daily trigger. This should be persisted into 
+S3 or a blobstore of your choice.
+
+You can start your pipeline by first creating this `export-installation` task and persisting it in an S3
+bucket.
+
+Requirements for this task include:
+
+* the Platform Automation image
+* the Platform Automation tasks
+* a configuration path for your env file
+* interpolation of the env file with credhub
+* a resource to store the exported installation into
+
+Starting our concourse pipeline, we need the following resources:
+```yaml
+resources:
+  - name: platform-automation-tasks
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*tasks-(.*).zip
+
+  - name: platform-automation-image
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*image-(.*).tgz
+      
+  - name: configuration
+    type: git
+    source:
+      private_key: ((configuration.private_key))
+      uri: ((configuration.uri))
+      branch: master
+      
+  - name: installation
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.installation))
+      regexp: installation-(.*).zip
+```
+
+In our `jobs` section, we need a job that will trigger daily to pull down the Ops Manager
+installation and store it in S3. This looks like the following:
+
+```yaml
+jobs:
+  - name: export-installation
+    serial: true
+    plan:
+      - aggregate:
+          - get: daily-trigger
+            trigger: true
+          - get: platform-automation-image
+            params:
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: interpolate-env-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: interpolated-env
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+          INSTALLATION_FILE: installation-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/installation*.zip
+```
+
+Once this resource is persisted, we can safely run `upgrade-opsman`, knowing that we can 
+never truly lose our foundation. This is also important in case something happens to the VM
+externally (whether accidentally deleted, or a similar disaster occurs). If something _does_
+happen to the original Ops Manager VM, this installation can be imported by any newly created Ops Manager
+VM.
+
+
+### Retrieving Existing Ops Manager Director Configuration
+If you would like to automate the configuration of your Ops Manager, you first need to externalize
+the director configuration. Using Platform Automation, this is done using Docker or by adding a job to
+the pipeline.
+
+**Docker**
+
+To get the currently configured Ops Manager configuration, we have to:
+
+1. Import the image
+```bash
+docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+```
+Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
+
+2. Then, you can use `docker run` to pass it arbitrary commands.
+Here, we're running the `om` CLI to see what commands are available:
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+om -h
+```
+
+Note:  that this will have access read and write files in your current working directory.
+If you need to mount other directories as well, you can add additional `-v` arguments.
+
+The command we will use to extract the current director configuration is called 
+[`staged-director-config`][staged-director-config]. This is an `om` command that calls
+the Ops Manager API to pull down the currently configured director configuration. To run this
+using Docker, you will need the env file created above as ${ENV_FILE}: 
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+om --env ${ENV_FILE} staged-director-config --include-placeholders
+```
+
+`--include-placeholders` is an optional flag, but highly recommended if you want a full
+configuration for your Ops Manager. This flag will replace any fields marked as "secret" 
+in your Ops Manager config with ((parametrized)) variables. If you would prefer to not
+work with ((parametrized)) variables, you can substitute `--include-placeholders` with
+`--include-credentials`.
+ 
+!!! warning
+    `--include-credentials` WILL expose passwords and 
+    secrets in _plain text_. Therefore, `--include-placeholders` is recommended, but not required.
+
+**Pipeline**
+
+To add [`staged-director-config`] to your pipeline, you will need the following resources:
+
+* the Platform Automation image
+* the Platform Automation tasks
+* a configuration path for your env file
+* a resource to store the exported configuration into
+
+Starting our Concourse pipeline, we need the following resources:
+```yaml
+resources:
+  - name: platform-automation-tasks
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*tasks-(.*).zip
+
+  - name: platform-automation-image
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*image-(.*).tgz
+      
+  - name: configuration
+    type: git
+    source:
+      private_key: ((configuration.private_key))
+      uri: ((configuration.uri))
+      branch: master
+```
+
+In our `jobs` section, we need a job that will interpolate the env file, pull down the 
+Ops Manager director config, and store the director config in the configuration directory
+(this can be the same resource as where the env is located, but will be stored in the `config`
+instead of the `env` directory). In order to persist the director config in your git repo,
+we first need to make a commit, detailing the change we made, and where in your git repo the 
+change happened. A way to do this is shown below:
+
+```yaml
+jobs:
+  - name: staged-director-config
+    plan:
+      - aggregate:
+          - get: platform-automation-tasks
+            params: {unpack: true}
+          - get: platform-automation-image
+            params: {unpack: true}
+          - get: configuration
+      - task: interpolate-env-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: staged-director-config
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/staged-director-config.yml
+        input_mapping:
+          env: interpolated-env
+        output_mapping:
+          generated-config: configuration/((foundation))/config
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: make-commit
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/make-git-commit.yml
+        input_mapping:
+          repository: configuration
+          file-source: configuration/((foundation))/config
+        output_mapping:
+          repository-commit: configuration-commit
+        params:
+          FILE_SOURCE_PATH: director.yml
+          FILE_DESTINATION_PATH: config/((foundation))/director.yml
+          GIT_AUTHOR_EMAIL: "git-author-email@example.com"
+          GIT_AUTHOR_NAME: "Git Author"
+          COMMIT_MESSAGE: "Update director.yml file"
+      - put: configuration
+        params:
+          repository: configuration-commit
+          merge: true
+```
+
+### Retrieving Existing Product Configurations
+
+If you would like to automate the configuration of your product tiles, you first need to externalize
+each product's configuration. Using Platform Automation, this is done using Docker or by adding a job to
+the pipeline.
+
+**Docker**
+
+As an example, we are going to start with the PAS tile.
+To get the currently configured PAS configuration, we have to:
+
+1. Import the image
+```bash
+docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+```
+Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
+
+2. Then, you can use `docker run` to pass it arbitrary commands.
+Here, we're running the `om` CLI to see what commands are available:
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+om -h
+```
+
+Note:  that this will have access read and write files in your current working directory.
+If you need to mount other directories as well, you can add additional `-v` arguments.
+
+The command we will use to extract the current director configuration is called 
+[`staged-config`][staged-config]. This is an `om` command that calls
+the Ops Manager API to pull down the currently configured product configuration given
+a product slug. To run this using Docker, you will need the env file created above as ${ENV_FILE}.
+The product slug for the PAS tile, within Ops Manager, is `cf`. To find the slug of your
+product, you can run the following docker command:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+om --env ${ENV_FILE} staged-products
+```
+
+This will give you a table like the following:
+
+```
++---------------+-----------------+
+|     NAME      |     VERSION     |
++---------------+-----------------+
+| cf            | 2.x.x           |
+| p-healthwatch | 1.x.x-build.x   |
+| p-bosh        | 2.x.x-build.x   |
++---------------+-----------------+
+```
+
+The values in the `NAME` column are the slugs of each product you have deployed. For this
+_How to Guide_, we only have PAS and Healthwatch. 
+
+!!! info 
+    p-bosh is the product slug of Ops Manager. However, `staged-config` _**cannot**_ 
+    be used to extract the director config. To do so, you must use `staged-director-config`
+
+
+With the appropriate product `${SLUG}`, we can run the following docker command to pull down
+the configuration of the chosen tile:
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+om --env ${ENV_FILE} staged-config --product-name ${SLUG} --include-placeholders
+```
+
+`--include-placeholders` is an optional flag, but highly recommended if you want a full
+configuration for your tile. This flag will replace any fields marked as "secret" 
+by the product in the config with ((parametrized)) variables. If you would prefer to not
+work with ((parametrized)) variables, you can substitute `--include-placeholders` with
+`--include-credentials`.
+ 
+!!! warning
+    `--include-credentials` WILL expose passwords and 
+    secrets in _plain text_. Therefore, `--include-placeholders` is recommended, but not required.
+
+**Pipeline**
+
+To add [`staged-config`] to your pipeline, you will need the following resources:
+
+* the Platform Automation image
+* the Platform Automation tasks
+* a configuration path for your env file
+* a resource to store the exported configuration into
+
+Starting our Concourse pipeline, we need the following resources:
+```yaml
+resources:
+  - name: platform-automation-tasks
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*tasks-(.*).zip
+
+  - name: platform-automation-image
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*image-(.*).tgz
+      
+  - name: configuration
+    type: git
+    source:
+      private_key: ((configuration.private_key))
+      uri: ((configuration.uri))
+      branch: master
+```
+
+In our `jobs` section, we need a job that will interpolate the env file, pull down the 
+product config, and store the director config in the configuration directory
+(this can be the same resource as where the env is located, but will be stored in the `config`
+instead of the `env` directory). In order to persist the product config in your git repo,
+we first need to make a commit, detailing the change we made, and where in your git repo the 
+change happened. A way to do this is shown below:
+
+```yaml
+jobs:
+  - name: staged-config
+    plan:
+      - aggregate:
+          - get: platform-automation-tasks
+            params: {unpack: true}
+          - get: platform-automation-image
+            params: {unpack: true}
+          - get: configuration
+      - task: interpolate-env-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: ((foundation))/config
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: interpolated-configs
+      - task: staged-config
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/staged-config.yml
+        input_mapping:
+          env: interpolated-env
+        output_mapping:
+          generated-config: configuration/((foundation))/config
+        params:
+          PRODUCT_NAME: cf   # this is the slug from `staged-products`
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: make-commit
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/make-git-commit.yml
+        input_mapping:
+          repository: configuration
+          file-source: configuration/((foundation))/config
+        output_mapping:
+          repository-commit: configuration-commit
+        params:
+          FILE_SOURCE_PATH: cf.yml  # the filename will be called ${SLUG}.yml
+          FILE_DESTINATION_PATH: config/((foundation))/director.yml
+          GIT_AUTHOR_EMAIL: "git-author-email@example.com"
+          GIT_AUTHOR_NAME: "Git Author"
+          COMMIT_MESSAGE: "Update director.yml file"
+      - put: configuration
+        params:
+          repository: configuration-commit
+          merge: true
+```
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
