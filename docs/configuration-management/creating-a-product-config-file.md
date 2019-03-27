@@ -83,7 +83,11 @@ here are some approaches you can use:
 
 - Look in the template where the variable appears for some additional context of its value.
 - Look at the tile's online documentation
-- Upload the tile to an Ops Manager and visit the tile in the Ops Manager UI to see if that provides any hints.
+- Upload the tile to an Ops Manager 
+  and visit the tile in the Ops Manager UI to see if that provides any hints.
+  
+    If you are still struggling, inspecting the html of the Ops Manager webpage
+    can more accurately map the value names to the associated UI element.
 
 !!! info "When Using The Ops Manager Docs and UI"
     Be aware that the field names in the UI do not necessarily map directly to property names.
