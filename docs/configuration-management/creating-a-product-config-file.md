@@ -11,7 +11,6 @@ Extracting a product configuration file, an externalized config that lives outsi
 A configuration file can be generated from the tile metadata directly from Pivotal Network.
 
 ### Prerequisites
-
 1. A token for the [Pivotal Network API](https://network.pivotal.io/docs/api#how-to-authenticate) is required.
 1. You'll need the Platform Automation Docker Image [imported and ready to run][running-commands-locally].
 1. For products that have multiple `.pivotal` files, you'll need a glob pattern uniquely matching one of them.
@@ -58,12 +57,15 @@ docker run -it -v $HOME/configs:/configs platform-automation-image \
 om interpolate \
   --config product.yml \
   -l product-default-vars.yml \
-  -l resource-vars.yml
+  -l resource-vars.yml \
+  -l errand-vars.yml
 ```
 
 Put all those vars in a file and give them the appropriate values.
 Once you've included all the variables,
 the output will be the finished template.
+For the rest of this guide,
+we will refer to these vars as `required-vars.yml`.
 
 There may be situations that call for splitting your vars across multiple files.
 This can be useful if there are vars that need to be interpolated when you apply the configuration,
@@ -74,10 +76,10 @@ You might consider creating a seperate vars file for each of the following cases
 - foundation-specific variables when using the same template for multiple foundations
 
 You can use the `--skip-missing` flag when creating your final template
-to leave such vars to be rendered later.
+using `om interpolate` to leave such vars to be rendered later.
 
-Here are some approaches you can use
-if you're having trouble figuring out what the values should be:
+If you're having trouble figuring out what the values should be,
+here are some approaches you can use:
 
 - Look in the template where the variable appears for some additional context of its value.
 - Look at the tile's online documentation
@@ -119,6 +121,8 @@ To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
 
 So, to enable TCP routing in PAS, you would add `-o features/tcp_routing-enable.yml`.
+For the rest of this guide, the vars for this feature
+are referred to as `feature-vars.yml`.
 If you run your complete command, you should again get a list of any newly-required variables.
 
 ```bash
@@ -129,7 +133,8 @@ om interpolate \
   -l resource-vars.yml \
   -l required-vars.yml \
   -o features/tcp_routing-enable.yml \
-  -l feature-vars.yml
+  -l feature-vars.yml \
+  -l errand-vars.yml
 ```
 
 #### Finalize Your Configuration
@@ -151,6 +156,7 @@ om interpolate \
   -l required-vars.yml \
   -o features/tcp_routing-enable.yml \
   -l feature-vars.yml \
+  -l errand-vars.yml \
   --skip-missing \
   > pas-config-template.yml
 ```
