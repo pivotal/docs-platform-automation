@@ -54,7 +54,7 @@ through the following steps:
 1. Retrieve the existing config from PAS and Healthwatch using `docker run`
 1. Create a pipeline to upgrade Ops Manager
   
-TODO: link the above to the headers below
+TODO: link the above to the headers below (after design review)
 
 ## Retrieving Resources from Pivnet
 
@@ -70,21 +70,16 @@ purpose of this reference pipeline, we will be utilizing the [Pivotal pivnet-res
 to directly communicate with and download products from Pivnet.
 
 To tell concourse that we will be using the Pivnet resource, we will have to include
-the following:
+the following in your `resource_types` section:
 ```yaml
-resource_types:
-- name: pivnet
-  type: docker-image
-  source:
-    repository: pivotalcf/pivnet-resource
-    tag: latest-final
+{% include './examples/pipeline-snippets/resource-types/pivnet.yml' %}
 ```
 
 After listing the "custom" resource type, we can then list the resources that our foundation
 requires. For this guide, our foundation includes: Ops Manager, Pivotal Application Service (PAS),
 and Healthwatch. The general automated workflow for fetching and storing resources is as follows:
 
-TODO: link to the appropriate sections
+TODO: link to the appropriate sections (after design review)
 
 1. Setup your s3 with the appropriate credentials/buckets for your foundation
 1. [Download product and stemcell](#download-product-and-products-stemcell) (using `download-product`) 
@@ -112,103 +107,26 @@ To reference the storage locations in Concourse, you are required to have the
 The following example assumes that all of your products live in the same s3 bucket, thus
 their `regexp` are very specific to match the slug/version.
 
-TODO: tabs for each of the resources as shown in "reference/pipeline" configs
-```yaml
-resources:
-- name: healthwatch-product
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: \[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal
-
-- name: healthwatch-stemcell
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: healthwatch-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
-
-- name: opsman-product
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: \[ops-manager,(.*)\].*.ova
-
-- name: pas-product
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: \[elastic-runtime,(.*)\]cf-.*.pivotal
-
-- name: pas-stemcell
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: pas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
-    
-- name: platform-automation-tasks
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: platform-automation-tasks-(.*).zip
-
-- name: platform-automation-image
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: platform-automation-image-(.*).tgz
-```
-
 To retrieve the platform-automation product, there is no stemcell, and thus the download
 process is much simpler than with Ops Manager products. Therefore, we can use the Pivnet
 resource we defined earlier and pull from Pivnet directly. The product can be stored in s3
-the same way that the other products can. We can add these resources to our pipeline:
-```yaml
-- name: platform-automation-pivnet
-  type: pivnet
-  source:
-    api_token: ((pivnet_token))
-    product_slug: platform-automation
-    product_version: 2\.(.*)
-    sort_by: semver
+the same way that the other products can. We can add all of these resources to our pipeline
+under the `resources` section:
 
-- name: platform-automation-tasks
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: platform-automation-tasks-(.*).zip
+``` yaml tab="Healthwatch"
+{% include './examples/resources-pipeline/concourse-resources/healthwatch.yml' %}
+```
 
-- name: platform-automation-image
-  type: s3
-  source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-    regexp: platform-automation-image-(.*).tgz
+``` yaml tab="PAS"
+{% include './examples/resources-pipeline/concourse-resources/pas.yml' %}
+```
+
+``` yaml tab="Ops Manager"
+{% include './examples/resources-pipeline/concourse-resources/opsman.yml' %}
+```
+
+``` yaml tab="Platform Automation"
+{% include './examples/resources-pipeline/concourse-resources/platform-automation.yml' %}
 ```
 
 ### Parametrizing Secrets, and Using Credhub Interpolate 
@@ -233,31 +151,13 @@ An example of how to use this in the resources pipeline is shown below. We will 
 "task" external to jobs and resources, so that it can be used in multiple jobs while keeping the yaml
 clean.
 ```yaml
-resource-types: ...
-resources: ...
-
-credhub-interpolate: &credhub-interpolate
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/credhub-interpolate.yml
-  params:
-    CREDHUB_CLIENT: ((credhub-client))
-    CREDHUB_SECRET: ((credhub-secret))
-    CREDHUB_SERVER: ((credhub-server))
-    PREFIX: '/pipeline/vsphere'
-    INTERPOLATION_PATH: "download-product-configs"
-  input_mapping:
-    files: config
-  output_mapping:
-    interpolated-files: config
-      
-jobs: ...
+{% include './examples/anchors/credhub-interpolate.yml' %}
 ```
 
 When referencing the above "task" we will be calling it with the yaml below. This will expand the 
 anchor `*credhub-interpolate` with the concourse-readable data we defined in `&credhub-interpolate` above.
 ```yaml
-- task: credhub-interpolate
-  <<: *credhub-interpolate
+{% include './examples/anchors/subbing-credhub-interpolate.yml' %}
 ```
 
 
@@ -287,22 +187,15 @@ To fetch a product from Pivnet, concourse needs to know
 These requirements gathered together and executed in a task could look like the snippet below.
 The snippet involves downloading Healthwatch. However, Healthwatch can be easily replaced by
 any other tile. The only pieces that would need to change are the task name (if being specific), 
-the name of the stemcell (if mapping), the name of the `download-product-config`, and the `put`s 
+the name of the stemcell (if mapping), the name of the `download-product-config`, and the `put`'s 
 specified after the product and stemcell are downloaded. 
-```yaml
-- task: download-healthwatch-product-and-stemcell
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/download-product.yml
-  params:
-    CONFIG_FILE: download-product-configs/healthwatch.yml
-  output_mapping: {downloaded-stemcell: healthwatch-stemcell}
-  - aggregate:
-  - put: healthwatch-product
-    params:
-      file: downloaded-product/*.pivotal
-  - put: healthwatch-stemcell
-    params:
-      file: healthwatch-stemcell/*.tgz
+
+``` yaml tab="Healthwatch"
+{% include './examples/resources-pipeline/download-product-task/healthwatch.yml' %}
+```
+
+``` yaml tab="PAS"
+{% include './examples/resources-pipeline/download-product-task/pas.yml' %}
 ```
 
 However, Concourse requires you to aggregate any number of tasks into a job. For convenience,
@@ -317,132 +210,27 @@ built-in time resource, to tell the `fetch` jobs how often to run and attempt to
 of the product and/or stemcell. To add this functionality to your pipeline, you must include the time
 resource in your `resources:` section:
 ```yaml
-resources:
-- name: daily-trigger
-  type: time
-  source:
-    interval: 24h
+{% include './examples/pipeline-snippets/resources/daily-trigger.yml' %}
 ```
 
 If included, this resource can be referenced in any appropriate job, and you can set the job to trigger
 on that daily (or custom) interval.
 
-An example of a `fetch-healthwatch` job is as shown below. The job includes the task we created above,
-the daily time trigger, and the interpolate created in an [earlier step](#parametrizing-secrets-and-using-credhub-interpolate).
-```yaml
-jobs:
-- name: fetch-healthwatch
-  plan:
-  - aggregate:
-    - get: daily
-      trigger: true
-    - get: platform-automation-image
-      params:
-        unpack: true
-    - get: platform-automation-tasks
-      params:
-        unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
-  - task: download-healthwatch-product-and-stemcell
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/download-product.yml
-    params:
-      CONFIG_FILE: download-product-configs/healthwatch.yml
-    output_mapping: {downloaded-stemcell: healthwatch-stemcell}
-  - aggregate:
-    - put: healthwatch-product
-      params:
-        file: downloaded-product/*.pivotal
-    - put: healthwatch-stemcell
-      params:
-        file: healthwatch-stemcell/*.tgz
+Examples of the `fetch-{product}` job are shown below. The job includes the task we created above,
+the daily time trigger, and the interpolate created in an 
+[earlier step](#parametrizing-secrets-and-using-credhub-interpolate). These jobs should be included under the 
+`jobs` header in your pipeline.
+
+```yaml tab="Healthwatch"
+{% include './examples/resources-pipeline/fetch-job/healthwatch.yml' %}
 ```
 
-TODO: tab to show example of each product "job" defined (like in reference/pipeline.html configs)
-This step can then be repeated for all products desired:
-```yaml
-jobs:
-- name: fetch-healthwatch
-  plan:
-  - aggregate:
-    - get: daily
-      trigger: true
-    - get: platform-automation-image
-      params:
-        unpack: true
-    - get: platform-automation-tasks
-      params:
-        unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
-  - task: download-healthwatch-product-and-stemcell
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/download-product.yml
-    params:
-      CONFIG_FILE: download-product-configs/healthwatch.yml
-    output_mapping: {downloaded-stemcell: healthwatch-stemcell}
-  - aggregate:
-    - put: healthwatch-product
-      params:
-        file: downloaded-product/*.pivotal
-    - put: healthwatch-stemcell
-      params:
-        file: healthwatch-stemcell/*.tgz
+```yaml tab="PAS"
+{% include './examples/resources-pipeline/fetch-job/pas.yml' %}
+```
 
-- name: fetch-opsman
-  plan:
-  - aggregate:
-    - get: daily
-      trigger: true
-    - get: platform-automation-image
-      params:
-        unpack: true
-    - get: platform-automation-tasks
-      params:
-        unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
-  - task: download-opsman-image
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/download-product.yml
-    params:
-      CONFIG_FILE: download-product-configs/opsman.yml
-  - aggregate:
-    - put: opsman-product
-      params:
-        file: downloaded-product/*
-
-- name: fetch-pas
-  plan:
-  - aggregate:
-    - get: daily
-      trigger: true
-    - get: platform-automation-image
-      params:
-        unpack: true
-    - get: platform-automation-tasks
-      params:
-        unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
-  - task: download-pas-product-and-stemcell
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/download-product.yml
-    params:
-      CONFIG_FILE: download-product-configs/pas.yml
-    output_mapping: {downloaded-stemcell: pas-stemcell}
-  - aggregate:
-    - put: pas-product
-      params:
-        file: downloaded-product/*.pivotal
-    - put: pas-stemcell
-      params:
-        file: pas-stemcell/*.tgz
+```yaml tab="Ops Manager"
+{% include './examples/resources-pipeline/fetch-job/opsman.yml' %}
 ```
 
 ### Download Platform Automation from Pivnet
@@ -455,19 +243,9 @@ installation. For more information about how Platform Automation uses strict sem
 please reference [Compatibility and Versioning][semantic-versioning].
 
 To download the Platform Automation tasks and the Docker image, and put it into your s3 blobstore, add
-the following job:
+the following `job`:
 ```yaml
-- name: fetch-platform-automation
-  plan:
-  - get: platform-automation-pivnet
-    trigger: true
-  - aggregate:
-    - put: platform-automation-tasks
-      params:
-        file: platform-automation-pivnet/*tasks*.zip
-    - put: platform-automation-image
-      params:
-        file: platform-automation-pivnet/*image*.tgz
+{% include './examples/resources-pipeline/fetch-job/platform-automation.yml' %}
 ``` 
 
 ### A Complete Resources Pipeline
@@ -637,13 +415,15 @@ your git repo under the `vars` directory. For more information on vars files, se
 provided to the task is a installation provided by Ops Manager itself. In the UI, this is located 
 on the [Settings Page][opsman-settings-page] of Ops Manager.
 
-Platform Automation _**highly recommends**_ automatically exporting and persisting the Ops 
+Platform Automation _**strongly recommends**_ automatically exporting and persisting the Ops 
 Manager installation on a regular basis. In order to do so, you can set your pipeline to run the 
 [`export-installation`][export-installation] task on a daily trigger. This should be persisted into 
 S3 or a blobstore of your choice.
 
 You can start your pipeline by first creating this `export-installation` task and persisting it in an S3
 bucket.
+
+{% include "./.export_installation_note.md" %}
 
 Requirements for this task include:
 
@@ -655,86 +435,16 @@ Requirements for this task include:
 
 Starting our concourse pipeline, we need the following resources:
 ```yaml
-resources:
-  - name: platform-automation-tasks
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*tasks-(.*).zip
+{% include './examples/pipeline-snippets/resources/common.yml' %}
 
-  - name: platform-automation-image
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*image-(.*).tgz
-      
-  - name: configuration
-    type: git
-    source:
-      private_key: ((configuration.private_key))
-      uri: ((configuration.uri))
-      branch: master
-      
-  - name: installation
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.installation))
-      regexp: installation-(.*).zip
+{% include './examples/pipeline-snippets/resources/installation.yml' %}
 ```
 
 In our `jobs` section, we need a job that will trigger daily to pull down the Ops Manager
 installation and store it in S3. This looks like the following:
 
 ```yaml
-jobs:
-  - name: export-installation
-    serial: true
-    plan:
-      - aggregate:
-          - get: daily-trigger
-            trigger: true
-          - get: platform-automation-image
-            params:
-              unpack: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: configuration
-          - get: variable
-      - task: interpolate-env-creds
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/credhub-interpolate.yml
-        params:
-          CREDHUB_CLIENT: ((credhub-client))
-          CREDHUB_SECRET: ((credhub-secret))
-          CREDHUB_SERVER: ((credhub-server))
-          PREFIX: '/pipeline/vsphere'
-          INTERPOLATION_PATH: ((foundation))/config
-          SKIP_MISSING: true
-        input_mapping:
-          files: configuration
-        output_mapping:
-          interpolated-files: interpolated-configs
-      - task: export-installation
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/export-installation.yml
-        input_mapping:
-          env: interpolated-env
-        params:
-          ENV_FILE: ((foundation))/env/env.yml
-          INSTALLATION_FILE: installation-$timestamp.zip
-      - put: installation
-        params:
-          file: installation/installation*.zip
+{% include './examples/pipeline-snippets/jobs/export-installation.yml' %}
 ```
 
 Once this resource is persisted, we can safely run `upgrade-opsman`, knowing that we can 
@@ -756,15 +466,14 @@ To get the currently configured Ops Manager configuration, we have to:
 
 1. Import the image
 ```bash
-docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+{% include './examples/docker/import-image.sh' %}
 ```
 Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
 
 2. Then, you can use `docker run` to pass it arbitrary commands.
 Here, we're running the `om` CLI to see what commands are available:
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-om -h
+{% include './examples/docker/om-help.sh' %}
 ```
 
 Note:  that this will have access read and write files in your current working directory.
@@ -773,11 +482,10 @@ If you need to mount other directories as well, you can add additional `-v` argu
 The command we will use to extract the current director configuration is called 
 [`staged-director-config`][staged-director-config]. This is an `om` command that calls
 the Ops Manager API to pull down the currently configured director configuration. To run this
-using Docker, you will need the env file created above as ${ENV_FILE}: 
+using Docker, you will need the env file created above as `${ENV_FILE}`: 
 
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-om --env ${ENV_FILE} staged-director-config --include-placeholders
+{% include './examples/docker/staged-director-config.sh' %}
 ```
 
 `--include-placeholders` is an optional flag, but highly recommended if you want a full
@@ -799,33 +507,9 @@ To add [`staged-director-config`] to your pipeline, you will need the following 
 * a configuration path for your env file
 * a resource to store the exported configuration into
 
-Starting our Concourse pipeline, we need the following resources:
+Starting our Concourse pipeline, we need the following `resources`:
 ```yaml
-resources:
-  - name: platform-automation-tasks
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*tasks-(.*).zip
-
-  - name: platform-automation-image
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*image-(.*).tgz
-      
-  - name: configuration
-    type: git
-    source:
-      private_key: ((configuration.private_key))
-      uri: ((configuration.uri))
-      branch: master
+{% include './examples/pipeline-snippets/resources/common.yml' %}
 ```
 
 In our `jobs` section, we need a job that will interpolate the env file, pull down the 
@@ -836,56 +520,7 @@ we first need to make a commit, detailing the change we made, and where in your 
 change happened. A way to do this is shown below:
 
 ```yaml
-jobs:
-  - name: staged-director-config
-    plan:
-      - aggregate:
-          - get: platform-automation-tasks
-            params: {unpack: true}
-          - get: platform-automation-image
-            params: {unpack: true}
-          - get: configuration
-      - task: interpolate-env-creds
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/credhub-interpolate.yml
-        params:
-          CREDHUB_CLIENT: ((credhub-client))
-          CREDHUB_SECRET: ((credhub-secret))
-          CREDHUB_SERVER: ((credhub-server))
-          PREFIX: '/pipeline/vsphere'
-          INTERPOLATION_PATH: ((foundation))/config
-          SKIP_MISSING: true
-        input_mapping:
-          files: configuration
-        output_mapping:
-          interpolated-files: interpolated-configs
-      - task: staged-director-config
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/staged-director-config.yml
-        input_mapping:
-          env: interpolated-env
-        output_mapping:
-          generated-config: configuration/((foundation))/config
-        params:
-          ENV_FILE: ((foundation))/env/env.yml
-      - task: make-commit
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/make-git-commit.yml
-        input_mapping:
-          repository: configuration
-          file-source: configuration/((foundation))/config
-        output_mapping:
-          repository-commit: configuration-commit
-        params:
-          FILE_SOURCE_PATH: director.yml
-          FILE_DESTINATION_PATH: config/((foundation))/director.yml
-          GIT_AUTHOR_EMAIL: "git-author-email@example.com"
-          GIT_AUTHOR_NAME: "Git Author"
-          COMMIT_MESSAGE: "Update director.yml file"
-      - put: configuration
-        params:
-          repository: configuration-commit
-          merge: true
+{% include './examples/pipeline-snippets/jobs/staged-director-config.yml' %}
 ```
 
 ## Retrieving Existing Product Configurations
@@ -901,15 +536,14 @@ To get the currently configured PAS configuration, we have to:
 
 1. Import the image
 ```bash
-docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+{% include './examples/docker/import-image.sh' %}
 ```
 Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
 
 2. Then, you can use `docker run` to pass it arbitrary commands.
 Here, we're running the `om` CLI to see what commands are available:
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-om -h
+{% include './examples/docker/om-help.sh' %}
 ```
 
 Note:  that this will have access read and write files in your current working directory.
@@ -918,13 +552,12 @@ If you need to mount other directories as well, you can add additional `-v` argu
 The command we will use to extract the current director configuration is called 
 [`staged-config`][staged-config]. This is an `om` command that calls
 the Ops Manager API to pull down the currently configured product configuration given
-a product slug. To run this using Docker, you will need the env file created above as ${ENV_FILE}.
+a product slug. To run this using Docker, you will need the env file created above as `${ENV_FILE}`.
 The product slug for the PAS tile, within Ops Manager, is `cf`. To find the slug of your
 product, you can run the following docker command:
 
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-om --env ${ENV_FILE} staged-products
+{% include './examples/docker/staged-products.sh' %}
 ```
 
 This will give you a table like the following:
@@ -950,8 +583,7 @@ _How to Guide_, we only have PAS and Healthwatch.
 With the appropriate product `${SLUG}`, we can run the following docker command to pull down
 the configuration of the chosen tile:
 ```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-om --env ${ENV_FILE} staged-config --product-name ${SLUG} --include-placeholders
+{% include './examples/docker/staged-config.sh' %}
 ```
 
 `--include-placeholders` is an optional flag, but highly recommended if you want a full
@@ -975,31 +607,7 @@ To add [`staged-config`] to your pipeline, you will need the following resources
 
 Starting our Concourse pipeline, we need the following resources:
 ```yaml
-resources:
-  - name: platform-automation-tasks
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*tasks-(.*).zip
-
-  - name: platform-automation-image
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*image-(.*).tgz
-      
-  - name: configuration
-    type: git
-    source:
-      private_key: ((configuration.private_key))
-      uri: ((configuration.uri))
-      branch: master
+{% include './examples/pipeline-snippets/resources/common.yml' %}
 ```
 
 In our `jobs` section, we need a job that will interpolate the env file, pull down the 
@@ -1010,57 +618,7 @@ we first need to make a commit, detailing the change we made, and where in your 
 change happened. A way to do this is shown below:
 
 ```yaml
-jobs:
-  - name: staged-config
-    plan:
-      - aggregate:
-          - get: platform-automation-tasks
-            params: {unpack: true}
-          - get: platform-automation-image
-            params: {unpack: true}
-          - get: configuration
-      - task: interpolate-env-creds
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/credhub-interpolate.yml
-        params:
-          CREDHUB_CLIENT: ((credhub-client))
-          CREDHUB_SECRET: ((credhub-secret))
-          CREDHUB_SERVER: ((credhub-server))
-          PREFIX: '/pipeline/vsphere'
-          INTERPOLATION_PATH: ((foundation))/config
-          SKIP_MISSING: true
-        input_mapping:
-          files: configuration
-        output_mapping:
-          interpolated-files: interpolated-configs
-      - task: staged-config
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/staged-config.yml
-        input_mapping:
-          env: interpolated-env
-        output_mapping:
-          generated-config: configuration/((foundation))/config
-        params:
-          PRODUCT_NAME: cf   # this is the slug from `staged-products`
-          ENV_FILE: ((foundation))/env/env.yml
-      - task: make-commit
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/make-git-commit.yml
-        input_mapping:
-          repository: configuration
-          file-source: configuration/((foundation))/config
-        output_mapping:
-          repository-commit: configuration-commit
-        params:
-          FILE_SOURCE_PATH: cf.yml  # the filename will be called ${SLUG}.yml
-          FILE_DESTINATION_PATH: config/((foundation))/director.yml
-          GIT_AUTHOR_EMAIL: "git-author-email@example.com"
-          GIT_AUTHOR_NAME: "Git Author"
-          COMMIT_MESSAGE: "Update director.yml file"
-      - put: configuration
-        params:
-          repository: configuration-commit
-          merge: true
+{% include './examples/pipeline-snippets/jobs/staged-config.yml' %}
 ```
 
 To retrieve the configuration for Healthwatch, we can simply duplicate the steps used for PAS. The `${SLUG}` 
@@ -1096,53 +654,14 @@ for the Ops Manager director, and for the `upgrade-opsman` config file.
 Let's review the resources that are required by Concourse for upgrading Ops Manager:
 ```yaml
 resources:
-  - name: platform-automation-tasks
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*tasks-(.*).zip
+{% include './examples/pipeline-snippets/resources/common.yml' %}
 
-  - name: platform-automation-image
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: .*image-(.*).tgz
+{% include './examples/pipeline-snippets/resources/installation.yml' %}
 
-  - name: installation
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.installation))
-      regexp: installation-(.*).zip
+{% include './examples/pipeline-snippets/resources/opsman-image.yml' %}
 
-  - name: opsman-image
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      bucket: ((s3.buckets.pivnet_products))
-      region_name: ((s3.region_name))
-      secret_access_key: ((s3.secret_access_key))
-      regexp: \[ops-manager,(.*)\].*.ova # vsphere ex: ops-manager-(.*).ova
-      
-  - name: configuration
-    type: git
-    source:
-      private_key: ((configuration.private_key))
-      uri: ((configuration.uri))
-      branch: master
-  
-  - name: daily-trigger   # for exporting installation daily
-    type: time
-    source:
-      interval: 24h
+# for exporting installation daily
+{% include './examples/pipeline-snippets/resources/daily-trigger.yml' %}
 ```
 
 Before we write the jobs portion of the pipeline, let's take a look at the tasks we should run
@@ -1205,130 +724,9 @@ changes to Ops Manager. Upon completion of this task, upgrading Ops Manager is n
 By placing all of these tasks into a pipeline, you can get something like the following:
 ```yaml
 jobs:
-- name: export-installation
-  serial: true
-  plan:
-    - aggregate:
-        - get: daily-trigger
-          trigger: true
-        - get: platform-automation-image
-          params:
-            unpack: true
-        - get: platform-automation-tasks
-          params:
-            unpack: true
-        - get: configuration
-        - get: variable
-    - task: interpolate-env-creds
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/credhub-interpolate.yml
-      params:
-        CREDHUB_CLIENT: ((credhub-client))
-        CREDHUB_SECRET: ((credhub-secret))
-        CREDHUB_SERVER: ((credhub-server))
-        PREFIX: '/pipeline/vsphere'
-        INTERPOLATION_PATH: ((foundation))/config
-        SKIP_MISSING: true
-      input_mapping:
-        files: configuration
-      output_mapping:
-        interpolated-files: interpolated-configs
-    - task: export-installation
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/export-installation.yml
-      input_mapping:
-        env: interpolated-env
-      params:
-        ENV_FILE: ((foundation))/env/env.yml
-        INSTALLATION_FILE: installation-$timestamp.zip
-    - put: installation
-      params:
-        file: installation/installation*.zip
-- name: upgrade-opsman
-  plan:
-    - aggregate:
-       - get: platform-automation-image
-        params:
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          unpack: true
-      - get: opsman-image
-      - get: installation
-        passed: [ export-installation ]
-      - get: configuration
-    - task: interpolate-env-creds
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/credhub-interpolate.yml
-      params:
-        CREDHUB_CLIENT: ((credhub-client))
-        CREDHUB_SECRET: ((credhub-secret))
-        CREDHUB_SERVER: ((credhub-server))
-        PREFIX: '/pipeline/vsphere'
-        INTERPOLATION_PATH: ((foundation))/env
-        SKIP_MISSING: true
-      input_mapping:
-        files: configuration
-      output_mapping:
-        interpolated-files: interpolated-env
-    - task: interpolate-config-creds
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/credhub-interpolate.yml
-      params:
-        CREDHUB_CLIENT: ((credhub-client))
-        CREDHUB_SECRET: ((credhub-secret))
-        CREDHUB_SERVER: ((credhub-server))
-        PREFIX: '/pipeline/vsphere'
-        INTERPOLATION_PATH: ((foundation))/config
-        SKIP_MISSING: true
-      input_mapping:
-        files: configuration
-      output_mapping:
-        interpolated-files: interpolated-configs
-    - task: upgrade-opsman
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/upgrade-opsman.yml
-      input_mapping:
-        image: opsman-image
-        state: configuration
-        config: interpolated-configs
-        env: interpolated-env
-      params:
-        VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
-        ENV_FILE: ((foundation))/env/env.yml
-        OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
-        STATE_FILE: ((foundation))/state/state.yml
-      ensure:
-        do:
-          - task: make-commit
-            image: platform-automation-image
-            file: platform-automation-tasks/tasks/make-git-commit.yml
-            input_mapping:
-              repository: configuration
-              file-source: configuration/((foundation))/config
-            output_mapping:
-              repository-commit: configuration-commit
-            params:
-              FILE_SOURCE_PATH: cf.yml  # the filename will be called ${SLUG}.yml
-              FILE_DESTINATION_PATH: config/((foundation))/director.yml
-              GIT_AUTHOR_EMAIL: "git-author-email@example.com"
-              GIT_AUTHOR_NAME: "Git Author"
-              COMMIT_MESSAGE: "Update director.yml file"
-          - put: configuration
-            params:
-              repository: configuration-commit
-              merge: true
-        - put: configuration
-          params:
-            repository: configuration-commit
-            merge: true
-    - task: apply-director-changes
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/apply-director-changes.yml
-      input_mapping:
-        env: interpolated-env
-      params:
-        ENV_FILE: ((foundation))/env/env.yml
+{% include './examples/pipeline-snippets/jobs/export-installation.yml' %}
+
+{% include './examples/pipeline-snippets/jobs/upgrade-opsman.yml' %}
 ```
 
 With your pipeline completed, you are now ready to trigger `export-installation`, and get started!

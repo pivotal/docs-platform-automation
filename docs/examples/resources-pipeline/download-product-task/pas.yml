@@ -1,0 +1,13 @@
+- task: download-pas-product-and-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product-configs/pas.yml
+  output_mapping: {downloaded-stemcell: pas-stemcell}
+    - aggregate:
+    - put: pas-product
+      params:
+        file: downloaded-product/*.pivotal
+    - put: pas-stemcell
+      params:
+        file: pas-stemcell/*.tgz
