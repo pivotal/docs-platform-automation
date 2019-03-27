@@ -1,0 +1,8 @@
+- name: installation
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    secret_access_key: ((s3.secret_access_key))
+    region_name: ((s3.region_name))
+    bucket: ((s3.buckets.installation))
+    regexp: installation-(.*).zip

@@ -1,0 +1,4 @@
+- name: daily-trigger
+  type: time
+  source:
+    interval: 24h
