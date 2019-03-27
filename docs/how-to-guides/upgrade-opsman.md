@@ -175,7 +175,7 @@ so. Explanations for each field are given below.
 
 {% code_snippet 'examples', 'download-product-config-parametrized' %}
 
-To fetch a product from Pivnet, concourse needs to know
+To fetch a product from Pivnet, concourse needs to know:
  
 * what image it will run the task on (`platform-automation-image`)
 * where the task file will come from (`platform-automation-tasks`) 
@@ -198,17 +198,22 @@ specified after the product and stemcell are downloaded.
 {% include './examples/resources-pipeline/download-product-task/pas.yml' %}
 ```
 
-However, Concourse requires you to aggregate any number of tasks into a job. For convenience,
-and ease of explanation, we have created a separate job for each product. These tasks can easily be
-combined into a single job. Benefits of doing could include only running `credhub-interpolate` once 
-(instead of for each job). A downside of structuring your job with all of the tasks include the 
-inability to rerun a particular section of the job that failed, so Concourse would run each task
-again when the job was triggered a second time.
+Concourse requires tasks to be within jobs.
+For convenience,
+and ease of explanation,
+we have created a separate job for each product.
+These tasks can easily be combined into a single job.
+Benefits of doing this could include running `credhub-interpolate` only once,
+(instead of once for each job).
+One downside of structuring your pipeline with many tasks in a given job
+is that you lose the ability to rerun just a particular section of the job that failed.
+This means Concourse would run every task again
+if the job was triggered a second time.
 
 To make sure your blobstore always has the most recent version of a pivnet product, you can use the
 built-in time resource, to tell the `fetch` jobs how often to run and attempt to download a new version
 of the product and/or stemcell. To add this functionality to your pipeline, you must include the time
-resource in your `resources:` section:
+resource in your `resources` section:
 ```yaml
 {% include './examples/pipeline-snippets/resources/daily-trigger.yml' %}
 ```
@@ -235,12 +240,17 @@ the daily time trigger, and the interpolate created in an
 
 ### Download Platform Automation from Pivnet
 
-Because downloading Platform Automation does not require the use of `download-product`, the task for 
-this is much simpler. The Platform Automation team recommends always triggering the 
-`fetch-platform-automation` when there is a new version available for the major version you defined (to
-get all required security updates and bug fixes, and be assured there are no breaking changes to your
-installation. For more information about how Platform Automation uses strict semver, and why this is safe,
-please reference [Compatibility and Versioning][semantic-versioning].
+Downloading the Platform Automation toolset does not use `download-product`.
+Using download-product for this would require the product have a dependency on itself.
+Instead, we use the `pivnet-resource` we defined earlier.
+
+The Platform Automation team recommends triggering `fetch-platform-automation`
+whenever there is a new version available.
+The resource definition for platform automation from above
+is pinned to the major version.
+Pinning to the major version but letting the minor and patch version increase
+allows you to get security updates, bug fixes, and new (non-breaking) features.
+Platform Automation uses [semantic versioning][semantic-versioning] to enable this.
 
 To download the Platform Automation tasks and the Docker image, and put it into your s3 blobstore, add
 the following `job`:
