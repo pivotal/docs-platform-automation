@@ -15,12 +15,11 @@ the Platform Automation team recommends the following:
     or run once from the command line using our Docker image. The preference to 
     do either is your choice, but the How To Guide will be using the Docker CLI.
     
-* Basic knowledge of [Git][git] and [GitHub][github]
+* Basic knowledge of [Git][git], and a [GitHub][github] account.
 
-    Git is a common distributed version control system for software development projects
-    and operators. Several tasks mutate state and configuration files that are best 
-    handled automatically in some sort of hosted version control system. For the purposes of the 
-    How To Guide, this system will be GitHub.
+    Several tasks mutate state and configuration files
+    that are best persisted in a remote version control system.
+    For the purposes of this guide, we'll use GitHub.
     
 * [Amazon S3][amazon-s3] or [Minio][minio]
     
@@ -163,12 +162,9 @@ anchor `*credhub-interpolate` with the concourse-readable data we defined in `&c
 
 ### Download Product and Product's Stemcell 
 
-Before downloading a product, you first need a [config file][download-product-config]
-for [download-product][download-product] to read. In the sample config below, the fields
-that are uncommented will be used in this how-to guide. s3-specific fields are only required 
-if using the `download-product-s3` command. If you are using Pivnet directly in your 
-pipeline, this resources pipeline is not necessary, and neither are the s3-specific fields.
-For this guide, these fields are required, and will be necessary later.
+Before downloading a product,
+you need a [config file][download-product-config]
+for [download-product][download-product].
 
 Commented out fields are entirely optional and should only be used if you have a need to do 
 so. Explanations for each field are given below.
@@ -267,41 +263,37 @@ or any other tile you desire for your foundation.
 
 ## Sample Github repository and file structure
 
-In this section we will dive into the distributed version control aspects of 
-how state is managed by Platform Automation. We will set up a sample Github repository 
-and go over the recommended folder structure for the repository. 
+Now let's dive into using version control
+to manage state in pipelines built with Platform Automation.
+We'll set up a git repository on Github,
+and the recommended directory structure for the repo. 
 
 ### Git and Github
 
-Because different tasks update the state and configuration files automatically, 
-some form of version control is required. Git is a commonly used version control tool
-that tracks local history and code changes various users make to files inside a predefined folder
-called a repository (or more often, a repo). To learn more about git, [read this short git handbook][github-git-handbook].
+Git is a commonly used version control tool.
+It can be used to track code changes made to files within a repository (or "repo").
+Changes can then be "pushed" to or "pulled" from remote copies of that repository.
 
-Git is great for working on a local, self hosted repository, but often, it's necessary to
-access repositories from the web or across multiple computers. Github is a distributed
-version control system that provides git functionality across the web. Using a distributed
-system will enable the pipeline we are creating to access and update the state and configuration files
-automatically through Github without manual intervention from the us.
-In this example, we will be using [Github][github], another common version control tool.
-For further reading, [this portion of the handbook][github-git-handbook-github] explains how Github
-fits into the overall version control workflow. 
+Github is a system that provides git remotes.
+Using a remote will enable the pipeline we are creating
+to access and update the state and configuration files.
+
+To learn more about git and github,
+you can [read this short git handbook][github-git-handbook].
 
 To create our Github repo:
 
-1. You must have a github account. 
-Login or create an account
 1. Create a new repository
-1. Using the example from the "Example: Start a new repository and publish it to GitHub"
-section of the [Git handbook][github-git-handbook] (about 3/4 down the page), 
-create a local repo and add your first file
+1. Using the "Example: Start a new repository and publish it to GitHub"
+   section of the [Git handbook][github-git-handbook] (about 3/4 down the page), 
+   create a repo, add a file, and push it to Github.
 
-### Creating repo folder structure
+### Creating Repo Directory Structure
 
-You now have both a local git repo and a distributed Github repo. Let's cover the recommended 
-folder structure for this repo before we fill it with files:
+You now have both a local git repo and a remote on Github.
+The recommended structure for a config repo is:
 
-```bash
+```tree
 ├── foundation
 │   ├── config
 │   ├── env
@@ -309,38 +301,50 @@ folder structure for this repo before we fill it with files:
 │   └── vars
 ```
 
-Each of the above directories are needed for this How To Guide, and is the recommended starter
-structure for configuration management. The pipeline described in this guide will 
-[map][concourse-input-mapping] files assuming this file structure.
- 
-* The `config` directory will hold all of the config files for the products installed on your 
-foundation. If using Credhub and/or vars files, these config files should have your 
-((parametrized)) values present in them.
+These directories are needed for this guide.
 
-* The `env` directory will hold a single `env.yml`, which will be your environment file used by 
-each task that interacts with Ops Manager.
-
-* The `vars` directory will hold all of the product-specific vars files needed for your foundation.
-
-* The `state` directory will hold a single `state.yml`, which will need to be created manually if 
-upgrading from an existing foundation for the first time, or is created automatically if
-installing from a empty foundation. 
+<table>
+    <tr>
+        <td>config</td>
+        <td>
+            Holds config files for the products installed on your foundation.
+            If using Credhub and/or vars files,
+            these config files should have your <code>((parametrized))</code> values present in them
+        </td>
+    </tr>
+    <tr>
+        <td>env</td>
+        <td>
+            Holds <code>env.yml</code>,
+            the environment file used by tasks that interact with Ops Manager.
+        </td>
+    </tr>
+    <tr>
+        <td>vars</td>
+        <td>
+          Holds product-specific vars files.
+        </td>
+    </tr>
+    <tr>
+        <td>state</td>
+        <td>
+            Holds <code>state.yml</code>,
+            which contains the VM ID for the Ops Manager VM.
+        </td>
+    </tr>
+</table> 
 
 ## Creating the Required Files
 
-Minimal files required for upgrading an Ops Manager VM include:
+Several files are required for upgrading an Ops Manager VM.
+They are used to capture the current state of the Ops Manager VM.
 
-* valid state.yml
-* valid `opsman.yml` (config)
-* valid `env.yml`
-* valid Ops Manager image file
-* (Optional) vars files -- if supporting multiple foundations
-* valid exported Ops Manager installation
+### Ops Manager VM State
 
-### Valid state.yml
-
-If creating a `state.yml` from an existing foundation, use the following as a template, based
-on your IaaS:
+We'll need to capture the current Ops Manager VM identifier,
+so we know what VM we are upgrading.
+To create a `state.yml` from your existing foundation,
+use the following as a template, based on your IaaS:
     
 ``` yaml tab="AWS"
 {% include './examples/state/aws.yml' %}
@@ -362,15 +366,12 @@ on your IaaS:
 {% include './examples/state/vsphere.yml' %}
 ```
 
-### Valid opsman.yml
+### Ops Manager VM Configuration
 
-`opsman.yml` is the configuration file required by the `p-automator` tool that exists in the 
-Platform Automation Docker image. `p-automator` is an abstraction that calls out to specific 
-IaaS CLIs in order to create/update/delete a VM. The optional and required fields detail configurations 
-and interfaces for the VM creation and deletion processes supported by the Platform Automation team.
+`opsman.yml` is the configuration file for `p-automator`,
+which calls out to specific IaaS CLIs in order to create/update/delete a VM.
 
-When creating a valid `opsman.yml`, the fields required differ based on your IaaS.
-Each field is commented if we believe more info is required:
+The properties contained in `opsman.yml` differ based on your IaaS:
 
 ``` yaml tab="AWS"
 {% include './examples/opsman-config/aws.yml' %}
@@ -392,32 +393,30 @@ Each field is commented if we believe more info is required:
 {% include './examples/opsman-config/vsphere.yml' %}
 ```
 
-### Valid env.yml
+### Ops Manager Environment File
 
-`env.yml` is a authentication file used by the `om` tool that exists in the Platform Automation
-image. This tool interacts directly with the foundation's Ops Manager and thus, the `env.yml` file 
-holds authentication information for that Ops Manager. This file is required by `upgrade-opsman` 
-because after the vm is recreated, the task will import the existing installation in Ops 
-Manager to finish the process.
+`env.yml` holds authentication and target information
+for a particular Ops Manager.
+This file is required by `upgrade-opsman`
+because after the VM is recreated,
+the task will import the provided installation.zip
+to Ops Manager to finish the process.
 
-An example `env.yml` is shown below. If your foundation uses an authentication other than basic
-auth, please reference [Inputs and Outputs][env] for more detail on UAA-based authentication. 
-As mentioned in the comment, `decryption-passphrase` is required for `import-installation`, and 
-is therefore required for `upgrade-opsman`.
+If your foundation uses authentication other than basic auth,
+please reference [Inputs and Outputs][env] for more detail on UAA-based authentication.
+
+An example `env.yml` is shown below.
+As mentioned in the comment,
+`decryption-passphrase` is required for `import-installation`,
+and therefore required for `upgrade-opsman`.
 
 {% code_snippet 'examples', 'env' %}
 
-### Valid Ops Manager image file
-
-The image file required for `upgrade-opsman` does not have to be downloaded or created manually.
-Instead, it will be included as a resource from an S3 bucket. This resource can also be consumed
-directly from Pivnet, but this _How to Guide_ will not be showing that workflow.
-
 ### Vars files
 
-If using vars files to store secrets or IaaS agnostic credentials, these files should be included in
-your git repo under the `vars` directory. For more information on vars files, see the 
-[Secrets Handling][secrets-handling] page. 
+If you are using files to store vars be rendered into your configuration templates,
+these files should be  in your git repo under the `vars` directory.
+For more information on vars files, see [Secrets Handling][secrets-handling].
 
 ### Valid exported Ops Manager installation
 
@@ -778,4 +777,3 @@ re-running the `upgrade-opsman` task.</b></i>
     {% include ".internal_link_url.md" %}
 {% endwith %}
 {% include ".external_link_url.md" %}
- 
