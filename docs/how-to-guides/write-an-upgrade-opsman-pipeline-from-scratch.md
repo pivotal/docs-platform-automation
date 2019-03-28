@@ -263,7 +263,7 @@ Great. Now we can safely make changes.
 
 #### The Test Task
 
-Platform Automation comes with a task
+Platform Automation comes with a [`test`](../reference/task.md#test) task
 meant to validate that it's been installed correctly.
 Let's use it to get setup.
 
@@ -393,7 +393,100 @@ git commit -m "Add resources needed for test task"
 ```
 
 #### Exporting The Installation
-We're finally in a position to do work
+We're finally in a position to do work!
+
+While ultimately we want to upgrade Ops Manager,
+to do that safely we first need to download and persist
+an export of the current installation.
+
+!!! warning "export your installation routinely"
+    We _**strongly recommend**_ automatically exporting
+    the Ops Manager installation
+    and persisting it to your blobstore on a regular basis.
+
+Let's switch out the test job
+for one that exports our existing Ops Manager's installation state.
+We can switch the task out by changing:
+- the `name` of the job
+- the `name` of the task
+- the `file` of the task
+
+[`export-installation`](../reference/task.md#export-installation)
+has an additional required input.
+We need the `env` file used to talk to Ops Manager.
+
+We'll write that file and make it available as a resource in a moment,
+for now, we'll just `get` it as if it's there.
+
+It also has an additional output (the exported installation).
+Again, for now, we'll just write that
+like we have somewhere to `put` it.
+
+```yaml
+jobs:
+- name: export-installation
+  plan:
+    - get: platform-automation-image
+      resource: platform-automation
+      params:
+        globs: ["*image*.tgz"]
+        unpack: true
+    - get: platform-automation-tasks
+      resource: platform-automation
+      params:
+        globs: ["*tasks*.zip"]
+        unpack: true
+    - get: env
+    - task: export-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/export-installation.yml
+    - put: installation
+      params:
+        file: installation/installation-*.zip
+```
+
+If we try to `fly` this up to Concourse,
+it will again complain about resources that don't exist.
+
+So, let's make them.
+
+The first new resource we need is the env file.
+We'll push our git repo to a remote on Github
+to make this (and later, other) configuration available to the pipelines.
+
+Github has good [instructions](https://help.github.com/en/articles/adding-an-existing-project-to-github-using-the-command-line)
+you can follow to create a new repository on Github.
+You can skip over the part
+about using `git init` to setup your repo,
+since we [already did that](#but-first-git-init).
+
+Once you've setup your remote
+and used `git push` to send what you've got so far,
+we can add a new directory to hold foundation-specific configuration.
+(We'll use the name "foundation" for this directory,
+but if your foundation has an actual name, use that instead.)
+
+```bash
+mkdir -p foundation
+cd !$
+```
+
+`env.yml` holds authentication and target information
+for a particular Ops Manager.
+
+An example `env.yml` is shown below.
+As mentioned in the comment,
+`decryption-passphrase` is required for `import-installation`,
+and therefore required for `upgrade-opsman`.
+
+If your foundation uses authentication other than basic auth,
+please reference [Inputs and Outputs][env]
+for more detail on UAA-based authentication.
+
+Write an `env.yml` for your Ops Manager.
+
+
+{% code_snippet 'examples', 'env' %}
 
 #### Fetching the New Ops Manager
 
