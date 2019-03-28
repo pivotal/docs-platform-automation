@@ -16,6 +16,7 @@ Before we get started, you'll need a few things ready to go:
    and to the Internet
 1. github.com account
 1. Credentials for S3
+1. an account on [https://network.pivotal.io](https://network.pivotal.io) (Pivnet)
 1. a MacOS workstation
     - with Docker installed
     - and a text editor you like
@@ -266,9 +267,133 @@ Platform Automation comes with a task
 meant to validate that it's been installed correctly.
 Let's use it to get setup.
 
+Add this to your `upgrade-ops-man-pipeline.yml`, starting on the line after the `---`:
+
+```yaml
+jobs:
+- name: test
+  plan:
+    - task: test
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/test.yml
+```
+
+If we try to set this now, Concourse will take it:
+
+```bash
+fly -t control-plane set-pipeline -p upgrade-ops-manager -c upgrade-ops-man-pipeline.yml
+```
+
+Now we should be able to see our `upgrade-ops-manager` pipeline
+in the Concourse UI.
+It'll be paused, so click the "play" button to unpause it.
+Then, click in to the gray box for our `test` job,
+and hit the "plus" button to schedule a build.
+
+It should error immediately, with `unknown artifact source: platform-automation-tasks`.
+We didn't give it a source for our task file.
+
+We've got a bit of pipeline code that Concourse accepts.
+Before we start doing the next part,
+this would be a good moment to make a commit:
+
+```bash
+git add upgrade-ops-man-pipeline.yml
+git commit -m "Add (nonfunctional) test task"
+```
+
+With that done,
+we can try to get the inputs we need
+by adding `get` steps to the plan
+before the task, like so:
+
+```yaml
+jobs:
+- name: test
+  plan:
+    - get: platform-automation-image
+      resource: platform-automation
+      params:
+        globs: ["*image*.tgz"]
+        unpack: true
+    - get: platform-automation-tasks
+      resource: platform-automation
+      params:
+        globs: ["*tasks*.zip"]
+        unpack: true
+    - task: test
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/test.yml
+```
+
+If we try to `fly set` this,
+`fly` will complain about invalid resources.
+
+To actually make the `image` and `file` we want to use available,
+we'll need some Resources.
+
 #### Adding Resources
+Resources are Concourse's main approach to managing artifacts.
+We need an image, and the tasks directory -
+so we'll tell Concourse how to get these things by declaring Resources for them.
+
+In this case, we'll be downloading them from Pivnet.
+Before we can declare the resources themselves,
+we have to teach Concourse to talk to Pivnet.
+(Many resource types are built in, but this one isn't.)
+
+Add the following to your pipeline file.
+We'll put it above the `jobs` entry.
+
+```yaml
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+resources:
+- name: platform-automation
+  type: pivnet
+  source:
+    product_slug: platform-automation
+    api_token: ((pivnet-refresh-token))
+```
+
+The API token is a credential,
+which we'll pass via the command-line when setting the pipeline,
+so we don't accidentally check it in.
+
+Grab a refresh token from your [Pivnet profile](https://network.pivotal.io/users/dashboard/edit-profile)
+and clicking "Request New Refresh Token."
+Then use that token in the following command:
+
+```bash
+fly -t control-plane set-pipeline \
+    -p upgrade-ops-manager \
+    -c upgrade-ops-man-pipeline.yml \
+    -v pivnet-refresh-token=your-api-token
+```
+
+!!! warning Getting Your Pivnet Token Expires It
+    When you get your Pivnet token as described above,
+    any previous Pivnet tokens you may have gotten will stop working.
+    If you're using your Pivnet refresh token anywhere,
+    retrieve it from your existing secret storage rather than getting a new one,
+    or you'll end up needing to update it everywhere it's used.
+
+Go back to the Concourse UI and trigger another build.
+This time, it should pass.
+
+Commit time!
+
+```bash
+git add upgrade-ops-man-pipeline.yml
+git commit -m "Add resources needed for test task"
+```
 
 #### Exporting The Installation
+We're finally in a position to do work
 
 #### Fetching the New Ops Manager
 
