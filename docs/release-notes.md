@@ -40,7 +40,9 @@ These are release notes for Platform Automation for PCF.
   about credhub, see [Secrets Handling](./configuration-management/secrets-handling.md#multiple-sources) 
 
 ### Bug Fixes
-TBD
+- OpenStack would sometimes be unable to associate the public IP when creating the VM, because it was 
+  waiting for the VM to come up. The `--wait` flag has been added to validate that the VM creation is
+  complete before more work is done to the VM.
 
 ## v2.2.0-beta.1
 **Release Date** Thursday, March 14, 2019
