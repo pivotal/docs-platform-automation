@@ -168,7 +168,7 @@ fly -t control-plane login
 If you don't see the Concourse you need, you can add it with the `-c` flag:
 
 ```bash
-fly -t control-plane login -c https://example.com/your-concourse-url
+fly -t control-plane login -c https://your-concourse.example.com
 ```
 
 You should see a login link you can click on
@@ -179,16 +179,19 @@ to complete login from your browser.
     In the future, you can leave out the `-c` argument.
 
 Either way, pipeline-setting time!
+(We'll use the name "foundation" for this pipeline,
+but if your foundation has an actual name, use that instead.)
 
 ```bash
-fly -t control-plane set-pipeline -p upgrade-ops-manager -c upgrade-ops-man-pipeline.yml
+fly -t control-plane set-pipeline -p foundation -c upgrade-ops-man-pipeline.yml
 ```
+
 
 It should say `no changes to apply`,
 which is fair, since we gave it an empty YAML doc.
 
 !!! info "version discrepancy"
-    If `fly` says something about a "version discrepency,"
+    If `fly` says something about a "version discrepancy,"
     "significant" or otherwise, just do as it says:
     run `fly sync` and try again.
     `fly sync` automatically updates the CLI
@@ -256,7 +259,7 @@ Great. Now we can safely make changes.
     makes it _much easier_ to figure out why things are the way they are,
     and to return to the way things were in simpler, better times.
     Writing short commit messages that capture the _intent_ of the change
-    (in an imparative style) can be tough,
+    (in an imperative style) can be tough,
     but it really does make the pipeline's history much more legible,
     both to future-you,
     and to current-and-future teammates and collaborators.
@@ -281,7 +284,7 @@ jobs:
 If we try to set this now, Concourse will take it:
 
 ```bash
-fly -t control-plane set-pipeline -p upgrade-ops-manager -c upgrade-ops-man-pipeline.yml
+fly -t control-plane set-pipeline -p foundation -c upgrade-ops-man-pipeline.yml
 ```
 
 Now we should be able to see our `upgrade-ops-manager` pipeline
@@ -368,11 +371,20 @@ Grab a refresh token from your [Pivnet profile](https://network.pivotal.io/users
 and clicking "Request New Refresh Token."
 Then use that token in the following command:
 
+!!! tip "Keep it secret, keep it safe"
+    Bash commands that start with a space character
+    are not saved in your history.
+    This can be very useful for cases like this,
+    where you want to pass a secret,
+    but don't want it saved.
+    Commands in this guide that contain a secret
+    start with a space, which can be easy to miss.
+
 ```bash
-fly -t control-plane set-pipeline \
-    -p upgrade-ops-manager \
-    -c upgrade-ops-man-pipeline.yml \
-    -v pivnet-refresh-token=your-api-token
+ fly -t control-plane set-pipeline \ # note the space before the command
+     -p foundation \
+     -c upgrade-ops-man-pipeline.yml \
+     -v pivnet-refresh-token=your-api-token
 ```
 
 !!! warning Getting Your Pivnet Token Expires It
@@ -391,6 +403,63 @@ Commit time!
 git add upgrade-ops-man-pipeline.yml
 git commit -m "Add resources needed for test task"
 ```
+
+
+We'd rather not pass our Pivnet token
+every time we need to set the pipeline.
+Fortunately, Concourse can integrate
+with secret storage services.
+
+Let's put our API token in credhub so Concourse can get it.
+
+First we'll need to login:
+
+```bash
+ credhub login --server example.com \ # again, note the space at the start!
+         --client-id your-client-id \
+         --client-secret your-client-secret
+```
+
+!!! info "logging in to crehub"
+    Depending on your credential type,
+    you may need to pass `client-id` and `client-secret`,
+    as we do above,
+    or `username` and `password`.
+    We use the `client` approach because that's the credential type
+    that automation should usually be working with.
+    Nominally, a username represents a person,
+    and a client represents a system;
+    this isn't always exactly how things are in practice.
+    Use whichever type of credential you have in your case.
+    Note that if you exclude either set of flags,
+    credhub will interactively prompt for `username` and `password`,
+    and hide the characters of your password when you type them.
+    This method of entry can be better in some situations.
+
+Then, we can set the credential name
+to the path [where Concourse will look for it][concourse-credhub-lookup-rules]:
+
+```bash
+ credhub set \ # note the starting space
+         --name /concourse/your-team-name/pivnet-refresh-token \
+         --type value \
+         --value your-credhub-refresh-token
+```
+
+Now, let's set that pipeline again,
+without passing a secret this time.
+
+```bash
+fly -t control-plane set-pipeline \
+    -p foundation \
+    -c upgrade-ops-man-pipeline.yml
+```
+
+This should succeed,
+and the diff concourse shows you should replace the literal credential
+with `((pivnet-refresh-token))`.
+Visit the UI again and re-run the test job;
+this should also succeed.
 
 #### Exporting The Installation
 We're finally in a position to do work!
@@ -485,12 +554,161 @@ for more detail on UAA-based authentication.
 
 Write an `env.yml` for your Ops Manager.
 
+```yaml
+target: https://pcf.foundation.example.com
+username: your-opsman-username
+password: ((opsman-password))
+decryption-passphrase: ((opsman-decryption-passphrase))
+```
 
-{% code_snippet 'examples', 'env' %}
+Add and commit the new file:
+
+```bash
+git add foundation/env.yml
+git commit -m "Add environment file for foundation"
+```
+
+Now that the env file we need is in our git remote,
+we need to add a resource to tell Concourse how to get it as `env`.
+
+Since this is (probably) a private repo,
+we'll need to create a deploy key Concourse can use to access it.
+Follow [Github's instructions]() for creating a read-only deploy key.
+
+Then, put the private key in Credhub so we can use it in our pipeline:
+```bash
+ credhub set \ # note the starting space
+         --name /concourse/your-team-name/platform-automation-pipelines-deploy-key-readonly \
+         --type ssh \
+         --private the/filepath/of/the/key-id_rsa \
+         --public the/filepath/of/the/key-id_rsa.pub
+```
+
+Then, add this to the resources section of your pipeline file:
+
+```yaml
+- name: env
+  type: git
+  source:
+    uri: git@github.com:username/platform-automation-pipelines
+private_key: ((platform-automation-pipelines-deploy-key-readonly))
+```
+
+Now we should be able to set the pipeline with `fly`.
+However, the build won't succeed,
+because the variables in the config file aren't yet being interpolated.
+
+We'll put the values we need in credhub:
+
+```bash
+credhub set \
+        -n /concourse/your-team-name/foundation/opsman-password \
+        -t value -v your-opsman-password
+credhub set \
+        -n /concourse/your-team-name/foundation/opsman-decryption-passphrase \
+        -t value -v your-opsman-decryption-passphrase
+```
+
+!!! info "Credhub paths and pipeline names"
+    Notice that we've added an element to the cred paths;
+    now we're using the foundation name.
+    If you look at [Concourse's lookup rules,][concourse-credhub-lookup-rules]
+    you'll see that it searches the pipeline-specific path
+    before the team path.
+    Since our pipeline is named for the foundation it's used to manage,
+    we can use this to scope access to our foundation-specific information
+    to just this pipeline.
+    By contrast, the Pivnet token may be valuable across several pipelines
+    (and associated foundations),
+    so we scoped that to our team.
+
+Earlier, we relied on Concourse's native integration with Credhub for interpolation.
+That worked because we needed to use the variable
+in the pipeline itself, not in one of our inputs.
+In order to perform interpolation in one of our input files,
+we'll need the [`credhub-interpolate` task](../reference/task.md#credub-interpolate)
+
+
+
+
+
+
+# CONTINUE WORK FROM HERE
+
+
+
+
 
 #### Fetching the New Ops Manager
 
+To upgrade, 
+we'll first need to get the bits
+of the Ops Man you want to upgrade to.
+
+```yaml
+resources:
+...
+
+- name: ops-manager
+  type: pivnet
+  source:
+    product_slug: ops-manager
+    api_token: ((pivnet-refresh-token))
+```
+
+With the new Ops Manager bits in hand,
+we can now use them to upgrade! 
+But, you may ask, how often we get these bits?
+Every new version?
+Every week?
+The possibilities are endless!
+Now, let's get this resource in our pipeline:
+
+```yaml
+jobs:
+- name: export-installation
+  plan:
+    - get: platform-automation-image
+      resource: platform-automation
+      params:
+        globs: ["*image*.tgz"]
+        unpack: true
+    - get: platform-automation-tasks
+      resource: platform-automation
+      params:
+        globs: ["*tasks*.zip"]
+        unpack: true
+    - get: env
+    - task: export-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/export-installation.yml
+    - put: installation
+      params:
+        file: installation/installation-*.zip
+```
+
+
 #### On Triggers
+
+We can use Concourse triggers
+to prompt our pipeline,
+based on some criteria we give a resource,
+to gather the designated resource.
+There exist [many different resources](https://concourse-ci.org/resource-types.html)
+that can be used to trigger a pipeline.
+To enable triggering,
+set the trigger flag to `true`:
+
+```yaml
+resources:
+...
+
+- name: ops-manager
+  type: pivnet
+  source:
+    product_slug: ops-manager
+    api_token: ((pivnet-refresh-token))
+```
 
 #### Upgrading Ops Manager
 
