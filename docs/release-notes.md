@@ -46,7 +46,7 @@ These are release notes for Platform Automation for PCF.
 - [`credhub-interpolate`][credhub-interpolate] now accepts multiple files for the `INTERPOLATION_PATH`. 
 
 ## v2.2.0-beta.1
-**Release Date** Thursday, March 14, 2019
+**Release Date** SomeDayOfTheWeek, Month, Day, Year
 
 ### What's New
 - New task [download-product-s3](./reference/task.md#download-product-s3)
