@@ -22,7 +22,7 @@ owner: PCF Platform Automation
 
 These are release notes for Platform Automation for PCF.
 
-## v2.2.1-beta.1
+## v2.3.0
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
 
 ### What's New
@@ -43,6 +43,7 @@ These are release notes for Platform Automation for PCF.
 - OpenStack would sometimes be unable to associate the public IP when creating the VM, because it was 
   waiting for the VM to come up. The `--wait` flag has been added to validate that the VM creation is
   complete before more work is done to the VM.
+- [`credhub-interpolate`][credhub-interpolate] now accepts multiple files for the `INTERPOLATION_PATH`. 
 
 ## v2.2.0-beta.1
 **Release Date** Thursday, March 14, 2019
