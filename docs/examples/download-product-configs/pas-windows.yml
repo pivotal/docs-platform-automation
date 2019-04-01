@@ -2,7 +2,7 @@
 pivnet-api-token: ((pivnet-token))
 pivnet-file-glob: "*.pivotal"
 pivnet-product-slug: pas-windows
-product-version-regex: ^2\.5\.0\-rc.*$
+product-version-regex: ^2\.5\.0.*$
 
 s3-access-key-id: ((s3_access_key_id))
 s3-secret-access-key: ((s3_secret_access_key))
