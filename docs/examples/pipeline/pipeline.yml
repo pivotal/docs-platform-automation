@@ -118,8 +118,8 @@ resources:
       interval: 24h
 
 # This task is used in multiple jobs
-# The yaml anchor "*interpolate-config-creds" is used in its place
-interpolate-config-creds: &interpolate-config-creds
+# The yaml anchor "*interpolate-creds" is used in its place
+interpolate-creds: &interpolate-creds
   image: platform-automation-image
   file: platform-automation-tasks/tasks/credhub-interpolate.yml
   params:
@@ -127,29 +127,12 @@ interpolate-config-creds: &interpolate-config-creds
     CREDHUB_SECRET: ((credhub-secret))
     CREDHUB_SERVER: ((credhub-server))
     PREFIX: '/pipeline/vsphere'
-    INTERPOLATION_PATH: ((foundation))/config
+    INTERPOLATION_PATH: ((foundation))/config ((foundation))/env
     SKIP_MISSING: true
   input_mapping:
     files: configuration
   output_mapping:
-    interpolated-files: interpolated-configs
-
-# This task is used in multiple jobs
-# The yaml anchor "*interpolate-env-creds" is used in its place
-interpolate-env-creds: &interpolate-env-creds
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/credhub-interpolate.yml
-  params:
-    CREDHUB_CLIENT: ((credhub-client))
-    CREDHUB_SECRET: ((credhub-secret))
-    CREDHUB_SERVER: ((credhub-server))
-    PREFIX: '/pipeline/vsphere'
-    INTERPOLATION_PATH: ((foundation))/env
-    SKIP_MISSING: true
-  input_mapping:
-    files: configuration
-  output_mapping:
-    interpolated-files: interpolated-env
+    interpolated-files: interpolated-creds
 
 jobs:
   - name: install-opsman
@@ -190,17 +173,15 @@ jobs:
         output_mapping:
           downloaded-product: opsman-image
       - get: variable
-      - task: interpolate-config-creds
-        <<: *interpolate-config-creds
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: create-vm
         image: platform-automation-image
         file: platform-automation-tasks/tasks/create-vm.yml
         input_mapping:
           image: opsman-image
           state: configuration
-          config: interpolated-configs
+          config: interpolated-creds
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
@@ -232,7 +213,7 @@ jobs:
         attempts: 10
         input_mapping:
           env: configuration
-          config: interpolated-configs
+          config: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
           AUTH_CONFIG_FILE: ((foundation))/config/auth.yml
@@ -240,8 +221,8 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
         input_mapping:
-          config: interpolated-configs
-          env: interpolated-env
+          config: interpolated-creds
+          env: interpolated-creds
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/vars/director-vars.yml
@@ -251,7 +232,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -264,13 +245,13 @@ jobs:
           - get: platform-automation-image
             params: {unpack: true}
           - get: configuration
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: staged-director-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-director-config.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -288,13 +269,13 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
           INSTALLATION_FILE: installation-$timestamp.zip
@@ -321,18 +302,16 @@ jobs:
             passed: [ export-installation ]
           - get: configuration
           - get: variable
-      - task: interpolate-config-creds
-        <<: *interpolate-config-creds
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: upgrade-opsman
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upgrade-opsman.yml
         input_mapping:
           image: opsman-image
           state: configuration
-          config: interpolated-configs
-          env: interpolated-env
+          config: interpolated-creds
+          env: interpolated-creds
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
@@ -344,7 +323,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -364,14 +343,14 @@ jobs:
           - get: pas-product
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-product
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
       - task: stage-product
@@ -379,7 +358,7 @@ jobs:
         file: platform-automation-tasks/tasks/stage-product.yml
         input_mapping:
           product: pas-product
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -398,16 +377,14 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
-      - task: interpolate-config-creds
-        <<: *interpolate-config-creds
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: configure-pas
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: interpolated-configs
-          env: interpolated-env
+          config: interpolated-creds
+          env: interpolated-creds
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/cf.yml
@@ -430,14 +407,14 @@ jobs:
           - get: pas-windows-product
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-windows-product
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
       - task: stage-product
@@ -445,7 +422,7 @@ jobs:
         file: platform-automation-tasks/tasks/stage-product.yml
         input_mapping:
           product: pas-windows-product
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -464,16 +441,14 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
-      - task: interpolate-config-creds
-        <<: *interpolate-config-creds
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: configure-pas
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: interpolated-configs
-          env: interpolated-env
+          config: interpolated-creds
+          env: interpolated-creds
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/pas-windows.yml
@@ -501,13 +476,13 @@ jobs:
             trigger: true
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: upload-pas-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
           stemcell: pas-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
@@ -515,7 +490,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
           stemcell: pas-windows-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
@@ -523,7 +498,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
           stemcell: healthwatch-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
@@ -542,14 +517,14 @@ jobs:
           - get: healthwatch-product
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: upload-and-stage-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-and-stage-product.yml
         input_mapping:
           product: healthwatch-product
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -568,16 +543,14 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
-      - task: interpolate-config-creds
-        <<: *interpolate-config-creds
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: configure-healthwatch
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: interpolated-configs
-          env: interpolated-env
+          config: interpolated-creds
+          env: interpolated-creds
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/healthwatch.yml
@@ -600,13 +573,13 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: apply-product-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
@@ -621,13 +594,13 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: staged-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-config.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
         params:
           PRODUCT_NAME: cf
           ENV_FILE: ((foundation))/env/env.yml
@@ -643,13 +616,13 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
-      - task: interpolate-env-creds
-        <<: *interpolate-env-creds
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: staged-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-config.yml
         input_mapping:
-          env: interpolated-env
+          env: interpolated-creds
         params:
           PRODUCT_NAME: p-healthwatch
           ENV_FILE: ((foundation))/env/env.yml
