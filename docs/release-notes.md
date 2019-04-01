@@ -38,6 +38,11 @@ These are release notes for Platform Automation for PCF.
 - the [reference pipeline](./reference/pipeline.md) has been updated to give an example of 
   [`credhub-interpolate`](./reference/task.md#credhub-interpolate) in practice. For more information
   about credhub, see [Secrets Handling](./configuration-management/secrets-handling.md#multiple-sources) 
+- `om` now has support for `config-template` (a Platform Automation encouraged replacement of 
+   `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`. 
+   For more information and instruction on how to use `config-template`, please see 
+   [Creating a Product Config File](./configuration-management/creating-a-product-config-file.md#from-pivnet).
+
 
 ### Bug Fixes
 - OpenStack would sometimes be unable to associate the public IP when creating the VM, because it was 
