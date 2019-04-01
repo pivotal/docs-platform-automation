@@ -44,6 +44,9 @@ These are release notes for Platform Automation for PCF.
   waiting for the VM to come up. The `--wait` flag has been added to validate that the VM creation is
   complete before more work is done to the VM.
 - [`credhub-interpolate`][credhub-interpolate] now accepts multiple files for the `INTERPOLATION_PATH`. 
+- CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/)
+  (related to vulnerabilities with `libmagic1`. While none of our code directly used these,
+  they are present on the image.)
 
 ## v2.2.0-beta.1
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
