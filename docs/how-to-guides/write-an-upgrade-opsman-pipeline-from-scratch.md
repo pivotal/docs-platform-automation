@@ -15,7 +15,7 @@ Before we get started, you'll need a few things ready to go:
    with access to a Credhub instance
    and to the Internet
 1. github.com account
-1. Credentials for S3
+1. Read/write credentials and bucket name for an S3 bucket
 1. an account on [https://network.pivotal.io](https://network.pivotal.io) (Pivnet)
 1. a MacOS workstation
     - with Docker installed
@@ -24,6 +24,10 @@ Before we get started, you'll need a few things ready to go:
     - a browser that works with Concourse,
       like Firefox or Chrome
     - and `git`
+
+It doesn't actually matter what IaaS your Ops Manager is running on,
+As long as your Concourse can connect to it.
+Pipelines built with Platform Automation can be platform-agnostic.
 
 It will be very helpful to have a basic familiarity with the following:
 
@@ -76,11 +80,27 @@ cd !$
     this is just a bash tip dearly beloved
     of at least one Platform Automator.
 
-Using your text editor, create a file called `upgrade-ops-man-pipeline.yml`.
+Before we get started with the pipeline itself,
+we'll gather some variables in a file
+we can use throughout our pipeline.
+
+Open your text editor and create `vars.yml`.
+Here's what it should look like to start:
+
+```yaml
+platform-automation-bucket: your-bucket-name
+credhub-server: https://your-credhub.example.com
+opsman-url: https://pcf.foundation.example.com
+```
+
+We can add things to this as we go.
+
+Now, create a file called `upgrade-ops-man-pipeline.yml`.
 
 Write this at the top, and save the file:
 
 ```yaml
+
 ---
 ```
 
@@ -121,6 +141,18 @@ you'll see something similar in the lower-right hand corner.
 Click the icon for your OS and save the file,
 `mv` the resulting file to somewhere in your `$PATH`,
 and use `chmod` to make it executable:
+
+!!! info "A note on command-line examples"
+    Some of these, you can copy-paste directly into your terminal.
+    Some of them won't work that way,
+    or even if they did, would require you to edit them to replace our example values
+    with your actual values.
+    We recommend you type all of the bash examples in by hand,
+    substituting values, if necessary, as you go.
+    Don't forget that you can often hit the `tab` key
+    to auto-complete the name of files that already exist;
+    it makes all that typing just a little easier,
+    and serves as a sort of command-line autocorrect.
 
 ```bash
 mv ~/Downloads/fly /usr/local/bin/fly
@@ -186,7 +218,6 @@ but if your foundation has an actual name, use that instead.)
 fly -t control-plane set-pipeline -p foundation -c upgrade-ops-man-pipeline.yml
 ```
 
-
 It should say `no changes to apply`,
 which is fair, since we gave it an empty YAML doc.
 
@@ -212,6 +243,7 @@ Good point. Don't actually add that to your pipeline config yet.
 Or if you have, delete it, so your whole pipeline looks like this again:
 
 ```yaml
+
 ---
 ```
 
@@ -239,8 +271,8 @@ Now we can add our `upgrade-ops-man-pipeline.yml`,
 so in the future it's easy to get back to that soothing `---` state.
 
 ```bash
-git add upgrade-ops-man-pipeline.yml
-git commit -m "Add empty upgrade-ops-man-pipeline"
+git add upgrade-ops-man-pipeline.yml vars.yml
+git commit -m "Add upgrade-ops-man-pipeline and starter vars"
 ```
 
 Let's just make sure we're all tidy:
@@ -336,6 +368,7 @@ To actually make the `image` and `file` we want to use available,
 we'll need some Resources.
 
 #### Adding Resources
+
 Resources are Concourse's main approach to managing artifacts.
 We need an image, and the tasks directory -
 so we'll tell Concourse how to get these things by declaring Resources for them.
@@ -404,7 +437,6 @@ git add upgrade-ops-man-pipeline.yml
 git commit -m "Add resources needed for test task"
 ```
 
-
 We'd rather not pass our Pivnet token
 every time we need to set the pipeline.
 Fortunately, Concourse can integrate
@@ -413,6 +445,13 @@ with secret storage services.
 Let's put our API token in credhub so Concourse can get it.
 
 First we'll need to login:
+
+!!! info "Backslashes in Bash Examples"
+    The following example has been broken across multiple lines
+    by using backslash characters (`\`) to escape the newlines.
+    We'll be doing this a lot to keep the examples readable.
+    When you're typing these out,
+    you can skip that and just put it all on one line.
 
 ```bash
  credhub login --server example.com \ # again, note the space at the start!
@@ -462,6 +501,7 @@ Visit the UI again and re-run the test job;
 this should also succeed.
 
 #### Exporting The Installation
+
 We're finally in a position to do work!
 
 While ultimately we want to upgrade Ops Manager,
@@ -472,10 +512,16 @@ an export of the current installation.
     We _**strongly recommend**_ automatically exporting
     the Ops Manager installation
     and persisting it to your blobstore on a regular basis.
+    This ensures that if you need to upgrade (or restore!)
+    your Ops Manager for any reason,
+    you'll have the latest installation info available.
+    Later in this tutorial, we'll be adding a time trigger
+    for exactly this reason.
 
 Let's switch out the test job
 for one that exports our existing Ops Manager's installation state.
 We can switch the task out by changing:
+
 - the `name` of the job
 - the `name` of the task
 - the `file` of the task
@@ -491,9 +537,14 @@ It also has an additional output (the exported installation).
 Again, for now, we'll just write that
 like we have somewhere to `put` it.
 
+Finally, while it's fine for `test` to run in parallel,
+`export-installation` shouldn't.
+So, we'll add `serial: true` to the job now, too.
+
 ```yaml
 jobs:
 - name: export-installation
+  serial: true
   plan:
     - get: platform-automation-image
       resource: platform-automation
@@ -535,6 +586,14 @@ we can add a new directory to hold foundation-specific configuration.
 (We'll use the name "foundation" for this directory,
 but if your foundation has an actual name, use that instead.)
 
+You will also need to add the repository URL
+to `vars.yml` so we can reference it later,
+when we declare the corresponding resource.
+
+```yaml
+pipeline-repo: git@github.com:username/platform-automation-pipelines
+```
+
 ```bash
 mkdir -p foundation
 cd !$
@@ -555,8 +614,8 @@ for more detail on UAA-based authentication.
 Write an `env.yml` for your Ops Manager.
 
 ```yaml
-target: https://pcf.foundation.example.com
-username: your-opsman-username
+target: ((opsman-url))
+username: ((opsman-username))
 password: ((opsman-password))
 decryption-passphrase: ((opsman-decryption-passphrase))
 ```
@@ -566,6 +625,7 @@ Add and commit the new file:
 ```bash
 git add foundation/env.yml
 git commit -m "Add environment file for foundation"
+git push
 ```
 
 Now that the env file we need is in our git remote,
@@ -573,12 +633,14 @@ we need to add a resource to tell Concourse how to get it as `env`.
 
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
-Follow [Github's instructions]() for creating a read-only deploy key.
+Follow [Github's instructions](https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys)
+for creating a read-only deploy key.
 
 Then, put the private key in Credhub so we can use it in our pipeline:
+
 ```bash
  credhub set \ # note the starting space
-         --name /concourse/your-team-name/platform-automation-pipelines-deploy-key-readonly \
+         --name /concourse/your-team-name/plat-auto-pipes-deploy-key \
          --type ssh \
          --private the/filepath/of/the/key-id_rsa \
          --public the/filepath/of/the/key-id_rsa.pub
@@ -590,17 +652,16 @@ Then, add this to the resources section of your pipeline file:
 - name: env
   type: git
   source:
-    uri: git@github.com:username/platform-automation-pipelines
-private_key: ((platform-automation-pipelines-deploy-key-readonly))
+    uri: ((pipeline-repo))
+    private_key: ((plat-auto-pipes-deploy-key))
 ```
 
-Now we should be able to set the pipeline with `fly`.
-However, the build won't succeed,
-because the variables in the config file aren't yet being interpolated.
-
-We'll put the values we need in credhub:
+We'll put the credentials we need in credhub:
 
 ```bash
+credhub set \
+        -n /concourse/your-team-name/foundation/opsman-username \
+        -t value -v your-opsman-username
 credhub set \
         -n /concourse/your-team-name/foundation/opsman-password \
         -t value -v your-opsman-password
@@ -626,47 +687,16 @@ Earlier, we relied on Concourse's native integration with Credhub for interpolat
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
 In order to perform interpolation in one of our input files,
-we'll need the [`credhub-interpolate` task](../reference/task.md#credub-interpolate)
+we'll need the [`credhub-interpolate` task](../reference/task.md#credhub-interpolate)
 
-
-
-
-
-
-# CONTINUE WORK FROM HERE
-
-
-
-
-
-#### Fetching the New Ops Manager
-
-To upgrade, 
-we'll first need to get the bits
-of the Ops Man you want to upgrade to.
-
-```yaml
-resources:
-...
-
-- name: ops-manager
-  type: pivnet
-  source:
-    product_slug: ops-manager
-    api_token: ((pivnet-refresh-token))
-```
-
-With the new Ops Manager bits in hand,
-we can now use them to upgrade! 
-But, you may ask, how often we get these bits?
-Every new version?
-Every week?
-The possibilities are endless!
-Now, let's get this resource in our pipeline:
+We can add it to our job
+after we've retrieved our `env` input,
+but before the `export-installation` task:
 
 ```yaml
 jobs:
 - name: export-installation
+  serial: true
   plan:
     - get: platform-automation-image
       resource: platform-automation
@@ -679,49 +709,226 @@ jobs:
         globs: ["*tasks*.zip"]
         unpack: true
     - get: env
+    - task: credhub-interpolate
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/credhub-interpolate.yml
+      params:
+        CREDHUB_CLIENT: ((credhub-client))
+        CREDHUB_SECRET: ((credhub-secret))
+        CREDHUB_SERVER: https://your-credhub.example.com
+        PREFIX: /concourse/your-team-name/foundation
+        INTERPOLATION_PATH: foundation/env.yml
+      input_mapping:
+        files: env
     - task: export-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/export-installation.yml
+      params:
+        ENV_FILE: your/env/path/env.yml
+      input_mapping:
+        env: interpolated-files
     - put: installation
       params:
         file: installation/installation-*.zip
 ```
 
+Notice the [input mappings](https://concourse-ci.org/task-step.html#input_mapping)
+of the `credhub-interpolate` and `export-installation` tasks.
+This allows us to use the output of one task
+as in input of another.
 
-#### On Triggers
+Ironically, we now need to put our `credhub_client` and `credhub_secret` into credhub,
+so Concourse's native integration can retrieve them
+and pass them as configuration to the `credhub-interpolate` task.
 
-We can use Concourse triggers
-to prompt our pipeline,
-based on some criteria we give a resource,
-to gather the designated resource.
-There exist [many different resources](https://concourse-ci.org/resource-types.html)
-that can be used to trigger a pipeline.
-To enable triggering,
-set the trigger flag to `true`:
-
-```yaml
-resources:
-...
-
-- name: ops-manager
-  type: pivnet
-  source:
-    product_slug: ops-manager
-    api_token: ((pivnet-refresh-token))
+```bash
+ credhub set \
+        -n /concourse/your-team-name/credhub-client \
+        -t value -v your-credhub-client
+ credhub set \
+        -n /concourse/your-team-name/credhub-secret \
+        -t value -v your-credhub-secret
 ```
 
-#### Upgrading Ops Manager
+Now, the `credhub-interpolate` task
+will interpolate our config input,
+and pass it to `export-installation` as `config`.
 
-### Wait, Is That All?
+The other new resource we need is a blobstore,
+so we can persist the exported installation.
 
-Yes, for now.
-You can do a lot more with Platform Automation,
-but your Ops Manager is now safely upgraded to a new version.
+We'll add an [S3 resource](https://github.com/concourse/s3-resource)
+to the `resources` section:
 
-Great work!
+```yaml
+- name: installation
+  type: s3
+  source:
+    access_key_id: ((s3-access-key-id))
+    secret_access_key: ((s3-secret-key))
+    bucket: ((platform-automation-bucket))
+    regexp: foundation/installation-(.*).zip
+```
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+Again, we'll need to save the credentials in Credhub:
 
+```bash
+ credhub set \
+        -n /concourse/your-team-name/s3-access-key-id \
+        -t value -v your-bucket-s3-access-key-id
+ credhub set \
+        -n /concourse/your-team-name/s3-secret-key \
+        -t value -v your-s3-secret-key
+```
+
+This time (and in the future),
+when we set the pipeline with `fly`,
+we'll need to load vars from `vars.yml`.
+
+```bash
+ fly -t control-plane set-pipeline \ # note the space before the command
+     -p foundation \
+     -c upgrade-ops-man-pipeline.yml \
+     -l vars.yml
+```
+
+Now you can manually trigger a build, and see it pass.
+
+!!! tip "Bash command history"
+    You'll be using this,
+    the ultimate form of the `fly` command to set your pipeline,
+    for the rest of the tutorial.
+    You can save yourself some typing by using your bash history.
+    You can cycle through previous commands with the up and down arrows.
+    Alternatively,
+    Ctrl-r will search your bash history.
+    Just hit Ctrl-r, type `fly`,
+    and it'll show you the last fly command you ran.
+    Run it with enter.
+    Instead of running it,
+    you can hit Ctrl-r again
+    to see the matching command before that.
+
+This is also a good commit point:
+
+```bash
+git add upgrade-ops-man-pipeline vars.yml
+git commit -m "Export foundation installation in CI"
+git push
+```
+
+### Performing The Upgrade
+
+Now that we have an exported installation,
+we'll create another Concourse job to do the upgrade itself.
+We want the export and the upgrade in separate jobs
+so they can be triggered (and re-run) independently.
+
+We know this new job is going to center
+on the [`upgrade-ops-man`](../reference/task.md#credhub-interpolate) task.
+Click through to the task description,
+and write a new job that has `get` steps
+for our platform-automation resources
+and all the inputs we already know how to get:
+
+```yaml
+- name: upgrade-ops-manager
+  serial: true
+  plan:
+  - get: platform-automation-image
+    resource: platform-automation
+      params:
+      globs: ["*image*.tgz"]
+      unpack: true
+  - get: platform-automation-tasks
+    resource: platform-automation
+    params:
+      globs: ["*tasks*.zip"]
+      unpack: true
+  - get: env
+  - get: installation
+```
+
+We should be able to set this with `fly` and see it pass,
+but it doesn't _do_ anything other than download the resources.
+Still, we can make a commit here:
+
+```bash
+git add upgrade-ops-man-pipeline
+git commit -m "Setup initial gets for upgrade job"
+git push
+```
+
+!!! tip "Is this really a commit point though?"
+    We like frequent, small commits that can be `fly` set and,
+    ideally, go green.
+    This one doesn't actually do anything though, right?
+    Fair, but: setting and running the job
+    gives you feedback on your syntax and variable usage.
+    It can catch typos, resources you forgot to add or misnamed, etc.
+    Committing when you get to a working point helps keeps the diffs small,
+    and the history tractable.
+    Also, down the line, if you've got more than one pair working on a foundation,
+    the small commits help you keep off one another's toes.
+    We don't demonstrate this workflow here,
+    but it can even be useful to make a commit,
+    use `fly` to see if it works,
+    and then push it if and only if it works.
+    If it doesn't, you can use `git commit --amend`
+    once you've figured out why and fixed it.
+    This workflow makes it easy to keep what is set on Concourse
+    and what is pushed to your source control remote in sync.
+
+Looking over the list of inputs for [`upgrade-ops-man`](../reference/task.md#credhub-interpolate)
+we still need three required inputs:
+
+1. `state`
+1. `config`
+1. `image`
+
+The optional inputs are vars used with the config,
+so we'll get to those when we do `config`.
+
+Let's start with the [state file](../reference/inputs-outputs.md#state).
+We need to record the `iaas` we're on
+and the ID of the _currently deployed_ Ops Manager VM.
+Different IaaS uniquely identify VMs differently;
+here are examples for what this file should look like,
+depending on your IaaS:
+
+``` yaml tab="AWS"
+{% include './examples/state/aws.yml' %}
+```
+
+``` yaml tab="Azure"
+{% include './examples/state/azure.yml' %}
+```
+
+``` yaml tab="GCP"
+{% include './examples/state/gcp.yml' %}
+```
+
+``` yaml tab="OpenStack"
+{% include './examples/state/openstack.yml' %}
+```
+
+``` yaml tab="vSphere"
+{% include './examples/state/vsphere.yml' %}
+```
+
+Find what you need for your IaaS,
+write it in your repo as `foundation/state.yml`,
+commit it, and push it:
+
+```bash
+git add foundation/state.yml
+git commit -m "Add state file for foundation Ops Manager"
+git push
+```
+
+We can map the env resource to [`upgrade-opsman`](../reference/task.md#upgrade-opsman)'s
+`state` input once we add the task.
+
+But first, we've got two more inputs to arrange for.
+
+Let's do [`config`](../reference/inputs-outputs.md#opsman-config) next.

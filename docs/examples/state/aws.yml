@@ -1,5 +1,3 @@
-{
-  "iaas": "aws"
-  # Instance ID of the AWS VM
-  "vm_id": "i-12345678987654321"
-}
+iaas: aws
+# Instance ID of the AWS VM
+vm_id: i-12345678987654321
