@@ -29,7 +29,7 @@ nav:
 - Release Notes: release-notes.md
 - Reference Pipeline: reference/pipeline.md
 - How to Guides:
-  - Upgrading an Existing OpsManager: how-to-guides/upgrade-opsman.md
+  - Upgrading an Existing OpsManager: how-to-guides/upgrade-existing-opsman.md
 - References:
   - Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md
