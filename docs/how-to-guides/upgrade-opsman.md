@@ -345,7 +345,7 @@ We'll need to capture the current Ops Manager VM identifier,
 so we know what VM we are upgrading.
 To create a `state.yml` from your existing foundation,
 use the following as a template, based on your IaaS:
-    
+
 ``` yaml tab="AWS"
 {% include './examples/state/aws.yml' %}
 ```

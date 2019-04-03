@@ -1,5 +1,3 @@
-{
-  "iaas": "vsphere",
-  # Path to the VM in vCenter
-  "vm_id": "/datacenter/vm/folder/vm_name"
-}
+iaas: vsphere
+# Path to the VM in vCenter
+vm_id: /datacenter/vm/folder/vm_name

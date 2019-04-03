@@ -1,5 +1,3 @@
-{
-  "iaas": "azure"
-  # Computer Name of the Azure VM
-  "vm_id": "vm_name"
-}
+iaas: azure
+# Computer Name of the Azure VM
+vm_id: vm_name
