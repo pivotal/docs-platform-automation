@@ -854,7 +854,7 @@ but it doesn't _do_ anything other than download the resources.
 Still, we can make a commit here:
 
 ```bash
-git add upgrade-ops-man-pipeline
+git add upgrade-ops-man-pipeline.yml
 git commit -m "Setup initial gets for upgrade job"
 git push
 ```
@@ -932,3 +932,130 @@ We can map the env resource to [`upgrade-opsman`](../reference/task.md#upgrade-o
 But first, we've got two more inputs to arrange for.
 
 Let's do [`config`](../reference/inputs-outputs.md#opsman-config) next.
+
+We'll write an [Ops Manager VM Configuration file](../reference/inputs-outputs.md#opsman-config)
+to `foundation/opsman.yml`.
+The properties available vary by IaaS;
+regardless, you can often inspect your existing Ops Manager
+in your IaaS's console
+(or, if your Ops Manager was created with Terraform,
+look at your terraform outputs)
+to find the necessary values.
+
+``` yaml tab="AWS"
+{% include './examples/howto/aws.yml' %}
+```
+
+``` yaml tab="Azure"
+{% include './examples/howto/azure.yml' %}
+```
+
+``` yaml tab="GCP"
+{% include './examples/howto/gcp.yml' %}
+```
+
+``` yaml tab="OpenStack"
+{% include './examples/howto/openstack.yml' %}
+```
+
+``` yaml tab="vSphere"
+{% include './examples/howto/vsphere.yml' %}
+```
+
+These examples all make assumptions
+about the details of your existing Ops Manager's configuration.
+See [the reference docs for this file](../reference/inputs-outputs.md#opsman-config)
+for more details about your options and per-IaaS caveats.
+
+Once you have your config file, commit and push it:
+
+```bash
+git add foundation/opsman.yml
+git commit -m "Add opsman config"
+git push
+```
+
+Finally, we need the image for the new Ops Manager version.
+
+We'll use the [`download-product`](../reference/task.md#download-product) task.
+It requires a config file to specify which Ops Manager to get,
+and to provide Pivotal Network credentials.
+Name this file `foundation/download-opsman.yml`:
+
+```yaml
+---
+pivnet-api-token: ((pivnet-refresh-token)) # interpolated from Credhub
+pivnet-file-glob: "ops-manager*.ova"
+pivnet-product-slug: ops-manager
+product-version-regex: ^2\.5\.0.*$
+```
+
+You know the drill.
+
+```bash
+git add foundation/download-opsman.yml
+git commit -m "Add download opsman config"
+git push
+```
+
+Now, we can put it all together:
+
+```yaml
+- name: upgrade-ops-manager
+  serial: true
+  plan:
+  - get: platform-automation-image
+    resource: platform-automation
+      params:
+      globs: ["*image*.tgz"]
+      unpack: true
+  - get: platform-automation-tasks
+    resource: platform-automation
+    params:
+      globs: ["*tasks*.zip"]
+      unpack: true
+  - get: env
+  - get: installation
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    params:
+      CREDHUB_CLIENT: ((credhub-client))
+      CREDHUB_SECRET: ((credhub-secret))
+      CREDHUB_SERVER: ((credhub-server))
+      PREFIX: /concourse/your-team-name/foundation
+      INTERPOLATION_PATH: |
+        foundation/env.yml
+        foundation/download-opsman.yml
+        foundation/opsman.yml # Remove if you don't have secrets in this file.
+    input_mapping:
+      files: env
+  - task: download-opsman-image
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-opsman.yml
+  - task: upgrade-ops-manager
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upgrade-ops-manager.yml
+    input_mapping:
+      config: env
+      image: downloaded-product
+      secrets: interpolated-files
+      state: env
+    params:
+      ENV_FILE: foundation/env.yml
+      OPSMAN_CONFIG_FILE: foundation/opsman.yml
+      STATE_FILE: foundation/state.yml
+```
+
+Set the pipeline.
+Run the task and see it pass.
+
+```bash
+git add upgrade-ops-man-pipeline.yml
+git commit -m "Upgrade Ops Manager in CI"
+git push
+```
+
+You are free.

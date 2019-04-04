@@ -1,0 +1,14 @@
+---
+opsman-configuration:
+  gcp:
+    gcp_service_account: ((gcp_service_account_json))
+    project: project-id
+    region: us-central1
+    zone: us-central1-b
+    vm_name: ops-manager-foundation
+    vpc_subnet: infrastructure-subnet
+    tags: ops-manager
+    private_ip: 10.0.0.2
+
+# Note that as this contains a secret, it will need to be interpolated.
+# The gcp_service_account_json will need to be set in credhub.
