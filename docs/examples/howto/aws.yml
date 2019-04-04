@@ -1,0 +1,16 @@
+---
+opsman-configuration:
+  aws:
+    region: us-west-2
+    vm_name: ops-manager-foundation
+    vpc_subnet_id: subnet-0292bc845215c2cbf
+    security_group_id: sg-0354f804ba7c4bc41
+    key_pair_name: ops-manager-key
+    private_ip: 10.0.0.2
+    use_instance_profile: true
+    iam_instance_profile_name: ops-manager-iam
+
+# Note that because this config contains no secrets
+# and is already written to a foundation-specific filepath,
+# it need not be interpolated.
+

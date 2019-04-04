@@ -1,0 +1,16 @@
+---
+opsman-configuration:
+  azure:
+    subscription_id: 90f35f10-ea9e-4e80-aac4-d6778b995532
+    resource_group: res-group
+    tenant_id: 3e52862f-a01e-4b97-98d5-f31a409df682
+    client_id: 5782deb6-9195-4827-83ae-a13fda90aa0d
+    client_secret: ((opsman-client-secret))
+    location: westus
+    container: opsmanagerimage
+    network_security_group: ops-manager-security-group
+    vpc_subnet: /subscriptions/<MY_SUBSCRIPTION_ID>/resourceGroups/<MY_RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<MY_VNET>/subnets/<MY_SUBNET>
+    storage_account: opsmanager # used for the Ops Manager image
+    ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ... # public key for ssh to VM
+    vm_name: ops-manager-foundation
+    private_ip: 10.0.0.3
