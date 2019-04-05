@@ -14,3 +14,6 @@ opsman-configuration:
     ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ... # public key for ssh to VM
     vm_name: ops-manager-foundation
     private_ip: 10.0.0.3
+
+# Note that as this contains a secret, it will need to be interpolated.
+# The opsman-client-secret will need to be set in credhub.
