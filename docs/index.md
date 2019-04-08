@@ -3,11 +3,7 @@ title: Platform Automation for PCF
 owner: PCF Platform Automation
 ---
 
-!!! info
-    Platform Automation for Pivotal Cloud Foundry (PCF)
-    is currently in beta. For questions and/or to report an issue please contact your primary Pivotal contact. See release notes for latest information regarding new features and any breaking changes.
-
- Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations.
+Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations.
 
 In this introduction we'll cover:
 
