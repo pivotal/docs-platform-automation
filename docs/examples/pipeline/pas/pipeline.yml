@@ -1,5 +1,5 @@
 # The following line helps maintain current documentation at http://docs.pivotal.io.
-# code_snippet pipeline start yaml
+# code_snippet multiple-products-pipeline start yaml
 resources:
   - name: platform-automation-tasks
     type: s3
@@ -511,6 +511,7 @@ jobs:
             params:
               unpack: true
             trigger: true
+            passed: [ "upgrade-opsman" ]
           - get: platform-automation-tasks
             params:
               unpack: true
@@ -626,5 +627,5 @@ jobs:
         params:
           PRODUCT_NAME: p-healthwatch
           ENV_FILE: ((foundation))/env/env.yml
-# code_snippet pipeline end
+# code_snippet multiple-products-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.
