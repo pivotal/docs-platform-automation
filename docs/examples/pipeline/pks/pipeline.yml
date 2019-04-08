@@ -1,0 +1,404 @@
+# The following line helps maintain current documentation at http://docs.pivotal.io.
+# code_snippet single-product-pipeline start yaml
+resources:
+  - name: platform-automation-tasks
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*tasks-(.*).zip
+
+  - name: platform-automation-image
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: .*image-(.*).tgz
+
+  - name: installation
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.installation))
+      regexp: installation-(.*).zip
+
+  - name: opsman-image
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      bucket: ((s3.buckets.pivnet_products))
+      region_name: ((s3.region_name))
+      secret_access_key: ((s3.secret_access_key))
+      regexp: \[ops-manager,(.*)\].*.ova # vsphere ex: ops-manager-(.*).ova
+
+  - name: pks-stemcell
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: pks-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
+
+  - name: pks-product
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: \[pivotal-container-service,(.*)\]pivotal-container-service-.*.pivotal
+
+  # configurations
+  - name: configuration
+    type: git
+    source:
+      private_key: ((configuration.private_key))
+      uri: ((configuration.uri))
+      branch: master
+
+  - name: variable
+    type: git
+    source:
+      private_key: ((variable.private_key))
+      uri: ((variable.uri))
+      branch: master
+
+  # triggers used to have jobs do something in a timely manner
+  - name: one-time-trigger
+    type: time
+    source:
+      interval: 999999h
+
+  - name: daily-trigger
+    type: time
+    source:
+      interval: 24h
+
+# This task is used in multiple jobs
+# The yaml anchor "*interpolate-creds" is used in its place
+interpolate-creds: &interpolate-creds
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  params:
+    CREDHUB_CLIENT: ((credhub-client))
+    CREDHUB_SECRET: ((credhub-secret))
+    CREDHUB_SERVER: ((credhub-server))
+    PREFIX: '/pipeline/vsphere-pks'
+    INTERPOLATION_PATH: ((foundation))/config ((foundation))/env
+    SKIP_MISSING: true
+  input_mapping:
+    files: configuration
+  output_mapping:
+    interpolated-files: interpolated-creds
+
+jobs:
+  - name: install-opsman
+    serial: true
+    serial_groups: [ install ]
+    plan:
+      - aggregate:
+        - get: platform-automation-image
+          params:
+            unpack: true
+        - get: one-time-trigger
+          trigger: true
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+      - task: interpolate-download-opsman-image-creds
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          PREFIX: '/pipeline/vsphere'
+          INTERPOLATION_PATH: "download-product-configs"
+          SKIP_MISSING: true
+        input_mapping:
+          files: configuration
+        output_mapping:
+          interpolated-files: product-configs
+      - task: download-opsman-image
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product-s3.yml
+        params:
+          CONFIG_FILE: download-product-configs/opsman.yml
+        input_mapping:
+          config: product-configs
+        output_mapping:
+          downloaded-product: opsman-image
+      - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: create-vm
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/create-vm.yml
+        input_mapping:
+          image: opsman-image
+          state: configuration
+          config: interpolated-creds
+          vars: variable
+        params:
+          VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
+          STATE_FILE: ((foundation))/state/state.yml
+          OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
+        ensure: &make-state-commit
+          do:
+            - task: make-commit
+              image: platform-automation-image
+              file: platform-automation-tasks/tasks/make-git-commit.yml
+              input_mapping:
+                repository: configuration
+                file-source: generated-state
+              output_mapping:
+                repository-commit: configuration-commit
+              params:
+                FILE_SOURCE_PATH: state.yml
+                FILE_DESTINATION_PATH: ((foundation))/state/state.yml
+                GIT_AUTHOR_EMAIL: "pcf-pipeline-bot@example.com"
+                GIT_AUTHOR_NAME: "Platform Automation Bot"
+                COMMIT_MESSAGE: 'Update state file'
+            - put: configuration
+              params:
+                repository: configuration-commit
+                merge: true
+      - task: configure-authentication
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/configure-authentication.yml
+        attempts: 10
+        input_mapping:
+          env: configuration
+          config: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+          AUTH_CONFIG_FILE: ((foundation))/config/auth.yml
+      - task: configure-director
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/configure-director.yml
+        input_mapping:
+          config: interpolated-creds
+          env: interpolated-creds
+          vars: variable
+        params:
+          VARS_FILES: vars/((foundation))/vars/director-vars.yml
+          ENV_FILE: ((foundation))/env/env.yml
+          DIRECTOR_CONFIG_FILE: ((foundation))/config/director.yml
+      - task: apply-director-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/apply-director-changes.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: export-installation
+    serial: true
+    plan:
+      - aggregate:
+          - get: daily-trigger
+            trigger: true
+          - get: platform-automation-image
+            params:
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+          INSTALLATION_FILE: installation-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/installation*.zip
+
+  - name: upgrade-opsman
+    serial: true
+    serial_groups: [ install ]
+    plan:
+      - aggregate:
+          - get: one-time-trigger
+            passed: [ install-opsman ]
+          - get: platform-automation-image
+            params:
+              unpack: true
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: opsman-image
+          - get: installation
+            passed: [ export-installation ]
+          - get: configuration
+          - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: upgrade-opsman
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upgrade-opsman.yml
+        input_mapping:
+          image: opsman-image
+          state: configuration
+          config: interpolated-creds
+          env: interpolated-creds
+          vars: variable
+        params:
+          VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
+          ENV_FILE: ((foundation))/env/env.yml
+          OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
+          STATE_FILE: ((foundation))/state/state.yml
+        ensure: *make-state-commit
+      - task: apply-director-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/apply-director-changes.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: upload-stemcells
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - upgrade-opsman
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: pks-stemcell
+            trigger: true
+          - get: configuration
+          - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: upload-pks-stemcell
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: interpolated-creds
+          stemcell: pks-stemcell
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: upload-and-stage-pks
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            trigger: true
+            passed: [ "upgrade-opsman" ]
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: pks-product
+          - get: configuration
+          - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: upload-and-stage-product
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-and-stage-product.yml
+        input_mapping:
+          product: pks-product
+          env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: configure-pks
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - upload-and-stage-pks
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: configure-pks
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/configure-product.yml
+        input_mapping:
+          config: interpolated-creds
+          env: interpolated-creds
+          vars: variable
+        params:
+          CONFIG_FILE: ((foundation))/config/pks.yml
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: apply-product-changes
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - configure-pks
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: apply-product-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/apply-changes.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+
+  - name: staged-pks-config
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      - task: staged-config
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/staged-config.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          PRODUCT_NAME: pivotal-container-service
+          ENV_FILE: ((foundation))/env/env.yml
+# code_snippet single-product-pipeline end
+# The previous line helps maintain current documentation at http://docs.pivotal.io.

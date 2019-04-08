@@ -3,12 +3,13 @@ title: Pipeline Reference
 owner: PCF Platform Automation
 ---
 
-##  Platform Automation for PCF Pipelines
-These Concourse pipelines are examples
-on how to use the [tasks](task.md). If you use a different CI/CD platform, you can use these Concourse files as examples
-of the inputs, outputs, and arguments used in each step in the workflow.
+!!! info 
+    These Concourse pipelines are examples
+    on how to use the [tasks](../reference/task.md). 
+    If you use a different CI/CD platform, you can use these Concourse files as examples
+    of the inputs, outputs, and arguments used in each step in the workflow.
 
-### Making Your Own Pipeline
+## Making Your Own Pipeline
 
 If the reference pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
 You know your environment and constraints, and we don’t.
@@ -26,7 +27,7 @@ or we can use the feedback to improve the tasks so they’re a better fit for wh
 If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
 and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
 
-### Prerequisites
+## Prerequisites
 
 * Deployed Concourse
 
@@ -37,25 +38,9 @@ and should be able to coexist in a pipeline with tasks from other sources, or cu
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
-* A valid [generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
-It is used by every task within Platform Automation for PCF
-* A valid [auth file]: this file will contain the credentials necessary to create the Ops Manager login the first time
-the VM is created. The choices for this file are simple or saml authentication.
+* A set of valid [download-product-config] files: Each product has a configuration YAML of what version to download from Pivotal Network. 
 
-!!! info 
-    There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
-
-* An [opsmanager configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
- of the Ops Manager VM
-* A [director configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
-a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one.
-* A set of valid [product configuration] files: Each product configuration is a yaml file that contains the properties
-necessary to configure an Ops Manager product tile using the `om` tool. This can be used during install or update.
-* (Optional) A working [credhub] setup with its own UAA client and secret.
-
-
-
-## Retrieving external dependencies
+## Retrieval from Pivotal Network
 
 {% include "./.opsman_filename_change_note.md" %}
 
@@ -66,7 +51,7 @@ retrieve task dependencies.
 
 {% code_snippet 'examples', 'put-resources-pipeline' %}
 
-This pipeline requires configuration for the [download-product](task.md#download-product) task.
+This pipeline requires configuration for the [download-product](../reference/task.md#download-product) task.
 Below are examples that can be used.
 
 ``` yaml tab="Healthwatch"
@@ -85,13 +70,9 @@ Below are examples that can be used.
 {% include './examples/download-product-configs/opsman.yml' %}
 ```
 
-## Installing Ops Manager and tiles
-
-The pipeline shows how compose the tasks to install Ops Manager and the PCF and Healthwatch tiles.
-Its dependencies are coming from a trusted git repository,
-which can be retrieved using [this pipeline](#retrieving-external-dependencies).
-
-{% code_snippet 'examples', 'pipeline' %}
+``` yaml tab="PKS"
+{% include './examples/download-product-configs/pks.yml' %}
+```
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

@@ -67,6 +67,24 @@ resources:
     secret_access_key: ((s3.secret_access_key))
     regexp: pas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
+- name: pks-product
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: \[pivotal-container-service,(.*)\]pivotal-container-service-.*.pivotal
+
+- name: pks-stemcell
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: pks-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
+
 - name: pas-windows-product
   type: s3
   source:
@@ -222,6 +240,34 @@ jobs:
     - put: pas-windows-product
       params:
         file: downloaded-product/*.pivotal
+
+- name: fetch-pks
+  plan:
+  - aggregate:
+      - get: daily
+        trigger: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: config
+  - task: credhub-interpolate
+    <<: *credhub-interpolate
+  - task: download-pks-product-and-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-configs/pks.yml
+    output_mapping: {downloaded-stemcell: pks-stemcell}
+  - aggregate:
+      - put: pks-product
+        params:
+          file: downloaded-product/*.pivotal
+      - put: pks-stemcell
+        params:
+          file: pks-stemcell/*.tgz
 
 - name: fetch-platform-automation
   # We use the pivnet resource to bootstrap the pipeline,
