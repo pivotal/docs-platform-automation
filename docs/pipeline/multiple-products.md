@@ -39,17 +39,17 @@ and should be able to coexist in a pipeline with tasks from other sources, or cu
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * A valid [generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
 It is used by every task within Platform Automation for PCF
-* A valid [auth file]: this file will contain the credentials necessary to create the Ops Manager login the first time
+* A valid [auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
 !!! info 
     There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
 
-* An [opsmanager configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
+* An [opsmanager-configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Ops Manager VM
-* A [director configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
+* A [director-configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
 a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one.
-* A set of valid [product configuration] files: Each product configuration is a yaml file that contains the properties
+* A set of valid [product-configuration] files: Each product configuration is a yaml file that contains the properties
 necessary to configure an Ops Manager product tile using the `om` tool. This can be used during install or update.
 * (Optional) A working [credhub] setup with its own UAA client and secret.
 
