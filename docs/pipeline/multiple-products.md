@@ -50,7 +50,7 @@ the VM is created. The choices for this file are simple or saml authentication.
 * A [director-configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
 a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one.
 * A set of valid [product-configuration] files: Each product configuration is a yaml file that contains the properties
-necessary to configure an Ops Manager product tile using the `om` tool. This can be used during install or update.
+necessary to configure an Ops Manager product using the `om` tool. This can be used during install or update.
 * (Optional) A working [credhub] setup with its own UAA client and secret.
 
 

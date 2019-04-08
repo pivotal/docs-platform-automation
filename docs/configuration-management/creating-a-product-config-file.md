@@ -287,12 +287,12 @@ Upgrading products to new patch versions:
 * Configuration settings should not differ between successive patch versions within the same minor version line.
     Underlying properties or property names may change,
     but the tile's upgrade process automatically translates properties to the new fields and values.
-* Pivotal cannot guarantee the functionality of upgrade scripts in third-party PCF product tiles.
+* Pivotal cannot guarantee the functionality of upgrade scripts in third-party PCF products.
 
-Replicating configuration settings from one product tile to the same product tile on a different foundation:
+Replicating configuration settings from one product to the same product on a different foundation:
 
 * Because properties and property names can change between patch versions of a product,
-  you can only safely apply configuration settings across product tiles if their versions exactly match.
+  you can only safely apply configuration settings across products if their versions exactly match.
 
 
 
