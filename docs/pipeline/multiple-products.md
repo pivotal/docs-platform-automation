@@ -61,7 +61,7 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 
 The pipeline shows how to compose the tasks to install Ops Manager and the PCF and Healthwatch products.
 Its dependencies are coming from a trusted git repository,
-which can be retrieved using [this pipeline](#retrieving-external-dependencies).
+which can be retrieved using [this pipeline][reference-resources].
 
 {% code_snippet 'examples', 'multiple-products-pipeline' %}
 
