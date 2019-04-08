@@ -28,9 +28,9 @@ a previous installation. It requires the following to perform this operations:
 
 * a valid [state file](reference/inputs-outputs.md#state) from the currently deployed Ops Manager
 * a valid [image file](reference/inputs-outputs.md#opsman-image) for the new Ops Manager to install
-* a [configuration file][opsmanager configuration] for IAAS specific details
+* a [configuration file][opsmanager-configuration] for IAAS specific details
 * an [exported installation][installation] from a currently deployed Ops Manager
-* the [auth file][auth file] for a currently deployed Ops Manager
+* the [auth file][auth-file] for a currently deployed Ops Manager
 
 ## Troubleshooting
 When you are upgrading your Ops Manager you may get version check or IaaS CLI errors. For information about troubleshooting these errors, see [`Version Check Errors`][version-check-errors] and [`IaaS CLI Errors`][iaas-cli-errors] below.
@@ -46,7 +46,7 @@ When you are upgrading your Ops Manager you may get version check or IaaS CLI er
 * Credentials provided in the auth file do not match the credentials of an already deployed Ops Manager.
 * SOLUTION: To change the credentials when upgrading an Ops Manager, you must update the password in your
 Account Settings. Then, you will need to update the following two files with the changes:
-  [`auth.yml`][auth file]
+  [`auth.yml`][auth-file]
   [`env.yml`][generating-env-file]
 
 3) <b>The Ops Manager API is inaccessible</b> (Recoverable)
