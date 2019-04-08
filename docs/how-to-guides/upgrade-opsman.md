@@ -534,7 +534,7 @@ change happened. A way to do this is shown below:
 
 ## Retrieving Existing Product Configurations
 
-If you would like to automate the configuration of your product tiles, you first need to externalize
+If you would like to automate the configuration of your products, you first need to externalize
 each product's configuration. Using Platform Automation, this is done using Docker or by adding a job to
 the pipeline.
 

@@ -77,7 +77,7 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
     <td><code>upload-and-stage-product</code></td>
   </tr><tr>
     <th>5. Configure Products</th>
-    <td>Manually configure product tiles</td>
+    <td>Manually configure products</td>
     <td><code>configure-product</code> with settings saved from tiles with same version</td>
   </tr><tr>
     <th>6. Deploy Products</th>
