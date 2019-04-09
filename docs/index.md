@@ -24,7 +24,7 @@ that demonstrate how to use these tasks
 in a containerized Continuous Integration (CI) system. Platform Automation for PCF tasks are:
 
     * Legible: They use
-human-readable YAML files which can be edited and managed
+human-readable YAML config files which can be edited and managed
 
     * Modular: Each task has defined inputs and outputs
 that perform granular actions
