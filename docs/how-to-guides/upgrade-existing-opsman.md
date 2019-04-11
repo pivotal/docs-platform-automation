@@ -322,7 +322,7 @@ If we try to set this now, Concourse will take it:
 fly -t control-plane set-pipeline -p foundation -c upgrade-opsman-pipeline.yml
 ```
 
-Now we should be able to see our `upgrade-ops-manager` pipeline
+Now we should be able to see our `upgrade-opsman` pipeline
 in the Concourse UI.
 It'll be paused, so click the "play" button to unpause it.
 Then, click in to the gray box for our `test` job,
@@ -726,20 +726,31 @@ jobs:
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: https://your-credhub.example.com
         PREFIX: /concourse/your-team-name/foundation
-        INTERPOLATION_PATH: foundation/env.yml
+        INTERPOLATION_PATH: foundation # contains env.yml
       input_mapping:
         files: env
+      output_mapping:
+        interpolated-files: interpolated-env
     - task: export-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/export-installation.yml
       params:
         ENV_FILE: your/env/path/env.yml
       input_mapping:
-        env: interpolated-files
+        env: interpolated-env
     - put: installation
       params:
         file: installation/installation-*.zip
 ```
+
+!!! note A bit on "output_mapping"
+    <p>The `credhub-interpolate` task for this job
+    maps the output from the task (`interpolated-files`)
+    to `interpolated-env`.
+    <p>This can be used by the next task in the job
+    to more explicitly define the inputs/outputs of each task.
+    It is also okay to leave the output as `interpolated-files`
+    if it is appropriately referenced in the next task
 
 Notice the [input mappings][concourse-input-mapping]
 of the `credhub-interpolate` and `export-installation` tasks.
@@ -844,7 +855,7 @@ for our platform-automation resources
 and all the inputs we already know how to get:
 
 ```yaml
-- name: upgrade-ops-manager
+- name: upgrade-opsman
   serial: true
   plan:
   - get: platform-automation-image
@@ -1012,13 +1023,13 @@ git push
 
 Now, we can put it all together:
 
-```yaml
-- name: upgrade-ops-manager
+```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46"
+- name: upgrade-opsman
   serial: true
   plan:
   - get: platform-automation-image
     resource: platform-automation
-      params:
+    params:
       globs: ["*image*.tgz"]
       unpack: true
   - get: platform-automation-tasks
@@ -1036,24 +1047,26 @@ Now, we can put it all together:
       CREDHUB_SECRET: ((credhub-secret))
       CREDHUB_SERVER: ((credhub-server))
       PREFIX: /concourse/your-team-name/foundation
-      INTERPOLATION_PATH: |
-        foundation/env.yml
-        foundation/download-opsman.yml
-        foundation/opsman.yml # Remove if you don't have secrets in this file.
+      # A file path that includes env.yml, opsman.yml, download-opsman.yml
+      INTERPOLATION_PATH: foundation 
     input_mapping:
       files: env
+    output_mapping:
+      interpolated-files: interpolated-configs
   - task: download-opsman-image
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-opsman.yml
-  - task: upgrade-ops-manager
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/upgrade-ops-manager.yml
     input_mapping:
-      config: env
+      config: interpolated-configs
+  - task: upgrade-opsman
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upgrade-opsman.yml
+    input_mapping:
+      config: interpolated-configs
       image: downloaded-product
-      secrets: interpolated-files
+      secrets: interpolated-configs
       state: env
     params:
       ENV_FILE: foundation/env.yml
