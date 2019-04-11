@@ -1,18 +1,19 @@
-View the most recent release of the [docs](https://docs.pivotal.io/platform-automation/)
+# Introduction
 
-You can see up-in-coming release changes in our [staging-docs](http://docs-pcf-staging.cfapps.io/platform-automation/develop/). *NOTE*: the changes in these docs are NOT final! Do not rely on these docs for offically supported features/documentation
+This is the source of the docs for the [Platform Automation](https://network.pivotal.io/products/platform-automation) package downloaded from Pivotal Network.
 
---------------
+The docs can be viewed at: https://docs.pivotal.io/platform-automation/ 
 
-to download dependencies:
-pip3 install -r requirements.txt
-brew install ripgrep 
+# Usage
 
-to build the mkdocs "final_app" (`site` in the mkdocs repo), run `mkdocs build` in the new docs directory
+We use [`mkdocs`](https://www.mkdocs.org/) for our documentation engine.
+To use it locally, it will require `python3` to be installed.
 
-to update the mkdocs dependencies, run `pip3 -r requirements.txt -U`
-
-to run the app, run `mkdocs serve` from the same directory
+```
+pip3 install -U -r requirements.txt
+brew install ripgrep
+mkdocs serve
+``` 
 
 **Notes**
 * `serve`ing the app will check for broken external links. An error in a link might show like so:
@@ -27,6 +28,6 @@ WARNING -  Documentation file 'task-reference.md' contains a link to 'asdfasdf.h
 Exited with 1 warnings in strict mode.
 ```
 
-* to find broken anchors in the app, run the `./bin/find_broken_anchors.rb` script from github.com/jtarchie/docs-converter repo
-* requires ruby version 2.5.1
-* after being converted, docs can be edited as markdown in html in the `docs` directory
+# Contributing
+
+Please see the [contribution doc](CONTRIBUTING.md) for more information.
