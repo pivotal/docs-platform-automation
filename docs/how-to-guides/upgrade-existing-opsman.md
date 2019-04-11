@@ -662,6 +662,7 @@ Then, add this to the resources section of your pipeline file:
   source:
     uri: ((pipeline-repo))
     private_key: ((plat-auto-pipes-deploy-key))
+    branch: master
 ```
 
 We'll put the credentials we need in Credhub:
@@ -1075,7 +1076,84 @@ Now, we can put it all together:
 ```
 
 Set the pipeline.
-Run the task and see it pass.
+
+Before we run the job, 
+we should [`ensure`][ensure] that `state.yml` is always persisted
+regardless of whether the `upgrade-opsman` job failed or passed.
+To do this, we can add the following section to the job:
+```yaml hl_lines="49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68"
+- name: upgrade-opsman
+  serial: true
+  plan:
+  - get: platform-automation-image
+    resource: platform-automation
+    params:
+      globs: ["*image*.tgz"]
+      unpack: true
+  - get: platform-automation-tasks
+    resource: platform-automation
+    params:
+      globs: ["*tasks*.zip"]
+      unpack: true
+  - get: env
+  - get: installation
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    params:
+      CREDHUB_CLIENT: ((credhub-client))
+      CREDHUB_SECRET: ((credhub-secret))
+      CREDHUB_SERVER: ((credhub-server))
+      PREFIX: /concourse/your-team-name/foundation
+      # A file path that includes env.yml, opsman.yml, download-opsman.yml
+      INTERPOLATION_PATH: foundation 
+    input_mapping:
+      files: env
+    output_mapping:
+      interpolated-files: interpolated-configs
+  - task: download-opsman-image
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-opsman.yml
+    input_mapping:
+      config: interpolated-configs
+  - task: upgrade-opsman
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upgrade-opsman.yml
+    input_mapping:
+      config: interpolated-configs
+      image: downloaded-product
+      secrets: interpolated-configs
+      state: env
+    params:
+      ENV_FILE: foundation/env.yml
+      OPSMAN_CONFIG_FILE: foundation/opsman.yml
+      STATE_FILE: foundation/state.yml
+  ensure:
+    do:
+    - task: make-commit
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/make-git-commit.yml
+      input_mapping:
+        repository: env
+        file-source: env
+      output_mapping:
+        repository-commit: env-commit
+      params:
+        FILE_SOURCE_PATH: foundation/state.yml
+        FILE_DESTINATION_PATH: foundation/state.yml
+        GIT_AUTHOR_EMAIL: "ci-user@example.com"
+        GIT_AUTHOR_NAME: "CI User"
+        COMMIT_MESSAGE: 'Update state file'
+    - put: env
+      params:
+        repository: env-commit
+        merge: true
+``` 
+
+Set the pipeline one final time,
+run the job, and see it pass.
 
 ```bash
 git add upgrade-opsman-pipeline.yml
