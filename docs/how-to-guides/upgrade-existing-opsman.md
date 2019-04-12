@@ -12,6 +12,7 @@ using [Concourse][concourse].
 Before we get started, you'll need a few things ready to go:
 
 1. a running Ops Manager VM that you would like to upgrade
+1. credentials for an IaaS Ops Manager is compatible with
 1. a Concourse instance
    with access to a Credhub instance
    and to the Internet
@@ -26,7 +27,7 @@ Before we get started, you'll need a few things ready to go:
       like Firefox or Chrome
     - and `git`
 
-It doesn't actually matter what IaaS your Ops Manager is running on,
+It doesn't actually matter what IaaS you use for Ops Manager,
 as long as your Concourse can connect to it.
 Pipelines built with Platform Automation can be platform-agnostic.
 
