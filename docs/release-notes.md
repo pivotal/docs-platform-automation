@@ -26,19 +26,70 @@ These are release notes for Platform Automation for PCF.
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
 
 ### Breaking Changes
+- The [`credhub-interpolate`](./reference/task.md#credhub-interpolate) task can have multiple
+  interpolation paths. The `INTERPOLATION_PATH` param is now plural: `INTERPOLATION_PATHS`.
+  IF you are using a custom `INTERPOLATION_PATH` for `credhub-interpolate`, you will need to update
+  your `pipeline.yml` to this new param.
+  As an example, if your credhub-interpolate job is defined as so:
+```yaml 
+# OLD pipeline.yml PRIOR TO 3.0.0 RELEASE
+- name: example-credhub-interpolate
+  plan:
+  - get: platform-automation-tasks
+  - get: platform-automation-image
+  - get: config
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    input_mapping:
+      files: config
+    params:
+      # all required
+      CREDHUB_CA_CERT: ((credhub_ca_cert))
+      CREDHUB_CLIENT: ((credhub_client))
+      CREDHUB_SECRET: ((credhub_secret))
+      CREDHUB_SERVER: ((credhub_server))
+      PREFIX: /private-foundation
+      INTERPOLATION_PATH: foundation/config-path
+      SKIP_MISSING: true 
+```
+  it should now look like
+```yaml hl_lines="19"
+# NEW pipeline.yml FOR 3.0.0 RELEASE
+- name: example-credhub-interpolate
+  plan:
+  - get: platform-automation-tasks
+  - get: platform-automation-image
+  - get: config
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    input_mapping:
+      files: config
+    params:
+      # all required
+      CREDHUB_CA_CERT: ((credhub_ca_cert))
+      CREDHUB_CLIENT: ((credhub_client))
+      CREDHUB_SECRET: ((credhub_secret))
+      CREDHUB_SERVER: ((credhub_server))
+      PREFIX: /private-foundation
+      INTERPOLATION_PATHS: foundation/config-path
+      SKIP_MISSING: true 
+```
+
 - the [`upload-product`](./reference/task.md#upload-product) option `--sha256` has been changed to `--shasum`. 
   IF you are using the `--config` flag in `upload-product`, your config file will need to update from:
-  ```yaml
-  # OLD YAML PRIOR TO 3.0.0 RELEASE
-  product-version: 1.2.3-build.4
-  sha256: 6daededd8fb4c341d0cd437a
-  ```
+```yaml
+# OLD upload-product-config.yml PRIOR TO 3.0.0 RELEASE
+product-version: 1.2.3-build.4
+sha256: 6daededd8fb4c341d0cd437a
+```
   to:
-  ```yaml
-  # NEW YAML FOR 3.0.0 RELEASE
-  product-version: 1.2.3-build.4
-  shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed 
-  ```
+```yaml hl_lines="3"
+# NEW upload-product-config.yml FOR 3.0.0 RELEASE
+product-version: 1.2.3-build.4
+shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed 
+```
   This change was added to future-proof the param name for when sha256 is no longer the 
   de facto way of defining shasums.
 
