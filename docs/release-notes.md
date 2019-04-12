@@ -28,6 +28,8 @@ These are release notes for Platform Automation for PCF.
 ### What's New
 -  On [GCP](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
    one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
+-  On [Azure](./reference/inputs-outputs.md#azure), if you did not assign a public IP, Azure would assign
+   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
 - `om interpolate` (example in the [test task](./reference/task.md#test-interpolate)) now supports
    the ability to accept partial vars files. This is added support for users who may also be using 
    credhub-interpolate or who want to mix interpolation methods. To make use of this feature, include
@@ -52,6 +54,8 @@ These are release notes for Platform Automation for PCF.
 - CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/)
   (related to vulnerabilities with `libmagic1`. While none of our code directly used these,
   they are present on the image.)
+- Improved error messaging for [vSphere](./reference/inputs-outputs.md#gcp) VM creation if neither `ssh-password` or `ssh-public-key` are set.
+  One or the other is required to create a VM.
 
 ## v2.2.0-beta.1
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
