@@ -94,9 +94,21 @@ credhub-server: https://your-credhub.example.com
 opsman-url: https://pcf.foundation.example.com
 ```
 
+!!! info
+    This example assumes that you're using DNS and hostnames.
+    You can use IP addresses for all these resources instead,
+    but you still need to provide the information as a URL,
+    f.ex `https://120.121.123.124`
+
 We can add things to this as we go.
 
-Now, create a file called `upgrade-opsman-pipeline.yml`.
+Now, create a file called `pipeline.yml`.
+
+!!! info
+    We'll use `pipeline.yml` in our examples throughout this guide.
+    However, you may create multiple pipelines over time.
+    If there's a more sensible name for the pipeline you're working on,
+    feel free to use that instead.
 
 Write this at the top, and save the file:
 
@@ -218,7 +230,7 @@ Either way, pipeline-setting time!
 but if your foundation has an actual name, use that instead.)
 
 ```bash
-fly -t control-plane set-pipeline -p foundation -c upgrade-opsman-pipeline.yml
+fly -t control-plane set-pipeline -p foundation -c pipeline.yml
 ```
 
 It should say `no changes to apply`,
@@ -236,7 +248,7 @@ which is fair, since we gave it an empty YAML doc.
 
 Let's see Concourse actually _do_ something, yeah?
 
-Add this to your `upgrade-opsman-pipeline.yml`, starting on the line after the `---`:
+Add this to your `pipeline.yml`, starting on the line after the `---`:
 
 ```yaml
 wait: no nevermind let's get version control first
@@ -270,12 +282,12 @@ Here's a [good guide][git-first-time-setup]
 to initial setup.
 Get that done, and try again.
 
-Now we can add our `upgrade-opsman-pipeline.yml`,
+Now we can add our `pipeline.yml`,
 so in the future it's easy to get back to that soothing `---` state.
 
 ```bash
-git add upgrade-opsman-pipeline.yml vars.yml
-git commit -m "Add upgrade-opsman-pipeline and starter vars"
+git add pipeline.yml vars.yml
+git commit -m "Add pipeline and starter vars"
 ```
 
 Let's just make sure we're all tidy:
@@ -305,7 +317,7 @@ Platform Automation comes with a [`test`][test] task
 meant to validate that it's been installed correctly.
 Let's use it to get setup.
 
-Add this to your `upgrade-opsman-pipeline.yml`, starting on the line after the `---`:
+Add this to your `pipeline.yml`, starting on the line after the `---`:
 
 ```yaml
 jobs:
@@ -319,7 +331,7 @@ jobs:
 If we try to set this now, Concourse will take it:
 
 ```bash
-fly -t control-plane set-pipeline -p foundation -c upgrade-opsman-pipeline.yml
+fly -t control-plane set-pipeline -p foundation -c pipeline.yml
 ```
 
 Now we should be able to see our `upgrade-opsman` pipeline
@@ -336,7 +348,7 @@ Before we start doing the next part,
 this would be a good moment to make a commit:
 
 ```bash
-git add upgrade-opsman-pipeline.yml
+git add pipeline.yml
 git commit -m "Add (nonfunctional) test task"
 ```
 
@@ -420,7 +432,7 @@ Then use that token in the following command:
 # note the space before the command
  fly -t control-plane set-pipeline \
      -p foundation \
-     -c upgrade-opsman-pipeline.yml \
+     -c pipeline.yml \
      -v pivnet-refresh-token=your-api-token
 ```
 
@@ -437,7 +449,7 @@ This time, it should pass.
 Commit time!
 
 ```bash
-git add upgrade-opsman-pipeline.yml
+git add pipeline.yml
 git commit -m "Add resources needed for test task"
 ```
 
@@ -497,7 +509,7 @@ without passing a secret this time.
 ```bash
 fly -t control-plane set-pipeline \
     -p foundation \
-    -c upgrade-opsman-pipeline.yml
+    -c pipeline.yml
 ```
 
 This should succeed,
@@ -812,7 +824,7 @@ we'll need to load vars from `vars.yml`.
 # note the space before the command
  fly -t control-plane set-pipeline \
      -p foundation \
-     -c upgrade-opsman-pipeline.yml \
+     -c pipeline.yml \
      -l vars.yml
 ```
 
@@ -836,7 +848,7 @@ Now you can manually trigger a build, and see it pass.
 This is also a good commit point:
 
 ```bash
-git add upgrade-opsman-pipeline vars.yml
+git add pipeline.yml vars.yml
 git commit -m "Export foundation installation in CI"
 git push
 ```
@@ -878,7 +890,7 @@ but it doesn't _do_ anything other than download the resources.
 Still, we can make a commit here:
 
 ```bash
-git add upgrade-opsman-pipeline.yml
+git add pipeline.yml
 git commit -m "Setup initial gets for upgrade job"
 git push
 ```
@@ -1156,7 +1168,7 @@ Set the pipeline one final time,
 run the job, and see it pass.
 
 ```bash
-git add upgrade-opsman-pipeline.yml
+git add pipeline.yml
 git commit -m "Upgrade Ops Manager in CI"
 git push
 ```
