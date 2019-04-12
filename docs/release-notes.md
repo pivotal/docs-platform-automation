@@ -26,7 +26,7 @@ These are release notes for Platform Automation for PCF.
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
 
 ### Breaking Changes
-* the [`upload-product`](./reference/task.md#upload-product) option `--sha256` has been changed to `--shasum`. 
+- the [`upload-product`](./reference/task.md#upload-product) option `--sha256` has been changed to `--shasum`. 
   IF you are using the `--config` flag in `upload-product`, your config file will need to update from:
   ```yaml
   # OLD YAML PRIOR TO 3.0.0 RELEASE
@@ -41,14 +41,6 @@ These are release notes for Platform Automation for PCF.
   ```
   This change was added to future-proof the param name for when sha256 is no longer the 
   de facto way of defining shasums.
-
-### What's New
-* [`upload-stemcell`](./reference/task.md#upload-stemcell) now supports the ability to include a config file.
-  This allows you to define an expected `shasum` that will validate the calculated shasum of the provided 
-  `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`](./reference/task.md#upload-product)
-
-## v2.3.0
-**Release Date** SomeDayOfTheWeek, Month, Day, Year
 
 ### What's New
 -  On [GCP](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
@@ -69,6 +61,9 @@ These are release notes for Platform Automation for PCF.
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`. 
    For more information and instruction on how to use `config-template`, please see 
    [Creating a Product Config File](./configuration-management/creating-a-product-config-file.md#from-pivnet).
+- [`upload-stemcell`](./reference/task.md#upload-stemcell) now supports the ability to include a config file.
+  This allows you to define an expected `shasum` that will validate the calculated shasum of the provided 
+  `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`](./reference/task.md#upload-product)
 
 
 ### Bug Fixes
