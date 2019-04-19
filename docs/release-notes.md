@@ -25,13 +25,6 @@ These are release notes for Platform Automation for PCF.
 ## v3.0.0
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
 
-
-### Features
-- [`download-product`](./reference/task.md#download-product) ensures sha sum checking when downloading the file from Pivotal Network.
-- [`download-product`](./reference/task.md#download-product) can now disable ssl validation when connecting to Pivotal Network.
-  This helps with environments with SSL and proxying issues.
-  Add `pivnet-disable-ssl: true` in your [download-product-config] to use this feature.
-
 ### Breaking Changes
 - The [`credhub-interpolate`](./reference/task.md#credhub-interpolate) task can have multiple
   interpolation paths. The `INTERPOLATION_PATH` param is now plural: `INTERPOLATION_PATHS`.
@@ -101,10 +94,14 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   de facto way of defining shasums.
 
 ### What's New
--  On [GCP](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
-   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
--  On [Azure](./reference/inputs-outputs.md#azure), if you did not assign a public IP, Azure would assign
-   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
+- [`download-product`](./reference/task.md#download-product) ensures sha sum checking when downloading the file from Pivotal Network.
+- [`download-product`](./reference/task.md#download-product) can now disable ssl validation when connecting to Pivotal Network.
+  This helps with environments with SSL and proxying issues.
+  Add `pivnet-disable-ssl: true` in your [download-product-config] to use this feature.
+- On [GCP](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
+  one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
+- On [Azure](./reference/inputs-outputs.md#azure), if you did not assign a public IP, Azure would assign
+  one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
 - `om interpolate` (example in the [test task](./reference/task.md#test-interpolate)) now supports
    the ability to accept partial vars files. This is added support for users who may also be using 
    credhub-interpolate or who want to mix interpolation methods. To make use of this feature, include
