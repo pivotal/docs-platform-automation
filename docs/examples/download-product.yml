@@ -6,6 +6,9 @@ pivnet-api-token: token
 pivnet-file-glob: "*.pivotal"
 pivnet-product-slug: product-slugs
 
+## defaults to false and should be excluded if not set to true
+# pivnet-disable-ssl: true
+
 ## Either product-version OR product-version-regex is required
 # product-version: 1.2.3
 
