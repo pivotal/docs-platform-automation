@@ -33,6 +33,7 @@ nav:
   - OpsManager + a product: pipeline/single-product.md
 - How to Guides:
   - Upgrading an Existing OpsManager: how-to-guides/upgrade-existing-opsman.md
+  - Installing OpsManager: how-to-guides/install-opsman.md
 - References:
   - Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md
