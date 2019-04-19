@@ -27,6 +27,7 @@ These are release notes for Platform Automation for PCF.
 
 
 ### Features
+- [`download-product`](./reference/task.md#download-product) ensures sha sum checking when downloading the file from Pivotal Network.
 - [`download-product`](./reference/task.md#download-product) can now disable ssl validation when connecting to Pivotal Network.
   This helps with environments with SSL and proxying issues.
   Add `pivnet-disable-ssl: true` in your [download-product-config] to use this feature.
