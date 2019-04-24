@@ -19,7 +19,7 @@
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: ((credhub-server))
         PREFIX: '/pipeline/vsphere'
-        INTERPOLATION_PATH: ((foundation))/env
+        INTERPOLATION_PATHS: ((foundation))/env
         SKIP_MISSING: true
       input_mapping:
         files: configuration
@@ -33,7 +33,7 @@
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: ((credhub-server))
         PREFIX: '/pipeline/vsphere'
-        INTERPOLATION_PATH: ((foundation))/config
+        INTERPOLATION_PATHS: ((foundation))/config
         SKIP_MISSING: true
       input_mapping:
         files: configuration

@@ -9,7 +9,7 @@ credhub-interpolate: &credhub-interpolate
     CREDHUB_SECRET: ((credhub-secret))
     CREDHUB_SERVER: ((credhub-server))
     PREFIX: '/pipeline/vsphere'
-    INTERPOLATION_PATH: "download-product-configs"
+    INTERPOLATION_PATHS: "download-product-configs"
   input_mapping:
     files: config
   output_mapping:
