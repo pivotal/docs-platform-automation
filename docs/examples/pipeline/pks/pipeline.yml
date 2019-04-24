@@ -91,7 +91,7 @@ interpolate-creds: &interpolate-creds
     CREDHUB_SECRET: ((credhub-secret))
     CREDHUB_SERVER: ((credhub-server))
     PREFIX: '/pipeline/vsphere-pks'
-    INTERPOLATION_PATH: ((foundation))/config ((foundation))/env
+    INTERPOLATION_PATHS: ((foundation))/config ((foundation))/env
     SKIP_MISSING: true
   input_mapping:
     files: configuration
@@ -121,7 +121,7 @@ jobs:
           CREDHUB_SECRET: ((credhub-secret))
           CREDHUB_SERVER: ((credhub-server))
           PREFIX: '/pipeline/vsphere'
-          INTERPOLATION_PATH: "download-product-configs"
+          INTERPOLATION_PATHS: "download-product-configs"
           SKIP_MISSING: true
         input_mapping:
           files: configuration

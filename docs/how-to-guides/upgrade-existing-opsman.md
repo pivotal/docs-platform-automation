@@ -727,7 +727,7 @@ jobs:
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: https://your-credhub.example.com
         PREFIX: /concourse/your-team-name/foundation
-        INTERPOLATION_PATH: foundation # contains env.yml
+        INTERPOLATION_PATHS: foundation # contains env.yml
       input_mapping:
         files: env
       output_mapping:
@@ -1049,7 +1049,7 @@ Now, we can put it all together:
       CREDHUB_SERVER: ((credhub-server))
       PREFIX: /concourse/your-team-name/foundation
       # A file path that includes env.yml, opsman.yml, download-opsman.yml
-      INTERPOLATION_PATH: foundation 
+      INTERPOLATION_PATHS: foundation 
     input_mapping:
       files: env
     output_mapping:
@@ -1106,7 +1106,7 @@ To do this, we can add the following section to the job:
       CREDHUB_SERVER: ((credhub-server))
       PREFIX: /concourse/your-team-name/foundation
       # A file path that includes env.yml, opsman.yml, download-opsman.yml
-      INTERPOLATION_PATH: foundation 
+      INTERPOLATION_PATHS: foundation 
     input_mapping:
       files: env
     output_mapping:
