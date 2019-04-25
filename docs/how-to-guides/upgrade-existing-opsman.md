@@ -2,8 +2,6 @@
 
 ## Prerequisites
 
-**Greetings, Platform Automator!**
-
 Over the course of this guide,
 we're going to use Platform Automation for PCF
 to create a [pipeline][concourse-pipeline]
@@ -11,14 +9,14 @@ using [Concourse][concourse].
 
 Before we get started, you'll need a few things ready to go:
 
-1. a running Ops Manager VM that you would like to upgrade
-1. a Concourse instance
+1. A running Ops Manager VM that you would like to upgrade
+1. A Concourse instance
    with access to a Credhub instance
    and to the Internet
-1. github.com account
+1. Github.com account
 1. Read/write credentials and bucket name for an S3 bucket
-1. an account on [https://network.pivotal.io][pivnet] (Pivnet)
-1. a MacOS workstation
+1. An account on [https://network.pivotal.io][pivnet] (Pivnet)
+1. A MacOS workstation
     - with Docker installed
     - and a text editor you like
     - a terminal emulator you like
@@ -26,21 +24,21 @@ Before we get started, you'll need a few things ready to go:
       like Firefox or Chrome
     - and `git`
 
-It doesn't actually matter what IaaS your Ops Manager is running on,
-as long as your Concourse can connect to it.
-Pipelines built with Platform Automation can be platform-agnostic.
+!!! info "IaaS"
+    It doesn't actually matter what IaaS your Ops Manager is running on,
+    as long as your Concourse can connect to it.
+    Pipelines built with Platform Automation can be platform-agnostic.
 
-It will be very helpful to have a basic familiarity with the following:
+It will be very helpful to have a basic familiarity with the following. If you don't have basic familiarity with all these things,
+that's okay.
+We'll explain some basics,
+and link to resources to learn more:
 
 - the bash terminal
 - [git][git]
 - [YAML][yaml]
 - [Concourse][concourse]
 
-But if you don't have basic familiarity with all these things,
-that's okay.
-We'll explain some basic stuff,
-and link to resources to learn more.
 
 !!! info "A note on the prerequisites"
     <p>While this guide uses Github to provide a git remote,
@@ -48,7 +46,7 @@ and link to resources to learn more.
     Platform Automation supports arbitrary git providers
     and S3-compatible blobstores.
     <p>If you need to use an alternate one,
-    that's okay!
+    that's okay.
     <p>We picked specific examples
     so we could describe some steps in detail.
     Some details may be different
@@ -61,10 +59,10 @@ and link to resources to learn more.
 
 ## Creating a Concourse Pipeline
 
-Platform Automation's tasks and image are meant to be used in a Concourse Pipeline.
+Platform Automation's tasks and image are meant to be used in a Concourse pipeline.
 So, let's make one.
 
-Using your trusty bash command-line client,
+Using your bash command-line client,
 create a directory to keep your pipeline files in, and `cd` into it.
 
 ```bash
@@ -72,7 +70,7 @@ mkdir platform-automation-pipelines
 cd !$
 ```
 
-!!! tip ""`!$`" ????"
+!!! tip ""`!$`""
     `!$` is a bash shortcut.
     Pronounced "bang, dollar-sign,"
     it means "use the last argument from the most recent command."
@@ -86,7 +84,7 @@ we'll gather some variables in a file
 we can use throughout our pipeline.
 
 Open your text editor and create `vars.yml`.
-Here's what it should look like to start:
+Here's what it should look like to start, we can add things to this as we go:
 
 ```yaml
 platform-automation-bucket: your-bucket-name
@@ -94,19 +92,14 @@ credhub-server: https://your-credhub.example.com
 opsman-url: https://pcf.foundation.example.com
 ```
 
-We can add things to this as we go.
-
 Now, create a file called `upgrade-opsman-pipeline.yml`.
 
-Write this at the top, and save the file:
+Write this at the top, and save the file. This is [YAML][yaml] for "the start of the document. It's optional, but traditional:
 
 ```yaml
 
 ---
 ```
-
-This is [YAML][yaml] for "the start of the document."
-It's optional, but traditional.
 
 Now you have a pipeline file! Nominally!
 Well, look.
@@ -191,7 +184,7 @@ note down its name, and use it in the login command:
 fly -t control-plane login
 ```
 
-!!! info "control-plane?"
+!!! info "Control-plane?"
     We're going to use the name `control-plane`
     for our Concourse in this guide.
     It's not a special name,
@@ -207,15 +200,15 @@ fly -t control-plane login -c https://your-concourse.example.com
 You should see a login link you can click on
 to complete login from your browser.
 
-!!! tip "Stay on Target"
+!!! tip "Stay on target"
     <p>The `-t` flag sets the name when used with `login` and `-c`.
     In the future, you can leave out the `-c` argument.
     <p>If you ever want to know what a short flag stands for,
     you can run the command with `-h` (`--help`) at the end.
 
-Either way, pipeline-setting time!
-(We'll use the name "foundation" for this pipeline,
-but if your foundation has an actual name, use that instead.)
+Pipeline-setting time!
+We'll use the name "foundation" for this pipeline,
+but if your foundation has an actual name, use that instead.
 
 ```bash
 fly -t control-plane set-pipeline -p foundation -c upgrade-opsman-pipeline.yml
@@ -224,7 +217,7 @@ fly -t control-plane set-pipeline -p foundation -c upgrade-opsman-pipeline.yml
 It should say `no changes to apply`,
 which is fair, since we gave it an empty YAML doc.
 
-!!! info "version discrepancy"
+!!! info "Version discrepancy"
     If `fly` says something about a "version discrepancy,"
     "significant" or otherwise, just do as it says:
     run `fly sync` and try again.
@@ -257,12 +250,12 @@ So let's make this directory a git repo!
 
 #### But First, `git init`
 
+`git` should come back with information about the commit you just created:
+
 ```bash
 git init
 git commit --allow-empty -m "Empty initial commit"
 ```
-
-`git` should come back with information about the commit you just created.
 
 If it gives you a config error instead,
 you might need to configure `git` a bit.
@@ -288,7 +281,7 @@ git status
 
 Great. Now we can safely make changes.
 
-!!! tip "Git Commits"
+!!! tip "Git commits"
     <p>`git` commits are the basic unit of code history.
     <p>Making frequent, small, commits with good commit messages
     makes it _much easier_ to figure out why things are the way they are,
@@ -376,7 +369,7 @@ Resources are Concourse's main approach to managing artifacts.
 We need an image, and the tasks directory -
 so we'll tell Concourse how to get these things by declaring Resources for them.
 
-In this case, we'll be downloading them from Pivnet.
+In this case, we'll be downloading the image and the tasks directory from Pivnet.
 Before we can declare the resources themselves,
 we have to teach Concourse to talk to Pivnet.
 (Many resource types are built in, but this one isn't.)
@@ -450,7 +443,7 @@ Let's put our API token in Credhub so Concourse can get it.
 
 First we'll need to login:
 
-!!! info "Backslashes in Bash Examples"
+!!! info "Backslashes in bash examples"
     The following example has been broken across multiple lines
     by using backslash characters (`\`) to escape the newlines.
     We'll be doing this a lot to keep the examples readable.
@@ -464,7 +457,7 @@ First we'll need to login:
          --client-secret your-client-secret
 ```
 
-!!! info "logging in to crehub"
+!!! info "Logging in to credhub"
     Depending on your credential type,
     you may need to pass `client-id` and `client-secret`,
     as we do above,
@@ -515,7 +508,7 @@ While ultimately we want to upgrade Ops Manager,
 to do that safely we first need to download and persist
 an export of the current installation.
 
-!!! warning "export your installation routinely"
+!!! warning "Export your installation routinely"
     We _**strongly recommend**_ automatically exporting
     the Ops Manager installation
     and _**persisting it to your blobstore**_ on a regular basis.
@@ -606,6 +599,8 @@ mkdir -p foundation
 cd !$
 ```
 
+Now lets write an `env.yml` for your Ops Manager.
+
 `env.yml` holds authentication and target information
 for a particular Ops Manager.
 
@@ -618,7 +613,6 @@ If your foundation uses authentication other than basic auth,
 please reference [Inputs and Outputs][env]
 for more detail on UAA-based authentication.
 
-Write an `env.yml` for your Ops Manager.
 
 ```yaml
 target: ((opsman-url))
@@ -627,7 +621,7 @@ password: ((opsman-password))
 decryption-passphrase: ((opsman-decryption-passphrase))
 ```
 
-Add and commit the new file:
+Add and commit the new `env.yml` file:
 
 ```bash
 git add foundation/env.yml
@@ -693,11 +687,12 @@ We'll put the credentials we need in Credhub:
     (and associated foundations),
     so we scoped that to our team.
 
+In order to perform interpolation in one of our input files,
+we'll need the [`credhub-interpolate` task][credhub-interpolate]
 Earlier, we relied on Concourse's native integration with Credhub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
-In order to perform interpolation in one of our input files,
-we'll need the [`credhub-interpolate` task][credhub-interpolate]
+
 
 We can add it to our job
 after we've retrieved our `env` input,
@@ -744,7 +739,7 @@ jobs:
         file: installation/installation-*.zip
 ```
 
-!!! note A bit on "output_mapping"
+!!! info A bit on "output_mapping"
     <p>The `credhub-interpolate` task for this job
     maps the output from the task (`interpolated-files`)
     to `interpolated-env`.
@@ -796,7 +791,7 @@ Again, we'll need to save the credentials in Credhub:
 
 ```bash
 # note the starting space throughout
- credhub set \ 
+ credhub set \
         -n /concourse/your-team-name/s3-access-key-id \
         -t value -v your-bucket-s3-access-key-id
  credhub set \
@@ -1049,7 +1044,7 @@ Now, we can put it all together:
       CREDHUB_SERVER: ((credhub-server))
       PREFIX: /concourse/your-team-name/foundation
       # A file path that includes env.yml, opsman.yml, download-opsman.yml
-      INTERPOLATION_PATHS: foundation 
+      INTERPOLATION_PATHS: foundation
     input_mapping:
       files: env
     output_mapping:
@@ -1077,7 +1072,7 @@ Now, we can put it all together:
 
 Set the pipeline.
 
-Before we run the job, 
+Before we run the job,
 we should [`ensure`][ensure] that `state.yml` is always persisted
 regardless of whether the `upgrade-opsman` job failed or passed.
 To do this, we can add the following section to the job:
@@ -1106,7 +1101,7 @@ To do this, we can add the following section to the job:
       CREDHUB_SERVER: ((credhub-server))
       PREFIX: /concourse/your-team-name/foundation
       # A file path that includes env.yml, opsman.yml, download-opsman.yml
-      INTERPOLATION_PATHS: foundation 
+      INTERPOLATION_PATHS: foundation
     input_mapping:
       files: env
     output_mapping:
@@ -1150,7 +1145,7 @@ To do this, we can add the following section to the job:
       params:
         repository: env-commit
         merge: true
-``` 
+```
 
 Set the pipeline one final time,
 run the job, and see it pass.
