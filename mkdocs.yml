@@ -27,7 +27,7 @@ nav:
 - Downloading and Testing: downloading-and-testing.md
 - Compatibility and Versioning: compatibility-and-versioning.md
 - Release Notes: release-notes.md
-- Reference Pipeline:
+- Reference Pipelines:
   - Retrieving External Dependencies: pipeline/resources.md
   - OpsManager + multiple products: pipeline/multiple-products.md
   - OpsManager + a product: pipeline/single-product.md
