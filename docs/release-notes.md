@@ -137,7 +137,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   One or the other is required to create a VM.
 
 ## v2.2.0-beta.1
-**Release Date** SomeDayOfTheWeek, Month, Day, Year
+**Release Date** Friday, April 26, 2019
 
 ### What's New
 - New task [download-product-s3](./reference/task.md#download-product-s3)
