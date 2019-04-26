@@ -23,7 +23,7 @@ owner: PCF Platform Automation
 These are release notes for Platform Automation for PCF.
 
 ## v2.2.0-beta.1
-**Release Date** Thursday, March 14, 2019
+**Release Date** Friday, April 26, 2019
 
 ### What's New
 - New task [download-product-s3](./reference/task.md#download-product-s3)
