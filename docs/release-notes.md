@@ -129,7 +129,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - OpenStack would sometimes be unable to associate the public IP when creating the VM, because it was 
   waiting for the VM to come up. The `--wait` flag has been added to validate that the VM creation is
   complete before more work is done to the VM.
-- [`credhub-interpolate`][credhub-interpolate] now accepts multiple files for the `INTERPOLATION_PATH`. 
+- [`credhub-interpolate`][credhub-interpolate] now accepts multiple files for the `INTERPOLATION_PATHS`. 
 - CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/)
   (related to vulnerabilities with `libmagic1`. While none of our code directly used these,
   they are present on the image.)
