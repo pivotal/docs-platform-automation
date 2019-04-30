@@ -25,6 +25,14 @@ with the `--skip-deploy-products`/`-sdp` flag.
 
 {% code_snippet 'tasks', 'apply-director-changes' %}
 
+### assign-multi-stemcell
+`assign-multi-stemcell` assigns multiple stemcells to a provided product.
+This feature is only available in OpsMan 2.6+.
+For more information on how to utilize this workflow,
+check out the [Stemcell Handling][stemcell-handling] topic.
+
+{% code_snippet 'tasks', 'assign-multi-stemcell' %}
+
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product. For more information on how to utilize
 this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
