@@ -93,12 +93,12 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
 
 ## Upgrading with Platform Automation for PCF
 
-Successful platform engineering teams know that a platform team that’s always up to date is critical for their business. 
-If they don’t stay up to date, they miss out on the latest platform features and the services that Pivotal delivers, 
-which means their development teams miss out too. By not keeping up to date, platforms could encounter security risks or 
+Successful platform engineering teams know that a platform team that’s always up to date is critical for their business.
+If they don’t stay up to date, they miss out on the latest platform features and the services that Pivotal delivers,
+which means their development teams miss out too. By not keeping up to date, platforms could encounter security risks or
 even application failures.
 
-Pivotal offers regular updates for PCF, which ensures our customers have access to the latest security patches and new features. 
+Pivotal offers regular updates for PCF, which ensures our customers have access to the latest security patches and new features.
 For example, Pivotal releases security patches every six days on average.
 
 !!! info
@@ -110,65 +110,16 @@ So how can a platform engineering team simplify the platform upgrade process?
 
 **Small and Constant Upgrades**
 
-Adopting the best practice of small and constant platform updates is one of the best ways to simplify the platform 
-upgrade process. This behavior can significantly reduce risk, increase stability with faster troubleshooting, and 
-overall reduce the effort of upgrading. This also creates a culture of continuous iteration and improves feedback loops 
+Adopting the best practice of small and constant platform updates is one of the best ways to simplify the platform
+upgrade process. This behavior can significantly reduce risk, increase stability with faster troubleshooting, and
+overall reduce the effort of upgrading. This also creates a culture of continuous iteration and improves feedback loops
 with the platform teams and the developers - building trust across the organization. A good place start is by consuming every patch.
 
 **How Platform Automation for PCF can help with small and continuous upgrades**
 
-With Platform Automation for PCF, platform teams have the tools to create an automated perpetual upgrade machine that 
-can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells, 
+With Platform Automation for PCF, platform teams have the tools to create an automated perpetual upgrade machine that
+can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells,
 products and services.
-
-**Testing Platform Automation Setup**
-
-Next we'll create a test pipeline to see if the assets can be accessed correctly.
-   This pipeline runs a test task, which ensures that all the parts work correctly.
-
-!!! info
-       The pipeline can use any blobstore.
-       We choose S3 because the resource natively supported by Concourse.
-       The S3 Concourse resource also supports S3-compatible blobstores (e.g. minio).
-       See [S3 Resource](https://github.com/concourse/s3-resource#source-configuration) for more information.
-       If you want to use other blobstore, you need to provide a custom [resource type](https://concourse-ci.org/resource-types.html).
-
- In order to test the setup, fill in the S3 resource credentials and set the below pipeline on your Concourse instance.
-
-```yaml
-resources:
-- name: platform-automation-tasks-s3
-  type: s3
-  source:
-    access_key_id: ((access_key_id))
-    secret_access_key: ((secret_access_key))
-    region_name: ((region))
-    bucket: ((bucket))
-    regexp: platform-automation-tasks-(.*).zip
-
-- name: platform-automation-image-s3
-  type: s3
-  source:
-    access_key_id: ((access_key_id))
-    secret_access_key: ((secret_access_key))
-    region_name: ((region))
-    bucket: ((bucket))
-    regexp: platform-automation-image-(.*).tgz
-
-jobs:
-- name: test-resources
-  plan:
-  - aggregate:
-    - get: platform-automation-tasks-s3
-      params:
-        unpack: true
-    - get: platform-automation-image-s3
-      params:
-        unpack: true
-  - task: test-resources
-    image: platform-automation-image-s3
-    file: platform-automation-tasks-s3/tasks/test.yml
-```
 
 Check out the [Downloading and Testing][downloading-and-testing] to get started.  
 
