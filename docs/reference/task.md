@@ -284,6 +284,8 @@ when S3 keys are present in the configuration file.
 This is the meta information about the product from Pivnet,
 which is not guaranteed to be in the original filename.
 This tasks uses the meta information to be able to perform 
+consistent downloads from s3
+as defined in the provided config.
 
 !!! info "When only downloading from Pivnet"
     When the download product config only has Pivnet credentials,
