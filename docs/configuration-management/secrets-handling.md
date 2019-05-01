@@ -32,10 +32,13 @@ jobs:
     input_mapping:
       files: config
     params:
-      # all required
+      # depending on credhub configuration
+      # ether CA cert or secret are required
       CREDHUB_CA_CERT: ((credhub_ca_cert))
-      CREDHUB_CLIENT: ((credhub_client))
       CREDHUB_SECRET: ((credhub_secret))
+
+      # all required
+      CREDHUB_CLIENT: ((credhub_client))
       CREDHUB_SERVER: ((credhub_server))
       PREFIX: /private-foundation
       SKIP_MISSING: true  
@@ -165,13 +168,16 @@ jobs:
     input_mapping:
       files: config
     params:
-      # all required
+      # depending on credhub configuration
+      # ether Credhub CA cert or Credhub secret are required
       CREDHUB_CA_CERT: ((credhub_ca_cert))
-      CREDHUB_CLIENT: ((credhub_client))
       CREDHUB_SECRET: ((credhub_secret))
+
+      # all required
+      CREDHUB_CLIENT: ((credhub_client))
       CREDHUB_SERVER: ((credhub_server))
       PREFIX: /private-foundation
-      SKIP_MISSING: true  
+      SKIP_MISSING: true
 - name: example-configure-director
   plan:
   - get:   
