@@ -2,7 +2,7 @@
 pivnet-api-token: ((pivnet-token))
 pivnet-file-glob: "ops-manager*.ova"
 pivnet-product-slug: ops-manager
-product-version-regex: ^2\.5\.\d+.*$
+product-version-regex: ^2\.[56]\.\d+.*$
 
 s3-access-key-id: ((s3_access_key_id))
 s3-secret-access-key: ((s3_secret_access_key))
