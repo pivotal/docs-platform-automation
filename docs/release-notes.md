@@ -94,6 +94,8 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   de facto way of defining shasums.
 
 ### What's New
+- The new command [`assign-multi-stemcell`](./reference/task.md#assign-multi-stemcell) assigns multiple stemcells to a provided product.
+  This feature is only available in OpsMan 2.6+.
 - [`download-product`](./reference/task.md#download-product) ensures sha sum checking when downloading the file from Pivotal Network.
 - [`download-product`](./reference/task.md#download-product) can now disable ssl validation when connecting to Pivotal Network.
   This helps with environments with SSL and proxying issues.
@@ -123,7 +125,6 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   This change was made because NSGs can be assigned at the subnet level rather than just the VM level. This
   param is also not required by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest). 
   Platform Automation now reflects this.
-
 
 ### Bug Fixes
 - OpenStack would sometimes be unable to associate the public IP when creating the VM, because it was 
