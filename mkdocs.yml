@@ -5,17 +5,7 @@ site_url: https://docs.pivotal.io
 repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!
 edit_uri: edit/develop/docs/
-theme:
-  custom_dir: theme
-  logo: https://docs.pivotal.io/images/icon-p-green.jpg
-  name: material
-  favicon: https://docs.pivotal.io/images/favicon.ico
-  font:
-    code: Ubuntu Mono
-    text: Source Sans Pro
-  palette:
-    accent: teal
-    primary: teal
+theme: pivotal
 strict: true
 use_directory_urls: false
 plugins:
