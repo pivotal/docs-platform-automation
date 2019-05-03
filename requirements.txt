@@ -1,4 +1,5 @@
 mkdocs
 mkdocs-material
 pygments
-git+https://github.com/jtarchie/docs-converter.git#egg=mkdocs-jinja2&subdirectory=mkdocs-plugins/mkdocs-jinja2
+git+https://github.com/pivotal/mkdocs-plugins.git#egg=mkdocs-jinja2&subdirectory=mkdocs-jinja2
+git+https://github.com/pivotal/mkdocs-pivotal-theme#egg=mkdocs-pivotal
