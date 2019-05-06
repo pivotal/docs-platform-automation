@@ -125,6 +125,37 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   This change was made because NSGs can be assigned at the subnet level rather than just the VM level. This
   param is also not required by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest). 
   Platform Automation now reflects this.
+- [staged-director-config](./reference/task.md#staged-director-config) now supports returning multiple IaaS 
+  configurations. `iaas-configurations` is a top level key returned in Ops Manager 2.2+. If using an Ops
+  Manager 2.1 or earlier, `iaas_configuration` will continue to be a key nested under `properties-configuration`.
+- [configure-director](./reference/task.md#configure-director) now supports setting multiple IaaS configurations. 
+  If using this feature, be sure to use the top-level `iaas-configurations` key, rather than the nested 
+  `properties-configuration.iaas_configuration` key. If using a single IaaS, `properties-configuration.iaas_configuration`
+  is still supported, but the new `iaas_configurations` top-level key is recommended.
+  
+    ```yaml hl_lines="2"
+    # Configuration for 2.2+
+    iaas-configurations:
+    - additional_cloud_properties: {}
+      name: ((iaas-configurations_0_name))
+    - additional_cloud_properties: {}
+      name: ((iaas-configurations_1_name))
+      ...
+    networks-configuration: ...
+    properties-configuration: ...
+    ```
+
+    ```yaml hl_lines="5"
+    # Configuration 2.1 and earlier
+    networks-configuration: ...
+    properties-configuration:
+        director_configuration: ...
+        iaas_configuration:
+          additional_cloud_properties: {}
+          name: ((iaas-configurations_0_name))
+          ...
+        security_configuration: ...
+    ```
 
 ### Bug Fixes
 - OpenStack would sometimes be unable to associate the public IP when creating the VM, because it was 
