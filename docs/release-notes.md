@@ -26,6 +26,10 @@ These are release notes for Platform Automation for PCF.
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
 
 ### Breaking Changes
+- `om` will now follow conventional Semantic Versioning,
+  with breaking changes in major bumps,
+  non-breaking changes for minor bumps,
+  and bug fixes for patches.
 - The [`credhub-interpolate`](./reference/task.md#credhub-interpolate) task can have multiple
   interpolation paths. The `INTERPOLATION_PATH` param is now plural: `INTERPOLATION_PATHS`.
   IF you are using a custom `INTERPOLATION_PATH` for `credhub-interpolate`, you will need to update
