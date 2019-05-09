@@ -1,11 +1,12 @@
 # Setup S3 for File Storage
 
-Platform Automation uses 
+Platform Automation uses and produces
 file artifacts that are too large to store in git.
 For example, many `.pivotal` product files are several gigabytes in size.
+Exported installation files may also be quite large.
 The recommended way to store these files
 is in a Amazon S3 compatible object store,
-commonly referred to simply as "S3" or "blobstore".
+commonly referred to simply as _"S3"_ or _"blobstore"_.
 
 ## The S3 Value
 
@@ -16,22 +17,28 @@ This is a common security practice
 but it creates a problem around upgrading.
 If products cannot be downloaded from PivNet directly,
 how can we get the latest version of something
-and send it through our upgrade pipeline?
+and send it through an upgrade pipeline?
 
 Enter S3 and Concourse's native S3 integration!
 We can place product files
 and new versions of OpsMan
 into a network whitelisted S3 bucket
 to be used by Platform Automation tasks.
-We can even create a "Resources Pipeline"
+We can even create a [Resources Pipeline][reference-resources]
 that gets the latest version of products
 from PivNet and places them into our S3 bucket automatically.
 
-Additionally, because a foundation's backup
+Alternatively, because a foundation's backup
 may be quite large,
-it is advantageous to persist it in a blobstore.
-Exported installations can then latter be acessed
+it is advantageous to persist it in a blobstore
+automatically through Concourse.
+Exported installations can then latter be accessed
 through the blobstore.
+Because most object stores
+implement secure, durable solutions,
+exported installations in buckets 
+are easily restorable
+and persistent. 
 
 In this guide,
 you will learn 
@@ -43,15 +50,25 @@ to retrieve and store objects.
 
 ## Pre-requisites
 
-TODO: Need all these things? 
-1. A unix-like workstation
-    - with a text editor you like
-    - a terminal emulator
-    - a browser that works with Concourse, like Firefox or Chrome
-1. A Concourse instance with access to the internet
-1. The `fly` command line tool
-1. An account on [PivNet][pivnet]
 1. An [Amazon Web Service account][amazon-s3] (commonly referred to as AWS) with access to S3
+
+!!! note "S3 blobstore compatibility"
+    Many cloud storage options exist
+    including [Amazon S3][amazon-s3],
+    [Google Storage][gcp-storage],
+    [Minio][minio],
+    and [Azure Blob Storage][azure-blob-storage].
+    However, not all object stores
+    are "S3 compatibible".
+    Because Amazon defines the 
+    S3 API for accessing blob stores,
+    and because the Amazon S3 product has emerged as the dominant blob storage solution,
+    not all "S3 compatible" object stores act exactly the same.
+    In general, if a storage solution claims to be "S3 compatible",
+    it should work with the [Concourse's S3 resource integration][concourse-s3-resource].
+    But note that it may behave differently if interacting directly with the S3 API.
+    Defer to the documentation of your preferred blobstore solution 
+    when setting up storage.
  
 ## Set up S3
 
@@ -65,7 +82,7 @@ With your AWS account,
 navigate to [the S3 console][amazon-s3-console]
 and sign up for S3. 
 Follow the on screen prompts.
-Now we are ready for buckets!
+Now you are ready for buckets!
 
 !!! tip "AWS Root User"
     When you sign up for the S3 service on Amazon,
@@ -100,7 +117,8 @@ This creates a bucket with the default S3 settings.
 Bucket permissions and settings
 can be set during bucket creation or changed afterwards.
 Bucket settings can even be copied from other buckets you have.
-For a detailed look at creating buckets on Amazon S3,
+For a detailed look at creating buckets
+and managing initial settings,
 check out [this documentation on creating buckets.][amazon-s3-create-bucket]
 
 ## Bucket Permissions
@@ -115,13 +133,12 @@ To view bucket permissions,
 from the S3 console,
 look at the "Access" column.
 
-For Amazon S3,
-these are the Access permissions:
+Amazon S3 has the following Access permissions:
 
 - *Public* - Everyone has access to one or more of the following: 
 List objects, Write objects, Read and write permissions
 - *Objects can be public* - The bucket is not public.
-But anyone with apprpriate permissions can grant public acccess to objects. 
+But anyone with appropriate permissions can grant public access to objects. 
 - *Buckets and objects not public* - The bucket and objects do not have any public access.
 - *Only authorized users of this account* - Access is isolated to IAM users and roles.
 
@@ -140,6 +157,15 @@ so that Concourse can access the files.
 1. Under the permissions tab for a bucket, choose "Public access settings"
 1. Choose "Edit" to change the public access settings
 1. Uncheck all boxes to allow public access. 
+
+In general, the credentials being used 
+to access an S3 compatible blobstore through Concourse
+must have `Read` and `Write` permissions.
+It is possible to use different user roles
+with different credentials
+to seperate which user can `Read`
+objects from the bucket
+and which user can `Write` objects to the bucket.
 
 !!! Note "Permissions"
     Amazon S3 provides many [permission settings for buckets][amazon-s3-permissions].
@@ -179,22 +205,34 @@ my-exported-installation.zip (version 121212)
 
 Any file that can be stored on a computer 
 can be stored on S3.
-> "... store and retrieve any amount of data, at any time, from anywhere on the web."
-> - [Amazon S3 Docs][amazon-s3]
+> " ... store and retrieve any amount of data, at any time, from anywhere on the web."
+> - [Amazon S3][amazon-s3]
 
 S3 is especially good at storing large files
-as it is designed to scale with large amounts of data.
+as it is designed to scale with large amounts of data
+while still being durable and fast.
 
 Platform Automation users may want to store the following files in S3:
 
 - `.pivotal` product files
+- `.tgz` stemcell files
 - `.ova` OpsManager files
 - `.zip` foundation exports
 
+Platform Automation users will likely **_NOT_** want to store the following in S3:
+
+- `.yaml` configuration files - Better suited for git
+- `secrets.yaml` environment and secret files - There are a number of ways
+to handle these types of files. 
+But they should not be stored in S3.
+Check out the [handling secrets guide][secrets-handling]
+for how to work with these types of files.  
+
 ## How to structure your bucket
 
-Buckets can have folders and any number of sub-folders.
-The following is one way to set up your bucket's folders: 
+Like any computer, buckets can have folders 
+and any number of sub-folders.
+The following is one way to set up your bucket's file structure: 
 
 ```
 ├── foundation-1
@@ -223,50 +261,103 @@ To create a sub-folder,
 when viewing a specific folder,
 select "Create folder" again.  
 
+When attempting to access a specific object in a folder,
+simply include the folder structure before the object name:
 
+```
+foundation1/products/healthwatch/my-healthwatch-product.pivotal
+```
 
+## Using a Bucket
 
-## Using a Bucket with Concourse
+When using the [Concourse S3 resource][concourse-s3-resource],
+several configuration properties are available
+for retreiving objects
+The bucket name is required.
 
-!!! Note "A note on networking"
+!!! Note "On networking and accessing a bucket"
     In order for your Concourse 
     to have access to your Amazon S3 bucket,
     ensure that you have the appropriate firewall and networking settings
-    for your concourse instance to
+    for your Concourse instance to
     make requests to your bucket. 
     Concourse uses various "outside" resources
     to perform certain jobs.
-    Ensure that Concourse can "talk" to your Amazon S3 bucket. 
+    Ensure that Concourse can "talk" to your Amazon S3 bucket.
 
 
-## Reference Resources
+## Reference Resources Pipeline
 
 #### Usefulness
 
--- TODO --
-The reference resources pipeline is great 
+The [Resources pipeline][reference-resources]
+may be used to download dependencies from Pivnet
+and place them into a trusted S3 bucket.
+The various `resources_types` use the [Concourse S3 resource type][concourse-s3-resource]
+and several Platform Automation tasks to accomplish this.
+The following is a S3 specific breakdown of these components
+and where to find more information.
 
-#### The Download Product Task
+#### The download-product Task
 
-The `download-product` task lets you get products from PivNet.
-These can be placed in a S3 bucket. 
-Mention the file prefixing!
+The [`download-product`][download-product] task lets you download products from PivNet.
+If S3 properties are set in the [download config][download-product-config],
+these files can be placed into an S3 bucket. 
 
-#### The Download Product S3 Task
+If S3 configurations are set,
+this task will perform a specific filename operation
+that will prepend meta data to the filename.
+If downloading the product `Example Product version 2.2.1` from PivNet
+where the product slug is `example-product` and the version is `2.2.1`,
+when directly downloaded from PivNet, the file may appear as:
 
-The `download-product-s3` task lets you download products from an S3 bucket.
-The prefix is used to find the files metadata.
+```
+product-2.2-build99.pivotal
+```
 
-To fetch a product from Pivnet, concourse needs to know:
- 
-* what image it will run the task on (`platform-automation-image`)
-* where the task file will come from (`platform-automation-tasks`) 
-* what config file it will read from to get data about pivnet and the tile (this is 
-  the `download-product-config` created above)
-* how to map the output from the task to something you will use later
-* where to put the output resources created in the task
+Because PivNet file names
+do not always have the necessary metadata required by Platform Automation,
+the download product task will prepend the necessary information
+to the filename before it is placed into the S3 bucket:
 
-{% with path="../../" %}
+```
+[example-product,2.2.1-build99]product-2.2-build99.pivotal
+```
+
+For complete information on this task
+and how it works, refer to the [download-product task reference.][download-product]
+
+!!! warning "Changing S3 file names"
+    Do not change the meta information 
+    prepended by `download-product`.
+    This information is required by the
+    `download-product-s3` task to properly parse product versions.
+    
+    If placing a product file into an S3 bucket manually,
+    ensure that it has the proper file name format;
+    opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
+    For example, for a product with slug of `product-slug` and version of `1.1.1`:
+    ```
+    [product-slug,1.1.1]original-filename.pivotal
+    ```
+
+#### The download-product-s3 Task
+
+The [`download-product-s3`][download-product-s3] 
+task lets you download products from an S3 bucket.
+The prefixed metadata added by `download-product` is used to find the appropriate file.
+This task uses the same [download-product config file][download-product-config]
+as `download-product` to ensure consistency 
+across what is `put` in S3
+and what is being accessed latter by `download-product-s3`.
+`download-product` and `download-product-s3` are designed
+to be used together. 
+The download product config should be different between the two tasks.
+
+For complete information on this task
+and how it works, refer to the [download-product-s3 task reference.][download-product-s3]
+
+{% with path="../" %}
     {% include ".internal_link_url.md" %}
 {% endwith %}
 {% include ".external_link_url.md" %}
