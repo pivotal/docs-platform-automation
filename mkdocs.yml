@@ -33,6 +33,7 @@ nav:
   - OpsManager + multiple products: pipeline/multiple-products.md
   - OpsManager + a product: pipeline/single-product.md
 - Before You Begin:
+  - Git Repository Layout: before-you-begin/git-repo-layout.md
   - Set up s3 for File Storage: before-you-begin/setup-s3-and-resources.md
 - How to Guides:
   - Upgrading an Existing OpsManager: how-to-guides/upgrade-existing-opsman.md
