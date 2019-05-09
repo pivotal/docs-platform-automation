@@ -8,6 +8,7 @@ owner: PCF Platform Automation
     on how to use the [tasks](../reference/task.md). 
     If you use a different CI/CD platform, you can use these Concourse files as examples
     of the inputs, outputs, and arguments used in each step in the workflow.
+    
 
 ## Making Your Own Pipeline
 
@@ -49,6 +50,16 @@ and places them into a trusted s3-like storage provider.
 This helps other concourse deployments without internet access
 retrieve task dependencies.
 
+!!! tip "S3 filename prefixing"
+    Note the unique regex format for blob names,
+    for example: `\[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal`.
+    Pivnet filenames will not always contain the necessary metadata
+    to accurately download files from S3.
+    So, the product slug and version are prepended when using `download-product`.
+    For more information on how this works,
+    and what to expect when using `download-product` and `download-product-s3`,
+    refer to the [`download-product` task reference.][download-product]
+    
 {% code_snippet 'examples', 'put-resources-pipeline' %}
 
 This pipeline requires configuration for the [download-product](../reference/task.md#download-product) task.
