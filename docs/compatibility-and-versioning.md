@@ -19,41 +19,27 @@ We have tested Platform Automation with these dependencies.
 </thead>
 <tbody>
     <tr>
-        <td>latest version</td>
+        <td>v3.0.0</td>
         <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
-        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1+</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
+        <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
+    </tr>
+    <tr>
+        <td>v2.2.0-beta</td>
+        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.5</a></td>
+        <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
+    </tr>
+    <tr>
+        <td>v2.0-beta - v2.1-beta</td>
+        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.5*</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
 </tbody>
 </table>
 
-## Docker Image Dependencies
-These dependencies are installed on the docker image distributed on Pivnet.
-The IaaS CLIs are used by and tested with `p-automator`,
-and `om` is invoked directly in many tasks.
-
-<table>
-<thead>
-    <tr>
-        <th>p-automator</th>
-        <th>om</th>
-        <th>gcloud</th>
-        <th>az</th>
-        <th>openstack</th>
-        <th>govc</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-        <td>latest version</td>
-        <td><a href="https://github.com/pivotal-cf/om">v0.44.0+</a></td>
-        <td><a href="https://cloud.google.com/sdk/gcloud/">v225.0.0</a></td>
-        <td><a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest/">v2.0.50</a></td>
-        <td><a href="https://docs.openstack.org/python-openstackclient/">v3.17.0</a></td>
-        <td><a href="https://github.com/vmware/govmomi/releases">v0.19.0</a></td>
-    </tr>
-</tbody>
-</table>
+{% include "./.opsman_filename_change_note.md" %}
 
 ## Semantic Versioning
 This product uses [semantic versioning][semver] 2.0.0
