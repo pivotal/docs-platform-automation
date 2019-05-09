@@ -22,6 +22,7 @@ markdown_extensions:
 - pymdownx.superfences
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
+- //script.crazyegg.com/pages/scripts/0020/8294.js
 nav:
 - Introduction: index.md
 - Downloading and Testing: downloading-and-testing.md
