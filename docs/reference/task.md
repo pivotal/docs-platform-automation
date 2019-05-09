@@ -276,16 +276,31 @@ and [upload-stemcell](#upload-stemcell) tasks.
 
 This task requires a [download-product config file][download-product-config].
 The same configuration file should be used with both this task and [`download-product`][download-product].
+This ensures that the same file
+is being captured with both tasks. 
 
-The product files uploaded to s3 for download with this task need a specific prefix:
+The product files uploaded to s3 for download with this task require a specific prefix:
 `[product-slug,semantic-version]`.
 This prefix is added by the [`download-product`][download-product] task
 when S3 keys are present in the configuration file.
 This is the meta information about the product from Pivnet,
-which is not guaranteed to be in the original filename.
+which is _not guaranteed_ to be in the original filename.
 This tasks uses the meta information to be able to perform 
 consistent downloads from s3
-as defined in the provided config.
+as defined in the provided download config.
+For example:
+
+- original-pivnet-filenames:
+  ```
+  ops-manager-aws-2.5.0-build.123.yml
+  cf-2.5.0-build.45.pivotal
+  ```
+
+- filenames expected by `download-product-s3` in a bucket:
+  ```
+  [ops-manager,2.5.0]ops-manager-aws-2.5.0-build.123.yml
+  [elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
+  ```
 
 !!! info "When only downloading from Pivnet"
     When the download product config only has Pivnet credentials,
