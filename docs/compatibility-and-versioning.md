@@ -19,7 +19,7 @@ We have tested Platform Automation with these dependencies.
 </thead>
 <tbody>
     <tr>
-        <td>latest version</td>
+        <td>v1.1</td>
         <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
         <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1-2.3</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
