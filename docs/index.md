@@ -3,22 +3,16 @@ title: Platform Automation for PCF
 owner: PCF Platform Automation
 ---
 
-<<<<<<< HEAD
-Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations.
-=======
  Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations.
->>>>>>> 3e391eb... update introduction and report an issue
 
 In this introduction we'll cover:
 
-* About Platform Automation
-<<<<<<< HEAD
+* About Platform Automation for PCF
+
 * Platform Automation and Ops Manager
-* How to download and test the setup of Platform Automation  
-=======
-* Platform Automation and Ops Manager  
+
 * Platform Automation and Upgrading PCF
->>>>>>> 3e391eb... update introduction and report an issue
+
 
 ## About
 
@@ -129,13 +123,6 @@ products and services. In addition, Platform Automation for PCF helps with:
 * Externalized configuration: helps manage multiple foundations and reduces configuration drift
 
 * The ability to create pipelines that handle installs and upgrades: helps streamline workflows
-
-<<<<<<< HEAD
-Check out the [Downloading and Testing][downloading-and-testing] to get started.  
-=======
-
->>>>>>> 3e391eb... update introduction and report an issue
-
 
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
