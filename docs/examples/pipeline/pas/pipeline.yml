@@ -1,5 +1,7 @@
 # The following line helps maintain current documentation at http://docs.pivotal.io.
 # code_snippet multiple-products-pipeline start yaml
+
+# code_snippet single-product-resources-s3 start yaml
 resources:
   - name: platform-automation-tasks
     type: s3
@@ -91,6 +93,7 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       regexp: \[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal
 
+  # code_snippet single-product-resources-configurations start yaml
   # configurations
   - name: configuration
     type: git
@@ -106,6 +109,7 @@ resources:
       uri: ((variable.uri))
       branch: master
 
+  # code_snippet single-product-resources-triggers start yaml
   # triggers used to have jobs do something in a timely manner
   - name: one-time-trigger
     type: time
@@ -117,6 +121,8 @@ resources:
     source:
       interval: 24h
 
+
+# code_snippet single-product-interpolate-creds start yaml
 # This task is used in multiple jobs
 # The yaml anchor "*interpolate-creds" is used in its place
 interpolate-creds: &interpolate-creds
@@ -134,6 +140,9 @@ interpolate-creds: &interpolate-creds
   output_mapping:
     interpolated-files: interpolated-creds
 
+
+
+# code_snippet single-product-jobs start yaml
 jobs:
   - name: install-opsman
     serial: true

@@ -13,6 +13,12 @@ In this introduction we'll cover:
 
 * Platform Automation and Upgrading PCF
 
+!!! info "Expectations Before We Begin"
+    Despite the name of Platform Automation, there are still manual steps involved.
+    At various places in the docs, we will call out manual steps and decision points.
+    For example, getting your Ops Manager director and tile configurations are manual steps. 
+    These can be obtained by using [`staged-director-config`][staged-director-config]
+    and [`staged-config`][staged-config]. Some of the How to Guides detail how to use these.
 
 ## About
 
