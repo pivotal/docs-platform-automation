@@ -20,8 +20,6 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
-These are release notes for Platform Automation for PCF.
-
 ## v3.0.0
 **Release Date** SomeDayOfTheWeek, Month, Day, Year
 
@@ -171,3 +169,5 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   they are present on the image.)
 - Improved error messaging for [vSphere](./reference/inputs-outputs.md#gcp) VM creation if neither `ssh-password` or `ssh-public-key` are set.
   One or the other is required to create a VM.
+  
+{% include ".internal_link_url.md" %}
