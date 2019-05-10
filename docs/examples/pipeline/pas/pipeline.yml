@@ -319,6 +319,13 @@ jobs:
           OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
           STATE_FILE: ((foundation))/state/state.yml
         ensure: *make-state-commit
+      - task: configure-director
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/configure-director.yml
+        input_mapping:
+          config: interpolated-creds
+          env: interpolated-creds
+          vars: variable
       - task: apply-director-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
