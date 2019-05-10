@@ -63,8 +63,49 @@ The pipeline shows how to compose the tasks to install Ops Manager and the PCF a
 Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline][reference-resources].
 
-{% code_snippet 'examples', 'multiple-products-pipeline' %}
+## Pipeline Components
 
+### S3 Resources
+
+These can either be uploaded manually or from the [reference resources pipeline][reference-resources].
+
+{% code_snippet 'examples', 'multiple-product-resources-s3' %}
+
+### Exported Installation Resource
+
+{% include "./.export_installation_note.md" %}
+
+{% code_snippet 'examples', 'multiple-product-export-installation' %}
+
+### Configured Resources
+
+You will need to add these to your configurations repo. These contain values for 
+opsman vm creation, director, product, foundation-specific vars, auth, and env files. 
+For more details, see the [Inputs and Outputs][inputs-outputs] section.
+
+{% code_snippet 'examples', 'multiple-product-resources-configurations' %}
+
+### Trigger Resources
+ 
+{% code_snippet 'examples', 'multiple-product-resources-triggers' %}
+
+### Credhub Interpolate Job
+
+`((foundation))` is a value intended to be replaced by the filepath of your foundation
+directory structure in github (if you are not using multi-foundation, this value can be removed).
+
+`((credhub-*))` are values for accessing your Concourse Credhub. These are set when `fly`-ing your 
+pipeline. For more information on how to fly your pipeline and use `((foundation))`, please
+reference our How To Guides for your specific workflow.
+
+{% code_snippet 'examples', 'multiple-product-interpolate-creds' %}
+
+### Jobs
+
+Each job corresponds to a "box" on the visual representation of your Concourse pipeline.
+These jobs consume resources defined above.
+
+{% code_snippet 'examples', 'multiple-product-jobs' %}
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
 {% endwith %}

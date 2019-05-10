@@ -1,7 +1,7 @@
 # The following line helps maintain current documentation at http://docs.pivotal.io.
 # code_snippet multiple-products-pipeline start yaml
 
-# code_snippet single-product-resources-s3 start yaml
+# code_snippet multiple-product-resources-s3 start yaml
 resources:
   - name: platform-automation-tasks
     type: s3
@@ -20,15 +20,6 @@ resources:
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.pivnet_products))
       regexp: .*image-(.*).tgz
-
-  - name: installation
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.installation))
-      regexp: installation-(.*).zip
 
   - name: opsman-image
     type: s3
@@ -92,8 +83,20 @@ resources:
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.pivnet_products))
       regexp: \[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal
+  # code_snippet multiple-product-resources-s3 end yaml
 
-  # code_snippet single-product-resources-configurations start yaml
+  # code_snippet multiple-product-export-installation start yaml
+  - name: installation
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.installation))
+      regexp: installation-(.*).zip
+  # code_snippet multiple-product-export-installation end yaml
+
+  # code_snippet multiple-product-resources-configurations start yaml
   # configurations
   - name: configuration
     type: git
@@ -108,8 +111,9 @@ resources:
       private_key: ((variable.private_key))
       uri: ((variable.uri))
       branch: master
+  # code_snippet multiple-product-resources-configurations end yaml
 
-  # code_snippet single-product-resources-triggers start yaml
+  # code_snippet multiple-product-resources-triggers start yaml
   # triggers used to have jobs do something in a timely manner
   - name: one-time-trigger
     type: time
@@ -120,9 +124,9 @@ resources:
     type: time
     source:
       interval: 24h
+  # code_snippet multiple-product-resources-triggers end yaml
 
-
-# code_snippet single-product-interpolate-creds start yaml
+# code_snippet multiple-product-interpolate-creds start yaml
 # This task is used in multiple jobs
 # The yaml anchor "*interpolate-creds" is used in its place
 interpolate-creds: &interpolate-creds
@@ -139,10 +143,9 @@ interpolate-creds: &interpolate-creds
     files: configuration
   output_mapping:
     interpolated-files: interpolated-creds
+# code_snippet multiple-product-interpolate-creds end yaml
 
-
-
-# code_snippet single-product-jobs start yaml
+# code_snippet multiple-product-jobs start yaml
 jobs:
   - name: install-opsman
     serial: true
@@ -647,5 +650,6 @@ jobs:
         params:
           PRODUCT_NAME: p-healthwatch
           ENV_FILE: ((foundation))/env/env.yml
+# code_snippet multiple-product-jobs end yaml
 # code_snippet multiple-products-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.
