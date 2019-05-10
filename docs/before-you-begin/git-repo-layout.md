@@ -4,13 +4,13 @@ Git is a commonly used version control tool.
 It can be used to track code changes made to files within a repository (or "repo").
 Changes can then be "pushed" to or "pulled" from remote copies of that repository.
 
-Github is a system that provides git remotes,
+GitHub is a system that provides git remotes,
 essentially, an internet accessible backup to the git repositories on your computer.
 Using a remote will enable a pipeline
 to access and update the state and configuration files.
 
-!!! note "Github alternatives"
-    There are many alternatives to Github including
+!!! note "GitHub alternatives"
+    There are many alternatives to GitHub including
     Gitlabs, Google Cloud Source Repositories, etc.
     Any remote Git client will work with Platform Automation and Concourse.
     Refer to the [Concourse Git resource][concourse-git-resource] documentation for details.
@@ -54,42 +54,42 @@ touch vars/opsman-vars.yml
 git commit -m "add initial files"
 ```
 
-## Create a Github repository
+## Create a GitHub repository
 
-Next, navigate to Github and create a new remote repository.
+Next, navigate to GitHub and create a new remote repository.
 
 1. Under your profile, select "Repositories"
 1. Select "New"
 1. Name your new repository and follow the prompts
 1. Do not select to add any default files when prompted
-1. Copy the URL of your new Github repository
+1. Copy the URL of your new GitHub repository
 
 Now, we can set the local git repository's
-remote to the new Github repo: 
+remote to the new GitHub repo: 
 
 ```bash
-# enter the path for the new Github repo
+# enter the path for the new GitHub repo
 git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
 
 # push your changes to the master branch
 git push --set-upstream origin master
 ```
 
-You should now see your Github repo populated
+You should now see your GitHub repo populated
 with the directories and empty files.
 
-!!! tip "Using Git with SSH"
-    A Github repository may be referenced
+!!! tip "Using GitHub with SSH"
+    A GitHub repository may be referenced
     as a remote repo by HTTPS or by SSH.
     In general, SSH keys are more secure.
     The [Concourse Git resource][concourse-git-resource]
     supports using SSH keys to pull from a repository.
-    For more information on using SSH keys with Github,
+    For more information on using SSH keys with GitHub,
     refer to this [SSH documentation.][github-ssh]
 
 ## Recommended File Structure
 
-You now have both a local git repo and a remote on Github.
+You now have both a local git repo and a remote on GitHub.
 The above commands give you the recommended structure
 for a Platform Automation configuration repo:
 
@@ -140,7 +140,7 @@ please refer to the [Inputs and Outputs][inputs-outputs] documentation.
 !!! warning "Never commit secrets to git"
     It is a best practice to **_not_** commit secrets,
     including passwords, keys, and sensitive information,
-    to git or Github. Instead, use `((parameters))`.
+    to git or GitHub. Instead, use `((parameters))`.
     For more information on a recommended way to do this,
     using Credhub or vars files,
     review the [handling secrets documentation.][secrets-handling]
