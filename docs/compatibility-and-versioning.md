@@ -35,34 +35,6 @@ We have tested Platform Automation with these dependencies.
 
 {% include "./.opsman_filename_change_note.md" %}
 
-## Docker Image Dependencies
-These dependencies are installed on the docker image distributed on Pivnet.
-The IaaS CLIs are used by and tested with `p-automator`,
-and `om` is invoked directly in many tasks.
-
-<table>
-<thead>
-    <tr>
-        <th>p-automator</th>
-        <th>om</th>
-        <th>gcloud</th>
-        <th>az</th>
-        <th>openstack</th>
-        <th>govc</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-        <td>latest version</td>
-        <td><a href="https://github.com/pivotal-cf/om">v0.44.0+</a></td>
-        <td><a href="https://cloud.google.com/sdk/gcloud/">v225.0.0</a></td>
-        <td><a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest/">v2.0.50</a></td>
-        <td><a href="https://docs.openstack.org/python-openstackclient/">v3.17.0</a></td>
-        <td><a href="https://github.com/vmware/govmomi/releases">v0.19.0</a></td>
-    </tr>
-</tbody>
-</table>
-
 ## Semantic Versioning
 This product uses [semantic versioning][semver] 2.0.0
 to describe the impact of changes to our concourse tasks. In order to take advantage of semantic versioning, we must declare an API.
