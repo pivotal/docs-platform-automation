@@ -1,4 +1,4 @@
-# Setup S3 for File Storage
+# Set Up S3 for File Storage
 
 Platform Automation uses and produces
 file artifacts that are too large to store in git.
@@ -12,7 +12,7 @@ commonly referred to simply as _"S3"_ or _"blobstore"_.
 
 Suppose that you have a Concourse or OpsMan environment
 that can't access the greater internet,
-including PivNet itself.
+including PivNet.
 This is a common security practice
 but it creates a problem around upgrading.
 If products cannot be downloaded from PivNet directly,
@@ -50,7 +50,7 @@ to retrieve and store objects.
 
 ## Pre-requisites
 
-1. An [Amazon Web Service account][amazon-s3] (commonly referred to as AWS) with access to S3
+1. An [Amazon Web Services account][amazon-s3] (commonly referred to as AWS) with access to S3
 
 !!! note "S3 blobstore compatibility"
     Many cloud storage options exist
@@ -59,9 +59,9 @@ to retrieve and store objects.
     [Minio][minio],
     and [Azure Blob Storage][azure-blob-storage].
     However, not all object stores
-    are "S3 compatibible".
+    are "S3 compatible".
     Because Amazon defines the 
-    S3 API for accessing blob stores,
+    S3 API for accessing blobstores,
     and because the Amazon S3 product has emerged as the dominant blob storage solution,
     not all "S3 compatible" object stores act exactly the same.
     In general, if a storage solution claims to be "S3 compatible",
@@ -97,7 +97,7 @@ Now you are ready for buckets!
     For more info on how this works,
     check out this [guide from Amazon][amazon-iam-guide].
     
-    In the rest of this guide,
+    For simplicity, in the rest of this guide,
     we will use the AWS root user
     to show how a bucket may be set up and used with Platform Automation.
 
@@ -109,7 +109,7 @@ Now you are ready for buckets!
 1. Enter a DNS-compliant name for your new bucket
     - This name must be unique across all of AWS S3 buckets
     and adhere to general URL guidelines. 
-    Make it something meaningful and rememberable!
+    Make it something meaningful and memorable!
 1. Enter the "Region" you want the bucket to reside in.
 1. Choose "Create".
 
@@ -151,8 +151,8 @@ In order to change who can access buckets or objects in buckets:
 In this tab,
 you can set the various permissions
 for an individual bucket. 
-In this guide, we will use public permissions
-so that Concourse can access the files.
+For simplicity, in this guide, we will use public permissions
+for Concourse to access the files.
 
 1. Under the permissions tab for a bucket, choose "Public access settings"
 1. Choose "Edit" to change the public access settings
@@ -181,13 +181,16 @@ By default,
 an S3 bucket will be _unversioned_.
 An unversioned bucket will not allow different versions of the same object.
 In order to take advantage of using an S3 bucket with Platform Automation,
-we will need to enable versioning. 
+we will want to enable versioning. Enabling versioning is not required,
+but versioning does make the process easier, 
+and will require less potential manual steps around naming updates to the new file 
+whenever they are changed. 
 
 1. Navigate to [the S3 console][amazon-s3-console].
 1. Choose the name of the bucket you created in the previous step
-1. Select the "Properpties" tab
+1. Select the "Properties" tab
 1. Click the "Versioning" tile
-1. Check the "Enable versioning" 
+1. Check the "Enable Versioning" 
 
 Now that versioning is enabled, 
 we can store multiple versions of a file.
@@ -195,7 +198,7 @@ For example, given the following object:
 ``` 
 my-exported-installation.zip
 ```
-We can now have have multiple versions of this object stored in our S3 bucket:
+We can now have multiple versions of this object stored in our S3 bucket:
 ```
 my-exported-installation.zip (version 111111)
 my-exported-installation.zip (version 121212)
@@ -221,11 +224,11 @@ Platform Automation users may want to store the following files in S3:
 
 Platform Automation users will likely **_NOT_** want to store the following in S3:
 
-- `.yaml` configuration files - Better suited for git
+- `.yaml` configuration files - Better suited for [git][git]
 - `secrets.yaml` environment and secret files - There are a number of ways
-to handle these types of files. 
-But they should not be stored in S3.
-Check out the [handling secrets guide][secrets-handling]
+to handle these types of files, 
+but they should not be stored in S3.
+Check out the [Secrets Handling page][secrets-handling]
 for how to work with these types of files.  
 
 ## How to structure your bucket
@@ -256,10 +259,10 @@ The following is one way to set up your bucket's file structure:
 ``` 
 
 When viewing a bucket in the AWS S3 console,
-simple select "Create folder".
+simple select "Create Folder".
 To create a sub-folder,
 when viewing a specific folder,
-select "Create folder" again.  
+select "Create Folder" again.  
 
 When attempting to access a specific object in a folder,
 simply include the folder structure before the object name:
@@ -270,7 +273,7 @@ foundation1/products/healthwatch/my-healthwatch-product.pivotal
 
 ## Using a Bucket
 
-When using the [Concourse S3 resource][concourse-s3-resource],
+When using the [Concourse S3 Resource][concourse-s3-resource],
 several configuration properties are available
 for retreiving objects
 The bucket name is required.
@@ -290,12 +293,12 @@ The bucket name is required.
 
 #### Usefulness
 
-The [Resources pipeline][reference-resources]
+The [resources pipeline][reference-resources]
 may be used to download dependencies from Pivnet
 and place them into a trusted S3 bucket.
-The various `resources_types` use the [Concourse S3 resource type][concourse-s3-resource]
+The various `resources_types` use the [Concourse S3 Resource type][concourse-s3-resource]
 and several Platform Automation tasks to accomplish this.
-The following is a S3 specific breakdown of these components
+The following is a S3-specific breakdown of these components
 and where to find more information.
 
 #### The download-product Task
@@ -336,6 +339,7 @@ and how it works, refer to the [download-product task reference.][download-produ
     If placing a product file into an S3 bucket manually,
     ensure that it has the proper file name format;
     opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
+    There should be no spaces between the two brackets.
     For example, for a product with slug of `product-slug` and version of `1.1.1`:
     ```
     [product-slug,1.1.1]original-filename.pivotal
