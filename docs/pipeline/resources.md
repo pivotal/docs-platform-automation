@@ -59,10 +59,8 @@ retrieve task dependencies.
     For more information on how this works,
     and what to expect when using `download-product` and `download-product-s3`,
     refer to the [`download-product` task reference.][download-product]
-    
-{% code_snippet 'examples', 'put-resources-pipeline' %}
 
-This pipeline requires configuration for the [download-product](../reference/task.md#download-product) task.
+The pipeline requires configuration for the [download-product](../reference/task.md#download-product) task.
 Below are examples that can be used.
 
 ``` yaml tab="Healthwatch"
@@ -84,6 +82,71 @@ Below are examples that can be used.
 ``` yaml tab="PKS"
 {% include './examples/download-product-configs/pks.yml' %}
 ```
+
+## Pipeline Components
+
+### Resource Types
+
+This custom resource type uses the pivnet resource to pull down and separate both 
+pieces of the Platform Automation product (tasks and image) so they can be stored 
+separately in S3. 
+
+{% code_snippet 'examples', 'resources-pipeline-resource-types' %}
+
+### Product Resources
+
+S3 resources where Platform Automation [`download-product`][download-product] outputs
+will be stored. Each product/stemcell needs a separate resource defined. 
+
+{% code_snippet 'examples', 'resources-pipeline-resources-product' %}
+
+### Platform Automation Resources
+
+`platform-automation-pivnet` is downloaded directly from Pivnet and will be used to 
+download all other products from Pivnet. 
+
+`platform-automation-tasks` and `platform-automation-image` are S3 resources that will
+be stored for internet-restricted, or faster, access.
+
+{% code_snippet 'examples', 'resources-pipeline-resources-platform-automation' %}
+
+### Exported Installation Resource
+
+{% include "./.export_installation_note.md" %}
+
+{% code_snippet 'examples', 'resources-pipeline-export-installation' %}
+
+### Configured Resources
+
+You will need to add these to your configurations repo. These contain values for your
+env file, which must be manually created. 
+For more details, see the [Inputs and Outputs][inputs-outputs] section.
+
+{% code_snippet 'examples', 'resources-pipeline-resources-configurations' %}
+
+### Trigger Resources
+ 
+{% code_snippet 'examples', 'resources-pipeline-resources-triggers' %}
+
+### Credhub Interpolate Job
+
+`((foundation))` is a value intended to be replaced by the filepath of your foundation
+directory structure in github (if you are not using multi-foundation, this value can be removed).
+
+`((credhub-*))` are values for accessing your Concourse Credhub. These are set when `fly`-ing your 
+pipeline. For more information on how to fly your pipeline and use `((foundation))`, please
+reference our How To Guides for your specific workflow.
+
+{% code_snippet 'examples', 'resources-pipeline-interpolate-creds' %}
+
+### Jobs
+
+Each job corresponds to a "box" on the visual representation of your Concourse pipeline.
+These jobs consume resources defined above.
+
+{% code_snippet 'examples', 'resources-pipeline-jobs' %}
+
+{% code_snippet 'examples', 'put-resources-pipeline' %}  //TODO: edit snippet names, then delete this line
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

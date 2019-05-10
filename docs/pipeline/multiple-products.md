@@ -106,6 +106,7 @@ Each job corresponds to a "box" on the visual representation of your Concourse p
 These jobs consume resources defined above.
 
 {% code_snippet 'examples', 'multiple-product-jobs' %}
+
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
 {% endwith %}
