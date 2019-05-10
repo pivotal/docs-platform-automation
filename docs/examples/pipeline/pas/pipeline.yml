@@ -326,6 +326,10 @@ jobs:
           config: interpolated-creds
           env: interpolated-creds
           vars: variable
+        params:
+          VARS_FILES: vars/((foundation))/vars/director-vars.yml
+          ENV_FILE: ((foundation))/env/env.yml
+          DIRECTOR_CONFIG_FILE: ((foundation))/config/director.yml
       - task: apply-director-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
