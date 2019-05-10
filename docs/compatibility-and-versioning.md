@@ -19,13 +19,15 @@ We have tested Platform Automation with these dependencies.
 </thead>
 <tbody>
     <tr>
-        <td>latest version</td>
+        <td>v2.0-beta - v2.1-beta</td>
         <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
-        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1+</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1-v2.5*</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
 </tbody>
 </table>
+
+{% include "./.opsman_filename_change_note.md" %}
 
 ## Docker Image Dependencies
 These dependencies are installed on the docker image distributed on Pivnet.
