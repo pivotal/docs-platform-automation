@@ -59,7 +59,8 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 
 ## Installing Ops Manager and multiple products
 
-The pipeline shows how to compose the tasks to install Ops Manager and the PCF and Healthwatch products.
+The pipeline shows how to compose the tasks
+to install Ops Manager and the PCF and Healthwatch products.
 Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline][reference-resources].
 
@@ -79,9 +80,10 @@ These can either be uploaded manually or from the [reference resources pipeline]
 
 ### Configured Resources
 
-You will need to add these to your configurations repo. These contain values for 
+These contain values for 
 opsman vm creation, director, product, foundation-specific vars, auth, and env files. 
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
+Platform Automation will not create these resources for you.
 
 {% code_snippet 'examples', 'multiple-product-resources-configurations' %}
 
@@ -91,18 +93,24 @@ For more details, see the [Inputs and Outputs][inputs-outputs] section.
 
 ### Credhub Interpolate Job
 
-`((foundation))` is a value intended to be replaced by the filepath of your foundation
-directory structure in github (if you are not using multi-foundation, this value can be removed).
+`((foundation))` is a value 
+intended to be replaced by the filepath 
+of your foundation directory structure in github 
+(if you are not using multi-foundation, this value can be removed).
 
-`((credhub-*))` are values for accessing your Concourse Credhub. These are set when `fly`-ing your 
-pipeline. For more information on how to fly your pipeline and use `((foundation))`, please
-reference our How To Guides for your specific workflow.
+`((credhub-*))` are values for accessing your Concourse Credhub. 
+These are set when `fly`-ing your pipeline. 
+For more information on how to fly your pipeline 
+and use `((foundation))`, 
+please reference our How To Guides for your specific workflow.
+Platform Automation will not create your Credhub or store values into your Credhub for you.
 
 {% code_snippet 'examples', 'multiple-product-interpolate-creds' %}
 
 ### Jobs
 
-Each job corresponds to a "box" on the visual representation of your Concourse pipeline.
+Each job corresponds to a "box"
+on the visual representation of your Concourse pipeline.
 These jobs consume resources defined above.
 
 {% code_snippet 'examples', 'multiple-product-jobs' %}

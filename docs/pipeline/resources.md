@@ -87,33 +87,36 @@ Below are examples that can be used.
 
 ### Resource Types
 
-This custom resource type uses the pivnet resource to pull down and separate both 
-pieces of the Platform Automation product (tasks and image) so they can be stored 
-separately in S3. 
+This custom resource type uses the pivnet resource 
+to pull down and separate both pieces of the Platform Automation product (tasks and image) 
+so they can be stored separately in S3. 
 
 {% code_snippet 'examples', 'resources-pipeline-resource-types' %}
 
 ### Product Resources
 
-S3 resources where Platform Automation [`download-product`][download-product] outputs
-will be stored. Each product/stemcell needs a separate resource defined. 
+S3 resources where Platform Automation [`download-product`][download-product] outputs will be stored. 
+Each product/stemcell needs a separate resource defined.
+Platform Automation will not create these resources for you.
 
 {% code_snippet 'examples', 'resources-pipeline-products' %}
 
 ### Platform Automation Resources
 
-`platform-automation-pivnet` is downloaded directly from Pivnet and will be used to 
-download all other products from Pivnet. 
+`platform-automation-pivnet` is downloaded directly from Pivnet 
+and will be used to download all other products from Pivnet. 
 
-`platform-automation-tasks` and `platform-automation-image` are S3 resources that will
-be stored for internet-restricted, or faster, access.
+`platform-automation-tasks` and `platform-automation-image` are S3 resources
+that will be stored for internet-restricted, or faster, access.
+Platform Automation will not create this resource for you.
 
 {% code_snippet 'examples', 'resources-pipeline-platform-automation' %}
 
 ### Configured Resources
 
-You will need to add your [`download-product` configuration][download-product-config] configuration
-files to your configurations repo. These must be manually created. 
+You will need to add your [`download-product` configuration][download-product-config] configuration files
+to your configurations repo.
+Platform Automation will not create these resources for you. 
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
 
 {% code_snippet 'examples', 'resources-pipeline-configurations' %}
@@ -124,12 +127,17 @@ For more details, see the [Inputs and Outputs][inputs-outputs] section.
 
 ### Credhub Interpolate Job
 
-`((foundation))` is a value intended to be replaced by the filepath of your foundation
-directory structure in github (if you are not using multi-foundation, this value can be removed).
+`((foundation))` is a value 
+intended to be replaced by the filepath 
+of your foundation directory structure in github 
+(if you are not using multi-foundation, this value can be removed).
 
-`((credhub-*))` are values for accessing your Concourse Credhub. These are set when `fly`-ing your 
-pipeline. For more information on how to fly your pipeline and use `((foundation))`, please
-reference our How To Guides for your specific workflow.
+`((credhub-*))` are values for accessing your Concourse Credhub. 
+These are set when `fly`-ing your pipeline. 
+For more information on how to fly your pipeline 
+and use `((foundation))`, 
+please reference our How To Guides for your specific workflow.
+Platform Automation will not create your Credhub or store values into your Credhub for you.
 
 {% code_snippet 'examples', 'resources-pipeline-interpolate-creds' %}
 
