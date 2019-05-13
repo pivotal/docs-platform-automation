@@ -98,7 +98,7 @@ separately in S3.
 S3 resources where Platform Automation [`download-product`][download-product] outputs
 will be stored. Each product/stemcell needs a separate resource defined. 
 
-{% code_snippet 'examples', 'resources-pipeline-resources-product' %}
+{% code_snippet 'examples', 'resources-pipeline-products' %}
 
 ### Platform Automation Resources
 
@@ -108,25 +108,19 @@ download all other products from Pivnet.
 `platform-automation-tasks` and `platform-automation-image` are S3 resources that will
 be stored for internet-restricted, or faster, access.
 
-{% code_snippet 'examples', 'resources-pipeline-resources-platform-automation' %}
-
-### Exported Installation Resource
-
-{% include "./.export_installation_note.md" %}
-
-{% code_snippet 'examples', 'resources-pipeline-export-installation' %}
+{% code_snippet 'examples', 'resources-pipeline-platform-automation' %}
 
 ### Configured Resources
 
-You will need to add these to your configurations repo. These contain values for your
-env file, which must be manually created. 
+You will need to add your [`download-product` configuration][download-product-config] configuration
+files to your configurations repo. These must be manually created. 
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
 
-{% code_snippet 'examples', 'resources-pipeline-resources-configurations' %}
+{% code_snippet 'examples', 'resources-pipeline-configurations' %}
 
 ### Trigger Resources
  
-{% code_snippet 'examples', 'resources-pipeline-resources-triggers' %}
+{% code_snippet 'examples', 'resources-pipeline-triggers' %}
 
 ### Credhub Interpolate Job
 
@@ -145,8 +139,6 @@ Each job corresponds to a "box" on the visual representation of your Concourse p
 These jobs consume resources defined above.
 
 {% code_snippet 'examples', 'resources-pipeline-jobs' %}
-
-{% code_snippet 'examples', 'put-resources-pipeline' %}  //TODO: edit snippet names, then delete this line
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

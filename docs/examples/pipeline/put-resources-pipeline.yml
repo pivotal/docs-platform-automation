@@ -1,5 +1,7 @@
 # The following line helps maintain current documentation at http://docs.pivotal.io.
 # code_snippet put-resources-pipeline start yaml
+
+# code_snippet resources-pipeline-resource-types start yaml
 resource_types:
 - name: pivnet
   type: docker-image
@@ -7,21 +9,10 @@ resource_types:
     repository: pivotalcf/pivnet-resource
     tag: latest-final
 
+# code_snippet resources-pipeline-resource-types end yaml
+
+# code_snippet resources-pipeline-products start yaml
 resources:
-- name: daily
-  type: time
-  source:
-    interval: 24h
-
-- name: config
-  type: git
-  source:
-    private_key: ((configuration.private_key))
-    uri: ((configuration.uri))
-    branch: master
-    submodules: all
-    depth: 1
-
 - name: healthwatch-product
   type: s3
   source:
@@ -93,7 +84,9 @@ resources:
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
     regexp: \[pas-windows,(.*)\]pas-windows-.*.pivotal
+# code_snippet resources-pipeline-products end yaml
 
+# code_snippet resources-pipeline-platform-automation start yaml
 - name: platform-automation-pivnet
   type: pivnet
   source:
@@ -119,7 +112,27 @@ resources:
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
     regexp: platform-automation-image-(.*).tgz
+# code_snippet resources-pipeline-platform-automation end yaml
 
+# code_snippet resources-pipeline-configurations start yaml
+- name: config
+  type: git
+  source:
+    private_key: ((configuration.private_key))
+    uri: ((configuration.uri))
+    branch: master
+    submodules: all
+    depth: 1
+# code_snippet resources-pipeline-configurations end yaml
+
+# code_snippet resources-pipeline-triggers start yaml
+- name: daily
+  type: time
+  source:
+    interval: 24h
+# code_snippet resources-pipeline-triggers end yaml
+
+# code_snippet resources-pipeline-interpolate-creds start yaml
 # This task is used in multiple jobs
 # The yaml anchor "*credhub-interpolate" is used in its place
 credhub-interpolate: &credhub-interpolate
@@ -135,7 +148,9 @@ credhub-interpolate: &credhub-interpolate
     files: config
   output_mapping:
     interpolated-files: config
+# code_snippet resources-pipeline-interpolate-creds end yaml
 
+# code_snippet resources-pipeline-jobs start yaml
 jobs:
 - name: fetch-healthwatch
   plan:
@@ -282,5 +297,6 @@ jobs:
     - put: platform-automation-image
       params:
         file: platform-automation-pivnet/*image*.tgz
+# code_snippet resources-pipeline-jobs end yaml
 # code_snippet put-resources-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.
