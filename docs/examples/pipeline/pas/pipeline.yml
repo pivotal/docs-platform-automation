@@ -276,11 +276,14 @@ jobs:
           - get: platform-automation-image
             params:
               unpack: true
+            passed: [ install-opsman ]
           - get: platform-automation-tasks
             params:
               unpack: true
           - get: configuration
           - get: variable
+          - get: one-time-trigger
+            passed: [ install-opsman ]
       - task: interpolate-creds
         <<: *interpolate-creds
       - task: export-installation
@@ -301,7 +304,7 @@ jobs:
     plan:
       - aggregate:
           - get: one-time-trigger
-            passed: [ install-opsman ]
+            passed: [ export-installation ]
           - get: platform-automation-image
             params:
               unpack: true
