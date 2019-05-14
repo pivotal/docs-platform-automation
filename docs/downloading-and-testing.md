@@ -5,12 +5,10 @@ The following describes the procedure for downloading, installing and testing th
 
 You'll need the following in order to setup Platform Automation for PCF.
 
-* Deployed [Concourse][concourse]
-
-    Platform Automation for PCF is based on Concourse CI.
+* Deployed [Concourse][concourse]. Platform Automation for PCF is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/guides.html) would be a good place to start.
-    
+
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation for PCF][pivnet-platform-automation]
 
