@@ -67,7 +67,7 @@ With Platform Automation for PCF, platform teams have the tools to create an aut
 can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells,
 products and services. In addition, Platform Automation for PCF helps with:
 
-* Externalized configuration: helps manage multiple foundations and reduces configuration drift
+* Externalized configuration: helps manage multiple foundations and reduces configuration drift by tracking changes through source control
 
 * The ability to create pipelines that handle installs and upgrades: helps streamline workflows
 
