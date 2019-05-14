@@ -3,32 +3,17 @@ title: Platform Automation for PCF
 owner: PCF Platform Automation
 ---
 
- Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations.
-
-In this introduction we'll cover:
-
-* About Platform Automation for PCF
-
-* Platform Automation and Ops Manager
-
-* Platform Automation and Upgrading PCF
-
-!!! info "Expectations Before We Begin"
-    Despite the name of Platform Automation, there are still manual steps involved.
-    At various places in the docs, we will call out manual steps and decision points.
-    For example, getting your Ops Manager director and tile configurations are manual steps. 
-    These can be obtained by using [`staged-director-config`][staged-director-config]
-    and [`staged-config`][staged-config]. Some of the How to Guides detail how to use these.
+ Platform Automation for PCF provides the building blocks to create a repeatable and reusable automated pipeline(s) for upgrading and installing PCF foundations. We also provide instructions on how to use these building blocks for various workflows. In this introduction, we'll provide a high-level overview of Platform Automation - to dive-deeper, check out the references section.  
 
 ## About
 
-* Platform Automation for PCF uses [om][om],
+* Uses [om][om],
 (and by extension, the Ops Manager API)
 to enable command-line interaction with Ops Manager
 ([Understanding the Ops Manager Interface][pivotalcf-understanding-opsman])
-* Platform Automation for PCF includes a documented reference pipeline
-showing one possible configuration to use tasks
-* Platform Automation for PCF comes bundled with Concourse [tasks][concourse-task-definition]
+* Includes a documented reference pipeline
+showing one possible configuration to use tasks. When automating your platform, there are some manual steps that you will need to take to optimize for automation - we will call these steps out so that these are clear to you.
+* Comes bundled with Concourse [tasks][concourse-task-definition]
 that demonstrate how to use these tasks
 in a containerized Continuous Integration (CI) system. Platform Automation for PCF tasks are:
 
@@ -47,13 +32,44 @@ and even interactions with the Ops Manager user interface.
 Platform Automation for PCF is a set of tools to use alongside other tools,
 rather than a comprehensive solution.
 
+* Assumes you have the following before using our tasks: a paved IaaS, a deployed Concourse, a git compliant source code control system, credential manager, and a S3-compliant object store. For more information on how to implement these, check out the Before you Begin section.  
+
+
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
 
 !!! info "Transitioning from PCF Pipelines"
-    If your current pipeline is based on PCF Pipelines,
-    we recommend building a replacement pipeline with the new tooling,
-    as opposed to trying to modify your existing pipeline to use the new tools. There is more upfront learning and set-up but in the long term you will have less maintenance with upgrades.
+      Platform Automation takes a different approach than PCF Pipelines, one example is that Platform Automation allows you to perform installs and upgrades in the same pipeline. We recommend trying out Platform Automation to get a sense of the features and how they differ to understand the best transition method for your environment and needs.
+
+
+## Platform Automation and Upgrading PCF
+
+Successful platform engineering teams know that a platform team that’s always up to date is critical for their business.
+If they don’t stay up to date, they miss out on the latest platform features and the services that Pivotal delivers,
+which means their development teams miss out too. By not keeping up to date, platforms could encounter security risks or
+even application failures.
+
+Pivotal offers regular updates for PCF, which ensures our customers have access to the latest security patches and new features.
+For example, Pivotal releases security patches every six days on average.
+
+So how can a platform engineering team simplify the platform upgrade process?
+
+**Small and Continuous Upgrades**
+
+Adopting the best practice of small and constant platform updates is one of the best ways to simplify the platform
+upgrade process. This behavior can significantly reduce risk, increase stability with faster troubleshooting, and
+overall reduce the effort of upgrading. This also creates a culture of continuous iteration and improves feedback loops
+with the platform teams and the developers - building trust across the organization. A good place to start is by consuming every patch.
+
+**How Platform Automation for PCF can help with small and continuous upgrades**
+
+With Platform Automation for PCF, platform teams have the tools to create an automated perpetual upgrade machine that
+can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells,
+products and services. In addition, Platform Automation for PCF helps with:
+
+* Externalized configuration: helps manage multiple foundations and reduces configuration drift
+
+* The ability to create pipelines that handle installs and upgrades: helps streamline workflows
 
 ## Platform Automation and Ops Manager
 
@@ -100,35 +116,6 @@ and Platform Automation for PCF might run a typical sequence of PCF operations:
     <td><code>export-installation</code> then <code>upgrade-opsman</code></td>
   </tr>
 </table>
-
-## Platform Automation and Upgrading PCF
-
-Successful platform engineering teams know that a platform team that’s always up to date is critical for their business.
-If they don’t stay up to date, they miss out on the latest platform features and the services that Pivotal delivers,
-which means their development teams miss out too. By not keeping up to date, platforms could encounter security risks or
-even application failures.
-
-Pivotal offers regular updates for PCF, which ensures our customers have access to the latest security patches and new features.
-For example, Pivotal releases security patches every six days on average.
-
-So how can a platform engineering team simplify the platform upgrade process?
-
-**Small and Continuous Upgrades**
-
-Adopting the best practice of small and constant platform updates is one of the best ways to simplify the platform
-upgrade process. This behavior can significantly reduce risk, increase stability with faster troubleshooting, and
-overall reduce the effort of upgrading. This also creates a culture of continuous iteration and improves feedback loops
-with the platform teams and the developers - building trust across the organization. A good place to start is by consuming every patch.
-
-**How Platform Automation for PCF can help with small and continuous upgrades**
-
-With Platform Automation for PCF, platform teams have the tools to create an automated perpetual upgrade machine that
-can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells,
-products and services. In addition, Platform Automation for PCF helps with:
-
-* Externalized configuration: helps manage multiple foundations and reduces configuration drift
-
-* The ability to create pipelines that handle installs and upgrades: helps streamline workflows
 
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
