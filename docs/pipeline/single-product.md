@@ -3,29 +3,9 @@ title: Pipeline Reference
 owner: PCF Platform Automation
 ---
 
-!!! info 
-    These Concourse pipelines are examples
-    on how to use the [tasks](../reference/task.md). 
-    If you use a different CI/CD platform, you can use these Concourse files as examples
-    of the inputs, outputs, and arguments used in each step in the workflow.
+Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't - we recommend you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
 
-## Making Your Own Pipeline
-
-If the reference pipeline doesn’t work for you, that’s okay! It probably shouldn’t.
-You know your environment and constraints, and we don’t.
-We recommend you look at the tasks that make up the pipeline,
-and see if they can be arranged such that they do what you need.
-If you have Platform Architects available, they can help you look at this problem.
-
-Our example just illustrates the tasks and provides one possible starting place
-- the suggested starting projects provide other starting places that make different choices.
-Your pipeline is yours, not a fork of something we wrote.
-
-If the tasks themselves don’t work for you, we’d like to hear from you.
-We might be able to help you figure out how to make it work,
-or we can use the feedback to improve the tasks so they’re a better fit for what you need.
-If you need to write your own tasks in the meantime, our tasks are designed with clear interfaces,
-and should be able to coexist in a pipeline with tasks from other sources, or custom tasks you develop yourself.
+These Concourse pipelines are examples on how to use the [tasks](../reference/task.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
 
 ## Prerequisites
 
@@ -42,7 +22,7 @@ It is used by every task within Platform Automation for PCF
 * A valid [auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
-!!! info 
+!!! info
     There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
 
 * An [opsmanager-configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
@@ -80,28 +60,28 @@ These can either be uploaded manually or from the [reference resources pipeline]
 
 ### Configured Resources
 
-These contain values for 
-opsman vm creation, director, product, foundation-specific vars, auth, and env files. 
-For more details, see the [Inputs and Outputs][inputs-outputs] section. 
+These contain values for
+opsman vm creation, director, product, foundation-specific vars, auth, and env files.
+For more details, see the [Inputs and Outputs][inputs-outputs] section.
 Platform Automation will not create these resources for you.
 
 {% code_snippet 'examples', 'single-product-resources-configurations' %}
 
 ### Trigger Resources
- 
+
 {% code_snippet 'examples', 'single-product-resources-triggers' %}
 
 ### Credhub Interpolate Job
 
-`((foundation))` is a value 
-intended to be replaced by the filepath 
-of your foundation directory structure in github 
+`((foundation))` is a value
+intended to be replaced by the filepath
+of your foundation directory structure in github
 (if you are not using multi-foundation, this value can be removed).
 
-`((credhub-*))` are values for accessing your Concourse Credhub. 
-These are set when `fly`-ing your pipeline. 
-For more information on how to fly your pipeline 
-and use `((foundation))`, 
+`((credhub-*))` are values for accessing your Concourse Credhub.
+These are set when `fly`-ing your pipeline.
+For more information on how to fly your pipeline
+and use `((foundation))`,
 please reference our How To Guides for your specific workflow.
 Platform Automation will not create your Credhub or store values into your Credhub for you.
 
