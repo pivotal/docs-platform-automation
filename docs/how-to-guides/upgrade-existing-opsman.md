@@ -1,5 +1,6 @@
 # Writing a Pipeline to Upgrade an Existing Ops Manager
 
+{% set extra_prereq_item="1. a running Ops Manager VM that you would like to upgrade" %}
 {% include ".getting-started.md" %}
 
 #### Exporting The Installation
