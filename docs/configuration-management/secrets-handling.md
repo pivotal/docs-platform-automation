@@ -190,6 +190,51 @@ jobs:
       DIRECTOR_CONFIG_FILE: config/director.yml
 ```
 
+## Multiple Key Lookups in a Single Task
+
+When using Credhub in a single foundation or multi-foundation manner, 
+we want to avoid duplicating identical credentials
+(duplication makes credential rotation harder). 
+
+In order to have Credhub read in credentials from multiple paths
+(not relative to your `PREFIX`), 
+you must provide the absolute path to any credentials 
+not in your relative path.
+
+For example, using an alternative `base.yml`:
+```yaml
+# An incomplete yaml response from om staged-config
+product-name: cf
+
+product-properties:
+  .cloud_controller.apps_domain:
+    value: ((cloud_controller_apps_domain))
+  .cloud_controller.encrypt_key:
+    value:
+      secret: ((/alternate_prefix/cloud_controller_encrypt_key.secret))
+  .properties.security_acknowledgement:
+    value: X
+  .properties.cloud_controller_default_stack:
+    value: default
+```
+
+Let's say in our `job`, we define the prefix as "foundation1".
+The parameterized values in the example above will be interpolated as follows:
+
+`((cloud_controller_apps_domain))` uses a relative path for Credhub.
+When running `credhub-interpolate`, the task will prepend the `PREFIX`.
+This value is stored in Credhub as `/foundation1/cloud_controller_apps_domain`. 
+
+`((/alternate_prefix/cloud_controller_encrypt_key.secret))` (note the leading slash)
+uses an absolute path for Credhub. 
+When running `credhub-interpolate`, the task will not prepend the prefix.
+This value is stored in Credhub at it's absolute path `/alternate_prefix/cloud_controller_encrypt_key.secret`.
+
+Any value with a leading `/` slash will never use the `PREFIX`
+to look up values in Credhub. 
+Therefore, you can have multiple key lookups in a single interpolate task. 
+
+
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
 {% endwith %}
