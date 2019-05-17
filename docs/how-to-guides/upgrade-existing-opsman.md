@@ -1,6 +1,6 @@
 # Writing a Pipeline to Upgrade an Existing Ops Manager
 
-{% set extra_prereq_item="1. a running Ops Manager VM that you would like to upgrade" %}
+{% set extra_prereq_item="1. A running Ops Manager VM that you would like to upgrade" %}
 {% include ".getting-started.md" %}
 
 #### Exporting The Installation
@@ -177,18 +177,7 @@ We'll put the credentials we need in Credhub:
         -t value -v your-opsman-decryption-passphrase
 ```
 
-!!! info "Credhub paths and pipeline names"
-    <p>Notice that we've added an element to the cred paths;
-    now we're using the foundation name.
-    <p>If you look at [Concourse's lookup rules,][concourse-credhub-lookup-rules]
-    you'll see that it searches the pipeline-specific path
-    before the team path.
-    Since our pipeline is named for the foundation it's used to manage,
-    we can use this to scope access to our foundation-specific information
-    to just this pipeline.
-    <p>By contrast, the Pivnet token may be valuable across several pipelines
-    (and associated foundations),
-    so we scoped that to our team.
+{% include './.paths-and-pipeline-names.md' %}
 
 In order to perform interpolation in one of our input files,
 we'll need the [`credhub-interpolate` task][credhub-interpolate]
@@ -256,7 +245,7 @@ of the `credhub-interpolate` and `export-installation` tasks.
 This allows us to use the output of one task
 as in input of another.
 
-Ironically, we now need to put our `credhub_client` and `credhub_secret` into Credhub,
+We now need to put our `credhub_client` and `credhub_secret` into Credhub,
 so Concourse's native integration can retrieve them
 and pass them as configuration to the `credhub-interpolate` task.
 
@@ -334,7 +323,7 @@ Now you can manually trigger a build, and see it pass.
 This is also a good commit point:
 
 ```bash
-git add upgrade-opsman-pipeline vars.yml
+git add pipeline.yml vars.yml
 git commit -m "Export foundation installation in CI"
 git push
 ```
