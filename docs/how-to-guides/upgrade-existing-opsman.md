@@ -624,7 +624,7 @@ To do this, we can add the following section to the job:
       file: platform-automation-tasks/tasks/make-git-commit.yml
       input_mapping:
         repository: env
-        file-source: env
+        file-source: generated-state
       output_mapping:
         repository-commit: env-commit
       params:
