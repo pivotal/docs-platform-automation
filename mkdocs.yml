@@ -36,6 +36,7 @@ nav:
   - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
 - How to Guides:
   - Upgrading an Existing OpsManager: how-to-guides/upgrade-existing-opsman.md
+  - Installing OpsManager: how-to-guides/install-opsman.md
 - References:
   - Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md
