@@ -18,7 +18,7 @@ opsman-configuration:
     project: project-id
     region: us-central1
     zone: us-central1-b
-    vm_name: ops-manager-vm               # default: OpsManager-vm
+    vm_name: ops-manager-vm               # default: Ops Manager-vm
     # For SharedVPC: projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]
     vpc_subnet: infrastructure-subnet
     tags: ops-manager

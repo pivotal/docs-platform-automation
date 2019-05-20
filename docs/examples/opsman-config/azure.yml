@@ -21,7 +21,7 @@ opsman-configuration:
     storage_key: pEuXDaDK/WWo...
 
     ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ...  # ssh key to access VM
-    vm_name: ops-manager-vm                       # default: OpsManager-vm
+    vm_name: ops-manager-vm                       # default: Ops Manager-vm
     boot_disk_size: 100                           # default: 200
     cloud_name: AzureCloud                        # default: AzureCloud
 

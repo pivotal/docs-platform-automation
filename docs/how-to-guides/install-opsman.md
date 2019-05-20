@@ -1,8 +1,8 @@
-# Writing a Pipeline to Install OpsManager
+# Writing a Pipeline to Install Ops Manager
 
 {% include ".getting-started.md" %}
 
-#### Download OpsManager product
+#### Download Ops Manager product
 
 We're finally in a position to do work!
 
