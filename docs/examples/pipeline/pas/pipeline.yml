@@ -656,7 +656,6 @@ jobs:
           PRODUCT_NAME: p-healthwatch
           ENV_FILE: ((foundation))/env/env.yml
         ensure: *make-state-commit
-
 # code_snippet multiple-product-jobs end yaml
 # code_snippet multiple-products-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.
