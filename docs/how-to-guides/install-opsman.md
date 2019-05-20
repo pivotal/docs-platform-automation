@@ -293,7 +293,7 @@ and you should use whichever method is right for you and your setup.
 
 There are open source terraforming scripts
 we recommend for use, as they are maintained by the Pivotal organization.
-These scripts are found in open source repos under the `pivotal-cf` org in Git.
+These scripts are found in open source repos under the `pivotal-cf` org in GitHub.
 
 - [terraforming-aws][terraforming-aws]
 - [terraforming-azure][terraforming-azure]
