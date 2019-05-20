@@ -29,14 +29,14 @@ nav:
 - Release Notes: release-notes.md
 - Reference Pipelines:
   - Retrieving External Dependencies: pipeline/resources.md
-  - OpsManager + multiple products: pipeline/multiple-products.md
-  - OpsManager + a product: pipeline/single-product.md
+  - Ops Manager + multiple products: pipeline/multiple-products.md
+  - Ops Manager + a product: pipeline/single-product.md
 - Before You Begin:
   - Git Repository Layout: before-you-begin/git-repo-layout.md
   - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
 - How to Guides:
-  - Upgrading an Existing OpsManager: how-to-guides/upgrade-existing-opsman.md
-  - Installing OpsManager: how-to-guides/install-opsman.md
+  - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
+  - Installing Ops Manager: how-to-guides/install-opsman.md
 - References:
   - Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md
@@ -50,5 +50,5 @@ nav:
 - Pipeline Design:
   - Variables: pipeline-design/variables.md
   - Stemcell Handling: pipeline-design/stemcell-handling.md
-- About Upgrading OpsManager: upgrade.md
+- About Upgrading Ops Manager: upgrade.md
 - Report an Issue: report-an-issue.md

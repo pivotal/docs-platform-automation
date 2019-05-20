@@ -127,7 +127,7 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 1. Requires the image YAML file from Pivnet
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account
-1. Creates the OpsManager image
+1. Creates the Ops Manager image
 1. Creates a VM from the image. This will use unmanaged disk (if specified), and assign a public and/or private IP. This only attaches existing infrastructure to a newly createdVM. This does not create any new resources.
 
 **GCP**
@@ -374,7 +374,7 @@ Also useful for persisting the configuration output from:
 {% code_snippet 'tasks', 'make-git-commit' %}
 
 ### pre-deploy-check
-Checks if the OpsManager director is configured properly and validates the configuration.
+Checks if the Ops Manager director is configured properly and validates the configuration.
 Additionally, checks each of the staged products
 and validates they are configured correctly.
 This task can be run at any time

@@ -219,7 +219,7 @@ Platform Automation users may want to store the following files in S3:
 
 - `.pivotal` product files
 - `.tgz` stemcell files
-- `.ova` OpsManager files
+- `.ova` Ops Manager files
 - `.zip` foundation exports
 
 Platform Automation users will likely **_NOT_** want to store the following in S3:

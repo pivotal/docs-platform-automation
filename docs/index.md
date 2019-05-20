@@ -64,7 +64,7 @@ with the platform teams and the developers - building trust across the organizat
 **How Platform Automation for PCF can help with small and continuous upgrades**
 
 With Platform Automation for PCF, platform teams have the tools to create an automated perpetual upgrade machine that
-can continuously take the latest updates when new software is available - including PAS, PKS, OpsManager, stemcells,
+can continuously take the latest updates when new software is available - including PAS, PKS, Ops Manager, stemcells,
 products and services. In addition, Platform Automation for PCF helps with:
 
 * Externalized configuration: helps manage multiple foundations and reduces configuration drift by tracking changes through source control

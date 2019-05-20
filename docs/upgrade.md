@@ -13,7 +13,7 @@ It's important to note when upgrading your Ops Manager:
 {% include "./.export_installation_note.md" %}
 
 ### Upgrade Flowchart
-The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an OpsManager VM.
+The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Ops Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}
