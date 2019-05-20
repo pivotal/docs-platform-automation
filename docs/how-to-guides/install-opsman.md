@@ -33,7 +33,7 @@ So, we'll add `serial: true` to the job, too.
 
 ```yaml hl_lines="2 3 15 16 17 18 19 20"
 jobs:
-- name: install-opsmanager
+- name: install-ops-manager
   serial: true
   plan:
     - get: platform-automation-image
@@ -201,7 +201,7 @@ but before the `download-product` task:
 
 ```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26 27 28 34 35"
 jobs:
-- name: install-opsmanager
+- name: install-ops-manager
   serial: true
   plan:
     - get: platform-automation-image
@@ -338,7 +338,7 @@ let's add the new task to the `install-opsman` job.
 
 ```yaml hl_lines="36 37 38"
 jobs:
-- name: install-opsmanager
+- name: install-ops-manager
   serial: true
   plan:
     - get: platform-automation-image
@@ -445,7 +445,7 @@ and the placeholder state file.
 
 ```yaml hl_lines="39 40 41 42 43 44 45"
 jobs:
-- name: install-opsmanager
+- name: install-ops-manager
   serial: true
   plan:
     - get: platform-automation-image
@@ -500,7 +500,7 @@ To do this, we can add the following section to the job:
 
 ```yaml hl_lines="46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65"
 jobs:
-- name: install-opsmanager
+- name: install-ops-manager
   serial: true
   plan:
     - get: platform-automation-image
