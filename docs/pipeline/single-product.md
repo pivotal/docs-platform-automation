@@ -25,7 +25,7 @@ the VM is created. The choices for this file are simple or saml authentication.
 !!! info
     There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
 
-* An [opsmanager-configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
+* An [opsman-configuration] file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Ops Manager VM
 * A [director-configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
 a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one.

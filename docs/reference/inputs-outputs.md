@@ -70,7 +70,7 @@ See the task for the [`configure-saml-authentication`][configure-saml-authentica
 The `saml-configuration` properties configures the SAML provider.
 The [Ops Manager API][opsman-api-saml] has more information about the values
 
-### opsman config
+### Ops Manager config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
 
 The `config` input for opsman task expects to have a `opsman.yml` file.
