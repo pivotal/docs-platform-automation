@@ -28,7 +28,7 @@ a previous installation. It requires the following to perform this operations:
 
 * a valid [state file](reference/inputs-outputs.md#state) from the currently deployed Ops Manager
 * a valid [image file](reference/inputs-outputs.md#opsman-image) for the new Ops Manager to install
-* a [configuration file][opsmanager-configuration] for IAAS specific details
+* a [configuration file][opsman-configuration] for IAAS specific details
 * an [exported installation][installation] from a currently deployed Ops Manager
 * the [auth file][auth-file] for a currently deployed Ops Manager
 

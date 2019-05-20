@@ -6,7 +6,7 @@ An example workflow would be storing an SSH key.
 
 1. Authenticate with your credhub instance.
 2. Generate an ssh key: `credhub generate --name="/private-foundation/opsman_ssh_key" --type=ssh`
-3. Create an [Ops Manager configuration][opsmanager-configuration] file that references the name of the property.
+3. Create an [Ops Manager configuration][opsman-configuration] file that references the name of the property.
 
 ```yaml
 opsman-configuration:
