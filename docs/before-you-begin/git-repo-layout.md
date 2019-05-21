@@ -1,24 +1,24 @@
-# Git Repo Structure
+# Why use Git and GitHub?
+
+GitHub is a system that provides Git remotes,
+essentially, an internet accessible backup to the git repositories on your computer.
+Using a remote will enable a pipeline
+to access and update the state and configuration files.
 
 Git is a commonly used version control tool.
 It can be used to track code changes made to files within a repository (or "repo").
 Changes can then be "pushed" to or "pulled" from remote copies of that repository.
 
-GitHub is a system that provides git remotes,
-essentially, an internet accessible backup to the git repositories on your computer.
-Using a remote will enable a pipeline
-to access and update the state and configuration files.
-
-!!! note "GitHub alternatives"
+!!! Info "GitHub alternatives"
     There are many alternatives to GitHub including
     Gitlabs, Google Cloud Source Repositories, etc.
     Any remote Git client will work with Platform Automation and Concourse.
     Refer to the [Concourse Git resource][concourse-git-resource] documentation for details.
 
-To learn more about git and github,
+To learn more about Git and Github,
 you can [read this short git handbook][github-git-handbook].
 
-## Create a Git repo
+## Creating a Git Repository
 
 To create a new, local Git repo:
 
@@ -46,7 +46,7 @@ touch env/env.yml
 touch state/state.yml
 
 # Optional:
-# create vars files for parameters corresponding to configs 
+# create vars files for parameters corresponding to configs
 touch vars/director-vars.yml
 touch vars/opsman-vars.yml
 
@@ -54,7 +54,7 @@ touch vars/opsman-vars.yml
 git commit -m "add initial files"
 ```
 
-## Create a GitHub repository
+## Creating a GitHub Repository
 
 Next, navigate to GitHub and create a new remote repository.
 
@@ -64,8 +64,8 @@ Next, navigate to GitHub and create a new remote repository.
 1. Do not select to add any default files when prompted
 1. Copy the URL of your new GitHub repository
 
-Now, we can set the local git repository's
-remote to the new GitHub repo: 
+Now, we can set the local Git repo's
+remote to the new GitHub repo:
 
 ```bash
 # enter the path for the new GitHub repo
@@ -89,7 +89,7 @@ with the directories and empty files.
 
 ## Recommended File Structure
 
-You now have both a local git repo and a remote on GitHub.
+You now have both a local Git repo and a remote on GitHub.
 The above commands give you the recommended structure
 for a Platform Automation configuration repo:
 
@@ -121,7 +121,7 @@ for a Platform Automation configuration repo:
         <td>vars</td>
         <td>
           Holds product-specific vars files.
-          The fields in these files get used to fill in 
+          The fields in these files get used to fill in
           <code>((parameters))</code> during interpolation steps.
         </td>
     </tr>
@@ -137,10 +137,10 @@ for a Platform Automation configuration repo:
 For further details regarding the contents of these files,
 please refer to the [Inputs and Outputs][inputs-outputs] documentation.
 
-!!! warning "Never commit secrets to git"
+!!! warning "Never commit secrets to Git"
     It is a best practice to **_not_** commit secrets,
     including passwords, keys, and sensitive information,
-    to git or GitHub. Instead, use `((parameters))`.
+    to Git or GitHub. Instead, use `((parameters))`.
     For more information on a recommended way to do this,
     using Credhub or vars files,
     review the [handling secrets documentation.][secrets-handling]
@@ -152,14 +152,14 @@ You may instead decide to have a repo for just config files and separate repos
 just for vars files. This decouples the config parameter names from their values
 for multi-foundation templating.
 
-There are many possibilities for structuring git repos in these complex situations.
+There are many possibilities for structuring Git repos in these complex situations.
 For guidance on how to best set up your git's file structure,
-refer to the [inputs and outputs documentation][inputs-outputs]
-and take note of the `inputs` and `outputs` of the 
+refer to the [Inputs and Outputs][inputs-outputs] documentation
+and take note of the `inputs` and `outputs` of the
 various [Platform Automation tasks][task-reference].
 As long as the various input / output mappings correctly correlate
 to the expected ins and outs of the Platform Automation tasks,
-any file structure could theoretically work. 
+any file structure could theoretically work.
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
