@@ -21,33 +21,6 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       regexp: .*image-(.*).tgz
 
-  - name: opsman-image
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      bucket: ((s3.buckets.pivnet_products))
-      region_name: ((s3.region_name))
-      secret_access_key: ((s3.secret_access_key))
-      regexp: \[ops-manager,(.*)\].*.ova # vsphere ex: ops-manager-(.*).ova
-
-  - name: pas-stemcell
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: pas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
-
-  - name: pas-product
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: \[elastic-runtime,(.*)\]cf-.*.pivotal
-
   - name: pas-windows-product
     type: s3
     source:
@@ -65,24 +38,6 @@ resources:
       region_name: ((s3.region_name))
       secret_access_key: ((s3.secret_access_key))
       regexp: pas-windows-stemcell/\[stemcells-windows-server,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
-
-  - name: healthwatch-stemcell
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: healthwatch-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
-
-  - name: healthwatch-product
-    type: s3
-    source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: \[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal
   # code_snippet multiple-product-resources-s3 end yaml
 
   # code_snippet multiple-product-export-installation start yaml
@@ -137,7 +92,7 @@ interpolate-creds: &interpolate-creds
     CREDHUB_SECRET: ((credhub-secret))
     CREDHUB_SERVER: ((credhub-server))
     PREFIX: '/pipeline/vsphere'
-    INTERPOLATION_PATHS: ((foundation))/config ((foundation))/env
+    INTERPOLATION_PATHS: ((foundation))/config ((foundation))/env download-product-configs
     SKIP_MISSING: true
   input_mapping:
     files: configuration
@@ -161,32 +116,18 @@ jobs:
           params:
             unpack: true
         - get: configuration
-      - task: interpolate-download-opsman-image-creds
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/credhub-interpolate.yml
-        params:
-          CREDHUB_CLIENT: ((credhub-client))
-          CREDHUB_SECRET: ((credhub-secret))
-          CREDHUB_SERVER: ((credhub-server))
-          PREFIX: '/pipeline/vsphere'
-          INTERPOLATION_PATHS: "download-product-configs"
-          SKIP_MISSING: true
-        input_mapping:
-          files: configuration
-        output_mapping:
-          interpolated-files: product-configs
+      - task: interpolate-creds
+        <<: *interpolate-creds
       - task: download-opsman-image
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product-s3.yml
         params:
           CONFIG_FILE: download-product-configs/opsman.yml
         input_mapping:
-          config: product-configs
+          config: interpolated-creds
         output_mapping:
           downloaded-product: opsman-image
       - get: variable
-      - task: interpolate-creds
-        <<: *interpolate-creds
       - task: create-vm
         image: platform-automation-image
         file: platform-automation-tasks/tasks/create-vm.yml
@@ -313,13 +254,21 @@ jobs:
           - get: platform-automation-tasks
             params:
               unpack: true
-          - get: opsman-image
           - get: installation
             passed: [ export-installation ]
           - get: configuration
           - get: variable
       - task: interpolate-creds
         <<: *interpolate-creds
+      - task: download-opsman-image
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product-s3.yml
+        params:
+          CONFIG_FILE: download-product-configs/opsman.yml
+        input_mapping:
+          config: interpolated-creds
+        output_mapping:
+          downloaded-product: opsman-image
       - task: upgrade-opsman
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upgrade-opsman.yml
@@ -367,17 +316,34 @@ jobs:
           - get: platform-automation-tasks
             params:
               unpack: true
-          - get: pas-product
           - get: configuration
           - get: variable
       - task: interpolate-creds
         <<: *interpolate-creds
+      - task: download-pas
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product-s3.yml
+        params:
+          CONFIG_FILE: download-product-configs/pas.yml
+        input_mapping:
+          config: interpolated-creds
+        output_mapping:
+          downloaded-product: pas-product
+          downloaded-stemcell: pas-stemcell
       - task: upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-product
           env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: upload-pas-stemcell
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: interpolated-creds
+          stemcell: pas-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
       - task: stage-product
@@ -432,6 +398,7 @@ jobs:
             params:
               unpack: true
           - get: pas-windows-product
+          - get: pas-windows-stemcell
           - get: configuration
           - get: variable
       - task: interpolate-creds
@@ -442,6 +409,14 @@ jobs:
         input_mapping:
           product: pas-windows-product
           env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: upload-pas-windows-stemcell
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: interpolated-creds
+          stemcell: pas-windows-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
       - task: stage-product
@@ -482,54 +457,6 @@ jobs:
           VARS_FILES: vars/((foundation))/vars/cf-vars.yml
           ENV_FILE: ((foundation))/env/env.yml
 
-  - name: upload-stemcells
-    serial: true
-    plan:
-      - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-            passed:
-              - upgrade-opsman
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: pas-stemcell
-            trigger: true
-          - get: pas-windows-stemcell
-            trigger: true
-          - get: healthwatch-stemcell
-            trigger: true
-          - get: configuration
-          - get: variable
-      - task: interpolate-creds
-        <<: *interpolate-creds
-      - task: upload-pas-stemcell
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upload-stemcell.yml
-        input_mapping:
-          env: interpolated-creds
-          stemcell: pas-stemcell
-        params:
-          ENV_FILE: ((foundation))/env/env.yml
-      - task: upload-pas-windows-stemcell
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upload-stemcell.yml
-        input_mapping:
-          env: interpolated-creds
-          stemcell: pas-windows-stemcell
-        params:
-          ENV_FILE: ((foundation))/env/env.yml
-      - task: upload-healthwatch-stemcell
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upload-stemcell.yml
-        input_mapping:
-          env: interpolated-creds
-          stemcell: healthwatch-stemcell
-        params:
-          ENV_FILE: ((foundation))/env/env.yml
-
   - name: upload-and-stage-healthwatch
     serial: true
     plan:
@@ -542,17 +469,34 @@ jobs:
           - get: platform-automation-tasks
             params:
               unpack: true
-          - get: healthwatch-product
           - get: configuration
           - get: variable
       - task: interpolate-creds
         <<: *interpolate-creds
+      - task: download-healthwatch
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product-s3.yml
+        params:
+          CONFIG_FILE: download-product-configs/healthwatch.yml
+        input_mapping:
+          config: interpolated-creds
+        output_mapping:
+          downloaded-product: healthwatch-product
+          downloaded-stemcell: healthwatch-stemcell
       - task: upload-and-stage-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-and-stage-product.yml
         input_mapping:
           product: healthwatch-product
           env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: upload-healthwatch-stemcell
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: interpolated-creds
+          stemcell: healthwatch-stemcell
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
