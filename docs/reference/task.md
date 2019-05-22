@@ -406,7 +406,7 @@ Staged a product to the Ops Manager specified in the config file.
 Downloads the configuration for a product from Ops Manager.
 
 Not to be confused with Ops Manager's
-built-in [export](https://docs.pivotal.io/pivotalcf/2-1/customizing/backup-restore/backup-pcf-bbr.html#export),
+built-in [export](https://docs.pivotal.io/pivotalcf/customizing/backup-restore/backup-pcf-bbr.html#export),
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 

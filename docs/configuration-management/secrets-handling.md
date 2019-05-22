@@ -6,7 +6,7 @@ An example workflow would be storing an SSH key.
 
 1. Authenticate with your credhub instance.
 2. Generate an ssh key: `credhub generate --name="/private-foundation/opsman_ssh_key" --type=ssh`
-3. Create an [Ops Manager configuration][opsman-configuration] file that references the name of the property.
+3. Create an [Ops Manager configuration][opsman-config] file that references the name of the property.
 
 ```yaml
 opsman-configuration:
@@ -80,7 +80,7 @@ rectify this, you can use a secret management tool, such as Credhub, to sub in t
 manifest.  
 
 Let's assume basic knowledge and understanding of the
-[`credhub-interpolate`][credhub-interpolate] task described in the [Secrets Handling][secrets handling] section
+[`credhub-interpolate`][credhub-interpolate] task described in the [Secrets Handling][secrets-handling] section
 of the documentation.
 
 For multiple foundations, [`credhub-interpolate`][credhub-interpolate] will work the same, but `PREFIX` param will
