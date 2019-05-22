@@ -1,56 +1,76 @@
 <style>
-    .md-header {
-        height: 7.4rem;
+    @media only screen and (max-width: 60em) {
+        .md-header .secondary-header {
+            display: none;
+        }
     }
+    @media only screen and (min-width: 60em) {
+        .md-header {
+            height: 7.4rem;
+        }
 
-    .md-header .md-header-nav {
-        height: 5rem;
-    }
-    .md-header .md-header-nav .md-flex {
-        height: 100%;
-    }
+        .md-header .md-header-nav {
+            height: 5rem;
+        }
 
-    .md-header .md-header-nav .md-flex__cell {
-        vertical-align: middle;
-    }
-    .md-header .md-header-nav .md-header-nav__title {
-        font-size: 1.5rem;
-        line-height: 5rem;
-    }
+        .md-header .md-header-nav .md-flex {
+            height: 100%;
+        }
 
-    .md-header .secondary-header .md-flex__cell{
-        width: 30rem;
-        text-align: right;
-    }
-    .md-header .secondary-header .md-grid {
-        padding: 0 .6rem;
-    }
-    .md-header .secondary-header .logo {
-        text-align: left;
-    }
-    .md-header .secondary-header {
-        height: 2.4rem;
-        line-height: 3.0rem;
-        background-color: #243640;
-    }
+        .md-header .md-header-nav .md-flex__cell {
+            vertical-align: middle;
+        }
 
-    .md-header .secondary-header .sub {
-        font-size: 13px;
-    }
+        .md-header .md-header-nav .md-header-nav__title {
+            font-size: 1.5rem;
+            line-height: 5rem;
+        }
 
-    .md-header .secondary-header .sub a {
-        margin-right: 17px;
-    }
+        .md-header .secondary-header .md-flex__cell {
+            width: 30rem;
+            text-align: right;
+        }
 
-    .global-header-title .pivotal-logo {
-        fill: white;
-        height: .9rem;
-        margin-right: 17px;
-    }
+        .md-header .secondary-header .md-grid {
+            padding: 0 .6rem;
+        }
 
-    .global-header-title .documentation-letters {
-        fill: white;
-        height: .6rem;
+        .md-header .secondary-header .logo {
+            text-align: left;
+        }
+
+        .md-header .secondary-header {
+            height: 2.4rem;
+            line-height: 3.0rem;
+            background-color: #243640;
+        }
+
+        .md-header .secondary-header .sub {
+            font-size: 13px;
+        }
+
+        .md-header .secondary-header .sub a {
+            margin-right: 17px;
+        }
+
+        .global-header-title .pivotal-logo {
+            fill: white;
+            height: .9rem;
+            margin-right: 17px;
+        }
+
+        .global-header-title .documentation-letters {
+            fill: white;
+            height: .6rem;
+        }
+
+        .md-sidebar[data-md-state=lock] {
+            top: 7.4rem;
+        }
+
+        .md-main__inner {
+            padding-top: 5rem;
+        }
     }
 </style>
 <header class="md-header" data-md-component="header">
