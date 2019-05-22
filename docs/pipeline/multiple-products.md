@@ -17,9 +17,9 @@ These Concourse pipelines are examples on how to use the [tasks](../reference/ta
     If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/3-0/guides.html) would be a good place to start.
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
-* A valid [generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
+* A valid [generating-env-file][generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
 It is used by every task within Platform Automation for PCF
-* A valid [auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
+* A valid [auth-file][auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
 !!! info
@@ -27,15 +27,15 @@ the VM is created. The choices for this file are simple or saml authentication.
 
 * An [opsman-configuration][opsman-config] file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Ops Manager VM
-* A [director-configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
+* A [director-configuration][director-configuration] file: Each Ops Manager needs its own configuration, but it is retrieved differently from
 a product configuration. This config is used to deploy a new Ops Manager director, or update an existing one.
-* A set of valid [product-configuration] files: Each product configuration is a yaml file that contains the properties
+* A set of valid [product-configuration][product-configuration] files: Each product configuration is a yaml file that contains the properties
 necessary to configure an Ops Manager product using the `om` tool. This can be used during install or update.
-* (Optional) A working [credhub] setup with its own UAA client and secret.
+* (Optional) A working [credhub][credhub] setup with its own UAA client and secret.
 
 
 !!! info "Retrieving products from Pivnet"
-    Please ensure products have been procured from Pivotal Network using the [reference-resources].
+    Please ensure products have been procured from Pivotal Network using the [reference-resources][reference-resources].
 
 ## Installing Ops Manager and multiple products
 

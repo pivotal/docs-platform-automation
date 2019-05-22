@@ -18,7 +18,7 @@ These Concourse pipelines are examples on how to use the [tasks](../reference/ta
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
-* A set of valid [download-product-config] files: Each product has a configuration YAML of what version to download from Pivotal Network.
+* A set of valid [download-product-config][download-product-config] files: Each product has a configuration YAML of what version to download from Pivotal Network.
 
 ## Retrieval from Pivotal Network
 
