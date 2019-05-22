@@ -1,0 +1,27 @@
+- name: fetch-healthwatch
+  plan:
+    - aggregate:
+        - get: daily
+          trigger: true
+        - get: platform-automation-image
+          params:
+            unpack: true
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: config
+    - task: credhub-interpolate
+      <<: *credhub-interpolate
+    - task: download-healthwatch-product-and-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product-configs/healthwatch.yml
+      output_mapping: {downloaded-stemcell: healthwatch-stemcell}
+    - aggregate:
+        - put: healthwatch-product
+          params:
+            file: downloaded-product/*.pivotal
+        - put: healthwatch-stemcell
+          params:
+            file: healthwatch-stemcell/*.tgz

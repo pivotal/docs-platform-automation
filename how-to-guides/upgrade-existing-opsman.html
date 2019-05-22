@@ -1,0 +1,1924 @@
+<!doctype html><html lang="en" class="no-js"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="x-ua-compatible" content="ie=edge"><link rel="canonical" href="https://docs.pivotal.io/how-to-guides/upgrade-existing-opsman.html"><meta name="lang:clipboard.copy" content="Copy to clipboard"><meta name="lang:clipboard.copied" content="Copied to clipboard"><meta name="lang:search.language" content="en"><meta name="lang:search.pipeline.stopwords" content="True"><meta name="lang:search.pipeline.trimmer" content="True"><meta name="lang:search.result.none" content="No matching documents"><meta name="lang:search.result.one" content="1 matching document"><meta name="lang:search.result.other" content="# matching documents"><meta name="lang:search.tokenizer" content="[\s\-]+"><link rel="shortcut icon" href="../assets/icon.svg"><meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.3.0"><title>Upgrading an Existing Ops Manager - Platform Automation</title><link rel="stylesheet" href="../assets/stylesheets/application.4031d38b.css"><link rel="stylesheet" href="../assets/stylesheets/application-palette.224b79ff.css"><meta name="theme-color" content="#009688"><script src="../assets/javascripts/modernizr.74668098.js"></script><link href="https://fonts.gstatic.com" rel="preconnect" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700|Ubuntu+Mono&display=swap"><style>body,input{font-family:"Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Ubuntu Mono","Courier New",Courier,monospace}</style><link rel="stylesheet" href="../assets/fonts/material-icons.css">
+<style>
+label.md-nav__link {
+    font-weight: bold;
+}
+
+@media only screen and (min-width: 76.1875em) {
+  label.md-nav__title.md-nav__title--site {
+      display: none;
+  }
+}
+.header-dropdown {
+  display: inline-block;
+  position: relative;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.header-dropdown:hover .content,
+.header-dropdown:hover .content:hover {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+.header-dropdown .content {
+  position: absolute;
+  top: 100%;
+  background-color: #009688;
+  left: 0;
+  display: none;
+  z-index: 1;
+  clear: both;
+  padding: 10px;
+}
+
+.header-dropdown ul {
+  padding: 0;
+  margin: 0;
+  line-height: 24px;
+}
+
+.header-dropdown ul li {
+  list-style: none;
+}
+
+.md-header-nav__topic {
+  overflow: visible;
+}
+
+.header-dropdown .pointer {
+  height: 24px;
+  width: 24px;
+  display: inline-flex;
+  vertical-align: middle;
+  fill: white;
+}
+
+.md-typeset pre, .md-typeset code {
+  font-size: 100%
+}
+
+.md-typeset table:not([class]) {
+  font-size: 16px
+}
+
+.md-typeset > .codehilitetable {
+  overflow: visible;
+}
+
+.md-typeset .md-footer-social {
+    font-size: .64rem;
+}
+
+.md-footer-social {
+    padding: .4rem 0;
+}
+</style>
+
+<!-- Google Tag Manager -->
+<script>
+ (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+ 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+ })(window,document,'script','dataLayer','GTM-MW4LZHR');
+</script>
+</head><body dir="ltr" data-md-color-primary="teal" data-md-color-accent="teal"><svg class="md-svg"><defs><svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg></defs></svg> <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off"> <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off"> <label class="md-overlay" data-md-component="overlay" for="__drawer"></label><a href="#writing-a-pipeline-to-upgrade-an-existing-ops-manager" tabindex="1" class="md-skip">Skip to content </a><style>
+    @media only screen and (max-width: 60em) {
+        .md-header .secondary-header {
+            display: none;
+        }
+    }
+    @media only screen and (min-width: 60em) {
+        .md-header {
+            height: 7.4rem;
+        }
+
+        .md-header .md-header-nav {
+            height: 5rem;
+        }
+
+        .md-header .md-header-nav .md-flex {
+            height: 100%;
+        }
+
+        .md-header .md-header-nav .md-flex__cell {
+            vertical-align: middle;
+        }
+
+        .md-header .md-header-nav .md-header-nav__title {
+            font-size: 1.5rem;
+            line-height: 5rem;
+        }
+
+        .md-header .secondary-header .md-flex__cell {
+            width: 30rem;
+            text-align: right;
+        }
+
+        .md-header .secondary-header .md-grid {
+            padding: 0 .6rem;
+        }
+
+        .md-header .secondary-header .logo {
+            text-align: left;
+        }
+
+        .md-header .secondary-header {
+            height: 2.4rem;
+            line-height: 3.0rem;
+            background-color: #243640;
+        }
+
+        .md-header .secondary-header .sub {
+            font-size: 13px;
+        }
+
+        .md-header .secondary-header .sub a {
+            margin-right: 17px;
+        }
+
+        .global-header-title .pivotal-logo {
+            fill: white;
+            height: .9rem;
+            margin-right: 17px;
+        }
+
+        .global-header-title .documentation-letters {
+            fill: white;
+            height: .6rem;
+        }
+
+        .md-sidebar[data-md-state=lock] {
+            top: 7.4rem;
+        }
+
+        .md-main__inner {
+            padding-top: 5rem;
+        }
+    }
+</style>
+<header class="md-header" data-md-component="header">
+    <div class="secondary-header">
+        <div class="md-flex md-grid">
+            <div class="md-flex__cell logo">
+            <a href="https://docs.pivotal.io" class="global-header-title" target="_blank">
+            <svg class="pivotal-logo" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 174.72 40.94">
+                <path class="a" d="M38.77,6h-6.2V0h6.2Zm0,34.24H32.56V10.41h6.22Z"></path>
+                <path class="a"
+                      d="M74.67,10.41,66,36.18c-1.49,4.22-4.15,4.76-6.3,4.76-3.19,0-5.11-1.47-6.24-4.75l-7.22-21.4H43.39V10.41h7.45l7.44,24c.33,1,.53,1.63,1.43,1.63s1.13-.62,1.43-1.63l7.59-24Z"></path>
+                <path class="a"
+                      d="M90,10.41c8.05,0,13.66,5.31,13.66,12.92V28c0,7.6-5.61,12.92-13.66,12.92S76.32,35.62,76.32,28V23.33c0-7.61,5.62-12.92,13.67-12.92M90,36c4.81,0,7.8-3.64,7.8-8V23.33c0-4.37-3-8-7.8-8-5.1,0-7.8,3.64-7.8,8V28c0,4.37,2.82,8,7.8,8"></path>
+                <path class="a"
+                      d="M153.32,11.36A53.46,53.46,0,0,0,141.8,10c-8.17,0-13.24,5.15-13.24,13.45v3.27c0,8.3,5.07,13.53,13.24,13.53.19,0,1.64,0,2.3-.06v-5l-2.3.07c-4.45,0-7.43-3.43-7.43-8.53V23.44c0-5.09,3-8.52,7.43-8.52a43.88,43.88,0,0,1,6.09.38l.33.08V40.24h6.22V12.4c0-.53,0-.74-1.13-1"></path>
+                <rect class="a" x="160.44" width="6.22" height="40.24"></rect>
+                <path class="a"
+                      d="M10.92,0H0V40.24H6.47V5.59h3.79c.81,0,1.49,0,2.18.06,5.61.1,8.35,2.33,8.35,6.69,0,.17,0,.29,0,.47,0,4-2.21,6.71-8.32,6.71H10.67c0,1.55,0,4.41,0,5.41.63,0,1.22.06,1.82.06,8.78,0,15-3.45,15-12.11,0-.17,0-.35,0-.52C27.44,3.38,20.69,0,10.92,0"></path>
+                <path class="a"
+                      d="M114.7,4v6.43h10.13v4.82H114.7V32.61c0,2.73,1.74,2.8,4.26,2.8h5.87v4.83h-7.94c-5.87,0-8.48-2.35-8.48-7.63V4.84Z"></path>
+                <path class="a"
+                      d="M169.52,37.64a2.6,2.6,0,1,1,2.6,2.6A2.61,2.61,0,0,1,169.52,37.64Zm2.6-2.25a2.23,2.23,0,1,0,2.22,2.24A2.24,2.24,0,0,0,172.12,35.39ZM171.55,39h-.31V36.19h.8c.72,0,1.06.33,1.06.86a.82.82,0,0,1-.58.8l.74,1.17h-.36l-.68-1.1-.67,0Zm.51-1.34c.46,0,.75-.24.75-.62s-.25-.6-.79-.6h-.48V37.7Z"></path>
+            </svg>
+            <svg class="documentation-letters" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 358.62 30.84">
+                <path class="a"
+                      d="M3.71,37.26V7.45h9.52c9.25,0,15.06,6.75,15.06,14.92S22.48,37.26,13.23,37.26Zm21.9-14.89c0-7-4.47-12.6-12.38-12.6h-7V34.93h7C21.1,34.93,25.61,29.35,25.61,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M33.52,22.37C33.52,13.66,39.24,7,48,7s14.48,6.7,14.48,15.41S56.72,37.79,48,37.79,33.52,31.09,33.52,22.37Zm26.28,0c0-7.55-4.64-13.09-11.8-13.09S36.21,14.82,36.21,22.37s4.6,13.1,11.79,13.1S59.8,29.88,59.8,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M67.67,22.37C67.67,13.21,74.33,7,82.78,7a13.38,13.38,0,0,1,10.86,5.27L91.5,13.61a10.84,10.84,0,0,0-8.72-4.33c-7,0-12.42,5.32-12.42,13.09s5.45,13.1,12.42,13.1a10.82,10.82,0,0,0,8.72-4.34l2.19,1.34a13.51,13.51,0,0,1-10.91,5.32C74.33,37.79,67.67,31.54,67.67,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M98.79,25.82V7.45h2.59V25.77c0,6,3.17,9.7,9,9.7s9-3.67,9-9.7V7.45H122V25.82c0,7.37-3.94,12-11.62,12S98.79,33.15,98.79,25.82Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M154.75,37.26V10.66l-10.87,26.6h-1L132,10.66v26.6h-2.55V7.45h3.8l10.14,24.8,10.1-24.8h3.85V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M164.76,37.26V7.45h18.91V9.77H167.31v11h16v2.32h-16v11.8h16.36v2.33Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M211.29,37.26,192.52,11.65V37.26H190V7.45h2.59L211.25,32.7V7.45h2.54V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M228.81,37.26V9.77h-9.74V7.45h22.08V9.77h-9.74V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M264.93,37.26,262,29.93H246.2l-2.95,7.33H240.3L252.51,7.45h3.17l12.2,29.81ZM254.11,10.17,247.05,27.6h14.08Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M276.78,37.26V9.77H267V7.45h22.07V9.77h-9.74V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M294.39,37.26V7.45h2.55V37.26Z" transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M303.24,22.37C303.24,13.66,309,7,317.72,7s14.48,6.7,14.48,15.41-5.76,15.42-14.48,15.42S303.24,31.09,303.24,22.37Zm26.28,0c0-7.55-4.65-13.09-11.8-13.09s-11.8,5.54-11.8,13.09,4.61,13.1,11.8,13.1S329.52,29.88,329.52,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M359.83,37.26,341.06,11.65V37.26h-2.55V7.45h2.59L359.78,32.7V7.45h2.55V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+            </svg>
+            </a></div>
+
+            <div class="md-flex__cell sub">
+                <a href="#">Support</a>
+                <a href="#">Downloads</a>
+            </div>
+        </div>
+    </div>
+    <nav class="md-header-nav md-grid">
+        <div class="md-flex">
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <a href="https://docs.pivotal.io" title="Platform Automation"
+                   class="md-header-nav__button md-logo">
+                    
+                        <img src="../assets/icon.svg" width="65" height="65">
+                    
+                </a>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch">
+                <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+                    
+                        
+                            <span class="md-header-nav__topic">
+                                Platform Automation
+                                
+                                    <span class="header-dropdown">
+                                        <a href="testin/how-to-guides/upgrade-existing-opsman.html">2.1</a>
+                                        <span class="pointer">
+                                            <svg width="100%" height="100%" viewBox="0 0 24 24" fit="" preserveAspectRatio="xMidYMid meet"
+                                               focusable="false"><path d="M18 9H6l6 6 6-6z" fill-rule="evenodd"></path></svg>
+                                        </span>
+                                        <span class="content">
+                                            <ul>
+                                              
+                                                  <li> <a href="testin/how-to-guides/upgrade-existing-opsman.html">1.1</a></li>
+                                              
+                                                  <li> <a href="testin/how-to-guides/upgrade-existing-opsman.html">2.1</a></li>
+                                              
+                                                  <li> <a href="testin/how-to-guides/upgrade-existing-opsman.html">develop</a></li>
+                                              
+                                            </ul>
+                                        </span>
+                                    </span>
+                                
+                            </span>
+                            <span class="md-header-nav__topic">
+                                Upgrading an Existing Ops Manager
+                            </span>
+                        
+                    
+                </div>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                
+                    
+                        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+                        <div class="md-search" data-md-component="search" role="dialog"><label class="md-search__overlay" for="__search"></label><div class="md-search__inner" role="search"><form class="md-search__form" name="search"><input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active"> <label class="md-icon md-search__icon" for="__search"></label> <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">&#xE5CD;</button></form><div class="md-search__output"><div class="md-search__scrollwrap" data-md-scrollfix><div class="md-search-result" data-md-component="result"><div class="md-search-result__meta">Type to start searching</div><ol class="md-search-result__list"></ol></div></div></div></div></div>
+                    
+                
+            </div>
+            
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <div class="md-header-nav__source">
+                        <a href="https://github.com/pivotal/docs-platform-automation/" title="Go to repository" class="md-source" data-md-source="github"><div class="md-source__icon"><svg viewBox="0 0 24 24" width="24" height="24"><use xlink:href="#__github" width="24" height="24"></use></svg></div><div class="md-source__repository">Help fix the docs!</div></a>
+                    </div>
+                </div>
+            
+        </div>
+    </nav>
+</header><div class="md-container"><main class="md-main"><div class="md-main__inner md-grid" data-md-component="container"><div class="md-sidebar md-sidebar--primary" data-md-component="navigation"><div class="md-sidebar__scrollwrap"><div class="md-sidebar__inner"><nav class="md-nav md-nav--primary" data-md-level="0"><label class="md-nav__title md-nav__title--site" for="__drawer"><a href="https://docs.pivotal.io" title="Platform Automation" class="md-nav__button md-logo"><img src="../assets/icon.svg" width="48" height="48"></a>Platform Automation</label><div class="md-nav__source"><a href="https://github.com/pivotal/docs-platform-automation/" title="Go to repository" class="md-source" data-md-source="github"><div class="md-source__icon"><svg viewBox="0 0 24 24" width="24" height="24"><use xlink:href="#__github" width="24" height="24"></use></svg></div><div class="md-source__repository">Help fix the docs!</div></a></div><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../index.html" title="Introduction" class="md-nav__link">Introduction</a></li><li class="md-nav__item"><a href="../downloading-and-testing.html" title="Downloading and Testing" class="md-nav__link">Downloading and Testing</a></li><li class="md-nav__item"><a href="../compatibility-and-versioning.html" title="Compatibility and Versioning" class="md-nav__link">Compatibility and Versioning</a></li><li class="md-nav__item"><a href="../release-notes.html" title="Release Notes" class="md-nav__link">Release Notes</a></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5"><label class="md-nav__link" for="nav-5">Reference Pipelines</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-5">Reference Pipelines</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../pipeline/resources.html" title="Retrieving External Dependencies" class="md-nav__link">Retrieving External Dependencies</a></li><li class="md-nav__item"><a href="../pipeline/multiple-products.html" title="Ops Manager + multiple products" class="md-nav__link">Ops Manager + multiple products</a></li><li class="md-nav__item"><a href="../pipeline/single-product.html" title="Ops Manager + a product" class="md-nav__link">Ops Manager + a product</a></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6"><label class="md-nav__link" for="nav-6">Before You Begin</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-6">Before You Begin</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../before-you-begin/git-repo-layout.html" title="Git Repository Layout" class="md-nav__link">Git Repository Layout</a></li><li class="md-nav__item"><a href="../before-you-begin/setup-s3-and-resources.html" title="Set Up S3 for File Storage" class="md-nav__link">Set Up S3 for File Storage</a></li></ul></nav></li><li class="md-nav__item md-nav__item--active md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7" checked><label class="md-nav__link" for="nav-7">How to Guides</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-7">How to Guides</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item md-nav__item--active"><input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc"><label class="md-nav__link md-nav__link--active" for="__toc">Upgrading an Existing Ops Manager</label><a href="upgrade-existing-opsman.html" title="Upgrading an Existing Ops Manager" class="md-nav__link md-nav__link--active">Upgrading an Existing Ops Manager</a><nav class="md-nav md-nav--secondary"><label class="md-nav__title" for="__toc">Table of contents</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="#prerequisites" title="Prerequisites" class="md-nav__link">Prerequisites</a></li><li class="md-nav__item"><a href="#creating-a-concourse-pipeline" title="Creating a Concourse Pipeline" class="md-nav__link">Creating a Concourse Pipeline</a><nav class="md-nav"><ul class="md-nav__list"><li class="md-nav__item"><a href="#getting-fly" title="Getting fly" class="md-nav__link">Getting fly</a></li><li class="md-nav__item"><a href="#setting-the-pipeline" title="Setting The Pipeline" class="md-nav__link">Setting The Pipeline</a></li><li class="md-nav__item"><a href="#your-first-job" title="Your First Job" class="md-nav__link">Your First Job</a><nav class="md-nav"><ul class="md-nav__list"><li class="md-nav__item"><a href="#but-first-git-init" title="But First, git init" class="md-nav__link">But First, git init</a></li><li class="md-nav__item"><a href="#the-test-task" title="The Test Task" class="md-nav__link">The Test Task</a></li><li class="md-nav__item"><a href="#adding-resources" title="Adding Resources" class="md-nav__link">Adding Resources</a></li><li class="md-nav__item"><a href="#exporting-the-installation" title="Exporting The Installation" class="md-nav__link">Exporting The Installation</a></li></ul></nav></li><li class="md-nav__item"><a href="#performing-the-upgrade" title="Performing The Upgrade" class="md-nav__link">Performing The Upgrade</a></li></ul></nav></li></ul></nav></li><li class="md-nav__item"><a href="install-opsman.html" title="Installing Ops Manager" class="md-nav__link">Installing Ops Manager</a></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8"><label class="md-nav__link" for="nav-8">References</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-8">References</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../reference/task.html" title="Tasks" class="md-nav__link">Tasks</a></li><li class="md-nav__item"><a href="../reference/inputs-outputs.html" title="Inputs/Outputs" class="md-nav__link">Inputs/Outputs</a></li><li class="md-nav__item"><a href="../reference/running-commands-locally.html" title="Running Commands Locally" class="md-nav__link">Running Commands Locally</a></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-9" type="checkbox" id="nav-9"><label class="md-nav__link" for="nav-9">Configuration Management</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-9">Configuration Management</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../configuration-management/configure-auth.html" title="Configure Auth" class="md-nav__link">Configure Auth</a></li><li class="md-nav__item"><a href="../configuration-management/creating-a-director-config-file.html" title="Creating a Director Config File" class="md-nav__link">Creating a Director Config File</a></li><li class="md-nav__item"><a href="../configuration-management/creating-a-product-config-file.html" title="Creating a Product Config File" class="md-nav__link">Creating a Product Config File</a></li><li class="md-nav__item"><a href="../configuration-management/configure-env.html" title="Configuring Env" class="md-nav__link">Configuring Env</a></li><li class="md-nav__item"><a href="../configuration-management/secrets-handling.html" title="Secrets Handling" class="md-nav__link">Secrets Handling</a></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-10" type="checkbox" id="nav-10"><label class="md-nav__link" for="nav-10">Pipeline Design</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-10">Pipeline Design</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../pipeline-design/variables.html" title="Variables" class="md-nav__link">Variables</a></li><li class="md-nav__item"><a href="../pipeline-design/stemcell-handling.html" title="Stemcell Handling" class="md-nav__link">Stemcell Handling</a></li></ul></nav></li><li class="md-nav__item"><a href="../upgrade.html" title="About Upgrading Ops Manager" class="md-nav__link">About Upgrading Ops Manager</a></li><li class="md-nav__item"><a href="../report-an-issue.html" title="Report an Issue" class="md-nav__link">Report an Issue</a></li></ul></nav></div></div></div><div class="md-sidebar md-sidebar--secondary" data-md-component="toc"><div class="md-sidebar__scrollwrap"><div class="md-sidebar__inner"><nav class="md-nav md-nav--secondary"><label class="md-nav__title" for="__toc">Table of contents</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="#prerequisites" title="Prerequisites" class="md-nav__link">Prerequisites</a></li><li class="md-nav__item"><a href="#creating-a-concourse-pipeline" title="Creating a Concourse Pipeline" class="md-nav__link">Creating a Concourse Pipeline</a><nav class="md-nav"><ul class="md-nav__list"><li class="md-nav__item"><a href="#getting-fly" title="Getting fly" class="md-nav__link">Getting fly</a></li><li class="md-nav__item"><a href="#setting-the-pipeline" title="Setting The Pipeline" class="md-nav__link">Setting The Pipeline</a></li><li class="md-nav__item"><a href="#your-first-job" title="Your First Job" class="md-nav__link">Your First Job</a><nav class="md-nav"><ul class="md-nav__list"><li class="md-nav__item"><a href="#but-first-git-init" title="But First, git init" class="md-nav__link">But First, git init</a></li><li class="md-nav__item"><a href="#the-test-task" title="The Test Task" class="md-nav__link">The Test Task</a></li><li class="md-nav__item"><a href="#adding-resources" title="Adding Resources" class="md-nav__link">Adding Resources</a></li><li class="md-nav__item"><a href="#exporting-the-installation" title="Exporting The Installation" class="md-nav__link">Exporting The Installation</a></li></ul></nav></li><li class="md-nav__item"><a href="#performing-the-upgrade" title="Performing The Upgrade" class="md-nav__link">Performing The Upgrade</a></li></ul></nav></li></ul></nav></div></div></div><div class="md-content"><article class="md-content__inner md-typeset"><a href="https://github.com/pivotal/docs-platform-automation/edit/develop/docs/how-to-guides/upgrade-existing-opsman.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a><h1 id="writing-a-pipeline-to-upgrade-an-existing-ops-manager">Writing a Pipeline to Upgrade an Existing Ops Manager</h1>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Over the course of this guide,
+we're going to use Platform Automation for PCF
+to create a <a href="https://concourse-ci.org/pipelines.html">pipeline</a>
+using <a href="https://concourse-ci.org/">Concourse</a>.</p>
+<p>Before we get started, you'll need a few things ready to go:</p>
+<ol>
+<li>A running Ops Manager VM that you would like to upgrade</li>
+<li>Credentials for an IaaS that Ops Manager is compatible with</li>
+<li>A Concourse instance
+   with access to a Credhub instance
+   and to the Internet</li>
+<li>Github.com account</li>
+<li>Read/write credentials and bucket name for an S3 bucket</li>
+<li>An account on <a href="https://network.pivotal.io">https://network.pivotal.io</a> (Pivnet)</li>
+<li>A MacOS workstation<ul>
+<li>with Docker installed</li>
+<li>and a text editor you like</li>
+<li>a terminal emulator you like</li>
+<li>a browser that works with Concourse,
+  like Firefox or Chrome</li>
+<li>and <code>git</code></li>
+</ul>
+</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">IaaS</p>
+<p>It doesn't actually matter what IaaS you use for Ops Manager,
+as long as your Concourse can connect to it.
+Pipelines built with Platform Automation can be platform-agnostic.</p>
+</div>
+<p>It will be very helpful to have a basic familiarity with the following. If you don't have basic familiarity with all these things,
+that's okay.
+We'll explain some basics,
+and link to resources to learn more:</p>
+<ul>
+<li>the bash terminal</li>
+<li><a href="https://git-scm.com/">git</a></li>
+<li><a href="https://learnxinyminutes.com/docs/yaml/">YAML</a></li>
+<li><a href="https://concourse-ci.org/">Concourse</a></li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">A note on the prerequisites</p>
+<p><p>While this guide uses Github to provide a git remote,
+and an S3 bucket as a blobstore,
+Platform Automation supports arbitrary git providers
+and S3-compatible blobstores.
+<p>If you need to use an alternate one,
+that's okay.
+<p>We picked specific examples
+so we could describe some steps in detail.
+Some details may be different
+if you follow along with different providers.
+If you're comfortable navigating those differences on your own,
+go for it!
+<p>Similarly, in this guide, we assume the MacOS operating system.
+This should all work fine on Linux, too,
+but there might be differences in the paths you'll need to figure out.</p>
+</div>
+<h2 id="creating-a-concourse-pipeline">Creating a Concourse Pipeline</h2>
+<p>Platform Automation's tasks and image are meant to be used in a Concourse pipeline.
+So, let's make one.</p>
+<p>Using your bash command-line client,
+create a directory to keep your pipeline files in, and <code>cd</code> into it.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>mkdir platform-automation-pipelines
+<span class="nb">cd</span> !$
+</pre></div>
+</td></tr></table>
+
+<div class="admonition tip">
+<p class="admonition-title">"<code>!$</code>"</p>
+<p><code>!$</code> is a bash shortcut.
+Pronounced "bang, dollar-sign,"
+it means "use the last argument from the most recent command."
+In this case, that's the directory we just created!
+This is not a Platform Automation thing,
+this is just a bash tip dearly beloved
+of at least one Platform Automator.</p>
+</div>
+<p>Before we get started with the pipeline itself,
+we'll gather some variables in a file
+we can use throughout our pipeline.</p>
+<p>Open your text editor and create <code>vars.yml</code>.
+Here's what it should look like to start, we can add things to this as we go:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">platform-automation-bucket</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">your-bucket-name</span>
+<span class="nt">credhub-server</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://your-credhub.example.com</span>
+<span class="nt">opsman-url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://pcf.foundation.example.com</span>
+</pre></div>
+</td></tr></table>
+
+<div class="admonition info">
+<p class="admonition-title">Using a DNS</p>
+<p>This example assumes that you're using DNS and hostnames.
+You can use IP addresses for all these resources instead,
+but you still need to provide the information as a URL,
+for example: <code>https://120.121.123.124</code></p>
+</div>
+<p>Now, create a file called <code>pipeline.yml</code>.</p>
+<div class="admonition info">
+<p class="admonition-title">Naming</p>
+<p>We'll use <code>pipeline.yml</code> in our examples throughout this guide.
+However, you may create multiple pipelines over time.
+If there's a more sensible name for the pipeline you're working on,
+feel free to use that instead.</p>
+</div>
+<p>Write this at the top, and save the file. This is <a href="https://learnxinyminutes.com/docs/yaml/">YAML</a> for "the start of the document. It's optional, but traditional:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+</pre></div>
+</td></tr></table>
+
+<p>Now you have a pipeline file! Nominally!
+Well, look.
+It's valid YAML, at least.</p>
+<h3 id="getting-fly">Getting <code>fly</code></h3>
+<p>Let's try to set it as a pipeline with <a href="https://concourse-ci.org/fly.html"><code>fly</code></a>,
+the Concourse command-line Interface (CLI).</p>
+<p>First, check if we've got <code>fly</code> installed at all:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>fly -v
+</pre></div>
+</td></tr></table>
+
+<p>If it gives you back a version number, great!
+Skip ahead to <a href="#setting-the-pipeline">Setting The Pipeline</a></p>
+<p>If it says something like <code>-bash: fly: command not found</code>,
+we have a little work to do; we've got to get <code>fly</code>.</p>
+<p>Navigate to the address for your Concourse instance in a web browser.
+At this point, you don't even need to be signed in!
+If there are no public pipelines, you should see something like this:</p>
+<p><img alt="Get Fly" src="../img/concourse-fly-download.png" /></p>
+<p>If there <em>are</em> public pipelines,
+or if you're signed in and there are pipelines you can see,
+you'll see something similar in the lower-right hand corner.</p>
+<p>Click the icon for your OS and save the file,
+<code>mv</code> the resulting file to somewhere in your <code>$PATH</code>,
+and use <code>chmod</code> to make it executable:</p>
+<div class="admonition info">
+<p class="admonition-title">A note on command-line examples</p>
+<p>Some of these, you can copy-paste directly into your terminal.
+Some of them won't work that way,
+or even if they did, would require you to edit them to replace our example values
+with your actual values.
+We recommend you type all of the bash examples in by hand,
+substituting values, if necessary, as you go.
+Don't forget that you can often hit the <code>tab</code> key
+to auto-complete the name of files that already exist;
+it makes all that typing just a little easier,
+and serves as a sort of command-line autocorrect.</p>
+</div>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>mv ~/Downloads/fly /usr/local/bin/fly
+chmod +x !$
+</pre></div>
+</td></tr></table>
+
+<p>Congrats! You got <code>fly</code>.</p>
+<div class="admonition info">
+<p class="admonition-title">Okay but what did I just do?</p>
+<p>FAIR QUESTION. You downloaded the <code>fly</code> binary,
+moved it into bash's PATH,
+which is where bash looks for things to execute
+when you type a command,
+and then added permissions that allow it to be e<code>x</code>ecuted.
+Now, the CLI is installed -
+and we won't have to do all that again,
+because <code>fly</code> has the ability to update itself,
+which we'll get into later.</p>
+</div>
+<h3 id="setting-the-pipeline">Setting The Pipeline</h3>
+<p>Okay <em>now</em> let's try to set our pipeline with <code>fly</code>, the Concourse CLI.</p>
+<p><code>fly</code> keeps a list of Concourses it knows how to talk to.
+Let's see if the Concourse we want is already on the list:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>fly targets
+</pre></div>
+</td></tr></table>
+
+<p>If you see the address of the Concourse you want to use in the list,
+note down its name, and use it in the login command:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>fly -t control-plane login
+</pre></div>
+</td></tr></table>
+
+<div class="admonition info">
+<p class="admonition-title">Control-plane?</p>
+<p>We're going to use the name <code>control-plane</code>
+for our Concourse in this guide.
+It's not a special name,
+it just happens to be the name
+of the Concourse we want to use in our target list.</p>
+</div>
+<p>If you don't see the Concourse you need, you can add it with the <code>-c</code> (<code>--concourse-url</code>)flag:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>fly -t control-plane login -c https://your-concourse.example.com
+</pre></div>
+</td></tr></table>
+
+<p>You should see a login link you can click on
+to complete login from your browser.</p>
+<div class="admonition tip">
+<p class="admonition-title">Stay on target</p>
+<p><p>The <code>-t</code> flag sets the name when used with <code>login</code> and <code>-c</code>.
+In the future, you can leave out the <code>-c</code> argument.
+<p>If you ever want to know what a short flag stands for,
+you can run the command with <code>-h</code> (<code>--help</code>) at the end.</p>
+</div>
+<p>Pipeline-setting time!
+We'll use the name "foundation" for this pipeline,
+but if your foundation has an actual name, use that instead.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+</pre></div>
+</td></tr></table>
+
+<p>It should say <code>no changes to apply</code>,
+which is fair, since we gave it an empty YAML doc.</p>
+<div class="admonition info">
+<p class="admonition-title">Version discrepancy</p>
+<p>If <code>fly</code> says something about a "version discrepancy,"
+"significant" or otherwise, just do as it says:
+run <code>fly sync</code> and try again.
+<code>fly sync</code> automatically updates the CLI
+with the version that matches the Concourse you're targeting.
+Useful!</p>
+</div>
+<h3 id="your-first-job">Your First Job</h3>
+<p>Let's see Concourse actually <em>do</em> something, yeah?</p>
+<p>Add this to your <code>pipeline.yml</code>, starting on the line after the <code>---</code>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">wait</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">no nevermind let&#39;s get version control first</span>
+</pre></div>
+</td></tr></table>
+
+<p>Good point. Don't actually add that to your pipeline config yet.
+Or if you have, delete it, so your whole pipeline looks like this again:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+</pre></div>
+</td></tr></table>
+
+<p>Reverting edits to our pipeline is something we'll probably want to do again.
+This is one of many reasons we want to keep our pipeline under version control.</p>
+<p>So let's make this directory a git repo!</p>
+<h4 id="but-first-git-init">But First, <code>git init</code></h4>
+<p><code>git</code> should come back with information about the commit you just created:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git init
+git commit --allow-empty -m <span class="s2">&quot;Empty initial commit&quot;</span>
+</pre></div>
+</td></tr></table>
+
+<p>If it gives you a config error instead,
+you might need to configure <code>git</code> a bit.
+Here's a <a href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">good guide</a>
+to initial setup.
+Get that done, and try again.</p>
+<p>Now we can add our <code>pipeline.yml</code>,
+so in the future it's easy to get back to that soothing <code>---</code> state.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add pipeline.yml vars.yml
+git commit -m <span class="s2">&quot;Add pipeline and starter vars&quot;</span>
+</pre></div>
+</td></tr></table>
+
+<p>Let's just make sure we're all tidy:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git status
+</pre></div>
+</td></tr></table>
+
+<p><code>git</code> should come back with <code>nothing to commit, working tree clean</code>.</p>
+<p>Great. Now we can safely make changes.</p>
+<div class="admonition tip">
+<p class="admonition-title">Git commits</p>
+<p><p><code>git</code> commits are the basic unit of code history.
+<p>Making frequent, small, commits with good commit messages
+makes it <em>much easier</em> to figure out why things are the way they are,
+and to return to the way things were in simpler, better times.
+Writing short commit messages that capture the <em>intent</em> of the change
+(in an imperative style) can be tough,
+but it really does make the pipeline's history much more legible,
+both to future-you,
+and to current-and-future teammates and collaborators.</p>
+</div>
+<h4 id="the-test-task">The Test Task</h4>
+<p>Platform Automation comes with a <a href="../reference/task.html#test"><code>test</code></a> task
+meant to validate that it's been installed correctly.
+Let's use it to get setup.</p>
+<p>Add this to your <code>pipeline.yml</code>, starting on the line after the <code>---</code>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">jobs</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+  <span class="nt">plan</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+      <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/test.yml</span>
+</pre></div>
+</td></tr></table>
+
+<p>If we try to set this now, Concourse will take it:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+</pre></div>
+</td></tr></table>
+
+<p>Now we should be able to see our pipeline
+in the Concourse UI.
+It'll be paused, so click the "play" button to unpause it.
+Then, click in to the gray box for our <code>test</code> job,
+and hit the "plus" button to schedule a build.</p>
+<p>It should error immediately, with <code>unknown artifact source: platform-automation-tasks</code>.
+We didn't give it a source for our task file.</p>
+<p>We've got a bit of pipeline code that Concourse accepts.
+Before we start doing the next part,
+this would be a good moment to make a commit:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add pipeline.yml
+git commit -m <span class="s2">&quot;Add (nonfunctional) test task&quot;</span>
+</pre></div>
+</td></tr></table>
+
+<p>With that done,
+we can try to get the inputs we need
+by adding <code>get</code> steps to the plan
+before the task, like so:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">jobs</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+  <span class="nt">plan</span><span class="p">:</span>
+<span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+</span><span class="hll">      <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+</span><span class="hll">      <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*image*.tgz&quot;</span><span class="p p-Indicator">]</span>
+</span><span class="hll">        <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks</span>
+</span><span class="hll">      <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+</span><span class="hll">      <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*tasks*.zip&quot;</span><span class="p p-Indicator">]</span>
+</span><span class="hll">        <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</span>    <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+      <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/test.yml</span>
+</pre></div>
+</td></tr></table>
+
+<p>If we try to <code>fly set</code> this,
+<code>fly</code> will complain about invalid resources.</p>
+<p>To actually make the <code>image</code> and <code>file</code> we want to use available,
+we'll need some Resources.</p>
+<h4 id="adding-resources">Adding Resources</h4>
+<p>Resources are Concourse's main approach to managing artifacts.
+We need an image, and the tasks directory -
+so we'll tell Concourse how to get these things by declaring Resources for them.</p>
+<p>In this case, we'll be downloading the image and the tasks directory from Pivnet.
+Before we can declare the resources themselves,
+we have to teach Concourse to talk to Pivnet.
+(Many resource types are built in, but this one isn't.)</p>
+<p>Add the following to your pipeline file.
+We'll put it above the <code>jobs</code> entry.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">resource_types</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pivnet</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker-image</span>
+  <span class="nt">source</span><span class="p">:</span>
+    <span class="nt">repository</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pivotalcf/pivnet-resource</span>
+    <span class="nt">tag</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest-final</span>
+<span class="nt">resources</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pivnet</span>
+  <span class="nt">source</span><span class="p">:</span>
+    <span class="nt">product_slug</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+    <span class="nt">api_token</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((pivnet-refresh-token))</span>
+</pre></div>
+</td></tr></table>
+
+<p>The API token is a credential,
+which we'll pass via the command-line when setting the pipeline,
+so we don't accidentally check it in.</p>
+<p>Grab a refresh token from your <a href="https://network.pivotal.io/users/dashboard/edit-profile">Pivnet profile</a>
+and clicking "Request New Refresh Token."
+Then use that token in the following command:</p>
+<div class="admonition tip">
+<p class="admonition-title">Keep it secret, keep it safe</p>
+<p>Bash commands that start with a space character
+are not saved in your history.
+This can be very useful for cases like this,
+where you want to pass a secret,
+but don't want it saved.
+Commands in this guide that contain a secret
+start with a space, which can be easy to miss.</p>
+</div>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># note the space before the command</span>
+ fly -t control-plane set-pipeline <span class="se">\</span>
+     -p foundation <span class="se">\</span>
+     -c pipeline.yml <span class="se">\</span>
+     -v pivnet-refresh-token<span class="o">=</span>your-api-token
+</pre></div>
+</td></tr></table>
+
+<div class="admonition warning getting your pivnet token expires it">
+<p class="admonition-title">Warning</p>
+<p>When you get your Pivnet token as described above,
+any previous Pivnet tokens you may have gotten will stop working.
+If you're using your Pivnet refresh token anywhere,
+retrieve it from your existing secret storage rather than getting a new one,
+or you'll end up needing to update it everywhere it's used.</p>
+</div>
+<p>Go back to the Concourse UI and trigger another build.
+This time, it should pass.</p>
+<p>Commit time!</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add pipeline.yml
+git commit -m <span class="s2">&quot;Add resources needed for test task&quot;</span>
+</pre></div>
+</td></tr></table>
+
+<p>We'd rather not pass our Pivnet token
+every time we need to set the pipeline.
+Fortunately, Concourse can integrate
+with secret storage services.</p>
+<p>Let's put our API token in Credhub so Concourse can get it.</p>
+<p>First we'll need to login:</p>
+<div class="admonition info">
+<p class="admonition-title">Backslashes in bash examples</p>
+<p>The following example has been broken across multiple lines
+by using backslash characters (<code>\</code>) to escape the newlines.
+We'll be doing this a lot to keep the examples readable.
+When you're typing these out,
+you can skip that and just put it all on one line.</p>
+</div>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># again, note the space at the start</span>
+ credhub login --server example.com <span class="se">\</span>
+         --client-id your-client-id <span class="se">\</span>
+         --client-secret your-client-secret
+</pre></div>
+</td></tr></table>
+
+<div class="admonition info">
+<p class="admonition-title">Logging in to credhub</p>
+<p>Depending on your credential type,
+you may need to pass <code>client-id</code> and <code>client-secret</code>,
+as we do above,
+or <code>username</code> and <code>password</code>.
+We use the <code>client</code> approach because that's the credential type
+that automation should usually be working with.
+Nominally, a username represents a person,
+and a client represents a system;
+this isn't always exactly how things are in practice.
+Use whichever type of credential you have in your case.
+Note that if you exclude either set of flags,
+Credhub will interactively prompt for <code>username</code> and <code>password</code>,
+and hide the characters of your password when you type them.
+This method of entry can be better in some situations.</p>
+</div>
+<p>Then, we can set the credential name
+to the path <a href="https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules">where Concourse will look for it</a>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># note the starting space</span>
+ credhub <span class="nb">set</span> <span class="se">\</span>
+         --name /concourse/your-team-name/pivnet-refresh-token <span class="se">\</span>
+         --type value <span class="se">\</span>
+         --value your-credhub-refresh-token
+</pre></div>
+</td></tr></table>
+
+<p>Now, let's set that pipeline again,
+without passing a secret this time.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>fly -t control-plane set-pipeline <span class="se">\</span>
+    -p foundation <span class="se">\</span>
+    -c pipeline.yml
+</pre></div>
+</td></tr></table>
+
+<p>This should succeed,
+and the diff Concourse shows you should replace the literal credential
+with <code>((pivnet-refresh-token))</code>.</p>
+<p>Visit the UI again and re-run the test job;
+this should also succeed.</p>
+<h4 id="exporting-the-installation">Exporting The Installation</h4>
+<p>We're finally in a position to do work!</p>
+<p>While ultimately we want to upgrade Ops Manager,
+to do that safely we first need to download and persist
+an export of the current installation.</p>
+<div class="admonition warning">
+<p class="admonition-title">Export your installation routinely</p>
+<p>We <em><strong>strongly recommend</strong></em> automatically exporting
+the Ops Manager installation
+and <em><strong>persisting it to your blobstore</strong></em> on a regular basis.
+This ensures that if you need to upgrade (or restore!)
+your Ops Manager for any reason,
+you'll have the latest installation info available.
+Later in this tutorial, we'll be adding a time trigger
+for exactly this reason.</p>
+</div>
+<p>Let's switch out the test job
+for one that exports our existing Ops Manager's installation state.
+We can switch the task out by changing:</p>
+<ul>
+<li>the <code>name</code> of the job</li>
+<li>the <code>name</code> of the task</li>
+<li>the <code>file</code> of the task</li>
+</ul>
+<p><a href="../reference/task.html#export-installation"><code>export-installation</code></a>
+has an additional required input.
+We need the <code>env</code> file used to talk to Ops Manager.</p>
+<p>We'll write that file and make it available as a resource in a moment,
+for now, we'll just <code>get</code> it as if it's there.</p>
+<p>It also has an additional output (the exported installation).
+Again, for now, we'll just write that
+like we have somewhere to <code>put</code> it.</p>
+<p>Finally, while it's fine for <code>test</code> to run in parallel,
+<code>export-installation</code> shouldn't.
+So, we'll add <code>serial: true</code> to the job, too.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">jobs</span><span class="p">:</span>
+<span class="hll"><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">export-installation</span>
+</span><span class="hll">  <span class="nt">serial</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</span>  <span class="nt">plan</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+      <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*image*.tgz&quot;</span><span class="p p-Indicator">]</span>
+        <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks</span>
+      <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*tasks*.zip&quot;</span><span class="p p-Indicator">]</span>
+        <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+</span><span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">export-installation</span>
+</span><span class="hll">      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+</span><span class="hll">      <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/export-installation.yml</span>
+</span><span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">put</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation</span>
+</span><span class="hll">      <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation/installation-*.zip</span>
+</span></pre></div>
+</td></tr></table>
+
+<p>If we try to <code>fly</code> this up to Concourse,
+it will again complain about resources that don't exist.</p>
+<p>So, let's make them.</p>
+<p>The first new resource we need is the env file.
+We'll push our git repo to a remote on Github
+to make this (and later, other) configuration available to the pipelines.</p>
+<p>Github has good <a href="https://help.github.com/en/articles/adding-an-existing-project-to-github-using-the-command-line">instructions</a>
+you can follow to create a new repository on Github.
+You can skip over the part
+about using <code>git init</code> to setup your repo,
+since we <a href="#but-first-git-init">already did that</a>.</p>
+<p>Once you've setup your remote
+and used <code>git push</code> to send what you've got so far,
+we can add a new directory to hold foundation-specific configuration.
+(We'll use the name "foundation" for this directory,
+but if your foundation has an actual name, use that instead.)</p>
+<p>You will also need to add the repository URL
+to <code>vars.yml</code> so we can reference it later,
+when we declare the corresponding resource.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">pipeline-repo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">git@github.com:username/platform-automation-pipelines</span>
+</pre></div>
+</td></tr></table>
+
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>mkdir -p foundation
+<span class="nb">cd</span> !$
+</pre></div>
+</td></tr></table>
+
+<p>Now lets write an <code>env.yml</code> for your Ops Manager.</p>
+<p><code>env.yml</code> holds authentication and target information
+for a particular Ops Manager.</p>
+<p>An example <code>env.yml</code> is shown below.
+As mentioned in the comment,
+<code>decryption-passphrase</code> is required for <code>import-installation</code>,
+and therefore required for <code>upgrade-opsman</code>.</p>
+<p>If your foundation uses authentication other than basic auth,
+please reference <a href="../reference/inputs-outputs.html#env">Inputs and Outputs</a>
+for more detail on UAA-based authentication.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">target</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((opsman-url))</span>
+<span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((opsman-username))</span>
+<span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((opsman-password))</span>
+<span class="nt">decryption-passphrase</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((opsman-decryption-passphrase))</span>
+</pre></div>
+</td></tr></table>
+
+<p>Add and commit the new <code>env.yml</code> file:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add foundation/env.yml
+git commit -m <span class="s2">&quot;Add environment file for foundation&quot;</span>
+git push
+</pre></div>
+</td></tr></table>
+
+<p>Now that the env file we need is in our git remote,
+we need to add a resource to tell Concourse how to get it as <code>env</code>.</p>
+<p>Since this is (probably) a private repo,
+we'll need to create a deploy key Concourse can use to access it.
+Follow <a href="https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys">Github's instructions</a>
+for creating a read-only deploy key.</p>
+<p>Then, put the private key in Credhub so we can use it in our pipeline:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># note the starting space</span>
+ credhub <span class="nb">set</span> <span class="se">\</span>
+         --name /concourse/your-team-name/plat-auto-pipes-deploy-key <span class="se">\</span>
+         --type ssh <span class="se">\</span>
+         --private the/filepath/of/the/key-id_rsa <span class="se">\</span>
+         --public the/filepath/of/the/key-id_rsa.pub
+</pre></div>
+</td></tr></table>
+
+<p>Then, add this to the resources section of your pipeline file:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">git</span>
+  <span class="nt">source</span><span class="p">:</span>
+    <span class="nt">uri</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((pipeline-repo))</span>
+    <span class="nt">private_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((plat-auto-pipes-deploy-key))</span>
+    <span class="nt">branch</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">master</span>
+</pre></div>
+</td></tr></table>
+
+<p>We'll put the credentials we need in Credhub:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># note the starting space throughout</span>
+ credhub <span class="nb">set</span> <span class="se">\</span>
+        -n /concourse/your-team-name/foundation/opsman-username <span class="se">\</span>
+        -t value -v your-opsman-username
+ credhub <span class="nb">set</span> <span class="se">\</span>
+        -n /concourse/your-team-name/foundation/opsman-password <span class="se">\</span>
+        -t value -v your-opsman-password
+ credhub <span class="nb">set</span> <span class="se">\</span>
+        -n /concourse/your-team-name/foundation/opsman-decryption-passphrase <span class="se">\</span>
+        -t value -v your-opsman-decryption-passphrase
+</pre></div>
+</td></tr></table>
+
+<div class="admonition info">
+<p class="admonition-title">Credhub paths and pipeline names</p>
+<p>Notice that we've added an element to the cred paths;
+now we're using the foundation name.</p>
+<p>If you look at <a href="https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules">Concourse's lookup rules,</a>
+you'll see that it searches the pipeline-specific path
+before the team path.
+Since our pipeline is named for the foundation it's used to manage,
+we can use this to scope access to our foundation-specific information
+to just this pipeline.</p>
+<p>By contrast, the Pivnet token may be valuable across several pipelines
+(and associated foundations),
+so we scoped that to our team.</p>
+</div>
+<p>In order to perform interpolation in one of our input files,
+we'll need the <a href="../reference/task.html#credhub-interpolate"><code>credhub-interpolate</code> task</a>
+Earlier, we relied on Concourse's native integration with Credhub for interpolation.
+That worked because we needed to use the variable
+in the pipeline itself, not in one of our inputs.</p>
+<p>We can add it to our job
+after we've retrieved our <code>env</code> input,
+but before the <code>export-installation</code> task:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">jobs</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">export-installation</span>
+  <span class="nt">serial</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">plan</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+      <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*image*.tgz&quot;</span><span class="p p-Indicator">]</span>
+        <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks</span>
+      <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*tasks*.zip&quot;</span><span class="p p-Indicator">]</span>
+        <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+<span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">credhub-interpolate</span>
+</span><span class="hll">      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+</span><span class="hll">      <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/credhub-interpolate.yml</span>
+</span><span class="hll">      <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">CREDHUB_CLIENT</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-client))</span>
+</span><span class="hll">        <span class="nt">CREDHUB_SECRET</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-secret))</span>
+</span><span class="hll">        <span class="nt">CREDHUB_SERVER</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://your-credhub.example.com</span>
+</span><span class="hll">        <span class="nt">PREFIX</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/concourse/your-team-name/foundation</span>
+</span><span class="hll">        <span class="nt">INTERPOLATION_PATHS</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation</span> <span class="c1"># contains env.yml</span>
+</span><span class="hll">      <span class="nt">input_mapping</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">files</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+</span>      <span class="nt">output_mapping</span><span class="p">:</span>
+        <span class="nt">interpolated-files</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-env</span>
+    <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">export-installation</span>
+      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+      <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/export-installation.yml</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">ENV_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">your/env/path/env.yml</span>
+      <span class="nt">input_mapping</span><span class="p">:</span>
+        <span class="nt">env</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-env</span>
+    <span class="p p-Indicator">-</span> <span class="nt">put</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation/installation-*.zip</span>
+</pre></div>
+</td></tr></table>
+
+<div class="admonition info a bit on">
+<p class="admonition-title">output_mapping</p>
+<p><p>The <code>credhub-interpolate</code> task for this job
+maps the output from the task (<code>interpolated-files</code>)
+to <code>interpolated-env</code>.
+<p>This can be used by the next task in the job
+to more explicitly define the inputs/outputs of each task.
+It is also okay to leave the output as <code>interpolated-files</code>
+if it is appropriately referenced in the next task</p>
+</div>
+<p>Notice the <a href="https://concourse-ci.org/task-step.html#input_mapping">input mappings</a>
+of the <code>credhub-interpolate</code> and <code>export-installation</code> tasks.
+This allows us to use the output of one task
+as in input of another.</p>
+<p>We now need to put our <code>credhub_client</code> and <code>credhub_secret</code> into Credhub,
+so Concourse's native integration can retrieve them
+and pass them as configuration to the <code>credhub-interpolate</code> task.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># note the starting space throughout</span>
+ credhub <span class="nb">set</span> <span class="se">\</span>
+        -n /concourse/your-team-name/credhub-client <span class="se">\</span>
+        -t value -v your-credhub-client
+ credhub <span class="nb">set</span> <span class="se">\</span>
+        -n /concourse/your-team-name/credhub-secret <span class="se">\</span>
+        -t value -v your-credhub-secret
+</pre></div>
+</td></tr></table>
+
+<p>Now, the <code>credhub-interpolate</code> task
+will interpolate our config input,
+and pass it to <code>export-installation</code> as <code>config</code>.</p>
+<p>The other new resource we need is a blobstore,
+so we can persist the exported installation.</p>
+<p>We'll add an <a href="https://github.com/concourse/s3-resource">S3 resource</a>
+to the <code>resources</code> section:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">s3</span>
+  <span class="nt">source</span><span class="p">:</span>
+    <span class="nt">access_key_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((s3-access-key-id))</span>
+    <span class="nt">secret_access_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((s3-secret-key))</span>
+    <span class="nt">bucket</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((platform-automation-bucket))</span>
+    <span class="nt">regexp</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/installation-(.*).zip</span>
+</pre></div>
+</td></tr></table>
+
+<p>Again, we'll need to save the credentials in Credhub:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># note the starting space throughout</span>
+ credhub <span class="nb">set</span> <span class="se">\</span>
+        -n /concourse/your-team-name/s3-access-key-id <span class="se">\</span>
+        -t value -v your-bucket-s3-access-key-id
+ credhub <span class="nb">set</span> <span class="se">\</span>
+        -n /concourse/your-team-name/s3-secret-key <span class="se">\</span>
+        -t value -v your-s3-secret-key
+</pre></div>
+</td></tr></table>
+
+<p>This time (and in the future),
+when we set the pipeline with <code>fly</code>,
+we'll need to load vars from <code>vars.yml</code>.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># note the space before the command</span>
+ fly -t control-plane set-pipeline <span class="se">\</span>
+     -p foundation <span class="se">\</span>
+     -c pipeline.yml <span class="se">\</span>
+     -l vars.yml
+</pre></div>
+</td></tr></table>
+
+<p>Now you can manually trigger a build, and see it pass.</p>
+<div class="admonition tip">
+<p class="admonition-title">Bash command history</p>
+<p><p>You'll be using this,
+the ultimate form of the <code>fly</code> command to set your pipeline,
+for the rest of the tutorial.
+<p>You can save yourself some typing by using your bash history.
+You can cycle through previous commands with the up and down arrows.
+Alternatively,
+Ctrl-r will search your bash history.
+Just hit Ctrl-r, type <code>fly</code>,
+and it'll show you the last fly command you ran.
+Run it with enter.
+Instead of running it,
+you can hit Ctrl-r again
+to see the matching command before that.</p>
+</div>
+<p>This is also a good commit point:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add pipeline.yml vars.yml
+git commit -m <span class="s2">&quot;Export foundation installation in CI&quot;</span>
+git push
+</pre></div>
+</td></tr></table>
+
+<h3 id="performing-the-upgrade">Performing The Upgrade</h3>
+<p>Now that we have an exported installation,
+we'll create another Concourse job to do the upgrade itself.
+We want the export and the upgrade in separate jobs
+so they can be triggered (and re-run) independently.</p>
+<p>We know this new job is going to center
+on the <a href="../reference/task.html#upgrade-opsman"><code>upgrade-opsman</code></a> task.
+Click through to the task description,
+and write a new job that has <code>get</code> steps
+for our platform-automation resources
+and all the inputs we already know how to get:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">upgrade-opsman</span>
+  <span class="nt">serial</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">plan</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+    <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+      <span class="l l-Scalar l-Scalar-Plain">params</span><span class="p p-Indicator">:</span>
+      <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*image*.tgz&quot;</span><span class="p p-Indicator">]</span>
+      <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks</span>
+    <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*tasks*.zip&quot;</span><span class="p p-Indicator">]</span>
+      <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation</span>
+</pre></div>
+</td></tr></table>
+
+<p>We should be able to set this with <code>fly</code> and see it pass,
+but it doesn't <em>do</em> anything other than download the resources.
+Still, we can make a commit here:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add pipeline.yml
+git commit -m <span class="s2">&quot;Setup initial gets for upgrade job&quot;</span>
+git push
+</pre></div>
+</td></tr></table>
+
+<div class="admonition tip">
+<p class="admonition-title">Is this really a commit point though?</p>
+<p><p>We like frequent, small commits that can be <code>fly</code> set and,
+ideally, go green.
+<p>This one doesn't actually do anything though, right?
+Fair, but: setting and running the job
+gives you feedback on your syntax and variable usage.
+It can catch typos, resources you forgot to add or misnamed, etc.
+Committing when you get to a working point helps keeps the diffs small,
+and the history tractable.
+Also, down the line, if you've got more than one pair working on a foundation,
+the small commits help you keep off one another's toes.
+<p>We don't demonstrate this workflow here,
+but it can even be useful to make a commit,
+use <code>fly</code> to see if it works,
+and then push it if and only if it works.
+If it doesn't, you can use <code>git commit --amend</code>
+once you've figured out why and fixed it.
+This workflow makes it easy to keep what is set on Concourse
+and what is pushed to your source control remote in sync.</p>
+</div>
+<p>Looking over the list of inputs for <a href="../reference/task.html#upgrade-opsman"><code>upgrade-opsman</code></a>
+we still need three required inputs:</p>
+<ol>
+<li><code>state</code></li>
+<li><code>config</code></li>
+<li><code>image</code></li>
+</ol>
+<p>The optional inputs are vars used with the config,
+so we'll get to those when we do <code>config</code>.</p>
+<p>Let's start with the <a href="../reference/inputs-outputs.html#state">state file</a>.
+We need to record the <code>iaas</code> we're on
+and the ID of the <em>currently deployed</em> Ops Manager VM.
+Different IaaS uniquely identify VMs differently;
+here are examples for what this file should look like,
+depending on your IaaS:</p>
+<div class="superfences-tabs">
+<input name="__tabs_1" type="radio" id="__tab_1_0" checked="checked" />
+<label for="__tab_1_0">AWS</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">iaas</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws</span>
+<span class="c1"># Instance ID of the AWS VM</span>
+<span class="nt">vm_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">i-12345678987654321</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_1" type="radio" id="__tab_1_1" />
+<label for="__tab_1_1">Azure</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">iaas</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">azure</span>
+<span class="c1"># Computer Name of the Azure VM</span>
+<span class="nt">vm_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">vm_name</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_1" type="radio" id="__tab_1_2" />
+<label for="__tab_1_2">GCP</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">iaas</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">gcp</span>
+<span class="c1"># Name of the VM in GCP</span>
+<span class="nt">vm_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">vm_name</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_1" type="radio" id="__tab_1_3" />
+<label for="__tab_1_3">OpenStack</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">iaas</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+<span class="c1"># Instance ID from the OpenStack Overview</span>
+<span class="nt">vm_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345678-9876-5432-1abc-defghijklmno</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_1" type="radio" id="__tab_1_4" />
+<label for="__tab_1_4">vSphere</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">iaas</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">vsphere</span>
+<span class="c1"># Path to the VM in vCenter</span>
+<span class="nt">vm_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/datacenter/vm/folder/vm_name</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>Find what you need for your IaaS,
+write it in your repo as <code>foundation/state.yml</code>,
+commit it, and push it:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add foundation/state.yml
+git commit -m <span class="s2">&quot;Add state file for foundation Ops Manager&quot;</span>
+git push
+</pre></div>
+</td></tr></table>
+
+<p>We can map the env resource to <a href="../reference/task.html#upgrade-opsman"><code>upgrade-opsman</code></a>'s
+<code>state</code> input once we add the task.</p>
+<p>But first, we've got two more inputs to arrange for.</p>
+<p>Let's do <a href="../reference/inputs-outputs.html#ops-manager-config"><code>config</code></a> next.</p>
+<p>We'll write an <a href="../reference/inputs-outputs.html#ops-manager-config">Ops Manager VM Configuration file</a>
+to <code>foundation/opsman.yml</code>.
+The properties available vary by IaaS;
+regardless, you can often inspect your existing Ops Manager
+in your IaaS's console
+(or, if your Ops Manager was created with Terraform,
+look at your terraform outputs)
+to find the necessary values.</p>
+<div class="superfences-tabs">
+<input name="__tabs_2" type="radio" id="__tab_2_0" checked="checked" />
+<label for="__tab_2_0">AWS</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">opsman-configuration</span><span class="p">:</span>
+  <span class="nt">aws</span><span class="p">:</span>
+    <span class="nt">region</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">us-west-2</span>
+    <span class="nt">vm_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-foundation</span>
+    <span class="nt">vpc_subnet_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">subnet-0292bc845215c2cbf</span>
+    <span class="nt">security_group_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sg-0354f804ba7c4bc41</span>
+    <span class="nt">key_pair_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-key</span>
+    <span class="nt">private_ip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.2</span>
+    <span class="nt">use_instance_profile</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="nt">iam_instance_profile_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-iam</span>
+
+<span class="c1"># Note that because this config contains no secrets</span>
+<span class="c1"># and is already written to a foundation-specific filepath,</span>
+<span class="c1"># it need not be interpolated.</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_2" type="radio" id="__tab_2_1" />
+<label for="__tab_2_1">Azure</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">opsman-configuration</span><span class="p">:</span>
+  <span class="nt">azure</span><span class="p">:</span>
+    <span class="nt">subscription_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">90f35f10-ea9e-4e80-aac4-d6778b995532</span>
+    <span class="nt">resource_group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">res-group</span>
+    <span class="nt">tenant_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3e52862f-a01e-4b97-98d5-f31a409df682</span>
+    <span class="nt">client_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5782deb6-9195-4827-83ae-a13fda90aa0d</span>
+    <span class="nt">client_secret</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((opsman-client-secret))</span>
+    <span class="nt">location</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">westus</span>
+    <span class="nt">container</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">opsmanagerimage</span>
+    <span class="nt">network_security_group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-security-group</span>
+    <span class="nt">vpc_subnet</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/subscriptions/&lt;MY_SUBSCRIPTION_ID&gt;/resourceGroups/&lt;MY_RESOURCE_GROUP&gt;/providers/Microsoft.Network/virtualNetworks/&lt;MY_VNET&gt;/subnets/&lt;MY_SUBNET&gt;</span>
+    <span class="nt">storage_account</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">opsman</span>                      <span class="c1"># used for the Ops Manager image</span>
+    <span class="nt">ssh_public_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ssh-rsa AAAAB3NzaC1yc2EAZ...</span> <span class="c1"># public key for ssh to VM</span>
+    <span class="nt">vm_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-foundation</span>
+    <span class="nt">private_ip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.3</span>
+
+<span class="c1"># Note that as this contains a secret, it will need to be interpolated.</span>
+<span class="c1"># The opsman-client-secret will need to be set in credhub.</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_2" type="radio" id="__tab_2_2" />
+<label for="__tab_2_2">GCP</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">opsman-configuration</span><span class="p">:</span>
+  <span class="nt">gcp</span><span class="p">:</span>
+    <span class="nt">gcp_service_account</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((gcp_service_account_json))</span>
+    <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">project-id</span>
+    <span class="nt">region</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">us-central1</span>
+    <span class="nt">zone</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">us-central1-b</span>
+    <span class="nt">vm_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-foundation</span>
+    <span class="nt">vpc_subnet</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">infrastructure-subnet</span>
+    <span class="nt">tags</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager</span>
+    <span class="nt">private_ip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.2</span>
+
+<span class="c1"># Note that as this contains a secret, it will need to be interpolated.</span>
+<span class="c1"># The gcp_service_account_json will need to be set in credhub.</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_2" type="radio" id="__tab_2_3" />
+<label for="__tab_2_3">OpenStack</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">opsman-configuration</span><span class="p">:</span>
+  <span class="nt">openstack</span><span class="p">:</span>
+    <span class="nt">auth_url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">http://os.example.com:5000/v2.0</span>
+    <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">project</span>
+    <span class="nt">net_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">26a13112-b6c2-11e8-96f8-529269fb1459</span>
+    <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">admin</span>
+    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((opsman-openstack-password))</span>
+    <span class="nt">key_pair_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">opsman-keypair</span>
+    <span class="nt">security_group_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">opsman-sec-group</span>
+    <span class="nt">vm_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-foundation</span>
+    <span class="nt">private_ip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.3</span>
+    <span class="nt">project_domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="nt">user_domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="nt">availability_zone</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">zone-01</span>
+
+<span class="c1"># Note that as this contains a secret, it will need to be interpolated.</span>
+<span class="c1"># The opsman-openstack-password will need to be set in credhub.</span>
+</pre></div>
+</td></tr></table></div>
+<input name="__tabs_2" type="radio" id="__tab_2_4" />
+<label for="__tab_2_4">vSphere</label>
+<div class="superfences-content"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">opsman-configuration</span><span class="p">:</span>
+  <span class="nt">vsphere</span><span class="p">:</span>
+    <span class="nt">vcenter</span><span class="p">:</span>
+      <span class="nt">url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">vcenter.example.com</span>
+      <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">admin</span>
+      <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((vcenter-password))</span>
+      <span class="nt">datastore</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">exmple-ds-1</span>
+      <span class="nt">ca_cert</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">certificate</span>
+      <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">example-host</span>               <span class="c1"># vCenter host to deploy Ops Manager on</span>
+      <span class="nt">datacenter</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">example-dc</span>
+      <span class="nt">resource_pool</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/example-dc/host/example-host/Resources/ResPool</span>
+      <span class="nt">folder</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/example-dc/vm/Folder</span>
+    <span class="nt">disk_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">thin</span>
+    <span class="nt">private_ip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.2</span>
+    <span class="nt">dns</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">8.8.8.8</span>
+    <span class="nt">ntp</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ntp.example.com</span>
+    <span class="nt">ssh_public_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ssh-rsa ......</span>
+    <span class="nt">hostname</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pcf.example.com</span>
+    <span class="nt">network</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">virtual-network</span>           <span class="c1"># vcenter network to deploy to</span>
+    <span class="nt">netmask</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">255.255.255.192</span>
+    <span class="nt">gateway</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.10.1</span>
+    <span class="nt">vm_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager-foundation</span>
+
+<span class="c1"># Note that as this contains a secret, it will need to be interpolated.</span>
+<span class="c1"># The vcenter-password will need to be set in credhub.</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>These examples all make assumptions
+about the details of your existing Ops Manager's configuration.
+See <a href="../reference/inputs-outputs.html#ops-manager-config">the reference docs for this file</a>
+for more details about your options and per-IaaS caveats.</p>
+<p>Once you have your config file, commit and push it:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add foundation/opsman.yml
+git commit -m <span class="s2">&quot;Add opsman config&quot;</span>
+git push
+</pre></div>
+</td></tr></table>
+
+<p>Finally, we need the image for the new Ops Manager version.</p>
+<p>We'll use the <a href="../reference/task.html#download-product"><code>download-product</code></a> task.
+It requires a config file to specify which Ops Manager to get,
+and to provide Pivotal Network credentials.
+Name this file <code>foundation/download-opsman.yml</code>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nn">---</span>
+<span class="nt">pivnet-api-token</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((pivnet-refresh-token))</span> <span class="c1"># interpolated from Credhub</span>
+<span class="nt">pivnet-file-glob</span><span class="p">:</span> <span class="s">&quot;ops-manager*.ova&quot;</span>
+<span class="nt">pivnet-product-slug</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ops-manager</span>
+<span class="nt">product-version-regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">^2\.5\.0.*$</span>
+</pre></div>
+</td></tr></table>
+
+<p>You know the drill.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add foundation/download-opsman.yml
+git commit -m <span class="s2">&quot;Add download opsman config&quot;</span>
+git push
+</pre></div>
+</td></tr></table>
+
+<p>Now, we can put it all together:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">upgrade-opsman</span>
+  <span class="nt">serial</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">plan</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+    <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*image*.tgz&quot;</span><span class="p p-Indicator">]</span>
+      <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks</span>
+    <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*tasks*.zip&quot;</span><span class="p p-Indicator">]</span>
+      <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation</span>
+<span class="hll">  <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">credhub-interpolate</span>
+</span><span class="hll">    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+</span><span class="hll">    <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/credhub-interpolate.yml</span>
+</span><span class="hll">    <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">      <span class="nt">CREDHUB_CLIENT</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-client))</span>
+</span><span class="hll">      <span class="nt">CREDHUB_SECRET</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-secret))</span>
+</span><span class="hll">      <span class="nt">CREDHUB_SERVER</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-server))</span>
+</span><span class="hll">      <span class="nt">PREFIX</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/concourse/your-team-name/foundation</span>
+</span><span class="hll">      <span class="c1"># A file path that includes env.yml, opsman.yml, download-opsman.yml</span>
+</span><span class="hll">      <span class="nt">INTERPOLATION_PATHS</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation</span>
+</span><span class="hll">    <span class="nt">input_mapping</span><span class="p">:</span>
+</span><span class="hll">      <span class="nt">files</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+</span><span class="hll">    <span class="nt">output_mapping</span><span class="p">:</span>
+</span><span class="hll">      <span class="nt">interpolated-files</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+</span><span class="hll">  <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">download-opsman-image</span>
+</span><span class="hll">    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+</span><span class="hll">    <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/download-product.yml</span>
+</span><span class="hll">    <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">      <span class="nt">CONFIG_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">download-opsman.yml</span>
+</span><span class="hll">    <span class="nt">input_mapping</span><span class="p">:</span>
+</span><span class="hll">      <span class="nt">config</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+</span><span class="hll">  <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">upgrade-opsman</span>
+</span><span class="hll">    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+</span><span class="hll">    <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/upgrade-opsman.yml</span>
+</span><span class="hll">    <span class="nt">input_mapping</span><span class="p">:</span>
+</span><span class="hll">      <span class="nt">config</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+</span><span class="hll">      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">downloaded-product</span>
+</span><span class="hll">      <span class="nt">secrets</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+</span><span class="hll">      <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+</span><span class="hll">    <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">      <span class="nt">ENV_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/env.yml</span>
+</span>      <span class="nt">OPSMAN_CONFIG_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/opsman.yml</span>
+      <span class="nt">STATE_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/state.yml</span>
+</pre></div>
+</td></tr></table>
+
+<p>Set the pipeline.</p>
+<p>Before we run the job,
+we should <a href="https://concourse-ci.org/ensure-step-hook.html"><code>ensure</code></a> that <code>state.yml</code> is always persisted
+regardless of whether the <code>upgrade-opsman</code> job failed or passed.
+To do this, we can add the following section to the job:
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">upgrade-opsman</span>
+  <span class="nt">serial</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">plan</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+    <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*image*.tgz&quot;</span><span class="p p-Indicator">]</span>
+      <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks</span>
+    <span class="nt">resource</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">globs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*tasks*.zip&quot;</span><span class="p p-Indicator">]</span>
+      <span class="nt">unpack</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+  <span class="p p-Indicator">-</span> <span class="nt">get</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">installation</span>
+  <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">credhub-interpolate</span>
+    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+    <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/credhub-interpolate.yml</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">CREDHUB_CLIENT</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-client))</span>
+      <span class="nt">CREDHUB_SECRET</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-secret))</span>
+      <span class="nt">CREDHUB_SERVER</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">((credhub-server))</span>
+      <span class="nt">PREFIX</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/concourse/your-team-name/foundation</span>
+      <span class="c1"># A file path that includes env.yml, opsman.yml, download-opsman.yml</span>
+      <span class="nt">INTERPOLATION_PATHS</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation</span>
+    <span class="nt">input_mapping</span><span class="p">:</span>
+      <span class="nt">files</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+    <span class="nt">output_mapping</span><span class="p">:</span>
+      <span class="nt">interpolated-files</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+  <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">download-opsman-image</span>
+    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+    <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/download-product.yml</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">CONFIG_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">download-opsman.yml</span>
+    <span class="nt">input_mapping</span><span class="p">:</span>
+      <span class="nt">config</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+  <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">upgrade-opsman</span>
+    <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+    <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/upgrade-opsman.yml</span>
+    <span class="nt">input_mapping</span><span class="p">:</span>
+      <span class="nt">config</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">downloaded-product</span>
+      <span class="nt">secrets</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">interpolated-configs</span>
+      <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+    <span class="nt">params</span><span class="p">:</span>
+      <span class="nt">ENV_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/env.yml</span>
+      <span class="nt">OPSMAN_CONFIG_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/opsman.yml</span>
+      <span class="nt">STATE_FILE</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/state.yml</span>
+<span class="hll">  <span class="nt">ensure</span><span class="p">:</span>
+</span><span class="hll">    <span class="nt">do</span><span class="p">:</span>
+</span><span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">task</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">make-commit</span>
+</span><span class="hll">      <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-image</span>
+</span><span class="hll">      <span class="nt">file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">platform-automation-tasks/tasks/make-git-commit.yml</span>
+</span><span class="hll">      <span class="nt">input_mapping</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">repository</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+</span><span class="hll">        <span class="nt">file-source</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">generated-state</span>
+</span><span class="hll">      <span class="nt">output_mapping</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">repository-commit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env-commit</span>
+</span><span class="hll">      <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">FILE_SOURCE_PATH</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/state.yml</span>
+</span><span class="hll">        <span class="nt">FILE_DESTINATION_PATH</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foundation/state.yml</span>
+</span><span class="hll">        <span class="nt">GIT_AUTHOR_EMAIL</span><span class="p">:</span> <span class="s">&quot;ci-user@example.com&quot;</span>
+</span><span class="hll">        <span class="nt">GIT_AUTHOR_NAME</span><span class="p">:</span> <span class="s">&quot;CI</span><span class="nv"> </span><span class="s">User&quot;</span>
+</span><span class="hll">        <span class="nt">COMMIT_MESSAGE</span><span class="p">:</span> <span class="s">&#39;Update</span><span class="nv"> </span><span class="s">state</span><span class="nv"> </span><span class="s">file&#39;</span>
+</span><span class="hll">    <span class="p p-Indicator">-</span> <span class="nt">put</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env</span>
+</span><span class="hll">      <span class="nt">params</span><span class="p">:</span>
+</span><span class="hll">        <span class="nt">repository</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">env-commit</span>
+</span><span class="hll">        <span class="nt">merge</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></pre></div>
+</td></tr></table></p>
+<p>Set the pipeline one final time,
+run the job, and see it pass.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>git add pipeline.yml
+git commit -m <span class="s2">&quot;Upgrade Ops Manager in CI&quot;</span>
+git push
+</pre></div>
+</td></tr></table>
+
+<p>Your upgrade pipeline is now complete.
+You are now free to move on to the next steps of your automation journey.</p></article></div></div></main><!-- Application footer -->
+<footer class="md-footer">
+
+    <!-- Link to previous and/or next page --><div class="md-footer-nav">
+        <nav class="md-footer-nav__inner md-grid">
+
+            <!-- Link to previous page --><a href="../before-you-begin/setup-s3-and-resources.html"
+               title="Set Up S3 for File Storage"
+               class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               rel="prev">
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-back
+                    md-footer-nav__button"></i>
+                </div>
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">Previous</span>Set Up S3 for File Storage</span>
+                </div>
+            </a><!-- Link to next page --><a href="install-opsman.html"
+               title="Installing Ops Manager"
+               class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               rel="next">
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">Next</span>Installing Ops Manager</span>
+                </div>
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-forward
+                    md-footer-nav__button"></i>
+                </div>
+            </a></nav>
+    </div><!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                <a href="https://pivotal.io/privacy-policy">
+                    Privacy Policy
+                </a>
+                |
+                <a href="https://pivotal.io/legal/">
+                    Terms of Use
+                </a>
+            </div>
+
+            <div class="md-footer-social">
+                <a href="https://pivotal.io">
+                    Pivotal Documentation © 2019 Pivotal Software, Inc. All Rights Reserved
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer></div><script src="../assets/javascripts/application.b260a35d.js"></script><script>app.initialize({version:"1.0.4",url:{base:".."}})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js"></script></body></html>

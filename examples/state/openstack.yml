@@ -1,0 +1,3 @@
+iaas: openstack
+# Instance ID from the OpenStack Overview
+vm_id: 12345678-9876-5432-1abc-defghijklmno

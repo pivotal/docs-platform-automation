@@ -1,0 +1,681 @@
+<!doctype html><html lang="en" class="no-js"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="x-ua-compatible" content="ie=edge"><link rel="canonical" href="https://docs.pivotal.io/before-you-begin/setup-s3-and-resources.html"><meta name="lang:clipboard.copy" content="Copy to clipboard"><meta name="lang:clipboard.copied" content="Copied to clipboard"><meta name="lang:search.language" content="en"><meta name="lang:search.pipeline.stopwords" content="True"><meta name="lang:search.pipeline.trimmer" content="True"><meta name="lang:search.result.none" content="No matching documents"><meta name="lang:search.result.one" content="1 matching document"><meta name="lang:search.result.other" content="# matching documents"><meta name="lang:search.tokenizer" content="[\s\-]+"><link rel="shortcut icon" href="../assets/icon.svg"><meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.3.0"><title>Set Up S3 for File Storage - Platform Automation</title><link rel="stylesheet" href="../assets/stylesheets/application.4031d38b.css"><link rel="stylesheet" href="../assets/stylesheets/application-palette.224b79ff.css"><meta name="theme-color" content="#009688"><script src="../assets/javascripts/modernizr.74668098.js"></script><link href="https://fonts.gstatic.com" rel="preconnect" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700|Ubuntu+Mono&display=swap"><style>body,input{font-family:"Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Ubuntu Mono","Courier New",Courier,monospace}</style><link rel="stylesheet" href="../assets/fonts/material-icons.css">
+<style>
+label.md-nav__link {
+    font-weight: bold;
+}
+
+@media only screen and (min-width: 76.1875em) {
+  label.md-nav__title.md-nav__title--site {
+      display: none;
+  }
+}
+.header-dropdown {
+  display: inline-block;
+  position: relative;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.header-dropdown:hover .content,
+.header-dropdown:hover .content:hover {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+.header-dropdown .content {
+  position: absolute;
+  top: 100%;
+  background-color: #009688;
+  left: 0;
+  display: none;
+  z-index: 1;
+  clear: both;
+  padding: 10px;
+}
+
+.header-dropdown ul {
+  padding: 0;
+  margin: 0;
+  line-height: 24px;
+}
+
+.header-dropdown ul li {
+  list-style: none;
+}
+
+.md-header-nav__topic {
+  overflow: visible;
+}
+
+.header-dropdown .pointer {
+  height: 24px;
+  width: 24px;
+  display: inline-flex;
+  vertical-align: middle;
+  fill: white;
+}
+
+.md-typeset pre, .md-typeset code {
+  font-size: 100%
+}
+
+.md-typeset table:not([class]) {
+  font-size: 16px
+}
+
+.md-typeset > .codehilitetable {
+  overflow: visible;
+}
+
+.md-typeset .md-footer-social {
+    font-size: .64rem;
+}
+
+.md-footer-social {
+    padding: .4rem 0;
+}
+</style>
+
+<!-- Google Tag Manager -->
+<script>
+ (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+ 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+ })(window,document,'script','dataLayer','GTM-MW4LZHR');
+</script>
+</head><body dir="ltr" data-md-color-primary="teal" data-md-color-accent="teal"><svg class="md-svg"><defs><svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg></defs></svg> <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off"> <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off"> <label class="md-overlay" data-md-component="overlay" for="__drawer"></label><a href="#why-use-s3" tabindex="1" class="md-skip">Skip to content </a><style>
+    @media only screen and (max-width: 60em) {
+        .md-header .secondary-header {
+            display: none;
+        }
+    }
+    @media only screen and (min-width: 60em) {
+        .md-header {
+            height: 7.4rem;
+        }
+
+        .md-header .md-header-nav {
+            height: 5rem;
+        }
+
+        .md-header .md-header-nav .md-flex {
+            height: 100%;
+        }
+
+        .md-header .md-header-nav .md-flex__cell {
+            vertical-align: middle;
+        }
+
+        .md-header .md-header-nav .md-header-nav__title {
+            font-size: 1.5rem;
+            line-height: 5rem;
+        }
+
+        .md-header .secondary-header .md-flex__cell {
+            width: 30rem;
+            text-align: right;
+        }
+
+        .md-header .secondary-header .md-grid {
+            padding: 0 .6rem;
+        }
+
+        .md-header .secondary-header .logo {
+            text-align: left;
+        }
+
+        .md-header .secondary-header {
+            height: 2.4rem;
+            line-height: 3.0rem;
+            background-color: #243640;
+        }
+
+        .md-header .secondary-header .sub {
+            font-size: 13px;
+        }
+
+        .md-header .secondary-header .sub a {
+            margin-right: 17px;
+        }
+
+        .global-header-title .pivotal-logo {
+            fill: white;
+            height: .9rem;
+            margin-right: 17px;
+        }
+
+        .global-header-title .documentation-letters {
+            fill: white;
+            height: .6rem;
+        }
+
+        .md-sidebar[data-md-state=lock] {
+            top: 7.4rem;
+        }
+
+        .md-main__inner {
+            padding-top: 5rem;
+        }
+    }
+</style>
+<header class="md-header" data-md-component="header">
+    <div class="secondary-header">
+        <div class="md-flex md-grid">
+            <div class="md-flex__cell logo">
+            <a href="https://docs.pivotal.io" class="global-header-title" target="_blank">
+            <svg class="pivotal-logo" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 174.72 40.94">
+                <path class="a" d="M38.77,6h-6.2V0h6.2Zm0,34.24H32.56V10.41h6.22Z"></path>
+                <path class="a"
+                      d="M74.67,10.41,66,36.18c-1.49,4.22-4.15,4.76-6.3,4.76-3.19,0-5.11-1.47-6.24-4.75l-7.22-21.4H43.39V10.41h7.45l7.44,24c.33,1,.53,1.63,1.43,1.63s1.13-.62,1.43-1.63l7.59-24Z"></path>
+                <path class="a"
+                      d="M90,10.41c8.05,0,13.66,5.31,13.66,12.92V28c0,7.6-5.61,12.92-13.66,12.92S76.32,35.62,76.32,28V23.33c0-7.61,5.62-12.92,13.67-12.92M90,36c4.81,0,7.8-3.64,7.8-8V23.33c0-4.37-3-8-7.8-8-5.1,0-7.8,3.64-7.8,8V28c0,4.37,2.82,8,7.8,8"></path>
+                <path class="a"
+                      d="M153.32,11.36A53.46,53.46,0,0,0,141.8,10c-8.17,0-13.24,5.15-13.24,13.45v3.27c0,8.3,5.07,13.53,13.24,13.53.19,0,1.64,0,2.3-.06v-5l-2.3.07c-4.45,0-7.43-3.43-7.43-8.53V23.44c0-5.09,3-8.52,7.43-8.52a43.88,43.88,0,0,1,6.09.38l.33.08V40.24h6.22V12.4c0-.53,0-.74-1.13-1"></path>
+                <rect class="a" x="160.44" width="6.22" height="40.24"></rect>
+                <path class="a"
+                      d="M10.92,0H0V40.24H6.47V5.59h3.79c.81,0,1.49,0,2.18.06,5.61.1,8.35,2.33,8.35,6.69,0,.17,0,.29,0,.47,0,4-2.21,6.71-8.32,6.71H10.67c0,1.55,0,4.41,0,5.41.63,0,1.22.06,1.82.06,8.78,0,15-3.45,15-12.11,0-.17,0-.35,0-.52C27.44,3.38,20.69,0,10.92,0"></path>
+                <path class="a"
+                      d="M114.7,4v6.43h10.13v4.82H114.7V32.61c0,2.73,1.74,2.8,4.26,2.8h5.87v4.83h-7.94c-5.87,0-8.48-2.35-8.48-7.63V4.84Z"></path>
+                <path class="a"
+                      d="M169.52,37.64a2.6,2.6,0,1,1,2.6,2.6A2.61,2.61,0,0,1,169.52,37.64Zm2.6-2.25a2.23,2.23,0,1,0,2.22,2.24A2.24,2.24,0,0,0,172.12,35.39ZM171.55,39h-.31V36.19h.8c.72,0,1.06.33,1.06.86a.82.82,0,0,1-.58.8l.74,1.17h-.36l-.68-1.1-.67,0Zm.51-1.34c.46,0,.75-.24.75-.62s-.25-.6-.79-.6h-.48V37.7Z"></path>
+            </svg>
+            <svg class="documentation-letters" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 358.62 30.84">
+                <path class="a"
+                      d="M3.71,37.26V7.45h9.52c9.25,0,15.06,6.75,15.06,14.92S22.48,37.26,13.23,37.26Zm21.9-14.89c0-7-4.47-12.6-12.38-12.6h-7V34.93h7C21.1,34.93,25.61,29.35,25.61,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M33.52,22.37C33.52,13.66,39.24,7,48,7s14.48,6.7,14.48,15.41S56.72,37.79,48,37.79,33.52,31.09,33.52,22.37Zm26.28,0c0-7.55-4.64-13.09-11.8-13.09S36.21,14.82,36.21,22.37s4.6,13.1,11.79,13.1S59.8,29.88,59.8,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M67.67,22.37C67.67,13.21,74.33,7,82.78,7a13.38,13.38,0,0,1,10.86,5.27L91.5,13.61a10.84,10.84,0,0,0-8.72-4.33c-7,0-12.42,5.32-12.42,13.09s5.45,13.1,12.42,13.1a10.82,10.82,0,0,0,8.72-4.34l2.19,1.34a13.51,13.51,0,0,1-10.91,5.32C74.33,37.79,67.67,31.54,67.67,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M98.79,25.82V7.45h2.59V25.77c0,6,3.17,9.7,9,9.7s9-3.67,9-9.7V7.45H122V25.82c0,7.37-3.94,12-11.62,12S98.79,33.15,98.79,25.82Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M154.75,37.26V10.66l-10.87,26.6h-1L132,10.66v26.6h-2.55V7.45h3.8l10.14,24.8,10.1-24.8h3.85V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M164.76,37.26V7.45h18.91V9.77H167.31v11h16v2.32h-16v11.8h16.36v2.33Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M211.29,37.26,192.52,11.65V37.26H190V7.45h2.59L211.25,32.7V7.45h2.54V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M228.81,37.26V9.77h-9.74V7.45h22.08V9.77h-9.74V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M264.93,37.26,262,29.93H246.2l-2.95,7.33H240.3L252.51,7.45h3.17l12.2,29.81ZM254.11,10.17,247.05,27.6h14.08Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M276.78,37.26V9.77H267V7.45h22.07V9.77h-9.74V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M294.39,37.26V7.45h2.55V37.26Z" transform="translate(-3.71 -6.96)"></path>
+                <path class="a"
+                      d="M303.24,22.37C303.24,13.66,309,7,317.72,7s14.48,6.7,14.48,15.41-5.76,15.42-14.48,15.42S303.24,31.09,303.24,22.37Zm26.28,0c0-7.55-4.65-13.09-11.8-13.09s-11.8,5.54-11.8,13.09,4.61,13.1,11.8,13.1S329.52,29.88,329.52,22.37Z"
+                      transform="translate(-3.71 -6.96)"></path>
+                <path class="a" d="M359.83,37.26,341.06,11.65V37.26h-2.55V7.45h2.59L359.78,32.7V7.45h2.55V37.26Z"
+                      transform="translate(-3.71 -6.96)"></path>
+            </svg>
+            </a></div>
+
+            <div class="md-flex__cell sub">
+                <a href="#">Support</a>
+                <a href="#">Downloads</a>
+            </div>
+        </div>
+    </div>
+    <nav class="md-header-nav md-grid">
+        <div class="md-flex">
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <a href="https://docs.pivotal.io" title="Platform Automation"
+                   class="md-header-nav__button md-logo">
+                    
+                        <img src="../assets/icon.svg" width="65" height="65">
+                    
+                </a>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch">
+                <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+                    
+                        
+                            <span class="md-header-nav__topic">
+                                Platform Automation
+                                
+                                    <span class="header-dropdown">
+                                        <a href="testin/before-you-begin/setup-s3-and-resources.html">2.1</a>
+                                        <span class="pointer">
+                                            <svg width="100%" height="100%" viewBox="0 0 24 24" fit="" preserveAspectRatio="xMidYMid meet"
+                                               focusable="false"><path d="M18 9H6l6 6 6-6z" fill-rule="evenodd"></path></svg>
+                                        </span>
+                                        <span class="content">
+                                            <ul>
+                                              
+                                                  <li> <a href="testin/before-you-begin/setup-s3-and-resources.html">1.1</a></li>
+                                              
+                                                  <li> <a href="testin/before-you-begin/setup-s3-and-resources.html">2.1</a></li>
+                                              
+                                                  <li> <a href="testin/before-you-begin/setup-s3-and-resources.html">develop</a></li>
+                                              
+                                            </ul>
+                                        </span>
+                                    </span>
+                                
+                            </span>
+                            <span class="md-header-nav__topic">
+                                Set Up S3 for File Storage
+                            </span>
+                        
+                    
+                </div>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                
+                    
+                        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+                        <div class="md-search" data-md-component="search" role="dialog"><label class="md-search__overlay" for="__search"></label><div class="md-search__inner" role="search"><form class="md-search__form" name="search"><input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active"> <label class="md-icon md-search__icon" for="__search"></label> <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">&#xE5CD;</button></form><div class="md-search__output"><div class="md-search__scrollwrap" data-md-scrollfix><div class="md-search-result" data-md-component="result"><div class="md-search-result__meta">Type to start searching</div><ol class="md-search-result__list"></ol></div></div></div></div></div>
+                    
+                
+            </div>
+            
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <div class="md-header-nav__source">
+                        <a href="https://github.com/pivotal/docs-platform-automation/" title="Go to repository" class="md-source" data-md-source="github"><div class="md-source__icon"><svg viewBox="0 0 24 24" width="24" height="24"><use xlink:href="#__github" width="24" height="24"></use></svg></div><div class="md-source__repository">Help fix the docs!</div></a>
+                    </div>
+                </div>
+            
+        </div>
+    </nav>
+</header><div class="md-container"><main class="md-main"><div class="md-main__inner md-grid" data-md-component="container"><div class="md-sidebar md-sidebar--primary" data-md-component="navigation"><div class="md-sidebar__scrollwrap"><div class="md-sidebar__inner"><nav class="md-nav md-nav--primary" data-md-level="0"><label class="md-nav__title md-nav__title--site" for="__drawer"><a href="https://docs.pivotal.io" title="Platform Automation" class="md-nav__button md-logo"><img src="../assets/icon.svg" width="48" height="48"></a>Platform Automation</label><div class="md-nav__source"><a href="https://github.com/pivotal/docs-platform-automation/" title="Go to repository" class="md-source" data-md-source="github"><div class="md-source__icon"><svg viewBox="0 0 24 24" width="24" height="24"><use xlink:href="#__github" width="24" height="24"></use></svg></div><div class="md-source__repository">Help fix the docs!</div></a></div><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../index.html" title="Introduction" class="md-nav__link">Introduction</a></li><li class="md-nav__item"><a href="../downloading-and-testing.html" title="Downloading and Testing" class="md-nav__link">Downloading and Testing</a></li><li class="md-nav__item"><a href="../compatibility-and-versioning.html" title="Compatibility and Versioning" class="md-nav__link">Compatibility and Versioning</a></li><li class="md-nav__item"><a href="../release-notes.html" title="Release Notes" class="md-nav__link">Release Notes</a></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5"><label class="md-nav__link" for="nav-5">Reference Pipelines</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-5">Reference Pipelines</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../pipeline/resources.html" title="Retrieving External Dependencies" class="md-nav__link">Retrieving External Dependencies</a></li><li class="md-nav__item"><a href="../pipeline/multiple-products.html" title="Ops Manager + multiple products" class="md-nav__link">Ops Manager + multiple products</a></li><li class="md-nav__item"><a href="../pipeline/single-product.html" title="Ops Manager + a product" class="md-nav__link">Ops Manager + a product</a></li></ul></nav></li><li class="md-nav__item md-nav__item--active md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked><label class="md-nav__link" for="nav-6">Before You Begin</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-6">Before You Begin</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="git-repo-layout.html" title="Git Repository Layout" class="md-nav__link">Git Repository Layout</a></li><li class="md-nav__item md-nav__item--active"><input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc"><label class="md-nav__link md-nav__link--active" for="__toc">Set Up S3 for File Storage</label><a href="setup-s3-and-resources.html" title="Set Up S3 for File Storage" class="md-nav__link md-nav__link--active">Set Up S3 for File Storage</a><nav class="md-nav md-nav--secondary"><label class="md-nav__title" for="__toc">Table of contents</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="#why-use-s3" title="Why use S3?" class="md-nav__link">Why use S3?</a></li><li class="md-nav__item"><a href="#prerequisites" title="Prerequisites" class="md-nav__link">Prerequisites</a></li><li class="md-nav__item"><a href="#your-first-bucket" title="Your First Bucket" class="md-nav__link">Your First Bucket</a></li><li class="md-nav__item"><a href="#bucket-permissions" title="Bucket Permissions" class="md-nav__link">Bucket Permissions</a></li><li class="md-nav__item"><a href="#object-versions" title="Object Versions" class="md-nav__link">Object Versions</a></li><li class="md-nav__item"><a href="#storing-files-in-s3" title="Storing Files in S3" class="md-nav__link">Storing Files in S3</a></li><li class="md-nav__item"><a href="#structuring-your-bucket" title="Structuring your Bucket" class="md-nav__link">Structuring your Bucket</a></li><li class="md-nav__item"><a href="#using-a-bucket" title="Using a Bucket" class="md-nav__link">Using a Bucket</a></li><li class="md-nav__item"><a href="#reference-resources-pipeline" title="Reference Resources Pipeline" class="md-nav__link">Reference Resources Pipeline</a><nav class="md-nav"><ul class="md-nav__list"><li class="md-nav__item"><a href="#the-download-product-task" title="The download-product task" class="md-nav__link">The download-product task</a></li><li class="md-nav__item"><a href="#the-download-product-s3-task" title="The download-product-s3 task" class="md-nav__link">The download-product-s3 task</a></li></ul></nav></li></ul></nav></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7"><label class="md-nav__link" for="nav-7">How to Guides</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-7">How to Guides</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../how-to-guides/upgrade-existing-opsman.html" title="Upgrading an Existing Ops Manager" class="md-nav__link">Upgrading an Existing Ops Manager</a></li><li class="md-nav__item"><a href="../how-to-guides/install-opsman.html" title="Installing Ops Manager" class="md-nav__link">Installing Ops Manager</a></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8"><label class="md-nav__link" for="nav-8">References</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-8">References</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../reference/task.html" title="Tasks" class="md-nav__link">Tasks</a></li><li class="md-nav__item"><a href="../reference/inputs-outputs.html" title="Inputs/Outputs" class="md-nav__link">Inputs/Outputs</a></li><li class="md-nav__item"><a href="../reference/running-commands-locally.html" title="Running Commands Locally" class="md-nav__link">Running Commands Locally</a></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-9" type="checkbox" id="nav-9"><label class="md-nav__link" for="nav-9">Configuration Management</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-9">Configuration Management</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../configuration-management/configure-auth.html" title="Configure Auth" class="md-nav__link">Configure Auth</a></li><li class="md-nav__item"><a href="../configuration-management/creating-a-director-config-file.html" title="Creating a Director Config File" class="md-nav__link">Creating a Director Config File</a></li><li class="md-nav__item"><a href="../configuration-management/creating-a-product-config-file.html" title="Creating a Product Config File" class="md-nav__link">Creating a Product Config File</a></li><li class="md-nav__item"><a href="../configuration-management/configure-env.html" title="Configuring Env" class="md-nav__link">Configuring Env</a></li><li class="md-nav__item"><a href="../configuration-management/secrets-handling.html" title="Secrets Handling" class="md-nav__link">Secrets Handling</a></li></ul></nav></li><li class="md-nav__item md-nav__item--nested"><input class="md-toggle md-nav__toggle" data-md-toggle="nav-10" type="checkbox" id="nav-10"><label class="md-nav__link" for="nav-10">Pipeline Design</label><nav class="md-nav" data-md-component="collapsible" data-md-level="1"><label class="md-nav__title" for="nav-10">Pipeline Design</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="../pipeline-design/variables.html" title="Variables" class="md-nav__link">Variables</a></li><li class="md-nav__item"><a href="../pipeline-design/stemcell-handling.html" title="Stemcell Handling" class="md-nav__link">Stemcell Handling</a></li></ul></nav></li><li class="md-nav__item"><a href="../upgrade.html" title="About Upgrading Ops Manager" class="md-nav__link">About Upgrading Ops Manager</a></li><li class="md-nav__item"><a href="../report-an-issue.html" title="Report an Issue" class="md-nav__link">Report an Issue</a></li></ul></nav></div></div></div><div class="md-sidebar md-sidebar--secondary" data-md-component="toc"><div class="md-sidebar__scrollwrap"><div class="md-sidebar__inner"><nav class="md-nav md-nav--secondary"><label class="md-nav__title" for="__toc">Table of contents</label><ul class="md-nav__list" data-md-scrollfix><li class="md-nav__item"><a href="#why-use-s3" title="Why use S3?" class="md-nav__link">Why use S3?</a></li><li class="md-nav__item"><a href="#prerequisites" title="Prerequisites" class="md-nav__link">Prerequisites</a></li><li class="md-nav__item"><a href="#your-first-bucket" title="Your First Bucket" class="md-nav__link">Your First Bucket</a></li><li class="md-nav__item"><a href="#bucket-permissions" title="Bucket Permissions" class="md-nav__link">Bucket Permissions</a></li><li class="md-nav__item"><a href="#object-versions" title="Object Versions" class="md-nav__link">Object Versions</a></li><li class="md-nav__item"><a href="#storing-files-in-s3" title="Storing Files in S3" class="md-nav__link">Storing Files in S3</a></li><li class="md-nav__item"><a href="#structuring-your-bucket" title="Structuring your Bucket" class="md-nav__link">Structuring your Bucket</a></li><li class="md-nav__item"><a href="#using-a-bucket" title="Using a Bucket" class="md-nav__link">Using a Bucket</a></li><li class="md-nav__item"><a href="#reference-resources-pipeline" title="Reference Resources Pipeline" class="md-nav__link">Reference Resources Pipeline</a><nav class="md-nav"><ul class="md-nav__list"><li class="md-nav__item"><a href="#the-download-product-task" title="The download-product task" class="md-nav__link">The download-product task</a></li><li class="md-nav__item"><a href="#the-download-product-s3-task" title="The download-product-s3 task" class="md-nav__link">The download-product-s3 task</a></li></ul></nav></li></ul></nav></div></div></div><div class="md-content"><article class="md-content__inner md-typeset"><a href="https://github.com/pivotal/docs-platform-automation/edit/develop/docs/before-you-begin/setup-s3-and-resources.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a><h1>Set Up S3 for File Storage</h1><p>In this guide,
+you will learn
+how to set up an S3 bucket,
+how bucket permissions work,
+what we can store in a bucket,
+and how a pipeline may be set up
+to retrieve and store objects.</p>
+<h2 id="why-use-s3">Why use S3?</h2>
+<ul>
+<li>
+<p>Platform Automation for PCF uses and produces
+file artifacts that are too large to store in git.
+For example, many <code>.pivotal</code> product files are several gigabytes in size.
+Exported installation files may also be quite large.</p>
+</li>
+<li>
+<p>For environments that can't access the greater internet. This is a common security practice, but it also means that it's not possible to connect directly to PivNet to access the latest product versions for your upgrades.</p>
+</li>
+</ul>
+<p>S3 and Concourse's native S3 integration makes it possible to store large file artifacts and retrieve the latest product versions in offline environments.   </p>
+<p>With S3, we can place product files
+and new versions of OpsMan
+into a network whitelisted S3 bucket
+to be used by Platform Automation tasks.
+We can even create a <a href="../pipeline/resources.html">Resources Pipeline</a>
+that gets the latest version of products
+from PivNet and places them into our S3 bucket automatically.</p>
+<p>Alternatively, because a foundation's backup
+may be quite large,
+it is advantageous to persist it in a blobstore
+automatically through Concourse.
+Exported installations can then later be accessed
+through the blobstore.
+Because most object stores
+implement secure, durable solutions,
+exported installations in buckets
+are easily restorable
+and persistent.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ol>
+<li>An <a href="https://aws.amazon.com/s3/">Amazon Web Services account</a> (commonly referred to as AWS) with access to S3</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">S3 blobstore compatibility</p>
+<p>Many cloud storage options exist
+including <a href="https://aws.amazon.com/s3/">Amazon S3</a>,
+<a href="https://cloud.google.com/storage/">Google Storage</a>,
+<a href="https://min.io/">Minio</a>,
+and <a href="https://azure.microsoft.com/en-us/services/storage/blobs/">Azure Blob Storage</a>.
+However, not all object stores
+are "S3 compatible".
+Because Amazon defines the
+S3 API for accessing blobstores,
+and because the Amazon S3 product has emerged as the dominant blob storage solution,
+not all "S3 compatible" object stores act exactly the same.
+In general, if a storage solution claims to be "S3 compatible",
+it should work with the <a href="https://github.com/concourse/s3-resource">Concourse's S3 resource integration</a>.
+But note that it may behave differently if interacting directly with the S3 API.
+Defer to the documentation of your preferred blobstore solution
+when setting up storage.</p>
+</div>
+<ol start="2">
+<li>Set up S3. With your AWS account,
+navigate to <a href="https://console.aws.amazon.com/s3/">the S3 console</a>
+and sign up for S3.
+Follow the on screen prompts.
+Now you are ready for buckets!</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">AWS Root User</p>
+<p>When you sign up for the S3 service on Amazon,
+the account with the email and password you use
+is the AWS account root user.
+As a best practice,
+you should not use the root user
+to access and manipulate services.
+Instead, use <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management</a>
+(commonly refered to as IAM)
+to create and manage users.
+For more info on how this works,
+check out this <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started_create-admin-group.html">guide from Amazon</a>.</p>
+<p>For simplicity, in the rest of this guide,
+we will use the AWS root user
+to show how a bucket may be set up and used with Platform Automation.</p>
+</div>
+<h2 id="your-first-bucket">Your First Bucket</h2>
+<p>S3 stores data as objects within buckets.
+An object is any file that can be stored on a file system.
+Buckets are the containers for objects.
+Buckets can have permissions for who can
+create, write, delete, and see objects within that bucket.</p>
+<ol>
+<li>Navigate to <a href="https://console.aws.amazon.com/s3/">the S3 console</a></li>
+<li>Click the "Create bucket" button</li>
+<li>Enter a DNS-compliant name for your new bucket<ul>
+<li>This name must be unique across all of AWS S3 buckets
+and adhere to general URL guidelines.
+Make it something meaningful and memorable!</li>
+</ul>
+</li>
+<li>Enter the "Region" you want the bucket to reside in</li>
+<li>Choose "Create"</li>
+</ol>
+<p>This creates a bucket with the default S3 settings.
+Bucket permissions and settings
+can be set during bucket creation or changed afterwards.
+Bucket settings can even be copied from other buckets you have.
+For a detailed look at creating buckets
+and managing initial settings,
+check out <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html">this documentation on creating buckets.</a></p>
+<h2 id="bucket-permissions">Bucket Permissions</h2>
+<p>By default, only the AWS account owner
+can access S3 resources, including buckets and objects.
+The resource owner may allow public access,
+allow specific IAM users permissions,
+or create a custom access policy.</p>
+<p>To view bucket permissions,
+from the S3 console,
+look at the "Access" column.</p>
+<p>Amazon S3 has the following Access permissions:</p>
+<ul>
+<li><em>Public</em> - Everyone has access to one or more of the following:
+List objects, Write objects, Read and write permissions</li>
+<li><em>Objects can be public</em> - The bucket is not public.
+But anyone with appropriate permissions can grant public access to objects.</li>
+<li><em>Buckets and objects not public</em> - The bucket and objects do not have any public access.</li>
+<li><em>Only authorized users of this account</em> - Access is isolated to IAM users and roles.</li>
+</ul>
+<p>In order to change who can access buckets or objects in buckets:</p>
+<ol>
+<li>Navigate to <a href="https://console.aws.amazon.com/s3/">the S3 console</a>.</li>
+<li>Choose the name of the bucket you created in the previous step</li>
+<li>In the top row, choose "Permissions"</li>
+</ol>
+<p>In this tab,
+you can set the various permissions
+for an individual bucket.
+For simplicity, in this guide, we will use public permissions
+for Concourse to access the files.</p>
+<ol>
+<li>Under the permissions tab for a bucket, choose "Public access settings"</li>
+<li>Choose "Edit" to change the public access settings</li>
+<li>Uncheck all boxes to allow public access.</li>
+</ol>
+<p>In general, the credentials being used
+to access an S3 compatible blobstore through Concourse
+must have <code>Read</code> and <code>Write</code> permissions.
+It is possible to use different user roles
+with different credentials
+to seperate which user can <code>Read</code>
+objects from the bucket
+and which user can <code>Write</code> objects to the bucket.</p>
+<div class="admonition info">
+<p class="admonition-title">Permissions</p>
+<p>Amazon S3 provides many <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/set-permissions.html">permission settings for buckets</a>.
+Specific <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/set-bucket-permissions.html">IAM users can have access</a>.
+Objects can have <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/set-object-permissions.html">their own permissions</a>.
+And buckets can even have their own <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/set-bucket-permissions.html">custom Bucket Policies</a>.
+Refer to your organization's security policy
+to best set up your S3 bucket.</p>
+</div>
+<h2 id="object-versions">Object Versions</h2>
+<p>By default,
+an S3 bucket will be <em>unversioned</em>.
+An unversioned bucket will not allow different versions of the same object.
+In order to take advantage of using an S3 bucket with Platform Automation,
+we will want to enable versioning. Enabling versioning is not required,
+but versioning does make the process easier,
+and will require less potential manual steps around naming updates to the new file
+whenever they are changed.</p>
+<ol>
+<li>Navigate to <a href="https://console.aws.amazon.com/s3/">the S3 console</a></li>
+<li>Choose the name of the bucket you created in the previous step</li>
+<li>Select the "Properties" tab</li>
+<li>Click the "Versioning" tile</li>
+<li>Check the "Enable Versioning"</li>
+</ol>
+<p>Now that versioning is enabled,
+we can store multiple versions of a file.
+For example, given the following object:
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="n">exported</span><span class="o">-</span><span class="n">installation</span><span class="p">.</span><span class="n">zip</span>
+</pre></div>
+</td></tr></table>
+We can now have multiple versions of this object stored in our S3 bucket:
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="n">exported</span><span class="o">-</span><span class="n">installation</span><span class="p">.</span><span class="n">zip</span> <span class="p">(</span><span class="k">version</span> <span class="mi">111111</span><span class="p">)</span>
+<span class="n">my</span><span class="o">-</span><span class="n">exported</span><span class="o">-</span><span class="n">installation</span><span class="p">.</span><span class="n">zip</span> <span class="p">(</span><span class="k">version</span> <span class="mi">121212</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></p>
+<h2 id="storing-files-in-s3">Storing Files in S3</h2>
+<p>Any file that can be stored on a computer
+can be stored on S3. S3 is especially good at storing large files as it is designed to scale with large amounts of data while still being durable and fast.</p>
+<p>Platform Automation users may want to store the following files in S3:</p>
+<ul>
+<li><code>.pivotal</code> product files</li>
+<li><code>.tgz</code> stemcell files</li>
+<li><code>.ova</code> Ops Manager files</li>
+<li><code>.zip</code> foundation exports</li>
+</ul>
+<p>Platform Automation users will likely <strong><em>NOT</em></strong> want to store the following in S3:</p>
+<ul>
+<li><code>.yaml</code> configuration files - Better suited for <a href="https://git-scm.com/">git</a></li>
+<li><code>secrets.yaml</code> environment and secret files - There are a number of ways
+to handle these types of files,
+but they should not be stored in S3.
+Check out the <a href="../configuration-management/secrets-handling.html">Secrets Handling page</a>
+for how to work with these types of files.  </li>
+</ul>
+<h2 id="structuring-your-bucket">Structuring your Bucket</h2>
+<p>Like any computer, buckets can have folders
+and any number of sub-folders.
+The following is one way to set up your bucket's file structure:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="err">├──</span> <span class="n">foundation</span><span class="o">-</span><span class="mi">1</span>
+<span class="err">│</span>   <span class="err">├──</span> <span class="n">products</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">├──</span> <span class="n">healthwatch</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">│</span>     <span class="n">healthwatch</span><span class="p">.</span><span class="n">pivotal</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">├──</span> <span class="n">pas</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">│</span>     <span class="n">pas</span><span class="p">.</span><span class="n">pivotal</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">└──</span> <span class="p">...</span>
+<span class="err">│</span>   <span class="err">│</span>
+<span class="err">│</span>   <span class="err">├──</span> <span class="n">stemcells</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">├──</span> <span class="n">healthwatch</span><span class="o">-</span><span class="n">stemcell</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">│</span>     <span class="n">ubuntu</span><span class="o">-</span><span class="n">trusty</span><span class="p">.</span><span class="n">tgz</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">├──</span> <span class="n">pas</span><span class="o">-</span><span class="n">stemcell</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">│</span>     <span class="n">ubuntu</span><span class="o">-</span><span class="n">xenial</span><span class="p">.</span><span class="n">tgz</span>
+<span class="err">│</span>   <span class="err">│</span>   <span class="err">└──</span> <span class="p">...</span>
+<span class="err">│</span>   <span class="err">│</span>
+<span class="err">│</span>   <span class="err">├──</span> <span class="n">foundation1</span><span class="o">-</span><span class="n">exports</span>
+<span class="err">│</span>           <span class="n">foundation1</span><span class="o">-</span><span class="n">installation</span><span class="p">.</span><span class="n">zip</span>
+</pre></div>
+</td></tr></table>
+
+<p>When viewing a bucket in the AWS S3 console,
+simple select "Create Folder".
+To create a sub-folder,
+when viewing a specific folder,
+select "Create Folder" again.  </p>
+<p>When attempting to access a specific object in a folder,
+simply include the folder structure before the object name:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">foundation1</span><span class="o">/</span><span class="n">products</span><span class="o">/</span><span class="n">healthwatch</span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">healthwatch</span><span class="o">-</span><span class="n">product</span><span class="p">.</span><span class="n">pivotal</span>
+</pre></div>
+</td></tr></table>
+
+<h2 id="using-a-bucket">Using a Bucket</h2>
+<p>When using the <a href="https://github.com/concourse/s3-resource">Concourse S3 Resource</a>,
+several configuration properties are available
+for retreiving objects. The bucket name is required.</p>
+<div class="admonition info">
+<p class="admonition-title">On networking and accessing a bucket</p>
+<p>In order for your Concourse
+to have access to your Amazon S3 bucket,
+ensure that you have the appropriate firewall and networking settings
+for your Concourse instance to
+make requests to your bucket.
+Concourse uses various "outside" resources
+to perform certain jobs.
+Ensure that Concourse can "talk" to your Amazon S3 bucket.</p>
+</div>
+<h2 id="reference-resources-pipeline">Reference Resources Pipeline</h2>
+<p>The <a href="../pipeline/resources.html">resources pipeline</a>
+may be used to download dependencies from Pivnet
+and place them into a trusted S3 bucket.
+The various <code>resources_types</code> use the <a href="https://github.com/concourse/s3-resource">Concourse S3 Resource type</a>
+and several Platform Automation tasks to accomplish this.
+The following is an S3-specific breakdown of these components
+and where to find more information.</p>
+<h4 id="the-download-product-task">The download-product task</h4>
+<p>The <a href="../reference/task.html#download-product"><code>download-product</code></a> task lets you download products from PivNet.
+If S3 properties are set in the <a href="../reference/inputs-outputs.html#download-product-config">download config</a>,
+these files can be placed into an S3 bucket.</p>
+<p>If S3 configurations are set,
+this task will perform a specific filename operation
+that will prepend meta data to the filename.
+If downloading the product <code>Example Product version 2.2.1</code> from PivNet
+where the product slug is <code>example-product</code> and the version is <code>2.2.1</code>,
+when directly downloaded from PivNet, the file may appear as:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">product</span><span class="o">-</span><span class="mi">2</span><span class="p">.</span><span class="mi">2</span><span class="o">-</span><span class="n">build99</span><span class="p">.</span><span class="n">pivotal</span>
+</pre></div>
+</td></tr></table>
+
+<p>Because PivNet file names
+do not always have the necessary metadata required by Platform Automation,
+the download product task will prepend the necessary information
+to the filename before it is placed into the S3 bucket:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p">[</span><span class="n">example</span><span class="o">-</span><span class="n">product</span><span class="p">,</span><span class="mi">2</span><span class="p">.</span><span class="mi">2</span><span class="p">.</span><span class="mi">1</span><span class="o">-</span><span class="n">build99</span><span class="p">]</span><span class="n">product</span><span class="o">-</span><span class="mi">2</span><span class="p">.</span><span class="mi">2</span><span class="o">-</span><span class="n">build99</span><span class="p">.</span><span class="n">pivotal</span>
+</pre></div>
+</td></tr></table>
+
+<p>For complete information on this task
+and how it works, refer to the <a href="../reference/task.html#download-product">download-product task reference.</a></p>
+<div class="admonition warning">
+<p class="admonition-title">Changing S3 file names</p>
+<p>Do not change the meta information
+prepended by <code>download-product</code>.
+This information is required by the
+<code>download-product-s3</code> task to properly parse product versions.</p>
+<p>If placing a product file into an S3 bucket manually,
+ensure that it has the proper file name format;
+opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
+There should be no spaces between the two brackets.
+For example, for a product with slug of <code>product-slug</code> and version of <code>1.1.1</code>:
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p">[</span><span class="n">product</span><span class="o">-</span><span class="n">slug</span><span class="p">,</span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="mi">1</span><span class="p">]</span><span class="n">original</span><span class="o">-</span><span class="n">filename</span><span class="p">.</span><span class="n">pivotal</span>
+</pre></div>
+</td></tr></table></p>
+</div>
+<h4 id="the-download-product-s3-task">The download-product-s3 task</h4>
+<p>The <a href="../reference/task.html#download-product-s3"><code>download-product-s3</code></a>
+task lets you download products from an S3 bucket.
+The prefixed metadata added by <code>download-product</code> is used to find the appropriate file.
+This task uses the same <a href="../reference/inputs-outputs.html#download-product-config">download-product config file</a>
+as <code>download-product</code> to ensure consistency
+across what is <code>put</code> in S3
+and what is being accessed latter by <code>download-product-s3</code>.
+<code>download-product</code> and <code>download-product-s3</code> are designed
+to be used together.
+The download product config should be different between the two tasks.</p>
+<p>For complete information on this task
+and how it works, refer to the <a href="../reference/task.html#download-product-s3">download-product-s3 task reference.</a></p></article></div></div></main><!-- Application footer -->
+<footer class="md-footer">
+
+    <!-- Link to previous and/or next page --><div class="md-footer-nav">
+        <nav class="md-footer-nav__inner md-grid">
+
+            <!-- Link to previous page --><a href="git-repo-layout.html"
+               title="Git Repository Layout"
+               class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               rel="prev">
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-back
+                    md-footer-nav__button"></i>
+                </div>
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">Previous</span>Git Repository Layout</span>
+                </div>
+            </a><!-- Link to next page --><a href="../how-to-guides/upgrade-existing-opsman.html"
+               title="Upgrading an Existing Ops Manager"
+               class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               rel="next">
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">Next</span>Upgrading an Existing Ops Manager</span>
+                </div>
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-forward
+                    md-footer-nav__button"></i>
+                </div>
+            </a></nav>
+    </div><!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                <a href="https://pivotal.io/privacy-policy">
+                    Privacy Policy
+                </a>
+                |
+                <a href="https://pivotal.io/legal/">
+                    Terms of Use
+                </a>
+            </div>
+
+            <div class="md-footer-social">
+                <a href="https://pivotal.io">
+                    Pivotal Documentation © 2019 Pivotal Software, Inc. All Rights Reserved
+                </a>
+            </div>
+
+        </div>
+    </div>
+</footer></div><script src="../assets/javascripts/application.b260a35d.js"></script><script>app.initialize({version:"1.0.4",url:{base:".."}})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js"></script></body></html>

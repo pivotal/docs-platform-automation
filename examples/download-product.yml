@@ -1,0 +1,49 @@
+# code_snippet download-product-config start yaml
+---
+pivnet-api-token: token
+## Note that file globs must be quoted if they start with *;
+## otherwise they'll be interpreted as a YAML anchor.
+pivnet-file-glob: "*.pivotal"
+pivnet-product-slug: product-slugs
+
+## defaults to false and should be excluded if not set to true
+# pivnet-disable-ssl: true
+
+## Either product-version OR product-version-regex is required
+# product-version: 1.2.3
+
+## Note that the regex mustn't be quoted,
+## as escape characters for the regex will confuse yaml parsers.
+# product-version-regex: ^1\.2\..*$
+
+stemcell-iaas: google
+
+## The following are required only if using download-product-s3.
+## Any key marked required above is still required when using S3.
+## If s3-bucket is set,
+## downloaded product files will have their slug and version prepended.
+s3-bucket: s3-bucket
+s3-region-name: us-west-1      # required; sufficient for AWS
+s3-endpoint: s3.endpoint.com   # if not using AWS, this is required
+
+## Required unless `s3-auth-method` is `iam`
+s3-access-key-id: aws-or-minio-key-id
+s3-secret-access-key: aws-or-minio-secret-key
+
+## Optional paths for both the product and the associated stemcell
+## defaults to the root path of the specified bucket
+# s3-product-path: /path/to/product
+# s3-stemcell-path: /path/to/stemcell
+
+## defaults to false and should be excluded if not set to true
+# s3-disable-ssl: true
+
+## defaults to false;
+## made available only because sometimes necessary for compatibility
+# s3-enable-v2-signing: true
+
+## defaults to accesskey;
+## allows use of AWS instance IAM creds, if available
+# s3-auth-method: iam
+
+# code_snippet download-product-config end

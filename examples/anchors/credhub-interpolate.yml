@@ -1,0 +1,18 @@
+resource-types:
+resources:
+
+credhub-interpolate: &credhub-interpolate
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  params:
+    CREDHUB_CLIENT: ((credhub-client))
+    CREDHUB_SECRET: ((credhub-secret))
+    CREDHUB_SERVER: ((credhub-server))
+    PREFIX: '/pipeline/vsphere'
+    INTERPOLATION_PATHS: "download-product-configs"
+  input_mapping:
+    files: config
+  output_mapping:
+    interpolated-files: config
+
+jobs:

@@ -1,0 +1,17 @@
+# code_snippet env-uaa start yaml
+---
+target: https://pcf.example.com
+connect-timeout: 30          # default 5
+request-timeout: 1800        # default 1800
+skip-ssl-validation: false   # default false
+client-id: client_id
+client-secret: client_secret
+# decryption-passphrase is optional,
+# except for use with `import-installation`.
+# OpsMan depends on the passphrase
+# to decrypt the imported installation.
+# For other commands, providing this key allows
+# decryption of the OpsMan VM after reboot,
+# which would otherwise need to be done manually.
+decryption-passphrase: passphrase
+# code_snippet env-uaa end

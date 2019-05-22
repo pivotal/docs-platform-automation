@@ -1,0 +1,45 @@
+# code_snippet director-configuration start yaml
+---
+az-configuration:
+- clusters:
+  - cluster: cluster-name
+    resource_pool: resource-pool-name
+  name: AZ01
+
+properties-configuration:
+  iaas_configuration:
+    vcenter_host: vcenter.example.com
+    vcenter_password: admin
+    vcenter_username: password
+    ......
+  director_configuration:
+    blobstore_type: local
+    bosh_recreate_on_next_deploy: false
+    custom_ssh_banner: null
+    ......
+  security_configuration:
+    generate_vm_passwords: true
+    trusted_certificates:
+  syslog_configuration:
+    enabled: false
+
+network-assignment:
+  network:
+    name: INFRASTRUCTURE
+  other_availability_zones: []
+  singleton_availability_zone:
+    name: AZ01
+
+networks-configuration:
+  icmp_checks_enabled: false
+  networks:
+  - name: NETWORK-NAME
+  ......
+
+resource-configuration:
+  compilation:
+    instance_type:
+      id: automatic
+    instances: automatic
+  ......
+# code_snippet director-configuration end
