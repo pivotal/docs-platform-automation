@@ -51,6 +51,32 @@ which can be retrieved using [this pipeline][reference-resources].
 These can either be uploaded manually or from the [reference resources pipeline][reference-resources].
 
 {% code_snippet 'examples', 'multiple-product-resources-s3' %}
+  
+!!! tip "PAS-Windows with S3"
+    If retrieving `pas-windows` and `pas-windows-stemcell` from an S3 bucket,
+    you must use the built in S3 concourse resource.
+    This is done in the example above.
+    The `download-product-s3` task does not persist meta information 
+    about necessary stemcell for `pas-windows`
+    because Pivotal does not distribute the Window's file system. 
+    
+Alternatively, products may be downloaded using the `download-product-s3` task.
+In a job, specify the following task:
+
+```yaml
+...
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product-s3.yml
+  params:
+    CONFIG_FILE: download-product-configs/pas.yml
+  input_mapping:
+    config: interpolated-creds
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+...
+```
 
 ### Exported Installation Resource
 
