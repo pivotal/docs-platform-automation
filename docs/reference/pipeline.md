@@ -53,7 +53,6 @@ necessary to configure an Ops Manager product tile using the `om` tool. This can
 * (Optional) A working [credhub] setup with its own UAA client and secret.
 
 
-
 ## Retrieving external dependencies
 
 The pipeline downloads dependencies consumed by the tasks
@@ -71,5 +70,7 @@ which can be retrieved using [this pipeline](#retrieving-external-dependencies).
 
 {% code_snippet 'pivotal/platform-automation', 'pipeline' %}
 
-{% include ".internal_link_url.md" %}
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
 {% include ".external_link_url.md" %}
