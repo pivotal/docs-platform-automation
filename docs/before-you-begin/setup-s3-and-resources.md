@@ -256,17 +256,17 @@ foundation1/products/healthwatch/my-healthwatch-product.pivotal
 
 When using the [Concourse S3 Resource][concourse-s3-resource],
 several configuration properties are available
-for retreiving objects. The bucket name is required.
+for retrieving objects. The bucket name is required.
 
 !!! Info "On networking and accessing a bucket"
     In order for your Concourse
-    to have access to your Amazon S3 bucket,
+    to have access to your S3 bucket,
     ensure that you have the appropriate firewall and networking settings
     for your Concourse instance to
     make requests to your bucket.
     Concourse uses various "outside" resources
     to perform certain jobs.
-    Ensure that Concourse can "talk" to your Amazon S3 bucket.
+    Ensure that Concourse can "talk" to your S3 bucket.
 
 
 ## Reference Resources Pipeline
@@ -331,7 +331,7 @@ The prefixed metadata added by `download-product` is used to find the appropriat
 This task uses the same [download-product config file][download-product-config]
 as `download-product` to ensure consistency
 across what is `put` in S3
-and what is being accessed latter by `download-product-s3`.
+and what is being accessed later by `download-product-s3`.
 `download-product` and `download-product-s3` are designed
 to be used together.
 The download product config should be different between the two tasks.
