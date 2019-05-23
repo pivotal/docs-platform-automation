@@ -70,3 +70,6 @@ Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline](#retrieving-external-dependencies).
 
 {% code_snippet 'pivotal/platform-automation', 'pipeline' %}
+
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}
