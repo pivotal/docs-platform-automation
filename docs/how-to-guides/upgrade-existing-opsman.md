@@ -1,9 +1,11 @@
 # Writing a Pipeline to Upgrade an Existing Ops Manager
 
+This how-to-guide shows you how to create a pipeline for upgrading an existing Ops Manager VM. If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-how-to].
+
 {% set extra_prereq_item="1. A running Ops Manager VM that you would like to upgrade" %}
 {% include ".getting-started.md" %}
 
-#### Exporting The Installation
+### Exporting The Installation
 
 We're finally in a position to do work!
 

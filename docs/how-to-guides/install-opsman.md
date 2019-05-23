@@ -1,8 +1,9 @@
 # Writing a Pipeline to Install Ops Manager
+This how-to-guide shows you how to write a pipeline for installing a new Ops Manager - including configuring and creating the Ops Manager VM and BOSH Director. If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to]. 
 
 {% include ".getting-started.md" %}
 
-#### Download Ops Manager product
+### Downloading Ops Manager
 
 We're finally in a position to do work!
 
@@ -281,12 +282,12 @@ git push
 ### Creating Resources for Your Ops Manager
 
 Before Platform Automation can create a VM for your Ops Manager installation,
-there are a certain number of resources 
+there are a certain number of resources
 required by the VM creation and the Ops Manager director installation processes.
-These resources are created directly on the IaaS of your choice, 
+These resources are created directly on the IaaS of your choice,
 and read in as configuration for your Ops Manager.
 
-There are two main ways of creating these resources, 
+There are two main ways of creating these resources,
 and you should use whichever method is right for you and your setup.
 
 **Terraform**:
@@ -303,7 +304,7 @@ These scripts are found in open source repos under the `pivotal-cf` org in GitHu
 
 Each of these repos contain instructions in their respective `README`s
 designed to get you started. Most of the manual keys that you need to fill out
-will be in a [terraform.tfvars][terraform-vars] file 
+will be in a [terraform.tfvars][terraform-vars] file
 (for more specific instruction, please consult the `README`).
 
 If there are specific aspects of the terraforming repos that do not work for you,
@@ -313,8 +314,8 @@ you can overwrite _some_ properties using an [override.tf][terraform-override] f
 
 Pivotal has extensive documentation to manually create the resources needed
 if you are unable or do not wish to use Terraform.
-As with the Terraform solution, however, 
-there are different docs depending on the IaaS 
+As with the Terraform solution, however,
+there are different docs depending on the IaaS
 you are installing Ops Manager onto.
 
 When going through the documentation required for your IaaS,
@@ -329,9 +330,9 @@ Platform Automation will do this for you.
 
 _NOTE_: if you need to install an earlier version of Ops Manager,
 select your desired version from the dropdown at the top of the page.
- 
 
-### Create the Ops Manager VM
+
+### Creating the Ops Manager VM
 
 Now that we have an Ops Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
