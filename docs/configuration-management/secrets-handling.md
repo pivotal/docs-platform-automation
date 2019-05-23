@@ -70,7 +70,7 @@ rectify this, you can use a secret management tool, such as Credhub, to sub in t
 manifest.  
 
 Let's assume basic knowledge and understanding of the
-[`credhub-interpolate`][credhub interpolate] task described in the [Secrets Handling][secrets handling] section
+[`credhub-interpolate`][credhub interpolate] task described in the [Secrets Handling][secrets-handling] section
 of the documentation.
 
 For multiple foundations, [`credhub-interpolate`][credhub interpolate] will work the same, but `PREFIX` param will
