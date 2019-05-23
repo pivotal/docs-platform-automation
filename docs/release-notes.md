@@ -194,7 +194,7 @@ based on user feedback. Thanks for the bug reports!
 ### Breaking Changes
 * `import-installation` no longer takes an `auth.yml`, which used to contain `decryption-passphrase`.
   Now it is required to set the `decryption-passphrase` in the `env.yml` when using the task. See
-  [env file](https://docs.pivotal.io/pcf-automationhttps://docs.pivotal.io/pcf-automation/pcf-automation/v1.1/reference/inputs-outputs.html#env)
+  [env file](https://docs.pivotal.io/pcf-automation/v1.1/reference/inputs-outputs.html#env)
 * `upgrade-opsman` invokes `import-installation` behind the scene, so the breaking change applies to this
   command as well. This mean that `upgrade-opsman` task no longer requires the `auth.yml`, but requires
   `decryption-passphrase` to be in the `env.yml`.
