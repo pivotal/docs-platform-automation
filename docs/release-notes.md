@@ -95,3 +95,6 @@ These are release notes for Platform Automation for PCF.
   if an installation had a custom SSL cert;
   it now allows for the momentary API downtime from restarting nginx on Ops Manager
   after configuring the custom cert.
+  
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}
