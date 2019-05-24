@@ -1,5 +1,5 @@
 
-Extracting a product configuration file, an externalized config that lives outside of OpsManager, can make it easier to manage multiple foundations as well as help with:
+Extracting a product configuration file, an externalized config that lives outside of Ops Manager, can make it easier to manage multiple foundations as well as help with:
 
 - traceability
 - avoiding configuration drift
@@ -173,13 +173,13 @@ You can then dispose of the config template directory.
 
 ## From A Staged Product
 
-A configuration can be generated from a staged product on an already existing OpsManager.
+A configuration can be generated from a staged product on an already existing Ops Manager.
 
 ### Prerequisites
 
 To extract the configuration for a product, you will first need to do the following:
 
-1. Upload and stage your desired product(s) to a fully deployed OpsManager.
+1. Upload and stage your desired product(s) to a fully deployed Ops Manager.
 For example, let's use [PAS][PAS] on Vsphere
 1. Configure your product _manually_ according to the product's
 [install instructions][pas-install-vsphere].
@@ -187,7 +187,7 @@ For example, let's use [PAS][PAS] on Vsphere
 ### Workflow
 
 [om] has a command called [staged-config], which is used to extract staged product
-configuration present in the OpsManager UI of the targeted foundation.
+configuration present in the Ops Manager UI of the targeted foundation.
 
 Sample usage, using `om` directly and assuming the [PAS][PAS] product:  
 `om --env env.yml staged-config --include-placeholders --product-name cf > tile-config.yml`  
@@ -230,7 +230,7 @@ jobs:
     params:
       file: generated-config/cf.yml      
 ```
-This task will connect to the OpsManager defined in your [`env.yml`][generating-env-file], download the current staged
+This task will connect to the Ops Manager defined in your [`env.yml`][generating-env-file], download the current staged
 configuration of your product, and put it into a `generated-config` folder in the concourse job. The `put` in
 concourse allows you to persist this config outside the concourse container.
 
@@ -242,7 +242,7 @@ of how to do this using on the linux/mac command line:
 ## Using Ops Files for Multi-Foundation
 
 `--include-placeholders` in the `om` command is a vital first step to externalizing
-your configuration for multiple foundations. This will search the OpsManager product
+your configuration for multiple foundations. This will search the Ops Manager product
 for fields marked as "secrets", and replace those values with
 `((placeholder_credentials))`.
 

@@ -20,18 +20,8 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
-## v3.0.1
-
-**Release Date** Something sometime
-
-### Bug Fixes
-
-- `upgrade-opsman` would incorrectly parse meta information from the `download-product`
-  prefixing if using S3. This lead to some unexpected upgrading behavior.
-  Now, the task will correctly upgrade if the semver is higher.
-
 ## v3.0.0
-**Release Date** SomeDayOfTheWeek, Month, Day, Year
+**Release Date** Friday, May, 24th, 2019
 
 ### Breaking Changes
 - `om` will now follow conventional Semantic Versioning,

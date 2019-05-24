@@ -1,6 +1,6 @@
 ## Generating an Env File
 Almost all [`om`][om] commands require an env file
-to describe the Ops Manager Authenticated API endpoint (This is the URL you connect to opsmanager with).
+to describe the Ops Manager Authenticated API endpoint (This is the URL you connect to Ops Manager with).
 
 The configuration for authentication has a dependency on either username/password
 
