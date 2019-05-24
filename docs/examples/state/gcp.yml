@@ -1,0 +1,3 @@
+iaas: gcp
+# Name of the VM in GCP
+vm_id: vm_name

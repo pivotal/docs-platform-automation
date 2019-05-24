@@ -28,9 +28,7 @@ nav:
 - Compatibility and Versioning: compatibility-and-versioning.md
 - Getting Started: downloading-and-testing.md
 - Reference Pipelines:
-  - Retrieving External Dependencies: pipeline/resources.md
-  - Ops Manager + a product: pipeline/single-product.md
-  - Ops Manager + multiple products: pipeline/multiple-products.md
+  - Pipeline reference: reference/pipeline.md
 - How to Guides:
   - Installing Ops Manager: how-to-guides/install-opsman.md
   - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
