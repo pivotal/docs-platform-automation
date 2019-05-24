@@ -11,7 +11,7 @@ The tasks are presented, in their entirety,
 as they are found in the product.
 
 The docker image can be used to invoke the commands in each task locally.
-Use `--help` for more information. To learn more see the [Running Commands Locally][running commands locally] section.
+Use `--help` for more information. To learn more see the [Running Commands Locally][running-commands-locally] section.
 
 ### apply-changes
 

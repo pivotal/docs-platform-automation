@@ -6,7 +6,7 @@ An example workflow would be storing an SSH key.
 
 1. Authenticate with your credhub instance.
 2. Generate an ssh key: `credhub generate --name="/private-foundation/opsman_ssh_key" --type=ssh`
-3. Create an [OpsManager configuration][opsmanager configuration] file that references the name of the property.
+3. Create an [OpsManager configuration][opsman-config] file that references the name of the property.
 
 ```yaml
 opsman-configuration:
@@ -14,7 +14,7 @@ opsman-configuration:
     ssh_public_key: ((opsman_ssh_key.public_key))
 ```
 
-4. Configure your pipeline to use the [credhub interpolate] task.
+4. Configure your pipeline to use the [Credhub interpolate][[credhub-interpolate]] task.
    It takes an input `files`, which should contain your configuration file from (3).
 
    The declaration within a pipeline might look like:
@@ -70,12 +70,12 @@ rectify this, you can use a secret management tool, such as Credhub, to sub in t
 manifest.  
 
 Let's assume basic knowledge and understanding of the
-[`credhub-interpolate`][credhub interpolate] task described in the [Secrets Handling][secrets-handling] section
+[`credhub-interpolate`][[credhub-interpolate]] task described in the [Secrets Handling][secrets-handling] section
 of the documentation.
 
-For multiple foundations, [`credhub-interpolate`][credhub interpolate] will work the same, but `PREFIX` param will
+For multiple foundations, [`credhub-interpolate`][[credhub-interpolate]] will work the same, but `PREFIX` param will
 differ per foundation. This will allow you to keep your `base.yml` the same for each foundation with the same
-((placeholder_credential)) reference. Each foundation will require a separate [`credhub-interpolate`][credhub interpolate]
+((placeholder_credential)) reference. Each foundation will require a separate [`credhub-interpolate`][[credhub-interpolate]]
 task call with a unique prefix to fill out the missing pieces of the template.
 
 ### Vars Files
