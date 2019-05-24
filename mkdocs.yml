@@ -27,8 +27,7 @@ nav:
 - Release Notes: release-notes.md
 - Compatibility and Versioning: compatibility-and-versioning.md
 - Getting Started: downloading-and-testing.md
-- Reference Pipelines:
-  - Pipeline reference: reference/pipeline.md
+- Pipeline reference: reference/pipeline.md
 - How to Guides:
   - Installing Ops Manager: how-to-guides/install-opsman.md
   - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
