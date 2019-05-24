@@ -24,31 +24,29 @@ extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
 - Introduction: index.md
-- Downloading and Testing: downloading-and-testing.md
-- Compatibility and Versioning: compatibility-and-versioning.md
 - Release Notes: release-notes.md
+- Compatibility and Versioning: compatibility-and-versioning.md
+- Getting Started: downloading-and-testing.md
 - Reference Pipelines:
   - Retrieving External Dependencies: pipeline/resources.md
-  - Ops Manager + multiple products: pipeline/multiple-products.md
   - Ops Manager + a product: pipeline/single-product.md
-- Before You Begin:
-  - Git Repository Layout: before-you-begin/git-repo-layout.md
-  - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
+  - Ops Manager + multiple products: pipeline/multiple-products.md
 - How to Guides:
-  - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
   - Installing Ops Manager: how-to-guides/install-opsman.md
-- References:
-  - Tasks: reference/task.md
-  - 'Inputs/Outputs': reference/inputs-outputs.md
-  - Running Commands Locally: reference/running-commands-locally.md
-- Configuration Management:
-  - Configure Auth: configuration-management/configure-auth.md
+  - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
+- Concepts:
+  - Configuring Auth: configuration-management/configure-auth.md
+  - Configuring Env: configuration-management/configure-env.md
   - Creating a Director Config File: configuration-management/creating-a-director-config-file.md
   - Creating a Product Config File: configuration-management/creating-a-product-config-file.md
-  - Configuring Env: configuration-management/configure-env.md
+  - Git Repository Layout: before-you-begin/git-repo-layout.md
+  - Running Commands Locally: reference/running-commands-locally.md
+  - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
   - Secrets Handling: configuration-management/secrets-handling.md
-- Pipeline Design:
-  - Variables: pipeline-design/variables.md
   - Stemcell Handling: pipeline-design/stemcell-handling.md
-- About Upgrading Ops Manager: upgrade.md
+  - Variables: pipeline-design/variables.md
+- References:
+  - Concourse Tasks: reference/task.md
+  - 'Inputs/Outputs': reference/inputs-outputs.md
+  - Upgrading Ops Manager: upgrade.md
 - Report an Issue: report-an-issue.md
