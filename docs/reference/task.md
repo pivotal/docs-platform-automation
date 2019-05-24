@@ -373,30 +373,6 @@ Also useful for persisting the configuration output from:
 
 {% code_snippet 'tasks', 'make-git-commit' %}
 
-### pre-deploy-check
-Checks if the Ops Manager director is configured properly and validates the configuration.
-Additionally, checks each of the staged products
-and validates they are configured correctly.
-This task can be run at any time
-and can be used a a pre-check for [`apply-changes`][apply-changes].
-
-The checks that this task executes are:
-
-- is configuration complete and valid
-- is the network assigned
-- is the availability zone assigned
-- is the stemcell assigned
-- what stemcell type/version is required
-- are there any unset/invalid properties
-- did any ops manager verifiers fail
-
-If any of the above checks fail
-the task will fail. 
-The failed task will provide a list of errors that need to be fixed 
-before an `apply-changes` could start. 
-
-{% code_snippet 'tasks', 'pre-deploy-check' %}
-
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
 
