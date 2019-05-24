@@ -127,7 +127,7 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 1. Requires the image YAML file from Pivnet
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account
-1. Creates the OpsManager image
+1. Creates the Ops Manager image
 1. Creates a VM from the image. This will use unmanaged disk (if specified), and assign a public and/or private IP. This only attaches existing infrastructure to a newly createdVM. This does not create any new resources.
 
 **GCP**
@@ -373,6 +373,30 @@ Also useful for persisting the configuration output from:
 
 {% code_snippet 'tasks', 'make-git-commit' %}
 
+### pre-deploy-check
+Checks if the Ops Manager director is configured properly and validates the configuration.
+Additionally, checks each of the staged products
+and validates they are configured correctly.
+This task can be run at any time
+and can be used a a pre-check for [`apply-changes`][apply-changes].
+
+The checks that this task executes are:
+
+- is configuration complete and valid
+- is the network assigned
+- is the availability zone assigned
+- is the stemcell assigned
+- what stemcell type/version is required
+- are there any unset/invalid properties
+- did any ops manager verifiers fail
+
+If any of the above checks fail
+the task will fail. 
+The failed task will provide a list of errors that need to be fixed 
+before an `apply-changes` could start. 
+
+{% code_snippet 'tasks', 'pre-deploy-check' %}
+
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
 
@@ -382,7 +406,7 @@ Staged a product to the Ops Manager specified in the config file.
 Downloads the configuration for a product from Ops Manager.
 
 Not to be confused with Ops Manager's
-built-in [export](https://docs.pivotal.io/pivotalcf/2-1/customizing/backup-restore/backup-pcf-bbr.html#export),
+built-in [export](https://docs.pivotal.io/pivotalcf/customizing/backup-restore/backup-pcf-bbr.html#export),
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 

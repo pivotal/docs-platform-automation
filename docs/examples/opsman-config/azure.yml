@@ -14,14 +14,14 @@ opsman-configuration:
     # Note that there are several environment-specific details in this path
     vpc_subnet: /subscriptions/<MY_SUBSCRIPTION_ID>/resourceGroups/<MY_RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<MY_VNET>/subnets/<MY_SUBNET>
 
-    storage_account: opsmanager                   # account name of container
+    storage_account: opsman                       # account name of container
 
     # Optional
     # only needed if your client doesn't have the needed storage permissions
     storage_key: pEuXDaDK/WWo...
 
     ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ...  # ssh key to access VM
-    vm_name: ops-manager-vm                       # default: OpsManager-vm
+    vm_name: ops-manager-vm                       # default: Ops Manager-vm
     boot_disk_size: 100                           # default: 200
     cloud_name: AzureCloud                        # default: AzureCloud
 

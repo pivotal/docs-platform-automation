@@ -3,7 +3,7 @@
 opsman-configuration:
   aws:
     region: us-west-2
-    vm_name: ops-manager-vm # defaults OpsManager-vm
+    vm_name: ops-manager-vm # defaults Ops Manager-vm
     boot_disk_size: 100 # default 200
     vpc_subnet_id: subnet-0292bc845215c2cbf
     security_group_id: sg-0354f804ba7c4bc41

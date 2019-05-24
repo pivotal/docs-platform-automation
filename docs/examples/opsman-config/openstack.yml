@@ -9,7 +9,7 @@ opsman-configuration:
     password: password
     key_pair_name: opsman-keypair
     security_group_name: opsman-sec-group
-    vm_name: ops-manager-vm      # default: OpsManager-vm
+    vm_name: ops-manager-vm      # default: Ops Manager-vm
     # At least one IP address (public or private) needs to be assigned to the VM.
     public_ip: 1.2.3.4
     private_ip: 10.0.0.3

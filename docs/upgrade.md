@@ -13,7 +13,7 @@ It's important to note when upgrading your Ops Manager:
 {% include "./.export_installation_note.md" %}
 
 ### Upgrade Flowchart
-The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an OpsManager VM.
+The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Ops Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}
@@ -28,7 +28,7 @@ a previous installation. It requires the following to perform this operations:
 
 * a valid [state file](reference/inputs-outputs.md#state) from the currently deployed Ops Manager
 * a valid [image file](reference/inputs-outputs.md#opsman-image) for the new Ops Manager to install
-* a [configuration file][opsmanager-configuration] for IAAS specific details
+* a [configuration file][opsman-config] for IAAS specific details
 * an [exported installation][installation] from a currently deployed Ops Manager
 * the [auth file][auth-file] for a currently deployed Ops Manager
 

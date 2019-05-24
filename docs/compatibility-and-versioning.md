@@ -13,7 +13,7 @@ We have tested Platform Automation with these dependencies.
     <tr>
         <th>Platform Automation</th>
         <th>Concourse</th>
-        <th>OpsManager</th>
+        <th>Ops Manager</th>
         <th>Pivnet Resource</th>
     </tr>
 </thead>

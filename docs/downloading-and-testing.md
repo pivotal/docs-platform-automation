@@ -34,7 +34,7 @@ Next we'll create a test pipeline to see if the assets can be accessed correctly
        The pipeline can use any blobstore.
        We choose S3 because the resource natively supported by Concourse.
        The S3 Concourse resource also supports S3-compatible blobstores (e.g. minio).
-       See [S3 Resource](https://github.com/concourse/s3-resource#source-configuration) for more information.
+       See [S3 Resource][s3-source-configuration] for more information.
        If you want to use other blobstore, you need to provide a custom [resource type](https://concourse-ci.org/resource-types.html).
 
  In order to test the setup, fill in the S3 resource credentials and set the below pipeline on your Concourse instance.
