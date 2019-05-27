@@ -150,7 +150,7 @@ git push
 ```
 
 Now that the env file we need is in our git remote,
-we need to add a resource to tell Concourse how to get it as `env`.
+we need to add a resource to tell Concourse how to get it as `config`.
 
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
@@ -226,7 +226,7 @@ jobs:
         PREFIX: /concourse/your-team-name/foundation
         INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
-        files: env
+        files: config
       output_mapping:
         interpolated-files: interpolated-config
     - task: download-product        
@@ -363,7 +363,7 @@ jobs:
         PREFIX: /concourse/your-team-name/foundation
         INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
-        files: env
+        files: config
       output_mapping:
         interpolated-files: interpolated-config
     - task: download-product        
@@ -470,7 +470,7 @@ jobs:
         PREFIX: /concourse/your-team-name/foundation
         INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
-        files: env
+        files: config
       output_mapping:
         interpolated-files: interpolated-config
     - task: download-product        
@@ -525,7 +525,7 @@ jobs:
         PREFIX: /concourse/your-team-name/foundation
         INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
-        files: env
+        files: config
       output_mapping:
         interpolated-files: interpolated-config
     - task: download-product        
