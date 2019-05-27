@@ -89,16 +89,16 @@ mkdir -p foundation
 cd !$
 ```
 
-`download-ops-man.yml` holds creds for communicating with Pivnet,
+`download-ops-manager.yml` holds creds for communicating with Pivnet,
 and uniquely identifies an Ops Manager image to download.
 
-An example `download-ops-man.yml` is shown below.
+An example `download-ops-manager.yml` is shown below.
 
 If your foundation uses authentication other than basic auth,
 please reference [Inputs and Outputs][env]
 for more detail on UAA-based authentication.
 
-Write an `download-ops-man.yml` for your Ops Manager.
+Write an `download-ops-mananager.yml` for your Ops Manager.
 
 
 ```yaml tab="AWS"
@@ -197,7 +197,7 @@ That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
 
 We can add it to our job
-after we've retrieved our `download-ops-man.yml` input,
+after we've retrieved our `download-ops-manager.yml` input,
 but before the `download-product` task:
 
 ```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26 27 28 34 35"
