@@ -132,7 +132,7 @@ based on user feedback. Thanks for the bug reports!
 **Release Date:** November 6, 2018
 
 ### What's New
-* Documentation engine has been changed to mkdocs. Please give us feedback on the [new documentation](https://docs.pivotal.io/platform-automation/alpha/index.html)!
+* Documentation engine has been changed to mkdocs. Please give us feedback on the [new documentation](https://docs.pivotal.io/platform-automation/)!
 * [New Task](./reference/task.md#credhub-interpolate)
   Credhub interpolation is now supported by the tasks
 * [New Task](./reference/task.md#download-product)
