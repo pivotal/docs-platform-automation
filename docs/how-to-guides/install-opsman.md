@@ -175,7 +175,7 @@ Then, add this to the resources section of your pipeline file:
   type: git
   source:
     uri: ((pipeline-repo))
-    private_key: ((plat-auto-pipes-deploy-key))
+    private_key: ((plat-auto-pipes-deploy-key.private_key))
     branch: master
 ```
 
