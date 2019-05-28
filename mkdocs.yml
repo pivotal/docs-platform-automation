@@ -37,12 +37,12 @@ nav:
 - Concepts:
   - Configuring Auth: configuration-management/configure-auth.md
   - Configuring Env: configuration-management/configure-env.md
-  - Creating a Director Config File: configuration-management/creating-a-director-config-file.md
-  - Creating a Product Config File: configuration-management/creating-a-product-config-file.md
+  - Creating the Director Config File: configuration-management/creating-a-director-config-file.md
+  - Creating the Product Config File: configuration-management/creating-a-product-config-file.md
   - Git Repository Layout: before-you-begin/git-repo-layout.md
   - Running Commands Locally: reference/running-commands-locally.md
-  - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
   - Secrets Handling: configuration-management/secrets-handling.md
+  - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
   - Stemcell Handling: pipeline-design/stemcell-handling.md
   - Variables: pipeline-design/variables.md
 - References:
