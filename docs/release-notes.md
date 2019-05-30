@@ -38,17 +38,7 @@ owner: PCF Platform Automation
   For more information on setting GCP scopes, refer to the [GCP scope][gcp-scope] docs.
 
 ## v3.0.1
-
-**Release Date** Something sometime
-
-### Bug Fixes
-
-- `upgrade-opsman` would incorrectly parse meta information from the `download-product`
-  prefixing if using S3. This lead to some unexpected upgrading behavior.
-  Now, the task will correctly upgrade if the semver is higher.
-
-## v3.0.0
-**Release Date** SomeDayOfTheWeek, Month, Day, Year
+**Release Date** Friday, May, 24th, 2019
 
 ### Breaking Changes
 - `om` will now follow conventional Semantic Versioning,
@@ -196,6 +186,9 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   they are present on the image.)
 - Improved error messaging for [vSphere](./reference/inputs-outputs.md#gcp) VM creation if neither `ssh-password` or `ssh-public-key` are set.
   One or the other is required to create a VM.
+- `upgrade-opsman` would incorrectly parse meta information from the `download-product`
+  prefixing if using S3. This lead to some unexpected upgrading behavior.
+  Now, the task will correctly upgrade if the semver is higher.
   
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
