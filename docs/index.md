@@ -32,14 +32,26 @@ and even interactions with the Ops Manager user interface.
 Platform Automation for PCF is a set of tools to use alongside other tools,
 rather than a comprehensive solution.
 
-* Assumes you have the following before using our tasks: a paved IaaS, a deployed Concourse, a git compliant source code control system, credential manager, and a S3-compliant object store. For more information on how to implement these, check out the Before you Begin section.  
+* Assumes you have the following before using our tasks: 
+    * a paved IaaS
+    * a deployed Concourse
+    * a [git compliant source code control system][git-repo-layout]
+    * a [credential manager][secrets-handling]
+    * an [S3-compliant object store][setup-s3-and-resources]
 
+    For more information on how these fit into the larger Platform Automation system, 
+    we recommend starting with one of the How to Guides.
+    
 
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
 
 !!! info "Transitioning from PCF Pipelines"
-      Platform Automation takes a different approach than PCF Pipelines, one example is that Platform Automation allows you to perform installs and upgrades in the same pipeline. We recommend trying out Platform Automation to get a sense of the features and how they differ to understand the best transition method for your environment and needs.
+      Platform Automation takes a different approach than PCF Pipelines,
+      one example is that Platform Automation allows you to perform installs and upgrades in the same pipeline.
+      We recommend trying out Platform Automation
+      to get a sense of the features and how they differ
+      to understand the best transition method for your environment and needs.
 
 
 ## Platform Automation and Upgrading PCF
