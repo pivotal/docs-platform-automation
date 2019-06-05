@@ -56,7 +56,81 @@ the configuration file from the foundation, you can use the flag
 `--include-placeholders`, it will help to parameterize some variables to
 ease the process of adapt for another foundation.
 
+## VM Extensions
+You may specify custom VM extensions to be used in deployments.
+To learn more about how various IAAS's support and use these extensions,
+[see the Bosh docs][bosh-vm-extensions].
 
+Using VM Extensions for your director configuration
+is an _advanced feature_ of Ops Manager. 
+Sometimes it is necessary to define these extensions
+in order to perform certain tasks on your Ops Manager director,
+but they are not required to run a foundation(s),
+and will change default behavior if defined.
+
+Use at your own discretion.
+
+In the following example, two new VM extensions are defined
+and will be added to the list of available extensions on the next [`configure-director`][configure-director].
+This can be added to the end of your existing `director.yml`, 
+or defined independently and set with no other configurations present.
+
+There are no default VM Extensions on a deployed Ops Manager.
+
+`director.yml` Example:
+```yaml
+vmextensions-configuration:
+- name: a_vm_extension
+  cloud_properties:
+    source_dest_check: false
+- name: another_vm_extension
+  cloud_properties:
+    foo: bar
+...
+```
+
+## VM Types
+You may specify custom VM types to be used in deployments.
+To learn more about how various IAAS's support and use these types,
+[see the Bosh docs][bosh-vm-types].
+
+Using VM Types for your director configuration
+is an _advanced feature_ of Ops Manager. 
+VM Types are not required to run a foundation(s),
+and will change default behavior if defined.
+
+Use at your own discretion.
+
+In the following example, two new VM types are defined
+and will be added to the list of available types on the next [`configure-director`][configure-director].
+This can be added to the end of your existing `director.yml`, 
+or defined independently and set with no other configurations present.
+
+`director.yml` Example:
+```yaml
+vmtypes-configuration:
+  custom_only: false
+  vm_types:
+  - name: x1.large
+    cpu: 8
+    ram: 8192
+    ephemeral_disk: 10240
+  - name: mycustomvmtype
+    cpu: 4
+    ram: 16384
+    ephemeral_disk: 4096
+...
+```
+
+!!! note "Precedence"
+    - If `custom_only` is `true`,
+    the VM types specified in your configuration will replace the entire list of available VM types in the Ops Manager. 
+    - If the property is set to false or is omitted, 
+    `configure_director` will append the listed VM types to the list of default VM types for your IaaS. 
+    - If a specified VM type is named the same as a predefined VM type, it will overwrite the predefined type. 
+    - If multiple specified VM types have the same name, the one specified last will be created. 
+    - Existing custom VM types do not persist across configure-director calls, 
+    and it should be expected that the entire list of custom VM types is specified in the director configuration.
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
