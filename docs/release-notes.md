@@ -37,6 +37,23 @@ owner: PCF Platform Automation
   This may be specified in the [Ops Manager config for GCP][inputs-outputs-gcp].
   For more information on setting GCP scopes, refer to the [GCP scope][gcp-scope] docs.
 
+## v3.0.2
+**Release Date** Maybe someday
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-3999-1](https://usn.ubuntu.com/3999-1/)
+  (related to vulnerabilities with `GnuTLS`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/4001-1/)
+  (related to vulnerabilities with `libseccomp`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4004-1](https://usn.ubuntu.com/4004-1/)
+  (related to vulnerabilities with `Berkeley DB`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-3993-1](https://usn.ubuntu.com/3993-1/)
+  (related to vulnerabilities with `curl`. While none of our code directly used these,
+  they are present on the image.)
+
 ## v3.0.1
 **Release Date** Friday, May, 24th, 2019
 
