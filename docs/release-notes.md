@@ -36,6 +36,10 @@ owner: PCF Platform Automation
 - For GCP, [`create-vm`][create-vm] supports setting `scopes` for the new Ops Manager VM.
   This may be specified in the [Ops Manager config for GCP][inputs-outputs-gcp].
   For more information on setting GCP scopes, refer to the [GCP scope][gcp-scope] docs.
+- [`configure-director`][configure-director] now support [VM Extensions][vm-extensions]. 
+  Please note this is an advanced feature, and should be used at your own discretion.  
+- [`configure-director`][configure-director] now support [VM Types][vm-types]. 
+  Please note this is an advanced feature, and should be used at your own discretion.  
 
 ## v3.0.2
 **Release Date** Maybe someday
