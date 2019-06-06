@@ -40,6 +40,10 @@ owner: PCF Platform Automation
   Please note this is an advanced feature, and should be used at your own discretion.  
 - [`configure-director`][configure-director] now support [VM Types][vm-types]. 
   Please note this is an advanced feature, and should be used at your own discretion.  
+  
+### Bug Fixes
+- [`download-product`][download-product] will now return a `download-product.json`
+  if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
 
 ## v3.0.2
 **Release Date** Maybe someday
