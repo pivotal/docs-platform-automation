@@ -30,7 +30,7 @@ owner: PCF Platform Automation
   to specify a `gcp_service_account_name`
   for the new Ops Manager VM.
   This enables you to designate a service account name 
-  as apposed to providing the entire block of service account json.
+  as opposed to providing a service account json object.
   This may be specified in the [Ops Manager config for GCP][inputs-outputs-gcp].
   For more information on GCP service accounts, refer to the [GCP service accounts][gcp-service-accounts] docs.
 - For GCP, [`create-vm`][create-vm] supports setting `scopes` for the new Ops Manager VM.
