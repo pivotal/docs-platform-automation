@@ -44,6 +44,6 @@ s3-secret-access-key: aws-or-minio-secret-key
 
 ## defaults to accesskey;
 ## allows use of AWS instance IAM creds, if available
-# s3-auth-method: iam
+# s3-auth-type: iam
 
 # code_snippet download-product-config end
