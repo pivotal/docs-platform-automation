@@ -22,7 +22,7 @@ owner: PCF Platform Automation
 
 ## v3.1.0
 
-**Release Date** Something sometime
+**Release Date** Someday sometime
 
 ### What's New
 
@@ -44,6 +44,17 @@ owner: PCF Platform Automation
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
+
+## v3.0.3
+**Release Date** Someday sometime
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/)
+  (related to vulnerabilities with `GLib`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4015-1](https://usn.ubuntu.com/4015-1/)
+  (related to vulnerabilities with `DBus`. While none of our code directly used these,
+  they are present on the image.)
 
 ## v3.0.2
 **Release Date** Maybe someday
