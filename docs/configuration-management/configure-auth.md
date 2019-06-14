@@ -3,6 +3,9 @@ Ops Manager's authentication system can be configured several ways.
 The format of the configuration file varies
 according to the authentication method to be used.
 
+For more information about these choices,
+see the [appropriate section][inputs-outputs-configure-auth] of the input/output reference.
+
 ### [configure-authentication]:
 {% code_snippet 'examples', 'auth-configuration' %}
 

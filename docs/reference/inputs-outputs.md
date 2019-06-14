@@ -48,8 +48,9 @@ signup redirect url (url):
 There are two different authentication methods that Ops Manager supports.
 
 #### basic authentication
-The configuration for authentication has a dependency on username/password.
-This configuration format matches the configuration for setting up authentication.
+
+This method of authentication configuration uses a specified username and password.
+
 See the task for the [`configure-authentication`][configure-authentication] for details.
 
 {% code_snippet 'examples', 'auth-configuration' %}
@@ -57,18 +58,47 @@ See the task for the [`configure-authentication`][configure-authentication] for 
 !!! info
     basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats
 
+#### ldap authentication
+
+This method of authentication configuration depends on a LDAP service
+to provide user information and authentication.
+
+This config file is used as the `config` input in the
+[`configure-ldap-authentication`][configure-ldap-authentication] task.
+
+By default, the [`configure-ldap-authentication`][configure-ldap-authentication] task
+will create an admin client for use with the BOSH Director.
+If you wish to prevent this, add `skip-bosh-admin-client-creation: true` to the config file.
+
+{% code_snippet 'examples', 'ldap-auth-configuration' %}
+
+!!! info
+    ldap authentication requires the <a href="#uaa-authentication">uaa env</a> format
+
+The `ldap-configuration` properties configures Ops Manager's usage of an LDAP provider.
+The [Ops Manager API Docs][opsman-api-ldap] have more information
+about the particular keys used in this configuration.
+
 #### saml authentication
-The configuration for authentication has a dependency on SAML.
-This configuration format matches the configuration for setting up authentication.
-See the task for the [`configure-saml-authentication`][configure-saml-authentication] for details.
+
+This method of authentication configuration depends on a SAML service
+to provide user information and authentication.
+
+This config file is used as the `config` input in the
+[`configure-saml-authentication`][configure-saml-authentication] task.
+
+By default, the [`configure-saml-authentication`][configure-saml-authentication] task
+will create an admin client for use with the BOSH Director.
+If you wish to prevent this, add `skip-bosh-admin-client-creation: true` to the config file.
 
 {% code_snippet 'examples', 'saml-auth-configuration' %}
 
 !!! info 
     saml authentication requires the <a href="#uaa-authentication">uaa env</a> format
 
-The `saml-configuration` properties configures the SAML provider.
-The [Ops Manager API][opsman-api-saml] has more information about the values
+The `saml-configuration` properties configures Ops Manager's usage of an SAML provider.
+The [Ops Manager API Docs][opsman-api-saml] have more information
+about the particular keys used in this configuration.
 
 ### Ops Manager config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
@@ -108,6 +138,7 @@ For example:
 `projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]`
 
 #### Openstack
+
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack][pivotalcf-openstack]
 
@@ -115,12 +146,14 @@ These required properties are adapted from the instructions outlined in
 {% include '.ip-addresses.md' %}
 
 #### vSphere
+
 These required properties are adapted from the instructions outlined in
 [Deploying BOSH and Ops Manager to vSphere][pivotalcf-vsphere]
 
 {% code_snippet 'examples', 'vsphere-configuration' %}
 
 ### director config
+
 The config director will set the bosh tile (director) on Ops Manager.
 
 The `config` input for a director task expects to have a `director.yml` file.
@@ -161,6 +194,7 @@ For example:
 `[HOST_PROJECT_ID]/[NETWORK]/[SUBNET]/[REGION]`
 
 ### product config
+
 There are two ways to build a product config.
 
 1. Using an already deployed product (tile), you can extract the config using [staged-config].
@@ -177,6 +211,7 @@ and a link to the API documentation explaining the properties.
 * `resource-config` - for the jobs of the tile [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#configuring-resources-for-a-job)
 
 ### state
+
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
 
@@ -188,6 +223,7 @@ The file contains two properties:
 2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the vm ID is the VM name.
 
 ### opsman image
+
 This file is an [artifact from Pivnet](https://network.pivotal.io/products/ops-manager), which contains the VM image on an IAAS.
 For vsphere and openstack, it is a full disk image.
 For AWS, GCP, and Azure, it is the YAML file of the image locations.
@@ -218,6 +254,7 @@ jobs:
 ```
 
 ### installation
+
 The file contains the information to restore an Ops Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
 
@@ -261,6 +298,7 @@ jobs:
 ```
 
 ### product
+
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
 
 An example on how to pull the PAS tile using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
@@ -292,12 +330,14 @@ jobs:
     This file cannot be manually created. It is a file that must retrieved from Pivnet.
 
 ### download-product-config
+
 The `config` input for a download product task expects to have a `download-config.yml` file.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-product-config' %}
 
 [configure-authentication]: task.md#configure-authentication
+[configure-ldap-authentication]: task.md#configure-ldap-authentication
 [configure-saml-authentication]: task.md#configure-saml-authentication
 [export-installation]: task.md#export-installation
 [import-installation]: task.md#import-installation

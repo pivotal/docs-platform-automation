@@ -94,6 +94,13 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 
 {% code_snippet 'tasks', 'configure-saml-authentication' %}
 
+!!! info "Bosh Admin Client"
+    By default, this task creates a bosh admin client.
+    This is helpful for some advanced workflows
+    that involve communicating directly with the BOSH Director.
+    It is possible to disable this behavior;
+    see our [config file documentation][generating-an-auth-file] for details.
+
 Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
