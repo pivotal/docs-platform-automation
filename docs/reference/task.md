@@ -17,13 +17,15 @@ Use `--help` for more information. To learn more see the [running-commands-local
 
 Triggers an install on the Ops Manager described by the auth file.
 
-{% code_snippet 'tasks', 'apply-changes' %}
+{% code_snippet 'tasks', 'apply-changes', 'Task' %}
+{% code_snippet 'tasks', 'apply-changes-script', 'Implementation' %}
 
 ### apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
 
-{% code_snippet 'tasks', 'apply-director-changes' %}
+{% code_snippet 'tasks', 'apply-director-changes', 'Task' %}
+{% code_snippet 'tasks', 'apply-director-changes-script', 'Implementation' %}
 
 ### assign-multi-stemcell
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
@@ -31,20 +33,23 @@ This feature is only available in OpsMan 2.6+.
 For more information on how to utilize this workflow,
 check out the [Stemcell Handling][stemcell-handling] topic.
 
-{% code_snippet 'tasks', 'assign-multi-stemcell' %}
+{% code_snippet 'tasks', 'assign-multi-stemcell', 'Task' %}
+{% code_snippet 'tasks', 'assign-multi-stemcell-script', 'Implementation' %}
 
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product. For more information on how to utilize
 this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
-{% code_snippet 'tasks', 'assign-stemcell' %}
+{% code_snippet 'tasks', 'assign-stemcell', 'Task' %}
+{% code_snippet 'tasks', 'assign-stemcell-script', 'Implementation' %}
 
 ### configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
-{% code_snippet 'tasks', 'configure-authentication' %}
+{% code_snippet 'tasks', 'configure-authentication', 'Task' %}
+{% code_snippet 'tasks', 'configure-authentication-script', 'Implementation' %}
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
@@ -54,7 +59,8 @@ Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
 
-{% code_snippet 'tasks', 'configure-director' %}
+{% code_snippet 'tasks', 'configure-director', 'Task' %}
+{% code_snippet 'tasks', 'configure-director-script', 'Implementation' %}
 
 !!! warning "GCP with service account"
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
@@ -64,7 +70,8 @@ Configures Ops Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
 
-{% code_snippet 'tasks', 'configure-ldap-authentication' %}
+{% code_snippet 'tasks', 'configure-ldap-authentication', 'Task' %}
+{% code_snippet 'tasks', 'configure-ldap-authentication-script', 'Implementation' %}
 
 For more details on using LDAP,
 please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/opsguide/auth-sso.html#configure-ldap).
@@ -85,14 +92,16 @@ which can extract a config file,
 and [upload-and-stage-product](#upload-and-stage-product),
 which can stage a product that's been uploaded.
 
-{% code_snippet 'tasks', 'configure-product' %}
+{% code_snippet 'tasks', 'configure-product', 'Task' %}
+{% code_snippet 'tasks', 'configure-product-script', 'Implementation' %}
 
 ### configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
-{% code_snippet 'tasks', 'configure-saml-authentication' %}
+{% code_snippet 'tasks', 'configure-saml-authentication', 'Task' %}
+{% code_snippet 'tasks', 'configure-saml-authentication-script', 'Implementation' %}
 
 !!! info "Bosh Admin Client"
     By default, this task creates a bosh admin client.
@@ -114,7 +123,8 @@ please see [Generating an Auth File][generating-an-auth-file].
 ### create-vm
 Creates an unconfigured Ops Manager VM.
 
-{% code_snippet 'tasks', 'create-vm' %}
+{% code_snippet 'tasks', 'create-vm', 'Task' %}
+{% code_snippet 'tasks', 'create-vm-script', 'Implementation' %}
 
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration][opsman-config] page for more specific examples.
@@ -163,7 +173,8 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
 
-{% code_snippet 'tasks', 'credhub-interpolate' %}
+{% code_snippet 'tasks', 'credhub-interpolate', 'Task' %}
+{% code_snippet 'tasks', 'credhub-interpolate-script', 'Implementation' %}
 
 This task requires a valid credhub with UAA client and secret. For information on how to
 set this up, see [Secrets Handling][secrets-handling]
@@ -171,12 +182,14 @@ set this up, see [Secrets Handling][secrets-handling]
 ### delete-installation
 Delete the Ops Manager Installation
 
-{% code_snippet 'tasks', 'delete-installation' %}
+{% code_snippet 'tasks', 'delete-installation', 'Task' %}
+{% code_snippet 'tasks', 'delete-installation-script', 'Implementation' %}
 
 ### delete-vm
 Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
-{% code_snippet 'tasks', 'delete-vm' %}
+{% code_snippet 'tasks', 'delete-vm', 'Task' %}
+{% code_snippet 'tasks', 'delete-vm-script', 'Implementation' %}
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
@@ -267,7 +280,8 @@ This avoids breaking current pipelines.
     For example, `example-product.pivotal` from Pivnet will be outputed
     as `example-product.pivotal`.
 
-{% code_snippet 'tasks', 'download-product' %}
+{% code_snippet 'tasks', 'download-product', 'Task' %}
+{% code_snippet 'tasks', 'download-product-script', 'Implementation' %}
 
 ### download-product-s3
 Downloads a product specified in a config file from an S3-compatible blobstore.
@@ -320,7 +334,8 @@ For example:
     instead of providing S3 creds in the config file.
     See [download-product config file][download-product-config] for details.
 
-{% code_snippet 'tasks', 'download-product-s3' %}
+{% code_snippet 'tasks', 'download-product-s3', 'Task' %}
+{% code_snippet 'tasks', 'download-product-s3-script', 'Implementation' %}
 
 ### export-installation
 Exports an existing Ops Manager to a file.
@@ -344,7 +359,8 @@ params:
     If the time is different on different workers, the generated timestamp may fail to sort correctly.
     Changing the time or timezone on workers might interfere with ordering.
 
-{% code_snippet 'tasks', 'export-installation' %}
+{% code_snippet 'tasks', 'export-installation', 'Task' %}
+{% code_snippet 'tasks', 'export-installation-script', 'Implementation' %}
 {% include "./.export_installation_note.md" %}
 
 ### import-installation
@@ -354,7 +370,8 @@ This is a part of the backup/restore and upgrade lifecycle processes.
 This task is used after an installation has been exported and a new Ops Manager
 has been deployed, but before the new Ops Manager is configured.
 
-{% code_snippet 'tasks', 'import-installation' %}
+{% code_snippet 'tasks', 'import-installation', 'Task' %}
+{% code_snippet 'tasks', 'import-installation-script', 'Implementation' %}
 
 ### make-git-commit
 Copies a single file into a repo and makes a commit.
@@ -378,7 +395,8 @@ Also useful for persisting the configuration output from:
     This does not perform a `git push`!
     You will need to `put` the output of this task to a git resource to persist it.
 
-{% code_snippet 'tasks', 'make-git-commit' %}
+{% code_snippet 'tasks', 'make-git-commit', 'Task' %}
+{% code_snippet 'tasks', 'make-git-commit-script', 'Implementation' %}
 
 ### pre-deploy-check
 Checks if the Ops Manager director is configured properly and validates the configuration.
@@ -402,12 +420,14 @@ the task will fail.
 The failed task will provide a list of errors that need to be fixed 
 before an `apply-changes` could start. 
 
-{% code_snippet 'tasks', 'pre-deploy-check' %}
+{% code_snippet 'tasks', 'pre-deploy-check', 'Task' %}
+{% code_snippet 'tasks', 'pre-deploy-check-script', 'Implementation' %}
 
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
 
-{% code_snippet 'tasks', 'stage-product' %}
+{% code_snippet 'tasks', 'stage-product', 'Task' %}
+{% code_snippet 'tasks', 'stage-product-script', 'Implementation' %}
 
 ### staged-config
 Downloads the configuration for a product from Ops Manager.
@@ -417,7 +437,8 @@ built-in [export](https://docs.pivotal.io/pivotalcf/customizing/backup-restore/b
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
-{% code_snippet 'tasks', 'staged-config' %}
+{% code_snippet 'tasks', 'staged-config', 'Task' %}
+{% code_snippet 'tasks', 'staged-config-script', 'Implementation' %}
 
 ### staged-director-config
 
@@ -425,7 +446,8 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
 
 Downloads configuration for the BOSH director from Ops Manager.
 
-{% code_snippet 'tasks', 'staged-director-config' %}
+{% code_snippet 'tasks', 'staged-director-config', 'Task' %}
+{% code_snippet 'tasks', 'staged-director-config-script', 'Implementation' %}
 
 The configuration is exported to the `generated-config` output.
 It does not extract credentials from Ops Manager
@@ -438,30 +460,35 @@ The credentials need to be provided from an external configuration when invoking
 ### test
 An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
 
-{% code_snippet 'tasks', 'test' %}
+{% code_snippet 'tasks', 'test', 'Task' %}
+{% code_snippet 'tasks', 'test-script', 'Implementation' %}
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
 For more instruction on this topic, see the [variables](../pipeline-design/variables.md) section
 
-{% code_snippet 'tasks', 'test-interpolate' %}
+{% code_snippet 'tasks', 'test-interpolate', 'Task' %}
+{% code_snippet 'tasks', 'test-interpolate-script', 'Implementation' %}
 
 ### upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
 
-{% code_snippet 'tasks', 'upgrade-opsman' %}
+{% code_snippet 'tasks', 'upgrade-opsman', 'Task' %}
+{% code_snippet 'tasks', 'upgrade-opsman-script', 'Implementation' %}
 
 For more information about this task and how it works, see the [upgrade](../upgrade.md) page.
 
 ### upload-and-stage-product
 Uploads and stages product to the Ops Manager specified in the config file.
 
-{% code_snippet 'tasks', 'upload-and-stage-product' %}
+{% code_snippet 'tasks', 'upload-and-stage-product', 'Task' %}
+{% code_snippet 'tasks', 'upload-and-stage-product-script', 'Implementation' %}
 
 ### upload-product
 Uploads a product to the Ops Manager specified in the config file.
 
-{% code_snippet 'tasks', 'upload-product' %}
+{% code_snippet 'tasks', 'upload-product', 'Task' %}
+{% code_snippet 'tasks', 'upload-product-script', 'Implementation' %}
 
 ### upload-stemcell
 Uploads a stemcell to Ops Manager.
@@ -469,7 +496,8 @@ Uploads a stemcell to Ops Manager.
 Note that the filename of the stemcell must be exactly as downloaded from Pivnet.
 Ops Manager parses this filename to determine the version and OS of the stemcell.
 
-{% code_snippet 'tasks', 'upload-stemcell' %}
+{% code_snippet 'tasks', 'upload-stemcell', 'Task' %}
+{% code_snippet 'tasks', 'upload-stemcell-script', 'Implementation' %}
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
