@@ -19,6 +19,7 @@ Triggers an install on the Ops Manager described by the auth file.
 
 {% code_snippet 'tasks', 'apply-changes', 'Task' %}
 {% code_snippet 'tasks', 'apply-changes-script', 'Implementation' %}
+{% code_snippet 'examples', 'apply-changes-usage', 'Usage' %}
 
 ### apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
@@ -26,6 +27,7 @@ with the `--skip-deploy-products`/`-sdp` flag.
 
 {% code_snippet 'tasks', 'apply-director-changes', 'Task' %}
 {% code_snippet 'tasks', 'apply-director-changes-script', 'Implementation' %}
+{% code_snippet 'examples', 'apply-director-changes-usage', 'Usage' %}
 
 ### assign-multi-stemcell
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
@@ -50,6 +52,7 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 
 {% code_snippet 'tasks', 'configure-authentication', 'Task' %}
 {% code_snippet 'tasks', 'configure-authentication-script', 'Implementation' %}
+{% code_snippet 'examples', 'configure-authentication-usage', 'Usage' %}
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
@@ -61,6 +64,7 @@ which can extract a config file.
 
 {% code_snippet 'tasks', 'configure-director', 'Task' %}
 {% code_snippet 'tasks', 'configure-director-script', 'Implementation' %}
+{% code_snippet 'examples', 'configure-director-usage', 'Usage' %}
 
 !!! warning "GCP with service account"
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
@@ -94,6 +98,7 @@ which can stage a product that's been uploaded.
 
 {% code_snippet 'tasks', 'configure-product', 'Task' %}
 {% code_snippet 'tasks', 'configure-product-script', 'Implementation' %}
+{% code_snippet 'examples', 'configure-product-usage', 'Usage' %}
 
 ### configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
@@ -125,6 +130,7 @@ Creates an unconfigured Ops Manager VM.
 
 {% code_snippet 'tasks', 'create-vm', 'Task' %}
 {% code_snippet 'tasks', 'create-vm-script', 'Implementation' %}
+{% code_snippet 'examples', 'create-vm-usage', 'Usage' %}
 
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration][opsman-config] page for more specific examples.
@@ -282,6 +288,7 @@ This avoids breaking current pipelines.
 
 {% code_snippet 'tasks', 'download-product', 'Task' %}
 {% code_snippet 'tasks', 'download-product-script', 'Implementation' %}
+{% code_snippet 'examples', 'download-product-usage', 'Usage' %}
 
 ### download-product-s3
 Downloads a product specified in a config file from an S3-compatible blobstore.
@@ -336,6 +343,7 @@ For example:
 
 {% code_snippet 'tasks', 'download-product-s3', 'Task' %}
 {% code_snippet 'tasks', 'download-product-s3-script', 'Implementation' %}
+{% code_snippet 'examples', 'download-product-s3-usage', 'Usage' %}
 
 ### export-installation
 Exports an existing Ops Manager to a file.
@@ -361,6 +369,7 @@ params:
 
 {% code_snippet 'tasks', 'export-installation', 'Task' %}
 {% code_snippet 'tasks', 'export-installation-script', 'Implementation' %}
+{% code_snippet 'examples', 'export-installation-usage', 'Usage' %}
 {% include "./.export_installation_note.md" %}
 
 ### import-installation
@@ -397,6 +406,7 @@ Also useful for persisting the configuration output from:
 
 {% code_snippet 'tasks', 'make-git-commit', 'Task' %}
 {% code_snippet 'tasks', 'make-git-commit-script', 'Implementation' %}
+{% code_snippet 'examples', 'make-git-commit-usage', 'Usage' %}
 
 ### pre-deploy-check
 Checks if the Ops Manager director is configured properly and validates the configuration.
@@ -428,6 +438,7 @@ Staged a product to the Ops Manager specified in the config file.
 
 {% code_snippet 'tasks', 'stage-product', 'Task' %}
 {% code_snippet 'tasks', 'stage-product-script', 'Implementation' %}
+{% code_snippet 'examples', 'stage-product-usage', 'Usage' %}
 
 ### staged-config
 Downloads the configuration for a product from Ops Manager.
@@ -439,6 +450,7 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
 
 {% code_snippet 'tasks', 'staged-config', 'Task' %}
 {% code_snippet 'tasks', 'staged-config-script', 'Implementation' %}
+{% code_snippet 'examples', 'staged-config-usage', 'Usage' %}
 
 ### staged-director-config
 
@@ -448,6 +460,7 @@ Downloads configuration for the BOSH director from Ops Manager.
 
 {% code_snippet 'tasks', 'staged-director-config', 'Task' %}
 {% code_snippet 'tasks', 'staged-director-config-script', 'Implementation' %}
+{% code_snippet 'examples', 'staged-director-config-usage', 'Usage' %}
 
 The configuration is exported to the `generated-config` output.
 It does not extract credentials from Ops Manager
@@ -475,6 +488,7 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
 
 {% code_snippet 'tasks', 'upgrade-opsman', 'Task' %}
 {% code_snippet 'tasks', 'upgrade-opsman-script', 'Implementation' %}
+{% code_snippet 'examples', 'upgrade-opsman-usage', 'Usage' %}
 
 For more information about this task and how it works, see the [upgrade](../upgrade.md) page.
 
@@ -483,12 +497,14 @@ Uploads and stages product to the Ops Manager specified in the config file.
 
 {% code_snippet 'tasks', 'upload-and-stage-product', 'Task' %}
 {% code_snippet 'tasks', 'upload-and-stage-product-script', 'Implementation' %}
+{% code_snippet 'examples', 'upload-and-stage-product-usage', 'Usage' %}
 
 ### upload-product
 Uploads a product to the Ops Manager specified in the config file.
 
 {% code_snippet 'tasks', 'upload-product', 'Task' %}
 {% code_snippet 'tasks', 'upload-product-script', 'Implementation' %}
+{% code_snippet 'examples', 'upload-product-usage', 'Usage' %}
 
 ### upload-stemcell
 Uploads a stemcell to Ops Manager.
@@ -498,6 +514,7 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
 
 {% code_snippet 'tasks', 'upload-stemcell', 'Task' %}
 {% code_snippet 'tasks', 'upload-stemcell-script', 'Implementation' %}
+{% code_snippet 'examples', 'upload-stemcell-usage', 'Usage' %}
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
