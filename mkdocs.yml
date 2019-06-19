@@ -5,9 +5,7 @@ site_url: https://docs.pivotal.io
 repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!
 edit_uri: edit/develop/docs/
-theme:
-  name: pivotal
-  custom_dir: theme/
+theme: pivotal
 strict: true
 use_directory_urls: false
 plugins:
