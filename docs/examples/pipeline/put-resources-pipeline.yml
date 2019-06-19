@@ -218,12 +218,14 @@ jobs:
     - get: config
   - task: credhub-interpolate
     <<: *credhub-interpolate
+  # code_snippet download-product-usage start yaml
   - task: download-pas-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-product-configs/pas.yml
     output_mapping: {downloaded-stemcell: pas-stemcell}
+  # code_snippet download-product-usage end
   - aggregate:
     - put: pas-product
       params:
