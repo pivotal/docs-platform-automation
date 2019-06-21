@@ -37,6 +37,7 @@ check out the [Stemcell Handling][stemcell-handling] topic.
 
 {% code_snippet 'tasks', 'assign-multi-stemcell', 'Task' %}
 {% code_snippet 'tasks', 'assign-multi-stemcell-script', 'Implementation' %}
+{% code_snippet 'examples', 'assign-multi-stemcell-usage', 'Usage' %}
 
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product. For more information on how to utilize
@@ -44,6 +45,7 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
 {% code_snippet 'tasks', 'assign-stemcell', 'Task' %}
 {% code_snippet 'tasks', 'assign-stemcell-script', 'Implementation' %}
+{% code_snippet 'examples', 'assign-stemcell-usage', 'Usage' %}
 
 ### configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
@@ -76,6 +78,7 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
 
 {% code_snippet 'tasks', 'configure-ldap-authentication', 'Task' %}
 {% code_snippet 'tasks', 'configure-ldap-authentication-script', 'Implementation' %}
+{% code_snippet 'examples', 'configure-ldap-authentication-usage', 'Usage' %}
 
 For more details on using LDAP,
 please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/opsguide/auth-sso.html#configure-ldap).
@@ -107,6 +110,7 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 
 {% code_snippet 'tasks', 'configure-saml-authentication', 'Task' %}
 {% code_snippet 'tasks', 'configure-saml-authentication-script', 'Implementation' %}
+{% code_snippet 'examples', 'configure-saml-authentication-usage', 'Usage' %}
 
 !!! info "Bosh Admin Client"
     By default, this task creates a bosh admin client.
@@ -181,6 +185,7 @@ Interpolate credhub entries into configuration files
 
 {% code_snippet 'tasks', 'credhub-interpolate', 'Task' %}
 {% code_snippet 'tasks', 'credhub-interpolate-script', 'Implementation' %}
+{% code_snippet 'examples', 'credhub-interpolate-usage', 'Usage' %}
 
 This task requires a valid credhub with UAA client and secret. For information on how to
 set this up, see [Secrets Handling][secrets-handling]
@@ -190,12 +195,14 @@ Delete the Ops Manager Installation
 
 {% code_snippet 'tasks', 'delete-installation', 'Task' %}
 {% code_snippet 'tasks', 'delete-installation-script', 'Implementation' %}
+{% code_snippet 'examples', 'delete-installation-usage', 'Usage' %}
 
 ### delete-vm
 Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 {% code_snippet 'tasks', 'delete-vm', 'Task' %}
 {% code_snippet 'tasks', 'delete-vm-script', 'Implementation' %}
+{% code_snippet 'examples', 'delete-vm-usage', 'Usage' %}
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
@@ -381,6 +388,7 @@ has been deployed, but before the new Ops Manager is configured.
 
 {% code_snippet 'tasks', 'import-installation', 'Task' %}
 {% code_snippet 'tasks', 'import-installation-script', 'Implementation' %}
+{% code_snippet 'examples', 'import-installation-usage', 'Usage' %}
 
 ### make-git-commit
 Copies a single file into a repo and makes a commit.
@@ -432,6 +440,7 @@ before an `apply-changes` could start.
 
 {% code_snippet 'tasks', 'pre-deploy-check', 'Task' %}
 {% code_snippet 'tasks', 'pre-deploy-check-script', 'Implementation' %}
+{% code_snippet 'examples', 'pre-deploy-check-usage', 'Usage' %}
 
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
@@ -475,6 +484,7 @@ An example task to ensure the assets and docker image are setup correctly in you
 
 {% code_snippet 'tasks', 'test', 'Task' %}
 {% code_snippet 'tasks', 'test-script', 'Implementation' %}
+{% code_snippet 'examples', 'test-usage', 'Usage' %}
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
@@ -482,6 +492,7 @@ For more instruction on this topic, see the [variables](../pipeline-design/varia
 
 {% code_snippet 'tasks', 'test-interpolate', 'Task' %}
 {% code_snippet 'tasks', 'test-interpolate-script', 'Implementation' %}
+{% code_snippet 'examples', 'test-interpolate-usage', 'Usage' %}
 
 ### upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version

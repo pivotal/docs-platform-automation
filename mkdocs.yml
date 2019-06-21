@@ -12,7 +12,7 @@ plugins:
 - search: {}
 - jinja2:
     dependent_sections:
-      tasks: "../platform-automation"
+      tasks: "../platform-automation/tasks"
       examples: "./docs/examples"
 markdown_extensions:
 - codehilite:
