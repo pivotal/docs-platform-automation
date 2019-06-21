@@ -102,6 +102,65 @@ interpolate-creds: &interpolate-creds
 
 # code_snippet multiple-product-jobs start yaml
 jobs:
+  - name: test-platform-automation
+    serial: true
+    plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    # code_snippet test-interpolate-usage start yaml
+    - task: test-interpolate
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/test-interpolate.yml
+      params:
+        CONFIG_FILE: download-product-configs/pas.yml
+        SKIP_MISSING: true
+      input_mapping:
+        config: configuration
+    # code_snippet test-interpolate-usage end
+    # code_snippet test-usage start yaml
+    - task: test
+      file: platform-automation-tasks/tasks/test.yml
+      image: platform-automation-image
+    # code_snippet test-usage end
+  - name: delete-opsman
+    serial: true
+    plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: interpolate-creds
+      <<: *interpolate-creds
+    # code_snippet delete-installation-usage start yaml
+    - task: delete-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/delete-installation.yml
+      params:
+        ENV_FILE: ((foundation))/env/env.yml
+    # code_snippet delete-installation-usage end
+    # code_snippet delete-vm-usage start yaml
+    - task: delete-vm
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/delete-vm.yml
+      params:
+        VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
+        STATE_FILE: ((foundation))/state/state.yml
+        OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
+      input_mapping:
+        state: configuration
+        config: interpolated-creds
+        vars: variable
+    # code_snippet delete-vm-usage end
   - name: install-opsman
     serial: true
     serial_groups: [ install ]
@@ -575,6 +634,15 @@ jobs:
           - get: variable
       - task: interpolate-creds
         <<: *interpolate-creds
+      # code_snippet pre-deploy-check-usage start yaml
+      - task: pre-deploy-check
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/pre-deploy-check.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      # code_snippet pre-deploy-check-usage end
       # code_snippet apply-changes-usage start yaml
       - task: apply-product-changes
         image: platform-automation-image

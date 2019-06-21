@@ -1,0 +1,40 @@
+# code_snippet assign-multi-stemcell-usage start yaml
+- task: assign-multi-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-multi-stemcell.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+# code_snippet assign-multi-stemcell-usage end
+# code_snippet assign-stemcell-usage start yaml
+- task: assign-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-stemcell.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+# code_snippet assign-stemcell-usage end
+# code_snippet configure-ldap-authentication-usage start yaml
+- task: configure-ldap-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-ldap-authentication.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
+# code_snippet configure-ldap-authentication-usage end
+# code_snippet configure-saml-authentication-usage start yaml
+- task: configure-saml-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-saml-authentication.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
+# code_snippet configure-saml-authentication-usage end
+# code_snippet import-installation-usage start yaml
+- task: import-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/import-installation.yml
+  input_mapping:
+    env: interpolated-creds
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    INSTALLATION_FILE: installation-*.zip
+# code_snippet import-installation-usage end
