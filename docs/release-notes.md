@@ -20,9 +20,34 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
-## v3.1.0
+## v4.0.0
 
 **Release Date** Someday sometime
+
+### Breaking Changes
+
+- The tasks have been updated to extract their `bash` scripting into a separate script.
+  The tasks' script can be used different CI/CD systems like Jenkins.
+  
+  This will be a breaking change if your tasks resource is not named `platform-automation-tasks`.
+  
+  For example,
+  
+  ```yaml
+  - get: tasks
+  - task: configure-authentication
+    file: tasks/tasks/configure-authentication.yml
+  ```
+  
+  will be changed to
+  
+  ```yaml
+  - get: platform-automation-tasks
+  - task: configure-authentication
+    file: platform-automation-tasks/tasks/configure-authentication.yml
+  ```
+  
+  Notice that the resource name changed as did the relative path to the task YAML file in `file`.
 
 ### What's New
 
