@@ -2,7 +2,27 @@
 # code_snippet multiple-products-pipeline start yaml
 
 # code_snippet multiple-product-resources-s3 start yaml
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
 resources:
+  - name: telemetry-collector-binary
+    type: pivnet
+    source:
+      api_token: ((pivnet_token))
+      product_slug: pivotal-telemetry-collector
+      product_version: 1\.0\.1$
+
+  - name: platform-automation-tasks-github
+    type: git
+    source:
+      private_key: ((platform_automation.private_key))
+      uri: git@github.com:pivotal/platform-automation
+      branch: telemetry
   - name: platform-automation-tasks
     type: s3
     source:
@@ -600,6 +620,39 @@ jobs:
           PRODUCT_NAME: p-healthwatch
           ENV_FILE: ((foundation))/env/env.yml
         ensure: *make-state-commit
+
+  - name: collect-telemetry
+    plan:
+    - aggregate:
+      - get: telemetry-collector-binary
+        params:
+          unpack: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks-github
+        params:
+          unpack: true
+    - task: run-collector
+      image: platform-automation-image
+      file: platform-automation-tasks-github/tasks/collect-telemetry.yml
+      params:
+        OPS_MANAGER_URL: pcf.ci.vsphere.platform-automation.cf-app.com
+        OPS_MANAGER_USERNAME: ((vsphere.username))
+        OPS_MANAGER_PASSWORD: ((vsphere.password))
+        INSECURE_SKIP_TLS_VERIFY: true
+        ENV_TYPE: sandbox
+      input_mapping:
+        platform-automation-tasks: platform-automation-tasks-github
+    - task: send-data
+      image: platform-automation-image
+      file: platform-automation-tasks-github/tasks/send-telemetry.yml
+      params:
+        API_KEY: no-op-test-key
+        DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
+      input_mapping:
+        platform-automation-tasks: platform-automation-tasks-github
+
 # code_snippet multiple-product-jobs end yaml
 # code_snippet multiple-products-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.

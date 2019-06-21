@@ -43,6 +43,24 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 {% code_snippet 'tasks', 'assign-stemcell', 'Task' %}
 {% code_snippet 'tasks', 'assign-stemcell-script', 'Implementation' %}
 
+### collect-telemetry
+Collects foundation information
+using the [Pivotal Telemetry][telemetry] tool.
+
+This task requires the `telemetry-collector-binary` as an input.
+The binary is available on [Pivotal Network][telemetry];
+you will need to define a `resource` to supply the binary.
+
+After using this task,
+the [send-telemetry][send-telemetry]
+may be used to send telemetry data to Pivotal.
+
+You can find additional documentation about Pivotal Telemetry
+at [https://docs.pivotal.io/telemetry](https://docs.pivotal.io/telemetry)
+
+{% code_snippet 'tasks', 'collect-telemetry', 'Task' %}
+{% code_snippet 'tasks', 'collect-telemetry-script', 'Implementation' %}
+
 ### configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
@@ -422,6 +440,18 @@ before an `apply-changes` could start.
 
 {% code_snippet 'tasks', 'pre-deploy-check', 'Task' %}
 {% code_snippet 'tasks', 'pre-deploy-check-script', 'Implementation' %}
+
+### send-telemetry
+Sends the `.tar` output from [`collect-telemetry`][]
+to Pivotal.
+
+!!! info Telemetry Key
+    In order to use this task,
+    you will need to acquire a license key.
+    Contact Pivot
+
+{% code_snippet 'tasks', 'send-telemetry', 'Task' %}
+{% code_snippet 'tasks', 'send-telemetry-script', 'Implementation' %}
 
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
