@@ -70,9 +70,28 @@ owner: PCF Platform Automation
 - [`download-product`][download-product] will now return a `download-product.json`
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
 
-## v3.0.2
+## v3.0.3
 **Release Date** Maybe someday
 
+### Bug Fixes
+- `credhub` CLI has been bumped to v2.5.1.
+  This includes a fix of not raising an error when processing an empty YAML file.
+- `om` CLI has been bumped to v1.1.0.
+  This includes the following bug fixes:
+    * Extra values passed in the env file will now fail if they are not recognized properties.
+    * Allow non-string entities to be passed as strings to Ops Manager.
+    * `download-product`'s output of `assign-stemcell.yml` will have the correct `product-name`
+    * `bosh-env` will now set `BOSH_ALL_PROXY` without a trailing slash if one is provided
+- CVE update to container image. Resolves [USN-4019-1](https://usn.ubuntu.com/4019-1/)
+  (related to vulnerabilities with `SQLite`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [CVE-2019-11477](https://people.canonical.com/~ubuntu-security/cve/2019/CVE-2019-11477.html)
+  (related to vulnerabilities with `linux-libc-dev`. While none of our code directly used these,
+  they are present on the image.)
+
+## v3.0.2
+**Release Date** Maybe someday
+  
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/)
   (related to vulnerabilities with `GLib`. While none of our code directly used these,
