@@ -99,6 +99,12 @@ These required properties are adapted from the instructions outlined in
 {% code_snippet 'examples', 'gcp-configuration' %}
 {% include '.ip-addresses.md' %}
 
+!!! info "Using a Service Account Name to Avoid Secrets"
+    For authentication either `gcp_service_account` or `gcp_service_account_name` is required.
+    You must remove the one you are not using
+    note that using `gcp_service_account_name` allows you to avoid interpolation,
+    as this file then contains no secrets.
+
 Support for Shared VPC is done via
 [configuring the `vpc_subnet` path][gcp-shared-vpc]
 to include the host project id, region of the subnet, and the subnet name.
