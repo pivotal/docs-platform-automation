@@ -38,3 +38,19 @@
     ENV_FILE: ((foundation))/env/env.yml
     INSTALLATION_FILE: installation-*.zip
 # code_snippet import-installation-usage end
+# code_snippet make-git-commit-usage start yaml
+- task: make-commit
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/make-git-commit.yml
+  input_mapping:
+    repository: configuration
+    file-source: generated-state
+  output_mapping:
+    repository-commit: configuration-commit
+  params:
+    FILE_SOURCE_PATH: state.yml
+    FILE_DESTINATION_PATH: state/state.yml
+    GIT_AUTHOR_EMAIL: "pcf-pipeline-bot@example.com"
+    GIT_AUTHOR_NAME: "Platform Automation Bot"
+    COMMIT_MESSAGE: 'Update state file'
+# code_snippet make-git-commit-usage end
