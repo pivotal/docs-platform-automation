@@ -2,6 +2,9 @@
 ---
 opsman-configuration:
   gcp:
+    # either gcp_service_account json is required
+    # or a gcp_service_account_name associated with the project
+    # you must remove whichever you don't use
     gcp_service_account: |
       {
         "type": "service_account",
@@ -15,6 +18,7 @@ opsman-configuration:
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
         "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/user%40project-id.iam.gserviceaccount.com"
       }
+    gcp_service_account_name: user@project-id.iam.gserviceaccount.com
     project: project-id
     region: us-central1
     zone: us-central1-b
@@ -30,4 +34,6 @@ opsman-configuration:
     # At least one IP address (public or private) needs to be assigned to the VM.
     public_ip: 1.2.3.4.
     private_ip: 10.0.0.2
+    # scopes to add to created vm
+    scopes: ["my-scope"]
 # code_snippet gcp-configuration end
