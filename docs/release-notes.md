@@ -277,3 +277,4 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   One or the other is required to create a VM.
   
 {% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}
