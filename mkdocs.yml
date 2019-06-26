@@ -45,6 +45,8 @@ nav:
   - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
   - Stemcell Handling: pipeline-design/stemcell-handling.md
   - Variables: pipeline-design/variables.md
+- Pipeline Design:
+  - Single Foundation: pipeline-design/single-foundation.md
 - References:
   - Concourse Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md

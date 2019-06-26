@@ -3,7 +3,16 @@ title: Pipeline Reference
 owner: PCF Platform Automation
 ---
 
-Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't - we recommend you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
+Below you will find a reference pipeline
+that illustrates the tasks and provides an example of a basic pipeline design.
+You know your environment and constraints and we don't
+- we recommend you look at the tasks that make up the pipeline,
+and see how they can be arranged for your specific automation needs.
+For a deeper dive into each task see the Task Reference.
+
+The [configs][ref-pipeline-configs] used in this pipeline are public
+and can be used as a starting point
+for your own pipeline.
 
 These Concourse pipelines are examples on how to use the [tasks](../reference/task.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
 
