@@ -93,6 +93,9 @@ owner: PCF Platform Automation
     * Allow non-string entities to be passed as strings to Ops Manager.
     * `download-product`'s output of `assign-stemcell.yml` will have the correct `product-name`
     * `bosh-env` will now set `BOSH_ALL_PROXY` without a trailing slash if one is provided
+- CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/)
+  (related to vulnerabilities with `Expat`. While none of our code directly used these,
+  they are present on the image.)
 - CVE update to container image. Resolves [USN-4038-1](https://usn.ubuntu.com/4038-1/)
   (related to vulnerabilities with `bzip`. While none of our code directly used these,
   they are present on the image.)
