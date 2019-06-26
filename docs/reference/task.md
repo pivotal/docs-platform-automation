@@ -99,7 +99,7 @@ The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/2-2/opsguide/config-rbac.html#enable-saml)
+please refer to the [Ops Manager documentation](https://docs.pivotal.io/pivotalcf/2-4/opsguide/config-rbac.html#enable-saml)
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
