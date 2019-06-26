@@ -74,6 +74,12 @@ owner: PCF Platform Automation
 **Release Date** Maybe someday
 
 ### Bug Fixes
+- `create-vm` and `upgrade-opsman` now function with `gcp_service_account_name` on GCP.
+  Previously, only providing a full `gcp_service_account` as a JSON blob worked.
+- Environment variables passed to `create-vm`, `delete-vm`, and `upgrade-opsman`
+  will be passed to the underlying IAAS CLI invocation.
+  This allows our tasks to work with the `https_proxy` and `no_proxy` variables
+  that can be [set in Concourse](https://github.com/concourse/concourse-bosh-release/blob/9764b66a6d85785735f6ea8ddcabf77785b5eddd/jobs/worker/spec#L50-L65).
 - `credhub` CLI has been bumped to v2.5.1.
   This includes a fix of not raising an error when processing an empty YAML file.
 - `om` CLI has been bumped to v1.1.0.
@@ -82,6 +88,9 @@ owner: PCF Platform Automation
     * Allow non-string entities to be passed as strings to Ops Manager.
     * `download-product`'s output of `assign-stemcell.yml` will have the correct `product-name`
     * `bosh-env` will now set `BOSH_ALL_PROXY` without a trailing slash if one is provided
+- CVE update to container image. Resolves [USN-4038-1](https://usn.ubuntu.com/4038-1/)
+  (related to vulnerabilities with `bzip`. While none of our code directly used these,
+  they are present on the image.)
 - CVE update to container image. Resolves [USN-4019-1](https://usn.ubuntu.com/4019-1/)
   (related to vulnerabilities with `SQLite`. While none of our code directly used these,
   they are present on the image.)
@@ -91,7 +100,7 @@ owner: PCF Platform Automation
 
 ## v3.0.2
 **Release Date** Maybe someday
-  
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/)
   (related to vulnerabilities with `GLib`. While none of our code directly used these,
@@ -261,9 +270,5 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   they are present on the image.)
 - Improved error messaging for [vSphere](./reference/inputs-outputs.md#gcp) VM creation if neither `ssh-password` or `ssh-public-key` are set.
   One or the other is required to create a VM.
-- `upgrade-opsman` would incorrectly parse meta information from the `download-product`
-  prefixing if using S3. This lead to some unexpected upgrading behavior.
-  Now, the task will correctly upgrade if the semver is higher.
   
 {% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}

@@ -115,6 +115,14 @@ These required properties are adapted from the instructions outlined in
 {% code_snippet 'examples', 'aws-configuration' %}
 {% include '.ip-addresses.md' %}
 
+!!! info "Using instance_profile to Avoid Secrets"
+    For authentication you must either set `use_instance_profile: true`
+    or provide a `secret_key_id` and `secret_access_key`.
+    You must remove key information if you're using an instance profile.
+    Using an instance profile allows you to avoid interpolation,
+    as this file then contains no secrets.
+
+
 #### Azure
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][pivotalcf-azure]
@@ -128,6 +136,12 @@ These required properties are adapted from the instructions outlined in
 
 {% code_snippet 'examples', 'gcp-configuration' %}
 {% include '.ip-addresses.md' %}
+
+!!! info "Using a Service Account Name to Avoid Secrets"
+    For authentication either `gcp_service_account` or `gcp_service_account_name` is required.
+    You must remove the one you are not using
+    note that using `gcp_service_account_name` allows you to avoid interpolation,
+    as this file then contains no secrets.
 
 Support for Shared VPC is done via
 [configuring the `vpc_subnet` path][gcp-shared-vpc]
