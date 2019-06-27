@@ -46,7 +46,7 @@ nav:
   - Stemcell Handling: pipeline-design/stemcell-handling.md
   - Variables: pipeline-design/variables.md
 - Pipeline Design:
-  - Single Foundation: pipeline-design/single-foundation.md
+  - Configuration Management Strategies: pipeline-design/configuration-management-strategies.md
 - References:
   - Concourse Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md
