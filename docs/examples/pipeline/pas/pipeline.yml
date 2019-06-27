@@ -120,7 +120,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/test-interpolate.yml
       params:
-        CONFIG_FILE: download-product-configs/pas.yml
+        CONFIG_FILE: download-product/pas.yml
         SKIP_MISSING: true
       input_mapping:
         config: configuration
@@ -182,7 +182,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product-s3.yml
         params:
-          CONFIG_FILE: download-product-configs/opsman.yml
+          CONFIG_FILE: download-product/opsman.yml
         input_mapping:
           config: interpolated-creds
         output_mapping:
@@ -301,7 +301,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product-s3.yml
         params:
-          CONFIG_FILE: download-product-configs/opsman.yml
+          CONFIG_FILE: download-product/opsman.yml
         input_mapping:
           config: interpolated-creds
         output_mapping:
@@ -349,7 +349,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product-s3.yml
         params:
-          CONFIG_FILE: download-product-configs/pas.yml
+          CONFIG_FILE: download-product/pas.yml
         input_mapping:
           config: interpolated-creds
         output_mapping:
@@ -489,7 +489,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product-s3.yml
         params:
-          CONFIG_FILE: download-product-configs/healthwatch.yml
+          CONFIG_FILE: download-product/healthwatch.yml
         input_mapping:
           config: interpolated-creds
         output_mapping:
