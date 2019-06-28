@@ -52,7 +52,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
-        CONFIG_FILE: foundation/download-ops-manager.yml
+        CONFIG_FILE: download-ops-manager.yml
 ```
 
 If we try to `fly` this up to Concourse,
@@ -70,35 +70,27 @@ You can skip over the part
 about using `git init` to setup your repo,
 since we [already did that](#but-first-git-init).
 
-Once you've setup your remote
-and used `git push` to send what you've got so far,
-we can add a new directory to hold foundation-specific configuration.
-(We'll use the name "foundation" for this directory,
-but if your foundation has an actual name, use that instead.)
+Go ahead and setup your remote
+and use `git push` to make what we have available.
+We will use this repository to hold our single foundation specific configuration.
+We are using the ["Single Repository for Each Foundation"][single-foundation-pattern]
+pattern to structure our configurations.
 
 You will also need to add the repository URL
 to `vars.yml` so we can reference it later,
 when we declare the corresponding resource.
 
 ```yaml
-pipeline-repo: git@github.com:username/platform-automation-pipelines
+pipeline-repo: git@github.com:username/your-repo-name
 ```
 
-```bash
-mkdir -p foundation
-cd !$
-```
 
 `download-ops-manager.yml` holds creds for communicating with Pivnet,
 and uniquely identifies an Ops Manager image to download.
 
 An example `download-ops-manager.yml` is shown below.
 
-If your foundation uses authentication other than basic auth,
-please reference [Inputs and Outputs][env]
-for more detail on UAA-based authentication.
-
-Write an `download-ops-mananager.yml` for your Ops Manager.
+Write an `download-ops-manager.yml` for your Ops Manager.
 
 
 ```yaml tab="AWS"
@@ -144,12 +136,12 @@ product-version-regex: ^2\.5\.\d+$
 Add and commit the new file:
 
 ```bash
-git add foundation/env.yml
-git commit -m "Add environment file for foundation"
+git add download-ops-manager.yml
+git commit -m "Add download-ops-manager file for foundation"
 git push
 ```
 
-Now that the env file we need is in our git remote,
+Now that the download-ops-manager file we need is in our git remote,
 we need to add a resource to tell Concourse how to get it as `config`.
 
 Since this is (probably) a private repo,
@@ -224,7 +216,6 @@ jobs:
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: https://your-credhub.example.com
         PREFIX: /concourse/your-team-name/foundation
-        INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
         files: config
       output_mapping:
@@ -233,7 +224,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
-        CONFIG_FILE: foundation/download-ops-manager.yml
+        CONFIG_FILE: download-ops-manager.yml
       input_mapping:
         config: interpolated-config
 ```
@@ -337,7 +328,7 @@ select your desired version from the dropdown at the top of the page.
 Now that we have an Ops Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
 
-```yaml hl_lines="36 37 38"
+```yaml hl_lines="35 36 37"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -361,7 +352,6 @@ jobs:
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: https://your-credhub.example.com
         PREFIX: /concourse/your-team-name/foundation
-        INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
         files: config
       output_mapping:
@@ -370,7 +360,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
-        CONFIG_FILE: foundation/download-ops-manager.yml
+        CONFIG_FILE: download-ops-manager.yml
       input_mapping:
         config: interpolated-config
     - task: create-vm
@@ -391,7 +381,7 @@ The optional inputs are vars used with the config, so we'll get to those when we
 
 Let's start with the config file.
 We'll write an [Ops Manager VM Configuration file][opsman-config]
-to `foundation/opsman.yml`.
+to `opsman.yml`.
 
 The properties available vary by IaaS, for example:
 
@@ -429,7 +419,7 @@ for more details about your options and per-IaaS caveats.
 Once you have your config file, commit and push it:
 
 ```bash
-git add foundation/opsman.yml
+git add opsman.yml
 git commit -m "Add opsman config"
 git push
 ```
@@ -468,7 +458,6 @@ jobs:
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: https://your-credhub.example.com
         PREFIX: /concourse/your-team-name/foundation
-        INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
         files: config
       output_mapping:
@@ -477,20 +466,26 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
-        CONFIG_FILE: foundation/download-ops-manager.yml
+        CONFIG_FILE: download-ops-manager.yml
       input_mapping:
         config: interpolated-config
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
-      params:
-        OPSMAN_CONFIG_FILE: foundation/opsman.yml
-        STATE_FILE: foundation/state.yml
       input_mapping:
         config: interpolated-config
         state: config
         image: downloaded-product
 ```
+
+!!! note "Defaults for tasks"
+    We do not explicitly set the default parameters
+    for `create-vm` in this example.
+    Because `opsman.yml` is the default input to
+    `OPSMAN_CONFIG_FILE`, it is redundant 
+    to set this param in the pipeline. 
+    Refer to the [task definitions][task-reference] for a full range of the 
+    available and default parameters.
 
 Set the pipeline.
 
@@ -499,7 +494,7 @@ we should [`ensure`][ensure] that `state.yml` is always persisted
 regardless of whether the `install-opsman` job failed or passed.
 To do this, we can add the following section to the job:
 
-```yaml hl_lines="46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65"
+```yaml hl_lines="42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -523,7 +518,6 @@ jobs:
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: https://your-credhub.example.com
         PREFIX: /concourse/your-team-name/foundation
-        INTERPOLATION_PATHS: foundation # contains download-ops-manager.yml
       input_mapping:
         files: config
       output_mapping:
@@ -532,15 +526,12 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
-        CONFIG_FILE: foundation/download-ops-manager.yml
+        CONFIG_FILE: download-ops-manager.yml
       input_mapping:
         config: interpolated-config
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
-      params:
-        OPSMAN_CONFIG_FILE: foundation/opsman.yml
-        STATE_FILE: foundation/state.yml
       input_mapping:
         config: interpolated-config
         state: config
@@ -557,7 +548,7 @@ jobs:
               repository-commit: config-commit
             params:
               FILE_SOURCE_PATH: state.yml
-              FILE_DESTINATION_PATH: ((foundation))/state/state.yml
+              FILE_DESTINATION_PATH: state.yml
               GIT_AUTHOR_EMAIL: "pcf-pipeline-bot@example.com"
               GIT_AUTHOR_NAME: "Platform Automation Bot"
               COMMIT_MESSAGE: 'Update state file'

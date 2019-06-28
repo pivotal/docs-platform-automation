@@ -96,7 +96,7 @@ to `vars.yml` so we can reference it later,
 when we declare the corresponding resource.
 
 ```yaml
-pipeline-repo: git@github.com:username/platform-automation-pipelines
+pipeline-repo: git@github.com:username/your-repo-name
 ```
 
 ```bash
