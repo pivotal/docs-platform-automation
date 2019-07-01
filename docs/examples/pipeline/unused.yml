@@ -54,3 +54,19 @@
     GIT_AUTHOR_NAME: "Platform Automation Bot"
     COMMIT_MESSAGE: 'Update state file'
 # code_snippet make-git-commit-usage end
+# code_snippet credhub-interpolate-usage start yaml
+- task: interpolate-env-creds
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  params:
+    CREDHUB_CLIENT: ((credhub-client))
+    CREDHUB_SECRET: ((credhub-secret))
+    CREDHUB_SERVER: ((credhub-server))
+    PREFIX: '/pipeline/vsphere'
+    INTERPOLATION_PATHS: ((foundation))/config
+    SKIP_MISSING: true
+  input_mapping:
+    files: configuration
+  output_mapping:
+    interpolated-files: interpolated-configs
+# code_snippet credhub-interpolate-usage end
