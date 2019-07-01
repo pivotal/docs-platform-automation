@@ -228,7 +228,7 @@ jobs:
       SUBSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS: true
   - put: configuration
     params:
-      file: generated-config/cf.yml      
+      file: generated-config/pas.yml
 ```
 This task will connect to the Ops Manager defined in your [`env.yml`][generating-env-file], download the current staged
 configuration of your product, and put it into a `generated-config` folder in the concourse job. The `put` in

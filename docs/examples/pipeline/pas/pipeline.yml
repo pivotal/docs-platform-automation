@@ -405,7 +405,7 @@ jobs:
           config: interpolated-creds
           env: interpolated-creds
         params:
-          CONFIG_FILE: cf.yml
+          CONFIG_FILE: pas.yml
       # code_snippet configure-product-usage end
 
   - name: upload-and-stage-pas-windows
