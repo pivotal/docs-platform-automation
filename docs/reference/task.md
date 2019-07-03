@@ -264,7 +264,7 @@ For example:
   [ops-manager,2.5.0]ops-manager-aws-2.5.0-build.123.yml
   [elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
   ```
-  
+
 This is to allow the same config parameters
 that let us select a file from Pivnet
 select it again when pulling from S3.
@@ -286,7 +286,7 @@ This avoids breaking current pipelines.
     To build this stemcell manually, please reference the
     [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
     in Pivotal Documentation.
-    
+
 !!! info "When only downloading from Pivnet"
     When the download product config only has Pivnet credentials,
     it will not add the prefix to the downloaded product.
@@ -312,7 +312,7 @@ and [upload-stemcell](#upload-stemcell) tasks.
 This task requires a [download-product config file][download-product-config].
 The same configuration file should be used with both this task and [`download-product`][download-product].
 This ensures that the same file
-is being captured with both tasks. 
+is being captured with both tasks.
 
 The product files uploaded to s3 for download with this task require a specific prefix:
 `[product-slug,semantic-version]`.
@@ -320,7 +320,7 @@ This prefix is added by the [`download-product`][download-product] task
 when S3 keys are present in the configuration file.
 This is the meta information about the product from Pivnet,
 which is _not guaranteed_ to be in the original filename.
-This tasks uses the meta information to be able to perform 
+This tasks uses the meta information to be able to perform
 consistent downloads from s3
 as defined in the provided download config.
 For example:
@@ -408,7 +408,7 @@ Also useful for persisting the configuration output from:
     in the repo used for the `repository` input,
     in addition to copying in a single file.
 
-!!! info 
+!!! info
     This does not perform a `git push`!
     You will need to `put` the output of this task to a git resource to persist it.
 
@@ -418,6 +418,7 @@ Also useful for persisting the configuration output from:
 
 ### pre-deploy-check
 Checks if the Ops Manager director is configured properly and validates the configuration.
+This feature is only available in Ops Manager 2.6+.
 Additionally, checks each of the staged products
 and validates they are configured correctly.
 This task can be run at any time
@@ -434,9 +435,9 @@ The checks that this task executes are:
 - did any ops manager verifiers fail
 
 If any of the above checks fail
-the task will fail. 
-The failed task will provide a list of errors that need to be fixed 
-before an `apply-changes` could start. 
+the task will fail.
+The failed task will provide a list of errors that need to be fixed
+before an `apply-changes` could start.
 
 {% code_snippet 'tasks', 'pre-deploy-check', 'Task' %}
 {% code_snippet 'tasks', 'pre-deploy-check-script', 'Implementation' %}
