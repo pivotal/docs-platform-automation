@@ -51,6 +51,11 @@ owner: PCF Platform Automation
 
 ### What's New
 
+- New task [`pre-deploy-check`][pre-deploy-check]
+  will validate that Ops Manager and it's staged products
+  are configured correctly.
+  This may be run at any time
+  and may be used as a pre-check for `apply-changes`.
 - For GCP, [`create-vm`][create-vm] will now allow you
   to specify a `gcp_service_account_name`
   for the new Ops Manager VM.
