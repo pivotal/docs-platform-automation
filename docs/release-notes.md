@@ -52,7 +52,7 @@ owner: PCF Platform Automation
   they are present on the image.)
 
 ## v3.0.2
-**Release Date** Maybe someday
+**Release Date** Monday, July 8th, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/)
@@ -75,7 +75,7 @@ owner: PCF Platform Automation
   they are present on the image.)
 
 ## v3.0.1
-**Release Date** Friday, May, 24th, 2019
+**Release Date** Friday, May 24th, 2019
 
 ### Breaking Changes
 - `om` will now follow conventional Semantic Versioning,
