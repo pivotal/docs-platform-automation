@@ -75,8 +75,8 @@ owner: PCF Platform Automation
 - [`download-product`][download-product] will now return a `download-product.json`
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
 
-## v3.0.3
-**Release Date** Maybe someday
+## v3.0.4
+**Release Date** Coming soon
 
 ### Bug Fixes
 - `create-vm` and `upgrade-opsman` now function with `gcp_service_account_name` on GCP.
