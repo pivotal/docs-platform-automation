@@ -20,8 +20,8 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
-## v3.0.3
-**Release Date** Maybe someday
+## v3.0.4
+**Release Date** Coming soon
 
 ### Bug Fixes
 - `create-vm` and `upgrade-opsman` now function with `gcp_service_account_name` on GCP.
