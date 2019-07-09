@@ -41,7 +41,7 @@ owner: PCF Platform Automation
 - CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/)
   (related to vulnerabilities with `Expat`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4038-1](https://usn.ubuntu.com/4038-1/)
+- CVE update to container image. Resolves [USN-4038-1](https://usn.ubuntu.com/4038-1/) and [USN-4038-3](https://usn.ubuntu.com/4038-3/)
   (related to vulnerabilities with `bzip`. While none of our code directly used these,
   they are present on the image.)
 - CVE update to container image. Resolves [USN-4019-1](https://usn.ubuntu.com/4019-1/)
@@ -49,6 +49,9 @@ owner: PCF Platform Automation
   they are present on the image.)
 - CVE update to container image. Resolves [CVE-2019-11477](https://people.canonical.com/~ubuntu-security/cve/2019/CVE-2019-11477.html)
   (related to vulnerabilities with `linux-libc-dev`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4049-1](https://usn.ubuntu.com/4049-1/)
+  (related to vulnerabilities with `libglib`. While none of our code directly used these,
   they are present on the image.)
 
 ## v3.0.2
