@@ -7,6 +7,23 @@
         top: 97%;
     }
 
+    .header-dropdown .content,
+    [data-md-color-primary=teal] .md-header, [data-md-color-primary=teal] .md-hero {
+        background-color: #00b5a3;
+    }
+
+    [data-md-color-primary=teal] .md-typeset a {
+        color: #00b5a3;
+    }
+
+    [data-md-color-primary=teal] .md-nav__link--active, [data-md-color-primary=teal] .md-nav__link:active {
+        color: #00A390;
+    }
+
+    body, input {
+        color: #00253e;
+    }
+
     @media only screen and (max-width: 60em) {
         .md-header .secondary-header {
             display: none;
@@ -14,11 +31,11 @@
     }
     @media only screen and (min-width: 60em) {
         .md-header {
-            height: 7.4rem;
+            height: 6.8rem;
         }
 
         .md-header .md-header-nav {
-            height: 5rem;
+            height: 4rem;
         }
 
         .md-header .md-header-nav .md-flex {
@@ -31,7 +48,7 @@
 
         .md-header .md-header-nav .md-header-nav__title {
             font-size: 1.25rem;
-            line-height: 5rem;
+            line-height: 4rem;
         }
 
         .md-header .secondary-header .md-flex__cell {
@@ -49,8 +66,8 @@
 
         .md-header .secondary-header {
             height: 2.4rem;
-            line-height: 3.0rem;
-            background-color: #243640;
+            background-color: white;
+            line-height: 2.1rem;
         }
 
         .md-header .secondary-header .sub {
@@ -58,13 +75,27 @@
         }
 
         .md-header .secondary-header .sub a {
-            margin-right: 17px;
+            margin: 0 0 0 25px;
+            color: #00253e;
+            font-size: 16px;
+        }
+
+        .md-header .secondary-header .sub a:hover {
+            color: #00A390;
+        }
+
+        .md-search {
+            padding-top: 0;
+        }
+
+        .md-header[data-md-state=shadow] {
+            box-shadow: none;
         }
 
         .global-header-title .pivotal-logo {
             fill: white;
             height: .9rem;
-            margin-right: 8px;
+            margin: 13px 0 0;
         }
 
         .global-header-title .documentation-letters {
@@ -85,64 +116,15 @@
     <div class="secondary-header">
         <div class="md-flex md-grid">
             <div class="md-flex__cell logo">
-            <a href="https://docs.pivotal.io" class="global-header-title" target="_blank">
-            <svg class="pivotal-logo" xmlns="http://www.w3.org/2000/svg"
-                 viewBox="0 0 174.72 40.94">
-                <path class="a" d="M38.77,6h-6.2V0h6.2Zm0,34.24H32.56V10.41h6.22Z"></path>
-                <path class="a"
-                      d="M74.67,10.41,66,36.18c-1.49,4.22-4.15,4.76-6.3,4.76-3.19,0-5.11-1.47-6.24-4.75l-7.22-21.4H43.39V10.41h7.45l7.44,24c.33,1,.53,1.63,1.43,1.63s1.13-.62,1.43-1.63l7.59-24Z"></path>
-                <path class="a"
-                      d="M90,10.41c8.05,0,13.66,5.31,13.66,12.92V28c0,7.6-5.61,12.92-13.66,12.92S76.32,35.62,76.32,28V23.33c0-7.61,5.62-12.92,13.67-12.92M90,36c4.81,0,7.8-3.64,7.8-8V23.33c0-4.37-3-8-7.8-8-5.1,0-7.8,3.64-7.8,8V28c0,4.37,2.82,8,7.8,8"></path>
-                <path class="a"
-                      d="M153.32,11.36A53.46,53.46,0,0,0,141.8,10c-8.17,0-13.24,5.15-13.24,13.45v3.27c0,8.3,5.07,13.53,13.24,13.53.19,0,1.64,0,2.3-.06v-5l-2.3.07c-4.45,0-7.43-3.43-7.43-8.53V23.44c0-5.09,3-8.52,7.43-8.52a43.88,43.88,0,0,1,6.09.38l.33.08V40.24h6.22V12.4c0-.53,0-.74-1.13-1"></path>
-                <rect class="a" x="160.44" width="6.22" height="40.24"></rect>
-                <path class="a"
-                      d="M10.92,0H0V40.24H6.47V5.59h3.79c.81,0,1.49,0,2.18.06,5.61.1,8.35,2.33,8.35,6.69,0,.17,0,.29,0,.47,0,4-2.21,6.71-8.32,6.71H10.67c0,1.55,0,4.41,0,5.41.63,0,1.22.06,1.82.06,8.78,0,15-3.45,15-12.11,0-.17,0-.35,0-.52C27.44,3.38,20.69,0,10.92,0"></path>
-                <path class="a"
-                      d="M114.7,4v6.43h10.13v4.82H114.7V32.61c0,2.73,1.74,2.8,4.26,2.8h5.87v4.83h-7.94c-5.87,0-8.48-2.35-8.48-7.63V4.84Z"></path>
-                <path class="a"
-                      d="M169.52,37.64a2.6,2.6,0,1,1,2.6,2.6A2.61,2.61,0,0,1,169.52,37.64Zm2.6-2.25a2.23,2.23,0,1,0,2.22,2.24A2.24,2.24,0,0,0,172.12,35.39ZM171.55,39h-.31V36.19h.8c.72,0,1.06.33,1.06.86a.82.82,0,0,1-.58.8l.74,1.17h-.36l-.68-1.1-.67,0Zm.51-1.34c.46,0,.75-.24.75-.62s-.25-.6-.79-.6h-.48V37.7Z"></path>
-            </svg>
-            <svg class="documentation-letters" xmlns="http://www.w3.org/2000/svg"
-                 viewBox="0 0 358.62 30.84">
-                <path class="a"
-                      d="M3.71,37.26V7.45h9.52c9.25,0,15.06,6.75,15.06,14.92S22.48,37.26,13.23,37.26Zm21.9-14.89c0-7-4.47-12.6-12.38-12.6h-7V34.93h7C21.1,34.93,25.61,29.35,25.61,22.37Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a"
-                      d="M33.52,22.37C33.52,13.66,39.24,7,48,7s14.48,6.7,14.48,15.41S56.72,37.79,48,37.79,33.52,31.09,33.52,22.37Zm26.28,0c0-7.55-4.64-13.09-11.8-13.09S36.21,14.82,36.21,22.37s4.6,13.1,11.79,13.1S59.8,29.88,59.8,22.37Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a"
-                      d="M67.67,22.37C67.67,13.21,74.33,7,82.78,7a13.38,13.38,0,0,1,10.86,5.27L91.5,13.61a10.84,10.84,0,0,0-8.72-4.33c-7,0-12.42,5.32-12.42,13.09s5.45,13.1,12.42,13.1a10.82,10.82,0,0,0,8.72-4.34l2.19,1.34a13.51,13.51,0,0,1-10.91,5.32C74.33,37.79,67.67,31.54,67.67,22.37Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a"
-                      d="M98.79,25.82V7.45h2.59V25.77c0,6,3.17,9.7,9,9.7s9-3.67,9-9.7V7.45H122V25.82c0,7.37-3.94,12-11.62,12S98.79,33.15,98.79,25.82Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a"
-                      d="M154.75,37.26V10.66l-10.87,26.6h-1L132,10.66v26.6h-2.55V7.45h3.8l10.14,24.8,10.1-24.8h3.85V37.26Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a" d="M164.76,37.26V7.45h18.91V9.77H167.31v11h16v2.32h-16v11.8h16.36v2.33Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a" d="M211.29,37.26,192.52,11.65V37.26H190V7.45h2.59L211.25,32.7V7.45h2.54V37.26Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a" d="M228.81,37.26V9.77h-9.74V7.45h22.08V9.77h-9.74V37.26Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a"
-                      d="M264.93,37.26,262,29.93H246.2l-2.95,7.33H240.3L252.51,7.45h3.17l12.2,29.81ZM254.11,10.17,247.05,27.6h14.08Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a" d="M276.78,37.26V9.77H267V7.45h22.07V9.77h-9.74V37.26Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a" d="M294.39,37.26V7.45h2.55V37.26Z" transform="translate(-3.71 -6.96)"></path>
-                <path class="a"
-                      d="M303.24,22.37C303.24,13.66,309,7,317.72,7s14.48,6.7,14.48,15.41-5.76,15.42-14.48,15.42S303.24,31.09,303.24,22.37Zm26.28,0c0-7.55-4.65-13.09-11.8-13.09s-11.8,5.54-11.8,13.09,4.61,13.1,11.8,13.1S329.52,29.88,329.52,22.37Z"
-                      transform="translate(-3.71 -6.96)"></path>
-                <path class="a" d="M359.83,37.26,341.06,11.65V37.26h-2.55V7.45h2.59L359.78,32.7V7.45h2.55V37.26Z"
-                      transform="translate(-3.71 -6.96)"></path>
-            </svg>
-            </a></div>
+                <a href="https://docs.pivotal.io" class="global-header-title">
+                    <img class='pivotal-logo' src="https://d1fto35gcfffzn.cloudfront.net/images/docs/logo-docs.svg"/>
+                </a></div>
 
             <div class="md-flex__cell sub">
                 <a href="#">Support</a>
                 <a href="#">Downloads</a>
+                <a href="#">Contact Us</a>
+                <a href="#">Sign In</a>
             </div>
         </div>
     </div>
