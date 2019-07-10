@@ -87,12 +87,16 @@ owner: PCF Platform Automation
   that can be [set in Concourse](https://github.com/concourse/concourse-bosh-release/blob/9764b66a6d85785735f6ea8ddcabf77785b5eddd/jobs/worker/spec#L50-L65).
 - `credhub` CLI has been bumped to v2.5.1.
   This includes a fix of not raising an error when processing an empty YAML file.
-- `om` CLI has been bumped to v1.1.0.
+- `om` CLI has been bumped to v2.0.0.
   This includes the following bug fixes:
     * Extra values passed in the env file will now fail if they are not recognized properties.
     * Allow non-string entities to be passed as strings to Ops Manager.
     * `download-product`'s output of `assign-stemcell.yml` will have the correct `product-name`
     * `bosh-env` will now set `BOSH_ALL_PROXY` without a trailing slash if one is provided
+    * When using `bosh-env`, a check is done to ensure the SSH private key exists.
+      If does not the command will exit 1.
+    * `config-template` will enforce the default value for a property to always be `configurable: false`.
+      This is inline with the OpsManager behaviour.
 - CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/)
   (related to vulnerabilities with `Expat`. While none of our code directly used these,
   they are present on the image.)
