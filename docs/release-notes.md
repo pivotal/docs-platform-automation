@@ -24,19 +24,54 @@ owner: PCF Platform Automation
 **Release Date** Coming soon
 
 ### Bug Fixes
-- `create-vm` and `upgrade-opsman` now function with `gcp_service_account_name` on GCP.
+- Both [`configure-ldap-authentication`][configure-ldap-authentication] 
+  and [`configure-saml-authentication`][configure-saml-authentication]
+  will now automatically
+  create a BOSH UAA admin client as documented [here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#saml).
+  This is only supported in OpsManager 2.4 and greater.
+  You may specify the option `skip-create-bosh-admin-client` in your config YAML
+  to skip creating this client.
+  After the client has been created,
+  you can find the client ID and secret
+  by following [steps three and four found here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#-provision-admin-client).
+  
+    _This feature needs to be enabled
+    to properly automate authentication for the bosh director when using LDAP and SAML._
+    If `skip-create-bosh-admin-client: true` is specified, manual steps are required,
+    and this task is no longer "automation".
+  
+- [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] now function with `gcp_service_account_name` on GCP.
   Previously, only providing a full `gcp_service_account` as a JSON blob worked.
-- Environment variables passed to `create-vm`, `delete-vm`, and `upgrade-opsman`
+- Environment variables passed to [`create-vm`][create-vm], [`delete-vm`][delete-vm], and [`upgrade-opsman`][upgrade-opsman]
   will be passed to the underlying IAAS CLI invocation.
   This allows our tasks to work with the `https_proxy` and `no_proxy` variables
   that can be [set in Concourse](https://github.com/concourse/concourse-bosh-release/blob/9764b66a6d85785735f6ea8ddcabf77785b5eddd/jobs/worker/spec#L50-L65).
+- [`download-product`][download-product] task output of `assign-stemcell.yml` will have the correct `product-name`
+- When using the `env.yml` for a task,
+  extra values passed in the env file will now fail if they are not recognized properties.
 - `credhub` CLI has been bumped to v2.5.1.
   This includes a fix of not raising an error when processing an empty YAML file.
 - `om` CLI has been bumped to v2.0.0.
   This includes the following bug fixes:
-    * Extra values passed in the env file will now fail if they are not recognized properties.
-    * Allow non-string entities to be passed as strings to Ops Manager.
-    * `download-product`'s output of `assign-stemcell.yml` will have the correct `product-name`
+    * `download-product` will now return a `download-file.json` 
+      if `stemcell-iaas` is defined but the product has no stemcell.
+      Previously, this would exit gracefully, but not return a file. 
+    * Non-string environment variables can now be read and passed as strings to Ops Manager.
+      For example, if your environment variable (`OM_NAME`) is set to `"123"` (with quotes escaped),
+      it will be evaluated in your config file with the quotes.
+      
+        Given `config.yml`
+        ```yaml
+        value: ((NAME))
+        ```
+        
+        `om interpolate -c config.yml --vars-env OM`
+        
+        Will evaluate to:
+        ```yaml
+          value: "123"
+        ```
+      
     * `bosh-env` will now set `BOSH_ALL_PROXY` without a trailing slash if one is provided
     * When using `bosh-env`, a check is done to ensure the SSH private key exists.
       If does not the command will exit 1.
