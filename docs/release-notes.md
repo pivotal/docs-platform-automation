@@ -108,6 +108,13 @@ owner: PCF Platform Automation
 - [`download-product`][download-product] task output of `assign-stemcell.yml` will have the correct `product-name`
 - When using the `env.yml` for a task,
   extra values passed in the env file will now fail if they are not recognized properties.
+  Invalid properties might now produce the following:
+    ```bash
+      $ om --env env.yml upload-product --product product.pivotal
+      could not parse env file: yaml: unmarshal errors:
+      line 5: field invalid-field not found in type main.options
+    ```
+  
 - `credhub` CLI has been bumped to v2.5.1.
   This includes a fix of not raising an error when processing an empty YAML file.
 - `om` CLI has been bumped to v2.0.0.
@@ -136,6 +143,7 @@ owner: PCF Platform Automation
       If does not the command will exit 1.
     * `config-template` will enforce the default value for a property to always be `configurable: false`.
       This is inline with the OpsManager behaviour.
+      
 - CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/)
   (related to vulnerabilities with `Expat`. While none of our code directly used these,
   they are present on the image.)
