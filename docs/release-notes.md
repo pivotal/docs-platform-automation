@@ -20,6 +20,14 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
+## v3.0.5
+**Release Date** coming soon
+
+### Bug Fixes
+- in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
+  setting `SKIP_MISSING: false` the command would fail. 
+  This has been fixed.
+  
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
 
