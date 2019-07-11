@@ -79,6 +79,14 @@ owner: PCF Platform Automation
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
 - [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
 
+## v3.0.5
+**Release Date** coming soon
+
+### Bug Fixes
+- in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
+  setting `SKIP_MISSING: false` the command would fail. 
+  This has been fixed.
+
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
 
