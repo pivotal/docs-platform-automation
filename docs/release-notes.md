@@ -21,7 +21,7 @@ owner: PCF Platform Automation
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
 ## v3.0.4
-**Release Date** Coming soon
+**Release Date** Thursday, July 11, 2019
 
 ### Bug Fixes
 - Both [`configure-ldap-authentication`][configure-ldap-authentication] 
