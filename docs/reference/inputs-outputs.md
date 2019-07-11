@@ -43,63 +43,6 @@ autoapprove (list):
 signup redirect url (url):
 ```
 
-### auth
-
-There are two different authentication methods that Ops Manager supports.
-
-#### basic authentication
-
-This method of authentication configuration uses a specified username and password.
-
-See the task for the [`configure-authentication`][configure-authentication] for details.
-
-{% code_snippet 'examples', 'auth-configuration' %}
-
-!!! info
-    basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats
-
-#### ldap authentication
-
-This method of authentication configuration depends on a LDAP service
-to provide user information and authentication.
-
-This config file is used as the `config` input in the
-[`configure-ldap-authentication`][configure-ldap-authentication] task.
-
-By default, the [`configure-ldap-authentication`][configure-ldap-authentication] task
-will create an admin client for use with the BOSH Director.
-If you wish to prevent this, add `skip-bosh-admin-client-creation: true` to the config file.
-
-{% code_snippet 'examples', 'ldap-auth-configuration' %}
-
-!!! info
-    ldap authentication requires the <a href="#uaa-authentication">uaa env</a> format
-
-The `ldap-configuration` properties configures Ops Manager's usage of an LDAP provider.
-The [Ops Manager API Docs][opsman-api-ldap] have more information
-about the particular keys used in this configuration.
-
-#### saml authentication
-
-This method of authentication configuration depends on a SAML service
-to provide user information and authentication.
-
-This config file is used as the `config` input in the
-[`configure-saml-authentication`][configure-saml-authentication] task.
-
-By default, the [`configure-saml-authentication`][configure-saml-authentication] task
-will create an admin client for use with the BOSH Director.
-If you wish to prevent this, add `skip-bosh-admin-client-creation: true` to the config file.
-
-{% code_snippet 'examples', 'saml-auth-configuration' %}
-
-!!! info 
-    saml authentication requires the <a href="#uaa-authentication">uaa env</a> format
-
-The `saml-configuration` properties configures Ops Manager's usage of an SAML provider.
-The [Ops Manager API Docs][opsman-api-saml] have more information
-about the particular keys used in this configuration.
-
 ### Ops Manager config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
 
