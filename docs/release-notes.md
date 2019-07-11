@@ -80,7 +80,7 @@ owner: PCF Platform Automation
 - [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
 
 ## v3.0.4
-**Release Date** Coming soon
+**Release Date** Thursday, July 11, 2019
 
 ### Bug Fixes
 - Both [`configure-ldap-authentication`][configure-ldap-authentication] 
