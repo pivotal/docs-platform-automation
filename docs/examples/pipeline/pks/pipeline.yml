@@ -31,7 +31,7 @@ resources:
       secret_access_key: ((s3.secret_access_key))
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.installation))
-      regexp: installation-(.*)-pks.zip
+      regexp: pks-installation-(.*).zip
   # code_snippet single-product-export-installation end yaml
 
   # VM state and foundation configuration
@@ -169,10 +169,10 @@ jobs:
         input_mapping:
           env: interpolated-creds
         params:
-          INSTALLATION_FILE: installation-$timestamp-pks.zip
+          INSTALLATION_FILE: pks-installation-$timestamp.zip
       - put: installation
         params:
-          file: installation/installation*.zip
+          file: installation/pks-installation*.zip
 
   - name: upgrade-opsman
     serial: true
