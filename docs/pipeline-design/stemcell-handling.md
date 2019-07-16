@@ -40,7 +40,7 @@ To upload the stemcell to Ops Manager without associating it with any product, t
     [`upload-stemcell`][upload-stemcell] task will need to be executed with the `FLOATING_STEMCELL: false` 
     flag set.
     
-    An example of this, in a pipeline:
+An example of this, in a pipeline:
 
 ```yaml
 - task: upload-stemcell
@@ -65,7 +65,7 @@ To upload the stemcell to Ops Manager without associating it with any product, t
    expecting. Upon successful completion, the stemcell specified in the config will be associated with the product
    specified in the config, and no other product will be associated with that stemcell.
    
-    An example of this, in a pipeline:
+An example of this, in a pipeline:
 
 ```yaml
 - task: assign-stemcell
