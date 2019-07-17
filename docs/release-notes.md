@@ -85,7 +85,11 @@ owner: PCF Platform Automation
 ### Bug Fixes
 - in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
   setting `SKIP_MISSING: false` the command would fail. 
-  This has been fixed.
+  This has been fixed.  
+- [`upgrade-opsman`][upgrade-opsman] would fail on the [`import-installation`][import-installation] step
+  if the env file did not contain a target or decryption passphrase.
+  This will now fail before the upgrade process begins 
+  to ensure faster feedback.
 
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
