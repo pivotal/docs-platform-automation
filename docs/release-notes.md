@@ -72,12 +72,30 @@ owner: PCF Platform Automation
 - [`configure-director`][configure-director] now support [VM Extensions][vm-extensions].
   Please note this is an advanced feature, and should be used at your own discretion.  
 - [`configure-director`][configure-director] now support [VM Types][vm-types].
-  Please note this is an advanced feature, and should be used at your own discretion.  
+  Please note this is an advanced feature, and should be used at your own discretion.
+- Add support for new NSX and NSXT format in Ops Manager 2.7+
+  when calling [`staged-config`][staged-config] and [`staged-director-config`][staged-director-config]
 
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
 - [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
+- `om` CLI has been bumped to v3.0.0.
+  This includes the following bug fixes:
+    * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
+    * `upload-stemcell` now accepts `--floating false` in addition to `floating=false`.
+      This was done to offer consistency between all of the flags on the command.
+    * `skip-unchanged-products` was removed from `apply-changes`.
+      This option has had issues with consistent successful behaviour.
+      For example, if the apply changes fails for any reason, the subsequent apply changes cannot pick where it left off.
+      This usually happens in the case of errands that are used for services.
+      
+        We are working on scoping a selective deploy feature that makes sense for users.
+        We would love to have feedback from users about this.
+        
+    * remove `revert-staged-changes`
+      `unstage-product` functionally does the same thing,
+      but uses the API.
 
 ## v3.0.5
 **Release Date** coming soon
