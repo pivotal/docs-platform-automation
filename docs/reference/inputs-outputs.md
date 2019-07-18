@@ -306,10 +306,18 @@ jobs:
     This file cannot be manually created. It is a file that must retrieved from Pivnet.
 
 ### download-product-config
-The `config` input for a download product task expects to have a `download-config.yml` file.
+
+The `config` input for a download product task can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-product-config' %}
+
+### download-stemcell-product-config
+
+The `config` input for a download product task can be used with a `download-config.yml` file to download a stemcell.
+The configuration of the `download-config.yml` looks like this:
+
+{% code_snippet 'examples', 'download-stemcell-product-config' %}
 
 [configure-authentication]: task.md#configure-authentication
 [configure-saml-authentication]: task.md#configure-saml-authentication
