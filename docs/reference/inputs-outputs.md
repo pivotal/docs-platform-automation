@@ -288,10 +288,17 @@ jobs:
 
 ### download-product-config
 
-The `config` input for a download product task expects to have a `download-config.yml` file.
+The `config` input for a download product task can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-product-config' %}
+
+### download-stemcell-product-config
+
+The `config` input for a download product task can be used with a `download-config.yml` file to download a stemcell.
+The configuration of the `download-config.yml` looks like this:
+
+{% code_snippet 'examples', 'download-stemcell-product-config' %}
 
 [configure-authentication]: task.md#configure-authentication
 [configure-ldap-authentication]: task.md#configure-ldap-authentication
