@@ -26,8 +26,28 @@ owner: PCF Platform Automation
 ### Bug Fixes
 - in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
   setting `SKIP_MISSING: false` the command would fail. 
-  This has been fixed.
-  
+  This has been fixed.  
+- [`upgrade-opsman`][upgrade-opsman] would fail on the [`import-installation`][import-installation] step
+  if the env file did not contain a target or decryption passphrase.
+  This will now fail before the upgrade process begins 
+  to ensure faster feedback.
+- `om` CLI has been bumped to v3.0.0.
+  This includes the following bug fixes:
+    * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
+    * `upload-stemcell` now accepts `--floating false` in addition to `floating=false`.
+      This was done to offer consistency between all of the flags on the command.
+    * `skip-unchanged-products` was removed from `apply-changes`.
+      This option has had issues with consistent successful behaviour.
+      For example, if the apply changes fails for any reason, the subsequent apply changes cannot pick where it left off.
+      This usually happens in the case of errands that are used for services.
+      
+        We are working on scoping a selective deploy feature that makes sense for users.
+        We would love to have feedback from users about this.
+        
+    * remove `revert-staged-changes`
+      `unstage-product` functionally does the same thing,
+      but uses the API.
+      
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
 
