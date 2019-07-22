@@ -21,7 +21,7 @@ owner: PCF Platform Automation
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
 ## v3.0.5
-**Release Date** coming soon
+**Release Date** July 22, 2019
 
 ### Bug Fixes
 - in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
