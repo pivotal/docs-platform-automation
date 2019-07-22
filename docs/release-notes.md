@@ -82,7 +82,7 @@ owner: PCF Platform Automation
 - [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
 
 ## v3.0.5
-**Release Date** coming soon
+**Release Date** July 22, 2019
 
 ### Bug Fixes
 - in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
