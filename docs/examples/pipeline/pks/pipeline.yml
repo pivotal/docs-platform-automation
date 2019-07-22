@@ -79,6 +79,7 @@ interpolate-creds: &interpolate-creds
     CREDHUB_CLIENT: ((credhub-client))
     CREDHUB_SECRET: ((credhub-secret))
     CREDHUB_SERVER: ((credhub-server))
+    CREDHUB_CA_CERT: ((credhub-ca-cert))
     PREFIX: '/concourse/main/reference-pipeline-pks'
     SKIP_MISSING: true
   input_mapping:
