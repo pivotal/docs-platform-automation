@@ -79,22 +79,23 @@ owner: PCF Platform Automation
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
-- [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
+
 
 ## v3.0.5
 **Release Date** July 22, 2019
 
 ### Bug Fixes
 - in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
-  setting `SKIP_MISSING: false` the command would fail. 
+  setting `SKIP_MISSING: false` the command would fail.
   This has been fixed.  
 - [`upgrade-opsman`][upgrade-opsman] would fail on the [`import-installation`][import-installation] step
   if the env file did not contain a target or decryption passphrase.
-  This will now fail before the upgrade process begins 
+  This will now fail before the upgrade process begins
   to ensure faster feedback.
 - [`upgrade-opsman`][upgrade-opsman] now respects environment variables
   when it makes calls internally to `om`
   (env file still required).
+- [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
 - `om` CLI has been bumped to v3.0.0.
   This includes the following bug fixes:
     * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
@@ -104,19 +105,19 @@ owner: PCF Platform Automation
       This option has had issues with consistent successful behaviour.
       For example, if the apply changes fails for any reason, the subsequent apply changes cannot pick where it left off.
       This usually happens in the case of errands that are used for services.
-      
+
         We are working on scoping a selective deploy feature that makes sense for users.
         We would love to have feedback from users about this.
-        
+
     * remove `revert-staged-changes`
       `unstage-product` functionally does the same thing,
       but uses the API.
-      
+
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
 
 ### Bug Fixes
-- Both [`configure-ldap-authentication`][configure-ldap-authentication] 
+- Both [`configure-ldap-authentication`][configure-ldap-authentication]
   and [`configure-saml-authentication`][configure-saml-authentication]
   will now automatically
   create a BOSH UAA admin client as documented [here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#saml).
@@ -126,12 +127,12 @@ owner: PCF Platform Automation
   After the client has been created,
   you can find the client ID and secret
   by following [steps three and four found here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#-provision-admin-client).
-  
+
     _This feature needs to be enabled
     to properly automate authentication for the bosh director when using LDAP and SAML._
     If `skip-create-bosh-admin-client: true` is specified, manual steps are required,
     and this task is no longer "automation".
-  
+
 - [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] now function with `gcp_service_account_name` on GCP.
   Previously, only providing a full `gcp_service_account` as a JSON blob worked.
 - Environment variables passed to [`create-vm`][create-vm], [`delete-vm`][delete-vm], and [`upgrade-opsman`][upgrade-opsman]
@@ -147,36 +148,36 @@ owner: PCF Platform Automation
       could not parse env file: yaml: unmarshal errors:
       line 5: field invalid-field not found in type main.options
     ```
-  
+
 - `credhub` CLI has been bumped to v2.5.1.
   This includes a fix of not raising an error when processing an empty YAML file.
 - `om` CLI has been bumped to v2.0.0.
   This includes the following bug fixes:
-    * `download-product` will now return a `download-file.json` 
+    * `download-product` will now return a `download-file.json`
       if `stemcell-iaas` is defined but the product has no stemcell.
-      Previously, this would exit gracefully, but not return a file. 
+      Previously, this would exit gracefully, but not return a file.
     * Non-string environment variables can now be read and passed as strings to Ops Manager.
       For example, if your environment variable (`OM_NAME`) is set to `"123"` (with quotes escaped),
       it will be evaluated in your config file with the quotes.
-      
+
         Given `config.yml`
         ```yaml
         value: ((NAME))
         ```
-        
+
         `om interpolate -c config.yml --vars-env OM`
-        
+
         Will evaluate to:
         ```yaml
           value: "123"
         ```
-      
+
     * `bosh-env` will now set `BOSH_ALL_PROXY` without a trailing slash if one is provided
     * When using `bosh-env`, a check is done to ensure the SSH private key exists.
       If does not the command will exit 1.
     * `config-template` will enforce the default value for a property to always be `configurable: false`.
       This is inline with the OpsManager behaviour.
-      
+
 - CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/)
   (related to vulnerabilities with `Expat`. While none of our code directly used these,
   they are present on the image.)
