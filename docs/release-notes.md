@@ -20,6 +20,14 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
+## v3.0.6
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
+  (related to vulnerabilities with `patch`. While none of our code directly used these,
+  they are present on the image.)
+  
 ## v3.0.5
 **Release Date** July 22, 2019
 
