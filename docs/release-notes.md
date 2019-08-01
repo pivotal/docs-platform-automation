@@ -75,6 +75,16 @@ owner: PCF Platform Automation
   Please note this is an advanced feature, and should be used at your own discretion.
 - Add support for new NSX and NSXT format in Ops Manager 2.7+
   when calling [`staged-config`][staged-config] and [`staged-director-config`][staged-director-config]
+- [state][state] can now be defined in a `state-$timestamp.yml` format (like [`export-installation`][export-installation]).
+  This is an _opt-in_ feature, and is only recommended
+  if you are storing state in a non-versioned s3-compatible blobstore.
+  To opt-in to this feature,
+  a param must be added to your pipeline
+  and given the value of `STATE_FILE: state-$timestamp.yml`
+  for each invocation of the following commands:
+      - [`create-vm`][create-vm]
+      - [`delete-vm`][delete-vm]
+      - [`upgrade-opsman`][upgrade-opsman]
 
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`
