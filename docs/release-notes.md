@@ -91,6 +91,15 @@ owner: PCF Platform Automation
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
 
 
+## v3.0.6
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
+  (related to vulnerabilities with `patch`. While none of our code directly used these,
+  they are present on the image.)
+
+
 ## v3.0.5
 **Release Date** July 22, 2019
 
