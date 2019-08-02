@@ -5,7 +5,10 @@ site_url: https://docs.pivotal.io
 repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!
 edit_uri: edit/v1.1/docs/
-theme: pivotal
+theme:
+  name: pivotal
+  logo: assets/icon.svg
+  favicon: assets/icon.svg
 strict: true
 use_directory_urls: false
 plugins:
