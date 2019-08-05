@@ -36,4 +36,5 @@ opsman-configuration:
     private_ip: 10.0.0.2
     # scopes to add to created vm
     scopes: ["my-scope"]
+    ssh_public_key: ssh-rsa some-public-key...
 # code_snippet gcp-configuration end
