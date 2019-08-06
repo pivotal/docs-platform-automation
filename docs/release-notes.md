@@ -89,6 +89,9 @@ owner: PCF Platform Automation
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
+- [vsphere opsman.yml][inputs-outputs-vsphere] now requires `ssh_public_key` for Ops Manager 2.6+
+  This was added to mitigate an error during upgrade
+  that would cause the VM to enter a reboot loop.
 
 ## v3.0.6
 **Release Date** Coming Soon
