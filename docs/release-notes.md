@@ -85,6 +85,8 @@ owner: PCF Platform Automation
       - [`create-vm`][create-vm]
       - [`delete-vm`][delete-vm]
       - [`upgrade-opsman`][upgrade-opsman]
+- [gcp opsman.yml][inputs-outputs-gcp] now supports `ssh_public_key`.
+  This is used to ssh into the Ops Manager VM to manage non-tile bosh add-ons.
 
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`

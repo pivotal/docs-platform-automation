@@ -36,5 +36,7 @@ opsman-configuration:
     private_ip: 10.0.0.2
     # scopes to add to created vm
     scopes: ["my-scope"]
+    # key to ssh onto the Ops Manger VM.
+    # used to manage non-tile BOSH add-ons
     ssh_public_key: ssh-rsa some-public-key...
 # code_snippet gcp-configuration end
