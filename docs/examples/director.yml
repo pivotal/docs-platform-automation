@@ -9,8 +9,8 @@ az-configuration:
 properties-configuration:
   iaas_configuration:
     vcenter_host: vcenter.example.com
-    vcenter_password: admin
-    vcenter_username: password
+    vcenter_username: admin
+    vcenter_password: password
     ......
   director_configuration:
     blobstore_type: local
