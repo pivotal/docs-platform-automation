@@ -94,6 +94,9 @@ owner: PCF Platform Automation
 - [vsphere opsman.yml][inputs-outputs-vsphere] now requires `ssh_public_key` for Ops Manager 2.6+
   This was added to mitigate an error during upgrade
   that would cause the VM to enter a reboot loop.
+- When using AWS to create the Ops Manager VM with encrypted disks,
+  the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
+  An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.6
 **Release Date** Coming Soon
