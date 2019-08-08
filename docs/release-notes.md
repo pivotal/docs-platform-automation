@@ -20,6 +20,14 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
+## v3.0.7
+**Release Date** Coming Soon
+
+### Bug Fixes
+- When using AWS to create the Ops Manager VM with encrypted disks,
+  the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
+  An exponential backoff will be and timeout after an hour if disk is not ready.
+
 ## v3.0.6
 **Release Date** Coming Soon
 
