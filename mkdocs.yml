@@ -7,7 +7,7 @@ repo_name: Help fix the docs!
 theme:
   name: pivotal
   logo: assets/icon.svg
-  favicon: assets/icon.svg
+  favicon: assets/favicon.ico
 edit_uri: edit/v2.0/docs/
 strict: true
 use_directory_urls: false
