@@ -591,7 +591,29 @@ jobs:
           PRODUCT_NAME: cf
         ensure: *put-state
       # code_snippet staged-config-usage end
-
+  - name: expiring-certificates
+    plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+      - get: state
+    - task: interpolate-creds
+      <<: *interpolate-creds
+    # code_snippet expiring-certificates-usage start yaml
+    - task: expiring-certificates
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/expiring-certificates.yml
+      input_mapping:
+        env: interpolated-creds
+      params:
+        EXPIRES_WITHIN: 6m
+      ensure: *put-state
+    # code_snippet expiring-certificates-usage end
   - name: staged-healthwatch-config
     plan:
       - aggregate:
