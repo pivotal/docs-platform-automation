@@ -352,6 +352,15 @@ For example:
 {% code_snippet 'tasks', 'download-product-s3-script', 'Implementation' %}
 {% code_snippet 'examples', 'download-product-s3-usage', 'Usage' %}
 
+### expiring-certificates
+Returns a list of certificates that are expiring within a time frame.
+These certificates can be Ops Manager or Credhub certificates.
+This is purely an informational task.
+
+{% code_snippet 'tasks', 'expiring-certificates', 'Task' %}
+{% code_snippet 'tasks', 'expiring-certificates-script', 'Implementation' %}
+{% code_snippet 'examples', 'expiring-certificates-usage', 'Usage' %}
+
 ### export-installation
 Exports an existing Ops Manager to a file.
 
