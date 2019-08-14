@@ -5,9 +5,9 @@ opsman-configuration:
     vcenter:
       ca_cert:                      # REQUIRED if insecure: 0 (secure)
       datacenter: example-dc
-      datastore: exmple-ds-1
+      datastore: example-ds-1
       folder: /example-dc/vm/Folder # RECOMMENDED, but not required
-      resource_pool: /example-dc/host/example-host/Resources/ResPool # or /<Data Center Name>/host/<Cluster Name>
+      resource_pool: /example-dc/host/example-host/Resources/example-res-pool # or /<Data Center Name>/host/<Cluster Name>
       url: vcenter.example.com
       username: admin
       password: password
@@ -19,11 +19,11 @@ opsman-configuration:
     disk_type: thin                 # thin|thick
     dns: 8.8.8.8
     gateway: 192.168.10.1
-    hostname: pcf.example.com
+    hostname: ops-manager.example.com
     netmask: 255.255.255.192
-    network: virtual-network
+    network: example-virtual-network
     ntp: ntp.ubuntu.com
-    private_ip: 10.0.0.2
+    private_ip: 10.0.0.10
     ssh_public_key: ssh-rsa ......  # REQUIRED Ops Manager >= 2.6
     # Optional
     # cpu:                          # default: 1
