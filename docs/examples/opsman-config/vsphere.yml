@@ -3,7 +3,7 @@
 opsman-configuration:
   vsphere:
     vcenter:
-      ca_cert:                      # REQUIRED if insecure: 0 (secure)
+      ca_cert: cert                 # REQUIRED if insecure: 0 (secure)
       datacenter: example-dc
       datastore: example-ds-1
       folder: /example-dc/vm/Folder # RECOMMENDED, but not required
@@ -12,9 +12,9 @@ opsman-configuration:
       username: admin
       password: password
       # Optional
-      # host:                       # DEPRECATED: Platform Automation cannot guarantee
+      # host: host                  # DEPRECATED: Platform Automation cannot guarantee
                                     # the location of the VM, given the nature of vSphere
-      # insecure:                   # default: 0 (secure) | 1 (insecure)
+      # insecure: 0                 # default: 0 (secure) | 1 (insecure)
 
     disk_type: thin                 # thin|thick
     dns: 8.8.8.8
@@ -26,9 +26,9 @@ opsman-configuration:
     private_ip: 10.0.0.10
     ssh_public_key: ssh-rsa ......  # REQUIRED Ops Manager >= 2.6
     # Optional
-    # cpu:                          # default: 1
-    # memory:                       # default: 8 (GB)
-    # ssh_password:                 # REQUIRED if ssh_public_key not defined
+    # cpu: 1                        # default: 1
+    # memory: 8                     # default: 8 (GB)
+    # ssh_password: password        # REQUIRED if ssh_public_key not defined
                                     # (Ops Manager < 2.6 ONLY)
-    # vm_name:                      # default: Ops_Manager
+    # vm_name: Ops_Manger           # default: Ops_Manager
 # code_snippet vsphere-configuration end
