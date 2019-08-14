@@ -25,6 +25,20 @@ owner: PCF Platform Automation
 
 ### What's New
 - [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
+- The new task [expiring-certificates]
+  fails if there are any expiring certificates
+  in a user specified time range.
+
+  Example Output:
+
+  ```text
+  Getting expiring certificates...
+  [X] Ops Manager
+      cf-79fba6887e8c29375eb7:
+          .uaa.service_provider_key_credentials: expiring on 09 Aug 19 17:05 UTC
+  could not execute "expiring-certificates": found expiring certs in the foundation
+  exit status 1
+  ```
 
 ## v4.0.0
 
