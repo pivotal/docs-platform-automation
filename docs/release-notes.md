@@ -27,11 +27,6 @@ owner: PCF Platform Automation
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
-
-## v3.0.6
-**Release Date** Coming Soon
-
-### Bug Fixes
 - CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
   (related to vulnerabilities with `patch`. While none of our code directly used these,
   they are present on the image.)
