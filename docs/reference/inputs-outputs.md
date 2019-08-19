@@ -194,12 +194,34 @@ and a link to the API documentation explaining the properties.
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
 
-{% code_snippet 'examples', 'state' %}
+The `state.yml` file contains two properties:
 
-The file contains two properties:
-
-1. `iaas` is the iaas the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
+1. `iaas` is the IAAS the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
 2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the vm ID is the VM name.
+
+Different IaaS uniquely identify VMs differently;
+here are examples for what this file should look like,
+depending on your IAAS:
+
+``` yaml tab="AWS"
+{% include './examples/state/aws.yml' %}
+```
+
+``` yaml tab="Azure"
+{% include './examples/state/azure.yml' %}
+```
+
+``` yaml tab="GCP"
+{% include './examples/state/gcp.yml' %}
+```
+
+``` yaml tab="OpenStack"
+{% include './examples/state/openstack.yml' %}
+```
+
+``` yaml tab="vSphere"
+{% include './examples/state/vsphere.yml' %}
+```
 
 ### opsman image
 This file is an [artifact from Pivnet](https://network.pivotal.io/products/ops-manager), which contains the VM image on an IAAS.
