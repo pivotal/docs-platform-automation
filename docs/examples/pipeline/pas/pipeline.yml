@@ -10,6 +10,7 @@ resource_types:
       tag: latest-final
 
 resources:
+  # should be s3
   - name: telemetry-collector-binary
     type: pivnet
     source:
@@ -17,6 +18,7 @@ resources:
       product_slug: pivotal-telemetry-collector
       product_version: 1\.0\.1$
 
+  # delete when done
   - name: platform-automation-tasks-github
     type: git
     source:
@@ -655,7 +657,6 @@ jobs:
           env: interpolated-creds
         params:
           PRODUCT_NAME: p-healthwatch
-          ENV_FILE: ((foundation))/env/env.yml
         ensure: *put-state
 
   - name: collect-telemetry
@@ -664,6 +665,8 @@ jobs:
       - get: telemetry-collector-binary
         params:
           unpack: true
+          globs:
+          - '*.tgz'
       - get: platform-automation-image
         params:
           unpack: true
