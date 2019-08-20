@@ -670,20 +670,22 @@ jobs:
       - get: platform-automation-image
         params:
           unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
       - get: platform-automation-tasks-github
         params:
           unpack: true
+    - task: interpolate-creds
+      <<: *interpolate-creds
     - task: run-collector
       image: platform-automation-image
       file: platform-automation-tasks-github/tasks/collect-telemetry.yml
-      params:
-        OPS_MANAGER_URL: pcf.ci.vsphere.platform-automation.cf-app.com
-        OPS_MANAGER_USERNAME: ((vsphere.username))
-        OPS_MANAGER_PASSWORD: ((vsphere.password))
-        INSECURE_SKIP_TLS_VERIFY: true
-        ENV_TYPE: sandbox
       input_mapping:
         platform-automation-tasks: platform-automation-tasks-github
+        env: interpolated-creds
+        config: configuration
     - task: send-data
       image: platform-automation-image
       file: platform-automation-tasks-github/tasks/send-telemetry.yml
