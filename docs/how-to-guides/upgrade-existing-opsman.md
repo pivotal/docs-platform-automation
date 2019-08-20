@@ -85,23 +85,18 @@ You can skip over the part
 about using `git init` to setup your repo,
 since we [already did that](#but-first-git-init).
 
-Once you've setup your remote
-and used `git push` to send what you've got so far,
-we can add a new directory to hold foundation-specific configuration.
-(We'll use the name "foundation" for this directory,
-but if your foundation has an actual name, use that instead.)
+Go ahead and setup your remote
+and use `git push` to make what we have available.
+We will use this repository to hold our single foundation specific configuration.
+We are using the ["Single Repository for Each Foundation"][single-foundation-pattern]
+pattern to structure our configurations.
 
 You will also need to add the repository URL
 to `vars.yml` so we can reference it later,
 when we declare the corresponding resource.
 
 ```yaml
-pipeline-repo: git@github.com:username/platform-automation-pipelines
-```
-
-```bash
-mkdir -p foundation
-cd !$
+pipeline-repo: git@github.com:username/your-repo-name
 ```
 
 Now lets write an `env.yml` for your Ops Manager.
@@ -129,7 +124,7 @@ decryption-passphrase: ((opsman-decryption-passphrase))
 Add and commit the new `env.yml` file:
 
 ```bash
-git add foundation/env.yml
+git add env.yml
 git commit -m "Add environment file for foundation"
 git push
 ```
@@ -216,7 +211,6 @@ jobs:
         CREDHUB_SECRET: ((credhub-secret))
         CREDHUB_SERVER: https://your-credhub.example.com
         PREFIX: /concourse/your-team-name/foundation
-        INTERPOLATION_PATHS: foundation # contains env.yml
       input_mapping:
         files: env
       output_mapping:
@@ -224,8 +218,6 @@ jobs:
     - task: export-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/export-installation.yml
-      params:
-        ENV_FILE: your/env/path/env.yml
       input_mapping:
         env: interpolated-env
     - put: installation
@@ -278,7 +270,7 @@ to the `resources` section:
     access_key_id: ((s3-access-key-id))
     secret_access_key: ((s3-secret-key))
     bucket: ((platform-automation-bucket))
-    regexp: foundation/installation-(.*).zip
+    regexp: installation-(.*).zip
 ```
 
 Again, we'll need to save the credentials in Credhub:
@@ -311,7 +303,8 @@ Now you can manually trigger a build, and see it pass.
     <p>You'll be using this,
     the ultimate form of the `fly` command to set your pipeline,
     for the rest of the tutorial.
-    <p>You can save yourself some typing by using your bash history.
+    <p>You can save yourself some typing by using your bash history
+    (if you did not prepend your command with a space).
     You can cycle through previous commands with the up and down arrows.
     Alternatively,
     Ctrl-r will search your bash history.
@@ -430,16 +423,16 @@ depending on your IaaS:
 ```
 
 Find what you need for your IaaS,
-write it in your repo as `foundation/state.yml`,
+write it in your repo as `state.yml`,
 commit it, and push it:
 
 ```bash
-git add foundation/state.yml
+git add state.yml
 git commit -m "Add state file for foundation Ops Manager"
 git push
 ```
 
-We can map the env resource to [`upgrade-opsman`][upgrade-opsman]'s
+We can map the `env` resource to [`upgrade-opsman`][upgrade-opsman]'s
 `state` input once we add the task.
 
 But first, we've got two more inputs to arrange for.
@@ -447,7 +440,7 @@ But first, we've got two more inputs to arrange for.
 Let's do [`config`][opsman-config] next.
 
 We'll write an [Ops Manager VM Configuration file][opsman-config]
-to `foundation/opsman.yml`.
+to `opsman.yml`.
 The properties available vary by IaaS;
 regardless, you can often inspect your existing Ops Manager
 in your IaaS's console
@@ -483,7 +476,7 @@ for more details about your options and per-IaaS caveats.
 Once you have your config file, commit and push it:
 
 ```bash
-git add foundation/opsman.yml
+git add opsman.yml
 git commit -m "Add opsman config"
 git push
 ```
@@ -493,7 +486,7 @@ Finally, we need the image for the new Ops Manager version.
 We'll use the [`download-product`][download-product] task.
 It requires a config file to specify which Ops Manager to get,
 and to provide Pivotal Network credentials.
-Name this file `foundation/download-opsman.yml`:
+Name this file `download-opsman.yml`:
 
 ```yaml
 ---
@@ -506,7 +499,7 @@ product-version-regex: ^2\.5\.0.*$
 You know the drill.
 
 ```bash
-git add foundation/download-opsman.yml
+git add download-opsman.yml
 git commit -m "Add download opsman config"
 git push
 ```
@@ -537,8 +530,6 @@ Now, we can put it all together:
       CREDHUB_SECRET: ((credhub-secret))
       CREDHUB_SERVER: ((credhub-server))
       PREFIX: /concourse/your-team-name/foundation
-      # A file path that includes env.yml, opsman.yml, download-opsman.yml
-      INTERPOLATION_PATHS: foundation
     input_mapping:
       files: env
     output_mapping:
@@ -558,11 +549,17 @@ Now, we can put it all together:
       image: downloaded-product
       secrets: interpolated-configs
       state: env
-    params:
-      ENV_FILE: foundation/env.yml
-      OPSMAN_CONFIG_FILE: foundation/opsman.yml
-      STATE_FILE: foundation/state.yml
 ```
+
+!!! note "Defaults for tasks"
+    We do not explicitly set the default parameters
+    for `upgrade-opsman` in this example.
+    Because `opsman.yml` is the default input to `OPSMAN_CONFIG_FILE`,
+    `env.yml` is the default input to `ENV_FILE`,
+    and `state.yml` is the default input to `STATE_FILE`,
+    it is redundant to set this param in the pipeline. 
+    Refer to the [task definitions][task-reference] for a full range of the 
+    available and default parameters.
 
 Set the pipeline.
 
@@ -594,8 +591,6 @@ To do this, we can add the following section to the job:
       CREDHUB_SECRET: ((credhub-secret))
       CREDHUB_SERVER: ((credhub-server))
       PREFIX: /concourse/your-team-name/foundation
-      # A file path that includes env.yml, opsman.yml, download-opsman.yml
-      INTERPOLATION_PATHS: foundation
     input_mapping:
       files: env
     output_mapping:
@@ -615,10 +610,6 @@ To do this, we can add the following section to the job:
       image: downloaded-product
       secrets: interpolated-configs
       state: env
-    params:
-      ENV_FILE: foundation/env.yml
-      OPSMAN_CONFIG_FILE: foundation/opsman.yml
-      STATE_FILE: foundation/state.yml
   ensure:
     do:
     - task: make-commit
@@ -630,8 +621,8 @@ To do this, we can add the following section to the job:
       output_mapping:
         repository-commit: env-commit
       params:
-        FILE_SOURCE_PATH: foundation/state.yml
-        FILE_DESTINATION_PATH: foundation/state.yml
+        FILE_SOURCE_PATH: state.yml
+        FILE_DESTINATION_PATH: state.yml
         GIT_AUTHOR_EMAIL: "ci-user@example.com"
         GIT_AUTHOR_NAME: "CI User"
         COMMIT_MESSAGE: 'Update state file'

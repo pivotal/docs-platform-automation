@@ -5,7 +5,10 @@ site_url: https://docs.pivotal.io
 repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!
 edit_uri: edit/develop/docs/
-theme: pivotal
+theme:
+  name: pivotal
+  logo: assets/icon.svg
+  favicon: assets/favicon.ico
 strict: true
 use_directory_urls: false
 plugins:
@@ -45,6 +48,8 @@ nav:
   - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
   - Stemcell Handling: pipeline-design/stemcell-handling.md
   - Variables: pipeline-design/variables.md
+- Pipeline Design:
+  - Configuration Management Strategies: pipeline-design/configuration-management-strategies.md
 - References:
   - Concourse Tasks: reference/task.md
   - 'Inputs/Outputs': reference/inputs-outputs.md
