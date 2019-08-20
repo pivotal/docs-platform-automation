@@ -10,4 +10,17 @@ group-search-filter: member={0}
 ldap-rbac-admin-group-name: cn=opsmgradmins,ou=groups,dc=opsmanager,dc=com
 email-attribute: mail
 ldap-referrals: follow
+
+# Optional
+# http-proxy-url:                 # proxy for outbound HTTP network traffic
+# https-proxy-url:                # proxy for outbound HTTPS network traffic
+# no-proxy:                       # comma-separated list of hosts that do not go
+                                  # through the proxy
+# precreated-client-secret:       # create a UAA client on the Ops Manager vm.
+                                  # this will be client-secret in env.yml
+# server-ssl-cert:                # the server certificate when using ldaps://
+# skip-create-bosh-admin-client:  # do not create a UAA client on the BOSH
+                                  # director. The client is required to execute
+                                  # BOSH commands from the BOSH CLI
+
 # code_snippet ldap-auth-configuration end

@@ -5,4 +5,17 @@ saml-idp-metadata: https://saml.example.com:8080
 saml-bosh-idp-metadata: https://bosh-saml.example.com:8080
 saml-rbac-admin-group: opsman.full_control
 saml-rbac-groups-attribute: myenterprise
+
+# Optional
+# http-proxy-url:                 # proxy for outbound HTTP network traffic
+# https-proxy-url:                # proxy for outbound HTTPS network traffic
+# no-proxy:                       # comma-separated list of hosts that do not go
+                                  # through the proxy
+# precreated-client-secret:       # create a UAA client on the Ops Manager vm.
+                                  # this will be client-secret in env.yml
+# server-ssl-cert:                # the server certificate when using ldaps://
+# skip-create-bosh-admin-client:  # do not create a UAA client on the BOSH
+                                  # director. The client is required to execute
+                                  # BOSH commands from the BOSH CLI
+
 # code_snippet saml-auth-configuration end

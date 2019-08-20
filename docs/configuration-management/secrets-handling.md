@@ -71,6 +71,121 @@ opsman-configuration:
     This inverts control that now workers need to access credhub vs
     default is atc injects secrets and passes them to the worker.
 
+## Defining Multiline Certificates and Keys in Config Files
+There are three ways to include certificates in the yaml files that are used by Platform Automation tasks.
+
+1. Direct inclusion in yaml file
+
+    ```yaml
+    # An incomplete base.yml response from om staged-config
+    product-name: cf
+
+    product-properties:
+      .uaa.service_provider_key_credentials:
+        value:
+          cert_pem: |
+            -----BEGIN CERTIFICATE-----
+            ...<Some Cert>...
+            -----END CERTIFICATE-----
+          private_key_pem: |
+            -----BEGIN RSA PRIVATE KEY-----
+            ...<Some Private Key>...
+            -----END RSA PRIVATE KEY-----
+
+      .properties.networking_poe_ssl_certs:
+        value:
+          -
+            certificate:
+              cert_pem: |
+                -----BEGIN CERTIFICATE-----
+                ...<Some Cert>...
+                -----END CERTIFICATE-----
+              private_key_pem: |
+                -----BEGIN RSA PRIVATE KEY-----
+                ...<Some Private Key>...
+                -----END RSA PRIVATE KEY-----
+    ```
+
+1. Secrets Manager reference in yaml file
+
+    ```yaml
+    # An incomplete base.yml
+    product-name: cf
+
+    product-properties:
+      .uaa.service_provider_key_credentials:
+        value:
+          cert_pem: ((uaa_service_provider_key_credentials.certificate))
+          private_key_pem: ((uaa_service_provider_key_credentials.private_key))
+
+      .properties.networking_poe_ssl_certs:
+        value:
+          -
+            certificate:
+              cert_pem: ((networking_poe_ssl_certs.certificate))
+              private_key_pem: ((networking_poe_ssl_certs.private_key))
+    ```
+
+    This example assumes the use of Credhub.
+
+    Credhub supports a `--type=certificate` credential type
+    which allows you to store a certificate and private key pair under a single name.
+    The cert and key can be stored temporarily in local files
+    or can be passed directly on the command line.
+
+    An example of the file storage method:
+
+    ```bash
+    credhub set --type=certificate \
+      --name=uaa_service_provider_key_credentials \
+      --certificate=./cert.pem \
+      --private=./private.key
+    ```
+
+1. Using vars files
+
+    Vars files are a mix of the two previous methods.
+    The cert/key is defined inline in the vars file:
+
+    ```yaml
+    #vars.yml
+    uaa_service_provider_key_credentials_cert_pem: |
+      -----BEGIN CERTIFICATE-----
+      ...<Some Cert>...
+      -----END CERTIFICATE-----
+    uaa_service_provider_key_credentials_private_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      ...<Some Private Key>...
+      -----END RSA PRIVATE KEY-----
+    networking_poe_ssl_certs_cert_pem: |
+      -----BEGIN CERTIFICATE-----
+      ...<Some Cert>...
+      -----END CERTIFICATE-----
+    networking_poe_ssl_certs_private_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      ...<Some Private Key>...
+      -----END RSA PRIVATE KEY-----
+    ```
+
+    and referenced as a `((parameter))` in the `base.yml`
+
+    ```yaml
+    # An incomplete base.yml
+    product-name: cf
+
+    product-properties:
+      .uaa.service_provider_key_credentials:
+        value:
+          cert_pem: ((uaa_service_provider_key_credentials_cert_pem))
+          private_key_pem: ((uaa_service_provider_key_credentials_private_key))
+
+      .properties.networking_poe_ssl_certs:
+        value:
+          -
+            certificate:
+              cert_pem: ((networking_poe_ssl_certs_cert_pem))
+              private_key_pem: ((networking_poe_ssl_certs_private_key))
+    ```
 
 ## Storing values for Multi-foundation
 ### Credhub

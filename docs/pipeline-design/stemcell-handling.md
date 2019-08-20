@@ -23,20 +23,21 @@ Ops Manager. These tasks, in order, are:
 - [upload-stemcell][upload-stemcell]
 - [assign-stemcell][assign-stemcell]
 
-1. `download-product`: 
-    Create a `config.yml` for this task using the [example provided][download-product-config]
+1. `download-product`:
+
+    Create a `config.yml` for this task using the [example provided][download-product-config].
 
     After running the task, a file named `assign-stemcell.yml` is outputted.
     The task will put a config file with two values, `product` and `stemcell` into the `assign-stemcell-config`
     output directory. This can be used with [assign-stemcell][assign-stemcell] to ensure the _latest_ stemcell is
     used with that product.
 
-2. Run the [upload-product][upload-product] and [stage-product][stage-product] tasks to get the 
+2. Run the [upload-product][upload-product] and [stage-product][stage-product] tasks to get the
    resources into Ops Manager.
 
 3. Run the [upload-stemcell][upload-stemcell] task.
 
-To upload the stemcell to Ops Manager without associating it with any product, the 
+    To upload the stemcell to Ops Manager without associating it with any product, the
     [`upload-stemcell`][upload-stemcell] task will need to be executed with the `FLOATING_STEMCELL: false` 
     flag set.
     
@@ -55,7 +56,7 @@ To upload the stemcell to Ops Manager without associating it with any product, t
 ```
 
 !!! warning
-    `upload-stemcell` should not be run until after the `stage-product` has completed. When the two tasks are run in the 
+    `upload-stemcell` should not be run until after the `stage-product` task has completed. When the two tasks are run in the
     opposite order, the stemcell will still auto-associate with the product.
 
 
@@ -79,8 +80,13 @@ To upload the stemcell to Ops Manager without associating it with any product, t
 ```
    
 
-5. [Configure Product][configure-product] and [Apply Changes][apply-changes] can then be run on the 
+5. [Configure Product][configure-product] and [Apply Changes][apply-changes] can then be run on the
 product as normal.
+
+## How to Download a Specific Stemcell
+
+Platform Automation can be used to download a specific stemcell. In order to do so, create a `config.yml` for this
+task using the [example provided][download-stemcell-product-config].
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

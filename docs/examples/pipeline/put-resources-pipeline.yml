@@ -118,8 +118,8 @@ resources:
 - name: config
   type: git
   source:
-    private_key: ((configuration.private_key))
-    uri: ((configuration.uri))
+    private_key: ((docs-ref-pipeline-repo-key.private_key))
+    uri: ((docs-ref-pipeline-repo-uri))
     branch: master
     submodules: all
     depth: 1
@@ -142,8 +142,9 @@ credhub-interpolate: &credhub-interpolate
     CREDHUB_CLIENT: ((credhub-client))
     CREDHUB_SECRET: ((credhub-secret))
     CREDHUB_SERVER: ((credhub-server))
+    CREDHUB_CA_CERT: ((credhub-ca-cert))
     PREFIX: '/pipeline/vsphere'
-    INTERPOLATION_PATHS: "download-product-configs"
+    INTERPOLATION_PATHS: "download-product"
   input_mapping:
     files: config
   output_mapping:
@@ -170,7 +171,7 @@ jobs:
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
-      CONFIG_FILE: download-product-configs/healthwatch.yml
+      CONFIG_FILE: download-product/healthwatch.yml
     output_mapping: {downloaded-stemcell: healthwatch-stemcell}
   - aggregate:
     - put: healthwatch-product
@@ -198,7 +199,7 @@ jobs:
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
-      CONFIG_FILE: download-product-configs/opsman.yml
+      CONFIG_FILE: download-product/opsman.yml
   - aggregate:
     - put: opsman-product
       params:
@@ -218,12 +219,14 @@ jobs:
     - get: config
   - task: credhub-interpolate
     <<: *credhub-interpolate
+  # code_snippet download-product-usage start yaml
   - task: download-pas-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
-      CONFIG_FILE: download-product-configs/pas.yml
+      CONFIG_FILE: download-product/pas.yml
     output_mapping: {downloaded-stemcell: pas-stemcell}
+  # code_snippet download-product-usage end
   - aggregate:
     - put: pas-product
       params:
@@ -250,7 +253,7 @@ jobs:
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
-      CONFIG_FILE: download-product-configs/pas-windows.yml
+      CONFIG_FILE: download-product/pas-windows.yml
   - aggregate:
     - put: pas-windows-product
       params:
@@ -274,7 +277,7 @@ jobs:
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
-      CONFIG_FILE: download-product-configs/pks.yml
+      CONFIG_FILE: download-product/pks.yml
     output_mapping: {downloaded-stemcell: pks-stemcell}
   - aggregate:
       - put: pks-product

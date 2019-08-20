@@ -3,7 +3,8 @@
 opsman-configuration:
   gcp:
     # either gcp_service_account json is required
-    # or the gcp_service_account_name associated with the project
+    # or a gcp_service_account_name associated with the project
+    # you must remove whichever you don't use
     gcp_service_account: |
       {
         "type": "service_account",
@@ -35,4 +36,7 @@ opsman-configuration:
     private_ip: 10.0.0.2
     # scopes to add to created vm
     scopes: ["my-scope"]
+    # key to ssh onto the Ops Manger VM.
+    # used to manage non-tile BOSH add-ons
+    ssh_public_key: ssh-rsa some-public-key...
 # code_snippet gcp-configuration end

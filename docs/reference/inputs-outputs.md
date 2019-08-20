@@ -43,63 +43,6 @@ autoapprove (list):
 signup redirect url (url):
 ```
 
-### auth
-
-There are two different authentication methods that Ops Manager supports.
-
-#### basic authentication
-
-This method of authentication configuration uses a specified username and password.
-
-See the task for the [`configure-authentication`][configure-authentication] for details.
-
-{% code_snippet 'examples', 'auth-configuration' %}
-
-!!! info
-    basic authentication supports both <a href="#basic-authentication">basic env</a> and <a href="#uaa-authentication">uaa env</a> formats
-
-#### ldap authentication
-
-This method of authentication configuration depends on a LDAP service
-to provide user information and authentication.
-
-This config file is used as the `config` input in the
-[`configure-ldap-authentication`][configure-ldap-authentication] task.
-
-By default, the [`configure-ldap-authentication`][configure-ldap-authentication] task
-will create an admin client for use with the BOSH Director.
-If you wish to prevent this, add `skip-bosh-admin-client-creation: true` to the config file.
-
-{% code_snippet 'examples', 'ldap-auth-configuration' %}
-
-!!! info
-    ldap authentication requires the <a href="#uaa-authentication">uaa env</a> format
-
-The `ldap-configuration` properties configures Ops Manager's usage of an LDAP provider.
-The [Ops Manager API Docs][opsman-api-ldap] have more information
-about the particular keys used in this configuration.
-
-#### saml authentication
-
-This method of authentication configuration depends on a SAML service
-to provide user information and authentication.
-
-This config file is used as the `config` input in the
-[`configure-saml-authentication`][configure-saml-authentication] task.
-
-By default, the [`configure-saml-authentication`][configure-saml-authentication] task
-will create an admin client for use with the BOSH Director.
-If you wish to prevent this, add `skip-bosh-admin-client-creation: true` to the config file.
-
-{% code_snippet 'examples', 'saml-auth-configuration' %}
-
-!!! info 
-    saml authentication requires the <a href="#uaa-authentication">uaa env</a> format
-
-The `saml-configuration` properties configures Ops Manager's usage of an SAML provider.
-The [Ops Manager API Docs][opsman-api-saml] have more information
-about the particular keys used in this configuration.
-
 ### Ops Manager config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
 
@@ -115,6 +58,14 @@ These required properties are adapted from the instructions outlined in
 {% code_snippet 'examples', 'aws-configuration' %}
 {% include '.ip-addresses.md' %}
 
+!!! info "Using instance_profile to Avoid Secrets"
+    For authentication you must either set `use_instance_profile: true`
+    or provide a `secret_key_id` and `secret_access_key`.
+    You must remove key information if you're using an instance profile.
+    Using an instance profile allows you to avoid interpolation,
+    as this file then contains no secrets.
+
+
 #### Azure
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][pivotalcf-azure]
@@ -128,6 +79,12 @@ These required properties are adapted from the instructions outlined in
 
 {% code_snippet 'examples', 'gcp-configuration' %}
 {% include '.ip-addresses.md' %}
+
+!!! info "Using a Service Account Name to Avoid Secrets"
+    For authentication either `gcp_service_account` or `gcp_service_account_name` is required.
+    You must remove the one you are not using
+    note that using `gcp_service_account_name` allows you to avoid interpolation,
+    as this file then contains no secrets.
 
 Support for Shared VPC is done via
 [configuring the `vpc_subnet` path][gcp-shared-vpc]
@@ -215,12 +172,34 @@ and a link to the API documentation explaining the properties.
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
 
-{% code_snippet 'examples', 'state' %}
+The `state.yml` file contains two properties:
 
-The file contains two properties:
-
-1. `iaas` is the iaas the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
+1. `iaas` is the IAAS the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
 2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the vm ID is the VM name.
+
+Different IaaS uniquely identify VMs differently;
+here are examples for what this file should look like,
+depending on your IAAS:
+
+``` yaml tab="AWS"
+{% include './examples/state/aws.yml' %}
+```
+
+``` yaml tab="Azure"
+{% include './examples/state/azure.yml' %}
+```
+
+``` yaml tab="GCP"
+{% include './examples/state/gcp.yml' %}
+```
+
+``` yaml tab="OpenStack"
+{% include './examples/state/openstack.yml' %}
+```
+
+``` yaml tab="vSphere"
+{% include './examples/state/vsphere.yml' %}
+```
 
 ### opsman image
 
@@ -331,10 +310,17 @@ jobs:
 
 ### download-product-config
 
-The `config` input for a download product task expects to have a `download-config.yml` file.
+The `config` input for a download product task can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-product-config' %}
+
+### download-stemcell-product-config
+
+The `config` input for a download product task can be used with a `download-config.yml` file to download a stemcell.
+The configuration of the `download-config.yml` looks like this:
+
+{% code_snippet 'examples', 'download-stemcell-product-config' %}
 
 [configure-authentication]: task.md#configure-authentication
 [configure-ldap-authentication]: task.md#configure-ldap-authentication
