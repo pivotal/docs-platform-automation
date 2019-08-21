@@ -268,6 +268,33 @@ jobs:
       params:
         file: downloaded-product/*.pivotal
 
+#########################TODO##########################
+### Make this actually work. create config file, etc###
+#######################################################
+- name: fetch-telemetry
+  plan:
+  - aggregate:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: config
+  - task: credhub-interpolate
+    <<: *credhub-interpolate
+  - task: download-telemetry
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product/telemetry.yml
+  - aggregate:
+    - put: telemetry-product
+      params:
+        file: downloaded-product/*.pivotal
+
 - name: fetch-pks
   plan:
   - aggregate:
