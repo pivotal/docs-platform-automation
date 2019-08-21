@@ -84,6 +84,15 @@ resources:
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
     regexp: \[pas-windows,(.*)\]pas-windows-.*.pivotal
+
+- name: telemetry-product
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: .*telemetry.*.pivotal
 # code_snippet resources-pipeline-products end yaml
 
 # code_snippet resources-pipeline-platform-automation start yaml
