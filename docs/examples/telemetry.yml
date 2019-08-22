@@ -2,12 +2,12 @@
 ---
 env_type: sandbox     # sandbox|development|qa|pre-production|production
 
-# Optional
-# with-credhub-info:  # include Credhub certificate expiry information
-# cf-api-url:         # UAA authentication to access Usage Service
-# usage-service-url:
-# usage-service-client-id:
-# usage-service-client-secret:
-# usage-service-insecure-skip-tls-verify:
+# Recommended, but not required
+with-credhub-info:    # include Credhub certificate expiry information
+cf-api-url:           # UAA authentication to access Usage Service
+usage-service-url:
+usage-service-client-id:
+usage-service-client-secret:
+usage-service-insecure-skip-tls-verify:
 
 # code_snippet telemetry end

@@ -39,7 +39,8 @@ that uses the "Single Repository for each Foundation" pattern:
 │   ├── healthwatch.yml
 │   ├── opsman.yml
 │   ├── pas-windows.yml
-│   └── pas.yml
+│   ├── pas.yml
+│   └── telemetry.yml
 ├── env.yml
 ├── healthwatch.yml
 ├── opsman.yml
