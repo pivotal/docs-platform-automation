@@ -91,7 +91,7 @@ resources:
     source:
       private_key: ((docs-ref-pipeline-repo-key.private_key))
       uri: ((docs-ref-pipeline-repo-uri))
-      branch: master
+      branch: telemetry
   # code_snippet multiple-product-resources-configurations end yaml
 
   # code_snippet multiple-product-resources-triggers start yaml
@@ -683,6 +683,8 @@ jobs:
     - task: run-collector
       image: platform-automation-image
       file: platform-automation-tasks-github/tasks/collect-telemetry.yml
+      params:
+        CONFIG_FILE: telemetry.yml
       input_mapping:
         platform-automation-tasks: platform-automation-tasks-github
         env: interpolated-creds
