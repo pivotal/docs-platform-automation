@@ -62,6 +62,10 @@ Below are examples that can be used.
 {% include './examples/download-product-configs/pks.yml' %}
 ```
 
+``` yaml tab="Telemetry"
+{% include './examples/download-product-configs/telemetry.yml' %}
+```
+
 ## Pipeline Components
 
 ### Resource Types
