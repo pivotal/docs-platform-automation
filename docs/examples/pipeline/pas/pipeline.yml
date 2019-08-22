@@ -666,8 +666,6 @@ jobs:
       - get: telemetry-collector-binary
         params:
           unpack: true
-          globs:
-          - '*.tgz'
       - get: platform-automation-image
         params:
           unpack: true
@@ -678,6 +676,8 @@ jobs:
       - get: platform-automation-tasks-github
         params:
           unpack: true
+      - get: daily-trigger
+        trigger: true
     - task: interpolate-creds
       <<: *interpolate-creds
     - task: run-collector
