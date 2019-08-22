@@ -554,6 +554,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
+    serial_groups: [ telemetry ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -653,6 +654,8 @@ jobs:
         ensure: *put-state
 
   - name: collect-telemetry
+    serial: true
+    serial_groups: [ telemetry ]
     plan:
     - aggregate:
       - get: telemetry-collector-binary
