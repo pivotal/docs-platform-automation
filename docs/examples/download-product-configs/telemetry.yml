@@ -1,0 +1,10 @@
+---
+pivnet-api-token: ((pivnet-token))
+pivnet-file-glob: "telemetry-collector*.ova"
+pivnet-product-slug: pivotal-telemetry-collector
+product-version-regex: ^1\.0\.\d+.*$
+
+s3-access-key-id: ((s3_access_key_id))
+s3-secret-access-key: ((s3_secret_access_key))
+s3-bucket: ((s3_pivnet_products_bucket))
+s3-region-name: ((s3_region_name))

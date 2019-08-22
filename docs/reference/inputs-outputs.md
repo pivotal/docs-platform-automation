@@ -310,24 +310,31 @@ jobs:
 
 ### download-product-config
 
-The `config` input for a download product task can be used with a `download-config.yml` file to download a tile.
+The `config` input for a download product task 
+can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-product-config' %}
 
 ### download-stemcell-product-config
 
-The `config` input for a download product task can be used with a `download-config.yml` file to download a stemcell.
+The `config` input for a download product task 
+can be used with a `download-config.yml` file to download a stemcell.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-stemcell-product-config' %}
 
-[configure-authentication]: task.md#configure-authentication
-[configure-ldap-authentication]: task.md#configure-ldap-authentication
-[configure-saml-authentication]: task.md#configure-saml-authentication
-[export-installation]: task.md#export-installation
-[import-installation]: task.md#import-installation
-[staged-config]: task.md#staged-config
-[staged-director-config]: task.md#staged-director-config
+### telemetry
 
+The `config` input for the [collect-telemetry][collect-telemetry] task 
+can be used with a `telemetry.yml` file to collect data for Pivotal
+so they can learn and measure results 
+in order to put customer experience at the forefront of their product decisions.
+The configuration of the `telemetry.yml` looks like this:
+
+{% code_snippet 'examples', 'telemetry' %}
+
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
 {% include ".external_link_url.md" %}

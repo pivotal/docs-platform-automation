@@ -39,6 +39,11 @@ owner: PCF Platform Automation
   could not execute "expiring-certificates": found expiring certs in the foundation
   exit status 1
   ```
+- [Telemetry][telemetry-docs] support has been added! 
+  To opt in, you must get the Telemetry tool from [Pivnet][telemetry],
+  create a [config file][telemetry-config], 
+  and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline. 
+  For an example, please see the [Reference Pipelines][reference-pipeline]. 
 
 ## v4.0.0
 
