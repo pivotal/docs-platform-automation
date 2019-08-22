@@ -19,14 +19,6 @@ resources:
       bucket: ((s3_pivnet_products_bucket))
       regexp: .*telemetry-(.*).tgz
 
-  # delete when done
-  - name: platform-automation-tasks-github
-    type: git
-    source:
-      private_key: ((platform_automation.private_key))
-      uri: git@github.com:pivotal/platform-automation
-      branch: telemetry
-
   - name: platform-automation-tasks
     type: s3
     source:
@@ -91,7 +83,7 @@ resources:
     source:
       private_key: ((docs-ref-pipeline-repo-key.private_key))
       uri: ((docs-ref-pipeline-repo-uri))
-      branch: telemetry
+      branch: master
   # code_snippet multiple-product-resources-configurations end yaml
 
   # code_snippet multiple-product-resources-triggers start yaml
@@ -673,30 +665,28 @@ jobs:
         params:
           unpack: true
       - get: configuration
-      - get: platform-automation-tasks-github
-        params:
-          unpack: true
       - get: daily-trigger
         trigger: true
     - task: interpolate-creds
       <<: *interpolate-creds
-    - task: run-collector
+    # code_snippet collect-telemetry-usage start yaml
+    - task: collect-telemetry-data
       image: platform-automation-image
-      file: platform-automation-tasks-github/tasks/collect-telemetry.yml
+      file: platform-automation-tasks/tasks/collect-telemetry.yml
       params:
         CONFIG_FILE: telemetry.yml
       input_mapping:
-        platform-automation-tasks: platform-automation-tasks-github
         env: interpolated-creds
         config: configuration
-    - task: send-data
+    # code_snippet collect-telemetry-usage end
+    # code_snippet send-telemetry-usage start yaml
+    - task: send-telemetry-data
       image: platform-automation-image
-      file: platform-automation-tasks-github/tasks/send-telemetry.yml
+      file: platform-automation-tasks/tasks/send-telemetry.yml
       params:
         API_KEY: no-op-test-key
         DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
-      input_mapping:
-        platform-automation-tasks: platform-automation-tasks-github
+    # code_snippet send-telemetry-usage end
 
 # code_snippet multiple-product-jobs end yaml
 # code_snippet multiple-products-pipeline end
