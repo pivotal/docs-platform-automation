@@ -21,7 +21,7 @@ owner: PCF Platform Automation
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
 ## v3.0.7
-**Release Date** Coming Soon
+**Release Date** August 23, 2019
 
 ### Bug Fixes
 - When using AWS to create the Ops Manager VM with encrypted disks,
