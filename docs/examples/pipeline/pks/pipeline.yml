@@ -21,6 +21,15 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       regexp: .*image-(.*).tgz
 
+  - name: telemetry-collector-binary
+    type: s3
+    source:
+      access_key_id: ((s3_access_key_id))
+      secret_access_key: ((s3_secret_access_key))
+      region_name: ((s3_region_name))
+      bucket: ((s3_pivnet_products_bucket))
+      regexp: .*telemetry-(.*).tgz
+
   # code_snippet single-product-resources-s3 end yaml
 
   # code_snippet single-product-export-installation start yaml
@@ -290,6 +299,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
+    serial_groups: [ telemetry ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -309,6 +319,40 @@ jobs:
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
           env: interpolated-creds
+
+  - name: collect-telemetry
+    serial: true
+    serial_groups: [ telemetry ]
+    plan:
+    - aggregate:
+      - get: telemetry-collector-binary
+        params:
+          unpack: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+      - get: daily-trigger
+        trigger: true
+    - task: interpolate-creds
+      <<: *interpolate-creds
+    - task: collect-telemetry-data
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/collect-telemetry.yml
+      params:
+        CONFIG_FILE: telemetry.yml
+      input_mapping:
+        env: interpolated-creds
+        config: configuration
+    - task: send-telemetry-data
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/send-telemetry.yml
+      params:
+        API_KEY: no-op-test-key
+        DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
 
 # code_snippet single-product-jobs end yaml
 # code_snippet single-product-pipeline end
