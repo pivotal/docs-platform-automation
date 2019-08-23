@@ -26,30 +26,29 @@ markdown_extensions:
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
-- Introduction: index.md
+- Overview: index.md
 - Release Notes: release-notes.md
 - Compatibility and Versioning: compatibility-and-versioning.md
-- Getting Started: downloading-and-testing.md
+- Getting Started: getting-started.md
 - Reference Pipelines:
   - Retrieving External Dependencies: pipeline/resources.md
   - Ops Manager + a product: pipeline/single-product.md
   - Ops Manager + multiple products: pipeline/multiple-products.md
-- How to Guides:
+- How-to Guides:
   - Installing Ops Manager: how-to-guides/install-opsman.md
   - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
-- Concepts:
   - Configuring Auth: configuration-management/configure-auth.md
   - Configuring Env: configuration-management/configure-env.md
   - Creating the Director Config File: configuration-management/creating-a-director-config-file.md
   - Creating the Product Config File: configuration-management/creating-a-product-config-file.md
   - Git Repository Layout: before-you-begin/git-repo-layout.md
   - Running Commands Locally: reference/running-commands-locally.md
-  - Secrets Handling: configuration-management/secrets-handling.md
   - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
+- Concepts:
+  - Secrets Handling: configuration-management/secrets-handling.md
   - Stemcell Handling: pipeline-design/stemcell-handling.md
   - Variables: pipeline-design/variables.md
-- References:
-  - Concourse Tasks: reference/task.md
-  - 'Inputs/Outputs': reference/inputs-outputs.md
-  - Upgrading Ops Manager: upgrade.md
+  - How Platform Automation Upgrades Ops Manager: upgrade.md
+- Task Reference: reference/task.md
+- Task Inputs and Outputs: reference/inputs-outputs.md
 - Report an Issue: report-an-issue.md
