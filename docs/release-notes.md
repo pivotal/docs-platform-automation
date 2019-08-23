@@ -124,7 +124,7 @@ owner: PCF Platform Automation
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.7
-**Release Date** Coming Soon
+**Release Date** August 23, 2019
 
 ### Bug Fixes
 - When using AWS to create the Ops Manager VM with encrypted disks,
