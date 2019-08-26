@@ -35,7 +35,7 @@ owner: PCF Platform Automation
   Getting expiring certificates...
   [X] Ops Manager
       cf-79fba6887e8c29375eb7:
-          .uaa.service_provider_key_credentials: expiring on 09 Aug 19 17:05 UTC
+          .uaa.service_provider_key_credentials: expired on 09 Aug 19 17:05 UTC
   could not execute "expiring-certificates": found expiring certs in the foundation
   exit status 1
   ```
