@@ -4,7 +4,7 @@ site_name: Platform Automation
 site_url: https://docs.pivotal.io
 repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!
-edit_uri: edit/develop/docs/
+edit_uri: edit/v3.0/docs/
 theme:
   name: pivotal
   logo: assets/icon.svg
@@ -26,32 +26,31 @@ markdown_extensions:
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
-- Introduction: index.md
+- Overview: index.md
 - Release Notes: release-notes.md
 - Compatibility and Versioning: compatibility-and-versioning.md
-- Getting Started: downloading-and-testing.md
+- Getting Started: getting-started.md
 - Reference Pipelines:
-  - Retrieving External Dependencies: pipeline/resources.md
-  - Ops Manager + a product: pipeline/single-product.md
-  - Ops Manager + multiple products: pipeline/multiple-products.md
-- How to Guides:
-  - Installing Ops Manager: how-to-guides/install-opsman.md
+  - Retrieving External Dependencies: pipelines/resources.md
+  - Ops Manager + a product: pipelines/single-product.md
+  - Ops Manager + multiple products: pipelines/multiple-products.md
+- How-to Guides:
+  - Installing Ops Manager: how-to-guides/installing-opsman.md
   - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
+  - Configuring Auth: how-to-guides/configuring-auth.md
+  - Configuring Env: how-to-guides/configuring-env.md
+  - Creating a Director Config File: how-to-guides/creating-a-director-config-file.md
+  - Creating a Product Config File: how-to-guides/creating-a-product-config-file.md
+  - Git Repository Layout: how-to-guides/git-repo-layout.md
+  - Running Commands Locally: how-to-guides/running-commands-locally.md
+  - Setting Up S3 for File Storage: how-to-guides/setting-up-s3.md
 - Concepts:
-  - Configuring Auth: configuration-management/configure-auth.md
-  - Configuring Env: configuration-management/configure-env.md
-  - Creating the Director Config File: configuration-management/creating-a-director-config-file.md
-  - Creating the Product Config File: configuration-management/creating-a-product-config-file.md
-  - Git Repository Layout: before-you-begin/git-repo-layout.md
-  - Running Commands Locally: reference/running-commands-locally.md
-  - Secrets Handling: configuration-management/secrets-handling.md
-  - Set Up S3 for File Storage: before-you-begin/setup-s3-and-resources.md
-  - Stemcell Handling: pipeline-design/stemcell-handling.md
-  - Variables: pipeline-design/variables.md
+  - Secrets Handling: concepts/secrets-handling.md
+  - Stemcell Handling: concepts/stemcell-handling.md
+  - Variables: concepts/variables.md
+  - How Platform Automation Upgrades Ops Manager: concepts/upgrade.md
 - Pipeline Design:
   - Configuration Management Strategies: pipeline-design/configuration-management-strategies.md
-- References:
-  - Concourse Tasks: reference/task.md
-  - 'Inputs/Outputs': reference/inputs-outputs.md
-  - Upgrading Ops Manager: upgrade.md
+- Task Reference: tasks.md
+- Task Inputs and Outputs: inputs-outputs.md
 - Report an Issue: report-an-issue.md

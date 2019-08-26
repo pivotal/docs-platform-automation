@@ -1,0 +1,15 @@
+# code_snippet telemetry start yaml
+---
+env_type: sandbox     # sandbox|development|qa|pre-production|production
+
+# Usage Service (Recommended)
+cf-api-url:           # UAA authentication to access Usage Service
+usage-service-url:
+usage-service-client-id:
+usage-service-client-secret:
+usage-service-insecure-skip-tls-verify:
+
+# CredHub (Optional)
+# with-credhub-info:  # include Credhub certificate expiry information
+
+# code_snippet telemetry end
