@@ -35,15 +35,15 @@ nav:
   - Ops Manager + a product: pipelines/single-product.md
   - Ops Manager + multiple products: pipelines/multiple-products.md
 - How-to Guides:
-  - Installing Ops Manager: how-to-guides/install-opsman.md
+  - Installing Ops Manager: how-to-guides/installing-opsman.md
   - Upgrading an Existing Ops Manager: how-to-guides/upgrade-existing-opsman.md
-  - Configuring Auth: how-to-guides/configure-auth.md
-  - Configuring Env: how-to-guides/configure-env.md
-  - Creating the Director Config File: how-to-guides/creating-a-director-config-file.md
-  - Creating the Product Config File: how-to-guides/creating-a-product-config-file.md
+  - Configuring Auth: how-to-guides/configuring-auth.md
+  - Configuring Env: how-to-guides/configuring-env.md
+  - Creating a Director Config File: how-to-guides/creating-a-director-config-file.md
+  - Creating a Product Config File: how-to-guides/creating-a-product-config-file.md
   - Git Repository Layout: how-to-guides/git-repo-layout.md
   - Running Commands Locally: how-to-guides/running-commands-locally.md
-  - Set Up S3 for File Storage: how-to-guides/setup-s3-and-resources.md
+  - Setting Up S3 for File Storage: how-to-guides/setting-up-s3.md
 - Concepts:
   - Secrets Handling: concepts/secrets-handling.md
   - Stemcell Handling: concepts/stemcell-handling.md
