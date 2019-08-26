@@ -74,7 +74,7 @@ have a single `base_vars_template.yml` shared across foundations.
 Some Platform Automation tasks have an optional vars input. Using the flow described above, these files can
 be plugged in to the tasks.
 
-An Example [Task](../reference/task.md#test-interpolate) has been provided to allow pipeline testing before
+An Example [Task](../tasks.md#test-interpolate) has been provided to allow pipeline testing before
 installing Ops Manager and PCF.
 An example pipeline for this is below:
 

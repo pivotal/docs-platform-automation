@@ -322,12 +322,12 @@ The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-stemcell-product-config' %}
 
-[configure-authentication]: task.md#configure-authentication
-[configure-ldap-authentication]: task.md#configure-ldap-authentication
-[configure-saml-authentication]: task.md#configure-saml-authentication
-[export-installation]: task.md#export-installation
-[import-installation]: task.md#import-installation
-[staged-config]: task.md#staged-config
-[staged-director-config]: task.md#staged-director-config
+[configure-authentication]: tasks.md#configure-authentication
+[configure-ldap-authentication]: tasks.md#configure-ldap-authentication
+[configure-saml-authentication]: tasks.md#configure-saml-authentication
+[export-installation]: tasks.md#export-installation
+[import-installation]: tasks.md#import-installation
+[staged-config]: tasks.md#staged-config
+[staged-director-config]: tasks.md#staged-director-config
 
 {% include ".external_link_url.md" %}

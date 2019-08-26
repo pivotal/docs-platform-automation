@@ -5,7 +5,7 @@ owner: PCF Platform Automation
 
 Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't - we recommend you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
 
-These Concourse pipelines are examples on how to use the [tasks](../reference/task.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
+These Concourse pipelines are examples on how to use the [tasks](../tasks.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
 
 ## Prerequisites
 
@@ -39,7 +39,7 @@ retrieve task dependencies.
     and what to expect when using `download-product` and `download-product-s3`,
     refer to the [`download-product` task reference.][download-product]
 
-The pipeline requires configuration for the [download-product](../reference/task.md#download-product) task.
+The pipeline requires configuration for the [download-product](../tasks.md#download-product) task.
 Below are examples that can be used.
 
 ``` yaml tab="Healthwatch"
