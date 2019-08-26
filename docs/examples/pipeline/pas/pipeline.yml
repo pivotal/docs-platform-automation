@@ -2,7 +2,23 @@
 # code_snippet multiple-products-pipeline start yaml
 
 # code_snippet multiple-product-resources-s3 start yaml
+resource_types:
+  - name: pivnet
+    type: docker-image
+    source:
+      repository: pivotalcf/pivnet-resource
+      tag: latest-final
+
 resources:
+  - name: telemetry-collector-binary
+    type: s3
+    source:
+      access_key_id: ((s3_access_key_id))
+      secret_access_key: ((s3_secret_access_key))
+      region_name: ((s3_region_name))
+      bucket: ((s3_pivnet_products_bucket))
+      regexp: .*telemetry-(.*).tgz
+
   - name: platform-automation-tasks
     type: s3
     source:
@@ -538,6 +554,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
+    serial_groups: [ telemetry ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -591,7 +608,29 @@ jobs:
           PRODUCT_NAME: cf
         ensure: *put-state
       # code_snippet staged-config-usage end
-
+  - name: expiring-certificates
+    plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+      - get: state
+    - task: interpolate-creds
+      <<: *interpolate-creds
+    # code_snippet expiring-certificates-usage start yaml
+    - task: expiring-certificates
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/expiring-certificates.yml
+      input_mapping:
+        env: interpolated-creds
+      params:
+        EXPIRES_WITHIN: 6m
+      ensure: *put-state
+    # code_snippet expiring-certificates-usage end
   - name: staged-healthwatch-config
     plan:
       - aggregate:
@@ -613,6 +652,45 @@ jobs:
         params:
           PRODUCT_NAME: p-healthwatch
         ensure: *put-state
+
+  - name: collect-telemetry
+    serial: true
+    serial_groups: [ telemetry ]
+    plan:
+    - aggregate:
+      - get: telemetry-collector-binary
+        params:
+          unpack: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+      - get: daily-trigger
+        trigger: true
+    - task: interpolate-creds
+      <<: *interpolate-creds
+    # code_snippet collect-telemetry-usage start yaml
+    - task: collect-telemetry-data
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/collect-telemetry.yml
+      params:
+        CONFIG_FILE: telemetry.yml
+      input_mapping:
+        env: interpolated-creds
+        config: configuration
+    # code_snippet collect-telemetry-usage end
+    # code_snippet send-telemetry-usage start yaml
+    - task: send-telemetry-data
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/send-telemetry.yml
+      params:
+        API_KEY: no-op-test-key
+        DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
+    # code_snippet send-telemetry-usage end
+
 # code_snippet multiple-product-jobs end yaml
 # code_snippet multiple-products-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.

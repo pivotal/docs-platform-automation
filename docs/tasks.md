@@ -47,6 +47,24 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 {% code_snippet 'tasks', 'assign-stemcell-script', 'Implementation' %}
 {% code_snippet 'examples', 'assign-stemcell-usage', 'Usage' %}
 
+### collect-telemetry
+Collects foundation information
+using the [Pivotal Telemetry][telemetry-docs] tool.
+
+This task requires the `telemetry-collector-binary` as an input.
+The binary is available on [Pivotal Network][telemetry];
+you will need to define a `resource` to supply the binary.
+
+This task requires a [config file][telemetry-config].
+
+After using this task,
+the [send-telemetry][send-telemetry]
+may be used to send telemetry data to Pivotal.
+
+{% code_snippet 'tasks', 'collect-telemetry', 'Task' %}
+{% code_snippet 'tasks', 'collect-telemetry-script', 'Implementation' %}
+{% code_snippet 'examples', 'collect-telemetry-usage', 'Usage' %}
+
 ### configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
@@ -352,6 +370,15 @@ For example:
 {% code_snippet 'tasks', 'download-product-s3-script', 'Implementation' %}
 {% code_snippet 'examples', 'download-product-s3-usage', 'Usage' %}
 
+### expiring-certificates
+Returns a list of certificates that are expiring within a time frame.
+These certificates can be Ops Manager or Credhub certificates.
+This is purely an informational task.
+
+{% code_snippet 'tasks', 'expiring-certificates', 'Task' %}
+{% code_snippet 'tasks', 'expiring-certificates-script', 'Implementation' %}
+{% code_snippet 'examples', 'expiring-certificates-usage', 'Usage' %}
+
 ### export-installation
 Exports an existing Ops Manager to a file.
 
@@ -443,6 +470,19 @@ before an `apply-changes` could start.
 {% code_snippet 'tasks', 'pre-deploy-check-script', 'Implementation' %}
 {% code_snippet 'examples', 'pre-deploy-check-usage', 'Usage' %}
 
+### send-telemetry
+Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
+to Pivotal.
+
+!!! info Telemetry Key
+    In order to use this task,
+    you will need to acquire a license key.
+    Contact your Pivotal Representative.
+
+{% code_snippet 'tasks', 'send-telemetry', 'Task' %}
+{% code_snippet 'tasks', 'send-telemetry-script', 'Implementation' %}
+{% code_snippet 'examples', 'send-telemetry-usage', 'Usage' %}
+
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
 
@@ -489,7 +529,7 @@ An example task to ensure the assets and docker image are setup correctly in you
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
-For more instruction on this topic, see the [variables](../pipeline-design/variables.md) section
+For more instruction on this topic, see the [variables](concepts/variables.md) section
 
 {% code_snippet 'tasks', 'test-interpolate', 'Task' %}
 {% code_snippet 'tasks', 'test-interpolate-script', 'Implementation' %}
@@ -502,7 +542,7 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
 {% code_snippet 'tasks', 'upgrade-opsman-script', 'Implementation' %}
 {% code_snippet 'examples', 'upgrade-opsman-usage', 'Usage' %}
 
-For more information about this task and how it works, see the [upgrade](../upgrade.md) page.
+For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
 
 ### upload-and-stage-product
 Uploads and stages product to the Ops Manager specified in the config file.
@@ -528,7 +568,5 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
 {% code_snippet 'tasks', 'upload-stemcell-script', 'Implementation' %}
 {% code_snippet 'examples', 'upload-stemcell-usage', 'Usage' %}
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
+{% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}

@@ -26,8 +26,8 @@ This aids in recovering from failures (ie: from an IAAS) that occur.
 The [`upgrade-opsman`][upgrade-opsman] task will delete the previous VM, create a new VM, and import
 a previous installation. It requires the following to perform this operations:
 
-* a valid [state file](reference/inputs-outputs.md#state) from the currently deployed Ops Manager
-* a valid [image file](reference/inputs-outputs.md#opsman-image) for the new Ops Manager to install
+* a valid [state file](../inputs-outputs.md#state) from the currently deployed Ops Manager
+* a valid [image file](../inputs-outputs.md#opsman-image) for the new Ops Manager to install
 * a [configuration file][opsman-config] for IAAS specific details
 * an [exported installation][installation] from a currently deployed Ops Manager
 * the [auth file][auth-file] for a currently deployed Ops Manager
@@ -64,5 +64,7 @@ an IAAS CLI error. The following tasks can return an error from the IAAS's CLI: 
 * SOLUTION: The specific error will be returned as output, but <i><b>most errors can simply be fixed by
 re-running the `upgrade-opsman` task.</b></i>
 
-{% include ".internal_link_url.md" %}
+{% with path="../" %}
+    {% include ".internal_link_url.md" %}
+{% endwith %}
 {% include ".external_link_url.md" %}

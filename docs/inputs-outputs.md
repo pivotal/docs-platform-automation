@@ -172,12 +172,34 @@ and a link to the API documentation explaining the properties.
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
 
-{% code_snippet 'examples', 'state' %}
+The `state.yml` file contains two properties:
 
-The file contains two properties:
-
-1. `iaas` is the iaas the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
+1. `iaas` is the IAAS the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
 2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the vm ID is the VM name.
+
+Different IaaS uniquely identify VMs differently;
+here are examples for what this file should look like,
+depending on your IAAS:
+
+``` yaml tab="AWS"
+{% include './examples/state/aws.yml' %}
+```
+
+``` yaml tab="Azure"
+{% include './examples/state/azure.yml' %}
+```
+
+``` yaml tab="GCP"
+{% include './examples/state/gcp.yml' %}
+```
+
+``` yaml tab="OpenStack"
+{% include './examples/state/openstack.yml' %}
+```
+
+``` yaml tab="vSphere"
+{% include './examples/state/vsphere.yml' %}
+```
 
 ### opsman image
 
@@ -288,24 +310,29 @@ jobs:
 
 ### download-product-config
 
-The `config` input for a download product task can be used with a `download-config.yml` file to download a tile.
+The `config` input for a download product task 
+can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-product-config' %}
 
 ### download-stemcell-product-config
 
-The `config` input for a download product task can be used with a `download-config.yml` file to download a stemcell.
+The `config` input for a download product task 
+can be used with a `download-config.yml` file to download a stemcell.
 The configuration of the `download-config.yml` looks like this:
 
 {% code_snippet 'examples', 'download-stemcell-product-config' %}
 
-[configure-authentication]: task.md#configure-authentication
-[configure-ldap-authentication]: task.md#configure-ldap-authentication
-[configure-saml-authentication]: task.md#configure-saml-authentication
-[export-installation]: task.md#export-installation
-[import-installation]: task.md#import-installation
-[staged-config]: task.md#staged-config
-[staged-director-config]: task.md#staged-director-config
+### telemetry
 
+The `config` input for the [collect-telemetry][collect-telemetry] task 
+can be used with a `telemetry.yml` file to collect data for Pivotal
+so they can learn and measure results 
+in order to put customer experience at the forefront of their product decisions.
+The configuration of the `telemetry.yml` looks like this:
+
+{% code_snippet 'examples', 'telemetry' %}
+
+{% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}

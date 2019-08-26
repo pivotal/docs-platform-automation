@@ -3,27 +3,32 @@
 opsman-configuration:
   vsphere:
     vcenter:
+      ca_cert: cert                 # REQUIRED if insecure: 0 (secure)
+      datacenter: example-dc
+      datastore: example-ds-1
+      folder: /example-dc/vm/Folder # RECOMMENDED, but not required
+      resource_pool: /example-dc/host/example-host/Resources/example-res-pool # or /<Data Center Name>/host/<Cluster Name>
       url: vcenter.example.com
       username: admin
       password: password
-      datastore: exmple-ds-1
-      ca_cert: certificate
-      host: example-host                     # vCenter host to deploy Ops Manager in
-      datacenter: example-dc
-      resource_pool: /example-dc/host/example-host/Resources/ResPool # or /<Data Center Name>/host/<Cluster Name>
-      folder: /example-dc/vm/Folder
-      insecure: 1                            # default: 0 (secure); 1 (insecure)
-    disk_type: thin                          # example: thin|thick
-    private_ip: 10.0.0.2
+      # Optional
+      # host: host                  # DEPRECATED: Platform Automation cannot guarantee
+                                    # the location of the VM, given the nature of vSphere
+      # insecure: 0                 # default: 0 (secure) | 1 (insecure)
+
+    disk_type: thin                 # thin|thick
     dns: 8.8.8.8
-    ntp: ntp.example.com                     # example: ntp.ubuntu.com
-    ssh_password: password                   
-    ssh_public_key: ssh-rsa ......           # for Ops Manager >= 2.3, required for Ops Manager >= 2.6
-    hostname: pcf.example.com
-    network: virtual-network                 # vcenter network to deploy to
-    netmask: 255.255.255.192
     gateway: 192.168.10.1
-    vm_name: Ops_Manager                     # default: Ops_Manager
-    memory: 8                                # default: 8 GB
-    cpu: 1                                   # default: 1
+    hostname: ops-manager.example.com
+    netmask: 255.255.255.192
+    network: example-virtual-network
+    ntp: ntp.ubuntu.com
+    private_ip: 10.0.0.10
+    ssh_public_key: ssh-rsa ......  # REQUIRED Ops Manager >= 2.6
+    # Optional
+    # cpu: 1                        # default: 1
+    # memory: 8                     # default: 8 (GB)
+    # ssh_password: password        # REQUIRED if ssh_public_key not defined
+                                    # (Ops Manager < 2.6 ONLY)
+    # vm_name: Ops_Manger           # default: Ops_Manager
 # code_snippet vsphere-configuration end
