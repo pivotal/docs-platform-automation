@@ -58,7 +58,7 @@ These are all documented for each task within the task files themselves.
 Additionally, the minimum compatible version
 of Concourse and Ops Manager
 are part of the API,
-and are specified [below][external-deps].
+and are specified [here][external-deps].
 
 The following are NOT covered:
 
