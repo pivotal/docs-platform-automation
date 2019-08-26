@@ -334,7 +334,5 @@ The configuration of the `telemetry.yml` looks like this:
 
 {% code_snippet 'examples', 'telemetry' %}
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
+{% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
