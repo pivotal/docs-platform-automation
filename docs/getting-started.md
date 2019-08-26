@@ -32,7 +32,7 @@ see one of the following reference pipelines:
 
 ## Other References
 
-To see a list of all of the tasks, their usage, 
+To see a list of all of the tasks,
 their inputs and outputs, and their parameters,
 see the [Task Reference][task-reference].
 
