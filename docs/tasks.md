@@ -529,7 +529,7 @@ An example task to ensure the assets and docker image are setup correctly in you
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
-For more instruction on this topic, see the [variables](../pipeline-design/variables.md) section
+For more instruction on this topic, see the [variables](concepts/variables.md) section
 
 {% code_snippet 'tasks', 'test-interpolate', 'Task' %}
 {% code_snippet 'tasks', 'test-interpolate-script', 'Implementation' %}
@@ -542,7 +542,7 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
 {% code_snippet 'tasks', 'upgrade-opsman-script', 'Implementation' %}
 {% code_snippet 'examples', 'upgrade-opsman-usage', 'Usage' %}
 
-For more information about this task and how it works, see the [upgrade](../upgrade.md) page.
+For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
 
 ### upload-and-stage-product
 Uploads and stages product to the Ops Manager specified in the config file.
@@ -568,7 +568,5 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
 {% code_snippet 'tasks', 'upload-stemcell-script', 'Implementation' %}
 {% code_snippet 'examples', 'upload-stemcell-usage', 'Usage' %}
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
+{% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
