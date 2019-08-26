@@ -15,10 +15,11 @@ We have in-depth procedures for deploying a new Ops Manager and
 taking over management of an existing Ops Manager
 with Platform Automation:
 
-- For more information about deploying Platform Automation with a new Ops Manager, 
-  see [Installing Ops Manager][install-how-to].
-- For more information about deploying Platform Automation with an existing Ops Manager, 
-  see [Upgrading an Existing Ops Manager][upgrade-how-to].
+- For more information about deploying Platform Automation
+  with a new Ops Manager, see [Installing Ops Manager][install-how-to].
+- For more information about deploying Platform Automation
+  with an existing Ops Manager, see
+  [Upgrading an Existing Ops Manager][upgrade-how-to].
 
 ## Reference Pipelines
 
@@ -26,12 +27,14 @@ To see an example of a finished pipeline,
 see one of the following reference pipelines:
 
 - A [single-product pipeline][reference-pipeline-pks] using [PKS][pks]
-- A [multi-product pipeline][reference-pipeline] with [PAS][pas] and [Healthwatch][healthwatch].
+- A [multi-product pipeline][reference-pipeline]
+  with [PAS][pas] and [Healthwatch][healthwatch].
 
 ## Other References
 
 To see a list of all of the tasks, their usage, 
-their inputs and outputs, and their parameters, see the [Task Reference][task-reference] .
+their inputs and outputs, and their parameters,
+see the [Task Reference][task-reference].
 
 To learn more about the format of the files used with the tasks, 
 see the [Task Inputs and Outputs Reference][inputs-outputs].
