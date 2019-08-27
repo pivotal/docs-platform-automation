@@ -7,7 +7,7 @@ owner: PCF Platform Automation
 
 !!! warning "Azure Updating to 2.5"
      Ops Manager will be removing the necessity to provide availability zones for azure.
-     If your `director.yml`(see [`staged-director-config`](./reference/task.md#staged-director-config))
+     If your `director.yml`(see [`staged-director-config`][staged-director-config])
      has a block like the following in the networks section:
      ```yaml
         availability_zone_names:
@@ -18,7 +18,7 @@ owner: PCF Platform Automation
      {"errors":["Availability zones cannot find availability zone with name null"]}
      ```
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
-     [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
+     [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v3.0.8
 **Release Date** Coming Soon
