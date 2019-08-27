@@ -20,8 +20,19 @@ owner: PCF Platform Automation
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
 
+## v3.0.8
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
+  (related to vulnerabilities with `libzstd`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: 
+  `libpython2.7`, `libpython2.7-dev`, `libpython2.7-minimal`, `libpython2.7-stdlib`, `libssl1.1`
+  `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
+
 ## v3.0.7
-**Release Date** August 23, 2019
+**Release Date** August 28, 2019
 
 ### Bug Fixes
 - When using AWS to create the Ops Manager VM with encrypted disks,
