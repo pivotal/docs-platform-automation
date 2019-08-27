@@ -19,30 +19,6 @@ owner: PCF Platform Automation
      ```
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
-## v4.1.0
-** Release Date** Someday sometime
-
-### What's New
-- [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
-- The new task [expiring-certificates]
-  fails if there are any expiring certificates
-  in a user specified time range.
-
-  Example Output:
-
-  ```text
-  Getting expiring certificates...
-  [X] Ops Manager
-      cf-79fba6887e8c29375eb7:
-          .uaa.service_provider_key_credentials: expired on 09 Aug 19 17:05 UTC
-  could not execute "expiring-certificates": found expiring certs in the foundation
-  exit status 1
-  ```
-- [Telemetry][telemetry-docs] support has been added! 
-  To opt in, you must get the Telemetry tool from [Pivnet][telemetry],
-  create a [config file][telemetry-config], 
-  and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline. 
-  For an example, please see the [Reference Pipelines][reference-pipeline]. 
 
 ## v4.0.1
 
