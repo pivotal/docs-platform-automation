@@ -18,11 +18,41 @@ owner: PCF Platform Automation
      {"errors":["Availability zones cannot find availability zone with name null"]}
      ```
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
-     [`staged-director-config`](./tasks.md#staged-director-config) to update your `director.yml`.
+     [`staged-director-config`](./reference/task.md#staged-director-config) to update your `director.yml`.
+## v4.1.0
+** Release Date** Someday sometime
+
+### What's New
+- [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
+- The new task [expiring-certificates]
+  fails if there are any expiring certificates
+  in a user specified time range.
+
+  Example Output:
+
+  ```text
+  Getting expiring certificates...
+  [X] Ops Manager
+      cf-79fba6887e8c29375eb7:
+          .uaa.service_provider_key_credentials: expired on 09 Aug 19 17:05 UTC
+  could not execute "expiring-certificates": found expiring certs in the foundation
+  exit status 1
+  ```
+- [Telemetry][telemetry-docs] support has been added! 
+  To opt in, you must get the Telemetry tool from [Pivnet][telemetry],
+  create a [config file][telemetry-config], 
+  and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline. 
+  For an example, please see the [Reference Pipelines][reference-pipeline]. 
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
+  (related to vulnerabilities with `libzstd`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `linux-libc-dev`
 
 ## v4.0.0
 
-**Release Date** Someday sometime
+**Release Date** Coming Soon
 
 ### Breaking Changes
 
@@ -98,8 +128,19 @@ owner: PCF Platform Automation
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
+## v3.0.8
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
+  (related to vulnerabilities with `libzstd`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: 
+  `libpython2.7`, `libpython2.7-dev`, `libpython2.7-minimal`, `libpython2.7-stdlib`, `libssl1.1`
+  `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
+  
 ## v3.0.7
-**Release Date** August 23, 2019
+**Release Date** August 28, 2019
 
 ### Bug Fixes
 - When using AWS to create the Ops Manager VM with encrypted disks,
