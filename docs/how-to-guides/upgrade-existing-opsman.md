@@ -110,9 +110,14 @@ Now lets write an `env.yml` for your Ops Manager.
 `env.yml` holds authentication and target information
 for a particular Ops Manager.
 
-An example `env.yml` is shown below.
-As mentioned in the comment,
-`decryption-passphrase` is required for `import-installation`,
+An example `env.yml` for username/password authentication
+is shown below with the required properties.
+Please reference [Configuring Env](generating-env-file) for the entire list of properties
+that can be used with `env.yml`
+as well as an example of an `env.yml`
+that can be used with UAA (SAML, LDAP, etc.) authentication.
+
+The property `decryption-passphrase` is required for `import-installation`,
 and therefore required for `upgrade-opsman`.
 
 If your foundation uses authentication other than basic auth,
