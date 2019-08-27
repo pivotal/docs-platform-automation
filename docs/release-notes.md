@@ -141,7 +141,7 @@ owner: PCF Platform Automation
   `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
 
 ## v3.0.7
-**Release Date** August 23, 2019
+**Release Date** August 28, 2019
 
 ### Bug Fixes
 - When using AWS to create the Ops Manager VM with encrypted disks,
