@@ -45,6 +45,10 @@ owner: PCF Platform Automation
   and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline. 
   For an example, please see the [Reference Pipelines][reference-pipeline]. 
 
+## v4.0.1
+
+**Release Date** Coming Soon
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
   (related to vulnerabilities with `libzstd`. While none of our code directly used these,
@@ -53,7 +57,7 @@ owner: PCF Platform Automation
 
 ## v4.0.0
 
-**Release Date** Someday sometime
+**Release Date** Coming Soon
 
 ### Breaking Changes
 
