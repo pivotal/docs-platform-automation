@@ -57,7 +57,7 @@ owner: PCF Platform Automation
 
 ## v4.0.0
 
-**Release Date** Coming Soon
+**Release Date** August 28, 2019
 
 ### Breaking Changes
 
