@@ -45,6 +45,12 @@ owner: PCF Platform Automation
   and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline. 
   For an example, please see the [Reference Pipelines][reference-pipeline]. 
 
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
+  (related to vulnerabilities with `libzstd`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `linux-libc-dev`
+
 ## v4.0.0
 
 **Release Date** Someday sometime
@@ -123,6 +129,17 @@ owner: PCF Platform Automation
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
+## v3.0.8
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
+  (related to vulnerabilities with `libzstd`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: 
+  `libpython2.7`, `libpython2.7-dev`, `libpython2.7-minimal`, `libpython2.7-stdlib`, `libssl1.1`
+  `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
+
 ## v3.0.7
 **Release Date** August 23, 2019
 
@@ -133,6 +150,8 @@ owner: PCF Platform Automation
 - CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
   (related to vulnerabilities with `patch`. While none of our code directly used these,
   they are present on the image.)
+- Bumped the following low-severity CVE packages: 
+  `linux-libc-dev`, `libldap-2.4-2`, `libldap-common`, `linux-libc-dev`
 
 ## v3.0.5
 **Release Date** July 22, 2019
@@ -165,6 +184,7 @@ owner: PCF Platform Automation
     * remove `revert-staged-changes`
       `unstage-product` functionally does the same thing,
       but uses the API.
+- Bumped the following low-severity CVE packages: `unzip`
 
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
