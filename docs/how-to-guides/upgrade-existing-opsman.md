@@ -107,7 +107,7 @@ for a particular Ops Manager.
 
 An example `env.yml` for username/password authentication
 is shown below with the required properties.
-Please reference [Configuring Env](generating-env-file) for the entire list of properties
+Please reference [Configuring Env][generating-env-file] for the entire list of properties
 that can be used with `env.yml`
 as well as an example of an `env.yml`
 that can be used with UAA (SAML, LDAP, etc.) authentication.
