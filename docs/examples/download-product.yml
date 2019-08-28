@@ -16,7 +16,10 @@ pivnet-product-slug: product-slugs
 ## as escape characters for the regex will confuse yaml parsers.
 # product-version-regex: ^1\.2\..*$
 
-stemcell-iaas: google
+## If set, will attempt to download the latest stemcell for the product.
+## Ignored if the specified file is not a `.pivotal` file.
+## Valid options are: aws, azure, google, openstack, vsphere.
+# stemcell-iaas: google
 
 ## The following are required only if using download-product-s3.
 ## Any key marked required above is still required when using S3.
