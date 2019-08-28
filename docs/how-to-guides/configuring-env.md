@@ -1,12 +1,16 @@
 ## Generating an Env File
 Almost all [`om`][om] commands require an env file
-to describe the Ops Manager Authenticated API endpoint (This is the URL you connect to Ops Manager with).
+to describe how to communicate (and authenticate) with a given Ops Manager.
 
-The configuration for authentication has a dependency on either username/password
+There are two ways to provide auth information.
+If your configuration choices allow you to use `username` and `password` directly,
+you can do so:
 
 {% code_snippet 'examples', 'env' %}
 
-or, if using SAML, a client-id and client-secret.
+However, if you're using an external identity provider
+via SAML or LDAP integration,
+you'll need to use a UAA client via `client-id` and `client-secret`:
 
 {% code_snippet 'examples', 'env-uaa' %}
 
