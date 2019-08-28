@@ -216,6 +216,18 @@ and [upload-stemcell](#upload-stemcell) tasks.
 
 This task requires a [download-product config file][download-product-config].
 
+If stemcell-iaas is specified in the [download-product config file][download-product-config],
+and the specified product is a `.pivotal` file,
+`download-product` will attempt to download the stemcell for the product.
+It will retrieve the latest compatible stemcell for the specified IaaS.
+The valid IaaSs are:
+
+- `aws`
+- `azure`
+- `google`
+- `openstack`
+- `vsphere`
+
 If S3 configuration is present in the [download-product config file][download-product-config],
 the slug and version of the downloaded product file will be prepended in brackets to the filename.  
 For example:
