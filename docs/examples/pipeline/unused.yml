@@ -70,3 +70,21 @@
   output_mapping:
     interpolated-files: interpolated-configs
 # code_snippet credhub-interpolate-usage end
+# code_snippet check-pending-changes-usage start yaml
+- task: check-pending-changes
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/check-pending-changes.yml
+  input_mapping:
+    env: interpolated-creds
+# code_snippet check-pending-changes-usage end
+# code_snippet stage-configure-apply-usage start yaml
+- task: stage-configure-apply-healthwatch
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/advanced/stage-configure-apply.yml
+  params:
+    CONFIG_FILE: healthwatch.yml
+  input_mapping:
+    product: healthwatch-product
+    env: interpolated-creds
+    config: interpolated-creds
+# code_snippet stage-configure-apply-usage end

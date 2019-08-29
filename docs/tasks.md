@@ -40,12 +40,24 @@ check out the [Stemcell Handling][stemcell-handling] topic.
 {% code_snippet 'examples', 'assign-multi-stemcell-usage', 'Usage' %}
 
 ### assign-stemcell
-`assign-stemcell` assigns a stemcell to a provided product. For more information on how to utilize
+`assign-stemcell` assigns a stemcell to a provided product.
+For more information on how to utilize
 this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
 {% code_snippet 'tasks', 'assign-stemcell', 'Task' %}
 {% code_snippet 'tasks', 'assign-stemcell-script', 'Implementation' %}
 {% code_snippet 'examples', 'assign-stemcell-usage', 'Usage' %}
+
+### check-pending-changes
+Returns a table of the current state of your Ops Manager
+and lists whether each product is changed or unchanged and the errands for that product.
+By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
+This is useful to keep manual changes from being accidentally applied 
+when automating the [configure-product][configure-product]/[apply-changes][apply-changes] of other products.
+
+{% code_snippet 'tasks', 'check-pending-changes', 'Task' %}
+{% code_snippet 'tasks', 'check-pending-changes-script', 'Implementation' %}
+{% code_snippet 'examples', 'check-pending-changes-usage', 'Usage' %}
 
 ### collect-telemetry
 Collects foundation information
@@ -494,6 +506,16 @@ to Pivotal.
 {% code_snippet 'tasks', 'send-telemetry', 'Task' %}
 {% code_snippet 'tasks', 'send-telemetry-script', 'Implementation' %}
 {% code_snippet 'examples', 'send-telemetry-usage', 'Usage' %}
+
+### stage-configure-apply
+This is an _advanced task_.
+Stage a product to Ops Manager, configure that product, and apply changes
+only to that product without applying changes to the rest of the foundation. 
+
+
+{% code_snippet 'tasks', 'stage-configure-apply', 'Task' %}
+{% code_snippet 'tasks', 'stage-configure-apply-script', 'Implementation' %}
+{% code_snippet 'examples', 'stage-configure-apply-usage', 'Usage' %}
 
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.

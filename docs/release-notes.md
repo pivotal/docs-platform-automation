@@ -44,11 +44,21 @@ owner: PCF Platform Automation
   could not execute "expiring-certificates": found expiring certs in the foundation
   exit status 1
   ```
+  
 - [Telemetry][telemetry-docs] support has been added! 
   To opt in, you must get the Telemetry tool from [Pivnet][telemetry],
   create a [config file][telemetry-config], 
   and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline. 
   For an example, please see the [Reference Pipelines][reference-pipeline]. 
+- [stage-configure-apply][stage-configure-apply] task has been added. 
+  This task will take a product, stage it, configure it, and apply changes 
+  _only_ for that product (all other products remain unchanged). 
+  Use this task only if you have confidence in the ordering 
+  in which you apply-changes for your products. 
+- [check-pending-changes][check-pending-changes] task has been added.
+  This task will perform a check on Ops Manager and fail if there are pending changes.
+  This is useful when trying to prevent manual changes 
+  from being applied during the automation process. 
 
 ## v4.0.1
 
