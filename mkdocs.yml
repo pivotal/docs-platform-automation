@@ -9,7 +9,6 @@ theme:
   name: pivotal
   logo: assets/icon.svg
   favicon: assets/favicon.ico
-  custom_dir: 'overwritten_theme_files/'
 strict: true
 use_directory_urls: false
 plugins:
