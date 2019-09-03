@@ -554,7 +554,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
-    serial_groups: [ telemetry ]
+    serial_groups: [ telemetry, install ]
     plan:
       - aggregate:
           - get: platform-automation-image
