@@ -4,8 +4,8 @@ owner: PCF Platform Automation
 ---
 
 !!! info "Platform Automation Beta Documentation"
-    Platform Automation is a GA product as of version 3.0. 
-    The beta versions of Platform Automation documentation 
+    Platform Automation is a GA product as of version 3.0.
+    The beta versions of Platform Automation documentation
     can be accessed by entering the url directly.
 
 {% include "./.opsman_filename_change_note.md" %}
@@ -44,25 +44,25 @@ owner: PCF Platform Automation
   could not execute "expiring-certificates": found expiring certs in the foundation
   exit status 1
   ```
-  
-- [Telemetry][telemetry-docs] support has been added! 
+
+- [Telemetry][telemetry-docs] support has been added!
   To opt in, you must get the Telemetry tool from [Pivnet][telemetry],
-  create a [config file][telemetry-config], 
-  and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline. 
-  For an example, please see the [Reference Pipelines][reference-pipeline]. 
-- [stage-configure-apply][stage-configure-apply] task has been added. 
-  This task will take a product, stage it, configure it, and apply changes 
-  _only_ for that product (all other products remain unchanged). 
-  Use this task only if you have confidence in the ordering 
-  in which you apply-changes for your products. 
+  create a [config file][telemetry-config],
+  and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline.
+  For an example, please see the [Reference Pipelines][reference-pipeline].
+- [stage-configure-apply][stage-configure-apply] task has been added.
+  This task will take a product, stage it, configure it, and apply changes
+  _only_ for that product (all other products remain unchanged).
+  Use this task only if you have confidence in the ordering
+  in which you apply-changes for your products.
 - [check-pending-changes][check-pending-changes] task has been added.
   This task will perform a check on Ops Manager and fail if there are pending changes.
-  This is useful when trying to prevent manual changes 
-  from being applied during the automation process. 
+  This is useful when trying to prevent manual changes
+  from being applied during the automation process.
 
 ## v4.0.1
 
-**Release Date** Coming Soon
+**Release Date** September 4, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
@@ -149,13 +149,13 @@ owner: PCF Platform Automation
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.8
-**Release Date** Coming Soon
+**Release Date** September 4, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
   (related to vulnerabilities with `libzstd`. While none of our code directly used these,
   they are present on the image.)
-- Bumped the following low-severity CVE packages: 
+- Bumped the following low-severity CVE packages:
   `libpython2.7`, `libpython2.7-dev`, `libpython2.7-minimal`, `libpython2.7-stdlib`, `libssl1.1`
   `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
 
@@ -169,7 +169,7 @@ owner: PCF Platform Automation
 - CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
   (related to vulnerabilities with `patch`. While none of our code directly used these,
   they are present on the image.)
-- Bumped the following low-severity CVE packages: 
+- Bumped the following low-severity CVE packages:
   `linux-libc-dev`, `libldap-2.4-2`, `libldap-common`, `linux-libc-dev`
 
 ## v3.0.5
