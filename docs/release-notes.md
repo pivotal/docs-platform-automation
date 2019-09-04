@@ -3,8 +3,8 @@ title: Release Notes
 owner: PCF Platform Automation
 ---
 !!! info "Platform Automation Beta Documentation"
-    Platform Automation is a GA product as of version 3.0. 
-    The beta versions of Platform Automation documentation 
+    Platform Automation is a GA product as of version 3.0.
+    The beta versions of Platform Automation documentation
     can be accessed by entering the url directly.
 
 {% include "./.opsman_filename_change_note.md" %}
@@ -26,7 +26,7 @@ owner: PCF Platform Automation
 
 ## v4.0.1
 
-**Release Date** Coming Soon
+**Release Date** September 4, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
@@ -113,16 +113,16 @@ owner: PCF Platform Automation
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.8
-**Release Date** Coming Soon
+**Release Date** September 4, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
   (related to vulnerabilities with `libzstd`. While none of our code directly used these,
   they are present on the image.)
-- Bumped the following low-severity CVE packages: 
+- Bumped the following low-severity CVE packages:
   `libpython2.7`, `libpython2.7-dev`, `libpython2.7-minimal`, `libpython2.7-stdlib`, `libssl1.1`
   `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
-  
+
 ## v3.0.7
 **Release Date** August 28, 2019
 
@@ -133,7 +133,7 @@ owner: PCF Platform Automation
 - CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
   (related to vulnerabilities with `patch`. While none of our code directly used these,
   they are present on the image.)
-  
+
 ## v3.0.5
 **Release Date** July 22, 2019
 
