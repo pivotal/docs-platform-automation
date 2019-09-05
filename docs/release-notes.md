@@ -59,6 +59,10 @@ owner: PCF Platform Automation
   This task will perform a check on Ops Manager and fail if there are pending changes.
   This is useful when trying to prevent manual changes
   from being applied during the automation process.
+- The VM state files currently support YAML,
+  but when generated, JSON was outputted.
+  This caused confusion.
+  The generated state file is now outputted as YAML.
 
 ## v4.0.1
 
