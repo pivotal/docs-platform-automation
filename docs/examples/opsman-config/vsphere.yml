@@ -3,20 +3,22 @@
 opsman-configuration:
   vsphere:
     vcenter:
-      ca_cert: cert                 # REQUIRED if insecure: 0 (secure)
+      ca_cert: cert                 # REQUIRED if insecure = 0 (secure)
       datacenter: example-dc
       datastore: example-ds-1
       folder: /example-dc/vm/Folder # RECOMMENDED, but not required
-      resource_pool: /example-dc/host/example-host/Resources/example-res-pool # or /<Data Center Name>/host/<Cluster Name>
       url: vcenter.example.com
       username: admin
       password: password
-      # Optional
-      # host: host                  # DEPRECATED: Platform Automation cannot guarantee
-                                    # the location of the VM, given the nature of vSphere
-      # insecure: 0                 # default: 0 (secure) | 1 (insecure)
+      resource_pool: /example-dc/host/example-host/Resources/example-res-pool
+      # resource_pool can use a cluster - /example-dc/host/example-cluster
 
-    disk_type: thin                 # thin|thick
+      # Optional
+      # host: host      # DEPRECATED - Platform Automation cannot guarantee
+                        # the location of the VM, given the nature of vSphere
+      # insecure: 0     # default: 0 (secure) | 1 (insecure)
+
+    disk_type: thin     # thin|thick
     dns: 8.8.8.8
     gateway: 192.168.10.1
     hostname: ops-manager.example.com
