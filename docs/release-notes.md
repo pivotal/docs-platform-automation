@@ -63,6 +63,22 @@ owner: PCF Platform Automation
   but when generated, JSON was outputted.
   This caused confusion.
   The generated state file is now outputted as YAML.
+  
+### Deprecation Notices
+- The `host` field in [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
+  Platform Automation can initially choose where the VM is placed
+  but cannot guarantee that it stays there
+  or that other generated VMs are assigned to the same host.
+- The `vpc_subnet` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
+  In your opsman.yml, replace `vpc_subnet` with `subnet_id`.
+  This change was to help mitigate confusion 
+  as VPC is an AWS, not an Azure, concept.
+- The optional `use_unmanaged_disk` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
+  In your opsman.yml, replace `use_unmanaged_disk: true` with `use_managed_disk: false`.
+  The default for `use_managed_disk` is true.
+  Unmanaged disk is not recommended by Azure.
+  If you would like to use unmanaged disks, 
+  please opt-out by setting `use_managed_disk: false`.
 
 ## v4.0.1
 
