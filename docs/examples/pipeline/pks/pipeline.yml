@@ -156,6 +156,16 @@ jobs:
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
           env: interpolated-creds
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          INSTALLATION_FILE: pks-installation-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/pks-installation*.zip
 
   - name: export-installation
     serial: true
@@ -233,6 +243,16 @@ jobs:
       file: platform-automation-tasks/tasks/apply-director-changes.yml
       input_mapping:
         env: interpolated-creds
+    - task: export-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/export-installation.yml
+      input_mapping:
+        env: interpolated-creds
+      params:
+        INSTALLATION_FILE: pks-installation-$timestamp.zip
+    - put: installation
+      params:
+        file: installation/pks-installation*.zip
 
   - name: upload-and-stage-pks
     serial: true
@@ -274,6 +294,7 @@ jobs:
 
   - name: configure-pks
     serial: true
+    serial_groups: [ install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -299,7 +320,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
-    serial_groups: [ telemetry ]
+    serial_groups: [ telemetry, install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -319,6 +340,16 @@ jobs:
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
           env: interpolated-creds
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          INSTALLATION_FILE: pks-installation-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/pks-installation*.zip
 
   - name: collect-telemetry
     serial: true
