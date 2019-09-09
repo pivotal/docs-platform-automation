@@ -223,6 +223,16 @@ jobs:
         input_mapping:
           env: interpolated-creds
       # code_snippet apply-director-changes-usage end
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          INSTALLATION_FILE: installation-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/installation*.zip
 
   - name: staged-director-config
     serial: true
@@ -326,6 +336,16 @@ jobs:
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
           env: interpolated-creds
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          INSTALLATION_FILE: installation-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/installation*.zip
 
   - name: upload-and-stage-pas
     serial: true
@@ -382,6 +402,7 @@ jobs:
 
   - name: configure-pas
     serial: true
+    serial_groups: [ install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -446,6 +467,7 @@ jobs:
 
   - name: configure-pas-windows
     serial: true
+    serial_groups: [ install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -511,6 +533,7 @@ jobs:
 
   - name: configure-healthwatch
     serial: true
+    serial_groups: [ install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -566,6 +589,16 @@ jobs:
         input_mapping:
           env: interpolated-creds
       # code_snippet apply-changes-usage end
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          INSTALLATION_FILE: installation-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/installation*.zip
   - name: staged-pas-config
     plan:
       - aggregate:
