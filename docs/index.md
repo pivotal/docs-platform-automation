@@ -4,7 +4,7 @@ title: Pivotal Platform Automation
 
 Pivotal Platform Automation provides building blocks
 to create repeatable and reusable automated pipeline(s)
-for upgrading and installing PCF foundations.
+for upgrading and installing Pivotal Platform foundations.
 We also provide instructions on using these building blocks in various workflows.
 In this introduction, we'll provide a high-level overview of Platform Automation.
 To dive-deeper, check out the references section.
@@ -55,7 +55,7 @@ The [Task Reference][task-reference] topic discusses these example tasks further
       to get a sense of the features and how they differ
       to understand the best transition method for your environment and needs.
 
-## Platform Automation and Upgrading PCF
+## Platform Automation and Upgrading Pivotal Platform
 
 Successful platform engineering teams know that a platform team
 that's always up to date is critical for their business.
@@ -65,7 +65,7 @@ which means their development teams miss out too.
 By not keeping up to date,
 platforms could encounter security risks or even application failures.
 
-Pivotal offers regular updates for PCF,
+Pivotal offers regular updates for Pivotal Platform,
 which ensures our customers have access to the latest security patches and new features.
 For example, Pivotal releases security patches every six days on average.
 
@@ -102,7 +102,7 @@ In addition, Pivotal Platform Automation allows you to:
 ## Platform Automation and Ops Manager
 
 The following table compares how Ops Manager
-and Pivotal Platform Automation might run a typical sequence of PCF operations:
+and Pivotal Platform Automation might run a typical sequence of Pivotal Platform operations:
 
 <table border="1">
   <tr>
