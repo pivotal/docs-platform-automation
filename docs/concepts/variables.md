@@ -75,7 +75,7 @@ Some Platform Automation tasks have an optional vars input. Using the flow descr
 be plugged in to the tasks.
 
 An Example [Task](../tasks.md#test-interpolate) has been provided to allow pipeline testing before
-installing Ops Manager and PCF.
+installing Ops Manager and Pivotal Platform.
 An example pipeline for this is below:
 
 ```yaml
