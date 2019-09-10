@@ -78,6 +78,16 @@ title: Release Notes
   Unmanaged disk is not recommended by Azure.
   If you would like to use unmanaged disks, 
   please opt-out by setting `use_managed_disk: false`.
+- The optional `use_instance_profile` field in [aws_opsman.yml][inputs-outputs-aws] has been deprecated.
+  It was redundant.
+  When you don't specify `access_key_id` and `secret_access_key`,
+  the authentication will try to use the instance profile on the executing machine -- for example, a concourse worker.
+  This is works in conjunction of how the `aws` CLI find authentication.
+- The required `security_group_id` field in [aws_opsman.yml][inputs-outputs-aws] has been deprecated.
+  Replace `security_group_id` with `security_group_ids` as YAML array.
+  For example, `security_group_id: sg-1`
+  becomes `security_group_ids: [ sg-1 ]`.
+  This allows the specification of multiple security groups to the Ops Manager VM.
 
 ## v4.0.1
 
