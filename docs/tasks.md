@@ -319,10 +319,10 @@ This avoids breaking current pipelines.
     The new file format preserves the original filename, so it is still possible to match on that -
     but if you need to match from the beginning of the filename, that will have been replaced by the prefix described above.
 
-!!! info "When specifying PAS-Windows"
+!!! info "When specifying Pivotal Application Service-Windows"
     This task will automatically download and inject the winfs for pas-windows.
 
-!!! warning "When specifying PAS-Windows on Vsphere"
+!!! warning "When specifying Pivotal Application Service-Windows on Vsphere"
     This task cannot download the stemcell for pas-windows on vSphere.
     To build this stemcell manually, please reference the
     [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide

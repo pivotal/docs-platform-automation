@@ -39,7 +39,7 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 ## Installing Ops Manager and a single product
 
 The pipeline shows how to compose the tasks
-to install Ops Manager and the PKS product.
+to install Ops Manager and the Pivotal Container Service product.
 Its dependencies are coming from a trusted git repository and S3,
 which can be retrieved using [this pipeline][reference-resources].
 
