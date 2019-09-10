@@ -279,7 +279,7 @@ jobs:
 
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
 
-An example on how to pull the PAS tile using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
+An example on how to pull the Pivotal Application Service tile using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
 
 ```yaml
 resource_types:
