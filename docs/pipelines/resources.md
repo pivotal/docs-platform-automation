@@ -45,11 +45,11 @@ Below are examples that can be used.
 {% include './examples/download-product-configs/healthwatch.yml' %}
 ```
 
-``` yaml tab="Pivotal Application Service"
+``` yaml tab="PAS"
 {% include './examples/download-product-configs/pas.yml' %}
 ```
 
-``` yaml tab="Pivotal Application Service Windows"
+``` yaml tab="PAS Windows"
 {% include './examples/download-product-configs/pas-windows.yml' %}
 ```
 
@@ -57,7 +57,7 @@ Below are examples that can be used.
 {% include './examples/download-product-configs/opsman.yml' %}
 ```
 
-``` yaml tab="Pivotal Container Service"
+``` yaml tab="PKS"
 {% include './examples/download-product-configs/pks.yml' %}
 ```
 
