@@ -1,6 +1,5 @@
 ---
 title: Platform Automation for PCF
-owner: PCF Platform Automation
 ---
 
 Platform Automation for PCF provides building blocks

@@ -1,6 +1,5 @@
 ---
 title: Compatibility and Dependencies
-owner: PCF Platform Automation
 ---
 
 This topic describes Platform Automation for PCF dependencies and semantic versioning.

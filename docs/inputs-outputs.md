@@ -1,6 +1,5 @@
 ---
 title: Input Reference
-owner: PCF Platform Automation
 ---
 
 ##  Inputs

@@ -1,6 +1,5 @@
 ---
 title: Release Notes
-owner: PCF Platform Automation
 ---
 
 !!! info "Platform Automation Beta Documentation"
