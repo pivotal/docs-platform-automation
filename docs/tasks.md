@@ -1,6 +1,5 @@
 ---
 title: Task Reference
-owner: PCF Platform Automation
 ---
 
 ##  Platform Automation for PCF Tasks
