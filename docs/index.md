@@ -90,7 +90,7 @@ How do we do this?
 With Pivotal Platform Automation,
 platform teams have the tools to create an automated perpetual upgrade machine,
 which can continuously take the latest updates when new software is available -
-including PAS, PKS, Ops Manager, stemcells, products, and services.
+including Pivotal Application Service, Pivotal Container Service, Ops Manager, stemcells, products, and services.
 In addition, Pivotal Platform Automation allows you to:
 
 * manage multiple foundations and reduce configuration drift
