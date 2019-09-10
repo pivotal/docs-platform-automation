@@ -2,8 +2,8 @@
 title: Task Reference
 ---
 
-##  Platform Automation for PCF Tasks
-This document lists each Platform Automation for PCF task,
+##  Pivotal Platform Automation Tasks
+This document lists each Pivotal Platform Automation task,
 and provides information about their intentions, inputs, and outputs.
 
 The tasks are presented, in their entirety,
