@@ -11,13 +11,13 @@ These Concourse pipelines are examples on how to use the [tasks](../tasks.md). I
 * Deployed Concourse
 
 !!! info
-    Platform Automation for PCF is based on Concourse CI.
+    Pivotal Platform Automation is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials](https://docs.pivotal.io/p-concourse/3-0/guides.html) would be a good place to start.
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * A valid [generating-env-file][generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
-It is used by every task within Platform Automation for PCF
+It is used by every task within Pivotal Platform Automation
 * A valid [auth-file][auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
