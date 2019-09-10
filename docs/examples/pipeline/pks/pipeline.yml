@@ -137,7 +137,7 @@ jobs:
           do:
           - put: state
             params:
-              file: state/state-pks.yml
+              file: generated-state/state-pks.yml
       - task: configure-authentication
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-authentication.yml
