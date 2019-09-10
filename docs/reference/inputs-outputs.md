@@ -30,8 +30,8 @@ To create a Client ID and Client Secret
 ```bash
 uaac client add -i
 Client ID:  NEW_CLIENT_NAME
-New client secret:  DESIRED_PASSWORD
-Verify new client secret:  DESIRED_PASSWORD
+New client secret:  DESIRED_Pivotal Application ServiceSWORD
+Verify new client secret:  DESIRED_Pivotal Application ServiceSWORD
 scope (list):  opsman.admin
 authorized grant types (list):  client_credentials
 authorities (list):  opsman.admin
@@ -298,7 +298,7 @@ jobs:
 ### product
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
 
-An example on how to pull the PAS tile using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
+An example on how to pull the Pivotal Application Service tile using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
 
 ```yaml
 resource_types:

@@ -51,7 +51,7 @@ These can either be uploaded manually or from the [reference resources pipeline]
 
 {% code_snippet 'examples', 'multiple-product-resources-s3' %}
   
-!!! tip "PAS-Windows with S3"
+!!! tip "Pivotal Application Service-Windows with S3"
     If retrieving `pas-windows` and `pas-windows-stemcell` from an S3 bucket,
     you must use the built in S3 concourse resource.
     This is done in the example above.

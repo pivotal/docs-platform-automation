@@ -25,9 +25,9 @@ with Platform Automation:
 To see an example of a finished pipeline,
 see one of the following reference pipelines:
 
-- A [single-product pipeline][reference-pipeline-pks] using [PKS][pks]
+- A [single-product pipeline][reference-pipeline-pks] using [Pivotal Container Service][pks]
 - A [multi-product pipeline][reference-pipeline]
-  with [PAS][pas] and [Healthwatch][healthwatch].
+  with [Pivotal Application Service][pas] and [Healthwatch][healthwatch].
 
 ## Other References
 
