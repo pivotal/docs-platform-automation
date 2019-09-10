@@ -2,7 +2,7 @@
 title: Compatibility and Dependencies
 ---
 
-This topic describes Platform Automation for PCF dependencies and semantic versioning.
+This topic describes Pivotal Platform Automation dependencies and semantic versioning.
 
 ## External Dependencies
 We have tested Platform Automation with these dependencies.

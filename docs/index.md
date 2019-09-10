@@ -1,8 +1,8 @@
 ---
-title: Platform Automation for PCF
+title: Pivotal Platform Automation
 ---
 
-Platform Automation for PCF provides building blocks
+Pivotal Platform Automation provides building blocks
 to create repeatable and reusable automated pipeline(s)
 for upgrading and installing PCF foundations.
 We also provide instructions on using these building blocks in various workflows.
@@ -28,7 +28,7 @@ on how to start using Platform Automation.
 * Comes bundled with Concourse [tasks][concourse-task-definition]
   that demonstrate how to use these tasks
   in a containerized Continuous Integration (CI) system.
-  Platform Automation for PCF tasks are:
+  Pivotal Platform Automation tasks are:
 
     * Legible: They use
       human-readable YAML config files which can be edited and managed
@@ -39,10 +39,10 @@ on how to start using Platform Automation.
     * Built for Automation: Tasks are idempotent,
       so re-running them in a CI won't break builds
 
-    * Not Comprehensive: Workflows that use Platform Automation for PCF
+    * Not Comprehensive: Workflows that use Pivotal Platform Automation
       may also contain `om` commands, custom tasks,
       and even interactions with the Ops Manager user interface.
-      Platform Automation for PCF is a set of tools to use alongside other tools,
+      Pivotal Platform Automation is a set of tools to use alongside other tools,
       rather than a comprehensive solution.
 
 The [Task Reference][task-reference] topic discusses these example tasks further.
@@ -87,11 +87,11 @@ How do we do this?
 
 #### <a id=""></a> Small and Continuous Upgrades With Platform Automation
 
-With Platform Automation for PCF,
+With Pivotal Platform Automation,
 platform teams have the tools to create an automated perpetual upgrade machine,
 which can continuously take the latest updates when new software is available -
 including PAS, PKS, Ops Manager, stemcells, products, and services.
-In addition, Platform Automation for PCF allows you to:
+In addition, Pivotal Platform Automation allows you to:
 
 * manage multiple foundations and reduce configuration drift
   by tracking changes through source control with
@@ -102,13 +102,13 @@ In addition, Platform Automation for PCF allows you to:
 ## Platform Automation and Ops Manager
 
 The following table compares how Ops Manager
-and Platform Automation for PCF might run a typical sequence of PCF operations:
+and Pivotal Platform Automation might run a typical sequence of PCF operations:
 
 <table border="1">
   <tr>
     <th></th>
     <th>Ops Manager</th>
-    <th>Platform Automation for PCF</th>
+    <th>Pivotal Platform Automation</th>
   </tr><tr>
     <th>When to Use</th>
     <th>First install and minor upgrades</th>
