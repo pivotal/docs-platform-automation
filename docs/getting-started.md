@@ -1,6 +1,5 @@
 ---
 title: Getting Started
-owner: PCF Platform Automation
 ---
 
 If you are using Platform Automation for the first time,

@@ -1,6 +1,5 @@
 ---
 title: Pipeline Reference
-owner: PCF Platform Automation
 ---
 
 Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't - we recommend you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
