@@ -1,6 +1,5 @@
 ---
 title: Release Notes
-owner: PCF Platform Automation
 ---
 !!! info "Platform Automation Beta Documentation"
     Platform Automation is a GA product as of version 3.0.
