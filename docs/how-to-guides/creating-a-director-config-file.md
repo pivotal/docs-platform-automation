@@ -19,7 +19,7 @@ To extract the configuration for an director, you will first need to do the foll
 1. Install Ops Manager using the [create-vm][create-vm] task
 
 1. (Optional) Configure Ops Manager _manually_ within the Ops Manager UI (Instructions for doing so can be found
-using the [Official-PCF-Documentation])
+using the [Official-Pivotal Platform-Documentation])
 
 
 ## Extracting Configuration
