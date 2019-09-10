@@ -8,7 +8,7 @@ to retrieve and store objects.
 
 ## Why use S3?
 
-* Platform Automation for PCF uses and produces
+* Pivotal Platform Automation uses and produces
 file artifacts that are too large to store in git.
 For example, many `.pivotal` product files are several gigabytes in size.
 Exported installation files may also be quite large.
