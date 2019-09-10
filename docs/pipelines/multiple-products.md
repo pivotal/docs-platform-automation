@@ -39,7 +39,7 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 ## Installing Ops Manager and multiple products
 
 The pipeline shows how to compose the tasks
-to install Ops Manager and the PCF and Healthwatch products.
+to install Ops Manager and the Pivotal Application Service and Healthwatch products.
 Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline][reference-resources].
 
