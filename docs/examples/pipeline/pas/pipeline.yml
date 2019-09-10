@@ -174,9 +174,11 @@ jobs:
       file: platform-automation-tasks/tasks/delete-vm.yml
       input_mapping:
         config: interpolated-creds
-    - put: state
-      params:
-        file: generated-state/state.yml
+      ensure: &put-state
+        do:
+        - put: state
+          params:
+            file: generated-state/state.yml
     # code_snippet delete-vm-usage end
   - name: install-opsman
     serial: true
@@ -211,11 +213,7 @@ jobs:
         input_mapping:
           image: opsman-image
           config: interpolated-creds
-        ensure: &put-state
-          do:
-            - put: state
-              params:
-                file: state/state.yml
+        ensure: *put-state
       # code_snippet create-vm-usage end
       # code_snippet configure-authentication-usage start yaml
       - task: configure-authentication
