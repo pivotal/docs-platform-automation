@@ -23,6 +23,22 @@ title: Release Notes
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.0.3
+
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+- CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
+  (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4132-1](https://usn.ubuntu.com/4132-1/)
+  (related to vulnerabilities with `expat`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libsystemd0`, `libudev1`, `linux-libc-dev`
+
 ## v4.0.1
 
 **Release Date** September 4, 2019
@@ -110,6 +126,21 @@ title: Release Notes
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
+
+## v3.0.10
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+- CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
+  (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4132-1](https://usn.ubuntu.com/4132-1/)
+  (related to vulnerabilities with `expat`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libsystemd0`, `libudev1`, `linux-libc-dev`
 
 ## v3.0.8
 **Release Date** September 4, 2019
