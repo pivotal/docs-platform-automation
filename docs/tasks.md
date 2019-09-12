@@ -270,6 +270,14 @@ Downloads a product specified in a config file from Pivnet.
 Optionally, also downloads the latest stemcell for that product.
 
 Downloads are cached, so files are not re-downloaded each time.
+When downloading from Pivnet,
+the cached file is verified
+using the Pivnet checksum
+to validate the integrity of that file.
+If it does not, the file re-downloaded.
+When downloading from s3,
+the cached file is not-verified,
+as there is no checksum from the s3 API to use.
 
 Outputs can be persisted to an S3-compatible blobstore using a `put` to an appropriate resource
 for later use with the [`download-product-s3`][download-product-s3],
@@ -586,6 +594,10 @@ Uploads and stages product to the Ops Manager specified in the config file.
 
 ### upload-product
 Uploads a product to the Ops Manager specified in the config file.
+
+If a shasum is provided in the config.yml,
+the integrity product will be verified
+with that shasum before uploading.
 
 {% code_snippet 'tasks', 'upload-product', 'Task' %}
 {% code_snippet 'tasks', 'upload-product-script', 'Implementation' %}
