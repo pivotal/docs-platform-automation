@@ -2,9 +2,9 @@
 ---
 opsman-configuration:
   gcp:
-    # either gcp_service_account json is required
-    # or a gcp_service_account_name associated with the project
-    # you must remove whichever you don't use
+    # Either gcp_service_account_name or gcp_service_account json is required
+    # You must remove whichever you don't use
+    gcp_service_account_name: user@project-id.iam.gserviceaccount.com
     gcp_service_account: |
       {
         "type": "service_account",
@@ -18,25 +18,24 @@ opsman-configuration:
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
         "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/user%40project-id.iam.gserviceaccount.com"
       }
-    gcp_service_account_name: user@project-id.iam.gserviceaccount.com
+
     project: project-id
     region: us-central1
     zone: us-central1-b
-    vm_name: ops-manager-vm               # default: Ops Manager-vm
-    # For SharedVPC: projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]
     vpc_subnet: infrastructure-subnet
-    tags: ops-manager
-    # This CPU, Memory and disk size demonstrated here
-    # match the defaults, and needn't be included if these are the desired values
-    custom_cpu: 2
-    custom_memory: 8
-    boot_disk_size: 100
-    # At least one IP address (public or private) needs to be assigned to the VM.
-    public_ip: 1.2.3.4.
+
+    # At least one IP address (public or private) needs to be assigned to the
+    # VM. It is also permissible to assign both.
+    public_ip: 1.2.3.4
     private_ip: 10.0.0.2
-    # scopes to add to created vm
-    scopes: ["my-scope"]
-    # key to ssh onto the Ops Manger VM.
-    # used to manage non-tile BOSH add-ons
-    ssh_public_key: ssh-rsa some-public-key...
+
+    ssh_public_key: ssh-rsa some-public-key... # RECOMMENDED, but not required
+    tags: ops-manager                          # RECOMMENDED, but not required
+
+    # Optional
+    # vm_name: OpsManager-vm   # default - OpsManager-vm
+    # custom_cpu: 2            # default - 2
+    # custom_memory: 8         # default - 8
+    # boot_disk_size: 100      # default - 100
+    # scopes: ["my-scope"]
 # code_snippet gcp-configuration end
