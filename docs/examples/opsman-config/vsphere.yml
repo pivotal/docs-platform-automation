@@ -27,6 +27,7 @@ opsman-configuration:
     ntp: ntp.ubuntu.com
     private_ip: 10.0.0.10
     ssh_public_key: ssh-rsa ......  # REQUIRED Ops Manager >= 2.6
+
     # Optional
     # cpu: 1                        # default - 1
     # memory: 8                     # default - 8 (GB)
