@@ -244,7 +244,7 @@ When downloading from Pivnet,
 the cached file is verified
 using the Pivnet checksum
 to validate the integrity of that file.
-If it does not, the file re-downloaded.
+If it does not, the file is re-downloaded.
 When downloading from s3,
 the cached file is not-verified,
 as there is no checksum from the s3 API to use.
