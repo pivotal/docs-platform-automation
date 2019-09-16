@@ -20,6 +20,6 @@ opsman-configuration:
     # user_domain_name: default
     # vm_name: ops-manager-vm       # default - OpsManager-vm
     # flavor: m1.xlarge             # default - m1.xlarge
-    # identity_api_version: 2       # default - 2
+    # identity_api_version: 2       # default - 3
     # insecure: true                # default - false
 # code_snippet openstack-configuration end
