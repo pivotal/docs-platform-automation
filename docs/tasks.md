@@ -51,7 +51,7 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 Returns a table of the current state of your Ops Manager
 and lists whether each product is changed or unchanged and the errands for that product.
 By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
-This is useful to keep manual changes from being accidentally applied 
+This is useful to keep manual changes from being accidentally applied
 when automating the [configure-product][configure-product]/[apply-changes][apply-changes] of other products.
 
 {% code_snippet 'tasks', 'check-pending-changes', 'Task' %}
@@ -274,7 +274,7 @@ When downloading from Pivnet,
 the cached file is verified
 using the Pivnet checksum
 to validate the integrity of that file.
-If it does not, the file re-downloaded.
+If it does not, the file is re-downloaded.
 When downloading from s3,
 the cached file is not-verified,
 as there is no checksum from the s3 API to use.
@@ -517,7 +517,7 @@ to Pivotal.
 ### stage-configure-apply
 This is an _advanced task_.
 Stage a product to Ops Manager, configure that product, and apply changes
-only to that product without applying changes to the rest of the foundation. 
+only to that product without applying changes to the rest of the foundation.
 
 
 {% code_snippet 'tasks', 'stage-configure-apply', 'Task' %}
