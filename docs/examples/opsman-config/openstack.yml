@@ -2,21 +2,24 @@
 ---
 opsman-configuration:
   openstack:
-    auth_url: http://os.example.com:5000/v2.0
     project_name: project
-    net_id: 26a13112-b6c2-11e8-96f8-529269fb1459
+    auth_url: http://os.example.com:5000/v2.0
     username: admin
     password: password
-    key_pair_name: opsman-keypair
+    net_id: 26a13112-b6c2-11e8-96f8-529269fb1459
     security_group_name: opsman-sec-group
-    vm_name: ops-manager-vm      # default: Ops Manager-vm
+    key_pair_name: opsman-keypair
+
     # At least one IP address (public or private) needs to be assigned to the VM.
-    public_ip: 1.2.3.4
+    public_ip: 1.2.3.4 # must be an already allocated floating IP
     private_ip: 10.0.0.3
-    flavor: m1.xlarge            # default: m1.xlarge
-    project_domain_name: default
-    user_domain_name: default
-    identity_api_version: 3 # default: 2
-    insecure: true # default: false
-    availability_zone: zone-01
+
+    # Optional
+    # availability_zone: zone-01
+    # project_domain_name: default
+    # user_domain_name: default
+    # vm_name: ops-manager-vm       # default - OpsManager-vm
+    # flavor: m1.xlarge             # default - m1.xlarge
+    # identity_api_version: 2       # default - 2
+    # insecure: true                # default - false
 # code_snippet openstack-configuration end
