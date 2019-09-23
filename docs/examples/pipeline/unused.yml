@@ -80,7 +80,7 @@
 # code_snippet stage-configure-apply-usage start yaml
 - task: stage-configure-apply-healthwatch
   image: platform-automation-image
-  file: platform-automation-tasks/tasks/advanced/stage-configure-apply.yml
+  file: platform-automation-tasks/tasks/stage-configure-apply.yml
   params:
     CONFIG_FILE: healthwatch.yml
   input_mapping:
