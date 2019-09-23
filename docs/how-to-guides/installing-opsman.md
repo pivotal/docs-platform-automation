@@ -94,46 +94,7 @@ An example `download-ops-manager.yml` is shown below.
 
 Write an `download-ops-manager.yml` for your Ops Manager.
 
-
-```yaml tab="AWS"
----
-pivnet-api-token: ((pivnet-token))
-pivnet-file-glob: "ops-manager-aws*.yml"
-pivnet-product-slug: ops-manager
-product-version-regex: ^2\.5\.\d+$
-```
-
-```yaml tab="Azure"
----
-pivnet-api-token: ((pivnet-token))
-pivnet-file-glob: "ops-manager-azure*.yml"
-pivnet-product-slug: ops-manager
-product-version-regex: ^2\.5\.\d+$
-```
-
-```yaml tab="GCP"
----
-pivnet-api-token: ((pivnet-token))
-pivnet-file-glob: "ops-manager-gcp*.yml"
-pivnet-product-slug: ops-manager
-product-version-regex: ^2\.5\.\d+$
-```
-
-```yaml tab="OpenStack"
----
-pivnet-api-token: ((pivnet-token))
-pivnet-file-glob: "ops-manager-openstack*.raw"
-pivnet-product-slug: ops-manager
-product-version-regex: ^2\.5\.\d+$
-```
-
-```yaml tab="vSphere"
----
-pivnet-api-token: ((pivnet-token))
-pivnet-file-glob: "ops-manager-vsphere*.ova"
-pivnet-product-slug: ops-manager
-product-version-regex: ^2\.5\.\d+$
-```
+{% include ".opsman-config.md" %}
 
 Add and commit the new file:
 
