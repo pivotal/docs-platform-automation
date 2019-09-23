@@ -208,18 +208,12 @@ For vsphere and openstack, it's a full disk image.
 For AWS, GCP, and Azure, it's a YAML file listing the location
 of images that are already available on the IaaS.
 
-Here's an example of how to pull the AWS image resource
+These are examples to download the image artifact for each IaaS
 using the [download-product][download-product] task.
 
 #### opsman.yml
 
-```yaml
----
-pivnet-api-token: token
-pivnet-file-glob: "ops-manager-aws*.yml"
-pivnet-product-slug: ops-manager
-product-version-regex: ^.*\..*\..*$
-```
+{% include "how-to-guides/.opsman-config.md" %}
 
 #### download-product task
 
@@ -255,13 +249,46 @@ using the [download-product][download-product] task.
 
 #### stemcell.yml
 
-```yaml
+```yaml tab="AWS"
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+```yaml tab="Azure"
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+```yaml tab="GCP"
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+```yaml tab="OpenStack"
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+```yaml tab="vSphere"
 ---
 pivnet-api-token: token
 pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
 pivnet-product-slug: stemcells-ubuntu-xenial
-product-version-regex: ^.*\..*$
+product-version-regex: ^170\..*$
 ```
+
 
 #### download-product task
 
@@ -287,7 +314,7 @@ using the [download-product][download-product] task.
 pivnet-api-token: token
 pivnet-file-glob: "cf-*.pivotal"
 pivnet-product-slug: elastic-runtime
-product-version-regex: ^.*\..*.*$
+product-version-regex: ^2\.6\..*$
 ```
 
 #### download-product task
