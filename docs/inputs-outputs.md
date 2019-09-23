@@ -202,33 +202,33 @@ depending on your IAAS:
 
 ### opsman image
 
-This file is an [artifact from Pivnet](https://network.pivotal.io/products/ops-manager), which contains the VM image on an IAAS.
-For vsphere and openstack, it is a full disk image.
-For AWS, GCP, and Azure, it is the YAML file of the image locations.
+This file is an [artifact from Pivnet](https://network.pivotal.io/products/ops-manager),
+which contains the VM image for a specific IaaS.
+For vsphere and openstack, it's a full disk image.
+For AWS, GCP, and Azure, it's a YAML file listing the location
+of images that are already available on the IaaS.
 
-An example on how to pull the AWS image resource using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
+Here's an example of how to pull the AWS image resource
+using the [download-product][download-product] task.
+
+#### opsman.yml
 
 ```yaml
-resource_types:
-- name: pivnet
-  type: docker-image
-  source:
-    repository: pivotalcf/pivnet-resource
-    tag: latest-final
-resources:
-- name: opsman-image
-  type: pivnet
-  source:
-    api_token: ((pivnet_token))
-    product_slug: ops-manager
-    product_version: 2.*
-    sort_by: semver
-jobs:
-- name: get-the-resource
-  plan:
-  - get: opsman-image
-    params:
-      globs: ["*AWS*.yml"]
+---
+pivnet-api-token: token
+pivnet-file-glob: "ops-manager-aws*.yml"
+pivnet-product-slug: ops-manager
+product-version-regex: ^.*\..*\..*$
+```
+
+#### download-product task
+
+```yaml
+- task: download-opsman-image
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: opsman.yml
 ```
 
 ### installation
@@ -250,58 +250,54 @@ The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-g
 !!! warning
     This file cannot be manually created. It is a file that must retrieved from Pivnet.
 
-An example on how to pull the vSphere stemcell using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
+Here's an example of how to pull the vSphere stemcell
+using the [download-product][download-product] task.
+
+#### stemcell.yml
 
 ```yaml
-resource_types:
-- name: pivnet
-  type: docker-image
-  source:
-    repository: pivotalcf/pivnet-resource
-    tag: latest-final
-resources:
-- name: stemcell
-  type: pivnet
-  source:
-    api_token: ((pivnet_token))
-    product_slug: stemcells
-    product_version: 3541.*
-    sort_by: semver
-jobs:
-- name: get-the-resource
-  plan:
-  - get: stemcell
-    params:
-      globs: ["*vsphere*.tgz"]
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^.*\..*$
+```
+
+#### download-product task
+
+```yaml
+- task: download-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: stemcell.yml
 ```
 
 ### product
 
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
 
-An example on how to pull the Pivotal Application Service tile using the [Pivnet Concourse Resource](https://github.com/pivotal-cf/pivnet-resource).
+Here's an example of how to pull the Pivotal Application Service tile
+using the [download-product][download-product] task.
+
+#### product.yml
 
 ```yaml
-resource_types:
-- name: pivnet
-  type: docker-image
-  source:
-    repository: pivotalcf/pivnet-resource
-    tag: latest-final
-resources:
-- name: stemcell
-  type: pivnet
-  source:
-    api_token: ((pivnet_token))
-    product_slug: elastic-runtime
-    product_version: 2.*
-    sort_by: semver
-jobs:
-- name: get-the-resource
-  plan:
-  - get: product
-    params:
-      globs: ["*cf*.pivotal"]
+---
+pivnet-api-token: token
+pivnet-file-glob: "cf-*.pivotal"
+pivnet-product-slug: elastic-runtime
+product-version-regex: ^.*\..*.*$
+```
+
+#### download-product task
+
+```yaml
+- task: download-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: product.yml
 ```
 
 !!! warning
