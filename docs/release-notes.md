@@ -32,6 +32,7 @@ title: Release Notes
 - The new task [expiring-certificates]
   fails if there are any expiring certificates
   in a user specified time range.
+  Root CAs cannot be included in this list until Ops Manager 2.7.
 
   Example Output:
 

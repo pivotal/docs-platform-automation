@@ -404,6 +404,7 @@ For example:
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
 These certificates can be Ops Manager or Credhub certificates.
+Root CAs cannot be included in this list until Ops Manager 2.7.
 This is purely an informational task.
 
 {% code_snippet 'tasks', 'expiring-certificates', 'Task' %}
