@@ -1,7 +1,3 @@
----
-title: Task Reference
----
-
 ##  Pivotal Platform Automation Tasks
 This document lists each Pivotal Platform Automation task,
 and provides information about their intentions, inputs, and outputs.

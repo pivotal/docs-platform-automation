@@ -1,7 +1,3 @@
----
-title: Pivotal Platform Automation
----
-
 Pivotal Platform Automation provides building blocks
 to create repeatable and reusable automated pipeline(s)
 for upgrading and installing Pivotal Platform foundations.

@@ -1,7 +1,3 @@
----
-title: Compatibility and Dependencies
----
-
 This topic describes Pivotal Platform Automation dependencies and semantic versioning.
 
 ## External Dependencies
