@@ -48,7 +48,7 @@ nav:
   - Secrets Handling: concepts/secrets-handling.md
   - Stemcell Handling: concepts/stemcell-handling.md
   - Variables: concepts/variables.md
-  - How Platform Automation Upgrades Ops Manager: concepts/upgrade.md
+  - Recovering and Upgrading Ops Manager: concepts/upgrade.md
 - Pipeline Design:
   - Configuration Management Strategies: pipeline-design/configuration-management-strategies.md
 - Task Reference: tasks.md
