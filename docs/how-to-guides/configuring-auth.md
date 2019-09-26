@@ -3,13 +3,13 @@ Ops Manager's authentication system can be configured several ways.
 The format of the configuration file varies
 according to the authentication method to be used.
 
-### [configure-authentication]:
+### [configure-authentication][configure-authentication]:
 {% code_snippet 'examples', 'auth-configuration' %}
 
-### [configure-ldap-authentication]:
+### [configure-ldap-authentication][configure-ldap-authentication]:
 {% code_snippet 'examples', 'ldap-auth-configuration' %}
 
-### [configure-saml-authentication]:
+### [configure-saml-authentication][configure-saml-authentication]:
 {% code_snippet 'examples', 'saml-auth-configuration' %}
 
 ## Managing Configuration, Auth, and State Files
