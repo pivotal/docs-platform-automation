@@ -195,7 +195,7 @@ title: Release Notes
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.10
-**Release Date** Coming Soon
+**Release Date** September 26, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
