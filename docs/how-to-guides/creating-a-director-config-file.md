@@ -23,7 +23,7 @@ using the [Official-Pivotal-Platform-Documentation][pivotal-install-docs])
 
 
 ## Extracting Configuration
-[om] has a command called [staged-director-config], which is used to extract
+[om][om] has a command called [staged-director-config][staged-director-config], which is used to extract
 the Ops Manager and the BOSH director configuration from the targeted foundation.
 
 {% include ".missing_fields_opsman_director.md" %}
@@ -42,7 +42,7 @@ after running this command:
 Now you can modify the settings in the configuration file directly instead of
 operating in the web ui. After you finish editing the file, the configuration
 file will need to apply back to the Ops Manager instance. The command
-[configure-director] will do the job.
+[configure-director][configure-director] will do the job.
 
 Sample usage:  
 `om --env env.yml configure-director --config director.yml`  
