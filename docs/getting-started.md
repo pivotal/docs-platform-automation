@@ -1,7 +1,3 @@
----
-title: Getting Started
----
-
 If you are using Platform Automation for the first time,
 you have a few options.
 

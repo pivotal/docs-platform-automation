@@ -1,7 +1,3 @@
----
-title: Release Notes
----
-
 !!! info "Platform Automation Beta Documentation"
     Platform Automation is a GA product as of version 3.0.
     The beta versions of Platform Automation documentation
