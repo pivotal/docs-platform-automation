@@ -1,6 +1,6 @@
 This topic provides an overview 
 of upgrading and recovering an Ops Manager using Platform Automation, 
-including command requirements and common version check and IaaS CLI errors.
+including common errors.
 
 {% include "./.export_installation_note.md" %}
 
@@ -21,17 +21,6 @@ This flowchart gives a high level overview of how the task makes decisions for a
 
 On successive invocations of the task, it will offer different behaviour of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
-
-### Command Requirements
-
-The [`upgrade-opsman`][upgrade-opsman] task will delete the previous VM, create a new VM, and import
-a previous installation. It requires the following to perform this operations:
-
-* a valid [state file][state] from the currently deployed Ops Manager
-* a valid [image file][opsman-image] for the new Ops Manager to install
-* a [configuration file][opsman-config] for IAAS specific details
-* an [exported installation][installation] from a currently deployed Ops Manager
-* the [auth file][auth-file] for a currently deployed Ops Manager
 
 ## Recovering the Ops Manager VM
 Using the `upgrade-opsman` task will always delete the VM.
@@ -56,24 +45,24 @@ Both methods require an exported installation.
 Below is a list of common errors when running `upgrade-opsman`.
 
 - **Error: The Ops Manager API is inaccessible.**
-Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Ops Manager VM is not
-created, and will run the [`create-vm`][create-vm] and
-[`import-installation`][import-installation] tasks.
+  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Ops Manager VM is not
+  created, and will run the [`create-vm`][create-vm] and
+  [`import-installation`][import-installation] tasks.
 
 - **Error: The CLI for a supported IAAS fails.** (i.e., bad network, outage, etc)
-The specific error will be returned as output, 
-but most errors can be fixed 
-by re-running the [`upgrade-opsman`][upgrade-opsman] task.
+  The specific error will be returned as output, 
+  but most errors can be fixed 
+  by re-running the [`upgrade-opsman`][upgrade-opsman] task.
 
-## Restoring the original Ops Manager VM
+## Restoring the Original Ops Manager VM
 There may be an instance in which you want to restore a previous Ops Manager VM
-before completing the upgrade process. 
+before completing the upgrade process.
 
-To restore a previous Ops Manager VM manually, complete the steps below.
-Instructions on how to run `p-automator` commands locally
-can be found in the [Running Commands Locally How-to Guide][running-commands-locally]
+It is recommended to restore a previous Ops Manager VM manually.
+The [Running Commands Locally How-to Guide][running-commands-locally]
+is a helpful resource to get started with the manual process below. 
 
-1. Run `delete-vm`delete-vm on the failed or non-desired Ops Manager
+1. Run `delete-vm` on the failed or non-desired Ops Manager
    using the [`state.yml`][state] if applicable. 
    [`opsman.yml`][opsman-config] is required for this command.
    ```bash
@@ -88,11 +77,11 @@ can be found in the [Running Commands Locally How-to Guide][running-commands-loc
    [`opsman.yml`][opsman-config] is required for this command.
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-    p-automator create-vm --config opsman.yml --image-file original-opsman-image.yml --state state.yml
+    p-automator create-vm --config opsman.yml --image-file original-opsman-image.yml \
+    --state state.yml
     ```
    
-1. Run `import-installation` using the exported installation
-   backed-up before upgrading.
+1. Run `import-installation`.
    This command requires the exported installation of the original Ops Manager
    and the `env.yml` used by Platform Automation
    ```bash
@@ -104,7 +93,9 @@ Alternatively, these steps could be completed using the `upgrade-opsman` command
 This command requires all inputs described above.
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-p-automator upgrade-opsman --state-file state.yml --config opsman.yml --image-file original-opsman-image.yml --installation installation.zip --env-file env.yml
+p-automator upgrade-opsman --state-file state.yml \
+--config opsman.yml --image-file original-opsman-image.yml \
+--installation installation.zip --env-file env.yml
 ```
 
 {% with path="../" %}
