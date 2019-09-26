@@ -24,7 +24,7 @@ title: Release Notes
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v3.0.10
-**Release Date** Coming Soon
+**Release Date** September 26, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
