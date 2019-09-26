@@ -660,7 +660,6 @@ jobs:
         env: interpolated-creds
       params:
         EXPIRES_WITHIN: 6m
-      ensure: *put-state
     # code_snippet expiring-certificates-usage end
   - name: staged-healthwatch-config
     plan:
