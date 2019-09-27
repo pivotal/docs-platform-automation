@@ -25,7 +25,7 @@ title: Release Notes
 
 ## v4.0.3
 
-**Release Date** Coming Soon
+**Release Date** September 27, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
