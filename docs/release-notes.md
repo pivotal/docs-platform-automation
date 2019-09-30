@@ -86,6 +86,16 @@
   becomes `security_group_ids: [ sg-1 ]`.
   This allows the specification of multiple security groups to the Ops Manager VM.
 
+## v4.0.4
+
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
+  (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
+
 ## v4.0.3
 
 **Release Date** September 27, 2019
@@ -189,6 +199,16 @@
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
+
+## v3.0.11
+
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
+  (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v3.0.10
 **Release Date** September 26, 2019
