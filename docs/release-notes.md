@@ -23,6 +23,16 @@ title: Release Notes
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v3.0.11
+
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
+  (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
+
 ## v3.0.10
 **Release Date** September 26, 2019
 
