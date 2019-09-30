@@ -23,6 +23,16 @@ title: Release Notes
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.0.4
+
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
+  (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
+
 ## v4.0.3
 
 **Release Date** September 27, 2019
@@ -127,6 +137,16 @@ title: Release Notes
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
+## v3.0.11
+
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
+  (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
+
 ## v3.0.10
 **Release Date** September 26, 2019
 
@@ -163,6 +183,8 @@ title: Release Notes
 - CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
   (related to vulnerabilities with `patch`. While none of our code directly used these,
   they are present on the image.)
+- Bumped the following low-severity CVE packages:
+  `linux-libc-dev`, `libldap-2.4-2`, `libldap-common`, `linux-libc-dev`
 
 ## v3.0.5
 **Release Date** July 22, 2019
@@ -195,6 +217,7 @@ title: Release Notes
     * remove `revert-staged-changes`
       `unstage-product` functionally does the same thing,
       but uses the API.
+- Bumped the following low-severity CVE packages: `unzip`
 
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
