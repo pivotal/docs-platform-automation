@@ -52,7 +52,7 @@ Specific examples for each IaaS are as follows:
 
 #### AWS
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on AWS][platform-aws]
+[Launching an Ops Manager Director Instance on AWS][manual-aws]
 
 {% code_snippet 'examples', 'aws-configuration' %}
 {% include '.ip-addresses.md' %}
@@ -67,14 +67,14 @@ These required properties are adapted from the instructions outlined in
 
 #### Azure
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Azure][platform-azure]
+[Launching an Ops Manager Director Instance on Azure][manual-azure]
 
 {% code_snippet 'examples', 'azure-configuration' %}
 {% include '.ip-addresses.md' %}
 
 #### GCP
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on GCP][platform-gcp]
+[Launching an Ops Manager Director Instance on GCP][manual-gcp]
 
 {% code_snippet 'examples', 'gcp-configuration' %}
 {% include '.ip-addresses.md' %}
@@ -96,7 +96,7 @@ For example:
 #### Openstack
 
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Openstack][platform-openstack]
+[Launching an Ops Manager Director Instance on Openstack][manual-openstack]
 
 {% code_snippet 'examples', 'openstack-configuration' %}
 {% include '.ip-addresses.md' %}
@@ -104,7 +104,7 @@ These required properties are adapted from the instructions outlined in
 #### vSphere
 
 These required properties are adapted from the instructions outlined in
-[Deploying BOSH and Ops Manager to vSphere][platform-vsphere]
+[Deploying BOSH and Ops Manager to vSphere][manual-vsphere]
 
 {% code_snippet 'examples', 'vsphere-configuration' %}
 
