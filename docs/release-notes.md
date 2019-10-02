@@ -226,13 +226,13 @@ title: Release Notes
 - Both [`configure-ldap-authentication`][configure-ldap-authentication]
   and [`configure-saml-authentication`][configure-saml-authentication]
   will now automatically
-  create a BOSH UAA admin client as documented [here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#saml).
+  create a BOSH UAA admin client as documented [here](https://docs.pivotal.io/platform/2-5/customizing/opsmanager-create-bosh-client.html#saml).
   This is only supported in OpsManager 2.4 and greater.
   You may specify the option `skip-create-bosh-admin-client` in your config YAML
   to skip creating this client.
   After the client has been created,
   you can find the client ID and secret
-  by following [steps three and four found here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#-provision-admin-client).
+  by following [steps three and four found here](https://docs.pivotal.io/platform/2-5/customizing/opsmanager-create-bosh-client.html#-provision-admin-client).
 
     _This feature needs to be enabled
     to properly automate authentication for the bosh director when using LDAP and SAML._
