@@ -80,7 +80,7 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
 {% code_snippet 'examples', 'configure-ldap-authentication-usage', 'Usage' %}
 
 For more details on using LDAP,
-please refer to the [Ops Manager documentation](https://docs.pivotal.io/platform/opsguide/auth-sso.html#configure-ldap).
+please refer to the [Ops Manager documentation][config-ldap].
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
@@ -89,7 +89,7 @@ please see [Generating an Auth File][generating-an-auth-file].
 Configures an individual, staged product with settings from a config file.
 
 Not to be confused with Ops Manager's
-built-in [import](https://docs.pivotal.io/platform/customizing/backup-restore/restore-pcf-bbr.html#deploy-import),
+built-in [import][bbr-import],
 which reads all deployed products and configurations from a single opaque file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
@@ -123,7 +123,7 @@ The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the [Ops Manager documentation](https://docs.pivotal.io/platform/2-4/opsguide/config-rbac.html#enable-saml)
+please refer to the [Ops Manager documentation][config-saml]
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
@@ -473,7 +473,7 @@ Staged a product to the Ops Manager specified in the config file.
 Downloads the configuration for a product from Ops Manager.
 
 Not to be confused with Ops Manager's
-built-in [export](https://docs.pivotal.io/platform/customizing/backup-restore/backup-pcf-bbr.html#export),
+built-in [export][bbr-export],
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
