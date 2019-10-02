@@ -17,7 +17,7 @@ on how to start using Platform Automation.
 * Uses [om][om],
   (and by extension, the Ops Manager API)
   to enable command-line interaction with Ops Manager
-  ([Understanding the Ops Manager Interface][pivotalcf-understanding-opsman])
+  ([Understanding the Ops Manager Interface][platform-understanding-opsman])
 
 * Includes a documented reference pipeline
   showing one possible configuration to use tasks.
