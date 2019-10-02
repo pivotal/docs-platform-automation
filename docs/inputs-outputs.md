@@ -48,7 +48,7 @@ Specific examples for each IaaS are as follows:
 
 #### AWS
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on AWS][pivotalcf-aws]
+[Launching an Ops Manager Director Instance on AWS][platform-aws]
 
 {% code_snippet 'examples', 'aws-configuration' %}
 {% include '.ip-addresses.md' %}
@@ -63,14 +63,14 @@ These required properties are adapted from the instructions outlined in
 
 #### Azure
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Azure][pivotalcf-azure]
+[Launching an Ops Manager Director Instance on Azure][platform-azure]
 
 {% code_snippet 'examples', 'azure-configuration' %}
 {% include '.ip-addresses.md' %}
 
 #### GCP
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on GCP][pivotalcf-gcp]
+[Launching an Ops Manager Director Instance on GCP][platform-gcp]
 
 {% code_snippet 'examples', 'gcp-configuration' %}
 {% include '.ip-addresses.md' %}
@@ -92,7 +92,7 @@ For example:
 #### Openstack
 
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Openstack][pivotalcf-openstack]
+[Launching an Ops Manager Director Instance on Openstack][platform-openstack]
 
 {% code_snippet 'examples', 'openstack-configuration' %}
 {% include '.ip-addresses.md' %}
@@ -100,7 +100,7 @@ These required properties are adapted from the instructions outlined in
 #### vSphere
 
 These required properties are adapted from the instructions outlined in
-[Deploying BOSH and Ops Manager to vSphere][pivotalcf-vsphere]
+[Deploying BOSH and Ops Manager to vSphere][platform-vsphere]
 
 {% code_snippet 'examples', 'vsphere-configuration' %}
 
@@ -138,7 +138,7 @@ and a link to the API documentation explaining any IAAS specific properties.
 
 #### GCP Shared VPC
 
-Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet](https://docs.pivotal.io/pivotalcf/customizing/gcp-prepare-env.html#create_network),
+Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet][gcp-create-network],
 which includes the host project id, region of the subnet, and the subnet name.
 
 For example:
@@ -158,9 +158,9 @@ For brevity, this `product.yml` is a basic example for `healthwatch`.
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
 
-* `product-properties` - properties for the tile [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#updating-a-selector-property)
-* `network-properties` - a list of named networks to deploy the VMs to [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#configuring-networks-and-azs)
-* `resource-config` - for the jobs of the tile [Ops Manager API](https://docs.pivotal.io/pivotalcf/2-1/opsman-api/#configuring-resources-for-a-job)
+* `product-properties` - properties for the tile [Ops Manager API][opsman-api-config-products]
+* `network-properties` - a list of named networks to deploy the VMs to [Ops Manager API][opsman-api-config-networks]
+* `resource-config` - for the jobs of the tile [Ops Manager API][opsman-api-config-resources]
 
 ### state
 

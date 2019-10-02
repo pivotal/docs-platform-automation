@@ -180,7 +180,7 @@ A configuration can be generated from a staged product on an already existing Op
 To extract the configuration for a product, you will first need to do the following:
 
 1. Upload and stage your desired product(s) to a fully deployed Ops Manager.
-For example, let's use [Pivotal Application Service][pas] on Vsphere
+For example, let's use [Pivotal Application Service][pas] on Vsphere with NSX-T
 1. Configure your product _manually_ according to the product's
 [install instructions][pas-install-vsphere].
 
