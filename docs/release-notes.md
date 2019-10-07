@@ -20,6 +20,37 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.2.0
+** Release Date** Someday sometime
+
+### What's New
+- The [`download-product`][download-product] task now supports the `SOURCE` flag
+  to specify where to download products and stemcells from.
+  The supported blobstores are Pivnet, S3, Azure, and GCS.
+  The [`download-product-s3`][download-product-s3] task has been deprecated
+  in favor of the [`download-product`][download-product] task and setting the `SOURCE: s3` in `params`.
+
+  For example, the `download-product-s3` in a pipeline:
+
+  ```yaml
+  - task: download-pas
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product-s3.yml
+    params:
+      CONFIG_FILE: download-product/pas.yml
+  ```
+
+  Will be changed to:
+
+  ```yaml
+  - task: download-pas
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product/pas.yml
+      SOURCE: s3
+  ```
+
 ## v4.1.0
 ** Release Date** Someday sometime
 
