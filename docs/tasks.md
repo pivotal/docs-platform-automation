@@ -262,7 +262,7 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 
 {% include "./.opsman_filename_change_note.md" %}
 
-Downloads a product specified in a config file from Pivnet.
+Downloads a product specified in a config file from Pivnet, S3, GCS, or Azure.
 Optionally, also downloads the latest stemcell for that product.
 
 Downloads are cached, so files are not re-downloaded each time.
@@ -271,12 +271,12 @@ the cached file is verified
 using the Pivnet checksum
 to validate the integrity of that file.
 If it does not, the file is re-downloaded.
-When downloading from s3,
+When downloading from a supported blobstore
 the cached file is not-verified,
-as there is no checksum from the s3 API to use.
+as there is no checksum from those blobstore APIs to use.
 
-Outputs can be persisted to an S3-compatible blobstore using a `put` to an appropriate resource
-for later use with the [`download-product-s3`][download-product-s3],
+Outputs can be persisted to any supported blobstore using a `put` to an appropriate resource
+for later use with download-product using the `SOURCE` parameter,
 or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
@@ -294,7 +294,7 @@ The valid IaaSs are:
 - `openstack`
 - `vsphere`
 
-If S3 configuration is present in the [download-product config file][download-product-config],
+If a configuration for S3, GCS, or Azure is present in the [download-product config file][download-product-config],
 the slug and version of the downloaded product file will be prepended in brackets to the filename.  
 For example:
 
@@ -312,9 +312,9 @@ For example:
 
 This is to allow the same config parameters
 that let us select a file from Pivnet
-select it again when pulling from S3.
+select it again when pulling from the supported blobstore.
 Note that the filename will be unchanged
-if S3 keys are not present in the configuration file.
+if supported blobstore keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
 !!! warning "When using the s3 resource in concourse"
@@ -340,9 +340,15 @@ This avoids breaking current pipelines.
 
 {% code_snippet 'tasks', 'download-product', 'Task' %}
 {% code_snippet 'tasks', 'download-product-script', 'Implementation' %}
-{% code_snippet 'examples', 'download-product-usage', 'Usage' %}
+{% code_snippet 'examples', 'download-product-usage', 'Pivnet Usage' %}
+{% code_snippet 'examples', 'download-product-s3-usage', 'S3 Usage' %}
 
 ### download-product-s3
+
+!!! warning
+    This task is deprecated in favor of [`download-product`][download-product],
+    which can now download from all supported blobstores.
+
 Downloads a product specified in a config file from an S3-compatible blobstore.
 This is useful when retrieving assets in an offline environment.
 
