@@ -199,9 +199,10 @@ jobs:
         <<: *interpolate-creds
       - task: download-opsman-image
         image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product-s3.yml
+        file: platform-automation-tasks/tasks/download-product.yml
         params:
           CONFIG_FILE: download-product/opsman.yml
+          SOURCE: s3
         input_mapping:
           config: interpolated-creds
         output_mapping:
@@ -324,9 +325,10 @@ jobs:
         <<: *interpolate-creds
       - task: download-opsman-image
         image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product-s3.yml
+        file: platform-automation-tasks/tasks/download-product.yml
         params:
           CONFIG_FILE: download-product/opsman.yml
+          SOURCE: s3
         input_mapping:
           config: interpolated-creds
         output_mapping:
@@ -382,9 +384,10 @@ jobs:
       # code_snippet download-product-s3-usage start yaml
       - task: download-pas
         image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product-s3.yml
+        file: platform-automation-tasks/tasks/download-product.yml
         params:
           CONFIG_FILE: download-product/pas.yml
+          SOURCE: s3
         input_mapping:
           config: interpolated-creds
         output_mapping:
@@ -524,9 +527,10 @@ jobs:
         <<: *interpolate-creds
       - task: download-healthwatch
         image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product-s3.yml
+        file: platform-automation-tasks/tasks/download-product.yml
         params:
           CONFIG_FILE: download-product/healthwatch.yml
+          SOURCE: s3
         input_mapping:
           config: interpolated-creds
         output_mapping:

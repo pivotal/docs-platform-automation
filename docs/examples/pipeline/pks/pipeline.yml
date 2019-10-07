@@ -118,9 +118,10 @@ jobs:
         <<: *interpolate-creds
       - task: download-opsman-image
         image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product-s3.yml
+        file: platform-automation-tasks/tasks/download-product.yml
         params:
           CONFIG_FILE: download-product/opsman.yml
+          SOURCE: s3
         input_mapping:
           config: interpolated-creds
         output_mapping:
@@ -214,9 +215,10 @@ jobs:
       <<: *interpolate-creds
     - task: download-opsman-image
       image: platform-automation-image
-      file: platform-automation-tasks/tasks/download-product-s3.yml
+      file: platform-automation-tasks/tasks/download-product.yml
       params:
         CONFIG_FILE: download-product/opsman.yml
+        SOURCE: s3
       input_mapping:
         config: interpolated-creds
       output_mapping:
@@ -271,9 +273,10 @@ jobs:
         <<: *interpolate-creds
       - task: download-pks
         image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product-s3.yml
+        file: platform-automation-tasks/tasks/download-product.yml
         params:
           CONFIG_FILE: download-product/pks.yml
+          SOURCE: s3
         input_mapping:
           config: interpolated-creds
         output_mapping:
