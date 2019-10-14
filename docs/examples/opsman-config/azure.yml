@@ -34,6 +34,13 @@ opsman-configuration:
                                       # set to false if you want to create
                                       # the new opsman VM with an unmanaged
                                       # disk (not recommended). default - true
+    # storage_sku: Premium_LRS        # this sets the SKU of the storage account
+                                      # for the disk
+                                      # Allowed values: Standard_LRS, Premium_LRS,
+                                      # StandardSSD_LRS, UltraSSD_LRS
+    # vm_size: Standard_DS1_v2        # the size of the Ops Manager VM
+                                      # default - Standard_DS2_v2
+                                      # Allowed values: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes-general
     # vpc_subnet: /subscriptions/...  # DEPRECATED - use subnet_id
     # use_unmanaged_disk: false       # DEPRECATED - use use_managed_disk
 # code_snippet azure-configuration end
