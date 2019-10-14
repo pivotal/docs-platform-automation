@@ -23,6 +23,14 @@ title: Release Notes
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v3.0.12
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package. 
+
 ## v3.0.11
 
 **Release Date** Coming soon!
