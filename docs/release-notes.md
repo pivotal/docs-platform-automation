@@ -22,6 +22,14 @@ title: Release Notes
      ```
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
+     
+## v4.0.5
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.  
 
 ## v4.0.4
 
@@ -137,6 +145,14 @@ title: Release Notes
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
+## v3.0.12
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package. 
+  
 ## v3.0.11
 
 **Release Date** Coming soon!
