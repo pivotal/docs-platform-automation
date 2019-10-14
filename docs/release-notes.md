@@ -51,8 +51,8 @@
       SOURCE: s3
   ```
 
-## v4.1.0
-** Release Date** Someday sometime
+## v4.1.2
+** Release Date** Coming Soon!
 
 ### What's New
 - [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
@@ -117,6 +117,19 @@
   becomes `security_group_ids: [ sg-1 ]`.
   This allows the specification of multiple security groups to the Ops Manager VM.
 
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+  
+## v4.0.5
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.  
+  
 ## v4.0.4
 
 **Release Date** Coming soon!
@@ -231,6 +244,14 @@
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
+## v3.0.12
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package. 
+  
 ## v3.0.11
 
 **Release Date** Coming soon!
