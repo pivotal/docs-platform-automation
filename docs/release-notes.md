@@ -33,7 +33,7 @@ title: Release Notes
 
 ## v4.0.4
 
-**Release Date** Coming soon!
+**Release Date** October 15, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
@@ -155,7 +155,7 @@ title: Release Notes
   
 ## v3.0.11
 
-**Release Date** Coming soon!
+**Release Date** October 15, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
