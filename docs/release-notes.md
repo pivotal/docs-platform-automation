@@ -50,6 +50,10 @@
       CONFIG_FILE: download-product/pas.yml
       SOURCE: s3
   ```
+- [`configure-authentication`][configure-authentication], 
+  [`configure-ldap-authentication`][configure-ldap-authentication], and 
+  [`configure-saml-authentication`][configure-saml-authentication]
+  now support passing through vars files to the underlying `om` command.
 
 ## v4.1.2
 ** Release Date** Coming Soon!
