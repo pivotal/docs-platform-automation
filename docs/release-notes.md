@@ -50,10 +50,29 @@
       CONFIG_FILE: download-product/pas.yml
       SOURCE: s3
   ```
+  
 - [`configure-authentication`][configure-authentication], 
   [`configure-ldap-authentication`][configure-ldap-authentication], and 
   [`configure-saml-authentication`][configure-saml-authentication]
   now support passing through vars files to the underlying `om` command.
+- When using [`configure-product`][configure-product] and [`configure-director`][configure-director], 
+  the `additional_vm_extensions` for a resource will have the following behaviour:
+    - If not set in config file, the value from Ops Manager will be persisted.
+    - If defined in the config file and an emtpy array (`[]`), the values on Ops Manager will be removed.
+    - If defined in the file with a value (`["web_lb"]`), these values will be set on Ops Manager.
+- When using [`configure-director`][configure-director]
+  `vmextensions-configuration` can be defined to add|remove vm_extensions
+  to|from the BOSH director. An example of this in the config:
+  
+    ```yaml
+    vmextensions-configuration:
+    - name: a_vm_extension
+      cloud_properties:
+        source_dest_check: false
+    - name: another_vm_extension
+      cloud_properties:
+        foo: bar
+    ```
 
 ## v4.1.2
 ** Release Date** Coming Soon!
