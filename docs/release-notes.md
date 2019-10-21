@@ -50,12 +50,12 @@
       CONFIG_FILE: download-product/pas.yml
       SOURCE: s3
   ```
-  
-- [`configure-authentication`][configure-authentication], 
-  [`configure-ldap-authentication`][configure-ldap-authentication], and 
+
+- [`configure-authentication`][configure-authentication],
+  [`configure-ldap-authentication`][configure-ldap-authentication], and
   [`configure-saml-authentication`][configure-saml-authentication]
   now support passing through vars files to the underlying `om` command.
-- When using [`configure-product`][configure-product] and [`configure-director`][configure-director], 
+- When using [`configure-product`][configure-product] and [`configure-director`][configure-director],
   the `additional_vm_extensions` for a resource will have the following behaviour:
     - If not set in config file, the value from Ops Manager will be persisted.
     - If defined in the config file and an emtpy array (`[]`), the values on Ops Manager will be removed.
@@ -63,7 +63,7 @@
 - When using [`configure-director`][configure-director]
   `vmextensions-configuration` can be defined to add|remove vm_extensions
   to|from the BOSH director. An example of this in the config:
-  
+
     ```yaml
     vmextensions-configuration:
     - name: a_vm_extension
@@ -75,7 +75,7 @@
     ```
 
 ## v4.1.2
-** Release Date** Coming Soon!
+** Release Date** October 21, 2019
 
 ### What's New
 - [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
@@ -113,7 +113,8 @@
   but when generated, JSON was outputted.
   This caused confusion.
   The generated state file is now outputted as YAML.
-  
+- `om` CLI has been bumped to v4.0.0. 
+
 ### Deprecation Notices
 - The `host` field in [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
   Platform Automation can initially choose where the VM is placed
@@ -121,13 +122,13 @@
   or that other generated VMs are assigned to the same host.
 - The `vpc_subnet` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
   In your opsman.yml, replace `vpc_subnet` with `subnet_id`.
-  This change was to help mitigate confusion 
+  This change was to help mitigate confusion
   as VPC is an AWS, not an Azure, concept.
 - The optional `use_unmanaged_disk` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
   In your opsman.yml, replace `use_unmanaged_disk: true` with `use_managed_disk: false`.
   The default for `use_managed_disk` is true.
   Unmanaged disk is not recommended by Azure.
-  If you would like to use unmanaged disks, 
+  If you would like to use unmanaged disks,
   please opt-out by setting `use_managed_disk: false`.
 - The optional `use_instance_profile` field in [aws_opsman.yml][inputs-outputs-aws] has been deprecated.
   It was redundant.
@@ -142,17 +143,17 @@
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
-  
+
 ## v4.0.5
 **Release Date** Coming soon!
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.  
-  
+
 ## v4.0.4
 
 **Release Date** October 15, 2019
@@ -169,7 +170,7 @@
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 - CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
   (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
@@ -272,9 +273,9 @@
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
-  This CVE is related to vulnerabilities with `python`. 
-  None of our code calls `python` directly, but the IaaS CLIs rely on this package. 
-  
+  This CVE is related to vulnerabilities with `python`.
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
 ## v3.0.11
 
 **Release Date** October 15, 2019
@@ -290,7 +291,7 @@
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 - CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
   (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
