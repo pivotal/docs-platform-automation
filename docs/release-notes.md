@@ -20,8 +20,8 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## v4.1.0
-** Release Date** Someday sometime
+## v4.1.2
+** Release Date** October 21, 2019
 
 ### What's New
 - [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
@@ -59,7 +59,8 @@
   but when generated, JSON was outputted.
   This caused confusion.
   The generated state file is now outputted as YAML.
-  
+- `om` CLI has been bumped to v4.0.0.
+
 ### Deprecation Notices
 - The `host` field in [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
   Platform Automation can initially choose where the VM is placed
@@ -67,13 +68,13 @@
   or that other generated VMs are assigned to the same host.
 - The `vpc_subnet` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
   In your opsman.yml, replace `vpc_subnet` with `subnet_id`.
-  This change was to help mitigate confusion 
+  This change was to help mitigate confusion
   as VPC is an AWS, not an Azure, concept.
 - The optional `use_unmanaged_disk` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
   In your opsman.yml, replace `use_unmanaged_disk: true` with `use_managed_disk: false`.
   The default for `use_managed_disk` is true.
   Unmanaged disk is not recommended by Azure.
-  If you would like to use unmanaged disks, 
+  If you would like to use unmanaged disks,
   please opt-out by setting `use_managed_disk: false`.
 - The optional `use_instance_profile` field in [aws_opsman.yml][inputs-outputs-aws] has been deprecated.
   It was redundant.
@@ -85,6 +86,19 @@
   For example, `security_group_id: sg-1`
   becomes `security_group_ids: [ sg-1 ]`.
   This allows the specification of multiple security groups to the Ops Manager VM.
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`.
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
+## v4.0.5
+**Release Date** Coming soon!
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`.
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package. 
 
 ## v4.0.4
 
