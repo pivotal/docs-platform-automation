@@ -24,6 +24,9 @@
 ** Release Date** Someday sometime
 
 ### What's New
+- When creating an `create-vm` task for Azure,
+  the disk type and VM type can be specified.
+  The configuration `storage_sku` and `vm_size` use the Azure values accordingly.
 - The [`download-product`][download-product] task now supports the `SOURCE` flag
   to specify where to download products and stemcells from.
   The supported blobstores are Pivnet, S3, Azure, and GCS.
@@ -73,6 +76,11 @@
       cloud_properties:
         foo: bar
     ```
+  
+### Bug Fixes
+- When creating a Ops Manager on Azure,
+  there was a bug in offline environments.
+  We are now using the full image reference ID when creating the VM.
 
 ## v4.1.2
 ** Release Date** October 21, 2019
