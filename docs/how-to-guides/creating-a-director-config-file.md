@@ -89,6 +89,16 @@ vmextensions-configuration:
 ...
 ```
 
+To use VM Extensions in either your director or product,
+define `additional_vm_extensions` like so:
+```yaml
+resource-configuration:
+  director:
+    additional_networks: []
+    additional_vm_extensions: [a_vm_extension,another_vm_extension]
+...
+```
+
 ## VM Types
 You may specify custom VM types to be used in deployments.
 To learn more about how various IAAS's support and use these types,
