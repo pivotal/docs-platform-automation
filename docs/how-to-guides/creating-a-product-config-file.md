@@ -117,9 +117,11 @@ you'll need to use some of the ops files in one of the following four directorie
     </tr>
     <tr>
         <td>resource</td>
-        <td>contains configuration that can be applied to resource configuration. For example, [BOSH vm extensions][vm-extensions]</td>
+        <td>contains configuration that can be applied to resource configuration. For example, BOSH vm extensions</td>
     </tr>
 </table>
+
+For more information on BOSH VM Extensions, refer to the [Creating a Director Config File How-to Guide][vm-extensions].
 
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
@@ -293,9 +295,6 @@ Replicating configuration settings from one product to the same product on a dif
 
 * Because properties and property names can change between patch versions of a product,
   you can only safely apply configuration settings across products if their versions exactly match.
-
-
-
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
