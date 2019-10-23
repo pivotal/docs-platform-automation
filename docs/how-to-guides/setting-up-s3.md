@@ -311,10 +311,11 @@ and how it works, refer to the [download-product task reference.][download-produ
 !!! warning "Changing S3 file names"
     Do not change the meta information
     prepended by `download-product`.
-    This information is required by the
-    `download-product-s3` task to properly parse product versions.
+    This information is required
+    if using a `download-product` with a blobstore (i.e. aws, gcs)
+    in order to properly parse product versions.
 
-    If placing a product file into an S3 bucket manually,
+    If placing a product file into an blobstore bucket manually,
     ensure that it has the proper file name format;
     opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
     There should be no spaces between the two brackets.
@@ -323,21 +324,20 @@ and how it works, refer to the [download-product task reference.][download-produ
     [product-slug,1.1.1]original-filename.pivotal
     ```
 
-#### The download-product-s3 task
-
-The [`download-product-s3`][download-product-s3]
-task lets you download products from an S3 bucket.
-The prefixed metadata added by `download-product` is used to find the appropriate file.
+#### The download-product task
+The [`download-product`][download-product]
+task lets you download products from an blobstore bucket if you define the `SOURCE` param.
+The prefixed metadata added by `download-product` with `SOURCE: pivnet` is used to find the appropriate file.
 This task uses the same [download-product config file][download-product-config]
 as `download-product` to ensure consistency
-across what is `put` in S3
-and what is being accessed later by `download-product-s3`.
-`download-product` and `download-product-s3` are designed
+across what is `put` in the blobstore
+and what is being accessed later.
+`download-product` with `SOURCE: pivnet` and `download-product` with `SOURCE: s3|gcs|azure` are designed
 to be used together.
 The download product config should be different between the two tasks.
 
 For complete information on this task
-and how it works, refer to the [download-product-s3 task reference.][download-product-s3]
+and how it works, refer to the [download-product task reference.][download-product]
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

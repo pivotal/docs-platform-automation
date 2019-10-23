@@ -1,52 +1,81 @@
-# code_snippet download-product-config start yaml
+# code_snippet download-product-config-pivnet start yaml
 ---
 pivnet-api-token: token
-## Note that file globs must be quoted if they start with *;
-## otherwise they'll be interpreted as a YAML anchor.
-pivnet-file-glob: "*.pivotal"
-pivnet-product-slug: product-slugs
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
 
-## defaults to false and should be excluded if not set to true
-# pivnet-disable-ssl: true
+# Either product-version OR product-version-regex is required
+# product-version-regex: ^1\.2\..*$ # must not be quoted
+product-version: 1.2.3
 
-## Either product-version OR product-version-regex is required
-# product-version: 1.2.3
+# Optional
+# pivnet-disable-ssl: true  # default - false
+# stemcell-iaas: google     # aws|azure|google|openstack|vsphere
+                            # will attempt to download the latest
+                            # stemcell for the product (if available)
+# blobstore-bucket: bucket  # if set, product files will have their slug and
+                            # version prepended. Set if the product will
+                            # ever be stored in a blobstore
+# code_snippet download-product-config-pivnet end yaml
 
-## Note that the regex mustn't be quoted,
-## as escape characters for the regex will confuse yaml parsers.
-# product-version-regex: ^1\.2\..*$
+# code_snippet download-product-config-s3 start yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+s3-region-name: us-west-1           # if NOT using AWS s3, value is 'region'
 
-## If set, will attempt to download the latest stemcell for the product.
-## Ignored if the specified file is not a `.pivotal` file.
-## Valid options are: aws, azure, google, openstack, vsphere.
-# stemcell-iaas: google
-
-## The following are required only if using download-product-s3.
-## Any key marked required above is still required when using S3.
-## If s3-bucket is set,
-## downloaded product files will have their slug and version prepended.
-s3-bucket: s3-bucket
-s3-region-name: us-west-1      # required; sufficient for AWS
-s3-endpoint: s3.endpoint.com   # if not using AWS, this is required
-
-## Required unless `s3-auth-method` is `iam`
+## Required unless `s3-auth-type: iam`
 s3-access-key-id: aws-or-minio-key-id
 s3-secret-access-key: aws-or-minio-secret-key
 
-## Optional paths for both the product and the associated stemcell
-## defaults to the root path of the specified bucket
-# s3-product-path: /path/to/product
-# s3-stemcell-path: /path/to/stemcell
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+# s3-disable-ssl: true                        # default - false
+# s3-enable-v2-signing: true                  # available for compatibility
+# s3-auth-type: iam                           # default - accesskey
+# s3-endpoint: s3.endpoint.com                # required if NOT using AWS S3
+# code_snippet download-product-config-s3 end yaml
 
-## defaults to false and should be excluded if not set to true
-# s3-disable-ssl: true
+# code_snippet download-product-config-gcs start yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+gcs-project-id: project-id
+gcs-service-account-json: |
+  {
+    "type": "service_account",
+    "project_id": "project-id",
+    "private_key_id": "fake-key-id",
+    "private_key": "-----BEGIN PRIVATE KEY-----\fake-key-----END PRIVATE KEY-----\n",
+    "client_email": "email@project-id.iam.gserviceaccount.com",
+    "client_id": "123456789876543212345",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/project%40project-id.iam.gserviceaccount.com"
+  }
 
-## defaults to false;
-## made available only because sometimes necessary for compatibility
-# s3-enable-v2-signing: true
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+# code_snippet download-product-config-gcs end yaml
 
-## defaults to accesskey;
-## allows use of AWS instance IAM creds, if available
-# s3-auth-type: iam
+# code_snippet download-product-config-azure start yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: container-name
+azure-storage-account: 1234567890abcdefghij
+azure-storage-key: storage-access-key-from-azure-portal
 
-# code_snippet download-product-config end
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+# code_snippet download-product-config-azure end yaml
+

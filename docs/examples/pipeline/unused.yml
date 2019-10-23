@@ -88,3 +88,29 @@
     env: interpolated-creds
     config: interpolated-creds
 # code_snippet stage-configure-apply-usage end
+      # code_snippet download-product-usage-gcs start yaml
+      - task: download-pas
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product.yml
+        params:
+          CONFIG_FILE: download-product/pas.yml
+          SOURCE: gcs
+        input_mapping:
+          config: interpolated-creds
+        output_mapping:
+          downloaded-product: pas-product
+          downloaded-stemcell: pas-stemcell
+      # code_snippet download-product-usage-gcs end
+      # code_snippet download-product-usage-azure start yaml
+      - task: download-pas
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product.yml
+        params:
+          CONFIG_FILE: download-product/pas.yml
+          SOURCE: azure
+        input_mapping:
+          config: interpolated-creds
+        output_mapping:
+          downloaded-product: pas-product
+          downloaded-stemcell: pas-stemcell
+      # code_snippet download-product-usage-azure end

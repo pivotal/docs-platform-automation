@@ -27,33 +27,9 @@
 - When creating an `create-vm` task for Azure,
   the disk type and VM type can be specified.
   The configuration `storage_sku` and `vm_size` use the Azure values accordingly.
-- The [`download-product`][download-product] task now supports the `SOURCE` flag
+- The [`download-product`][download-product] task now supports the `SOURCE` param
   to specify where to download products and stemcells from.
   The supported blobstores are Pivnet, S3, Azure, and GCS.
-  The [`download-product-s3`][download-product-s3] task has been deprecated
-  in favor of the [`download-product`][download-product] task and setting the `SOURCE: s3` in `params`.
-
-  For example, the `download-product-s3` in a pipeline:
-
-  ```yaml
-  - task: download-pas
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/download-product-s3.yml
-    params:
-      CONFIG_FILE: download-product/pas.yml
-  ```
-
-  Will be changed to:
-
-  ```yaml
-  - task: download-pas
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/download-product.yml
-    params:
-      CONFIG_FILE: download-product/pas.yml
-      SOURCE: s3
-  ```
-
 - [`configure-authentication`][configure-authentication],
   [`configure-ldap-authentication`][configure-ldap-authentication], and
   [`configure-saml-authentication`][configure-saml-authentication]
@@ -75,6 +51,31 @@
     - name: another_vm_extension
       cloud_properties:
         foo: bar
+    ```
+  
+### Deprecation Notices
+- The [`download-product-s3`][download-product-s3] task has been deprecated
+  in favor of the [`download-product`][download-product] task and setting the `SOURCE: s3` in `params`.
+
+    For example, the `download-product-s3` in a pipeline:
+    
+    ```yaml
+    - task: download-pas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product-s3.yml
+      params:
+        CONFIG_FILE: download-product/pas.yml
+    ```
+    
+    Will be changed to:
+    
+    ```yaml
+    - task: download-pas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product/pas.yml
+        SOURCE: s3
     ```
   
 ### Bug Fixes
