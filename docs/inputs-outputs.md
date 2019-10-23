@@ -332,7 +332,10 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
-{% code_snippet 'examples', 'download-product-config' %}
+{% code_snippet 'examples', 'download-product-config-pivnet', 'Pivnet' %}
+{% code_snippet 'examples', 'download-product-config-s3', 'S3' %}
+{% code_snippet 'examples', 'download-product-config-gcs', 'GCS' %}
+{% code_snippet 'examples', 'download-product-config-azure', 'Azure' %}
 
 ### download-stemcell-product-config
 

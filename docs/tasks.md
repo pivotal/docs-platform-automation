@@ -304,7 +304,7 @@ For example:
   cf-2.5.0-build.45.pivotal
   ```
 
-- download-product-filenames if S3 configuration is present:
+- download-product-filenames if blobstore configuration is present:
   ```
   [ops-manager,2.5.0]ops-manager-aws-2.5.0-build.123.yml
   [elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
@@ -341,13 +341,16 @@ This avoids breaking current pipelines.
 {% code_snippet 'tasks', 'download-product', 'Task' %}
 {% code_snippet 'tasks', 'download-product-script', 'Implementation' %}
 {% code_snippet 'examples', 'download-product-usage', 'Pivnet Usage' %}
-{% code_snippet 'examples', 'download-product-s3-usage', 'S3 Usage' %}
+{% code_snippet 'examples', 'download-product-usage-s3', 'S3 Usage' %}
+{% code_snippet 'examples', 'download-product-usage-gcs', 'GCS Usage' %}
+{% code_snippet 'examples', 'download-product-usage-azure', 'Azure Usage' %}
 
 ### download-product-s3
 
-!!! warning
+!!! warning "Deprecation Notice"
     This task is deprecated in favor of [`download-product`][download-product],
     which can now download from all supported blobstores.
+    Usage has been changed to reflect the preferred command.
 
 Downloads a product specified in a config file from an S3-compatible blobstore.
 This is useful when retrieving assets in an offline environment.
@@ -401,7 +404,7 @@ For example:
 
 {% code_snippet 'tasks', 'download-product-s3', 'Task' %}
 {% code_snippet 'tasks', 'download-product-s3-script', 'Implementation' %}
-{% code_snippet 'examples', 'download-product-s3-usage', 'Usage' %}
+{% code_snippet 'examples', 'download-product-usage-s3', 'Usage' %}
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.

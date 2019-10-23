@@ -381,7 +381,7 @@ jobs:
           - get: configuration
       - task: interpolate-creds
         <<: *interpolate-creds
-      # code_snippet download-product-s3-usage start yaml
+      # code_snippet download-product-usage-s3 start yaml
       - task: download-pas
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
@@ -393,7 +393,7 @@ jobs:
         output_mapping:
           downloaded-product: pas-product
           downloaded-stemcell: pas-stemcell
-      # code_snippet download-product-s3-usage end
+      # code_snippet download-product-usage-s3 end
       # code_snippet upload-product-usage start yaml
       - task: upload-product
         image: platform-automation-image

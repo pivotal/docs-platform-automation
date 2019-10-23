@@ -24,14 +24,14 @@ and places them into a trusted s3-like storage provider.
 This helps other concourse deployments without internet access
 retrieve task dependencies.
 
-!!! tip "S3 filename prefixing"
+!!! tip "Blobstore filename prefixing"
     Note the unique regex format for blob names,
     for example: `\[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal`.
     Pivnet filenames will not always contain the necessary metadata
-    to accurately download files from S3.
+    to accurately download files from a blobstore (i.e. s3, gcs, azure).
     So, the product slug and version are prepended when using `download-product`.
     For more information on how this works,
-    and what to expect when using `download-product` and `download-product-s3`,
+    and what to expect when using `download-product`,
     refer to the [`download-product` task reference.][download-product]
 
 The pipeline requires configuration for the [download-product](../tasks.md#download-product) task.
