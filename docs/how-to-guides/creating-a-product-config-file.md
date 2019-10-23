@@ -117,7 +117,7 @@ you'll need to use some of the ops files in one of the following four directorie
     </tr>
     <tr>
         <td>resource</td>
-        <td>contains configuration that can be applied to resource configuration. For example, BOSH vm extensions</td>
+        <td>contains configuration that can be applied to resource configuration. For example, [BOSH vm extensions][vm-extensions]</td>
     </tr>
 </table>
 
