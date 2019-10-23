@@ -404,7 +404,7 @@ For example:
 
 {% code_snippet 'tasks', 'download-product-s3', 'Task' %}
 {% code_snippet 'tasks', 'download-product-s3-script', 'Implementation' %}
-{% code_snippet 'examples', 'download-product-usage-s3', 'Usage' %}
+{% code_snippet 'examples', 'download-product-s3-usage', 'Usage' %}
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
