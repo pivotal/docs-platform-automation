@@ -458,6 +458,20 @@ to find the necessary values.
 {% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
 {% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
 
+Alternatively, you can auto-generate your opsman.yml
+using a `p-automator` command to output an opsman.yml file
+in the directory it is called from. 
+
+```bash tab="AWS"
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --aws-region "$AWS_REGION" \
+  --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+  --aws-access-key-id "$AWS_ACCESS_KEY_ID"
+```
+
 Once you have your config file, commit and push it:
 
 ```bash
