@@ -443,8 +443,6 @@ We can map the `env` resource to [`upgrade-opsman`][upgrade-opsman]'s
 
 But first, we've got two more inputs to arrange for.
 
-Let's do [`config`][opsman-config] next.
-
 We'll write an [Ops Manager VM Configuration file][opsman-config]
 to `opsman.yml`.
 The properties available vary by IaaS;
@@ -454,30 +452,11 @@ in your IaaS's console
 look at your terraform outputs)
 to find the necessary values.
 
-``` yaml tab="AWS"
-{% include './examples/howto/aws.yml' %}
-```
-
-``` yaml tab="Azure"
-{% include './examples/howto/azure.yml' %}
-```
-
-``` yaml tab="GCP"
-{% include './examples/howto/gcp.yml' %}
-```
-
-``` yaml tab="OpenStack"
-{% include './examples/howto/openstack.yml' %}
-```
-
-``` yaml tab="vSphere"
-{% include './examples/howto/vsphere.yml' %}
-```
-
-These examples all make assumptions
-about the details of your existing Ops Manager's configuration.
-See [the reference docs for this file][opsman-config]
-for more details about your options and per-IaaS caveats.
+{% code_snippet 'examples', 'aws-configuration', 'AWS' %}
+{% code_snippet 'examples', 'azure-configuration', 'Azure' %}
+{% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
+{% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
+{% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
 
 Once you have your config file, commit and push it:
 

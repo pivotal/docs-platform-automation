@@ -4,8 +4,8 @@ opsman-configuration:
   openstack:
     project_name: project
     auth_url: http://os.example.com:5000/v2.0
-    username: admin
-    password: password
+    username: ((opsman-openstack-username))
+    password: ((opsman-openstack-password))
     net_id: 26a13112-b6c2-11e8-96f8-529269fb1459
     security_group_name: opsman-sec-group
     key_pair_name: opsman-keypair

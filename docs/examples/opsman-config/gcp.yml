@@ -5,19 +5,7 @@ opsman-configuration:
     # Either gcp_service_account_name or gcp_service_account json is required
     # You must remove whichever you don't use
     gcp_service_account_name: user@project-id.iam.gserviceaccount.com
-    gcp_service_account: |
-      {
-        "type": "service_account",
-        "project_id": "project-id",
-        "private_key_id": "af719b1ca48f7b6ac67ca9c5319cb175",
-        "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
-        "client_email": "user@project-id.iam.gserviceaccount.com",
-        "client_id": "1234567890",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://accounts.google.com/o/oauth2/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/user%40project-id.iam.gserviceaccount.com"
-      }
+    gcp_service_account: ((gcp-service-account-key-json))
 
     project: project-id
     region: us-central1
