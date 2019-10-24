@@ -8,8 +8,8 @@ opsman-configuration:
       datastore: example-ds-1
       folder: /example-dc/vm/Folder # RECOMMENDED, but not required
       url: vcenter.example.com
-      username: admin
-      password: password
+      username: ((vcenter-username))
+      password: ((vcenter-password))
       resource_pool: /example-dc/host/example-host/Resources/example-res-pool
       # resource_pool can use a cluster - /example-dc/host/example-cluster
 
@@ -26,12 +26,12 @@ opsman-configuration:
     network: example-virtual-network
     ntp: ntp.ubuntu.com
     private_ip: 10.0.0.10
-    ssh_public_key: ssh-rsa ......  # REQUIRED Ops Manager >= 2.6
+    ssh_public_key: ssh-rsa ......   # REQUIRED Ops Manager >= 2.6
 
     # Optional
-    # cpu: 1                        # default - 1
-    # memory: 8                     # default - 8 (GB)
-    # ssh_password: password        # REQUIRED if ssh_public_key not defined
-                                    # (Ops Manager < 2.6 ONLY)
-    # vm_name: Ops_Manger           # default - Ops_Manager
+    # cpu: 1                         # default - 1
+    # memory: 8                      # default - 8 (GB)
+    # ssh_password: ((ssh-password)) # REQUIRED if ssh_public_key not defined
+                                     # (Ops Manager < 2.6 ONLY)
+    # vm_name: Ops_Manger            # default - Ops_Manager
 # code_snippet vsphere-configuration end

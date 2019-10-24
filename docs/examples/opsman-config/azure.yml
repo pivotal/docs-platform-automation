@@ -5,7 +5,7 @@ opsman-configuration:
     tenant_id: 3e52862f-a01e-4b97-98d5-f31a409df682
     subscription_id: 90f35f10-ea9e-4e80-aac4-d6778b995532
     client_id: 5782deb6-9195-4827-83ae-a13fda90aa0d
-    client_secret: 6Iaue71Lqxfq
+    client_secret: ((opsman-client-secret))
     location: westus
     resource_group: res-group
     storage_account: opsman                       # account name of container
@@ -22,7 +22,7 @@ opsman-configuration:
 
     # Optional
     # cloud_name: AzureCloud          # default - AzureCloud
-    # storage_key: pEuXDaDK/WWo...    # only required if your client does not
+    # storage_key: ((storage-key))    # only required if your client does not
                                       # have the needed storage permissions
     # container: opsmanagerimage      # storage account container name
                                       # default - opsmanagerimage

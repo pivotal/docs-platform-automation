@@ -353,31 +353,11 @@ The properties available vary by IaaS, for example:
 * ssh key
 * datacenter/availability zone/region
 
-``` yaml tab="AWS"
-{% include './examples/howto/aws.yml' %}
-```
-
-``` yaml tab="Azure"
-{% include './examples/howto/azure.yml' %}
-```
-
-``` yaml tab="GCP"
-{% include './examples/howto/gcp.yml' %}
-```
-
-``` yaml tab="OpenStack"
-{% include './examples/howto/openstack.yml' %}
-```
-
-``` yaml tab="vSphere"
-{% include './examples/howto/vsphere.yml' %}
-```
-
-
-These examples all make assumptions
-about the details of your soon-to-be Ops Manager's configuration.
-See [the reference docs for this file][opsman-config]
-for more details about your options and per-IaaS caveats.
+{% code_snippet 'examples', 'aws-configuration', 'AWS' %}
+{% code_snippet 'examples', 'azure-configuration', 'Azure' %}
+{% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
+{% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
+{% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
 
 Once you have your config file, commit and push it:
 
