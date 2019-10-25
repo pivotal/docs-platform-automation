@@ -156,7 +156,7 @@
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.5
-**Release Date** Coming soon!
+**Release Date** October 25, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
@@ -278,7 +278,7 @@
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.12
-**Release Date** Coming soon!
+**Release Date** October 25, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
