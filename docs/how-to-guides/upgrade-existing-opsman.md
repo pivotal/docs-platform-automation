@@ -472,6 +472,16 @@ docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
   --aws-access-key-id "$AWS_ACCESS_KEY_ID"
 ```
 
+```bash tab="GCP"
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --gcp-zone "$GCP_ZONE" \
+  --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
+  --gcp-project-id "$GCP_PROJECT_ID"
+```
+
 Once you have your config file, commit and push it:
 
 ```bash
