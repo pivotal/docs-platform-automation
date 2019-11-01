@@ -83,7 +83,7 @@
   there was a bug in offline environments.
   We are now using the full image reference ID when creating the VM.  
 
-## v4.1.3
+## v4.1.5
 **Release Date** Coming Soon
 
 ### Bug Fixes
