@@ -81,7 +81,18 @@
 ### Bug Fixes
 - When creating a Ops Manager on Azure,
   there was a bug in offline environments.
-  We are now using the full image reference ID when creating the VM.
+  We are now using the full image reference ID when creating the VM.  
+
+## v4.1.3
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
 
 ## v4.1.2
 ** Release Date** October 21, 2019
@@ -154,6 +165,17 @@
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
+## v4.0.6
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
 
 ## v4.0.5
 **Release Date** October 25, 2019
@@ -276,6 +298,17 @@
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
+
+## v3.0.13
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
 
 ## v3.0.12
 **Release Date** October 25, 2019
