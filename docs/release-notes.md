@@ -415,7 +415,7 @@ CVE update to container image. Resolves USN-4151-1 This CVE is related to vulner
   with breaking changes in major bumps,
   non-breaking changes for minor bumps,
   and bug fixes for patches.
-- The [`credhub-interpolate`](./tasks.md#credhub-interpolate) task can have multiple
+- The [`credhub-interpolate`][credhub-interpolate] task can have multiple
   interpolation paths. The `INTERPOLATION_PATH` param is now plural: `INTERPOLATION_PATHS`.
   IF you are using a custom `INTERPOLATION_PATH` for `credhub-interpolate`, you will need to update
   your `pipeline.yml` to this new param.
@@ -466,7 +466,7 @@ CVE update to container image. Resolves USN-4151-1 This CVE is related to vulner
       SKIP_MISSING: true
 ```
 
-- the [`upload-product`](./tasks.md#upload-product) option `--sha256` has been changed to `--shasum`.
+- the [`upload-product`][upload-product] option `--sha256` has been changed to `--shasum`.
   IF you are using the `--config` flag in `upload-product`, your config file will need to update from:
 ```yaml
 # OLD upload-product-config.yml PRIOR TO 3.0.0 RELEASE
@@ -483,41 +483,41 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   de facto way of defining shasums.
 
 ### What's New
-- The new command [`assign-multi-stemcell`](./tasks.md#assign-multi-stemcell) assigns multiple stemcells to a provided product.
+- The new command [`assign-multi-stemcell`][assign-multi-stemcell] assigns multiple stemcells to a provided product.
   This feature is only available in OpsMan 2.6+.
-- [`download-product`](./tasks.md#download-product) ensures sha sum checking when downloading the file from Pivotal Network.
-- [`download-product`](./tasks.md#download-product) can now disable ssl validation when connecting to Pivotal Network.
+- [`download-product`][download-product] ensures sha sum checking when downloading the file from Pivotal Network.
+- [`download-product`][download-product] can now disable ssl validation when connecting to Pivotal Network.
   This helps with environments with SSL and proxying issues.
-  Add `pivnet-disable-ssl: true` in your [download-product-config] to use this feature.
-- On [GCP](./inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
+  Add `pivnet-disable-ssl: true` in your [download-product-config][download-product-config] to use this feature.
+- On [GCP][inputs-outputs-gcp], if you did not assign a public IP, Google would assign
   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
-- On [Azure](./inputs-outputs.md#azure), if you did not assign a public IP, Azure would assign
+- On [Azure][inputs-outputs-azure], if you did not assign a public IP, Azure would assign
   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
-- `om interpolate` (example in the [test task](./tasks.md#test-interpolate)) now supports
+- `om interpolate` (example in the [test task][test-interpolate]) now supports
    the ability to accept partial vars files. This is added support for users who may also be using
    credhub-interpolate or who want to mix interpolation methods. To make use of this feature, include
    the `--skip-missing` flag.
-- [`credhub-interpolate`](./tasks.md#credhub-interpolate) now supports the `SKIP_MISSING`
+- [`credhub-interpolate`][credhub-interpolate] now supports the `SKIP_MISSING`
    parameter. For more information on how to use this feature and if it fits for your foundation(s), see the
-   [Secrets Handling](./concepts/secrets-handling.md#multiple-sources) section.
-- the [reference pipeline](./pipelines/multiple-products.md) has been updated to give an example of
-  [`credhub-interpolate`](./tasks.md#credhub-interpolate) in practice. For more information
-  about credhub, see [Secrets Handling](./concepts/secrets-handling.md#multiple-sources)
+   [Secrets Handling][secrets-handling-multiple-sources] section.
+- the [reference pipeline][reference-pipeline] has been updated to give an example of
+  [`credhub-interpolate`][credhub-interpolate] in practice. For more information
+  about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
 - `om` now has support for `config-template` (a Platform Automation encouraged replacement of
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
-   [Creating a Product Config File](./how-to-guides/creating-a-product-config-file.md#from-pivnet).
-- [`upload-stemcell`](./tasks.md#upload-stemcell) now supports the ability to include a config file.
+   [Creating a Product Config File][product-configuration-from-pivnet].
+- [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
   This allows you to define an expected `shasum` that will validate the calculated shasum of the provided
-  `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`](./tasks.md#upload-product)
-- [Azure](./inputs-outputs.md#azure) now allows NSG(network security group) to be optional.
+  `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`][upload-product]
+- [Azure][inputs-outputs-azure] now allows NSG(network security group) to be optional.
   This change was made because NSGs can be assigned at the subnet level rather than just the VM level. This
   param is also not required by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest).
   Platform Automation now reflects this.
-- [staged-director-config](./tasks.md#staged-director-config) now supports returning multiple IaaS
+- [staged-director-config][staged-director-config] now supports returning multiple IaaS
   configurations. `iaas-configurations` is a top level key returned in Ops Manager 2.2+. If using an Ops
   Manager 2.1 or earlier, `iaas_configuration` will continue to be a key nested under `properties-configuration`.
-- [configure-director](./tasks.md#configure-director) now supports setting multiple IaaS configurations.
+- [configure-director][configure-director] now supports setting multiple IaaS configurations.
   If using this feature, be sure to use the top-level `iaas-configurations` key, rather than the nested
   `properties-configuration.iaas_configuration` key. If using a single IaaS, `properties-configuration.iaas_configuration`
   is still supported, but the new `iaas_configurations` top-level key is recommended.
@@ -554,7 +554,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/)
   (related to vulnerabilities with `libmagic1`. While none of our code directly used these,
   they are present on the image.)
-- Improved error messaging for [vSphere](./inputs-outputs.md#gcp) VM creation if neither `ssh-password` or `ssh-public-key` are set.
+- Improved error messaging for [vSphere][inputs-outputs-vsphere] VM creation if neither `ssh-password` or `ssh-public-key` are set.
   One or the other is required to create a VM.
 
 {% include ".internal_link_url.md" %}
