@@ -1,6 +1,3 @@
----
-title: Release Notes
----
 !!! info "Platform Automation Beta Documentation"
     Platform Automation is a GA product as of version 3.0.
     The beta versions of Platform Automation documentation
@@ -23,13 +20,24 @@ title: Release Notes
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v3.0.13
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
+
 ## v3.0.12
 **Release Date** October 25, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
-  This CVE is related to vulnerabilities with `python`. 
-  None of our code calls `python` directly, but the IaaS CLIs rely on this package. 
+  This CVE is related to vulnerabilities with `python`.
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v3.0.11
 
@@ -46,7 +54,7 @@ title: Release Notes
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 - CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
   (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
@@ -77,6 +85,8 @@ title: Release Notes
 - CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
   (related to vulnerabilities with `patch`. While none of our code directly used these,
   they are present on the image.)
+- Bumped the following low-severity CVE packages:
+  `linux-libc-dev`, `libldap-2.4-2`, `libldap-common`, `linux-libc-dev`
 
 ## v3.0.5
 **Release Date** July 22, 2019
@@ -92,6 +102,7 @@ title: Release Notes
 - [`upgrade-opsman`][upgrade-opsman] now respects environment variables
   when it makes calls internally to `om`
   (env file still required).
+- [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
 - `om` CLI has been bumped to v3.0.0.
   This includes the following bug fixes:
     * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
@@ -108,6 +119,7 @@ title: Release Notes
     * remove `revert-staged-changes`
       `unstage-product` functionally does the same thing,
       but uses the API.
+- Bumped the following low-severity CVE packages: `unzip`
 
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
@@ -221,7 +233,7 @@ title: Release Notes
   with breaking changes in major bumps,
   non-breaking changes for minor bumps,
   and bug fixes for patches.
-- The [`credhub-interpolate`](./reference/task.md#credhub-interpolate) task can have multiple
+- The [`credhub-interpolate`][credhub-interpolate] task can have multiple
   interpolation paths. The `INTERPOLATION_PATH` param is now plural: `INTERPOLATION_PATHS`.
   IF you are using a custom `INTERPOLATION_PATH` for `credhub-interpolate`, you will need to update
   your `pipeline.yml` to this new param.
@@ -272,7 +284,7 @@ title: Release Notes
       SKIP_MISSING: true
 ```
 
-- the [`upload-product`](./reference/task.md#upload-product) option `--sha256` has been changed to `--shasum`.
+- the [`upload-product`][upload-product] option `--sha256` has been changed to `--shasum`.
   IF you are using the `--config` flag in `upload-product`, your config file will need to update from:
 ```yaml
 # OLD upload-product-config.yml PRIOR TO 3.0.0 RELEASE
@@ -289,41 +301,41 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   de facto way of defining shasums.
 
 ### What's New
-- The new command [`assign-multi-stemcell`](./reference/task.md#assign-multi-stemcell) assigns multiple stemcells to a provided product.
+- The new command [`assign-multi-stemcell`][assign-multi-stemcell] assigns multiple stemcells to a provided product.
   This feature is only available in OpsMan 2.6+.
-- [`download-product`](./reference/task.md#download-product) ensures sha sum checking when downloading the file from Pivotal Network.
-- [`download-product`](./reference/task.md#download-product) can now disable ssl validation when connecting to Pivotal Network.
+- [`download-product`][download-product] ensures sha sum checking when downloading the file from Pivotal Network.
+- [`download-product`][download-product] can now disable ssl validation when connecting to Pivotal Network.
   This helps with environments with SSL and proxying issues.
-  Add `pivnet-disable-ssl: true` in your [download-product-config] to use this feature.
-- On [GCP](./reference/inputs-outputs.md#gcp), if you did not assign a public IP, Google would assign
+  Add `pivnet-disable-ssl: true` in your [download-product-config][download-product-config] to use this feature.
+- On [GCP][inputs-outputs-gcp], if you did not assign a public IP, Google would assign
   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
-- On [Azure](./reference/inputs-outputs.md#azure), if you did not assign a public IP, Azure would assign
+- On [Azure][inputs-outputs-azure], if you did not assign a public IP, Azure would assign
   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
-- `om interpolate` (example in the [test task](./reference/task.md#test-interpolate)) now supports
+- `om interpolate` (example in the [test task][test-interpolate]) now supports
    the ability to accept partial vars files. This is added support for users who may also be using
    credhub-interpolate or who want to mix interpolation methods. To make use of this feature, include
    the `--skip-missing` flag.
-- [`credhub-interpolate`](./reference/task.md#credhub-interpolate) now supports the `SKIP_MISSING`
+- [`credhub-interpolate`][credhub-interpolate] now supports the `SKIP_MISSING`
    parameter. For more information on how to use this feature and if it fits for your foundation(s), see the
-   [Secrets Handling](./configuration-management/secrets-handling.md#multiple-sources) section.
-- the [reference pipeline](./pipeline/multiple-products.md) has been updated to give an example of
-  [`credhub-interpolate`](./reference/task.md#credhub-interpolate) in practice. For more information
-  about credhub, see [Secrets Handling](./configuration-management/secrets-handling.md#multiple-sources)
+   [Secrets Handling][secrets-handling-multiple-sources] section.
+- the [reference pipeline][reference-pipeline] has been updated to give an example of
+  [`credhub-interpolate`][credhub-interpolate] in practice. For more information
+  about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
 - `om` now has support for `config-template` (a Platform Automation encouraged replacement of
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
-   [Creating a Product Config File](./configuration-management/creating-a-product-config-file.md#from-pivnet).
-- [`upload-stemcell`](./reference/task.md#upload-stemcell) now supports the ability to include a config file.
+   [Creating a Product Config File][product-configuration-from-pivnet].
+- [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
   This allows you to define an expected `shasum` that will validate the calculated shasum of the provided
-  `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`](./reference/task.md#upload-product)
-- [Azure](./reference/inputs-outputs.md#azure) now allows NSG(network security group) to be optional.
+  `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`][upload-product]
+- [Azure][inputs-outputs-azure] now allows NSG(network security group) to be optional.
   This change was made because NSGs can be assigned at the subnet level rather than just the VM level. This
   param is also not required by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest).
   Platform Automation now reflects this.
-- [staged-director-config](./reference/task.md#staged-director-config) now supports returning multiple IaaS
+- [staged-director-config][staged-director-config] now supports returning multiple IaaS
   configurations. `iaas-configurations` is a top level key returned in Ops Manager 2.2+. If using an Ops
   Manager 2.1 or earlier, `iaas_configuration` will continue to be a key nested under `properties-configuration`.
-- [configure-director](./reference/task.md#configure-director) now supports setting multiple IaaS configurations.
+- [configure-director][configure-director] now supports setting multiple IaaS configurations.
   If using this feature, be sure to use the top-level `iaas-configurations` key, rather than the nested
   `properties-configuration.iaas_configuration` key. If using a single IaaS, `properties-configuration.iaas_configuration`
   is still supported, but the new `iaas_configurations` top-level key is recommended.
@@ -360,10 +372,8 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/)
   (related to vulnerabilities with `libmagic1`. While none of our code directly used these,
   they are present on the image.)
-- Improved error messaging for [vSphere](./reference/inputs-outputs.md#gcp) VM creation if neither `ssh-password` or `ssh-public-key` are set.
+- Improved error messaging for [vSphere][inputs-outputs-vsphere] VM creation if neither `ssh-password` or `ssh-public-key` are set.
   One or the other is required to create a VM.
-- `upgrade-opsman` would incorrectly parse meta information from the `download-product`
-  prefixing if using S3. This lead to some unexpected upgrading behavior.
-  Now, the task will correctly upgrade if the semver is higher.
 
 {% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}
