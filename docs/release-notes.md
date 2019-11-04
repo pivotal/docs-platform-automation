@@ -20,6 +20,17 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.1.5
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
+
 ## v4.1.2
 ** Release Date** October 21, 2019
 
@@ -59,7 +70,7 @@
   but when generated, JSON was outputted.
   This caused confusion.
   The generated state file is now outputted as YAML.
-- `om` CLI has been bumped to v4.0.0.
+- `om` CLI has been bumped to v4.0.0. 
 
 ### Deprecation Notices
 - The `host` field in [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
@@ -92,13 +103,24 @@
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
+## v4.0.6
+**Release Date** Coming Soon
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
+
 ## v4.0.5
 **Release Date** October 25, 2019
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
   This CVE is related to vulnerabilities with `python`.
-  None of our code calls `python` directly, but the IaaS CLIs rely on this package. 
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.  
 
 ## v4.0.4
 
@@ -116,7 +138,7 @@
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 - CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
   (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
@@ -214,12 +236,24 @@
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
-## v3.0.12
+## v3.0.13
+**Release Date** Coming Soon
 
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
+
+## v3.0.12
 **Release Date** October 25, 2019
 
-Bug Fixes
-CVE update to container image. Resolves USN-4151-1 This CVE is related to vulnerabilities with python. None of our code calls python directly, but the IaaS CLIs rely on this package.
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+  This CVE is related to vulnerabilities with `python`.
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v3.0.11
 
@@ -236,7 +270,7 @@ CVE update to container image. Resolves USN-4151-1 This CVE is related to vulner
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 - CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
   (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
