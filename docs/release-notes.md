@@ -154,7 +154,7 @@
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.13
-**Release Date** Coming Soon
+**Release Date** Coming Soon to a theater near you
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
