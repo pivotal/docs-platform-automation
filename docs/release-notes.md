@@ -24,9 +24,9 @@
 **Release Date** Coming Soon
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
   This CVE is related to vulnerabilities with `file` and `libmagic`.
-- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/).
   This CVE is related to vulnerabilities with `libidn2`.
 - Bump `bosh` CLI to v6.1.1
 - Bump `credhub` CLI to v2.6.1
@@ -35,7 +35,7 @@
 **Release Date** October 25, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.  
 
@@ -44,7 +44,7 @@
 **Release Date** October 15, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/).
   (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
   they are present on the image.)
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
@@ -54,13 +54,13 @@
 **Release Date** September 27, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
+- CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
-- CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
+- CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/).
   (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4132-1](https://usn.ubuntu.com/4132-1/)
+- CVE update to container image. Resolves [USN-4132-1](https://usn.ubuntu.com/4132-1/).
   (related to vulnerabilities with `expat`. While none of our code directly used these,
   they are present on the image.)
 - Bumped the following low-severity CVE packages: `libsystemd0`, `libudev1`, `linux-libc-dev`
@@ -70,7 +70,7 @@
 **Release Date** September 4, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/).
   (related to vulnerabilities with `libzstd`. While none of our code directly used these,
   they are present on the image.)
 - Bumped the following low-severity CVE packages: `linux-libc-dev`
@@ -154,12 +154,12 @@
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.13
-**Release Date** Coming Soon to a theater near you
+**Release Date** Coming Soon
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/)
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
   This CVE is related to vulnerabilities with `file` and `libmagic`.
-- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/)
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/).
   This CVE is related to vulnerabilities with `libidn2`.
 - Bump `bosh` CLI to v6.1.1
 - Bump `credhub` CLI to v2.6.1
@@ -168,7 +168,7 @@
 **Release Date** October 25, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/)
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
@@ -177,7 +177,7 @@
 **Release Date** October 15, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/)
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/).
   (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
   they are present on the image.)
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
@@ -186,13 +186,13 @@
 **Release Date** September 26, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/)
+- CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
-- CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/)
+- CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/).
   (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4132-1](https://usn.ubuntu.com/4132-1/)
+- CVE update to container image. Resolves [USN-4132-1](https://usn.ubuntu.com/4132-1/).
   (related to vulnerabilities with `expat`. While none of our code directly used these,
   they are present on the image.)
 - Bumped the following low-severity CVE packages: `libsystemd0`, `libudev1`, `linux-libc-dev`
@@ -201,7 +201,7 @@
 **Release Date** September 4, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/)
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/).
   (related to vulnerabilities with `libzstd`. While none of our code directly used these,
   they are present on the image.)
 - Bumped the following low-severity CVE packages:
@@ -215,7 +215,7 @@
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
-- CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/)
+- CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/).
   (related to vulnerabilities with `patch`. While none of our code directly used these,
   they are present on the image.)
 - Bumped the following low-severity CVE packages:
@@ -319,19 +319,19 @@
     * `config-template` will enforce the default value for a property to always be `configurable: false`.
       This is inline with the OpsManager behaviour.
 
-- CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/)
+- CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/).
   (related to vulnerabilities with `Expat`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4038-1](https://usn.ubuntu.com/4038-1/) and [USN-4038-3](https://usn.ubuntu.com/4038-3/)
+- CVE update to container image. Resolves [USN-4038-1](https://usn.ubuntu.com/4038-1/) and [USN-4038-3](https://usn.ubuntu.com/4038-3/).
   (related to vulnerabilities with `bzip`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4019-1](https://usn.ubuntu.com/4019-1/)
+- CVE update to container image. Resolves [USN-4019-1](https://usn.ubuntu.com/4019-1/).
   (related to vulnerabilities with `SQLite`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [CVE-2019-11477](https://people.canonical.com/~ubuntu-security/cve/2019/CVE-2019-11477.html)
+- CVE update to container image. Resolves [CVE-2019-11477](https://people.canonical.com/~ubuntu-security/cve/2019/CVE-2019-11477.html).
   (related to vulnerabilities with `linux-libc-dev`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4049-1](https://usn.ubuntu.com/4049-1/)
+- CVE update to container image. Resolves [USN-4049-1](https://usn.ubuntu.com/4049-1/).
   (related to vulnerabilities with `libglib`. While none of our code directly used these,
   they are present on the image.)
 
@@ -339,22 +339,22 @@
 **Release Date** Monday, July 8th, 2019
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/)
+- CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/).
   (related to vulnerabilities with `GLib`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4015-1](https://usn.ubuntu.com/4015-1/)
+- CVE update to container image. Resolves [USN-4015-1](https://usn.ubuntu.com/4015-1/).
   (related to vulnerabilities with `DBus`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-3999-1](https://usn.ubuntu.com/3999-1/)
+- CVE update to container image. Resolves [USN-3999-1](https://usn.ubuntu.com/3999-1/).
   (related to vulnerabilities with `GnuTLS`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4001-1](https://usn.ubuntu.com/4001-1/)
+- CVE update to container image. Resolves [USN-4001-1](https://usn.ubuntu.com/4001-1/).
   (related to vulnerabilities with `libseccomp`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-4004-1](https://usn.ubuntu.com/4004-1/)
+- CVE update to container image. Resolves [USN-4004-1](https://usn.ubuntu.com/4004-1/).
   (related to vulnerabilities with `Berkeley DB`. While none of our code directly used these,
   they are present on the image.)
-- CVE update to container image. Resolves [USN-3993-1](https://usn.ubuntu.com/3993-1/)
+- CVE update to container image. Resolves [USN-3993-1](https://usn.ubuntu.com/3993-1/).
   (related to vulnerabilities with `curl`. While none of our code directly used these,
   they are present on the image.)
 
@@ -502,7 +502,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   waiting for the VM to come up. The `--wait` flag has been added to validate that the VM creation is
   complete before more work is done to the VM.
 - [`credhub-interpolate`][credhub-interpolate] now accepts multiple files for the `INTERPOLATION_PATHS`.
-- CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/)
+- CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/).
   (related to vulnerabilities with `libmagic1`. While none of our code directly used these,
   they are present on the image.)
 - Improved error messaging for [vSphere][inputs-outputs-vsphere] VM creation if neither `ssh-password` or `ssh-public-key` are set.
