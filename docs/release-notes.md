@@ -28,6 +28,7 @@
   This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
 
   Usage:
+
   1. Get the Pivotal Platform Automation image from Pivotal Network.
   1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
   1. Create a [state file][state] that represents your current VM and IAAS.
@@ -74,13 +75,13 @@
       cloud_properties:
         foo: bar
     ```
-  
+
 ### Deprecation Notices
 - The [`download-product-s3`][download-product-s3] task has been deprecated
   in favor of the [`download-product`][download-product] task and setting the `SOURCE: s3` in `params`.
 
     For example, the `download-product-s3` in a pipeline:
-    
+
     ```yaml
     - task: download-pas
       image: platform-automation-image
@@ -88,9 +89,9 @@
       params:
         CONFIG_FILE: download-product/pas.yml
     ```
-    
+
     Will be changed to:
-    
+
     ```yaml
     - task: download-pas
       image: platform-automation-image
@@ -99,7 +100,7 @@
         CONFIG_FILE: download-product/pas.yml
         SOURCE: s3
     ```
-  
+
 ### Bug Fixes
 - When creating a Ops Manager on Azure,
   there was a bug in offline environments.
@@ -155,7 +156,7 @@
   but when generated, JSON was outputted.
   This caused confusion.
   The generated state file is now outputted as YAML.
-- `om` CLI has been bumped to v4.0.0. 
+- `om` CLI has been bumped to v4.0.0.
 
 ### Deprecation Notices
 - The `host` field in [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
