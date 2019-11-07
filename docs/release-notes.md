@@ -70,7 +70,7 @@
   but when generated, JSON was outputted.
   This caused confusion.
   The generated state file is now outputted as YAML.
-- `om` CLI has been bumped to v4.0.0. 
+- `om` CLI has been bumped to v4.0.0.
 
 ### Deprecation Notices
 - The `host` field in [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
