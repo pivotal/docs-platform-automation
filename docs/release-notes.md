@@ -73,7 +73,7 @@
 - `om` CLI has been bumped to v4.0.0.
 
 ### Deprecation Notices
-- The `host` field in [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
+- The `host` field in the vcenter section of the [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
   Platform Automation can initially choose where the VM is placed
   but cannot guarantee that it stays there
   or that other generated VMs are assigned to the same host.
