@@ -23,6 +23,8 @@
 ## v3.0.13
 **Release Date** Coming Soon
 
+* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
   This CVE is related to vulnerabilities with `file` and `libmagic`.
@@ -34,6 +36,8 @@
 ## v3.0.12
 **Release Date** October 25, 2019
 
+* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
@@ -43,6 +47,8 @@
 
 **Release Date** October 15, 2019
 
+* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/).
   (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
@@ -51,6 +57,8 @@
 
 ## v3.0.10
 **Release Date** September 26, 2019
+
+* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/).
@@ -67,6 +75,8 @@
 ## v3.0.8
 **Release Date** September 4, 2019
 
+* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/).
   (related to vulnerabilities with `libzstd`. While none of our code directly used these,
@@ -77,6 +87,8 @@
 
 ## v3.0.7
 **Release Date** August 28, 2019
+
+* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - When using AWS to create the Ops Manager VM with encrypted disks,
@@ -90,6 +102,8 @@
 
 ## v3.0.5
 **Release Date** July 22, 2019
+
+* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
@@ -123,6 +137,8 @@
 
 ## v3.0.4
 **Release Date** Thursday, July 11, 2019
+
+* includes `om` at version [2.0.0](https://github.com/pivotal-cf/om/releases/tag/2.0.0)
 
 ### Bug Fixes
 - Both [`configure-ldap-authentication`][configure-ldap-authentication]
@@ -205,6 +221,8 @@
 ## v3.0.2
 **Release Date** Monday, July 8th, 2019
 
+* includes `om` at version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/).
   (related to vulnerabilities with `GLib`. While none of our code directly used these,
@@ -227,6 +245,8 @@
 
 ## v3.0.1
 **Release Date** Friday, May 24th, 2019
+
+* includes `om` at version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
 
 ### Breaking Changes
 - `om` will now follow conventional Semantic Versioning,
