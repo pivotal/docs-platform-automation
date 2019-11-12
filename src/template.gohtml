@@ -1,0 +1,25 @@
+{{- define "folder"}}
+    {{- range $_index, $folder := .SubFolders -}}
+        {{- $index := inc -}}
+        <input id="collapse-{{$index}}" class="toggle" type="checkbox">
+        <label for="collapse-{{$index}}"><i class="md-icon"></i>{{$folder.Name}}</label>
+        <pre>{{$folder.Contents}}</pre>
+        <ul>
+            <li>
+                {{template "folder" $folder }}
+            </li>
+        </ul>
+    {{- end -}}
+    {{- range $_index, $file := .SubFiles -}}
+        <li>
+            <label><i class="md-icon">insert_drive_file</i>{{$file.Name}}</label>
+            <pre>{{$file.Contents}}</pre>
+        </li>
+    {{- end -}}
+{{- end -}}
+
+<ul>
+    <li>
+        {{template "folder" .}}
+    </li>
+</ul>
