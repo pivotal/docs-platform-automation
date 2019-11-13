@@ -10,7 +10,7 @@ opsman-configuration:
       url: vcenter.example.com
       username: ((vcenter-username))
       password: ((vcenter-password))
-      resource_pool: /example-dc/host/example-host/Resources/example-res-pool
+      resource_pool: /example-dc/host/example-cluster/Resources/example-pool
       # resource_pool can use a cluster - /example-dc/host/example-cluster
 
       # Optional
