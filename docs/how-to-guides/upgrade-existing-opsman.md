@@ -482,6 +482,16 @@ docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
   --gcp-project-id "$GCP_PROJECT_ID"
 ```
 
+```bash tab="vSphere"
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --vsphere-url "$VCENTER_URL" \
+  --vsphere-username "$VCENTER_USERNAME" \
+  --vsphere-password "$VCENTER_PASSWORD"
+```
+
 Once you have your config file, commit and push it:
 
 ```bash
