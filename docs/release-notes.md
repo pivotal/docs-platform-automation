@@ -21,7 +21,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v3.0.13
-**Release Date** Coming Soon
+**Release Date** November 14, 2019
 
 * includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
