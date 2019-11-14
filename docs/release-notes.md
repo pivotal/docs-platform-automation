@@ -166,7 +166,7 @@
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.13
-**Release Date** Coming Soon
+**Release Date** November 14, 2019
 
 * includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
