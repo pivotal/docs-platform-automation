@@ -290,6 +290,15 @@ jobs:
             passed: [ install-opsman ]
       - task: interpolate-creds
         <<: *interpolate-creds
+      # code_snippet revert-staged-changes-usage start yaml
+      - task: revert-staged-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/revert-staged-changes.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          INSTALLATION_FILE: installation-$timestamp.zip
+      # code_snippet revert-staged-changes-usage end
       # code_snippet export-installation-usage start yaml
       - task: export-installation
         image: platform-automation-image
