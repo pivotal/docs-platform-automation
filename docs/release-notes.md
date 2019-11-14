@@ -20,6 +20,14 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.3.0
+** Release Date** Someday sometime
+
+### What's New
+- The [`revert-staged-changes`][revert-staged-changes] task has been added.
+  This allows changes that weren't part of the pipeline to be undone,
+  by guaranteeing a clean state before using various `configure-*` tasks.
+
 ## v4.2.1
 ** Release Date** Someday sometime
 

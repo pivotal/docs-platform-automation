@@ -507,6 +507,19 @@ before an `apply-changes` could start.
 {% code_snippet 'tasks', 'pre-deploy-check-script', 'Implementation' %}
 {% code_snippet 'examples', 'pre-deploy-check-usage', 'Usage' %}
 
+### revert-staged-changes
+Reverts all changes that are currently staged on the Ops Manager.
+This is only available until Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+.
+
+!!! warning
+    Since this reverts all changes on an Ops Manager,
+    it can conflict with tasks that perform stage or configure operations.
+    Use passed constraints to ensure things run in the order you mean them to.
+
+{% code_snippet 'tasks', 'revert-staged-changes', 'Task' %}
+{% code_snippet 'tasks', 'revert-staged-changes-script', 'Implementation' %}
+{% code_snippet 'examples', 'revert-staged-changes-usage', 'Usage' %}
+
 ### send-telemetry
 Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
 to Pivotal.
