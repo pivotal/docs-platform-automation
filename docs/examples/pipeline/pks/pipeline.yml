@@ -43,6 +43,7 @@ resources:
       regexp: pks-installation-(.*).zip
   # code_snippet single-product-export-installation end yaml
 
+  # code_snippet single-product-resources-configurations start yaml
   # VM state and foundation configuration
   - name: state
     type: s3
@@ -55,7 +56,6 @@ resources:
       initial_content_text: '{}'
       initial_version: 'empty-start'
 
-  # code_snippet single-product-resources-configurations start yaml
   # configurations
   - name: configuration
     type: git
