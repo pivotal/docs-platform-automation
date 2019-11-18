@@ -16,73 +16,73 @@ resources:
 - name: healthwatch-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: \[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal
 
 - name: healthwatch-stemcell
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: healthwatch-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
 - name: opsman-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: \[ops-manager,(.*)\].*.ova
 
 - name: pas-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: \[elastic-runtime,(.*)\]cf-.*.pivotal
 
 - name: pas-stemcell
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: pas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
 - name: pks-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: \[pivotal-container-service,(.*)\]pivotal-container-service-.*.pivotal
 
 - name: pks-stemcell
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: pks-stemcell/\[stemcells-ubuntu-xenial,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
 
 - name: pas-windows-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: \[pas-windows,(.*)\]pas-windows-.*.pivotal
 # code_snippet resources-pipeline-products end yaml
 
@@ -98,19 +98,19 @@ resources:
 - name: platform-automation-tasks
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: platform-automation-tasks-(.*).zip
 
 - name: platform-automation-image
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.buckets.pivnet_products))
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
     regexp: platform-automation-image-(.*).tgz
 # code_snippet resources-pipeline-platform-automation end yaml
 
