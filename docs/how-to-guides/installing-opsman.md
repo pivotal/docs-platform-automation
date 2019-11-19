@@ -139,7 +139,7 @@ We'll need to put the pivnet token in Crehub:
 ```bash
 # note the starting space throughout
  credhub set \
-        -n /concourse/your-team-name/foundation/pivnet-token \
+        -n /concourse/your_team_name/foundation/pivnet_token \
         -t value -v your-pivnet-token
 ```
 
