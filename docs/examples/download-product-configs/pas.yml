@@ -1,5 +1,5 @@
 ---
-pivnet-api-token: ((pivnet-token))
+pivnet-api-token: ((pivnet_token))
 pivnet-file-glob: "*cf*.pivotal"
 pivnet-product-slug: elastic-runtime
 product-version-regex: ^2\.[56]\.0.*$
