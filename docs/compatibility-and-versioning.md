@@ -18,21 +18,21 @@ We have tested Platform Automation with these dependencies.
 </thead>
 <tbody>
     <tr>
-        <td>v3.0.0</td>
+        <td>v4.1.0</td>
         <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
         <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
     <tr>
-        <td>v2.2.0-beta</td>
+        <td>v4.0.0</td>
         <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
-        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1-v2.5</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
     <tr>
-        <td>v2.0-beta - v2.1-beta</td>
+        <td>v3.0.0</td>
         <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
-        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.1-v2.5*</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
 </tbody>
