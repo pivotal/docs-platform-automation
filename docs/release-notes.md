@@ -1,3 +1,9 @@
+<style>
+    .md-typeset h2 {
+        font-weight: bold;
+    }
+</style>
+
 !!! info "Platform Automation Beta Documentation"
     Platform Automation is a GA product as of version 3.0.
     The beta versions of Platform Automation documentation
@@ -21,9 +27,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.0.6
-**Release Date** Coming Soon
-
-* includes `om` at version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Coming soon, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -34,9 +38,7 @@
 - Bump `credhub` CLI to v2.6.1
 
 ## v4.0.5
-**Release Date** October 25, 2019
-
-* includes `om` at version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released October 25, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
@@ -45,9 +47,7 @@
 
 ## v4.0.4
 
-**Release Date** October 15, 2019
-
-* includes `om` at version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released October 15, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/).
@@ -57,9 +57,7 @@
 
 ## v4.0.3
 
-**Release Date** September 27, 2019
-
-* includes `om` at version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released September 27, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/).
@@ -75,9 +73,7 @@
 
 ## v4.0.1
 
-**Release Date** September 4, 2019
-
-* includes `om` at version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released September 4, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/).
@@ -87,9 +83,7 @@
 
 ## v4.0.0
 
-**Release Date** August 28, 2019
-
-* includes `om` at version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Breaking Changes
 
@@ -166,9 +160,7 @@
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.13
-**Release Date** November 14, 2019
-
-* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released November 14, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -179,9 +171,7 @@
 - Bump `credhub` CLI to v2.6.1
 
 ## v3.0.12
-**Release Date** October 25, 2019
-
-* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released October 25, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
@@ -190,9 +180,7 @@
 
 ## v3.0.11
 
-**Release Date** October 15, 2019
-
-* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released October 15, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/).
@@ -201,9 +189,7 @@
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v3.0.10
-**Release Date** September 26, 2019
-
-* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released September 26, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/).
@@ -218,9 +204,7 @@
 - Bumped the following low-severity CVE packages: `libsystemd0`, `libudev1`, `linux-libc-dev`
 
 ## v3.0.8
-**Release Date** September 4, 2019
-
-* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released September 4, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/).
@@ -231,9 +215,7 @@
   `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
 
 ## v3.0.7
-**Release Date** August 28, 2019
-
-* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released August 28, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - When using AWS to create the Ops Manager VM with encrypted disks,
@@ -246,9 +228,7 @@
   `linux-libc-dev`, `libldap-2.4-2`, `libldap-common`, `linux-libc-dev`
 
 ## v3.0.5
-**Release Date** July 22, 2019
-
-* includes `om` at version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released July 22, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
@@ -281,9 +261,7 @@
 - Bumped the following low-severity CVE packages: `unzip`
 
 ## v3.0.4
-**Release Date** Thursday, July 11, 2019
-
-* includes `om` at version [2.0.0](https://github.com/pivotal-cf/om/releases/tag/2.0.0)
+Released July 11, 2019, includes `om` version [2.0.0](https://github.com/pivotal-cf/om/releases/tag/2.0.0)
 
 ### Bug Fixes
 - Both [`configure-ldap-authentication`][configure-ldap-authentication]
@@ -364,9 +342,7 @@
   they are present on the image.)
 
 ## v3.0.2
-**Release Date** Monday, July 8th, 2019
-
-* includes `om` at version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
+Released July 8, 2019, includes `om` version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/).
@@ -389,9 +365,7 @@
   they are present on the image.)
 
 ## v3.0.1
-**Release Date** Friday, May 24th, 2019
-
-* includes `om` at version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
+Released May 24, 2019, includes `om` version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
 
 ### Breaking Changes
 - `om` will now follow conventional Semantic Versioning,
