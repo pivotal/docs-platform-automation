@@ -33,6 +33,8 @@ Someday Sometime
 - The [`revert-staged-changes`][revert-staged-changes] task has been added.
   This allows changes that weren't part of the pipeline to be undone,
   by guaranteeing a clean state before using various `configure-*` tasks.
+- The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration for Azure and vSphere.
+  This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
 
 ## v4.2.1
 Someday Sometime, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
