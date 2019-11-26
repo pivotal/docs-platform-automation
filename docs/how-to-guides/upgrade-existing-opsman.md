@@ -472,6 +472,18 @@ docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
   --aws-access-key-id "$AWS_ACCESS_KEY_ID"
 ```
 
+```bash tab="Azure"
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --azure-subscription-id "$AZURE_SUBSCRIPTION_ID" \
+  --azure-tenant-id "$AZURE_TENANT_ID" \
+  --azure-client-id "$AZURE_CLIENT_ID" \
+  --azure-client-secret "$AZURE_CLIENT_SECRET" \
+  --azure-resource-group "$AZURE_RESOURCE_GROUP"
+```
+
 ```bash tab="GCP"
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
   p-automator export-opsman-config \
