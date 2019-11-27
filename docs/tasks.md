@@ -509,9 +509,9 @@ before an `apply-changes` could start.
 
 ### revert-staged-changes
 Reverts all changes that are currently staged on the Ops Manager.
-This is only available until Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+.
+This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
-!!! warning
+!!! warning "Using revert-staged-changes"
     Since this reverts all changes on an Ops Manager,
     it can conflict with tasks that perform stage or configure operations.
     Use passed constraints to ensure things run in the order you mean them to.
