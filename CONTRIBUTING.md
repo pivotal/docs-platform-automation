@@ -54,6 +54,11 @@ Just clone the repo and start mkdocs.
 git clone https://github.com/pivotal/docs-platform-automation
 ```
 
+### Install the requirements
+```
+pip3 install -r requirements.txt
+```
+
 ### View them from `mkdocs`
 
 ```bash
