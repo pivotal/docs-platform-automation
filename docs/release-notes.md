@@ -26,8 +26,16 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.0.7
+Released December 3, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
+  This CVE is related to vulnerabilities with `libsqlite3`.
+  None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
 ## v4.0.6
-Coming soon, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released November 6, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -158,6 +166,14 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
+
+## v3.0.14
+Released December 3, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
+  This CVE is related to vulnerabilities with `libsqlite3`.
+  None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v3.0.13
 Released November 14, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
