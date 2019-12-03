@@ -123,7 +123,7 @@ Someday Sometime, includes `om` version [4.2.1](https://github.com/pivotal-cf/om
   We are now using the full image reference ID when creating the VM.  
 
 ## v4.1.5
-Coming Soon, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released November 19, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -205,7 +205,7 @@ Released October 21, 2019, includes `om` version [4.1.0](https://github.com/pivo
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.6
-Coming soon, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released November 6, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
