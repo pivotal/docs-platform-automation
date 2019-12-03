@@ -338,11 +338,23 @@ jobs:
           - get: configuration
       - task: interpolate-creds
         <<: *interpolate-creds
+      - task: pre-deploy-check
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/pre-deploy-check.yml
+        input_mapping:
+          env: interpolated-creds
       - task: apply-product-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
           env: interpolated-creds
+      - task: check-pending-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/check-pending-changes.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          ALLOW_PENDING_CHANGES: true
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml

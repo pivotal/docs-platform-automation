@@ -621,6 +621,15 @@ jobs:
         input_mapping:
           env: interpolated-creds
       # code_snippet apply-changes-usage end
+      # code_snippet check-pending-changes-usage start yaml
+      - task: check-pending-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/check-pending-changes.yml
+        input_mapping:
+          env: interpolated-creds
+        params:
+          ALLOW_PENDING_CHANGES: true
+      # code_snippet check-pending-changes-usage end
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
