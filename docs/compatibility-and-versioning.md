@@ -14,6 +14,12 @@ Platform Automation is designed to work with these dependencies.
 </thead>
 <tbody>
     <tr>
+        <td>v4.2.0</td>
+        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
+        <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
+    </tr>
+    <tr>
         <td>v4.1.0</td>
         <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
         <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
