@@ -211,6 +211,29 @@ using the [download-product][download-product] task.
 
 {% include "how-to-guides/.opsman-config.md" %}
 
+The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP and AWS).
+This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
+
+Usage:
+
+1. Get the Pivotal Platform Automation image from Pivotal Network.
+1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
+1. Create a [state file][state] that represents your current VM and IAAS.
+1. Invoke the `p-automator` CLI to get the configuration.
+
+For example, on AWS with an access key and secret key:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+p-automator export-opsman-config \
+--state-file=state.yml \
+--aws-region=us-west-1 \
+--aws-secret-access-key some-secret-key \
+--aws-access-key-id some-access-key
+```
+
+The outputted `opsman.yml` contains the information needed for Pivotal Platform Automation to manage the Ops Manager VM.
+
 #### download-product task
 
 ```yaml
