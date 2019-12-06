@@ -36,6 +36,13 @@ Someday Sometime
 - The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration for Azure and vSphere.
   This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
 
+## v4.2.3
+Coming soon, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+
+### Bug Fixes
+* When specifing `StorageSKU` for azure, it would append `--storage-sku` twice in the creating VM innvocation.
+  It does not affect anything, but we removed the second instance to avoid confusion.
+
 ## v4.2.2
 Released December 3, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
 
