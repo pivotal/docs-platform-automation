@@ -4,11 +4,6 @@
     }
 </style>
 
-!!! info "Platform Automation Beta Documentation"
-    Platform Automation is a GA product as of version 3.0.
-    The beta versions of Platform Automation documentation
-    can be accessed by entering the url directly.
-
 {% include "./.opsman_filename_change_note.md" %}
 
 !!! warning "Azure Updating to 2.5"
