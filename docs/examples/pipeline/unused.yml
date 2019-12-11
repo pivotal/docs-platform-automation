@@ -107,3 +107,10 @@
           downloaded-product: pas-product
           downloaded-stemcell: pas-stemcell
       # code_snippet download-product-usage-azure end
+# code_snippet add-secrets-to-tasks-usage start yaml
+- task: add-secrets-to-tasks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/add-secrets-to-tasks.yml
+  input_mapping:
+    tasks: platform-automation-tasks
+# code_snippet add-secrets-to-tasks-usage end
