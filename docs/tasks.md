@@ -8,6 +8,13 @@ as they are found in the product.
 The docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information. To learn more see the [running-commands-locally][running-commands-locally] section.
 
+### add-secrets-to-tasks
+Modifies task files to include config secrets as environment variables
+
+{% code_snippet 'tasks', 'add-secrets-to-tasks', 'Task' %}
+{% code_snippet 'tasks', 'add-secrets-to-tasks-script', 'Implementation' %}
+{% code_snippet 'examples', 'add-secrets-to-tasks-usage', 'Usage' %}
+
 ### apply-changes
 
 Triggers an install on the Ops Manager described by the auth file.
