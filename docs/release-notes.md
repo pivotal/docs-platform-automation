@@ -21,6 +21,13 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v3.0.15
+Released December 12, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
+  The CVEs are related to vulnerabilities with `git`.
+
 ## v3.0.14
 Released December 3, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
