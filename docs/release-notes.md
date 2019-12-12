@@ -30,6 +30,13 @@ Someday Sometime
   by guaranteeing a clean state before using various `configure-*` tasks.
 - The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration for Azure and vSphere.
   This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
+- The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] command has been added.
+  It replaces the [credhub-interpolate][credhub-interpolate] task and provides the following benefits:
+    - Support for all native Concourse secrets stores including Credhub and Vault.
+    - Credhub credentials are no longer required by the task so they can be completely handled by concourse.
+    - Credentials are no longer written to disk which alleviates some security concerns.
+  For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
+  To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace].
 
 ## v4.2.3
 Released December 12, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
