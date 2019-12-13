@@ -30,8 +30,11 @@ Someday Sometime
   by guaranteeing a clean state before using various `configure-*` tasks.
 - The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration for Azure and vSphere.
   This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
+- The `credhub` cli now returns a list of parameters it could not find when `--skip-missing` is enabled.
+  This feature will show up in the [`credhub-interpolate`][credhub-interpolate],
+  when `SKIP_MISSING: true` is set.
 - The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] command has been added.
-  It replaces the [credhub-interpolate][credhub-interpolate] task and provides the following benefits:
+  It replaces the [`credhub-interpolate`][credhub-interpolate] task and provides the following benefits:
     - Support for all native Concourse secrets stores including Credhub and Vault.
     - Credhub credentials are no longer required by the task so they can be completely handled by concourse.
     - Credentials are no longer written to disk which alleviates some security concerns.
