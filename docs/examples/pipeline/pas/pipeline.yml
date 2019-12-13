@@ -104,19 +104,15 @@ resources:
 # The yaml anchor "*interpolate-creds" is used in its place
 interpolate-creds: &interpolate-creds
   image: platform-automation-image
-  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
   params:
-    CREDHUB_CLIENT: ((credhub-client))
-    CREDHUB_SECRET: ((credhub-secret))
-    CREDHUB_SERVER: ((credhub-server))
-    CREDHUB_CA_CERT: ((credhub-ca-cert))
-    PREFIX: '/concourse/main/reference-pipeline'
-    INTERPOLATION_PATHS: .
-#    SKIP_MISSING: true
+    VARS_PATHS: vars/vars
   input_mapping:
-    files: configuration
+    tasks: platform-automation-tasks
+    config: configuration
+    vars: configuration
   output_mapping:
-    interpolated-files: interpolated-creds
+    tasks: platform-automation-tasks
 # code_snippet multiple-product-interpolate-creds end yaml
 
 # code_snippet multiple-product-jobs start yaml
@@ -166,14 +162,14 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/delete-installation.yml
       input_mapping:
-        env: interpolated-creds
+        env: configuration
     # code_snippet delete-installation-usage end
     # code_snippet delete-vm-usage start yaml
     - task: delete-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/delete-vm.yml
       input_mapping:
-        config: interpolated-creds
+        config: configuration
       ensure: &put-state
         do:
         - put: state
@@ -204,7 +200,7 @@ jobs:
           CONFIG_FILE: download-product/opsman.yml
           SOURCE: s3
         input_mapping:
-          config: interpolated-creds
+          config: configuration
         output_mapping:
           downloaded-product: opsman-image
       # code_snippet create-vm-usage start yaml
@@ -213,7 +209,7 @@ jobs:
         file: platform-automation-tasks/tasks/create-vm.yml
         input_mapping:
           image: opsman-image
-          config: interpolated-creds
+          config: configuration
         ensure: *put-state
       # code_snippet create-vm-usage end
       # code_snippet configure-authentication-usage start yaml
@@ -222,29 +218,29 @@ jobs:
         file: platform-automation-tasks/tasks/configure-authentication.yml
         attempts: 10
         input_mapping:
-          env: interpolated-creds
-          config: interpolated-creds
+          env: configuration
+          config: configuration
       # code_snippet configure-authentication-usage end
       # code_snippet configure-director-usage start yaml
       - task: configure-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
         input_mapping:
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
       # code_snippet configure-director-usage end
       # code_snippet apply-director-changes-usage start yaml
       - task: apply-director-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
       # code_snippet apply-director-changes-usage end
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: installation-$timestamp.zip
       - put: installation
@@ -268,7 +264,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-director-config.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         ensure: *put-state
       # code_snippet staged-director-config-usage end
 
@@ -295,7 +291,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/revert-staged-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: installation-$timestamp.zip
       # code_snippet revert-staged-changes-usage end
@@ -304,7 +300,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: installation-$timestamp.zip
       # code_snippet export-installation-usage end
@@ -339,7 +335,7 @@ jobs:
           CONFIG_FILE: download-product/opsman.yml
           SOURCE: s3
         input_mapping:
-          config: interpolated-creds
+          config: configuration
         output_mapping:
           downloaded-product: opsman-image
       # code_snippet upgrade-opsman-usage start yaml
@@ -348,26 +344,26 @@ jobs:
         file: platform-automation-tasks/tasks/upgrade-opsman.yml
         input_mapping:
           image: opsman-image
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
         ensure: *put-state
       # code_snippet upgrade-opsman-usage end
       - task: configure-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
         input_mapping:
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
       - task: apply-director-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: installation-$timestamp.zip
       - put: installation
@@ -399,7 +395,7 @@ jobs:
           CONFIG_FILE: download-product/pas.yml
           SOURCE: s3
         input_mapping:
-          config: interpolated-creds
+          config: configuration
         output_mapping:
           downloaded-product: pas-product
           downloaded-stemcell: pas-stemcell
@@ -411,14 +407,14 @@ jobs:
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-product
-          env: interpolated-creds
+          env: configuration
       # code_snippet upload-product-usage end
       # code_snippet upload-stemcell-usage start yaml
       - task: upload-pas-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
           stemcell: pas-stemcell
       # code_snippet upload-stemcell-usage end
       # code_snippet stage-product-usage start yaml
@@ -427,7 +423,7 @@ jobs:
         file: platform-automation-tasks/tasks/stage-product.yml
         input_mapping:
           product: pas-product
-          env: interpolated-creds
+          env: configuration
       # code_snippet stage-product-usage end
 
   - name: configure-pas
@@ -452,10 +448,12 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
+          vars: configuration
         params:
           CONFIG_FILE: pas.yml
+          VARS_FILES: vars/vars/pas.yml
       # code_snippet configure-product-usage end
 
   - name: upload-and-stage-pas-windows
@@ -481,19 +479,19 @@ jobs:
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-windows-product
-          env: interpolated-creds
+          env: configuration
       - task: upload-pas-windows-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
           stemcell: pas-windows-stemcell
       - task: stage-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/stage-product.yml
         input_mapping:
           product: pas-windows-product
-          env: interpolated-creds
+          env: configuration
 
   - name: configure-pas-windows
     serial: true
@@ -516,8 +514,8 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
         params:
           CONFIG_FILE: pas-windows.yml
 
@@ -543,7 +541,7 @@ jobs:
           CONFIG_FILE: download-product/healthwatch.yml
           SOURCE: s3
         input_mapping:
-          config: interpolated-creds
+          config: configuration
         output_mapping:
           downloaded-product: healthwatch-product
           downloaded-stemcell: healthwatch-stemcell
@@ -553,13 +551,13 @@ jobs:
         file: platform-automation-tasks/tasks/upload-and-stage-product.yml
         input_mapping:
           product: healthwatch-product
-          env: interpolated-creds
+          env: configuration
       # code_snippet upload-and-stage-product-usage end
       - task: upload-healthwatch-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
           stemcell: healthwatch-stemcell
 
   - name: configure-healthwatch
@@ -583,8 +581,8 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
         params:
           CONFIG_FILE: healthwatch.yml
 
@@ -612,21 +610,21 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/pre-deploy-check.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
       # code_snippet pre-deploy-check-usage end
       # code_snippet apply-changes-usage start yaml
       - task: apply-product-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
       # code_snippet apply-changes-usage end
       # code_snippet check-pending-changes-usage start yaml
       - task: check-pending-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/check-pending-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           ALLOW_PENDING_CHANGES: true
       # code_snippet check-pending-changes-usage end
@@ -634,7 +632,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: installation-$timestamp.zip
       - put: installation
@@ -658,7 +656,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-config.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           PRODUCT_NAME: cf
         ensure: *put-state
@@ -681,7 +679,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/expiring-certificates.yml
       input_mapping:
-        env: interpolated-creds
+        env: configuration
       params:
         EXPIRES_WITHIN: 6m
     # code_snippet expiring-certificates-usage end
@@ -702,7 +700,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-config.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           PRODUCT_NAME: p-healthwatch
         ensure: *put-state
@@ -733,7 +731,7 @@ jobs:
       params:
         CONFIG_FILE: telemetry.yml
       input_mapping:
-        env: interpolated-creds
+        env: configuration
         config: configuration
     # code_snippet collect-telemetry-usage end
     # code_snippet send-telemetry-usage start yaml

@@ -83,16 +83,13 @@ resources:
 # The yaml anchor "*interpolate-creds" is used in its place
 interpolate-creds: &interpolate-creds
   image: platform-automation-image
-  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
   params:
-    CREDHUB_CLIENT: ((credhub-client))
-    CREDHUB_SECRET: ((credhub-secret))
-    CREDHUB_SERVER: ((credhub-server))
-    CREDHUB_CA_CERT: ((credhub-ca-cert))
-    PREFIX: '/concourse/main/reference-pipeline-pks'
-    SKIP_MISSING: true
+    VARS_PATHS: vars/vars
   input_mapping:
-    files: configuration
+    tasks: platform-automation-tasks
+    config: configuration
+    vars: configuration
   output_mapping:
     interpolated-files: interpolated-creds
 # code_snippet single-product-interpolate-creds end yaml
