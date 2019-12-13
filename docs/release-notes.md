@@ -38,6 +38,9 @@ Someday Sometime
   For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
   To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace].
 
+### Bug Fixes
+- the p-automator binary no longer accepts unknown flags for faster debug feedback
+
 ## v4.2.3
 Released December 12, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
 
