@@ -91,7 +91,7 @@ interpolate-creds: &interpolate-creds
     config: configuration
     vars: configuration
   output_mapping:
-    interpolated-files: interpolated-creds
+    tasks: platform-automation-tasks
 # code_snippet single-product-interpolate-creds end yaml
 
 # code_snippet single-product-jobs start yaml
@@ -120,7 +120,7 @@ jobs:
           CONFIG_FILE: download-product/opsman.yml
           SOURCE: s3
         input_mapping:
-          config: interpolated-creds
+          config: configuration
         output_mapping:
           downloaded-product: opsman-image
       - task: create-vm
@@ -128,7 +128,7 @@ jobs:
         file: platform-automation-tasks/tasks/create-vm.yml
         input_mapping:
           image: opsman-image
-          config: interpolated-creds
+          config: configuration
         params:
           STATE_FILE: state-pks.yml
         ensure: &put-state
@@ -141,24 +141,24 @@ jobs:
         file: platform-automation-tasks/tasks/configure-authentication.yml
         attempts: 10
         input_mapping:
-          env: interpolated-creds
-          config: interpolated-creds
+          env: configuration
+          config: configuration
       - task: configure-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
         input_mapping:
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
       - task: apply-director-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: pks-installation-$timestamp.zip
       - put: installation
@@ -185,7 +185,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: pks-installation-$timestamp.zip
       - put: installation
@@ -217,7 +217,7 @@ jobs:
         CONFIG_FILE: download-product/opsman.yml
         SOURCE: s3
       input_mapping:
-        config: interpolated-creds
+        config: configuration
       output_mapping:
         downloaded-product: opsman-image
     - task: upgrade-opsman
@@ -225,8 +225,8 @@ jobs:
       file: platform-automation-tasks/tasks/upgrade-opsman.yml
       input_mapping:
         image: opsman-image
-        config: interpolated-creds
-        env: interpolated-creds
+        config: configuration
+        env: configuration
       params:
         STATE_FILE: state-pks.yml
         INSTALLATION_FILE: pks-installation*.zip
@@ -235,18 +235,18 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/configure-director.yml
       input_mapping:
-        config: interpolated-creds
-        env: interpolated-creds
+        config: configuration
+        env: configuration
     - task: apply-director-changes
       image: platform-automation-image
       file: platform-automation-tasks/tasks/apply-director-changes.yml
       input_mapping:
-        env: interpolated-creds
+        env: configuration
     - task: export-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/export-installation.yml
       input_mapping:
-        env: interpolated-creds
+        env: configuration
       params:
         INSTALLATION_FILE: pks-installation-$timestamp.zip
     - put: installation
@@ -275,7 +275,7 @@ jobs:
           CONFIG_FILE: download-product/pks.yml
           SOURCE: s3
         input_mapping:
-          config: interpolated-creds
+          config: configuration
         output_mapping:
           downloaded-product: pks-product
           downloaded-stemcell: pks-stemcell
@@ -284,12 +284,12 @@ jobs:
         file: platform-automation-tasks/tasks/upload-and-stage-product.yml
         input_mapping:
           product: pks-product
-          env: interpolated-creds
+          env: configuration
       - task: upload-pks-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
           stemcell: pks-stemcell
 
   - name: configure-pks
@@ -313,10 +313,12 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
-          config: interpolated-creds
-          env: interpolated-creds
+          config: configuration
+          env: configuration
+          vars: configuration
         params:
           CONFIG_FILE: pks.yml
+          VARS_FILES: vars/vars/pks.yml
 
   - name: apply-product-changes
     serial: true
@@ -339,24 +341,24 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/pre-deploy-check.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
       - task: apply-product-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
       - task: check-pending-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/check-pending-changes.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           ALLOW_PENDING_CHANGES: true
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: interpolated-creds
+          env: configuration
         params:
           INSTALLATION_FILE: pks-installation-$timestamp.zip
       - put: installation
@@ -388,7 +390,7 @@ jobs:
       params:
         CONFIG_FILE: telemetry.yml
       input_mapping:
-        env: interpolated-creds
+        env: configuration
         config: configuration
     - task: send-telemetry-data
       image: platform-automation-image
