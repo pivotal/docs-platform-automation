@@ -655,8 +655,6 @@ jobs:
             params:
               unpack: true
           - get: configuration
-          - get: daily-trigger
-            trigger: true
       - task: interpolate-creds
         <<: *interpolate-creds
       # code_snippet collect-telemetry-usage start yaml
