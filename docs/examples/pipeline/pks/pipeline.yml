@@ -322,7 +322,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
-    serial_groups: [ install ]
+    serial_groups: [ telemetry, install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -335,9 +335,6 @@ jobs:
             params:
               unpack: true
           - get: configuration
-          - get: telemetry-collector-binary
-            params:
-              unpack: true
       - task: interpolate-creds
         <<: *interpolate-creds
       - task: pre-deploy-check
@@ -350,20 +347,6 @@ jobs:
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
           env: configuration
-      - task: collect-telemetry-data
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/collect-telemetry.yml
-        params:
-          CONFIG_FILE: telemetry.yml
-        input_mapping:
-          env: configuration
-          config: configuration
-      - task: send-telemetry-data
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/send-telemetry.yml
-        params:
-          API_KEY: no-op-test-key
-          DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
       - task: check-pending-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/check-pending-changes.yml
@@ -381,6 +364,42 @@ jobs:
       - put: installation
         params:
           file: installation/pks-installation*.zip
+
+  - name: collect-telemetry
+    serial: true
+    serial_groups: [ telemetry ]
+    plan:
+    - aggregate:
+      - get: telemetry-collector-binary
+        params:
+          unpack: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+        passed:
+          - apply-product-changes
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+      - get: daily-trigger
+        trigger: true
+    - task: interpolate-creds
+      <<: *interpolate-creds
+    - task: collect-telemetry-data
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/collect-telemetry.yml
+      params:
+        CONFIG_FILE: telemetry.yml
+      input_mapping:
+        env: configuration
+        config: configuration
+    - task: send-telemetry-data
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/send-telemetry.yml
+      params:
+        API_KEY: no-op-test-key
+        DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
 
 # code_snippet single-product-jobs end yaml
 # code_snippet single-product-pipeline end

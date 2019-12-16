@@ -588,7 +588,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
-    serial_groups: [ install ]
+    serial_groups: [ telemetry, install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -603,9 +603,6 @@ jobs:
             params:
               unpack: true
           - get: configuration
-          - get: telemetry-collector-binary
-            params:
-              unpack: true
       - task: interpolate-creds
         <<: *interpolate-creds
       # code_snippet pre-deploy-check-usage start yaml
@@ -622,24 +619,6 @@ jobs:
         input_mapping:
           env: configuration
       # code_snippet apply-changes-usage end
-      # code_snippet collect-telemetry-usage start yaml
-      - task: collect-telemetry-data
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/collect-telemetry.yml
-        params:
-          CONFIG_FILE: telemetry.yml
-        input_mapping:
-          env: configuration
-          config: configuration
-      # code_snippet collect-telemetry-usage end
-      # code_snippet send-telemetry-usage start yaml
-      - task: send-telemetry-data
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/send-telemetry.yml
-        params:
-          API_KEY: no-op-test-key
-          DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
-      # code_snippet send-telemetry-usage end
       # code_snippet check-pending-changes-usage start yaml
       - task: check-pending-changes
         image: platform-automation-image
@@ -659,6 +638,45 @@ jobs:
       - put: installation
         params:
           file: installation/installation*.zip
+  - name: collect-telemetry
+    serial: true
+    serial_groups: [ telemetry ]
+    plan:
+      - aggregate:
+          - get: telemetry-collector-binary
+            params:
+              unpack: true
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - apply-product-changes
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: daily-trigger
+            trigger: true
+      - task: interpolate-creds
+        <<: *interpolate-creds
+      # code_snippet collect-telemetry-usage start yaml
+      - task: collect-telemetry-data
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/collect-telemetry.yml
+        params:
+          CONFIG_FILE: telemetry.yml
+        input_mapping:
+          env: configuration
+          config: configuration
+      # code_snippet collect-telemetry-usage end
+      # code_snippet send-telemetry-usage start yaml
+      - task: send-telemetry-data
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/send-telemetry.yml
+        params:
+          API_KEY: no-op-test-key
+          DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
+    # code_snippet send-telemetry-usage end
   - name: staged-pas-config
     plan:
       - aggregate:
