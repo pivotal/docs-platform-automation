@@ -322,7 +322,7 @@ jobs:
 
   - name: apply-product-changes
     serial: true
-    serial_groups: [ telemetry, install ]
+    serial_groups: [ install ]
     plan:
       - aggregate:
           - get: platform-automation-image
@@ -367,7 +367,7 @@ jobs:
 
   - name: collect-telemetry
     serial: true
-    serial_groups: [ telemetry ]
+    serial_groups: [ install ]
     plan:
     - aggregate:
       - get: telemetry-collector-binary
