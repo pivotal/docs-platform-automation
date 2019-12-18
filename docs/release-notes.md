@@ -40,6 +40,7 @@ Someday Sometime
     - Credentials are no longer written to disk which alleviates some security concerns.
   For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
   To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace].
+- The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
 
 ### Bug Fixes
 - the p-automator binary no longer accepts unknown flags for faster debug feedback
