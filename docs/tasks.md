@@ -508,7 +508,8 @@ before an `apply-changes` could start.
 {% code_snippet 'examples', 'pre-deploy-check-usage', 'Usage' %}
 
 ### prepare-tasks-with-secrets
-Modifies task files to include config secrets as environment variables
+Modifies task files to include config secrets as environment variables.
+Learn more about [secrets handling][secrets-handling]   .
 
 {% code_snippet 'tasks', 'prepare-tasks-with-secrets', 'Task' %}
 {% code_snippet 'tasks', 'prepare-tasks-with-secrets-script', 'Implementation' %}

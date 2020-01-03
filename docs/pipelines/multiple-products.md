@@ -94,19 +94,13 @@ Platform Automation will not create these resources for you.
 
 {% code_snippet 'examples', 'multiple-product-resources-triggers' %}
 
-### Credhub Interpolate Job
+### Secrets Handling
 
-`((foundation))` is a value
-intended to be replaced by the filepath
-of your foundation directory structure in github
-(if you are not using multi-foundation, this value can be removed).
-
-`((credhub-*))` are values for accessing your Concourse Credhub.
-These are set when `fly`-ing your pipeline.
-For more information on how to fly your pipeline
-and use `((foundation))`,
-please reference our How To Guides for your specific workflow.
-Platform Automation will not create your Credhub or store values into your Credhub for you.
+This helps load secrets stored in an external credential manager -- such as Credhub.
+Concourse support several [credential managers][concourse-secrets-handling] natively.
+ 
+The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
+to load secrets from your external configuration files.
 
 {% code_snippet 'examples', 'multiple-product-interpolate-creds' %}
 
