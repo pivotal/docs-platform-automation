@@ -69,7 +69,7 @@ Platform Automation will not create these resources for you.
 ### Secrets Handling
 
 This helps load secrets stored in an external credential manager -- such as Credhub.
-Concourse support several [credential managers][concourse-secrets-handling] natively.
+Concourse supports several [credential managers][concourse-secrets-handling] natively.
  
 The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
 to load secrets from your external configuration files.
