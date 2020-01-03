@@ -651,6 +651,7 @@ jobs:
               unpack: true
             passed:
               - apply-product-changes
+            trigger: true
           - get: platform-automation-tasks
             params:
               unpack: true
