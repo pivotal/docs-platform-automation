@@ -124,7 +124,7 @@ resources:
 # code_snippet resources-pipeline-platform-automation end yaml
 
 # code_snippet resources-pipeline-configurations start yaml
-- name: config
+- name: configuration
   type: git
   source:
     private_key: ((docs-ref-pipeline-repo-key.private_key))
@@ -143,21 +143,19 @@ resources:
 
 # code_snippet resources-pipeline-interpolate-creds start yaml
 # This task is used in multiple jobs
-# The yaml anchor "*credhub-interpolate" is used in its place
-credhub-interpolate: &credhub-interpolate
+# The yaml anchor "*interpolate-creds" is used in its place
+interpolate-creds: &interpolate-creds
   image: platform-automation-image
-  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
   params:
-    CREDHUB_CLIENT: ((credhub-client))
-    CREDHUB_SECRET: ((credhub-secret))
-    CREDHUB_SERVER: ((credhub-server))
-    CREDHUB_CA_CERT: ((credhub-ca-cert))
-    PREFIX: '/concourse/main/reference-resources'
-    INTERPOLATION_PATHS: "download-product"
+    VARS_PATHS: vars/vars
+    CONFIG_PATHS: config/download-product
   input_mapping:
-    files: config
+    tasks: platform-automation-tasks
+    config: configuration
+    vars: configuration
   output_mapping:
-    interpolated-files: config
+    tasks: platform-automation-tasks
 # code_snippet resources-pipeline-interpolate-creds end yaml
 
 # code_snippet resources-pipeline-jobs start yaml
@@ -173,14 +171,16 @@ jobs:
     - get: platform-automation-tasks
       params:
         unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
+    - get: configuration
+  - task: interpolate-creds
+    <<: *interpolate-creds
   - task: download-healthwatch-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-product/healthwatch.yml
+    input_mapping:
+      config: configuration
     output_mapping: {downloaded-stemcell: healthwatch-stemcell}
   - aggregate:
     - put: healthwatch-product
@@ -201,14 +201,16 @@ jobs:
     - get: platform-automation-tasks
       params:
         unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
+    - get: configuration
+  - task: interpolate-creds
+    <<: *interpolate-creds
   - task: download-opsman-image
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-product/opsman.yml
+    input_mapping:
+      config: configuration
   - aggregate:
     - put: opsman-product
       params:
@@ -225,15 +227,17 @@ jobs:
     - get: platform-automation-tasks
       params:
         unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
+    - get: configuration
+  - task: interpolate-creds
+    <<: *interpolate-creds
   # code_snippet download-product-usage start yaml
   - task: download-pas-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-product/pas.yml
+    input_mapping:
+      config: configuration
     output_mapping: {downloaded-stemcell: pas-stemcell}
   # code_snippet download-product-usage end
   - aggregate:
@@ -255,14 +259,16 @@ jobs:
     - get: platform-automation-tasks
       params:
         unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
+    - get: configuration
+  - task: interpolate-creds
+    <<: *interpolate-creds
   - task: download-pas-windows-product
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-product/pas-windows.yml
+    input_mapping:
+      config: configuration
   - aggregate:
     - put: pas-windows-product
       params:
@@ -279,14 +285,16 @@ jobs:
     - get: platform-automation-tasks
       params:
         unpack: true
-    - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
+    - get: configuration
+  - task: interpolate-creds
+    <<: *interpolate-creds
   - task: download-telemetry
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-product/telemetry.yml
+    input_mapping:
+      config: configuration
   - aggregate:
     - put: telemetry-product
       params:
@@ -303,14 +311,16 @@ jobs:
       - get: platform-automation-tasks
         params:
           unpack: true
-      - get: config
-  - task: credhub-interpolate
-    <<: *credhub-interpolate
+      - get: configuration
+  - task: interpolate-creds
+    <<: *interpolate-creds
   - task: download-pks-product-and-stemcell
     image: platform-automation-image
     file: platform-automation-tasks/tasks/download-product.yml
     params:
       CONFIG_FILE: download-product/pks.yml
+    input_mapping:
+      config: configuration
     output_mapping: {downloaded-stemcell: pks-stemcell}
   - aggregate:
       - put: pks-product
