@@ -21,6 +21,15 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.0.9
+Someday Sometime
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
+  The CVEs are related to vulnerabilities with `Libgcrypt`.
+- CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
+  The CVEs are related to vulnerabilities with `GnuTLS`.
+
 ## v4.0.8
 Released December 12, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
@@ -168,6 +177,15 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
+
+## v3.0.16
+Someday Sometime
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
+  The CVEs are related to vulnerabilities with `Libgcrypt`.
+- CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
+  The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v3.0.15
 Released December 12, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
