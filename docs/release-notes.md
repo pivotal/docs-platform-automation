@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.3.0
-Someday Sometime
+Someday Sometime, includes `om` version [4.4.1](https://github.com/pivotal-cf/om/releases/tag/4.4.1)
 
 ### What's New
 - The [`revert-staged-changes`][revert-staged-changes] task has been added.
@@ -63,7 +63,7 @@ Someday Sometime
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.3
-Released December 12, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released December 12, 2019, includes `om` version [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0)
 
 ### Bug Fixes
 - When specifying `StorageSKU` for azure, `p-automator` would append `--storage-sku` twice in the creating VM invocation.
@@ -72,7 +72,7 @@ Released December 12, 2019, includes `om` version [4.2.1](https://github.com/piv
   The CVEs are related to vulnerabilities with `git`.
 
 ## v4.2.2
-Released December 3, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released December 3, 2019, includes `om` version [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0)
 
 ### What's New
 - The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP and AWS Only at the moment).
@@ -161,7 +161,7 @@ Released December 3, 2019, includes `om` version [4.2.1](https://github.com/pivo
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.1.9
-Someday Sometime
+Someday Sometime, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
@@ -270,7 +270,7 @@ Released October 21, 2019, includes `om` version [4.1.0](https://github.com/pivo
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.9
-Someday Sometime
+Someday Sometime, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
@@ -427,7 +427,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.16
-Someday Sometime
+Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
