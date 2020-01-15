@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v3.0.16
-Someday Sometime
+Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
