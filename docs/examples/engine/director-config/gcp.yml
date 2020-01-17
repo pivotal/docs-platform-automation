@@ -1,0 +1,45 @@
+---
+az-configuration:
+  - name: us-central1-c
+    iaas_configuration_name: default
+  - name: us-central1-b
+    iaas_configuration_name: default
+  - name: us-central1-a
+    iaas_configuration_name: default
+iaas-configurations:
+  - additional_cloud_properties: {}
+    associated_service_account: ((associated_service_account))
+    default_deployment_tag: ((default_deployment_tag))
+    name: ((name))
+    project: ((project))
+network-assignment:
+  network:
+    name: management-network
+  other_availability_zones: []
+  singleton_availability_zone:
+    name: us-central1-a
+networks-configuration:
+  icmp_checks_enabled: false
+  networks:
+    - name: management-network
+      subnets:
+        - iaas_identifier: ((network_name))/((subnet_management_name))/((region))
+          cidr: 10.0.0.0/26
+          reserved_ip_ranges: 10.0.0.0-10.0.0.10
+          gateway: 10.0.0.1
+          dns: 8.8.8.8
+          availability_zone_names:
+            - us-central1-a
+            - us-central1-b
+            - us-central1-c
+properties-configuration:
+  director_configuration:
+    ntp_servers_string: ntp.ubuntu.com
+vmextensions-configuration:
+- name: concourse-lb
+  cloud_properties:
+    target_pool: concourse
+- name: worker-disk
+  cloud_properties:
+    root_disk_size_gb: 100
+    root_disk_type: pd-ssd
