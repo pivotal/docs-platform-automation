@@ -1,0 +1,378 @@
+---
+resource_types:
+- name: pivnet
+  type: registry-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: platform-automation-tasks
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    secret_access_key: ((s3.secret_access_key))
+    region_name: ((s3.region_name))
+    bucket: ((s3.buckets.pivnet_products))
+    regexp: .*tasks-(.*).zip
+
+- name: platform-automation-image
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    secret_access_key: ((s3.secret_access_key))
+    region_name: ((s3.region_name))
+    bucket: ((s3.buckets.pivnet_products))
+    regexp: .*image-(.*).tgz
+
+- name: terraforming-gcp
+  type: git
+  source:
+    uri: https://github.com/jtarchie/terraforming-gcp
+
+- name: concourse-bosh-deployment
+  type: git
+  source:
+    #    uri: https://github.com/concourse/concourse-bosh-deployment
+    uri: https://github.com/jtarchie/concourse-bosh-deployment
+
+- name: ci
+  type: git
+  source:
+    private_key: ((platform_automation_ci.private_key))
+    uri: git@github.com:pivotal/platform-automation-ci
+
+- name: deployments
+  type: git
+  source:
+    branch: master
+    private_key: ((platform_automation_deployments.private_key))
+    uri: git@github.com:pivotal/platform-automation-deployments
+
+- name: opsman-image
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: ops-manager
+    product_version: ^2\.7\.\d+$
+
+- name: concourse-release
+  type: bosh-io-release
+  source:
+    repository: concourse/concourse-bosh-release
+  version:
+    version: 5.8.0
+
+- name: bpm-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bpm-release
+  version:
+    version: 1.1.6
+
+- name: postgres-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/postgres-release
+  version:
+    version: 40
+
+- name: credhub-release
+  type: bosh-io-release
+  source:
+    repository: pivotal-cf/credhub-release
+  version:
+    version: 2.5.7
+
+- name: uaa-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/uaa-release
+  version:
+    version: 74.9.0
+
+- name: ubuntu-xenial-stemcell
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: stemcells-ubuntu-xenial
+    product_version: ^621\..*
+
+jobs:
+- name: create-opsman
+  serial_groups: [ install ]
+  serial: true
+  plan:
+  - get: opsman-image
+    params:
+      globs:
+      - '*gcp*.yml'
+      - '*GCP.yml'
+  - get: terraforming-gcp
+  - get: platform-automation-tasks
+    params:
+      unpack: true
+  - get: platform-automation-image
+    params:
+      unpack: true
+  - get: deployments
+  - get: ci
+  - task: run-terraform
+    file: ci/tasks/create-infrastructure/task.yml
+    params:
+      IAAS: gcp-compatibility
+    input_mapping:
+      terraforming: terraforming-gcp
+    ensure:
+      put: deployments
+      params:
+        rebase: true
+        repository: deployments-updated
+  - task: generate-config
+    file: ci/tasks/generate-config/task.yml
+    params:
+      IAAS: gcp-compatibility
+  - task: create-vm
+    file: platform-automation-tasks/tasks/create-vm.yml
+    input_mapping:
+      image: opsman-image
+    image: platform-automation-image
+    ensure:
+      do:
+      - task: state-file
+        file: ci/tasks/make-commit/task.yml
+        params:
+          IAAS: gcp-compatibility
+      - put: deployments
+        params:
+          rebase: true
+          repository: deployments-updated
+  - task: configure-authentication
+    file: platform-automation-tasks/tasks/configure-authentication.yml
+    image: platform-automation-image
+    attempts: 20
+  - task: configure-director
+    file: platform-automation-tasks/tasks/configure-director.yml
+    image: platform-automation-image
+  - task: apply-director-changes
+    file: platform-automation-tasks/tasks/apply-director-changes.yml
+    image: platform-automation-image
+- name: deploy-and-test
+  serial_groups: [ install ]
+  serial: true
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+      passed: [ create-opsman ]
+      trigger: true
+    - get: deployments
+    - get: concourse-release
+    - get: bpm-release
+    - get: postgres-release
+    - get: credhub-release
+    - get: uaa-release
+    - get: concourse-bosh-deployment
+    - get: ci
+    - get: ubuntu-xenial-stemcell
+      params:
+        globs: ["*google*"]
+  - task: generate-config
+    file: ci/tasks/generate-config/task.yml
+    params:
+      IAAS: gcp-compatibility
+  - task: deploy-it
+    image: platform-automation-image
+    config:
+      inputs:
+      - name: deployments
+      - name: env
+      - name: concourse-release
+      - name: bpm-release
+      - name: postgres-release
+      - name: credhub-release
+      - name: uaa-release
+      - name: ubuntu-xenial-stemcell
+      - name: config
+      - name: concourse-bosh-deployment
+      - name: ci
+      platform: linux
+      params:
+        CONCOURSE_URL: ci.g23.gcp.platform-automation.cf-app.com
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          #!/usr/bin/env bash
+          set -euxo pipefail
+
+          cp env/env.yml env.yml
+          cp config/director.yml director.yml
+          mv concourse-release/*.tgz concourse-release.tgz
+          mv bpm-release/*.tgz bpm-release.tgz
+          mv postgres-release/*.tgz postgres-release.tgz
+          mv credhub-release/*.tgz credhub-release.tgz
+          mv uaa-release/*.tgz uaa-release.tgz
+          mv ubuntu-xenial-stemcell/*.tgz stemcell.tgz
+          mv ci/platform-automation-engine/operations/operations.yml operations.yml
+          mv ci/platform-automation-engine/test-pipeline.yml pipeline.yml
+
+          om interpolate \
+            -c deployments/platform-automation/gcp-compatibility/terraform.tfstate \
+            --path /modules/0/outputs/ops_manager_ssh_private_key/value > /tmp/private_key
+
+          # code_snippet engine-bosh-target start bash
+          eval "$(om --env env/env.yml bosh-env --ssh-private-key=/tmp/private_key)"
+          # check that we are properly targeted
+          bosh curl /info
+          # code_snippet engine-bosh-target end bash
+
+          # code_snippet engine-upload-releases start bash
+          # upload releases
+          bosh upload-release concourse*.tgz
+          bosh upload-release bpm*.tgz
+          bosh upload-release postgres*.tgz
+          bosh upload-release uaa*.tgz
+          bosh upload-release credhub*.tgz
+          # code_snippet engine-upload-releases end bash
+
+          # code_snippet engine-upload-stemcell start bash
+          bosh upload-stemcell stemcell.tgz
+          # code_snippet engine-upload-stemcell end bash
+
+          pushd concourse-bosh-deployment
+
+          cat << EOF > ../vars.yml
+          # BOSH uses this to identify the deployment
+          deployment_name: concourse
+          # This can be any vm type from the cloud config: `bosh cloud-config`
+          web_vm_type: large
+          # This is the external Concourse URL created above
+          external_host: $CONCOURSE_URL
+          # This is the external Concourse URL created above
+          external_url: https://$CONCOURSE_URL
+          # This can be any vm type from the cloud config: `bosh cloud-config`
+          db_vm_type: large
+          # This can be any disk type from the cloud config: `bosh cloud-config`
+          db_persistent_disk_type: 102400
+          # This can be any vm type from the cloud config: `bosh cloud-config`
+          worker_vm_type: large
+          EOF
+
+          # code_snippet create-user start bash
+          credhub set -n /p-bosh/concourse/local_user -t user -z admin -w password
+          # code_snippet create-user end bash
+
+          # code_snippet engine-deploy-concourse start bash
+          bosh -n -d cluster/concourse.yml \
+            -o cluster/operations/privileged-http.yml \
+            -o cluster/operations/privileged-https.yml \
+            -o cluster/operations/enable-lets-encrypt.yml \
+            -o cluster/operations/basic-auth.yml \
+            -o cluster/operations/tls-vars.yml \
+            -o cluster/operations/uaa.yml \
+            -o cluster/operations/credhub-colocated.yml \
+            -o cluster/operations/offline-releases.yml \
+            -o ../operations.yml \
+            -l ../vars.yml \
+            -l cluster/versions/credhub.yml \
+            -l cluster/versions/uaa.yml \
+            -l versions.yml \
+            -v network_name=$(om interpolate --config ../director.yml --path /network-assignment/network/name)
+          # code_snippet engine-deploy-concourse end bash
+          popd
+
+          # code_snippet engine-credhub-credentials start bash
+          credhub_admin_secret=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
+          credhub_ca_cert=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
+
+          unset CREDHUB_SECRET CREDHUB_CLIENT CREDHUB_SERVER CREDHUB_PROXY CREDHUB_CA_CERT
+          # code_snippet engine-credhub-credentials end bash
+
+
+          # code_snippet engine-credhub-set start bash
+          credhub login \
+            --server https://$CONCOURSE_URL:8844 \
+            --client-name=credhub_admin \
+            --client-secret="${credhub_admin_secret}" \
+            --ca-cert "${credhub_ca_cert}"
+          # code_snippet engine-credhub-set end bash
+
+          credhub set \
+            -n /concourse/main/test-pipeline/provided-by-credhub \
+            -t value \
+            -v "World"
+
+          # code_snippet engine-fly-pipeline start bash
+          curl "https://$CONCOURSE_URL/api/v1/cli?arch=amd64&platform=linux" --output fly
+          chmod +x fly
+
+          ./fly -t ci login \
+            -c https://$CONCOURSE_URL \
+            -u admin \
+            -p password
+
+          ./fly -t ci set-pipeline \
+            -n \
+            -p test-pipeline \
+            -c pipeline.yml \
+            --check-creds
+
+          ./fly -t ci unpause-pipeline -p test-pipeline
+          # code_snippet engine-fly-pipeline end bash
+- name: ☢delete☢
+  serial_groups: [ install ]
+  serial: true
+  plan:
+  - get: deployments
+  - get: ci
+  - get: platform-automation-image
+    passed: [ deploy-and-test ]
+    trigger: true
+    params:
+      unpack: true
+  - get: platform-automation-tasks
+    params:
+      unpack: true
+  - get: terraforming-gcp
+  - task: generate-config
+    file: ci/tasks/generate-config/task.yml
+    params:
+      IAAS: gcp-compatibility
+  - try:
+      task: delete-deployment
+      image: platform-automation-image
+      file: ci/platform-automation-engine/delete-deployment/task.yml
+  - try:
+      task: delete-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/delete-installation.yml
+  - try:
+      task: delete-opsman-vm
+      file: platform-automation-tasks/tasks/delete-vm.yml
+      image: platform-automation-image
+      ensure:
+        do:
+        - task: state-file
+          file: ci/tasks/make-commit/task.yml
+          params:
+            IAAS: gcp-compatibility
+        - put: deployments
+          params:
+            rebase: true
+            repository: deployments-updated
+  - try:
+      task: delete-infrastructure
+      file: ci/tasks/delete-infrastructure/task.yml
+      params:
+        IAAS: gcp-compatibility
+        TF_WARN_OUTPUT_ERRORS: 1
+      input_mapping:
+        terraforming: terraforming-gcp
+    ensure:
+      put: deployments
+      params:
+        rebase: true
+        repository: deployments-updated
