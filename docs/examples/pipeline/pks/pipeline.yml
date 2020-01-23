@@ -78,10 +78,10 @@ resources:
       interval: 24h
   # code_snippet single-product-resources-triggers end yaml
 
-# code_snippet single-product-interpolate-creds start yaml
+# code_snippet single-product-prepare-tasks-with-secrets start yaml
 # This task is used in multiple jobs
-# The yaml anchor "*interpolate-creds" is used in its place
-interpolate-creds: &interpolate-creds
+# The yaml anchor "*prepare-tasks-with-secrets" is used in its place
+prepare-tasks-with-secrets: &prepare-tasks-with-secrets
   image: platform-automation-image
   file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
   params:
@@ -92,7 +92,7 @@ interpolate-creds: &interpolate-creds
     vars: configuration
   output_mapping:
     tasks: platform-automation-tasks
-# code_snippet single-product-interpolate-creds end yaml
+# code_snippet single-product-prepare-tasks-with-secrets end yaml
 
 # code_snippet single-product-jobs start yaml
 jobs:
@@ -111,8 +111,8 @@ jobs:
             unpack: true
         - get: configuration
         - get: state
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: download-opsman-image
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
@@ -179,8 +179,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
@@ -208,8 +208,8 @@ jobs:
         passed: [ export-installation ]
       - get: configuration
       - get: state
-    - task: interpolate-creds
-      <<: *interpolate-creds
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
     - task: download-opsman-image
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
@@ -266,8 +266,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: download-pks
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
@@ -307,8 +307,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: configure-pks
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
@@ -335,8 +335,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: pre-deploy-check
         image: platform-automation-image
         file: platform-automation-tasks/tasks/pre-deploy-check.yml
@@ -383,8 +383,8 @@ jobs:
         params:
           unpack: true
       - get: configuration
-    - task: interpolate-creds
-      <<: *interpolate-creds
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
     - task: collect-telemetry-data
       image: platform-automation-image
       file: platform-automation-tasks/tasks/collect-telemetry.yml

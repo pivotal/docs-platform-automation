@@ -99,10 +99,10 @@ resources:
       interval: 24h
   # code_snippet multiple-product-resources-triggers end yaml
 
-# code_snippet multiple-product-interpolate-creds start yaml
+# code_snippet multiple-product-prepare-tasks-with-secrets start yaml
 # This task is used in multiple jobs
-# The yaml anchor "*interpolate-creds" is used in its place
-interpolate-creds: &interpolate-creds
+# The yaml anchor "*prepare-tasks-with-secrets" is used in its place
+prepare-tasks-with-secrets: &prepare-tasks-with-secrets
   image: platform-automation-image
   file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
   params:
@@ -113,7 +113,7 @@ interpolate-creds: &interpolate-creds
     vars: configuration
   output_mapping:
     tasks: platform-automation-tasks
-# code_snippet multiple-product-interpolate-creds end yaml
+# code_snippet multiple-product-prepare-tasks-with-secrets end yaml
 
 # code_snippet multiple-product-jobs start yaml
 jobs:
@@ -155,8 +155,8 @@ jobs:
           unpack: true
       - get: configuration
       - get: state
-    - task: interpolate-creds
-      <<: *interpolate-creds
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
     # code_snippet delete-installation-usage start yaml
     - task: delete-installation
       image: platform-automation-image
@@ -191,8 +191,8 @@ jobs:
             unpack: true
         - get: configuration
         - get: state
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: download-opsman-image
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
@@ -257,8 +257,8 @@ jobs:
             params: {unpack: true}
           - get: configuration
           - get: state
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       # code_snippet staged-director-config-usage start yaml
       - task: staged-director-config
         image: platform-automation-image
@@ -284,8 +284,8 @@ jobs:
           - get: configuration
           - get: one-time-trigger
             passed: [ install-opsman ]
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       # code_snippet revert-staged-changes-usage start yaml
       - task: revert-staged-changes
         image: platform-automation-image
@@ -326,8 +326,8 @@ jobs:
             passed: [ export-installation ]
           - get: configuration
           - get: state
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: download-opsman-image
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
@@ -384,8 +384,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       # code_snippet download-product-usage-s3 start yaml
       # code_snippet download-product-s3-usage start yaml
       - task: download-pas
@@ -441,8 +441,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       # code_snippet configure-product-usage start yaml
       - task: configure-pas
         image: platform-automation-image
@@ -472,8 +472,8 @@ jobs:
           - get: pas-windows-product
           - get: pas-windows-stemcell
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-product.yml
@@ -508,8 +508,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: configure-pas
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
@@ -532,8 +532,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: download-healthwatch
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
@@ -575,8 +575,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: configure-healthwatch
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
@@ -603,8 +603,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       # code_snippet pre-deploy-check-usage start yaml
       - task: pre-deploy-check
         image: platform-automation-image
@@ -656,8 +656,8 @@ jobs:
             params:
               unpack: true
           - get: configuration
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       # code_snippet collect-telemetry-usage start yaml
       - task: collect-telemetry-data
         image: platform-automation-image
@@ -687,8 +687,8 @@ jobs:
               unpack: true
           - get: configuration
           - get: state
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       # code_snippet staged-config-usage start yaml
       - task: staged-config
         image: platform-automation-image
@@ -710,8 +710,8 @@ jobs:
           unpack: true
       - get: configuration
       - get: state
-    - task: interpolate-creds
-      <<: *interpolate-creds
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
     # code_snippet expiring-certificates-usage start yaml
     - task: expiring-certificates
       image: platform-automation-image
@@ -732,8 +732,8 @@ jobs:
               unpack: true
           - get: configuration
           - get: state
-      - task: interpolate-creds
-        <<: *interpolate-creds
+      - task: prepare-tasks-with-secrets
+        <<: *prepare-tasks-with-secrets
       - task: staged-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/staged-config.yml
