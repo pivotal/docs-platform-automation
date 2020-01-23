@@ -102,7 +102,7 @@ Concourse support several [credential managers][concourse-secrets-handling] nati
 The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
 to load secrets from your external configuration files.
 
-{% code_snippet 'examples', 'multiple-product-interpolate-creds' %}
+{% code_snippet 'examples', 'multiple-product-prepare-tasks-with-secrets' %}
 
 ### Jobs
 

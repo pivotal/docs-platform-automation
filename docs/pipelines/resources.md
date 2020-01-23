@@ -111,7 +111,7 @@ Concourse supports several [credential managers][concourse-secrets-handling] nat
 The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
 to load secrets from your external configuration files.
 
-{% code_snippet 'examples', 'resources-pipeline-interpolate-creds' %}
+{% code_snippet 'examples', 'resources-pipeline-prepare-tasks-with-secrets' %}
 
 ### Jobs
 
