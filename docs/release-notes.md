@@ -21,6 +21,12 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.3.1
+Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om/releases/tag/4.4.2)
+
+### What's New
+- The [config][download-product-config] for the `download-product` task now recommends using `file-glob` instead of `pivnet-file-glob`.
+
 ## v4.3.0
 Someday Sometime, includes `om` version [4.4.1](https://github.com/pivotal-cf/om/releases/tag/4.4.1)
 
