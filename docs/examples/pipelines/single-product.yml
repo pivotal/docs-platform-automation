@@ -1,24 +1,8 @@
 # The following line helps maintain current documentation at http://docs.pivotal.io.
-# code_snippet multiple-products-pipeline start yaml
+# code_snippet single-product-pipeline start yaml
 
-# code_snippet multiple-product-resources-s3 start yaml
-resource_types:
-  - name: pivnet
-    type: docker-image
-    source:
-      repository: pivotalcf/pivnet-resource
-      tag: latest-final
-
+# code_snippet single-product-resources-s3 start yaml
 resources:
-  - name: telemetry-collector-binary
-    type: s3
-    source:
-      access_key_id: ((s3_access_key_id))
-      secret_access_key: ((s3_secret_access_key))
-      region_name: ((s3_region_name))
-      bucket: ((s3_pivnet_products_bucket))
-      regexp: .*telemetry-(.*).tgz
-
   - name: platform-automation-tasks
     type: s3
     source:
@@ -37,26 +21,18 @@ resources:
       bucket: ((s3_pivnet_products_bucket))
       regexp: .*image-(.*).tgz
 
-  - name: pas-windows-product
+  - name: telemetry-collector-binary
     type: s3
     source:
       access_key_id: ((s3_access_key_id))
-      bucket: ((s3_pivnet_products_bucket))
-      region_name: ((s3_region_name))
       secret_access_key: ((s3_secret_access_key))
-      regexp: \[pas-windows,(.*)\]pas-windows-.*.pivotal
-
-  - name: pas-windows-stemcell
-    type: s3
-    source:
-      access_key_id: ((s3_access_key_id))
-      bucket: ((s3_pivnet_products_bucket))
       region_name: ((s3_region_name))
-      secret_access_key: ((s3_secret_access_key))
-      regexp: pas-windows-stemcell/\[stemcells-windows-server,(.*)\]bosh-stemcell-.*-vsphere.*\.tgz
-  # code_snippet multiple-product-resources-s3 end yaml
+      bucket: ((s3_pivnet_products_bucket))
+      regexp: .*telemetry-(.*).tgz
 
-  # code_snippet multiple-product-export-installation start yaml
+  # code_snippet single-product-resources-s3 end yaml
+
+  # code_snippet single-product-export-installation start yaml
   - name: installation
     type: s3
     source:
@@ -64,10 +40,10 @@ resources:
       secret_access_key: ((s3_secret_access_key))
       region_name: ((s3_region_name))
       bucket: ((s3_installation_bucket))
-      regexp: installation-(.*).zip
-  # code_snippet multiple-product-export-installation end yaml
+      regexp: pks-installation-(.*).zip
+  # code_snippet single-product-export-installation end yaml
 
-  # code_snippet multiple-product-resources-configurations start yaml
+  # code_snippet single-product-resources-configurations start yaml
   # VM state and foundation configuration
   - name: state
     type: s3
@@ -76,17 +52,20 @@ resources:
       bucket: ((s3_foundation_state_bucket))
       region_name: ((s3_region_name))
       secret_access_key: ((s3_secret_access_key))
-      versioned_file: state.yml
+      versioned_file: state-pks.yml
+      initial_content_text: '{}'
+      initial_version: 'empty-start'
 
+  # configurations
   - name: configuration
     type: git
     source:
       private_key: ((docs-ref-pipeline-repo-key.private_key))
       uri: ((docs-ref-pipeline-repo-uri))
-      branch: master
-  # code_snippet multiple-product-resources-configurations end yaml
+      branch: pks
+  # code_snippet single-product-resources-configurations end yaml
 
-  # code_snippet multiple-product-resources-triggers start yaml
+  # code_snippet single-product-resources-triggers start yaml
   # triggers used to have jobs do something in a timely manner
   - name: one-time-trigger
     type: time
@@ -97,9 +76,9 @@ resources:
     type: time
     source:
       interval: 24h
-  # code_snippet multiple-product-resources-triggers end yaml
+  # code_snippet single-product-resources-triggers end yaml
 
-# code_snippet multiple-product-prepare-tasks-with-secrets start yaml
+# code_snippet single-product-prepare-tasks-with-secrets start yaml
 # This task is used in multiple jobs
 # The yaml anchor "*prepare-tasks-with-secrets" is used in its place
 prepare-tasks-with-secrets: &prepare-tasks-with-secrets
@@ -113,69 +92,10 @@ prepare-tasks-with-secrets: &prepare-tasks-with-secrets
     vars: configuration
   output_mapping:
     tasks: platform-automation-tasks
-# code_snippet multiple-product-prepare-tasks-with-secrets end yaml
+# code_snippet single-product-prepare-tasks-with-secrets end yaml
 
-# code_snippet multiple-product-jobs start yaml
+# code_snippet single-product-jobs start yaml
 jobs:
-  - name: test-platform-automation
-    serial: true
-    plan:
-    - aggregate:
-      - get: platform-automation-image
-        params:
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          unpack: true
-      - get: configuration
-    # code_snippet test-interpolate-usage start yaml
-    - task: test-interpolate
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/test-interpolate.yml
-      params:
-        CONFIG_FILE: download-product/pas.yml
-        SKIP_MISSING: true
-      input_mapping:
-        config: configuration
-    # code_snippet test-interpolate-usage end
-    # code_snippet test-usage start yaml
-    - task: test
-      file: platform-automation-tasks/tasks/test.yml
-      image: platform-automation-image
-    # code_snippet test-usage end
-  - name: delete-opsman
-    serial: true
-    plan:
-    - aggregate:
-      - get: platform-automation-image
-        params:
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          unpack: true
-      - get: configuration
-      - get: state
-    - task: prepare-tasks-with-secrets
-      <<: *prepare-tasks-with-secrets
-    # code_snippet delete-installation-usage start yaml
-    - task: delete-installation
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/delete-installation.yml
-      input_mapping:
-        env: configuration
-    # code_snippet delete-installation-usage end
-    # code_snippet delete-vm-usage start yaml
-    - task: delete-vm
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/delete-vm.yml
-      input_mapping:
-        config: configuration
-      ensure: &put-state
-        do:
-        - put: state
-          params:
-            file: generated-state/state.yml
-    # code_snippet delete-vm-usage end
   - name: install-opsman
     serial: true
     serial_groups: [ install ]
@@ -203,16 +123,19 @@ jobs:
           config: configuration
         output_mapping:
           downloaded-product: opsman-image
-      # code_snippet create-vm-usage start yaml
       - task: create-vm
         image: platform-automation-image
         file: platform-automation-tasks/tasks/create-vm.yml
         input_mapping:
           image: opsman-image
           config: configuration
-        ensure: *put-state
-      # code_snippet create-vm-usage end
-      # code_snippet configure-authentication-usage start yaml
+        params:
+          STATE_FILE: state-pks.yml
+        ensure: &put-state
+          do:
+          - put: state
+            params:
+              file: generated-state/state-pks.yml
       - task: configure-authentication
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-authentication.yml
@@ -220,53 +143,27 @@ jobs:
         input_mapping:
           env: configuration
           config: configuration
-      # code_snippet configure-authentication-usage end
-      # code_snippet configure-director-usage start yaml
       - task: configure-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
         input_mapping:
           config: configuration
           env: configuration
-      # code_snippet configure-director-usage end
-      # code_snippet apply-director-changes-usage start yaml
       - task: apply-director-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
           env: configuration
-      # code_snippet apply-director-changes-usage end
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
           env: configuration
         params:
-          INSTALLATION_FILE: installation-$timestamp.zip
+          INSTALLATION_FILE: pks-installation-$timestamp.zip
       - put: installation
         params:
-          file: installation/installation*.zip
-
-  - name: staged-director-config
-    serial: true
-    plan:
-      - aggregate:
-          - get: platform-automation-tasks
-            params: {unpack: true}
-          - get: platform-automation-image
-            params: {unpack: true}
-          - get: configuration
-          - get: state
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      # code_snippet staged-director-config-usage start yaml
-      - task: staged-director-config
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/staged-director-config.yml
-        input_mapping:
-          env: configuration
-        ensure: *put-state
-      # code_snippet staged-director-config-usage end
+          file: installation/pks-installation*.zip
 
   - name: export-installation
     serial: true
@@ -282,244 +179,81 @@ jobs:
             params:
               unpack: true
           - get: configuration
-          - get: one-time-trigger
-            passed: [ install-opsman ]
       - task: prepare-tasks-with-secrets
         <<: *prepare-tasks-with-secrets
-      # code_snippet revert-staged-changes-usage start yaml
-      - task: revert-staged-changes
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/revert-staged-changes.yml
-        input_mapping:
-          env: configuration
-        params:
-          INSTALLATION_FILE: installation-$timestamp.zip
-      # code_snippet revert-staged-changes-usage end
-      # code_snippet export-installation-usage start yaml
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
           env: configuration
         params:
-          INSTALLATION_FILE: installation-$timestamp.zip
-      # code_snippet export-installation-usage end
+          INSTALLATION_FILE: pks-installation-$timestamp.zip
       - put: installation
         params:
-          file: installation/installation*.zip
+          file: installation/pks-installation*.zip
 
   - name: upgrade-opsman
     serial: true
     serial_groups: [ install ]
     plan:
-      - aggregate:
-          - get: one-time-trigger
-            passed: [ export-installation ]
-          - get: platform-automation-image
-            params:
-              unpack: true
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: installation
-            passed: [ export-installation ]
-          - get: configuration
-          - get: state
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      - task: download-opsman-image
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product.yml
+    - aggregate:
+      - get: platform-automation-image
         params:
-          CONFIG_FILE: download-product/opsman.yml
-          SOURCE: s3
-        input_mapping:
-          config: configuration
-        output_mapping:
-          downloaded-product: opsman-image
-      # code_snippet upgrade-opsman-usage start yaml
-      - task: upgrade-opsman
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upgrade-opsman.yml
-        input_mapping:
-          image: opsman-image
-          config: configuration
-          env: configuration
-        ensure: *put-state
-      # code_snippet upgrade-opsman-usage end
-      - task: configure-director
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/configure-director.yml
-        input_mapping:
-          config: configuration
-          env: configuration
-      - task: apply-director-changes
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/apply-director-changes.yml
-        input_mapping:
-          env: configuration
-      - task: export-installation
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/export-installation.yml
-        input_mapping:
-          env: configuration
+          unpack: true
+        trigger: true
+      - get: platform-automation-tasks
         params:
-          INSTALLATION_FILE: installation-$timestamp.zip
-      - put: installation
-        params:
-          file: installation/installation*.zip
+          unpack: true
+      - get: installation
+        passed: [ export-installation ]
+      - get: configuration
+      - get: state
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-opsman-image
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product/opsman.yml
+        SOURCE: s3
+      input_mapping:
+        config: configuration
+      output_mapping:
+        downloaded-product: opsman-image
+    - task: upgrade-opsman
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upgrade-opsman.yml
+      input_mapping:
+        image: opsman-image
+        config: configuration
+        env: configuration
+      params:
+        STATE_FILE: state-pks.yml
+        INSTALLATION_FILE: pks-installation*.zip
+      ensure: *put-state
+    - task: configure-director
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-director.yml
+      input_mapping:
+        config: configuration
+        env: configuration
+    - task: apply-director-changes
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/apply-director-changes.yml
+      input_mapping:
+        env: configuration
+    - task: export-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/export-installation.yml
+      input_mapping:
+        env: configuration
+      params:
+        INSTALLATION_FILE: pks-installation-$timestamp.zip
+    - put: installation
+      params:
+        file: installation/pks-installation*.zip
 
-  - name: upload-and-stage-pas
-    serial: true
-    plan:
-      - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-            passed:
-              - upgrade-opsman
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: configuration
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      # code_snippet download-product-usage-s3 start yaml
-      # code_snippet download-product-s3-usage start yaml
-      - task: download-pas
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product.yml
-        params:
-          CONFIG_FILE: download-product/pas.yml
-          SOURCE: s3
-        input_mapping:
-          config: configuration
-        output_mapping:
-          downloaded-product: pas-product
-          downloaded-stemcell: pas-stemcell
-      # code_snippet download-product-s3-usage end
-      # code_snippet download-product-usage-s3 end
-      # code_snippet upload-product-usage start yaml
-      - task: upload-product
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upload-product.yml
-        input_mapping:
-          product: pas-product
-          env: configuration
-      # code_snippet upload-product-usage end
-      # code_snippet upload-stemcell-usage start yaml
-      - task: upload-pas-stemcell
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upload-stemcell.yml
-        input_mapping:
-          env: configuration
-          stemcell: pas-stemcell
-      # code_snippet upload-stemcell-usage end
-      # code_snippet stage-product-usage start yaml
-      - task: stage-product
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/stage-product.yml
-        input_mapping:
-          product: pas-product
-          env: configuration
-      # code_snippet stage-product-usage end
-
-  - name: configure-pas
-    serial: true
-    serial_groups: [ install ]
-    plan:
-      - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-            passed:
-              - upload-and-stage-pas
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: configuration
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      # code_snippet configure-product-usage start yaml
-      - task: configure-pas
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/configure-product.yml
-        input_mapping:
-          config: configuration
-          env: configuration
-          vars: configuration
-        params:
-          CONFIG_FILE: pas.yml
-          VARS_FILES: vars/vars/pas.yml
-      # code_snippet configure-product-usage end
-
-  - name: upload-and-stage-pas-windows
-    serial: true
-    plan:
-      - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-            passed:
-              - upgrade-opsman
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: pas-windows-product
-          - get: pas-windows-stemcell
-          - get: configuration
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      - task: upload-product
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upload-product.yml
-        input_mapping:
-          product: pas-windows-product
-          env: configuration
-      - task: upload-pas-windows-stemcell
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/upload-stemcell.yml
-        input_mapping:
-          env: configuration
-          stemcell: pas-windows-stemcell
-      - task: stage-product
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/stage-product.yml
-        input_mapping:
-          product: pas-windows-product
-          env: configuration
-
-  - name: configure-pas-windows
-    serial: true
-    serial_groups: [ install ]
-    plan:
-      - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-            passed:
-              - upload-and-stage-pas-windows
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: configuration
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      - task: configure-pas
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/configure-product.yml
-        input_mapping:
-          config: configuration
-          env: configuration
-        params:
-          CONFIG_FILE: pas-windows.yml
-
-  - name: upload-and-stage-healthwatch
+  - name: upload-and-stage-pks
     serial: true
     plan:
       - aggregate:
@@ -534,33 +268,31 @@ jobs:
           - get: configuration
       - task: prepare-tasks-with-secrets
         <<: *prepare-tasks-with-secrets
-      - task: download-healthwatch
+      - task: download-pks
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
         params:
-          CONFIG_FILE: download-product/healthwatch.yml
+          CONFIG_FILE: download-product/pks.yml
           SOURCE: s3
         input_mapping:
           config: configuration
         output_mapping:
-          downloaded-product: healthwatch-product
-          downloaded-stemcell: healthwatch-stemcell
-      # code_snippet upload-and-stage-product-usage start yaml
+          downloaded-product: pks-product
+          downloaded-stemcell: pks-stemcell
       - task: upload-and-stage-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-and-stage-product.yml
         input_mapping:
-          product: healthwatch-product
+          product: pks-product
           env: configuration
-      # code_snippet upload-and-stage-product-usage end
-      - task: upload-healthwatch-stemcell
+      - task: upload-pks-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
           env: configuration
-          stemcell: healthwatch-stemcell
+          stemcell: pks-stemcell
 
-  - name: configure-healthwatch
+  - name: configure-pks
     serial: true
     serial_groups: [ install ]
     plan:
@@ -569,7 +301,7 @@ jobs:
             params:
               unpack: true
             passed:
-              - upload-and-stage-healthwatch
+              - upload-and-stage-pks
             trigger: true
           - get: platform-automation-tasks
             params:
@@ -577,14 +309,16 @@ jobs:
           - get: configuration
       - task: prepare-tasks-with-secrets
         <<: *prepare-tasks-with-secrets
-      - task: configure-healthwatch
+      - task: configure-pks
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
           config: configuration
           env: configuration
+          vars: configuration
         params:
-          CONFIG_FILE: healthwatch.yml
+          CONFIG_FILE: pks.yml
+          VARS_FILES: vars/vars/pks.yml
 
   - name: apply-product-changes
     serial: true
@@ -595,9 +329,7 @@ jobs:
             params:
               unpack: true
             passed:
-              - configure-healthwatch
-              - configure-pas
-              - configure-pas-windows
+              - configure-pks
             trigger: true
           - get: platform-automation-tasks
             params:
@@ -605,21 +337,16 @@ jobs:
           - get: configuration
       - task: prepare-tasks-with-secrets
         <<: *prepare-tasks-with-secrets
-      # code_snippet pre-deploy-check-usage start yaml
       - task: pre-deploy-check
         image: platform-automation-image
         file: platform-automation-tasks/tasks/pre-deploy-check.yml
         input_mapping:
           env: configuration
-      # code_snippet pre-deploy-check-usage end
-      # code_snippet apply-changes-usage start yaml
       - task: apply-product-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
           env: configuration
-      # code_snippet apply-changes-usage end
-      # code_snippet check-pending-changes-usage start yaml
       - task: check-pending-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/check-pending-changes.yml
@@ -627,122 +354,52 @@ jobs:
           env: configuration
         params:
           ALLOW_PENDING_CHANGES: true
-      # code_snippet check-pending-changes-usage end
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
           env: configuration
         params:
-          INSTALLATION_FILE: installation-$timestamp.zip
+          INSTALLATION_FILE: pks-installation-$timestamp.zip
       - put: installation
         params:
-          file: installation/installation*.zip
+          file: installation/pks-installation*.zip
+
   - name: collect-telemetry
     serial: true
     serial_groups: [ install ]
     plan:
-      - aggregate:
-          - get: telemetry-collector-binary
-            params:
-              unpack: true
-          - get: platform-automation-image
-            params:
-              unpack: true
-            passed:
-              - apply-product-changes
-            trigger: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: configuration
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      # code_snippet collect-telemetry-usage start yaml
-      - task: collect-telemetry-data
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/collect-telemetry.yml
-        params:
-          CONFIG_FILE: telemetry.yml
-        input_mapping:
-          env: configuration
-          config: configuration
-      # code_snippet collect-telemetry-usage end
-      # code_snippet send-telemetry-usage start yaml
-      - task: send-telemetry-data
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/send-telemetry.yml
-        params:
-          API_KEY: no-op-test-key
-          DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
-    # code_snippet send-telemetry-usage end
-  - name: staged-pas-config
-    plan:
-      - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: configuration
-          - get: state
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      # code_snippet staged-config-usage start yaml
-      - task: staged-config
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/staged-config.yml
-        input_mapping:
-          env: configuration
-        params:
-          PRODUCT_NAME: cf
-        ensure: *put-state
-      # code_snippet staged-config-usage end
-  - name: expiring-certificates
-    plan:
     - aggregate:
+      - get: telemetry-collector-binary
+        params:
+          unpack: true
       - get: platform-automation-image
         params:
           unpack: true
+        passed:
+          - apply-product-changes
+        trigger: true
       - get: platform-automation-tasks
         params:
           unpack: true
       - get: configuration
-      - get: state
     - task: prepare-tasks-with-secrets
       <<: *prepare-tasks-with-secrets
-    # code_snippet expiring-certificates-usage start yaml
-    - task: expiring-certificates
+    - task: collect-telemetry-data
       image: platform-automation-image
-      file: platform-automation-tasks/tasks/expiring-certificates.yml
+      file: platform-automation-tasks/tasks/collect-telemetry.yml
+      params:
+        CONFIG_FILE: telemetry.yml
       input_mapping:
         env: configuration
+        config: configuration
+    - task: send-telemetry-data
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/send-telemetry.yml
       params:
-        EXPIRES_WITHIN: 6m
-    # code_snippet expiring-certificates-usage end
-  - name: staged-healthwatch-config
-    plan:
-      - aggregate:
-          - get: platform-automation-image
-            params:
-              unpack: true
-          - get: platform-automation-tasks
-            params:
-              unpack: true
-          - get: configuration
-          - get: state
-      - task: prepare-tasks-with-secrets
-        <<: *prepare-tasks-with-secrets
-      - task: staged-config
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/staged-config.yml
-        input_mapping:
-          env: configuration
-        params:
-          PRODUCT_NAME: p-healthwatch
-        ensure: *put-state
+        API_KEY: no-op-test-key
+        DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
 
-# code_snippet multiple-product-jobs end yaml
-# code_snippet multiple-products-pipeline end
+# code_snippet single-product-jobs end yaml
+# code_snippet single-product-pipeline end
 # The previous line helps maintain current documentation at http://docs.pivotal.io.
