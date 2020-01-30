@@ -21,6 +21,19 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v3.0.17
+Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
+  The CVEs are related to vulnerabilities with `libbsd`.
+- CVE update to container image. Resolves [USN-4249-1](https://usn.ubuntu.com/4249-1/).
+  The CVEs are related to vulnerabilities with `e2fsprogs`.
+- CVE update to container image. Resolves [USN-4233-2](https://usn.ubuntu.com/4233-2/).
+  The CVEs are related to vulnerabilities with `libgnutls30`.
+- CVE update to container image. Resolves [USN-4256-1](https://usn.ubuntu.com/4256-1/).
+  The CVEs are related to vulnerabilities with `libsasl2-2`.
+
 ## v3.0.16
 Released January 28, 2020, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
