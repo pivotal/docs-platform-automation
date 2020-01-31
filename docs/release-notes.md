@@ -21,6 +21,12 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v3.0.18
+Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+
 ## v3.0.17
 Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
