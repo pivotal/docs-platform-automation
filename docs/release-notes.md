@@ -21,6 +21,12 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.0.11
+Released Someday Sometime, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+
+### Bug Fixes
+- GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+
 ## v4.0.10
 Released Someday Sometime, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
 
@@ -190,6 +196,12 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 - When using AWS to create the Ops Manager VM with encrypted disks,
   the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
   An exponential backoff will be and timeout after an hour if disk is not ready.
+
+## v3.0.18
+Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v3.0.17
 Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
