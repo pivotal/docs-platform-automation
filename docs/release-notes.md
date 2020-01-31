@@ -39,6 +39,7 @@ Released Someday Sometime, includes `om` version [4.2.1](https://github.com/pivo
   The CVEs are related to vulnerabilities with `libgnutls30`.
 - CVE update to container image. Resolves [USN-4256-1](https://usn.ubuntu.com/4256-1/).
   The CVEs are related to vulnerabilities with `libsasl2-2`.
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v4.1.9
 Released January 22, 2020, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
@@ -55,6 +56,7 @@ Released December 12, 2019, includes `om` version [4.2.1](https://github.com/piv
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
   The CVEs are related to vulnerabilities with `git`.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.1.7
 Released December 3, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
@@ -66,6 +68,7 @@ Released December 3, 2019, includes `om` version [4.2.1](https://github.com/pivo
 - When using the `check-pending-changes` task,
   it would not work because it reference a script that did not exist.
   The typo has been fixed and tested in the reference pipeline.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.1.5
 Released November 19, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
@@ -167,6 +170,7 @@ Released Someday Sometime, includes `om` version [3.1.0](https://github.com/pivo
   The CVEs are related to vulnerabilities with `libgnutls30`.
 - CVE update to container image. Resolves [USN-4256-1](https://usn.ubuntu.com/4256-1/).
   The CVEs are related to vulnerabilities with `libsasl2-2`.
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v4.0.9
 Released January 22, 2020, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
@@ -176,6 +180,7 @@ Released January 22, 2020, includes `om` version [3.1.0](https://github.com/pivo
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.0.8
 Released December 12, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
@@ -183,6 +188,7 @@ Released December 12, 2019, includes `om` version [3.1.0](https://github.com/piv
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
   The CVEs are related to vulnerabilities with `git`.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.0.7
 Released December 3, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
@@ -343,6 +349,7 @@ Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivo
   The CVEs are related to vulnerabilities with `libgnutls30`.
 - CVE update to container image. Resolves [USN-4256-1](https://usn.ubuntu.com/4256-1/).
   The CVEs are related to vulnerabilities with `libsasl2-2`.
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v3.0.16
 Released January 28, 2020, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
@@ -352,6 +359,7 @@ Released January 28, 2020, includes `om` version [3.0.0](https://github.com/pivo
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v3.0.15
 Released December 12, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
@@ -359,6 +367,7 @@ Released December 12, 2019, includes `om` version [3.0.0](https://github.com/piv
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
   The CVEs are related to vulnerabilities with `git`.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v3.0.14
 Released December 3, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
