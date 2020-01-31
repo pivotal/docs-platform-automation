@@ -266,7 +266,7 @@ jobs:
           # code_snippet create-user end bash
 
           # code_snippet engine-deploy-concourse start bash
-          bosh -n -d cluster/concourse.yml \
+          bosh -n -d concourse deploy cluster/concourse.yml \
             -o cluster/operations/privileged-http.yml \
             -o cluster/operations/privileged-https.yml \
             -o cluster/operations/enable-lets-encrypt.yml \
