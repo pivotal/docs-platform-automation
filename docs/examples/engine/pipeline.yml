@@ -247,7 +247,7 @@ jobs:
           cat << EOF > ../vars.yml
           # BOSH uses this to identify the deployment
           deployment_name: concourse
-          # This can be any vm type from the cloud config: `bosh cloud-config`
+          # This can be any vm type from the cloud config: bosh cloud-config
           web_vm_type: large
           # This is the external Concourse URL created above
           external_host: $CONCOURSE_URL
