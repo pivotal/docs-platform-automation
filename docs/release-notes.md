@@ -26,6 +26,8 @@ Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+- All default VM names are now `ops-manager-vm` to conform with IAAS name requirements.
+    - GCP did not allow for capital letters in VM names.
 
 ## v4.3.2
 Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om/releases/tag/4.4.2)
@@ -64,8 +66,8 @@ Someday Sometime, includes `om` version [4.4.1](https://github.com/pivotal-cf/om
   For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
   To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace].
 - The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
-- Add the ability to recreate vms to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
-    - If `RECREATE: true`, these commands will recreate all product vms for their relevant product(s).
+- Add the ability to recreate VMs to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
+    - If `RECREATE: true`, these commands will recreate all product VMs for their relevant product(s).
     - To recreate the BOSH director VM, make any change to the director tile, and apply-changes.
       We recommend modifying the Custom SSH Banner if this is desired.
 
@@ -468,7 +470,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 
 ### What's New
 - [`configure-ldap-authentication`][configure-ldap-authentication], [`configure-saml-authentication`][configure-saml-authentication], and [`configure-authentication`][configure-authentication]
-  can create a UAA client on the Ops Manager vm.
+  can create a UAA client on the Ops Manager VM.
   The client_secret will be the value provided to this option `precreated-client-secret`.
   This is supported in OpsManager 2.5+.
 - For Ops Manager 2.6+, new task [`pre-deploy-check`][pre-deploy-check]
@@ -522,7 +524,7 @@ Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivo
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v3.0.17
-Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released February 3, 2020, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
