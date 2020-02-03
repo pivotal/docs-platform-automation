@@ -369,7 +369,7 @@ git push
 
 The `state` input is a placeholder
 which will be filled in by the `create-vm` task output.
-This will be used later to keep track of the vm so it can be upgraded,
+This will be used later to keep track of the VM so it can be upgraded,
 which you can learn about in the [upgrade-how-to].
 
 The `create-vm` task in the `install-opsman` will need to be updated to

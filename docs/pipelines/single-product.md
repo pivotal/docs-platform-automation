@@ -56,7 +56,7 @@ These can either be uploaded manually or from the [reference resources pipeline]
 ### Configured Resources
 
 These contain values for
-opsman vm creation, director, product, foundation-specific vars, auth, and env files.
+opsman VM creation, director, product, foundation-specific vars, auth, and env files.
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
 Platform Automation will not create these resources for you.
 

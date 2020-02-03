@@ -470,7 +470,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 
 ### What's New
 - [`configure-ldap-authentication`][configure-ldap-authentication], [`configure-saml-authentication`][configure-saml-authentication], and [`configure-authentication`][configure-authentication]
-  can create a UAA client on the Ops Manager vm.
+  can create a UAA client on the Ops Manager VM.
   The client_secret will be the value provided to this option `precreated-client-secret`.
   This is supported in OpsManager 2.5+.
 - For Ops Manager 2.6+, new task [`pre-deploy-check`][pre-deploy-check]
