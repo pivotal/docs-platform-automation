@@ -21,7 +21,7 @@ opsman-configuration:
     tags: ops-manager                          # RECOMMENDED, but not required
 
     # Optional
-    # vm_name: OpsManager-vm   # default - OpsManager-vm
+    # vm_name: ops-manager-vm   # default - ops-manager-vm
     # custom_cpu: 2            # default - 2
     # custom_memory: 8         # default - 8
     # boot_disk_size: 100      # default - 100

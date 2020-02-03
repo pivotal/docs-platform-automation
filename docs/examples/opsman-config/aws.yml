@@ -14,7 +14,7 @@ opsman-configuration:
     private_ip: 10.0.0.2
 
     # Optional
-    # vm_name: ops-manager-vm    # default - OpsManager-vm
+    # vm_name: ops-manager-vm    # default - ops-manager-vm
     # boot_disk_size: 100        # default - 200 (GB)
     # instance_type: m5.large    # default - m5.large
                                  # NOTE - not all regions support m5.large
