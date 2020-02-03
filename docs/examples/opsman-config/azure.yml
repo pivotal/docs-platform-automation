@@ -27,7 +27,7 @@ opsman-configuration:
     # container: opsmanagerimage      # storage account container name
                                       # default - opsmanagerimage
     # network_security_group: ops-manager-security-group
-    # vm_name: OpsManager-vm          # default - OpsManager-vm
+    # vm_name: ops-manager-vm          # default - ops-manager-vm
     # boot_disk_size: 200             # default - 200 (GB)
     # use_managed_disk: true          # this flag is only respected by the
                                       # create-vm and upgrade-opsman commands.
