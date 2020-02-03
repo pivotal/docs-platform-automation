@@ -22,7 +22,14 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.3.3
-Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om/releases/tag/4.4.2)
+Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [4.4.2](https://github.com/pivotal-cf/om/releases/tag/4.4.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
@@ -30,7 +37,14 @@ Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om
     - GCP did not allow for capital letters in VM names.
 
 ## v4.3.2
-Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om/releases/tag/4.4.2)
+Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [4.4.2](https://github.com/pivotal-cf/om/releases/tag/4.4.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### What's New
 - The [config][download-product-config] for the `download-product` task now recommends using `file-glob` instead of `pivnet-file-glob`.
@@ -47,7 +61,14 @@ Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v4.3.0
-Someday Sometime, includes `om` version [4.4.1](https://github.com/pivotal-cf/om/releases/tag/4.4.1)
+Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [4.4.1](https://github.com/pivotal-cf/om/releases/tag/4.4.1) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### What's New
 - The [`revert-staged-changes`][revert-staged-changes] task has been added.
@@ -79,13 +100,27 @@ Someday Sometime, includes `om` version [4.4.1](https://github.com/pivotal-cf/om
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.6
-Someday Sometime, includes `om` version [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0)
+Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v4.2.5
-Someday Sometime, includes `om` version [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0)
+Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -99,7 +134,14 @@ Someday Sometime, includes `om` version [4.3.0](https://github.com/pivotal-cf/om
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v4.2.4
-Released January 28, 2020, includes `om` version [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0)
+Released January 28, 2020
+
+| Name | version |
+|---|---|
+| om | [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
@@ -109,7 +151,14 @@ Released January 28, 2020, includes `om` version [4.3.0](https://github.com/pivo
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.2.3
-Released December 12, 2019, includes `om` version [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0)
+Released December 12, 2019
+
+| Name | version |
+|---|---|
+| om | [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### Bug Fixes
 - When specifying `StorageSKU` for azure, `p-automator` would append `--storage-sku` twice in the creating VM invocation.
@@ -119,7 +168,14 @@ Released December 12, 2019, includes `om` version [4.3.0](https://github.com/piv
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.2.2
-Released December 3, 2019, includes `om` version [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0)
+Released December 3, 2019
+
+| Name | version |
+|---|---|
+| om | [4.3.0](https://github.com/pivotal-cf/om/releases/tag/4.3.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
 ### What's New
 - The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP and AWS Only at the moment).
@@ -208,13 +264,27 @@ Released December 3, 2019, includes `om` version [4.3.0](https://github.com/pivo
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.1.11
-Released Someday Sometime, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v4.1.10
-Released Someday Sometime, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -228,7 +298,14 @@ Released Someday Sometime, includes `om` version [4.2.1](https://github.com/pivo
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v4.1.9
-Released January 22, 2020, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released January 22, 2020
+
+| Name | version |
+|---|---|
+| om | [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
@@ -237,7 +314,14 @@ Released January 22, 2020, includes `om` version [4.2.1](https://github.com/pivo
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.1.8
-Released December 12, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released December 12, 2019
+
+| Name | version |
+|---|---|
+| om | [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
@@ -245,7 +329,14 @@ Released December 12, 2019, includes `om` version [4.2.1](https://github.com/piv
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.1.7
-Released December 3, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released December 3, 2019
+
+| Name | version |
+|---|---|
+| om | [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
@@ -257,7 +348,14 @@ Released December 3, 2019, includes `om` version [4.2.1](https://github.com/pivo
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.1.5
-Released November 19, 2019, includes `om` version [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1)
+Released November 19, 2019
+
+| Name | version |
+|---|---|
+| om | [4.2.1](https://github.com/pivotal-cf/om/releases/tag/4.2.1) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -268,7 +366,14 @@ Released November 19, 2019, includes `om` version [4.2.1](https://github.com/piv
 - Bump `credhub` CLI to v2.6.1
 
 ## v4.1.2
-Released October 21, 2019, includes `om` version [4.1.0](https://github.com/pivotal-cf/om/releases/tag/4.1.0)
+Released October 21, 2019
+
+| Name | version |
+|---|---|
+| om | [4.1.0](https://github.com/pivotal-cf/om/releases/tag/4.1.0) |
+| bosh-cli | [6.1.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.0) |
+| credhub | [2.6.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.0) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### What's New
 - [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
@@ -339,13 +444,27 @@ Released October 21, 2019, includes `om` version [4.1.0](https://github.com/pivo
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.11
-Released Someday Sometime, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v4.0.10
-Released Someday Sometime, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -359,7 +478,14 @@ Released Someday Sometime, includes `om` version [3.1.0](https://github.com/pivo
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v4.0.9
-Released January 22, 2020, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released January 22, 2020
+
+| Name | version |
+|---|---|
+| om | [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
@@ -369,7 +495,14 @@ Released January 22, 2020, includes `om` version [3.1.0](https://github.com/pivo
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.0.8
-Released December 12, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released December 12, 2019
+
+| Name | version |
+|---|---|
+| om | [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
@@ -377,7 +510,14 @@ Released December 12, 2019, includes `om` version [3.1.0](https://github.com/piv
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v4.0.7
-Released December 3, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released December 3, 2019
+
+| Name | version |
+|---|---|
+| om | [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
@@ -385,7 +525,14 @@ Released December 3, 2019, includes `om` version [3.1.0](https://github.com/pivo
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.6
-Released November 6, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released November 6, 2019
+
+| Name | version |
+|---|---|
+| om | [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -396,7 +543,14 @@ Released November 6, 2019, includes `om` version [3.1.0](https://github.com/pivo
 - Bump `credhub` CLI to v2.6.1
 
 ## v4.0.5
-Released October 25, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
+Released October 25, 2019
+
+| Name | version |
+|---|---|
+| om | [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0) |
+| bosh-cli | [5.5.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v5.5.1) |
+| credhub | [2.5.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.5.2) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
@@ -518,13 +672,27 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.18
-Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released Someday Sometime
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v3.0.17
-Released February 3, 2020, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released February 3, 2020
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -538,7 +706,14 @@ Released February 3, 2020, includes `om` version [3.0.0](https://github.com/pivo
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v3.0.16
-Released January 28, 2020, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released January 28, 2020
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
@@ -548,7 +723,14 @@ Released January 28, 2020, includes `om` version [3.0.0](https://github.com/pivo
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v3.0.15
-Released December 12, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released December 12, 2019
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
@@ -556,7 +738,14 @@ Released December 12, 2019, includes `om` version [3.0.0](https://github.com/piv
 - Bumped the following low-severity CVE package: `linux-libc-dev`
 
 ## v3.0.14
-Released December 3, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released December 3, 2019
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
