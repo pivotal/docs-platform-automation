@@ -524,7 +524,7 @@ Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivo
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v3.0.17
-Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released February 3, 2020, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
