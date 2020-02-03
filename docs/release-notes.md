@@ -153,7 +153,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 
 ### What's New
 - [`configure-ldap-authentication`][configure-ldap-authentication], [`configure-saml-authentication`][configure-saml-authentication], and [`configure-authentication`][configure-authentication]
-  can create a UAA client on the Ops Manager vm.
+  can create a UAA client on the Ops Manager VM.
   The client_secret will be the value provided to this option `precreated-client-secret`.
   This is supported in OpsManager 2.5+.
 - For Ops Manager 2.6+, new task [`pre-deploy-check`][pre-deploy-check]
@@ -207,7 +207,7 @@ Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivo
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v3.0.17
-Released Someday Sometime, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+Released February 3, 2020, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
