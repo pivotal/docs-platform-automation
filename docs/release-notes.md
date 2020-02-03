@@ -26,6 +26,8 @@ Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+- All default VM names are now `ops-manager-vm` to conform with IAAS name requirements.
+    - GCP did not allow for capital letters in VM names.
 
 ## v4.3.2
 Someday Sometime, includes `om` version [4.4.2](https://github.com/pivotal-cf/om/releases/tag/4.4.2)
@@ -64,8 +66,8 @@ Someday Sometime, includes `om` version [4.4.1](https://github.com/pivotal-cf/om
   For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
   To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace].
 - The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
-- Add the ability to recreate vms to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
-    - If `RECREATE: true`, these commands will recreate all product vms for their relevant product(s).
+- Add the ability to recreate VMs to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
+    - If `RECREATE: true`, these commands will recreate all product VMs for their relevant product(s).
     - To recreate the BOSH director VM, make any change to the director tile, and apply-changes.
       We recommend modifying the Custom SSH Banner if this is desired.
 
