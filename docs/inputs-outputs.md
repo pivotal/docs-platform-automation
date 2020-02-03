@@ -134,7 +134,7 @@ and a link to the API documentation explaining any IAAS specific properties.
     * `security_configuration` - security properties for the bosh director [Ops Manager API][opsman-api-director-properties]
     * `syslog_configuration` - configure the syslog sinks for the bosh director [Ops Manager API][opsman-api-director-properties]
 * `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-resource-config]
-* `vmextensions-configuration` - create/update/delete vm extensions [Ops Manager API][opsman-api-vm-extension]
+* `vmextensions-configuration` - create/update/delete VM extensions [Ops Manager API][opsman-api-vm-extension]
 
 #### GCP Shared VPC
 
@@ -169,8 +169,8 @@ The `state` input for a opsman VM task expects to have a `state.yml` file.
 
 The `state.yml` file contains two properties:
 
-1. `iaas` is the IAAS the ops manager vm is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
-2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the vm ID is the VM name.
+1. `iaas` is the IAAS the ops manager VM is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
+2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the VM ID is the VM name.
 
 Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,

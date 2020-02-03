@@ -171,7 +171,7 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 1. Requires the image YAML file from Pivnet
 2. Validates the existence of the VM if defined in the statefile, if so do nothing
 3. Chooses the correct ami to use based on the provided image YAML file from Pivnet
-4. Creates the vm configured via opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
+4. Creates the VM configured via opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
 5. The public IP address, if provided, is assigned after successful creation
 
 **Azure**
@@ -201,7 +201,7 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 
 1. Requires the OVA image from Pivnet
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
-1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is stored on the generated path. If folder is not provided, the vm will be placed in the datacenter.
+1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is stored on the generated path. If folder is not provided, the VM will be placed in the datacenter.
 1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources
 
 
@@ -456,7 +456,7 @@ has been deployed, but before the new Ops Manager is configured.
 
 ### make-git-commit
 Copies a single file into a repo and makes a commit.
-Useful for persisting the state output of tasks that manage the vm, such as:
+Useful for persisting the state output of tasks that manage the VM, such as:
 
 - [create-vm](#create-vm)
 - [upgrade-opsman](#upgrade-opsman)
