@@ -33,5 +33,5 @@ opsman-configuration:
     # memory: 8                      # default - 8 (GB)
     # ssh_password: ((ssh-password)) # REQUIRED if ssh_public_key not defined
                                      # (Ops Manager < 2.6 ONLY)
-    # vm_name: Ops_Manger            # default - ops-manager-vm
+    # vm_name: ops-manager-vm        # default - ops-manager-vm
 # code_snippet vsphere-configuration end
