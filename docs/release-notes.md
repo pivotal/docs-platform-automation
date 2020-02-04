@@ -457,7 +457,7 @@ Released Someday Sometime
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v4.0.10
-Released Someday Sometime
+Released February 4, 2020
 
 | Name | version |
 |---|---|
