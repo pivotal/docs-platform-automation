@@ -25,10 +25,10 @@ resources:
     bucket: ((s3.buckets.pivnet_products))
     regexp: .*image-(.*).tgz
 
-- name: terraforming-gcp
+- name: paving
   type: git
   source:
-    uri: https://github.com/jtarchie/terraforming-gcp
+    uri: https://github.com/pivotal/paving
 
 - name: concourse-bosh-deployment
   type: git
@@ -107,8 +107,7 @@ jobs:
     params:
       globs:
       - '*gcp*.yml'
-      - '*GCP.yml'
-  - get: terraforming-gcp
+  - get: paving
   - get: platform-automation-tasks
     params:
       unpack: true
@@ -118,22 +117,105 @@ jobs:
   - get: deployments
   - get: ci
   - task: run-terraform
-    file: ci/tasks/create-infrastructure/task.yml
-    params:
-      IAAS: gcp-compatibility
-    input_mapping:
-      terraforming: terraforming-gcp
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: hashicorp/terraform
+          tag: full
+      inputs:
+      - name: paving
+      - name: deployments
+      outputs:
+      - name: deployments
+      params:
+        DEPLOYMENT: gcp-new
+        IAAS: gcp
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eux
+
+          commit() {
+            git config --global user.name "platform-automation-ci"
+            git config --global user.email "pcf-platform-automation@pivotal.io"
+            git add terraform.tfstate
+            terraform output stable_config > output.json
+            git add output.json
+            git commit -m "created a new deployment to test $IAAS" || true
+          }
+
+          trap commit EXIT
+
+          terraform_path=$PWD/paving/$IAAS
+
+          cd deployments/platform-automation/$DEPLOYMENT
+            cp additional.tf $terraform_path || true
+
+            terraform init "$terraform_path"
+            terraform refresh \
+              -state terraform.tfstate \
+              -var-file terraform.tfvars \
+              "$terraform_path"
+            terraform plan \
+              -state terraform.tfstate \
+              -out terraform.tfplan \
+              -var-file terraform.tfvars \
+              "$terraform_path"
+            terraform apply \
+              -state-out terraform.tfstate \
+              -parallelism=5 \
+              terraform.tfplan
     ensure:
       put: deployments
       params:
         rebase: true
-        repository: deployments-updated
-  - task: generate-config
-    file: ci/tasks/generate-config/task.yml
-    params:
-      IAAS: gcp-compatibility
+        repository: deployments
+  - &generate-config
+    task: generate-config
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: internalpcfplatformautomation/ci
+          tag: testing
+      inputs:
+      - name: deployments
+      outputs:
+      - name: config
+      - name: env
+      - name: vars
+      - name: state
+      params:
+        DEPLOYMENT: gcp-new
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eux
+
+          output_path=$PWD/deployments/platform-automation/"$DEPLOYMENT"/output.json
+
+          echo "Attempting to copy optional files to outputs..."
+          cp deployments/platform-automation/"$DEPLOYMENT"/state/*.yml state/ || true
+          cp deployments/platform-automation/"$DEPLOYMENT"/vars/*.yml vars/ || true
+          cp deployments/platform-automation/"$DEPLOYMENT"/config/*.yml config/
+
+          bosh int -l "$output_path" deployments/platform-automation/"$DEPLOYMENT"/config/opsman.yml > config/opsman.yml
+          bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/config/director.yml > config/director.yml
+          bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/env/env.yml > env/env.yml
+
+          echo "Config generation nominal"
+
   - task: create-vm
     file: platform-automation-tasks/tasks/create-vm.yml
+    params:
+      RECREATE: true
     input_mapping:
       image: opsman-image
     image: platform-automation-image
@@ -142,7 +224,7 @@ jobs:
       - task: state-file
         file: ci/tasks/make-commit/task.yml
         params:
-          IAAS: gcp-compatibility
+          IAAS: gcp-new
       - put: deployments
         params:
           rebase: true
@@ -178,10 +260,7 @@ jobs:
     - get: ubuntu-xenial-stemcell
       params:
         globs: ["*google*"]
-  - task: generate-config
-    file: ci/tasks/generate-config/task.yml
-    params:
-      IAAS: gcp-compatibility
+  - *generate-config
   - task: deploy-it
     image: platform-automation-image
     config:
@@ -199,7 +278,7 @@ jobs:
       - name: ci
       platform: linux
       params:
-        CONCOURSE_URL: ci.g23.gcp.platform-automation.cf-app.com
+        CONCOURSE_URL: ci.paving.gcp.platform-automation.cf-app.com
       run:
         path: bash
         args:
@@ -220,8 +299,8 @@ jobs:
           mv ci/platform-automation-engine/test-pipeline.yml pipeline.yml
 
           om interpolate \
-            -c deployments/platform-automation/gcp-compatibility/terraform.tfstate \
-            --path /modules/0/outputs/ops_manager_ssh_private_key/value > /tmp/private_key
+            -c deployments/platform-automation/gcp-new/output.json \
+            --path /ops_manager_ssh_private_key > /tmp/private_key
 
           # code_snippet engine-bosh-target start bash
           eval "$(om --env env/env.yml bosh-env --ssh-private-key=/tmp/private_key)"
@@ -336,11 +415,8 @@ jobs:
   - get: platform-automation-tasks
     params:
       unpack: true
-  - get: terraforming-gcp
-  - task: generate-config
-    file: ci/tasks/generate-config/task.yml
-    params:
-      IAAS: gcp-compatibility
+  - get: paving
+  - *generate-config
   - try:
       task: delete-deployment
       image: platform-automation-image
@@ -358,7 +434,7 @@ jobs:
         - task: state-file
           file: ci/tasks/make-commit/task.yml
           params:
-            IAAS: gcp-compatibility
+            IAAS: gcp-new
         - put: deployments
           params:
             rebase: true
@@ -367,10 +443,10 @@ jobs:
       task: delete-infrastructure
       file: ci/tasks/delete-infrastructure/task.yml
       params:
-        IAAS: gcp-compatibility
+        IAAS: gcp-new
         TF_WARN_OUTPUT_ERRORS: 1
       input_mapping:
-        terraforming: terraforming-gcp
+        terraforming: paving
     ensure:
       put: deployments
       params:
