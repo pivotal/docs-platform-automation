@@ -42,6 +42,11 @@ resources:
     private_key: ((platform_automation_ci.private_key))
     uri: git@github.com:pivotal/platform-automation-ci
 
+- name: docs-platform-automation
+  type: git
+  source:
+    uri: https://github.com/pivotal/docs-platform-automation
+
 - name: deployments
   type: git
   source:
@@ -103,19 +108,21 @@ jobs:
   serial_groups: [ install ]
   serial: true
   plan:
-  - get: opsman-image
-    params:
-      globs:
-      - '*gcp*.yml'
-  - get: paving
-  - get: platform-automation-tasks
-    params:
-      unpack: true
-  - get: platform-automation-image
-    params:
-      unpack: true
-  - get: deployments
-  - get: ci
+  - in_parallel:
+    - get: opsman-image
+      params:
+        globs:
+        - '*gcp*.yml'
+    - get: paving
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: deployments
+    - get: ci
+    - get: docs-platform-automation
   - task: run-terraform
     config:
       platform: linux
@@ -127,6 +134,7 @@ jobs:
       inputs:
       - name: paving
       - name: deployments
+      - name: docs-platform-automation
       outputs:
       - name: deployments
       params:
@@ -158,7 +166,7 @@ jobs:
           trap commit EXIT
 
           mkdir -p $terraform_path
-          cp $deployment_path/additional.tf terraform-templates/ || true
+          cp docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf terraform-templates/
           cp $deployment_path/terraform.tfstate terraform-templates/ || true
           cp $deployment_path/terraform.tfvars terraform-templates/ || true
 
