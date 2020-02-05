@@ -139,36 +139,50 @@ jobs:
         - |
           set -eux
 
+          terraform_path=$PWD/terraform-templates
+          deployment_path=$PWD/deployments/platform-automation/$DEPLOYMENT
+
           commit() {
-            git config --global user.name "platform-automation-ci"
-            git config --global user.email "pcf-platform-automation@pivotal.io"
-            git add terraform.tfstate
-            terraform output stable_config > output.json
-            git add output.json
-            git commit -m "created a new deployment to test $IAAS" || true
+            cp $terraform_path/terraform.tfstate $deployment_path
+            pushd $deployment_path
+              git config --global user.name "platform-automation-ci"
+              git config --global user.email "pcf-platform-automation@pivotal.io"
+              git add terraform.tfstate
+
+              terraform output stable_config > output.json
+              git add output.json
+              git commit -m "created a new deployment to test $IAAS" || true
+            popd
           }
 
           trap commit EXIT
 
-          terraform_path=$PWD/paving/$IAAS
+          mkdir -p $terraform_path
+          cp $deployment_path/additional.tf terraform-templates/ || true
+          cp $deployment_path/terraform.tfstate terraform-templates/ || true
+          cp $deployment_path/terraform.tfvars terraform-templates/ || true
 
-          cd deployments/platform-automation/$DEPLOYMENT
-            cp additional.tf $terraform_path || true
-
-            terraform init "$terraform_path"
+          # code_snippet engine-run-terraform start bash
+          mkdir -p terraform-templates
+          pushd terraform-templates
+            cp ../paving/$IAAS/*.tf .
+            # copy terraform template for concourse load balancer (if available)
+            # create the documented `terraform.tfvars` file
+            terraform init
             terraform refresh \
               -state terraform.tfstate \
-              -var-file terraform.tfvars \
-              "$terraform_path"
+              -var-file terraform.tfvars
             terraform plan \
               -state terraform.tfstate \
               -out terraform.tfplan \
-              -var-file terraform.tfvars \
-              "$terraform_path"
+              -var-file terraform.tfvars
             terraform apply \
               -state-out terraform.tfstate \
               -parallelism=5 \
               terraform.tfplan
+          popd
+          # code_snippet engine-run-terraform end
+
     ensure:
       put: deployments
       params:
