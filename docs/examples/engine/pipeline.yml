@@ -400,6 +400,7 @@ jobs:
             --check-creds
 
           ./fly -t ci unpause-pipeline -p test-pipeline
+          ./fly -t ci trigger-job -j test-pipeline/test-job
           # code_snippet engine-fly-pipeline end bash
 - name: ☢delete☢
   serial_groups: [ install ]
