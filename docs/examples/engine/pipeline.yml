@@ -323,7 +323,7 @@ jobs:
           PASSWORD=$(om interpolate -c config/auth.yml --path /password)
           DECRYPTION_PASSPHRASE=$(om interpolate -c config/auth.yml --path /decryption-passphrase)
           # code_snippet engine-configure-auth start bash
-          om --env env.yml --skip-ssl-validation configure-authentication \
+          om --env env.yml configure-authentication \
              --username $USERNAME \
              --password $PASSWORD \
              --decryption-passphrase $DECRYPTION_PASSPHRASE
