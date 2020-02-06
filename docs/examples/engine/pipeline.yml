@@ -233,6 +233,8 @@ jobs:
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/config/director.yml > config/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/env/env.yml > env/env.yml
 
+          cp $output_path vars/terraform-vars.yml
+
           echo "Config generation nominal"
 
   - task: create-vm
@@ -252,16 +254,6 @@ jobs:
         params:
           rebase: true
           repository: deployments-updated
-  - task: configure-authentication
-    file: platform-automation-tasks/tasks/configure-authentication.yml
-    image: platform-automation-image
-    attempts: 20
-  - task: configure-director
-    file: platform-automation-tasks/tasks/configure-director.yml
-    image: platform-automation-image
-  - task: apply-director-changes
-    file: platform-automation-tasks/tasks/apply-director-changes.yml
-    image: platform-automation-image
 - name: deploy-and-test
   serial_groups: [ install ]
   serial: true
@@ -290,6 +282,7 @@ jobs:
       inputs:
       - name: deployments
       - name: env
+      - name: vars
       - name: concourse-release
       - name: bpm-release
       - name: postgres-release
@@ -311,7 +304,8 @@ jobs:
           set -euxo pipefail
 
           cp env/env.yml env.yml
-          cp config/director.yml director.yml
+          cp config/director.yml director-config.yml
+          cp vars/terraform-vars.yml terraform-vars.yml
           mv concourse-release/*.tgz concourse-release.tgz
           mv bpm-release/*.tgz bpm-release.tgz
           mv postgres-release/*.tgz postgres-release.tgz
@@ -325,8 +319,28 @@ jobs:
             -c deployments/platform-automation/gcp-new/output.json \
             --path /ops_manager_ssh_private_key > /tmp/private_key
 
+          USERNAME=$(om interpolate -c config/auth.yml --path /username)
+          PASSWORD=$(om interpolate -c config/auth.yml --path /password)
+          DECRYPTION_PASSPHRASE=$(om interpolate -c config/auth.yml --path /decryption-passphrase)
+          # code_snippet engine-configure-auth start bash
+          om --env env.yml --skip-ssl-validation configure-authentication \
+             --username $USERNAME \
+             --password $PASSWORD \
+             --decryption-passphrase $DECRYPTION_PASSPHRASE
+          # code_snippet engine-configure-auth end bash
+
+          # code_snippet engine-apply-changes start bash
+          om --env env.yml configure-director \
+             --config director-config.yml \
+             --vars-file terraform-vars.yml
+
+          om --env env.yml apply-changes \
+             --skip-deploy-products
+          # code_snippet engine-apply-changes end bash
+
+
           # code_snippet engine-bosh-target start bash
-          eval "$(om --env env/env.yml bosh-env --ssh-private-key=/tmp/private_key)"
+          eval "$(om --env env.yml bosh-env --ssh-private-key=/tmp/private_key)"
           # check that we are properly targeted
           bosh curl /info
           # code_snippet engine-bosh-target end bash
@@ -382,7 +396,7 @@ jobs:
             -l cluster/versions/credhub.yml \
             -l cluster/versions/uaa.yml \
             -l versions.yml \
-            -v network_name=$(om interpolate --config ../director.yml --path /network-assignment/network/name)
+            -v network_name=$(om interpolate --config ../director-config.yml --path /network-assignment/network/name --vars-file ../terraform-vars.yml)
           # code_snippet engine-deploy-concourse end bash
           popd
 
