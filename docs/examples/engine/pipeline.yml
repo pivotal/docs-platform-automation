@@ -147,7 +147,7 @@ jobs:
         - |
           set -eux
 
-          terraform_path=$PWD/terraform-templates
+          terraform_path=$PWD/paving-$IAAS
           deployment_path=$PWD/deployments/platform-automation/$DEPLOYMENT
 
           commit() {
@@ -165,17 +165,17 @@ jobs:
 
           trap commit EXIT
 
-          mkdir -p $terraform_path
-          cp docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf terraform-templates/
-          cp $deployment_path/terraform.tfstate terraform-templates/ || true
-          cp $deployment_path/terraform.tfvars terraform-templates/ || true
+          cp -ra paving/$IAAS paving-$IAAS
+          cp docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf $terraform_path
+          cp $deployment_path/terraform.tfstate $terraform_path
+          cp $deployment_path/terraform.tfvars $terraform_path
 
-          # code_snippet engine-run-terraform start bash
-          mkdir -p terraform-templates
-          pushd terraform-templates
-            cp ../paving/$IAAS/*.tf .
-            # copy terraform template for concourse load balancer (if available)
-            # create the documented `terraform.tfvars` file
+          # code_snippet engine-copy-terraform start bash
+            cp -ra paving/$IAAS paving-$IAAS
+            cd paving-$IAAS
+          # code_snippet engine-copy-terraform end
+
+            # code_snippet engine-run-terraform start bash
             terraform init
             terraform refresh \
               -state terraform.tfstate \
@@ -188,8 +188,9 @@ jobs:
               -state-out terraform.tfstate \
               -parallelism=5 \
               terraform.tfplan
-          popd
-          # code_snippet engine-run-terraform end
+            # code_snippet engine-run-terraform end
+          cd -
+
 
     ensure:
       put: deployments
@@ -422,7 +423,7 @@ jobs:
             --check-creds
 
           ./fly -t ci unpause-pipeline -p test-pipeline
-          ./fly -t ci trigger-job -j test-pipeline/test-job
+          ./fly -t ci trigger-job -j test-pipeline/test-job --watch
           # code_snippet engine-fly-pipeline end bash
 - name: ☢delete☢
   serial_groups: [ install ]
