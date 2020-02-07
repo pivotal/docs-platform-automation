@@ -1,0 +1,15 @@
+# code_snippet engine-test-pipeline start bash
+jobs:
+- name: test-job
+  plan:
+  - task: display-cred
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: ubuntu
+      run:
+        path: bash
+        args: [-c, "echo Hello, ((provided-by-credhub))"]
+# code_snippet engine-test-pipeline end bash
