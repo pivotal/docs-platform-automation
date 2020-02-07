@@ -349,7 +349,8 @@ jobs:
 
           # code_snippet engine-bosh-target start bash
           eval "$(om --env env.yml bosh-env --ssh-private-key=/tmp/private_key)"
-          # check that we are properly targeted
+
+          # Will return a non-error if properly targeted
           bosh curl /info
           # code_snippet engine-bosh-target end bash
 
