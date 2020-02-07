@@ -199,7 +199,7 @@ Released Someday Sometime
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v4.1.10
-Released Someday Sometime
+Released February 7, 2020
 
 | Name | version |
 |---|---|
