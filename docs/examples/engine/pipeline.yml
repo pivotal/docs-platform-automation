@@ -292,6 +292,7 @@ jobs:
       - name: config
       - name: concourse-bosh-deployment
       - name: ci
+      - name: docs-platform-automation
       platform: linux
       params:
         CONCOURSE_URL: ci.paving.gcp.platform-automation.cf-app.com
@@ -313,7 +314,7 @@ jobs:
           mv uaa-release/*.tgz uaa-release.tgz
           mv ubuntu-xenial-stemcell/*.tgz stemcell.tgz
           mv ci/platform-automation-engine/operations/operations.yml operations.yml
-          mv ci/platform-automation-engine/test-pipeline.yml pipeline.yml
+          mv docs-platform-automation/docs/examples/engine/test-pipeline pipeline.yml
 
           om interpolate \
             -c deployments/platform-automation/gcp-new/output.json \
@@ -401,44 +402,62 @@ jobs:
           popd
 
           # code_snippet engine-credhub-credentials start bash
-          credhub_admin_secret=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
-          credhub_ca_cert=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
-
-          unset CREDHUB_SECRET CREDHUB_CLIENT CREDHUB_SERVER CREDHUB_PROXY CREDHUB_CA_CERT
+          CREDHUB_ADMIN_SECRET=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
+          CREDHUB_CA_CERT=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
           # code_snippet engine-credhub-credentials end bash
 
+          # code_snippet engine-credhub-unset start bash
+          unset CREDHUB_SECRET CREDHUB_CLIENT CREDHUB_SERVER CREDHUB_PROXY CREDHUB_CA_CERT
+          # code_snippet engine-credhub-unset end bash
 
-          # code_snippet engine-credhub-set start bash
+          # code_snippet engine-credhub-login start bash
           credhub login \
             --server https://$CONCOURSE_URL:8844 \
             --client-name=credhub_admin \
-            --client-secret="${credhub_admin_secret}" \
-            --ca-cert "${credhub_ca_cert}"
-          # code_snippet engine-credhub-set end bash
+            --client-secret="${CREDHUB_ADMIN_SECRET}" \
+            --ca-cert "${CREDHUB_CA_CERT}"
+          # code_snippet engine-credhub-login end bash
 
+          # code_snippet engine-credhub-add-value start bash
           credhub set \
             -n /concourse/main/test-pipeline/provided-by-credhub \
             -t value \
             -v "World"
+          # code_snippet engine-credhub-add-value end bash
 
-          # code_snippet engine-fly-pipeline start bash
+          # code_snippet engine-fly-download start bash
           curl "https://$CONCOURSE_URL/api/v1/cli?arch=amd64&platform=linux" --output fly
           chmod +x fly
+          # code_snippet engine-fly-download end bash
 
+          # code_snippet engine-fly-login start bash
           ./fly -t ci login \
             -c https://$CONCOURSE_URL \
             -u admin \
             -p password
+          # code_snippet engine-fly-login end bash
 
+          # code_snippet engine-fly-set-pipeline start bash
           ./fly -t ci set-pipeline \
             -n \
             -p test-pipeline \
             -c pipeline.yml \
             --check-creds
+          # code_snippet engine-fly-set-pipeline end bash
 
+          # code_snippet engine-fly-unpause-run start bash
           ./fly -t ci unpause-pipeline -p test-pipeline
           ./fly -t ci trigger-job -j test-pipeline/test-job --watch
-          # code_snippet engine-fly-pipeline end bash
+          # code_snippet engine-fly-unpause-run end bash
+
+          output=$(fly -t test-ci trigger-job -j test-pipeline/test-job -w)
+          if [[ $output == *"Hello, World"* ]]; then
+            exit 0
+          fi
+
+          echo "Did not find expected output of 'Hello, World'. Instead saw:"
+          echo "${output}"
+          exit 1
 - name: ☢delete☢
   serial_groups: [ install ]
   serial: true
