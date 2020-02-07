@@ -321,7 +321,7 @@ jobs:
           mv uaa-release/*.tgz uaa-release.tgz
           mv ubuntu-xenial-stemcell/*.tgz stemcell.tgz
           mv ci/platform-automation-engine/operations/operations.yml operations.yml
-          mv docs-platform-automation/docs/examples/engine/test-pipeline pipeline.yml
+          mv docs-platform-automation/docs/examples/engine/test-pipeline.yml pipeline.yml
 
           om interpolate \
             -c deployments/platform-automation/gcp-new/output.json \
