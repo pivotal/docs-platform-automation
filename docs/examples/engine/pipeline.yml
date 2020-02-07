@@ -457,7 +457,7 @@ jobs:
           ./fly -t ci trigger-job -j test-pipeline/test-job --watch
           # code_snippet engine-fly-unpause-run end bash
 
-          output=$(./fly -t test-ci trigger-job -j test-pipeline/test-job -w)
+          output=$(./fly -t ci trigger-job -j test-pipeline/test-job --watch)
           if [[ $output == *"Hello, World"* ]]; then
             exit 0
           fi
