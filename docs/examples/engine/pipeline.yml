@@ -374,9 +374,9 @@ jobs:
           deployment_name: concourse
           # This can be any VM type from the cloud config: bosh cloud-config
           web_vm_type: large
-          # This is the external Concourse URL created above
+          # This is the external concourse URL exported from the terraform output
           external_host: $CONCOURSE_URL
-          # This is the external Concourse URL created above
+          # This is the external concourse URL exported from the terraform output
           external_url: https://$CONCOURSE_URL
           # This can be any VM type from the cloud config: bosh cloud-config
           db_vm_type: large
@@ -387,7 +387,14 @@ jobs:
           EOF
 
           # code_snippet create-user start bash
-          credhub set -n /p-bosh/concourse/local_user -t user -z admin -w password
+          ADMIN_USERNAME=admin
+          ADMIN_PASSWORD=password
+
+          credhub set
+             -n /p-bosh/concourse/local_user \
+             -t user \
+             -z "${ADMIN_USERNAME}" \
+             -w "${ADMIN_PASSWORD}"
           # code_snippet create-user end bash
 
           # code_snippet engine-deploy-concourse start bash
@@ -420,7 +427,7 @@ jobs:
 
           # code_snippet engine-credhub-login start bash
           credhub login \
-            --server https://$CONCOURSE_URL:8844 \
+            --server "https://${CONCOURSE_URL}:8844" \
             --client-name=credhub_admin \
             --client-secret="${CONCOURSE_CREDHUB_SECRET}" \
             --ca-cert "${CONCOURSE_CREDHUB_CA_CERT}"
@@ -434,15 +441,15 @@ jobs:
           # code_snippet engine-credhub-add-value end bash
 
           # code_snippet engine-fly-download start bash
-          curl "https://$CONCOURSE_URL/api/v1/cli?arch=amd64&platform=linux" --output fly
+          curl "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=linux" --output fly
           chmod +x fly
           # code_snippet engine-fly-download end bash
 
           # code_snippet engine-fly-login start bash
           ./fly -t ci login \
-            -c https://$CONCOURSE_URL \
-            -u admin \
-            -p password
+            -c "https://${CONCOURSE_URL}" \
+            -u "${ADMIN_USERNAME}" \
+            -p "${ADMIN_PASSWORD}"
           # code_snippet engine-fly-login end bash
 
           # code_snippet engine-fly-set-pipeline start bash
@@ -455,6 +462,7 @@ jobs:
 
           # code_snippet engine-fly-unpause-run start bash
           ./fly -t ci unpause-pipeline -p test-pipeline
+
           ./fly -t ci trigger-job -j test-pipeline/test-job --watch
           # code_snippet engine-fly-unpause-run end bash
 
