@@ -390,7 +390,7 @@ jobs:
           ADMIN_USERNAME=admin
           ADMIN_PASSWORD=password
 
-          credhub set
+          credhub set \
              -n /p-bosh/concourse/local_user \
              -t user \
              -z "${ADMIN_USERNAME}" \
