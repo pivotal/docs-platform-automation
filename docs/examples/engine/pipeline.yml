@@ -402,8 +402,8 @@ jobs:
           popd
 
           # code_snippet engine-credhub-credentials start bash
-          CREDHUB_ADMIN_SECRET=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
-          CREDHUB_CA_CERT=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
+          CONCOURSE_CREDHUB_SECRET=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
+          CONCOURSE_CREDHUB_CA_CERT=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
           # code_snippet engine-credhub-credentials end bash
 
           # code_snippet engine-credhub-unset start bash
@@ -414,8 +414,8 @@ jobs:
           credhub login \
             --server https://$CONCOURSE_URL:8844 \
             --client-name=credhub_admin \
-            --client-secret="${CREDHUB_ADMIN_SECRET}" \
-            --ca-cert "${CREDHUB_CA_CERT}"
+            --client-secret="${CONCOURSE_CREDHUB_SECRET}" \
+            --ca-cert "${CONCOURSE_CREDHUB_CA_CERT}"
           # code_snippet engine-credhub-login end bash
 
           # code_snippet engine-credhub-add-value start bash
