@@ -177,26 +177,32 @@ jobs:
 
             # code_snippet engine-run-terraform start bash
             terraform init
+
             terraform refresh \
               -state terraform.tfstate \
               -var-file terraform.tfvars
+
             terraform plan \
               -state terraform.tfstate \
               -out terraform.tfplan \
               -var-file terraform.tfvars
+
             terraform apply \
               -state-out terraform.tfstate \
               -parallelism=5 \
               terraform.tfplan
             # code_snippet engine-run-terraform end
-          cd -
 
+            # code_snippet engine-terraform-output end
+            terraform output stable_config > terraform-vars.yml
+            # code_snippet engine-terraform-output end
 
     ensure:
       put: deployments
       params:
         rebase: true
         repository: deployments
+
   - &generate-config
     task: generate-config
     config:
@@ -222,7 +228,7 @@ jobs:
         - |
           set -eux
 
-          output_path=$PWD/deployments/platform-automation/"$DEPLOYMENT"/output.json
+          output_path=$PWD/deployments/platform-automation/"$DEPLOYMENT"/terraform-vars.yml
 
           echo "Attempting to copy optional files to outputs..."
           cp deployments/platform-automation/"$DEPLOYMENT"/state/*.yml state/ || true
