@@ -173,7 +173,7 @@ jobs:
           # code_snippet engine-copy-terraform start bash
             cp -ra paving/$IAAS paving-$IAAS
             cd paving-$IAAS
-          # code_snippet engine-copy-terraform end
+          # code_snippet engine-copy-terraform end bash
 
             # code_snippet engine-run-terraform start bash
             terraform init
@@ -191,11 +191,11 @@ jobs:
               -state-out terraform.tfstate \
               -parallelism=5 \
               terraform.tfplan
-            # code_snippet engine-run-terraform end
+            # code_snippet engine-run-terraform end bash
 
-            # code_snippet engine-terraform-output end
+            # code_snippet engine-terraform-output start bash
             terraform output stable_config > terraform-vars.yml
-            # code_snippet engine-terraform-output end
+            # code_snippet engine-terraform-output end bash
 
     ensure:
       put: deployments
