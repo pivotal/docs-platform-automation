@@ -277,6 +277,7 @@ jobs:
     - get: credhub-release
     - get: uaa-release
     - get: concourse-bosh-deployment
+    - get: docs-platform-automation
     - get: ci
     - get: ubuntu-xenial-stemcell
       params:
