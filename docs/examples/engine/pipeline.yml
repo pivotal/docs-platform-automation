@@ -157,8 +157,8 @@ jobs:
               git config --global user.email "pcf-platform-automation@pivotal.io"
               git add terraform.tfstate
 
-              terraform output stable_config > output.json
-              git add output.json
+              cp $terraform_path/terraform-vars.yml $deployment_path
+              git add terraform-vars.yml
               git commit -m "created a new deployment to test $IAAS" || true
             popd
           }
