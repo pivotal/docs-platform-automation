@@ -1,5 +1,9 @@
+locals  {
+  concourse_url = "ci.${var.environment_name}.${data.google_dns_managed_zone.hosted-zone.dns_name}"
+}
+
 resource "google_dns_record_set" "concourse" {
-  name = "ci.${var.environment_name}.${data.google_dns_managed_zone.hosted-zone.dns_name}"
+  name = local.concourse_url
   type = "A"
   ttl  = 60
 
@@ -60,4 +64,8 @@ resource "google_compute_forwarding_rule" "concourse_uaa" {
 
 resource "google_compute_target_pool" "concourse_target_pool" {
   name = "${var.environment_name}-concourse"
+}
+
+output "concourse_url" {
+  value = local.concourse_url
 }
