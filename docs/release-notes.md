@@ -35,7 +35,7 @@ Someday Sometime
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 
 ## v4.2.5
-Someday Sometime
+Released February 10, 2020
 
 | Name | version |
 |---|---|
