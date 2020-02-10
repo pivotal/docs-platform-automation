@@ -195,8 +195,10 @@ jobs:
 
             # code_snippet engine-terraform-output start bash
             terraform output stable_config > terraform-vars.yml
-            terraform output concourse_url >> terraform-vars.yml
+            export CONCOURSE_URL=$(terraform output concourse_url)
             # code_snippet engine-terraform-output end bash
+
+            terraform output concourse_url > concourse-url.txt
 
     ensure:
       put: deployments
@@ -241,6 +243,7 @@ jobs:
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/env/env.yml > env/env.yml
 
           cp $output_path vars/terraform-vars.yml
+          cp $PWD/deployments/platform-automation/"$DEPLOYMENT"/concourse-url.txt vars/concourse-url.txt
 
           echo "Config generation nominal"
 
@@ -328,9 +331,12 @@ jobs:
             -c deployments/platform-automation/gcp-new/output.json \
             --path /ops_manager_ssh_private_key > /tmp/private_key
 
+          CONCOURSE_URL=$(cat vars/concourse-url.txt)
+
           USERNAME=$(om interpolate -c config/auth.yml --path /username)
           PASSWORD=$(om interpolate -c config/auth.yml --path /password)
           DECRYPTION_PASSPHRASE=$(om interpolate -c config/auth.yml --path /decryption-passphrase)
+
           # code_snippet engine-configure-auth start bash
           om --env env.yml configure-authentication \
              --username $USERNAME \
