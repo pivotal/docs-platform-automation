@@ -158,7 +158,9 @@ jobs:
               git add terraform.tfstate
 
               cp $terraform_path/terraform-vars.yml $deployment_path
+              cp $terraform_path/concourse-url.txt $deployment_path
               git add terraform-vars.yml
+              git add concourse-url.txt
               git commit -m "created a new deployment to test $IAAS" || true
             popd
           }
