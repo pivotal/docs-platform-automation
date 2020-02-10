@@ -195,10 +195,13 @@ jobs:
               terraform.tfplan
             # code_snippet engine-run-terraform end bash
 
-            # code_snippet engine-terraform-output start bash
+            # code_snippet engine-terraform-vars start bash
             terraform output stable_config > terraform-vars.yml
+            # code_snippet engine-terraform-vars end bash
+
+            # code_snippet engine-terraform-concourse-url start bash
             export CONCOURSE_URL=$(terraform output concourse_url)
-            # code_snippet engine-terraform-output end bash
+            # code_snippet engine-terraform-concourse-url end bash
 
             terraform output concourse_url > concourse-url.txt
 
