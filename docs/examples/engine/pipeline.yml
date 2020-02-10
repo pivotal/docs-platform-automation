@@ -195,6 +195,7 @@ jobs:
 
             # code_snippet engine-terraform-output start bash
             terraform output stable_config > terraform-vars.yml
+            terraform output concourse_url >> terraform-vars.yml
             # code_snippet engine-terraform-output end bash
 
     ensure:
