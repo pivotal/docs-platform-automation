@@ -67,5 +67,5 @@ resource "google_compute_target_pool" "concourse_target_pool" {
 }
 
 output "concourse_url" {
-  value = local.concourse_url
+  value = replace(replace(local.concourse_url, "/\\.$/", ""), "*.", "")
 }
