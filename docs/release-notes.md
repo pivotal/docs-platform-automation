@@ -37,7 +37,7 @@ Someday Sometime
     - GCP did not allow for capital letters in VM names.
 
 ## v4.3.2
-Someday Sometime
+February 11, 2020
 
 | Name | version |
 |---|---|
@@ -61,7 +61,7 @@ Someday Sometime
 - Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
 
 ## v4.3.0
-Someday Sometime
+Released January 31, 2020
 
 | Name | version |
 |---|---|
