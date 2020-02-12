@@ -421,8 +421,6 @@ jobs:
             -o cluster/operations/offline-releases.yml \
             -o ../operations.yml \
             -l ../vars.yml \
-            -l cluster/versions/credhub.yml \
-            -l cluster/versions/uaa.yml \
             -l versions.yml \
             -v network_name=$(om interpolate --config ../director-config.yml --path /network-assignment/network/name --vars-file ../terraform-vars.yml)
           # code_snippet engine-deploy-concourse end bash
