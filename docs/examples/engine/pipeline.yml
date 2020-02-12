@@ -524,16 +524,61 @@ jobs:
           params:
             rebase: true
             repository: deployments-updated
-  - try:
-      task: delete-infrastructure
-      file: ci/tasks/delete-infrastructure/task.yml
+  - task: run-terraform
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: hashicorp/terraform
+          tag: full
+      inputs:
+      - name: paving
+      - name: deployments
+      - name: docs-platform-automation
+      outputs:
+      - name: deployments
       params:
-        IAAS: gcp-new
-        TF_WARN_OUTPUT_ERRORS: 1
-      input_mapping:
-        terraforming: paving
+        DEPLOYMENT: gcp-new
+        IAAS: gcp
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eux
+
+          terraform_path=$PWD/paving-$IAAS
+          deployment_path=$PWD/deployments/platform-automation/$DEPLOYMENT
+
+          commit() {
+            cp $terraform_path/terraform.tfstate $deployment_path
+            pushd $deployment_path
+              git config --global user.name "platform-automation-ci"
+              git config --global user.email "pcf-platform-automation@pivotal.io"
+              git add terraform.tfstate
+
+              git commit -m "deleted infrastructure for $IAAS" || true
+            popd
+          }
+
+          trap commit EXIT
+
+          cp -ra paving/$IAAS paving-$IAAS
+          cp docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf $terraform_path
+          cp $deployment_path/terraform.tfstate $terraform_path
+          cp $deployment_path/terraform.tfvars $terraform_path
+
+            cp -ra paving/$IAAS paving-$IAAS
+            cd paving-$IAAS
+
+            terraform init
+            terraform destroy \
+              -auto-approve \
+              -var-file=terraform.tfvars \
+              -state=terraform.tfstate
     ensure:
       put: deployments
       params:
         rebase: true
-        repository: deployments-updated
+        repository: deployments
