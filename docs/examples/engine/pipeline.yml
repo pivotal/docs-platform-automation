@@ -497,6 +497,7 @@ jobs:
     trigger: true
     params:
       unpack: true
+  - get: docs-platform-automation
   - get: platform-automation-tasks
     params:
       unpack: true
