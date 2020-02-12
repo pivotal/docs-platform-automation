@@ -14,12 +14,12 @@ opsman-configuration:
     private_ip: 10.0.0.2
 
     # Optional
-    # vm_name: ops-manager-vm    # default - OpsManager-vm
+    # vm_name: ops-manager-vm    # default - ops-manager-vm
     # boot_disk_size: 100        # default - 200 (GB)
     # instance_type: m5.large    # default - m5.large
                                  # NOTE - not all regions support m5.large
     # assume_role: "arn:aws:iam::..." # necessary if a role is needed to authorize
-                                    # the OpsMan VM instance profile
+                                      # the OpsMan VM instance profile
 
     # Omit if using instance profiles
     # And instance profile OR access_key/secret_access_key is required
