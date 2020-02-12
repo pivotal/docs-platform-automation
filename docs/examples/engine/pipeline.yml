@@ -524,7 +524,8 @@ jobs:
           params:
             rebase: true
             repository: deployments-updated
-  - task: run-terraform
+  - try:
+    task: delete-terraform
     config:
       platform: linux
       image_resource:
@@ -569,14 +570,14 @@ jobs:
           cp $deployment_path/terraform.tfstate $terraform_path
           cp $deployment_path/terraform.tfvars $terraform_path
 
-            cp -ra paving/$IAAS paving-$IAAS
-            cd paving-$IAAS
-
+          cp -ra paving/$IAAS paving-$IAAS
+          pushd paving-$IAAS
             terraform init
             terraform destroy \
               -auto-approve \
               -var-file=terraform.tfvars \
               -state=terraform.tfstate
+          popd
     ensure:
       put: deployments
       params:
