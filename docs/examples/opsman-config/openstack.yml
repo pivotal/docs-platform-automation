@@ -18,7 +18,7 @@ opsman-configuration:
     # availability_zone: zone-01
     # project_domain_name: default
     # user_domain_name: default
-    # vm_name: ops-manager-vm       # default - OpsManager-vm
+    # vm_name: ops-manager-vm       # default - ops-manager-vm
     # flavor: m1.xlarge             # default - m1.xlarge
     # identity_api_version: 2       # default - 3
     # insecure: true                # default - false
