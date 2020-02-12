@@ -333,7 +333,7 @@ jobs:
           mv docs-platform-automation/docs/examples/engine/test-pipeline.yml pipeline.yml
 
           om interpolate \
-            -c deployments/platform-automation/gcp-new/output.json \
+            -c terraform-vars.yml \
             --path /ops_manager_ssh_private_key > /tmp/private_key
 
           CONCOURSE_URL=$(cat vars/concourse-url.txt)
