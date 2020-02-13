@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v3.0.18
-Released Someday Sometime
+Released Coming Soon
 
 | Name | version |
 |---|---|
@@ -33,6 +33,9 @@ Released Someday Sometime
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+- CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
+  The CVEs are related to vulnerabilities with `libxml2`.
+- Bumped the following low-severity CVE packages: libsystemd0 libudev1
 
 ## v3.0.17
 Released February 3, 2020
