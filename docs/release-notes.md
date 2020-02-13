@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.0.11
-Released Someday Sometime
+Released Coming Soon
 
 | Name | version |
 |---|---|
@@ -33,6 +33,9 @@ Released Someday Sometime
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+- CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
+  The CVEs are related to vulnerabilities with `libxml2`.
+- Bumped the following low-severity CVE packages: libsystemd0 libudev1
 
 ## v4.0.10
 Released February 4, 2020
@@ -250,7 +253,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.18
-Released Someday Sometime
+Released Coming Soon
 
 | Name | version |
 |---|---|
@@ -261,6 +264,9 @@ Released Someday Sometime
 
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+- CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
+  The CVEs are related to vulnerabilities with `libxml2`.
+- Bumped the following low-severity CVE packages: libsystemd0 libudev1
 
 ## v3.0.17
 Released February 3, 2020
