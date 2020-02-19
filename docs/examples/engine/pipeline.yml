@@ -382,6 +382,7 @@ jobs:
           pushd concourse-bosh-deployment
 
           cat << EOF > ../vars.yml
+          # code_snippet engine-vars-file start yaml
           # BOSH uses this to identify the deployment
           deployment_name: concourse
           # This can be any VM type from the cloud config: bosh cloud-config
@@ -396,6 +397,9 @@ jobs:
           db_persistent_disk_type: 102400
           # This can be any VM type from the cloud config: bosh cloud-config
           worker_vm_type: large
+          # This assigns created VMs (web, worker, and db) to AZs in the IaaS
+          availability_zones: [us-central1-a]
+          # code_snippet engine-vars-file end yaml
           EOF
 
           # code_snippet create-user start bash
