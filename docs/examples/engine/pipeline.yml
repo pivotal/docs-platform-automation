@@ -222,6 +222,7 @@ jobs:
           tag: testing
       inputs:
       - name: deployments
+      - name: paving
       outputs:
       - name: config
       - name: env
@@ -229,6 +230,7 @@ jobs:
       - name: state
       params:
         DEPLOYMENT: gcp-new
+        IAAS: gcp
       run:
         path: bash
         args:
@@ -243,7 +245,7 @@ jobs:
           cp deployments/platform-automation/"$DEPLOYMENT"/vars/*.yml vars/ || true
           cp deployments/platform-automation/"$DEPLOYMENT"/config/*.yml config/
 
-          bosh int -l "$output_path" deployments/platform-automation/"$DEPLOYMENT"/config/opsman.yml > config/opsman.yml
+          bosh int -l "$output_path" paving/ci/configuration/"$IAAS"/ops-manager.yml > config/opsman.yml
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/config/director.yml > config/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/env/env.yml > env/env.yml
 
@@ -288,6 +290,7 @@ jobs:
     - get: concourse-bosh-deployment
     - get: docs-platform-automation
     - get: ci
+    - get: paving
     - get: ubuntu-xenial-stemcell
       params:
         globs: ["*google*"]
