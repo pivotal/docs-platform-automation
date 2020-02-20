@@ -436,7 +436,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.18
-Released Coming Soon
+Released February 20, 2020
 
 | Name | version |
 |---|---|
