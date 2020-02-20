@@ -167,14 +167,13 @@ jobs:
 
           trap commit EXIT
 
-          cp -ra paving/$IAAS paving-$IAAS
           cp docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf $terraform_path
           cp $deployment_path/terraform.tfstate $terraform_path
           cp $deployment_path/terraform.tfvars $terraform_path
 
           # code_snippet engine-copy-terraform start bash
-            cp -ra paving/$IAAS paving-$IAAS
-            cd paving-$IAAS
+            cp -ra paving/${IAAS} paving-${IAAS}
+            cd paving-${IAAS}
           # code_snippet engine-copy-terraform end bash
 
             # code_snippet engine-run-terraform start bash
