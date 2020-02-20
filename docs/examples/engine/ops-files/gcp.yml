@@ -1,24 +1,9 @@
 ---
-- type: replace
-  path: /instance_groups/name=web/azs
-  value: [us-central1-a]
-- type: replace
-  path: /instance_groups/name=worker/azs
-  value: [us-central1-a]
-- type: replace
-  path: /instance_groups/name=db/azs
-  value: [us-central1-a]
+# code_snippet engine-gcp-ops-file start yaml
+# REMOVE when released: https://github.com/concourse/concourse-bosh-release/commit/20c9cad3c6de402d85a54a9941855d1fc4e70cd4
 - type: replace
   path: /instance_groups/name=web/jobs/name=web/properties/lets_encrypt?/acme_url
   value: https://acme-v02.api.letsencrypt.org/directory
-- type: replace
-  path: /instance_groups/name=web/jobs/name=uaa/properties/uaadb?/tls
-  value: disabled
-- type: replace
-  path: /instance_groups/name=web/update?
-  value:
-    update_watch_time: 1000-150000
-    canary_watch_time: 1000-150000
 - type: replace
   path: /instance_groups/name=web/vm_extensions?/-
   value: concourse-lb
@@ -31,3 +16,4 @@
 - type: replace
   path: /instance_groups/name=worker/vm_extensions?/-
   value: increased-disk
+# code_snippet engine-gcp-ops-file end yaml
