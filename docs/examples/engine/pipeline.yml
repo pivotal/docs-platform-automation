@@ -223,6 +223,7 @@ jobs:
       inputs:
       - name: deployments
       - name: paving
+      - name: docs-platform-automation
       outputs:
       - name: config
       - name: env
@@ -245,8 +246,10 @@ jobs:
           cp deployments/platform-automation/"$DEPLOYMENT"/vars/*.yml vars/ || true
           cp deployments/platform-automation/"$DEPLOYMENT"/config/*.yml config/
 
-          bosh int -l "$output_path" paving/ci/configuration/"$IAAS"/ops-manager.yml > config/opsman.yml
-          bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/config/director.yml > config/director.yml
+          bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/ops-manager.yml > config/opsman.yml
+          cat docs-platform-automation/docs/examples/engine/gcp-lbs-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
+          cat docs-platform-automation/docs/examples/engine/increased-disk-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
+          bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/director.yml > config/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/env/env.yml > env/env.yml
 
           cp $output_path vars/terraform-vars.yml
