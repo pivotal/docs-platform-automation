@@ -345,6 +345,10 @@ jobs:
 
           CONCOURSE_URL=$(cat vars/concourse-url.txt)
 
+          # code_snippet engine-terraform-ops-manager-url start bash
+          export OM_TARGET=$(om interpolate -c terraform-vars.yml --path /ops_manager_dns)
+          # code_snippet engine-terraform-ops-manager-url end bash
+
           OM_USERNAME=$(om interpolate -c config/auth.yml --path /username)
           OM_PASSWORD=$(om interpolate -c config/auth.yml --path /password)
           OM_DECRYPTION_PASSPHRASE=$(om interpolate -c config/auth.yml --path /decryption-passphrase)
