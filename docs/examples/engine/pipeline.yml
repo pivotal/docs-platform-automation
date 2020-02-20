@@ -345,15 +345,15 @@ jobs:
 
           CONCOURSE_URL=$(cat vars/concourse-url.txt)
 
-          USERNAME=$(om interpolate -c config/auth.yml --path /username)
-          PASSWORD=$(om interpolate -c config/auth.yml --path /password)
-          DECRYPTION_PASSPHRASE=$(om interpolate -c config/auth.yml --path /decryption-passphrase)
+          OM_USERNAME=$(om interpolate -c config/auth.yml --path /username)
+          OM_PASSWORD=$(om interpolate -c config/auth.yml --path /password)
+          OM_DECRYPTION_PASSPHRASE=$(om interpolate -c config/auth.yml --path /decryption-passphrase)
 
           # code_snippet engine-configure-auth start bash
           om --env env.yml configure-authentication \
-             --username ${USERNAME} \
-             --password ${PASSWORD} \
-             --decryption-passphrase ${DECRYPTION_PASSPHRASE}
+             --username ${OM_USERNAME} \
+             --password ${OM_PASSWORD} \
+             --decryption-passphrase ${OM_DECRYPTION_PASSPHRASE}
           # code_snippet engine-configure-auth end bash
 
           # code_snippet engine-apply-changes start bash
