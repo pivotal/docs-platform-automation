@@ -335,7 +335,7 @@ jobs:
           mv credhub-release/*.tgz credhub-release.tgz
           mv uaa-release/*.tgz uaa-release.tgz
           mv ubuntu-xenial-stemcell/*.tgz stemcell.tgz
-          mv ci/platform-automation-engine/operations/operations.yml operations.yml
+          mv docs-platform-automation/docs/examples/engine/ops-files/gcp.yml operations.yml
           mv docs-platform-automation/docs/examples/engine/test-pipeline.yml pipeline.yml
 
           # code_snippet engine-write-private-key start bash
