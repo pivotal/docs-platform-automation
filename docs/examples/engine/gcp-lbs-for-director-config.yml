@@ -1,0 +1,4 @@
+vmextensions-configuration:
+- name: concourse-lb
+  cloud_properties:
+    target_pool: ((environment_name))-concourse
