@@ -66,21 +66,21 @@ resources:
   source:
     repository: concourse/concourse-bosh-release
   version:
-    version: 5.8.0
+    version: 5.5.7
 
 - name: bpm-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/bpm-release
   version:
-    version: 1.1.6
+    version: 1.1.3
 
 - name: postgres-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/postgres-release
   version:
-    version: 40
+    version: 39
 
 - name: credhub-release
   type: bosh-io-release
