@@ -351,9 +351,9 @@ jobs:
 
           # code_snippet engine-configure-auth start bash
           om --env env.yml configure-authentication \
-             --username $USERNAME \
-             --password $PASSWORD \
-             --decryption-passphrase $DECRYPTION_PASSPHRASE
+             --username ${USERNAME} \
+             --password ${PASSWORD} \
+             --decryption-passphrase ${DECRYPTION_PASSPHRASE}
           # code_snippet engine-configure-auth end bash
 
           # code_snippet engine-apply-changes start bash
