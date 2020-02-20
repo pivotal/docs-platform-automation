@@ -26,7 +26,7 @@ Coming Soon
 
 | Name | version |
 |---|---|
-| om | [4.5.0](https://github.com/pivotal-cf/om/releases/tag/4.4.2) |
+| om | [4.5.0](https://github.com/pivotal-cf/om/releases/tag/4.5.0) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
@@ -684,7 +684,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   An exponential backoff will be and timeout after an hour if disk is not ready.
 
 ## v3.0.18
-Released Coming Soon
+Released February 20, 2020
 
 | Name | version |
 |---|---|
