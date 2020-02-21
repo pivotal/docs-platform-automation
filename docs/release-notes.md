@@ -21,6 +21,19 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## V4.3.4
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.5.0](https://github.com/pivotal-cf/om/releases/tag/4.5.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+### Bug Fixes
+- The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] now correctly allows for an optional vars input.
+
 ## v4.3.3
 Coming Soon
 
@@ -82,7 +95,7 @@ Released January 31, 2020
 - The `credhub` cli now returns a list of parameters it could not find when `--skip-missing` is enabled.
   This feature will show up in the [`credhub-interpolate`][credhub-interpolate],
   when `SKIP_MISSING: true` is set.
-- The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] command has been added.
+- The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task has been added.
   It replaces the [`credhub-interpolate`][credhub-interpolate] task and provides the following benefits:
     - Support for all native Concourse secrets stores including Credhub and Vault.
     - Credhub credentials are no longer required by the task so they can be completely handled by concourse.
