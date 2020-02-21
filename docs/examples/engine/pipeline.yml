@@ -172,7 +172,7 @@ jobs:
           cp $deployment_path/terraform.tfvars $terraform_path
 
           # code_snippet engine-copy-terraform start bash
-            cp -Ra paving/${IAAS} paving-${IAAS}
+            cp -ra paving/${IAAS} paving-${IAAS} # OSX: cp -Ra ...
             cd paving-${IAAS}
           # code_snippet engine-copy-terraform end bash
 
