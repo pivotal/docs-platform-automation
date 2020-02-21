@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.2.6
-Coming Soon
+Released February 21, 2020
 
 | Name | version |
 |---|---|
@@ -372,7 +372,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.11
-Released Coming Soon
+Released February 21, 2020
 
 | Name | version |
 |---|---|
