@@ -465,8 +465,9 @@ jobs:
             -v "World"
           # code_snippet engine-credhub-add-value end bash
 
+          PLATFORM=linux
           # code_snippet engine-fly-download start bash
-          curl "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=linux" --output fly
+          curl "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=${PLATFORM}" --output fly
           chmod +x fly
           # code_snippet engine-fly-download end bash
 
