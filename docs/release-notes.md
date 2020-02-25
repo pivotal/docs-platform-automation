@@ -283,7 +283,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.1.11
-Released Coming Soon
+Released February 25, 2020
 
 | Name | version |
 |---|---|
