@@ -167,48 +167,50 @@ jobs:
 
           trap commit EXIT
 
-          cp docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf $terraform_path
+          # code_snippet engine-copy-terraform start bash
+          # cp -Ra paving/${IAAS} paving-${IAAS}
+          mkdir paving-${IAAS}
+          cp -a paving/$IAAS/. paving-$IAAS
+          cd paving-${IAAS}
+          # code_snippet engine-copy-terraform end bash
+
+          cp ../docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf $terraform_path
           cp $deployment_path/terraform.tfstate $terraform_path
           cp $deployment_path/terraform.tfvars $terraform_path
 
-          # code_snippet engine-copy-terraform start bash
-            cp -ra paving/${IAAS} paving-${IAAS} # OSX: cp -Ra ...
-            cd paving-${IAAS}
-          # code_snippet engine-copy-terraform end bash
+          # code_snippet engine-terraform-init start bash
+          terraform init
+          # code_snippet engine-terraform-init end bash
 
-            # code_snippet engine-terraform-init start bash
-            terraform init
-            # code_snippet engine-terraform-init end bash
+          # code_snippet engine-terraform-refresh start bash
+          terraform refresh \
+            -state terraform.tfstate \
+            -var-file terraform.tfvars
+          # code_snippet engine-terraform-refresh end bash
 
-            # code_snippet engine-terraform-refresh start bash
-            terraform refresh \
-              -state terraform.tfstate \
-              -var-file terraform.tfvars
-            # code_snippet engine-terraform-refresh end bash
+          # code_snippet engine-terraform-plan start bash
+          terraform plan \
+            -state terraform.tfstate \
+            -out terraform.tfplan \
+            -var-file terraform.tfvars
+          # code_snippet engine-terraform-plan end bash
 
-            # code_snippet engine-terraform-plan start bash
-            terraform plan \
-              -state terraform.tfstate \
-              -out terraform.tfplan \
-              -var-file terraform.tfvars
-            # code_snippet engine-terraform-plan end bash
+          # code_snippet engine-terraform-apply start bash
+          terraform apply \
+            -state-out terraform.tfstate \
+            -parallelism=5 \
+            terraform.tfplan
+          # code_snippet engine-terraform-apply end bash
 
-            # code_snippet engine-terraform-apply start bash
-            terraform apply \
-              -state-out terraform.tfstate \
-              -parallelism=5 \
-              terraform.tfplan
-            # code_snippet engine-terraform-apply end bash
+          # code_snippet engine-terraform-vars start bash
+          terraform output stable_config > terraform-vars.yml
+          # code_snippet engine-terraform-vars end bash
 
-            # code_snippet engine-terraform-vars start bash
-            terraform output stable_config > terraform-vars.yml
-            # code_snippet engine-terraform-vars end bash
+          # code_snippet engine-terraform-concourse-url start bash
+          export CONCOURSE_URL=$(terraform output concourse_url)
+          # code_snippet engine-terraform-concourse-url end bash
 
-            # code_snippet engine-terraform-concourse-url start bash
-            export CONCOURSE_URL=$(terraform output concourse_url)
-            # code_snippet engine-terraform-concourse-url end bash
-
-            terraform output concourse_url > concourse-url.txt
+          terraform output concourse_url > concourse-url.txt
 
     ensure:
       put: deployments
