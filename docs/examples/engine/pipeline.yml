@@ -429,7 +429,7 @@ jobs:
           # This can be any VM type from the cloud config: bosh cloud-config
           worker_vm_type: large
           # This assigns created VMs (web, worker, and db) to AZs in the IaaS
-          availability_zones: [us-central1-a]
+          azs: [us-central1-a]
           # code_snippet engine-vars-file end yaml
           EOF
 
