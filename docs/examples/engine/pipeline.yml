@@ -35,6 +35,7 @@ resources:
   source:
     #    uri: https://github.com/concourse/concourse-bosh-deployment
     uri: https://github.com/jtarchie/concourse-bosh-deployment
+    branch: jtarchie-v5.5.7
 
 - name: ci
   type: git
@@ -74,6 +75,13 @@ resources:
     repository: cloudfoundry/bpm-release
   version:
     version: 1.1.3
+
+- name: bbr-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/backup-and-restore-sdk-release
+  version:
+    version: 1.15.0
 
 - name: postgres-release
   type: bosh-io-release
@@ -294,6 +302,7 @@ jobs:
     - get: deployments
     - get: concourse-release
     - get: bpm-release
+    - get: bbr-release
     - get: postgres-release
     - get: credhub-release
     - get: uaa-release
@@ -314,6 +323,7 @@ jobs:
       - name: vars
       - name: concourse-release
       - name: bpm-release
+      - name: bbr-release
       - name: postgres-release
       - name: credhub-release
       - name: uaa-release
@@ -338,6 +348,7 @@ jobs:
           cp vars/terraform-vars.yml terraform-vars.yml
           mv concourse-release/*.tgz concourse-release.tgz
           mv bpm-release/*.tgz bpm-release.tgz
+          mv bbr-release/*.tgz bbr-release.tgz
           mv postgres-release/*.tgz postgres-release.tgz
           mv credhub-release/*.tgz credhub-release.tgz
           mv uaa-release/*.tgz uaa-release.tgz
@@ -392,6 +403,7 @@ jobs:
           bosh upload-release postgres*.tgz
           bosh upload-release uaa*.tgz
           bosh upload-release credhub*.tgz
+          bosh upload-release bbr*.tgz
           # code_snippet engine-upload-releases end bash
 
           # code_snippet engine-upload-stemcell start bash
@@ -442,6 +454,8 @@ jobs:
             -o cluster/operations/uaa.yml \
             -o cluster/operations/credhub-colocated.yml \
             -o cluster/operations/offline-releases.yml \
+            -o cluster/operations/backup-atc-colocated-web.yml \
+            -o cluster/operations/secure-internal-postgres.yml \
             -o ../operations.yml \
             -l ../vars.yml \
             -l versions.yml \
