@@ -167,7 +167,7 @@ jobs:
 
               cp $terraform_path/terraform-outputs.yml $deployment_path
               cp $terraform_path/concourse-url.txt $deployment_path
-              git add terraform-outputs.yml
+              git add ../terraform-outputs.yml
               git add concourse-url.txt
               git commit -m "created a new deployment to test $IAAS" || true
             popd
