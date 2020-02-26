@@ -35,7 +35,7 @@ Coming Soon
 - The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] now correctly allows for an optional vars input.
 
 ## v4.3.3
-Coming Soon
+Released February 26, 2020
 
 | Name | version |
 |---|---|
