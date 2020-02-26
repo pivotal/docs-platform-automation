@@ -456,6 +456,9 @@ jobs:
             -o cluster/operations/offline-releases.yml \
             -o cluster/operations/backup-atc-colocated-web.yml \
             -o cluster/operations/secure-internal-postgres.yml \
+            -o cluster/operations/secure-internal-postgres-bbr.yml \
+            -o cluster/operations/secure-internal-postgres-uaa.yml \
+            -o cluster/operations/secure-internal-postgres-credhub.yml \
             -o ../operations.yml \
             -l ../vars.yml \
             -l versions.yml \
