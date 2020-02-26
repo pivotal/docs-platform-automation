@@ -165,7 +165,7 @@ jobs:
               git config --global user.email "pcf-platform-automation@pivotal.io"
               git add terraform.tfstate
 
-              cp $terraform_path/terraform-outputs.yml $deployment_path
+              cp terraform-outputs.yml $deployment_path
               cp $terraform_path/concourse-url.txt $deployment_path
               git add ../terraform-outputs.yml
               git add concourse-url.txt
