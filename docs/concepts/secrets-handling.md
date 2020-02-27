@@ -9,25 +9,28 @@ Platform Automation Tasks contains two tasks to help with retrieving these crede
 
 ### Using prepare-tasks-with-secrets
 The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task takes a set of tasks
-and modifies them to include environment variables referencing the secrets found in the provided config files.
+and modifies them to include environment variables referencing the variables found in the provided config files.
 This allows use of the native [Concourse secrets handling][concourse-secrets-handling]
-and provides support for any secrets store Concourse supports.
+and provides support for any secret store Concourse supports.
 
-The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task replaces the [credhub-interpolate][credhub-interpolate] task
+The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
+replaces the [credhub-interpolate][credhub-interpolate] task
 and provides the following benefits:
 
 * Support for all native Concourse secrets stores including Credhub and Vault.
 * Credhub credentials are no longer required by the task so they can be completely handled by concourse.
-* Credentials are no longer written to disk which alleviates some security concerns.
+* Secrets are no longer written to disk which alleviates some security concerns.
 
 The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task can be used two ways:
 
 * Adding to a pipeline without an already implemented credhub-interpolate task
 * [Replacing an already implemented credhub-interpolate task](#replacing-credhub-interpolate-with-prepare-tasks-with-secrets)
 
-!!! info "All Secrets Must Exist"
-    If using `prepare-tasks-with-secrets`, _all secrets_ must exist in either a secrets store or a vars file.
-    If a vars file is used in the subsequent task, it is required by `prepare-tasks-with-secrets`.
+!!! info "All Variables Must Exist"
+    If using `prepare-tasks-with-secrets`, _all secrets_ must exist in either a secrets store
+    or a vars file found under `VARS_PATHS`.
+    If a vars from a config file can't be found in credhub,
+    it must be available in a yaml file found under `VARS_PATHS` in `prepare-tasks-with-secrets`.
     This will prevent those credentials from being added as environment variables to the task
     resulting in Concourse being unable to find them in the secrets store.
 
@@ -39,7 +42,9 @@ below is an example of how a task will be changed:
         ```bash
         credhub generate --name="/concourse/:team_name/:pipeline_name/vcenter_login" --type=user --username=some-user
         ```
-3. Create a director configuration file that references the properties.
+3. Create a director configuration file that references the properties
+   using the om interpolation syntax:
+
        ```yaml
        properties-configuration:
          iaas_configuration:
@@ -48,16 +53,18 @@ below is an example of how a task will be changed:
            vcenter_password: ((vcenter_login.password))
        ```
 
-4. (Optional) Create vars files with additional credentials not stored in the secrets store.
+4. (Optional) Create vars files with additional variables not stored in the secrets store.
 
-    This is not recommended as it is more secure to store credentials in the secrets store.
+    We recommend this only for non-secret variables.
+    It's more secure to store secrets in the secrets store.
     If using multiple foundations, there are some cases where 
-    a foundation-specific key might not be a credential,
+    a foundation-specific key might not be sensitive,
     but should be extracted to allow reuse of the config file between foundations.
     If using a single config file for multiple foundations, 
-    vars files may be used instead of storing those non-credentials in a secrets store.
+    vars files may be used instead of storing those variables in a secrets store.
 
     For example:
+
        ```yaml
        vcenter_host: vcenter.example.com
        ```
@@ -71,6 +78,7 @@ below is an example of how a task will be changed:
     * The `output_mapping` section is required and is where the modified tasks will be.
 
     The declaration within a pipeline might look like:
+
        ```yaml
        - task: prepare-tasks-with-secrets
          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
@@ -94,11 +102,8 @@ below is an example of how a task will be changed:
      The modified tasks include an extended `params` section with the secret references detected from the config files.
 
 6. Use the modified tasks in future jobs.
-   When using the modified tasks in the rest of the pipeline,
-   they can be used alone without the need for vars files
-   as all credentials will be pulled from the secrets store.
 
-What the `prepare-tasks-with-secrets` task is doing internally is something like the following. 
+Here's an example of what `prepare-tasks-with-secrets` is doing internally.
 Given an original task and the previously provided config/vars files:
 
 ```yaml
@@ -144,8 +149,9 @@ run:
   path: platform-automation-tasks/tasks/configure-director.sh
 ```
 
-The `prepare-tasks-with-secrets` task will modify the original task to have the credentials found in `director.yml` embedded in the `params` section.
-Any credentials found in the `vars.yml` file will not be included in the modified task.
+The `prepare-tasks-with-secrets` task will modify the original task
+to have the variables found in `director.yml` embedded in the `params` section.
+Any variables found in the `vars.yml` file will not be included in the modified task.
 The `params` added will have a prefix of `OM_VAR`, so there are no collisions.
 The task is a programmatically modified YAML file, so the output loses the comments and keys are sorted.
 
@@ -289,10 +295,13 @@ opsman-configuration:
 ```
 
 !!! info 
-    If using this you need to ensure the concourse worker can talk to credhub so depending
-    on how you deployed credhub and/or worker this may or may not be possible.
-    This inverts control that now workers need to access credhub vs
-    default is atc injects secrets and passes them to the worker.
+    If using this you need to ensure the concourse worker can talk to credhub.
+    Depending on how you deployed credhub and/or the worker,
+    this may not be possible.
+    Using credhub-interpolate inverts control;
+    now workers need to access Credhub.
+    With `prepare-tasks-with-secrets` and other uses of Concourse's native integration,
+    the ATC retrieves secrets from Credhub and passes them to the worker.
 
 ## Defining Multiline Certificates and Keys in Config Files
 There are three ways to include certificates in the yaml files that are used by Platform Automation tasks.
