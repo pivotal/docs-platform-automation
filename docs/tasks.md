@@ -508,8 +508,9 @@ before an `apply-changes` could start.
 {% code_snippet 'examples', 'pre-deploy-check-usage', 'Usage' %}
 
 ### prepare-tasks-with-secrets
-Modifies task files to include config secrets as environment variables.
-Learn more about [secrets handling][secrets-handling]   .
+Modifies task files to include variables needed for config files as environment variables
+for run-time interpolation from a secret store.
+Learn more about [secrets handling][secrets-handling].
 
 {% code_snippet 'tasks', 'prepare-tasks-with-secrets', 'Task' %}
 {% code_snippet 'tasks', 'prepare-tasks-with-secrets-script', 'Implementation' %}
