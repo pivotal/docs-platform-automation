@@ -112,9 +112,9 @@ resources:
     product_version: ^621\..*
 
 jobs:
-<% ["gcp"].each do |iaas| %>
-- name: create-opsman
-  serial_groups: [ install ]
+<% ["gcp", "aws"].each do |iaas| %>
+- name: create-opsman-<%= iaas %>
+  serial_groups: [ install-<%= iaas %> ]
   serial: true
   plan:
   - in_parallel:
@@ -184,7 +184,7 @@ jobs:
           # code_snippet engine-copy-terraform end bash
 
           cp ../docs-platform-automation/docs/examples/engine/terraform-templates/${IAAS}.tf $terraform_path
-          cp $deployment_path/terraform.tfstate $terraform_path
+          cp $deployment_path/terraform.tfstate $terraform_path || true
           cp $deployment_path/terraform.tfvars $terraform_path
 
           # code_snippet engine-terraform-init start bash
@@ -296,15 +296,15 @@ jobs:
         params:
           rebase: true
           repository: repository-commit
-- name: deploy-and-test
-  serial_groups: [ install ]
+- name: deploy-and-test-<%= iaas %>
+  serial_groups: [ install-<%= iaas %> ]
   serial: true
   plan:
   - in_parallel:
     - get: platform-automation-image
       params:
         unpack: true
-      passed: [ create-opsman ]
+      passed: [ create-opsman-<%= iaas %> ]
       trigger: true
     - get: deployments
     - get: concourse-release
@@ -532,14 +532,14 @@ jobs:
           echo "Did not find expected output of 'Hello, World'. Instead saw:"
           echo "${output}"
           exit 1
-- name: ☢delete☢
-  serial_groups: [ install ]
+- name: ☢delete-<%= iaas %>☢
+  serial_groups: [ install-<%= iaas %> ]
   serial: true
   plan:
   - get: deployments
   - get: ci
   - get: platform-automation-image
-    passed: [ deploy-and-test ]
+    passed: [ deploy-and-test-<%= iaas %> ]
     trigger: true
     params:
       unpack: true
