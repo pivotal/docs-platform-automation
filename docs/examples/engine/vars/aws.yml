@@ -1,4 +1,4 @@
-# code_snippet engine-vars-file-gcp start yaml
+# code_snippet engine-vars-file-aws start yaml
 # BOSH uses this to identify the deployment
 deployment_name: concourse
 # This can be any VM type from the cloud config: bosh cloud-config
@@ -15,4 +15,4 @@ db_persistent_disk_type: 102400
 worker_vm_type: large
 # This assigns created VMs (web, worker, and db) to AZs in the IaaS
 azs: ((availability_zones))
-# code_snippet engine-vars-file-gcp end yaml
+# code_snippet engine-vars-file-aws end yaml
