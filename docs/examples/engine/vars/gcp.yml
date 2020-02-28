@@ -2,17 +2,17 @@
 # BOSH uses this to identify the deployment
 deployment_name: concourse
 # This can be any VM type from the cloud config: bosh cloud-config
-web_vm_type: large
+web_vm_type: c5.large
 # This is the external concourse URL exported from the terraform output
 external_host: $CONCOURSE_URL
 # This is the external concourse URL exported from the terraform output
 external_url: https://$CONCOURSE_URL
 # This can be any VM type from the cloud config: bosh cloud-config
-db_vm_type: large
+db_vm_type: c5.large
 # This can be any disk type from the cloud config: bosh cloud-config
 db_persistent_disk_type: 102400
 # This can be any VM type from the cloud config: bosh cloud-config
-worker_vm_type: large
+worker_vm_type: c5.large
 # This assigns created VMs (web, worker, and db) to AZs in the IaaS
-azs: [us-central1-a]
+azs: ((availability_zones))
 # code_snippet engine-vars-file-gcp end yaml
