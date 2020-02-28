@@ -1,7 +1,3 @@
-locals  {
-  concourse_url = "ci.${var.environment_name}.${data.google_dns_managed_zone.hosted-zone.dns_name}"
-}
-
 resource "google_dns_record_set" "concourse" {
   name = local.concourse_url
   type = "A"
@@ -67,5 +63,5 @@ resource "google_compute_target_pool" "concourse_target_pool" {
 }
 
 output "concourse_url" {
-  value = replace(replace(local.concourse_url, "/\\.$/", ""), "*.", "")
+  value = replace(replace("${google_dns_record_set.concourse.name}", "/\\.$/", ""), "*.", "")
 }
