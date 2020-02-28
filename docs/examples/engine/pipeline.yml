@@ -417,28 +417,10 @@ jobs:
           bosh upload-stemcell stemcell.tgz
           # code_snippet engine-upload-stemcell end bash
 
-          pushd concourse-bosh-deployment
 
-          cat << EOF > ../vars.yml
-          # code_snippet engine-vars-file start yaml
-          # BOSH uses this to identify the deployment
-          deployment_name: concourse
-          # This can be any VM type from the cloud config: bosh cloud-config
-          web_vm_type: large
-          # This is the external concourse URL exported from the terraform output
-          external_host: $CONCOURSE_URL
-          # This is the external concourse URL exported from the terraform output
-          external_url: https://$CONCOURSE_URL
-          # This can be any VM type from the cloud config: bosh cloud-config
-          db_vm_type: large
-          # This can be any disk type from the cloud config: bosh cloud-config
-          db_persistent_disk_type: 102400
-          # This can be any VM type from the cloud config: bosh cloud-config
-          worker_vm_type: large
-          # This assigns created VMs (web, worker, and db) to AZs in the IaaS
-          azs: [us-central1-a]
-          # code_snippet engine-vars-file end yaml
-          EOF
+          cat docs-platform-automation/docs/examples/engine/vars/<%= iaas %>.yml | envsubst > vars.yml
+
+          pushd concourse-bosh-deployment
 
           # code_snippet create-user start bash
           ADMIN_USERNAME=admin
