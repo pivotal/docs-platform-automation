@@ -112,6 +112,7 @@ resources:
     product_version: ^621\..*
 
 jobs:
+<% ["gcp"].each do |iaas| %>
 - name: create-opsman
   serial_groups: [ install ]
   serial: true
@@ -120,7 +121,7 @@ jobs:
     - get: opsman-image
       params:
         globs:
-        - '*gcp*.yml'
+        - '*<%= iaas %>*.yml'
     - get: paving
     - get: platform-automation-tasks
       params:
@@ -146,8 +147,8 @@ jobs:
       outputs:
       - name: deployments
       params:
-        DEPLOYMENT: gcp-new
-        IAAS: gcp
+        DEPLOYMENT: engine-<%= iaas %>
+        IAAS: <%= iaas %>
       run:
         path: bash
         args:
@@ -156,7 +157,7 @@ jobs:
           set -eux
 
           terraform_path=$PWD/paving-$IAAS
-          deployment_path=$PWD/deployments/platform-automation/$DEPLOYMENT
+          deployment_path=$PWD/deployments/$DEPLOYMENT
 
           commit() {
             cp $terraform_path/terraform.tfstate $deployment_path
@@ -165,7 +166,7 @@ jobs:
               git config --global user.email "pcf-platform-automation@pivotal.io"
               git add terraform.tfstate
 
-              cp ../../../terraform-outputs.yml $deployment_path
+              cp $terraform_path/../terraform-outputs.yml $deployment_path
               cp $terraform_path/concourse-url.txt $deployment_path
               git add terraform-outputs.yml
               git add concourse-url.txt
@@ -182,7 +183,7 @@ jobs:
           cd paving-${IAAS}
           # code_snippet engine-copy-terraform end bash
 
-          cp ../docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf $terraform_path
+          cp ../docs-platform-automation/docs/examples/engine/terraform-templates/${IAAS}.tf $terraform_path
           cp $deployment_path/terraform.tfstate $terraform_path
           cp $deployment_path/terraform.tfvars $terraform_path
 
@@ -245,8 +246,8 @@ jobs:
       - name: vars
       - name: state
       params:
-        DEPLOYMENT: gcp-new
-        IAAS: gcp
+        DEPLOYMENT: engine-<%= iaas %>
+        IAAS: <%= iaas %>
       run:
         path: bash
         args:
@@ -254,21 +255,19 @@ jobs:
         - |
           set -eux
 
-          output_path=$PWD/deployments/platform-automation/"$DEPLOYMENT"/terraform-outputs.yml
+          output_path=$PWD/deployments/"$DEPLOYMENT"/terraform-outputs.yml
 
           echo "Attempting to copy optional files to outputs..."
-          cp deployments/platform-automation/"$DEPLOYMENT"/state/*.yml state/ || true
-          cp deployments/platform-automation/"$DEPLOYMENT"/vars/*.yml vars/ || true
-          cp deployments/platform-automation/"$DEPLOYMENT"/config/*.yml config/
+          cp deployments/"$DEPLOYMENT"/state.yml state/ || true
 
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/ops-manager.yml > config/opsman.yml
-          cat docs-platform-automation/docs/examples/engine/gcp-lbs-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
+          cat docs-platform-automation/docs/examples/engine/"$IAAS"-lbs-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
           cat docs-platform-automation/docs/examples/engine/increased-disk-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/director.yml > config/director.yml
-          bosh int -l "$output_path" --vars-env=TF_VARS deployments/platform-automation/"$DEPLOYMENT"/env/env.yml > env/env.yml
+          bosh int -l "$output_path" --vars-env=TF_VARS deployments/"$DEPLOYMENT"/env.yml > env/env.yml
 
           cp $output_path vars/terraform-outputs.yml
-          cp $PWD/deployments/platform-automation/"$DEPLOYMENT"/concourse-url.txt vars/concourse-url.txt
+          cp $PWD/deployments/"$DEPLOYMENT"/concourse-url.txt vars/concourse-url.txt
 
           echo "Config generation nominal"
 
@@ -282,13 +281,21 @@ jobs:
     ensure:
       do:
       - task: state-file
-        file: ci/tasks/make-commit/task.yml
+        file: platform-automation-tasks/tasks/make-git-commit.yml
+        image: platform-automation-image
         params:
-          IAAS: gcp-new
+          GIT_AUTHOR_NAME: norm-ci
+          GIT_AUTHOR_EMAIL: pcf-norm@pivotal.io
+          COMMIT_MESSAGE: "create-vm update state file for engine-<%= iaas %>"
+          FILE_SOURCE_PATH: state.yml
+          FILE_DESTINATION_PATH: engine-<%= iaas %>/state.yml
+        input_mapping:
+          repository: deployments
+          file-source: generated-state
       - put: deployments
         params:
           rebase: true
-          repository: deployments-updated
+          repository: repository-commit
 - name: deploy-and-test
   serial_groups: [ install ]
   serial: true
@@ -334,7 +341,7 @@ jobs:
       - name: docs-platform-automation
       platform: linux
       params:
-        CONCOURSE_URL: ci.paving.gcp.platform-automation.cf-app.com
+        CONCOURSE_URL: ci.paving.<%= iaas %>.platform-automation.cf-app.com
       run:
         path: bash
         args:
@@ -353,7 +360,7 @@ jobs:
           mv credhub-release/*.tgz credhub-release.tgz
           mv uaa-release/*.tgz uaa-release.tgz
           mv ubuntu-xenial-stemcell/*.tgz stemcell.tgz
-          mv docs-platform-automation/docs/examples/engine/ops-files/gcp.yml operations.yml
+          mv docs-platform-automation/docs/examples/engine/ops-files/<%= iaas %>.yml operations.yml
           mv docs-platform-automation/docs/examples/engine/test-pipeline.yml pipeline.yml
 
           # code_snippet engine-write-private-key start bash
@@ -368,9 +375,9 @@ jobs:
           export OM_TARGET=$(om interpolate -c terraform-outputs.yml --path /ops_manager_dns)
           # code_snippet engine-terraform-ops-manager-url end bash
 
-          OM_USERNAME=$(om interpolate -c config/auth.yml --path /username)
-          OM_PASSWORD=$(om interpolate -c config/auth.yml --path /password)
-          OM_DECRYPTION_PASSPHRASE=$(om interpolate -c config/auth.yml --path /decryption-passphrase)
+          OM_USERNAME=$(om interpolate -c env.yml --path /username)
+          OM_PASSWORD=$(om interpolate -c env.yml --path /password)
+          OM_DECRYPTION_PASSPHRASE=$(om interpolate -c env.yml --path /decryption-passphrase)
 
           # code_snippet engine-configure-auth start bash
           om --env env.yml configure-authentication \
@@ -546,6 +553,8 @@ jobs:
       task: delete-deployment
       image: platform-automation-image
       file: ci/platform-automation-engine/delete-deployment/task.yml
+      params:
+        IAAS: <%= iaas %>
   - try:
       task: delete-installation
       image: platform-automation-image
@@ -557,13 +566,21 @@ jobs:
       ensure:
         do:
         - task: state-file
-          file: ci/tasks/make-commit/task.yml
+          file: platform-automation-tasks/tasks/make-git-commit.yml
+          image: platform-automation-image
           params:
-            IAAS: gcp-new
+            GIT_AUTHOR_NAME: norm-ci
+            GIT_AUTHOR_EMAIL: pcf-norm@pivotal.io
+            COMMIT_MESSAGE: "delete-vm update state file for engine-<%= iaas %>"
+            FILE_SOURCE_PATH: state.yml
+            FILE_DESTINATION_PATH: engine-<%= iaas %>/state.yml
+          input_mapping:
+            repository: deployments
+            file-source: generated-state
         - put: deployments
           params:
             rebase: true
-            repository: deployments-updated
+            repository: repository-commit
   - try:
     task: delete-terraform
     config:
@@ -580,8 +597,8 @@ jobs:
       outputs:
       - name: deployments
       params:
-        DEPLOYMENT: gcp-new
-        IAAS: gcp
+        DEPLOYMENT: engine-<%= iaas %>
+        IAAS: <%= iaas %>
       run:
         path: bash
         args:
@@ -590,7 +607,7 @@ jobs:
           set -eux
 
           terraform_path=$PWD/paving-$IAAS
-          deployment_path=$PWD/deployments/platform-automation/$DEPLOYMENT
+          deployment_path=$PWD/deployments/$DEPLOYMENT
 
           commit() {
             cp $terraform_path/terraform.tfstate $deployment_path
@@ -606,7 +623,7 @@ jobs:
           trap commit EXIT
 
           cp -ra paving/$IAAS paving-$IAAS
-          cp docs-platform-automation/docs/examples/engine/terraform-templates/gcp.tf $terraform_path
+          cp docs-platform-automation/docs/examples/engine/terraform-templates/<%= iaas %>.tf $terraform_path
           cp $deployment_path/terraform.tfstate $terraform_path
           cp $deployment_path/terraform.tfvars $terraform_path
 
@@ -623,3 +640,4 @@ jobs:
       params:
         rebase: true
         repository: deployments
+<% end %>
