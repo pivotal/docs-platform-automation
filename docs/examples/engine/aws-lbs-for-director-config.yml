@@ -1,0 +1,5 @@
+vmextensions-configuration:
+- name: concourse-lb
+  cloud_properties:
+    lb_target_groups: [ ((environment_name))-concourse-lb ]
+#    security_groups: [ ((environment_name))-concourse-sg ]
