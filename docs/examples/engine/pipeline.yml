@@ -262,7 +262,6 @@ jobs:
 
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/ops-manager.yml > config/opsman.yml
           cat docs-platform-automation/docs/examples/engine/"$IAAS"-lbs-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
-          cat docs-platform-automation/docs/examples/engine/increased-disk-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/director.yml > config/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/"$DEPLOYMENT"/env.yml > env/env.yml
 
@@ -438,7 +437,6 @@ jobs:
           # code_snippet create-user end bash
 
           # code_snippet engine-deploy-concourse start bash
-          om interpolate --config ../vars.yml --vars-file ../terraform-outputs.yml
           bosh -n -d concourse deploy cluster/concourse.yml \
             -o cluster/operations/privileged-http.yml \
             -o cluster/operations/privileged-https.yml \
