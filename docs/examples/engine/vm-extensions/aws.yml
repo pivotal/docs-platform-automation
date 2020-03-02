@@ -9,3 +9,7 @@ vmextensions-configuration:
     security_groups:
       - ((environment_name))-concourse-sg
       - ((platform_vms_security_group_id))
+- name: increased-disk
+  cloud_properties:
+    type: gp2
+    size: 102400

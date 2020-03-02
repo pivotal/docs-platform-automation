@@ -1,4 +1,0 @@
-- name: increased-disk
-  cloud_properties:
-    root_disk_size_gb: 100
-    root_disk_type: pd-ssd
