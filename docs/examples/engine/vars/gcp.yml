@@ -16,5 +16,5 @@ worker_vm_type: large
 # This assigns created VMs (web, worker, and db) to AZs in the IaaS
 azs: ((availability_zones))
 # The network name to assign the VMs to.
-network_name: services
+network_name: management
 # code_snippet engine-vars-file-aws end yaml
