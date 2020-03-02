@@ -166,10 +166,10 @@ jobs:
               git config --global user.email "pcf-platform-automation@pivotal.io"
               git add terraform.tfstate
 
-              cp $terraform_path/../terraform-outputs.yml $deployment_path
-              cp $terraform_path/concourse-url.txt $deployment_path
-              git add terraform-outputs.yml
-              git add concourse-url.txt
+              cp $terraform_path/../terraform-outputs.yml $deployment_path || true
+              cp $terraform_path/concourse-url.txt $deployment_path || true
+              git add terraform-outputs.yml || true
+              git add concourse-url.txt || true
               git commit -m "created a new deployment to test $IAAS" || true
             popd
           }
@@ -319,7 +319,11 @@ jobs:
     - get: paving
     - get: ubuntu-xenial-stemcell
       params:
+        <% if iaas == "gcp" %>
         globs: ["*google*"]
+        <% else %>
+        globs: ["*<%= iaas %>*"]
+        <% end %>
   - *generate-config
   - task: deploy-it
     image: platform-automation-image
@@ -434,6 +438,7 @@ jobs:
           # code_snippet create-user end bash
 
           # code_snippet engine-deploy-concourse start bash
+          om interpolate --config ../vars.yml --vars-file ../terraform-outputs.yml
           bosh -n -d concourse deploy cluster/concourse.yml \
             -o cluster/operations/privileged-http.yml \
             -o cluster/operations/privileged-https.yml \
@@ -449,9 +454,8 @@ jobs:
             -o cluster/operations/secure-internal-postgres-uaa.yml \
             -o cluster/operations/secure-internal-postgres-credhub.yml \
             -o ../operations.yml \
-            -l ../vars.yml \
-            -l versions.yml \
-            -v network_name=$(om interpolate --config ../director-config.yml --path /network-assignment/network/name --vars-file ../terraform-outputs.yml)
+            -l <(om interpolate --config ../vars.yml --vars-file ../terraform-outputs.yml) \
+            -l versions.yml
           # code_snippet engine-deploy-concourse end bash
           popd
 
@@ -622,4 +626,21 @@ jobs:
       params:
         rebase: true
         repository: deployments
+  # leftovers is purely a CI tool
+  # it is not officially supported by Pivotal
+  - task: leftovers
+    file: ci/tasks/leftovers.yml
+    params:
+      BBL_IAAS: <%= iaas %>
+      BBL_AWS_ACCESS_KEY_ID: ((s3.access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((s3.secret_access_key))
+      BBL_AWS_REGION: ((s3.region_name))
+      BBL_AZURE_CLIENT_ID: ((azure.client_id))
+      BBL_AZURE_CLIENT_SECRET: ((azure.client_secret))
+      BBL_AZURE_TENANT_ID: ((azure.tenant_id))
+      BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+      FILTER: engine-<%= iaas %>
+      DRY_RUN: false
+      NO_CONFIRM: true
 <% end %>
