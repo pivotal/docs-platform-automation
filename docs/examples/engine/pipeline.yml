@@ -261,7 +261,7 @@ jobs:
           cp deployments/"$DEPLOYMENT"/state.yml state/ || true
 
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/ops-manager.yml > config/opsman.yml
-          cat docs-platform-automation/docs/examples/engine/"$IAAS"-lbs-for-director-config.yml >> paving/ci/configuration/"$IAAS"/director.yml
+          cat docs-platform-automation/docs/examples/engine/vm-extensions/"$IAAS".yml >> paving/ci/configuration/"$IAAS"/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/director.yml > config/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/"$DEPLOYMENT"/env.yml > env/env.yml
 
@@ -520,18 +520,19 @@ jobs:
   serial_groups: [ install-<%= iaas %> ]
   serial: true
   plan:
-  - get: deployments
-  - get: ci
-  - get: platform-automation-image
-    passed: [ deploy-and-test-<%= iaas %> ]
-    trigger: true
-    params:
-      unpack: true
-  - get: docs-platform-automation
-  - get: platform-automation-tasks
-    params:
-      unpack: true
-  - get: paving
+  - in_parallel:
+    - get: deployments
+    - get: ci
+    - get: platform-automation-image
+      passed: [ deploy-and-test-<%= iaas %> ]
+      trigger: true
+      params:
+        unpack: true
+    - get: docs-platform-automation
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: paving
   - *generate-config
   - try:
       task: delete-deployment
@@ -539,10 +540,13 @@ jobs:
       file: ci/platform-automation-engine/delete-deployment/task.yml
       params:
         IAAS: <%= iaas %>
+        OM_TARGET: opsmanager.paving.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/delete-installation.yml
+      params:
+        OM_TARGET: opsmanager.paving.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-opsman-vm
       file: platform-automation-tasks/tasks/delete-vm.yml
@@ -566,59 +570,59 @@ jobs:
             rebase: true
             repository: repository-commit
   - try:
-    task: delete-terraform
-    config:
-      platform: linux
-      image_resource:
-        type: registry-image
-        source:
-          repository: hashicorp/terraform
-          tag: full
-      inputs:
-      - name: paving
-      - name: deployments
-      - name: docs-platform-automation
-      outputs:
-      - name: deployments
-      params:
-        DEPLOYMENT: engine-<%= iaas %>
-        IAAS: <%= iaas %>
-      run:
-        path: bash
-        args:
-        - -c
-        - |
-          set -eux
+      task: delete-terraform
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: hashicorp/terraform
+            tag: full
+        inputs:
+        - name: paving
+        - name: deployments
+        - name: docs-platform-automation
+        outputs:
+        - name: deployments
+        params:
+          DEPLOYMENT: engine-<%= iaas %>
+          IAAS: <%= iaas %>
+        run:
+          path: bash
+          args:
+          - -c
+          - |
+            set -eux
 
-          terraform_path=$PWD/paving-$IAAS
-          deployment_path=$PWD/deployments/$DEPLOYMENT
+            terraform_path=$PWD/paving-$IAAS
+            deployment_path=$PWD/deployments/$DEPLOYMENT
 
-          commit() {
-            cp $terraform_path/terraform.tfstate $deployment_path
-            pushd $deployment_path
-              git config --global user.name "platform-automation-ci"
-              git config --global user.email "pcf-platform-automation@pivotal.io"
-              git add terraform.tfstate
+            commit() {
+              cp $terraform_path/terraform.tfstate $deployment_path
+              pushd $deployment_path
+                git config --global user.name "platform-automation-ci"
+                git config --global user.email "pcf-platform-automation@pivotal.io"
+                git add terraform.tfstate
 
-              git commit -m "deleted infrastructure for $IAAS" || true
+                git commit -m "deleted infrastructure for $IAAS" || true
+              popd
+            }
+
+            trap commit EXIT
+
+            cp -ra paving/$IAAS paving-$IAAS
+            cp docs-platform-automation/docs/examples/engine/terraform-templates/<%= iaas %>.tf $terraform_path
+            cp $deployment_path/terraform.tfstate $terraform_path
+            cp $deployment_path/terraform.tfvars $terraform_path
+
+            cp -ra paving/$IAAS paving-$IAAS
+            pushd paving-$IAAS
+              terraform init
+              terraform destroy \
+                -auto-approve \
+                -var-file=terraform.tfvars \
+                -state=terraform.tfstate
             popd
-          }
-
-          trap commit EXIT
-
-          cp -ra paving/$IAAS paving-$IAAS
-          cp docs-platform-automation/docs/examples/engine/terraform-templates/<%= iaas %>.tf $terraform_path
-          cp $deployment_path/terraform.tfstate $terraform_path
-          cp $deployment_path/terraform.tfvars $terraform_path
-
-          cp -ra paving/$IAAS paving-$IAAS
-          pushd paving-$IAAS
-            terraform init
-            terraform destroy \
-              -auto-approve \
-              -var-file=terraform.tfvars \
-              -state=terraform.tfstate
-          popd
     ensure:
       put: deployments
       params:
