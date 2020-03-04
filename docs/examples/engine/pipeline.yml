@@ -130,6 +130,7 @@ jobs:
     - get: deployments
     - get: ci
     - get: docs-platform-automation
+      trigger: true
   - task: run-terraform
     config:
       platform: linux
@@ -301,8 +302,6 @@ jobs:
     - get: platform-automation-image
       params:
         unpack: true
-      passed: [ create-opsman-<%= iaas %> ]
-      trigger: true
     - get: deployments
     - get: concourse-release
     - get: bpm-release
@@ -312,6 +311,8 @@ jobs:
     - get: uaa-release
     - get: concourse-bosh-deployment
     - get: docs-platform-automation
+      trigger: true
+      passed: [ create-opsman-<%= iaas %> ]
     - get: ci
     - get: paving
     - get: ubuntu-xenial-stemcell
@@ -537,11 +538,11 @@ jobs:
     - get: deployments
     - get: ci
     - get: platform-automation-image
-      passed: [ deploy-and-test-<%= iaas %> ]
-      trigger: true
       params:
         unpack: true
     - get: docs-platform-automation
+      passed: [ deploy-and-test-<%= iaas %> ]
+      trigger: true
     - get: platform-automation-tasks
       params:
         unpack: true
