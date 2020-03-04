@@ -192,20 +192,17 @@ jobs:
 
           # code_snippet engine-terraform-refresh start bash
           terraform refresh \
-            -state terraform.tfstate \
             -var-file terraform.tfvars
           # code_snippet engine-terraform-refresh end bash
 
           # code_snippet engine-terraform-plan start bash
           terraform plan \
-            -state terraform.tfstate \
             -out terraform.tfplan \
             -var-file terraform.tfvars
           # code_snippet engine-terraform-plan end bash
 
           # code_snippet engine-terraform-apply start bash
           terraform apply \
-            -state-out terraform.tfstate \
             -parallelism=5 \
             terraform.tfplan
           # code_snippet engine-terraform-apply end bash
