@@ -554,13 +554,13 @@ jobs:
       file: ci/platform-automation-engine/delete-deployment/task.yml
       params:
         IAAS: <%= iaas %>
-        OM_TARGET: opsmanager.paving.<%= iaas %>.platform-automation.cf-app.com
+        OM_TARGET: ci.paving.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/delete-installation.yml
       params:
-        OM_TARGET: opsmanager.paving.<%= iaas %>.platform-automation.cf-app.com
+        OM_TARGET: ci.paving.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-opsman-vm
       file: platform-automation-tasks/tasks/delete-vm.yml
