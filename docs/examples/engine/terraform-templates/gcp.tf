@@ -1,5 +1,5 @@
 resource "google_dns_record_set" "concourse" {
-  name = local.concourse_url
+  name = "ci.${var.environment_name}.${data.google_dns_managed_zone.hosted-zone.dns_name}"
   type = "A"
   ttl  = 60
 
