@@ -109,6 +109,10 @@ resources:
     product_slug: stemcells-ubuntu-xenial
     product_version: ^621\..*
 
+- name: lock
+  type: time
+  source: {interval: 999h}
+
 jobs:
 <% ["gcp", "aws"].each do |iaas| %>
 - name: create-opsman-<%= iaas %>
@@ -131,6 +135,8 @@ jobs:
     - get: ci
     - get: docs-platform-automation
       trigger: true
+    - get: lock
+  - put: lock
   - task: run-terraform
     config:
       platform: linux
@@ -308,6 +314,7 @@ jobs:
     - get: uaa-release
     - get: concourse-bosh-deployment
     - get: docs-platform-automation
+    - get: lock
       trigger: true
       passed: [ create-opsman-<%= iaas %> ]
     - get: ci
@@ -339,8 +346,6 @@ jobs:
       - name: ci
       - name: docs-platform-automation
       platform: linux
-      params:
-        CONCOURSE_URL: ci.paving.<%= iaas %>.platform-automation.cf-app.com
       run:
         path: bash
         args:
@@ -538,6 +543,7 @@ jobs:
       params:
         unpack: true
     - get: docs-platform-automation
+    - get: lock
       passed: [ deploy-and-test-<%= iaas %> ]
       trigger: true
     - get: platform-automation-tasks
@@ -551,13 +557,13 @@ jobs:
       file: ci/platform-automation-engine/delete-deployment/task.yml
       params:
         IAAS: <%= iaas %>
-        OM_TARGET: ci.paving.<%= iaas %>.platform-automation.cf-app.com
+        OM_TARGET: ci.engine-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/delete-installation.yml
       params:
-        OM_TARGET: ci.paving.<%= iaas %>.platform-automation.cf-app.com
+        OM_TARGET: ci.engine-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-opsman-vm
       file: platform-automation-tasks/tasks/delete-vm.yml
@@ -642,6 +648,7 @@ jobs:
   # leftovers is purely a CI tool
   # it is not officially supported by Pivotal
   - task: leftovers
+    attempts: 5
     file: ci/tasks/leftovers.yml
     params:
       BBL_IAAS: <%= iaas %>
@@ -656,4 +663,13 @@ jobs:
       FILTER: engine-<%= iaas %>
       DRY_RUN: false
       NO_CONFIRM: true
+  - task: remove state files
+    file: ci/tasks/delete-state-file.yml
+    params:
+      DEPLOYMENT: engine-<%= iaas %>
+    ensure:
+      put: deployments
+      params:
+        rebase: true
+        repository: deployments
 <% end %>
