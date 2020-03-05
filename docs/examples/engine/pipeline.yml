@@ -471,8 +471,8 @@ jobs:
           # code_snippet engine-deploy-concourse end bash
 
           # code_snippet engine-credhub-credentials start bash
-          CONCOURSE_CREDHUB_SECRET=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
-          CONCOURSE_CREDHUB_CA_CERT=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
+          export CONCOURSE_CREDHUB_SECRET=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
+          export CONCOURSE_CREDHUB_CA_CERT=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
           # code_snippet engine-credhub-credentials end bash
 
           # code_snippet engine-credhub-unset start bash
