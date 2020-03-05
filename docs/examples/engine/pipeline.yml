@@ -388,7 +388,7 @@ jobs:
             --path /ops_manager_ssh_private_key > /tmp/private_key
           # code_snippet engine-write-private-key end bash
 
-          CONCOURSE_URL=$(cat vars/concourse-url.txt)
+          export CONCOURSE_URL=$(cat vars/concourse-url.txt)
 
           # code_snippet engine-terraform-ops-manager-url start bash
           export OM_TARGET=$(om interpolate -c terraform-outputs.yml --path /ops_manager_dns)
@@ -439,8 +439,6 @@ jobs:
 
           cat docs-platform-automation/docs/examples/engine/vars/<%= iaas %>.yml | envsubst > vars.yml
 
-          pushd concourse-bosh-deployment
-
           # code_snippet create-user start bash
           ADMIN_USERNAME=admin
           ADMIN_PASSWORD=password
@@ -453,25 +451,24 @@ jobs:
           # code_snippet create-user end bash
 
           # code_snippet engine-deploy-concourse start bash
-          bosh -n -d concourse deploy cluster/concourse.yml \
-            -o cluster/operations/privileged-http.yml \
-            -o cluster/operations/privileged-https.yml \
-            -o cluster/operations/enable-lets-encrypt.yml \
-            -o cluster/operations/basic-auth.yml \
-            -o cluster/operations/tls-vars.yml \
-            -o cluster/operations/uaa.yml \
-            -o cluster/operations/credhub-colocated.yml \
-            -o cluster/operations/offline-releases.yml \
-            -o cluster/operations/backup-atc-colocated-web.yml \
-            -o cluster/operations/secure-internal-postgres.yml \
-            -o cluster/operations/secure-internal-postgres-bbr.yml \
-            -o cluster/operations/secure-internal-postgres-uaa.yml \
-            -o cluster/operations/secure-internal-postgres-credhub.yml \
-            -o ../operations.yml \
-            -l <(om interpolate --config ../vars.yml --vars-file ../terraform-outputs.yml) \
-            -l versions.yml
+          bosh -n -d concourse deploy concourse-bosh-deployment/cluster/concourse.yml \
+            -o concourse-bosh-deployment/cluster/operations/privileged-http.yml \
+            -o concourse-bosh-deployment/cluster/operations/privileged-https.yml \
+            -o concourse-bosh-deployment/cluster/operations/enable-lets-encrypt.yml \
+            -o concourse-bosh-deployment/cluster/operations/basic-auth.yml \
+            -o concourse-bosh-deployment/cluster/operations/tls-vars.yml \
+            -o concourse-bosh-deployment/cluster/operations/uaa.yml \
+            -o concourse-bosh-deployment/cluster/operations/credhub-colocated.yml \
+            -o concourse-bosh-deployment/cluster/operations/offline-releases.yml \
+            -o concourse-bosh-deployment/cluster/operations/backup-atc-colocated-web.yml \
+            -o concourse-bosh-deployment/cluster/operations/secure-internal-postgres.yml \
+            -o concourse-bosh-deployment/cluster/operations/secure-internal-postgres-bbr.yml \
+            -o concourse-bosh-deployment/cluster/operations/secure-internal-postgres-uaa.yml \
+            -o concourse-bosh-deployment/cluster/operations/secure-internal-postgres-credhub.yml \
+            -o operations.yml \
+            -l <(om interpolate --config vars.yml --vars-file terraform-outputs.yml) \
+            -l concourse-bosh-deployment/versions.yml
           # code_snippet engine-deploy-concourse end bash
-          popd
 
           # code_snippet engine-credhub-credentials start bash
           CONCOURSE_CREDHUB_SECRET=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
