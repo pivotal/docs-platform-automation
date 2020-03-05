@@ -322,9 +322,9 @@ jobs:
     - get: ubuntu-xenial-stemcell
       params:
         <% if iaas == "gcp" %>
-        globs: ["*google*"]
+        globs: ["light*google*"]
         <% else %>
-        globs: ["*<%= iaas %>*"]
+        globs: ["light*<%= iaas %>*"]
         <% end %>
   - *generate-config
   - task: deploy-it
