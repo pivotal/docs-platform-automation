@@ -440,8 +440,8 @@ jobs:
           cat docs-platform-automation/docs/examples/engine/vars/<%= iaas %>.yml | envsubst > vars.yml
 
           # code_snippet create-user start bash
-          ADMIN_USERNAME=admin
-          ADMIN_PASSWORD=password
+          export ADMIN_USERNAME=admin
+          export ADMIN_PASSWORD=password
 
           credhub set \
              -n /p-bosh/concourse/local_user \
