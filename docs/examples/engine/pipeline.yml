@@ -114,7 +114,7 @@ resources:
   source: {interval: 999h}
 
 jobs:
-<% ["gcp", "aws"].each do |iaas| %>
+<% ["gcp", "aws", "azure"].each do |iaas| %>
 - name: create-opsman-<%= iaas %>
   serial_groups: [ install-<%= iaas %> ]
   serial: true
@@ -323,6 +323,8 @@ jobs:
       params:
         <% if iaas == "gcp" %>
         globs: ["light*google*"]
+        <% elsif iaas == "azure" %>
+        globs: ["*<%= iaas %>*"]
         <% else %>
         globs: ["light*<%= iaas %>*"]
         <% end %>
