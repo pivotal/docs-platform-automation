@@ -12,4 +12,4 @@ vmextensions-configuration:
 - name: increased-disk
   cloud_properties:
     type: gp2
-    size: 102400
+    size: 512000
