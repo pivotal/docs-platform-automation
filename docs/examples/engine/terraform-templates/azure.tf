@@ -110,37 +110,9 @@ resource "azurerm_lb_probe" "concourse-credhub" {
   port                = 8844
 }
 
-resource "azurerm_network_security_rule" "concourse-http" {
-  name                        = "${var.environment_name}-concourse-http"
-  priority                    = 209
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "80"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.platform.name
-  network_security_group_name = azurerm_network_security_group.platform-vms.name
-}
-
-resource "azurerm_network_security_rule" "concourse-https" {
-  name                        = "${var.environment_name}-concourse-https"
-  priority                    = 208
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "443"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.platform.name
-  network_security_group_name = azurerm_network_security_group.platform-vms.name
-}
-
 resource "azurerm_network_security_rule" "concourse-credhub" {
-  name                        = "${var.environment_name}-uaa"
-  priority                    = 207
+  name                        = "${var.environment_name}-credhub"
+  priority                    = 300
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
@@ -152,9 +124,9 @@ resource "azurerm_network_security_rule" "concourse-credhub" {
   network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
-resource "azurerm_network_security_rule" "uaa" {
+resource "azurerm_network_security_rule" "concourse-uaa" {
   name                        = "${var.environment_name}-uaa"
-  priority                    = 206
+  priority                    = 3001
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
