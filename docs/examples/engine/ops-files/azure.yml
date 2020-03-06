@@ -1,0 +1,18 @@
+---
+# code_snippet engine-azure-ops-file start yaml
+- type: replace
+  path: /instance_groups/name=web/jobs/name=web/properties/lets_encrypt?/acme_url
+  value: https://acme-v02.api.letsencrypt.org/directory
+- type: replace
+  path: /instance_groups/name=web/vm_extensions?/-
+  value: concourse-lb
+- type: replace
+  path: /instance_groups/name=web/vm_extensions?/-
+  value: public_ip
+- type: replace
+  path: /instance_groups/name=worker/vm_extensions?/-
+  value: public_ip
+- type: replace
+  path: /instance_groups/name=worker/vm_extensions?/-
+  value: increased-disk
+# code_snippet engine-azure-ops-file end yaml
