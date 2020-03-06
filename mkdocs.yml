@@ -8,7 +8,6 @@ edit_uri: edit/develop/docs/
 theme:
   name: pivotal
   logo: assets/icon.svg
-  favicon: assets/favicon.ico
 strict: true
 use_directory_urls: false
 plugins:
