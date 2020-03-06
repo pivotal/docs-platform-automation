@@ -5,7 +5,7 @@ resource "azurerm_public_ip" "concourse" {
   allocation_method            = "Static"
   sku                          = "Standard"
 
-  tags {
+  tags = {
     environment = var.environment_name
   }
 }
@@ -121,7 +121,7 @@ resource "azurerm_network_security_rule" "concourse-http" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.platform.name
-  network_security_group_name = azurerm_network_security_group.platform.name
+  network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
 resource "azurerm_network_security_rule" "concourse-https" {
@@ -135,7 +135,7 @@ resource "azurerm_network_security_rule" "concourse-https" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.platform.name
-  network_security_group_name = azurerm_network_security_group.platform.name
+  network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
 resource "azurerm_network_security_rule" "concourse-credhub" {
@@ -149,7 +149,7 @@ resource "azurerm_network_security_rule" "concourse-credhub" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.platform.name
-  network_security_group_name = azurerm_network_security_group.platform.name
+  network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
 resource "azurerm_network_security_rule" "uaa" {
@@ -163,7 +163,7 @@ resource "azurerm_network_security_rule" "uaa" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.platform.name
-  network_security_group_name = azurerm_network_security_group.platform.name
+  network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
 resource "azurerm_lb_backend_address_pool" "concourse" {
