@@ -3,7 +3,7 @@ resource "azurerm_public_ip" "concourse" {
   location                     = var.location
   resource_group_name          = azurerm_resource_group.platform.name
   allocation_method            = "Static"
-  sku                          = "Standard"
+  sku                          = "Basic"
 
   tags = {
     environment = var.environment_name
@@ -14,7 +14,7 @@ resource "azurerm_lb" "concourse" {
   name                = "${var.environment_name}-concourse-lb"
   resource_group_name = azurerm_resource_group.platform.name
   location            = var.location
-  sku                 = "Standard"
+  sku                 = "Basic"
 
   frontend_ip_configuration {
     name                 = "${var.environment_name}-concourse-frontend-ip-configuration"
