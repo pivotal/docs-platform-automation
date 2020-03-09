@@ -15,4 +15,15 @@
 - type: replace
   path: /instance_groups/name=worker/vm_extensions?/-
   value: increased-disk
+- type: replace
+  path: /networks-configuration/networks/-
+  value:
+    name: concourse
+    service_network: false
+    subnets:
+      - iaas_identifier: ((network_name))/((concourse_subnet_name))
+        cidr: ((concourse_subnet_cidr))
+        reserved_ip_ranges: ((concourse_subnet_gateway))-((concourse_subnet_range))
+        dns: 168.63.129.16
+        gateway: ((concourse_subnet_gateway))
 # code_snippet engine-azure-ops-file end yaml
