@@ -16,5 +16,5 @@ worker_vm_type: Standard_DS2_v2
 # This assigns created VMs (web, worker, and db) to AZs in the IaaS
 azs: ["Availability Sets"]
 # The network name to assign the VMs to.
-network_name: concourse
+network_name: management
 # code_snippet engine-vars-file-azure end yaml
