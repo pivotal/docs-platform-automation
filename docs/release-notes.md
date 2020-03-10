@@ -625,7 +625,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 ### Breaking Changes
 
 - The tasks have been updated to extract their `bash` scripting into a separate script.
-  The tasks' script can be used different CI/CD systems like Jenkins.
+  The tasks' script can be used with different CI/CD systems like Jenkins.
 
   This will be a breaking change if your tasks resource is not named `platform-automation-tasks`.
 
