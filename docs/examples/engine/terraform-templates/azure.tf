@@ -22,12 +22,6 @@ resource "azurerm_lb" "concourse" {
   }
 }
 
-resource "azurerm_lb_backend_address_pool" "concourse" {
-  name                = "${var.environment_name}-concourse-backend-pool"
-  resource_group_name = azurerm_resource_group.platform.name
-  loadbalancer_id     = azurerm_lb.concourse.id
-}
-
 resource "azurerm_lb_rule" "concourse-https" {
   name                = "${var.environment_name}-concourse-https"
   resource_group_name = azurerm_resource_group.platform.name
@@ -116,79 +110,38 @@ resource "azurerm_lb_probe" "concourse-credhub" {
   port                = 8844
 }
 
-resource "azurerm_subnet" "concourse" {
-  name = "${var.environment_name}-pas-subnet"
-
-  resource_group_name  = azurerm_resource_group.platform.name
-  virtual_network_name = azurerm_virtual_network.platform.name
-  address_prefix       = "10.0.16.0/24"
-
-  network_security_group_id = azurerm_network_security_group.concourse.id # Deprecated but required until AzureRM Provider 2.0
+resource "azurerm_network_security_rule" "concourse-credhub" {
+  name                        = "${var.environment_name}-credhub"
+  priority                    = 300
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "8844"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.platform.name
+  network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
-resource "azurerm_subnet_network_security_group_association" "concourse" {
-  subnet_id                 = azurerm_subnet.concourse.id
-  network_security_group_id = azurerm_network_security_group.concourse.id
-
-  depends_on = [
-    azurerm_subnet.concourse,
-    azurerm_network_security_group.concourse
-  ]
+resource "azurerm_network_security_rule" "concourse-uaa" {
+  name                        = "${var.environment_name}-uaa"
+  priority                    = 3001
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "8443"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.platform.name
+  network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
-resource "azurerm_network_security_group" "concourse" {
-  name                = "${var.environment_name}-concourse-network-sg"
-  location            = var.location
+resource "azurerm_lb_backend_address_pool" "concourse" {
+  name                = "${var.environment_name}-concourse-backend-pool"
   resource_group_name = azurerm_resource_group.platform.name
-
-  security_rule {
-    name                                       = "https"
-    priority                                   = 100
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_port_range                          = "*"
-    destination_port_range                     = "443"
-    source_address_prefix                      = "*"
-  }
-
-  security_rule {
-    name                                       = "ssh"
-    priority                                   = 100
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_port_range                          = "*"
-    destination_port_range                     = "2222"
-    source_address_prefix                      = "*"
-  }
-
-  security_rule {
-    name                                       = "uaa"
-    priority                                   = 100
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_port_range                          = "*"
-    destination_port_range                     = "8443"
-    source_address_prefix                      = "*"
-  }
-
-  security_rule {
-    name                                       = "credhub"
-    priority                                   = 100
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_port_range                          = "*"
-    destination_port_range                     = "8844"
-    source_address_prefix                      = "*"
-  }
-
-  tags = merge(
-    var.tags,
-    { name = "${var.environment_name}-concourse-network-sg" },
-  )
+  loadbalancer_id     = azurerm_lb.concourse.id
 }
 
 resource "azurerm_dns_a_record" "concourse" {
@@ -206,14 +159,4 @@ resource "azurerm_dns_a_record" "concourse" {
 
 output "concourse_url" {
   value  = "${azurerm_dns_a_record.concourse.name}.${azurerm_dns_a_record.concourse.zone_name}"
-}
-
-output "stable_config" {
-  value     = jsonencode(merge(local.stable_config, {
-    "concourse_subnet_name"    = azurerm_subnet.concourse.name,
-    "concourse_subnet_id"      = azurerm_subnet.concourse.id,
-    "concourse_subnet_cidr"    = azurerm_subnet.concourse.address_prefix,
-    "concourse_subnet_gateway" = cidrhost(azurerm_subnet.concourse.address_prefix, 1),
-    "concourse_subnet_range"   = cidrhost(azurerm_subnet.concourse.address_prefix, 10)
-  }))
 }
