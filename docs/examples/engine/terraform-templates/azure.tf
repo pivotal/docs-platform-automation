@@ -110,7 +110,7 @@ resource "azurerm_lb_probe" "concourse-credhub" {
   port                = 8844
 }
 
-resource "azurerm_network_security_rule" "concourse-credhub" {
+resource "azurerm_network_security_rule" "concourse-credhub-platform-vms" {
   name                        = "${var.environment_name}-credhub"
   priority                    = 300
   direction                   = "Inbound"
@@ -124,7 +124,7 @@ resource "azurerm_network_security_rule" "concourse-credhub" {
   network_security_group_name = azurerm_network_security_group.platform-vms.name
 }
 
-resource "azurerm_network_security_rule" "concourse-uaa" {
+resource "azurerm_network_security_rule" "concourse-uaa-platform-vms" {
   name                        = "${var.environment_name}-uaa"
   priority                    = 3001
   direction                   = "Inbound"
@@ -136,6 +136,34 @@ resource "azurerm_network_security_rule" "concourse-uaa" {
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.platform.name
   network_security_group_name = azurerm_network_security_group.platform-vms.name
+}
+
+resource "azurerm_network_security_rule" "concourse-credhub-ops-manager" {
+  name                        = "${var.environment_name}-credhub"
+  priority                    = 300
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "8844"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.platform.name
+  network_security_group_name = azurerm_network_security_group.ops-manager.name
+}
+
+resource "azurerm_network_security_rule" "concourse-uaa-ops-manager" {
+  name                        = "${var.environment_name}-uaa"
+  priority                    = 3001
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "8443"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.platform.name
+  network_security_group_name = azurerm_network_security_group.ops-manager.name
 }
 
 resource "azurerm_lb_backend_address_pool" "concourse" {
