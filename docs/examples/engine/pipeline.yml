@@ -34,6 +34,7 @@ resources:
   type: git
   source:
     uri: https://github.com/concourse/concourse-bosh-deployment
+    branch: release/5.5.x
 
 - name: ci
   type: git
@@ -59,7 +60,7 @@ resources:
     api_token: ((pivnet_token))
     product_slug: ops-manager
     product_version: ^2\.7\.\d+$
-
+####
 - name: concourse-release
   type: bosh-io-release
   source:
@@ -101,7 +102,7 @@ resources:
     repository: cloudfoundry/uaa-release
   version:
     version: 74.9.0
-
+####
 - name: ubuntu-xenial-stemcell
   type: pivnet
   source:
@@ -329,6 +330,35 @@ jobs:
         globs: ["light*<%= iaas %>*"]
         <% end %>
   - *generate-config
+
+  - task: versions
+    image: platform-automation-image
+    config:
+      inputs:
+      - name: concourse-bosh-deployment
+      - name: docs-platform-automation
+      - name: config
+      - name: vars
+      platform: linux
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eux
+
+          apt-get -y install wget
+
+          bosh interpolate concourse-bosh-deployment/cluster/concourse.yml \
+            -o concourse-bosh-deployment/cluster/operations/uaa.yml \
+            -o concourse-bosh-deployment/cluster/operations/credhub-colocated.yml \
+            -o concourse-bosh-deployment/cluster/operations/backup-atc-colocated-web.yml \
+            -l concourse-bosh-deployment/versions.yml | \
+          om interpolate --path /releases --skip-missing | \
+          grep url | \
+          awk '{ print $2 }' | \
+          xargs wget --content-disposition
+
   - task: deploy-it
     image: platform-automation-image
     config:
