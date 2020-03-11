@@ -65,7 +65,7 @@ resources:
   source:
     repository: concourse/concourse-bosh-release
   version:
-    version: 5.5.7
+    version: 5.5.8
 
 - name: bpm-release
   type: bosh-io-release
@@ -79,7 +79,7 @@ resources:
   source:
     repository: cloudfoundry-incubator/backup-and-restore-sdk-release
   version:
-    version: 1.17.2
+    version: 1.15.0
 
 - name: postgres-release
   type: bosh-io-release
@@ -93,14 +93,14 @@ resources:
   source:
     repository: pivotal-cf/credhub-release
   version:
-    version: 2.5.10
+    version: 2.5.7
 
 - name: uaa-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/uaa-release
   version:
-    version: 74.5.0
+    version: 74.9.0
 
 - name: ubuntu-xenial-stemcell
   type: pivnet
