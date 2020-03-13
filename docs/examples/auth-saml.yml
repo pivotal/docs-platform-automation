@@ -13,6 +13,7 @@ saml-rbac-groups-attribute: myenterprise
                                   # through the proxy
 # precreated-client-secret:       # create a UAA client on the Ops Manager vm.
                                   # this will be client-secret in env.yml
+                                  # client ID is precreated-client                                  
 # server-ssl-cert:                # the server certificate when using ldaps://
 # skip-create-bosh-admin-client:  # do not create a UAA client on the BOSH
                                   # director. The client is required to execute
