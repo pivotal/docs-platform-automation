@@ -21,6 +21,27 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.1.12
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+### Bug Fixes
+- `configure-director` now correctly handles when you don't name your iaas_configuration `default` on vSphere.
+  Previously, naming a configuration anything other than `default` would result in an extra, empty `default` configuration.
+  This closes issue [#469](https://github.com/pivotal-cf/om/issues/469).
+- Downloading a stemcell associated with a product will try to download the light or heavy stemcell.
+  If anyone has experienced the recent issue with `download-product`
+  and the AWS heavy stemcell,
+  this will resolve your issue.
+  Please remove any custom globbing that might've been added to circumvent this issue.
+  For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now. 
+
 ## v4.1.11
 Released February 25, 2020
 
@@ -204,6 +225,24 @@ Released October 21, 2019
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
+## v4.0.12
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+### Bug Fixes
+- Downloading a stemcell associated with a product will try to download the light or heavy stemcell.
+  If anyone has experienced the recent issue with `download-product`
+  and the AWS heavy stemcell,
+  this will resolve your issue.
+  Please remove any custom globbing that might've been added to circumvent this issue.
+  For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now. 
+
 ## v4.0.11
 Released February 21, 2020
 
@@ -364,7 +403,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 ### Breaking Changes
 
 - The tasks have been updated to extract their `bash` scripting into a separate script.
-  The tasks' script can be used different CI/CD systems like Jenkins.
+  The tasks' script can be used with different CI/CD systems like Jenkins.
 
   This will be a breaking change if your tasks resource is not named `platform-automation-tasks`.
 
