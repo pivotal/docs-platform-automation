@@ -11,5 +11,5 @@ decryption-passphrase: decryption-passphrase
                             # through the proxy
 # precreated-client-secret: # create a UAA client on the Ops Manager vm.
                             # this will be client-secret in env.yml
-
+                            # client ID is precreated-client
 # code_snippet auth-configuration end
