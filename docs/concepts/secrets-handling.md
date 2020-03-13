@@ -14,7 +14,7 @@ This allows use of the native [Concourse secrets handling][concourse-secrets-han
 and provides support for any secret store Concourse supports.
 
 The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
-replaces the [credhub-interpolate][credhub-interpolate] task
+replaces the [credhub-interpolate][credhub-interpolate] task on Concourse versions 5.x+
 and provides the following benefits:
 
 * Support for all native Concourse secrets stores including Credhub and Vault.
@@ -184,7 +184,8 @@ run:
 
 #### Replacing credhub-interpolate with prepare-tasks-with-secrets
 If you already have implemented the [`credhub-interpolate`][credhub-interpolate] task within your pipeline,
-this solution should be a _drop in replacement_ if you are not using vars files.
+this solution should be a _drop in replacement_ if you are not using vars files. 
+Note this is only a replacement if using Concourse 5.x or greater.
 
 If you are using vars files, the `vars` input and the `VARS_PATHS` param will also need to be set on the `prepare-tasks-with-secrets` task.
 
@@ -229,7 +230,7 @@ Notice in the above:
 ###  Using credhub-interpolate
 The [credhub-interpolate][credhub-interpolate] task can only be used with Credhub.
 
-**It is recommended to use the [prepare-tasks-with-secrets][prepare-tasks-with-secrets] task instead.**
+**If using Concourse 5.x+, It is recommended to use the [prepare-tasks-with-secrets][prepare-tasks-with-secrets] task instead.**
 
 An example workflow would be storing an SSH key.
 
