@@ -135,7 +135,6 @@ jobs:
     - get: deployments
     - get: ci
     - get: docs-platform-automation
-      trigger: true
     - get: lock
   - put: lock
   - task: run-terraform
