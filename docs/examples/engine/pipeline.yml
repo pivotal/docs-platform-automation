@@ -420,9 +420,9 @@ jobs:
           bosh -n -d concourse deploy concourse-bosh-deployment/cluster/concourse.yml \
             -o concourse-bosh-deployment/cluster/operations/privileged-http.yml \
             -o concourse-bosh-deployment/cluster/operations/privileged-https.yml \
-            -o concourse-bosh-deployment/cluster/operations/enable-lets-encrypt.yml \
             -o concourse-bosh-deployment/cluster/operations/basic-auth.yml \
             -o concourse-bosh-deployment/cluster/operations/tls-vars.yml \
+            -o concourse-bosh-deployment/cluster/operations/tls.yml \
             -o concourse-bosh-deployment/cluster/operations/uaa.yml \
             -o concourse-bosh-deployment/cluster/operations/credhub-colocated.yml \
             -o concourse-bosh-deployment/cluster/operations/offline-releases.yml \
@@ -437,8 +437,8 @@ jobs:
           # code_snippet engine-deploy-concourse end bash
 
           # code_snippet engine-credhub-credentials start bash
-          export CONCOURSE_CREDHUB_SECRET=$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)
-          export CONCOURSE_CREDHUB_CA_CERT=$(credhub get -n /p-bosh/concourse/atc_tls -k ca)
+          export CONCOURSE_CREDHUB_SECRET="$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)"
+          export CONCOURSE_CA_CERT="$(credhub get -n /p-bosh/concourse/atc_tls -k ca)"
           # code_snippet engine-credhub-credentials end bash
 
           # code_snippet engine-credhub-unset start bash
@@ -450,7 +450,7 @@ jobs:
             --server "https://${CONCOURSE_URL}:8844" \
             --client-name=credhub_admin \
             --client-secret="${CONCOURSE_CREDHUB_SECRET}" \
-            --ca-cert "${CONCOURSE_CREDHUB_CA_CERT}"
+            --ca-cert "${CONCOURSE_CA_CERT}"
           # code_snippet engine-credhub-login end bash
 
           # code_snippet engine-credhub-add-value start bash
@@ -462,7 +462,9 @@ jobs:
 
           PLATFORM=linux
           # code_snippet engine-fly-download start bash
-          curl "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=${PLATFORM}" --output fly
+          curl "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=${PLATFORM}" \
+            --output fly \
+            --cacert <(echo "${CONCOURSE_CA_CERT}")
           chmod +x fly
           # code_snippet engine-fly-download end bash
 
@@ -470,7 +472,8 @@ jobs:
           ./fly -t ci login \
             -c "https://${CONCOURSE_URL}" \
             -u "${ADMIN_USERNAME}" \
-            -p "${ADMIN_PASSWORD}"
+            -p "${ADMIN_PASSWORD}" \
+            --ca-cert <(echo "${CONCOURSE_CA_CERT}")
           # code_snippet engine-fly-login end bash
 
           # code_snippet engine-fly-set-pipeline start bash
