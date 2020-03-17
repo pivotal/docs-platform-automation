@@ -110,7 +110,7 @@ jobs:
       outputs:
       - name: deployments
       params:
-        DEPLOYMENT: engine-<%= iaas %>
+        DEPLOYMENT: cpa-<%= iaas %>
         IAAS: <%= iaas %>
       run:
         path: bash
@@ -139,45 +139,45 @@ jobs:
 
           trap commit EXIT
 
-          # code_snippet engine-copy-terraform start bash
+          # code_snippet cpa-copy-terraform start bash
           # cp -Ra paving/${IAAS} paving-${IAAS}
           mkdir paving-${IAAS}
           cp -a paving/$IAAS/. paving-$IAAS
           cd paving-${IAAS}
-          # code_snippet engine-copy-terraform end bash
+          # code_snippet cpa-copy-terraform end bash
 
-          cp ../docs-platform-automation/docs/examples/engine/terraform-templates/${IAAS}.tf $terraform_path
+          cp ../docs-platform-automation/docs/examples/cpa/terraform-templates/${IAAS}.tf $terraform_path
           cp $deployment_path/terraform.tfstate $terraform_path || true
           cp $deployment_path/terraform.tfvars $terraform_path
 
-          # code_snippet engine-terraform-init start bash
+          # code_snippet cpa-terraform-init start bash
           terraform init
-          # code_snippet engine-terraform-init end bash
+          # code_snippet cpa-terraform-init end bash
 
-          # code_snippet engine-terraform-refresh start bash
+          # code_snippet cpa-terraform-refresh start bash
           terraform refresh \
             -var-file terraform.tfvars
-          # code_snippet engine-terraform-refresh end bash
+          # code_snippet cpa-terraform-refresh end bash
 
-          # code_snippet engine-terraform-plan start bash
+          # code_snippet cpa-terraform-plan start bash
           terraform plan \
             -out terraform.tfplan \
             -var-file terraform.tfvars
-          # code_snippet engine-terraform-plan end bash
+          # code_snippet cpa-terraform-plan end bash
 
-          # code_snippet engine-terraform-apply start bash
+          # code_snippet cpa-terraform-apply start bash
           terraform apply \
             -parallelism=5 \
             terraform.tfplan
-          # code_snippet engine-terraform-apply end bash
+          # code_snippet cpa-terraform-apply end bash
 
-          # code_snippet engine-terraform-vars start bash
+          # code_snippet cpa-terraform-vars start bash
           terraform output stable_config > ../terraform-outputs.yml
-          # code_snippet engine-terraform-vars end bash
+          # code_snippet cpa-terraform-vars end bash
 
-          # code_snippet engine-terraform-concourse-url start bash
+          # code_snippet cpa-terraform-concourse-url start bash
           export CONCOURSE_URL=$(terraform output concourse_url)
-          # code_snippet engine-terraform-concourse-url end bash
+          # code_snippet cpa-terraform-concourse-url end bash
 
           terraform output concourse_url > concourse-url.txt
 
@@ -206,7 +206,7 @@ jobs:
       - name: vars
       - name: state
       params:
-        DEPLOYMENT: engine-<%= iaas %>
+        DEPLOYMENT: cpa-<%= iaas %>
         IAAS: <%= iaas %>
       run:
         path: bash
@@ -221,7 +221,7 @@ jobs:
           cp deployments/"$DEPLOYMENT"/state.yml state/ || true
 
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/ops-manager.yml > config/opsman.yml
-          cat docs-platform-automation/docs/examples/engine/vm-extensions/"$IAAS".yml >> paving/ci/configuration/"$IAAS"/director.yml
+          cat docs-platform-automation/docs/examples/cpa/vm-extensions/"$IAAS".yml >> paving/ci/configuration/"$IAAS"/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS paving/ci/configuration/"$IAAS"/director.yml > config/director.yml
           bosh int -l "$output_path" --vars-env=TF_VARS deployments/"$DEPLOYMENT"/env.yml > env/env.yml
 
@@ -245,9 +245,9 @@ jobs:
         params:
           GIT_AUTHOR_NAME: norm-ci
           GIT_AUTHOR_EMAIL: pcf-norm@pivotal.io
-          COMMIT_MESSAGE: "create-vm update state file for engine-<%= iaas %>"
+          COMMIT_MESSAGE: "create-vm update state file for cpa-<%= iaas %>"
           FILE_SOURCE_PATH: state.yml
-          FILE_DESTINATION_PATH: engine-<%= iaas %>/state.yml
+          FILE_DESTINATION_PATH: cpa-<%= iaas %>/state.yml
         input_mapping:
           repository: deployments
           file-source: generated-state
@@ -345,50 +345,50 @@ jobs:
           mv releases/credhub-release*.tgz credhub-release.tgz
           mv releases/uaa-release*.tgz uaa-release.tgz
           mv ubuntu-xenial-stemcell/*.tgz stemcell.tgz
-          mv docs-platform-automation/docs/examples/engine/ops-files/<%= iaas %>.yml operations.yml
-          mv docs-platform-automation/docs/examples/engine/test-pipeline.yml pipeline.yml
+          mv docs-platform-automation/docs/examples/cpa/ops-files/<%= iaas %>.yml operations.yml
+          mv docs-platform-automation/docs/examples/cpa/test-pipeline.yml pipeline.yml
 
-          # code_snippet engine-write-private-key start bash
+          # code_snippet cpa-write-private-key start bash
           om interpolate \
             -c terraform-outputs.yml \
             --path /ops_manager_ssh_private_key > /tmp/private_key
-          # code_snippet engine-write-private-key end bash
+          # code_snippet cpa-write-private-key end bash
 
           export CONCOURSE_URL=$(cat vars/concourse-url.txt)
 
-          # code_snippet engine-terraform-ops-manager-url start bash
+          # code_snippet cpa-terraform-ops-manager-url start bash
           export OM_TARGET=$(om interpolate -c terraform-outputs.yml --path /ops_manager_dns)
-          # code_snippet engine-terraform-ops-manager-url end bash
+          # code_snippet cpa-terraform-ops-manager-url end bash
 
           OM_USERNAME=$(om interpolate -c env.yml --path /username)
           OM_PASSWORD=$(om interpolate -c env.yml --path /password)
           OM_DECRYPTION_PASSPHRASE=$(om interpolate -c env.yml --path /decryption-passphrase)
 
-          # code_snippet engine-configure-auth start bash
+          # code_snippet cpa-configure-auth start bash
           om --env env.yml configure-authentication \
              --username ${OM_USERNAME} \
              --password ${OM_PASSWORD} \
              --decryption-passphrase ${OM_DECRYPTION_PASSPHRASE}
-          # code_snippet engine-configure-auth end bash
+          # code_snippet cpa-configure-auth end bash
 
-          # code_snippet engine-apply-changes start bash
+          # code_snippet cpa-apply-changes start bash
           om --env env.yml configure-director \
              --config director-config.yml \
              --vars-file terraform-outputs.yml
 
           om --env env.yml apply-changes \
              --skip-deploy-products
-          # code_snippet engine-apply-changes end bash
+          # code_snippet cpa-apply-changes end bash
 
 
-          # code_snippet engine-bosh-target start bash
+          # code_snippet cpa-bosh-target start bash
           eval "$(om --env env.yml bosh-env --ssh-private-key=/tmp/private_key)"
 
           # Will return a non-error if properly targeted
           bosh curl /info
-          # code_snippet engine-bosh-target end bash
+          # code_snippet cpa-bosh-target end bash
 
-          # code_snippet engine-upload-releases start bash
+          # code_snippet cpa-upload-releases start bash
           # upload releases
           bosh upload-release concourse*.tgz
           bosh upload-release bpm*.tgz
@@ -396,14 +396,14 @@ jobs:
           bosh upload-release uaa*.tgz
           bosh upload-release credhub*.tgz
           bosh upload-release backup-and-restore-sdk*.tgz
-          # code_snippet engine-upload-releases end bash
+          # code_snippet cpa-upload-releases end bash
 
-          # code_snippet engine-upload-stemcell start bash
+          # code_snippet cpa-upload-stemcell start bash
           bosh upload-stemcell stemcell.tgz
-          # code_snippet engine-upload-stemcell end bash
+          # code_snippet cpa-upload-stemcell end bash
 
 
-          cat docs-platform-automation/docs/examples/engine/vars/<%= iaas %>.yml | envsubst > vars.yml
+          cat docs-platform-automation/docs/examples/cpa/vars/<%= iaas %>.yml | envsubst > vars.yml
 
           # code_snippet create-user start bash
           export ADMIN_USERNAME=admin
@@ -416,7 +416,7 @@ jobs:
              -w "${ADMIN_PASSWORD}"
           # code_snippet create-user end bash
 
-          # code_snippet engine-deploy-concourse start bash
+          # code_snippet cpa-deploy-concourse start bash
           bosh -n -d concourse deploy concourse-bosh-deployment/cluster/concourse.yml \
             -o concourse-bosh-deployment/cluster/operations/privileged-http.yml \
             -o concourse-bosh-deployment/cluster/operations/privileged-https.yml \
@@ -434,61 +434,61 @@ jobs:
             -o operations.yml \
             -l <(om interpolate --config vars.yml --vars-file terraform-outputs.yml) \
             -l concourse-bosh-deployment/versions.yml
-          # code_snippet engine-deploy-concourse end bash
+          # code_snippet cpa-deploy-concourse end bash
 
-          # code_snippet engine-credhub-credentials start bash
+          # code_snippet cpa-credhub-credentials start bash
           export CONCOURSE_CREDHUB_SECRET="$(credhub get -n /p-bosh/concourse/credhub_admin_secret -q)"
           export CONCOURSE_CA_CERT="$(credhub get -n /p-bosh/concourse/atc_tls -k ca)"
-          # code_snippet engine-credhub-credentials end bash
+          # code_snippet cpa-credhub-credentials end bash
 
-          # code_snippet engine-credhub-unset start bash
+          # code_snippet cpa-credhub-unset start bash
           unset CREDHUB_SECRET CREDHUB_CLIENT CREDHUB_SERVER CREDHUB_PROXY CREDHUB_CA_CERT
-          # code_snippet engine-credhub-unset end bash
+          # code_snippet cpa-credhub-unset end bash
 
-          # code_snippet engine-credhub-login start bash
+          # code_snippet cpa-credhub-login start bash
           credhub login \
             --server "https://${CONCOURSE_URL}:8844" \
             --client-name=credhub_admin \
             --client-secret="${CONCOURSE_CREDHUB_SECRET}" \
             --ca-cert "${CONCOURSE_CA_CERT}"
-          # code_snippet engine-credhub-login end bash
+          # code_snippet cpa-credhub-login end bash
 
-          # code_snippet engine-credhub-add-value start bash
+          # code_snippet cpa-credhub-add-value start bash
           credhub set \
             -n /concourse/main/test-pipeline/provided-by-credhub \
             -t value \
             -v "World"
-          # code_snippet engine-credhub-add-value end bash
+          # code_snippet cpa-credhub-add-value end bash
 
           PLATFORM=linux
-          # code_snippet engine-fly-download start bash
+          # code_snippet cpa-fly-download start bash
           curl "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=${PLATFORM}" \
             --output fly \
             --cacert <(echo "${CONCOURSE_CA_CERT}")
           chmod +x fly
-          # code_snippet engine-fly-download end bash
+          # code_snippet cpa-fly-download end bash
 
-          # code_snippet engine-fly-login start bash
+          # code_snippet cpa-fly-login start bash
           ./fly -t ci login \
             -c "https://${CONCOURSE_URL}" \
             -u "${ADMIN_USERNAME}" \
             -p "${ADMIN_PASSWORD}" \
             --ca-cert <(echo "${CONCOURSE_CA_CERT}")
-          # code_snippet engine-fly-login end bash
+          # code_snippet cpa-fly-login end bash
 
-          # code_snippet engine-fly-set-pipeline start bash
+          # code_snippet cpa-fly-set-pipeline start bash
           ./fly -t ci set-pipeline \
             -n \
             -p test-pipeline \
             -c pipeline.yml \
             --check-creds
-          # code_snippet engine-fly-set-pipeline end bash
+          # code_snippet cpa-fly-set-pipeline end bash
 
-          # code_snippet engine-fly-unpause-run start bash
+          # code_snippet cpa-fly-unpause-run start bash
           ./fly -t ci unpause-pipeline -p test-pipeline
 
           ./fly -t ci trigger-job -j test-pipeline/test-job --watch
-          # code_snippet engine-fly-unpause-run end bash
+          # code_snippet cpa-fly-unpause-run end bash
 
           output=$(./fly -t ci trigger-job -j test-pipeline/test-job --watch)
           if [[ $output == *"Hello, World"* ]]; then
@@ -520,16 +520,16 @@ jobs:
   - try:
       task: delete-deployment
       image: platform-automation-image
-      file: ci/platform-automation-engine/delete-deployment/task.yml
+      file: ci/cpa/delete-deployment/task.yml
       params:
         IAAS: <%= iaas %>
-        OM_TARGET: opsmanager.engine-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
+        OM_TARGET: opsmanager.cpa-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-installation
       image: platform-automation-image
       file: platform-automation-tasks/tasks/delete-installation.yml
       params:
-        OM_TARGET: opsmanager.engine-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
+        OM_TARGET: opsmanager.cpa-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-opsman-vm
       file: platform-automation-tasks/tasks/delete-vm.yml
@@ -542,9 +542,9 @@ jobs:
           params:
             GIT_AUTHOR_NAME: norm-ci
             GIT_AUTHOR_EMAIL: pcf-norm@pivotal.io
-            COMMIT_MESSAGE: "delete-vm update state file for engine-<%= iaas %>"
+            COMMIT_MESSAGE: "delete-vm update state file for cpa-<%= iaas %>"
             FILE_SOURCE_PATH: state.yml
-            FILE_DESTINATION_PATH: engine-<%= iaas %>/state.yml
+            FILE_DESTINATION_PATH: cpa-<%= iaas %>/state.yml
           input_mapping:
             repository: deployments
             file-source: generated-state
@@ -568,7 +568,7 @@ jobs:
         outputs:
         - name: deployments
         params:
-          DEPLOYMENT: engine-<%= iaas %>
+          DEPLOYMENT: cpa-<%= iaas %>
           IAAS: <%= iaas %>
         run:
           path: bash
@@ -594,7 +594,7 @@ jobs:
             trap commit EXIT
 
             cp -ra paving/$IAAS paving-$IAAS
-            cp docs-platform-automation/docs/examples/engine/terraform-templates/<%= iaas %>.tf $terraform_path
+            cp docs-platform-automation/docs/examples/cpa/terraform-templates/<%= iaas %>.tf $terraform_path
             cp $deployment_path/terraform.tfstate $terraform_path
             cp $deployment_path/terraform.tfvars $terraform_path
 
@@ -626,13 +626,13 @@ jobs:
       BBL_AZURE_TENANT_ID: ((azure.tenant_id))
       BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
       BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
-      FILTER: engine-<%= iaas %>
+      FILTER: cpa-<%= iaas %>
       DRY_RUN: false
       NO_CONFIRM: true
   - task: remove state files
     file: ci/tasks/delete-state-file.yml
     params:
-      DEPLOYMENT: engine-<%= iaas %>
+      DEPLOYMENT: cpa-<%= iaas %>
     ensure:
       put: deployments
       params:
@@ -642,17 +642,21 @@ jobs:
 - name: release-to-pivnet
   serial: true
   plan:
-    - get: concourse-bosh-deployment
-      passed:
-        - deploy-and-test-aws
-        - deploy-and-test-azure
-        - deploy-and-test-gcp
-    - get: docs-platform-automation
-      passed:
-        - deploy-and-test-aws
-        - deploy-and-test-azure
-        - deploy-and-test-gcp
-    - get: ci
+    - in_parallel:
+      - get: concourse-bosh-deployment
+        #passed:
+        #  - deploy-and-test-aws
+        #  - deploy-and-test-azure
+        #  - deploy-and-test-gcp
+      - get: docs-platform-automation
+        #passed:
+        #  - deploy-and-test-aws
+        #  - deploy-and-test-azure
+        #  - deploy-and-test-gcp
+      - get: ci
+      - get: platform-automation-image
+        params:
+          unpack: true
     - *download-bosh-releases
     - task: package-for-release
       file: ci/tasks/package-for-release/cpa.yml
