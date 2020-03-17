@@ -1,4 +1,4 @@
-# code_snippet engine-test-pipeline start bash
+# code_snippet cpa-test-pipeline start bash
 jobs:
 - name: test-job
   plan:
@@ -12,4 +12,4 @@ jobs:
       run:
         path: bash
         args: [-c, "echo Hello, ((provided-by-credhub))"]
-# code_snippet engine-test-pipeline end bash
+# code_snippet cpa-test-pipeline end bash
