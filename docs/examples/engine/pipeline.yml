@@ -282,14 +282,13 @@ jobs:
         <% end %>
   - *generate-config
 
-  - task: download-bosh-releases
+  - &download-bosh-releases
+    task: download-bosh-releases
     image: platform-automation-image
     config:
       inputs:
         - name: concourse-bosh-deployment
         - name: docs-platform-automation
-        - name: config
-        - name: vars
       outputs:
         - name: releases
       caches:
@@ -637,3 +636,27 @@ jobs:
         rebase: true
         repository: deployments
 <% end %>
+- name: release-to-pivnet
+  serial: true
+  plan:
+    - get: concourse-bosh-deployment
+      passed:
+        - deploy-and-test-aws
+        - deploy-and-test-azure
+        - deploy-and-test-gcp
+    - get: docs-platform-automation
+      passed:
+        - deploy-and-test-aws
+        - deploy-and-test-azure
+        - deploy-and-test-gcp
+    - get: ci
+    - *download-bosh-releases
+    - task: package-for-release
+      file: ci/tasks/package-for-release/cpa.yml
+    - task: generate-metadata
+      file: ci/tasks/pivnet-release/generate-cpa-metadata.yml
+#    - put: pivnet-rc
+#      params:
+#        file_glob: packaged-product/*
+#        metadata_file: metadata/metadata.yml
+#        s3_filepath_prefix: ((pivnet_s3_filepath_prefix))
