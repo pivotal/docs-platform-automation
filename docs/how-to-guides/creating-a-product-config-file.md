@@ -1,17 +1,15 @@
-
 Extracting a product configuration file, an externalized config that lives outside of Ops Manager, can make it easier to manage multiple foundations as well as help with:
 
 - traceability
 - avoiding configuration drift
 - configuration promotion
 
-
 ## From Pivnet
 
-A configuration file can be generated from the tile metadata directly from Pivotal Network.
+A configuration file can be generated from the tile metadata directly from VMware Tanzu Network.
 
 ### Prerequisites
-1. A token for the [Pivotal Network API](https://network.pivotal.io/docs/api#how-to-authenticate) is required.
+1. A token for the [VMware Tanzu Network API](https://network.pivotal.io/docs/api#how-to-authenticate) is required.
 1. You'll need the Platform Automation Docker Image [imported and ready to run][running-commands-locally].
 1. For products that have multiple `.pivotal` files, you'll need a glob pattern uniquely matching one of them.
 
@@ -20,7 +18,7 @@ A configuration file can be generated from the tile metadata directly from Pivot
 #### Generate the Config Template Directory
 
 ```bash
-export PIVNET_API_TOKEN='your-pivotal-network-api-token'
+export PIVNET_API_TOKEN='your-vmware-tanzu-network-api-token'
 
 ```
 (Alternatively, you can write the above to a file and `source` it to avoid credentials in your bash history.)
@@ -126,7 +124,7 @@ For more information on BOSH VM Extensions, refer to the [Creating a Director Co
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
 
-So, to enable TCP routing in Pivotal Application Service, you would add `-o features/tcp_routing-enable.yml`.
+So, to enable TCP routing in Tanzu Application Service, you would add `-o features/tcp_routing-enable.yml`.
 For the rest of this guide, the vars for this feature
 are referred to as `feature-vars.yml`.
 If you run your complete command, you should again get a list of any newly-required variables.
@@ -182,7 +180,7 @@ A configuration can be generated from a staged product on an already existing Op
 To extract the configuration for a product, you will first need to do the following:
 
 1. Upload and stage your desired product(s) to a fully deployed Ops Manager.
-For example, let's use [Pivotal Application Service][pas] on Vsphere with NSX-T
+For example, let's use [Tanzu Application Service][pas] on Vsphere with NSX-T
 1. Configure your product _manually_ according to the product's
 [install instructions][pas-install-vsphere].
 
@@ -191,7 +189,7 @@ For example, let's use [Pivotal Application Service][pas] on Vsphere with NSX-T
 [om] has a command called [staged-config], which is used to extract staged product
 configuration present in the Ops Manager UI of the targeted foundation.
 
-Sample usage, using `om` directly and assuming the [Pivotal Application Service][pas] product:  
+Sample usage, using `om` directly and assuming the [Tanzu Application Service][pas] product:  
 `om --env env.yml staged-config --include-placeholders --product-name cf > tile-config.yml`  
 
 Most products will contain the following high level keys:
@@ -204,7 +202,7 @@ You can check the file in to git.
 
 For convenience, Platform Automation provides you with two ways to use the
 `om staged-config` command. The command can be run as a [task][staged-config]
-inside of your pipeline. As an example of how to invoke this for the [Pivotal Application Service][pas] product
+inside of your pipeline. As an example of how to invoke this for the [Tanzu Application Service][pas] product
 in your pipeline.yml(resources not listed):
 ```yaml
 jobs:
@@ -252,7 +250,7 @@ In order to fully support multiple foundations, however, a bit more work is
 necessary. There are two ways to do this: using [secrets management][multi-foundation-secrets-handling] or ops files.
 This section will explain how to support multiple foundations using ops files.
 
-Starting with an **incomplete** [Pivotal Application Service][pas] config from **vSphere** as an example:
+Starting with an **incomplete** [Tanzu Application Service][pas] config from **vSphere** as an example:
 
 {% include ".cf-partial-config.md" %}
 
@@ -289,7 +287,7 @@ Upgrading products to new patch versions:
 * Configuration settings should not differ between successive patch versions within the same minor version line.
     Underlying properties or property names may change,
     but the tile's upgrade process automatically translates properties to the new fields and values.
-* Pivotal cannot guarantee the functionality of upgrade scripts in third-party Pivotal Platform products.
+* VMware cannot guarantee the functionality of upgrade scripts in third-party products.
 
 Replicating configuration settings from one product to the same product on a different foundation:
 

@@ -7,13 +7,13 @@ These Concourse pipelines are examples on how to use the [tasks](../tasks.md). I
 * Deployed Concourse
 
 !!! info
-    Pivotal Platform Automation is based on Concourse CI.
+    Platform Automation Toolkit is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials][concourse-tutorial] would be a good place to start.
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * A valid [generating-env-file][generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
-It is used by every task within Pivotal Platform Automation
+It is used by every task within Platform Automation Toolkit
 * A valid [auth-file][auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
@@ -29,13 +29,14 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 * (Optional) A working [credhub][credhub] setup with its own UAA client and secret.
 
 
-!!! info "Retrieving products from Pivnet"
-    Please ensure products have been procured from Pivotal Network using the [reference-resources][reference-resources].
+!!! info "Retrieving products from pivnet"
+    Please ensure products have been procured from VMware Tanzu Network
+    using the [reference-resources][reference-resources].
 
 ## Installing Ops Manager and a single product
 
 The pipeline shows how to compose the tasks
-to install Ops Manager and the Pivotal Container Service product.
+to install Ops Manager and the VMware Enterprise PKS product.
 Its dependencies are coming from a trusted git repository and S3,
 which can be retrieved using [this pipeline][reference-resources].
 
