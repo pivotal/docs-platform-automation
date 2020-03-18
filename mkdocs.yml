@@ -1,6 +1,6 @@
 # Example: https://github.com/squidfunk/mkdocs-material/blob/master/mkdocs.yml
 ---
-site_name: Pivotal Platform Automation
+site_name: Platform Automation Toolkit
 site_url: https://docs.pivotal.io
 repo_url: https://github.com/pivotal/docs-platform-automation
 repo_name: Help fix the docs!

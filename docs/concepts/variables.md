@@ -71,11 +71,11 @@ have a single `base_vars_template.yml` shared across foundations.
 
 ## Using variables in the Platform Automation Tasks
 
-Some Platform Automation tasks have an optional vars input. Using the flow described above, these files can
-be plugged in to the tasks.
+Some Platform Automation tasks have an optional vars input. 
+Using the flow described above, these files can be plugged in to the tasks.
 
-An Example [Task](../tasks.md#test-interpolate) has been provided to allow pipeline testing before
-installing Ops Manager and Pivotal Platform.
+We provide a [Test Task](../tasks.md#test-interpolate)
+to allow pipeline testing before installing Ops Manager.
 An example pipeline for this is below:
 
 ```yaml
