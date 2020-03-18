@@ -1,8 +1,14 @@
 # Introduction
 
-This is the source of the docs for the [Platform Automation](https://network.pivotal.io/products/platform-automation) package downloaded from Pivotal Network.
+This is the docs source for
+[Platform Automation](https://network.pivotal.io/products/platform-automation),
+available from VMware Tanzu Network.
 
-The docs can be viewed at: https://docs.pivotal.io/platform-automation/ 
+The production docs are here:
+https://docs.pivotal.io/platform-automation/
+
+There is a public staging copy here:
+https://docs-pcf-staging.cfapps.io/platform-automation/
 
 # Usage
 
@@ -16,7 +22,8 @@ mkdocs serve
 ``` 
 
 **Notes**
-* `serve`ing the app will check for broken external links. An error in a link might show like so:
+* `serve`ing the app will check for broken external links.
+  An error in a link might show like so:
 
 ```
 ○ → mkdocs serve
