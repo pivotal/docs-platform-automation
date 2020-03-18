@@ -19,8 +19,7 @@ To extract the configuration for an director, you will first need to do the foll
 1. Install Ops Manager using the [create-vm][create-vm] task
 
 1. (Optional) Configure Ops Manager _manually_ within the Ops Manager UI (Instructions for doing so can be found
-using the [Official-Pivotal-Platform-Documentation][pivotal-install-docs])
-
+using the [Official Ops Manager Documentation][opsman-install-docs])
 
 ## Extracting Configuration
 [om][om] has a command called [staged-director-config][staged-director-config], which is used to extract
