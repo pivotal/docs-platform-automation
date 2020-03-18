@@ -71,7 +71,7 @@ have a single `base_vars_template.yml` shared across foundations.
 
 ## Using variables in the Platform Automation Tasks
 
-Some Platform Automation tasks have an optional vars input. 
+Some Platform Automation tasks have an optional vars input.
 Using the flow described above, these files can be plugged in to the tasks.
 
 We provide a [Test Task](../tasks.md#test-interpolate)
