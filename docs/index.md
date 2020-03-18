@@ -1,6 +1,6 @@
-Pivotal Platform Automation provides building blocks
+Platform Automation Toolkit provides building blocks
 to create repeatable and reusable automated pipeline(s)
-for upgrading and installing Pivotal Platform foundations.
+for upgrading and installing foundations.
 We also provide instructions on using these building blocks in various workflows.
 In this introduction, we'll provide a high-level overview of Platform Automation.
 To dive-deeper, check out the references section.
@@ -24,7 +24,7 @@ on how to start using Platform Automation.
 * Comes bundled with Concourse [tasks][concourse-task-definition]
   that demonstrate how to use these tasks
   in a containerized Continuous Integration (CI) system.
-  Pivotal Platform Automation tasks are:
+  Platform Automation Toolkit tasks are:
 
     * Legible: They use
       human-readable YAML config files which can be edited and managed
@@ -35,10 +35,10 @@ on how to start using Platform Automation.
     * Built for Automation: Tasks are idempotent,
       so re-running them in a CI won't break builds
 
-    * Not Comprehensive: Workflows that use Pivotal Platform Automation
+    * Not Comprehensive: Workflows that use Platform Automation Toolkit
       may also contain `om` commands, custom tasks,
       and even interactions with the Ops Manager user interface.
-      Pivotal Platform Automation is a set of tools to use alongside other tools,
+      Platform Automation Toolkit is a set of tools to use alongside other tools,
       rather than a comprehensive solution.
 
 The [Task Reference][task-reference] topic discusses these example tasks further.
@@ -51,19 +51,19 @@ The [Task Reference][task-reference] topic discusses these example tasks further
       to get a sense of the features and how they differ
       to understand the best transition method for your environment and needs.
 
-## Platform Automation and Upgrading Pivotal Platform
+## Platform Automation and Upgrading Ops Manager
 
 Successful platform engineering teams know that a platform team
 that's always up to date is critical for their business.
 If they don’t stay up to date,
-they miss out on the latest platform features and the services that Pivotal delivers,
+they miss out on the latest platform features and the services that VMware delivers,
 which means their development teams miss out too.
 By not keeping up to date,
 platforms could encounter security risks or even application failures.
 
-Pivotal offers regular updates for Pivotal Platform,
+VMware offers regular updates for Ops Manager and the products it installs,
 which ensures our customers have access to the latest security patches and new features.
-For example, Pivotal releases security patches every six days on average.
+For example, VMware releases security patches every six days on average.
 
 So how can a platform engineering team simplify the platform upgrade process?
 
@@ -83,11 +83,11 @@ How do we do this?
 
 #### <a id=""></a> Small and Continuous Upgrades With Platform Automation
 
-With Pivotal Platform Automation,
+With Platform Automation Toolkit,
 platform teams have the tools to create an automated perpetual upgrade machine,
 which can continuously take the latest updates when new software is available -
-including Pivotal Application Service, Pivotal Container Service, Ops Manager, stemcells, products, and services.
-In addition, Pivotal Platform Automation allows you to:
+including Tanzu Application Service, VMware Tanzu PKS, Ops Manager, stemcells, products, and services.
+In addition, Platform Automation Toolkit allows you to:
 
 * manage multiple foundations and reduce configuration drift
   by tracking changes through source control with
@@ -98,13 +98,13 @@ In addition, Pivotal Platform Automation allows you to:
 ## Platform Automation and Ops Manager
 
 The following table compares how Ops Manager
-and Pivotal Platform Automation might run a typical sequence of Pivotal Platform operations:
+and Platform Automation Toolkit might run a typical sequence of Ops Manager operations:
 
 <table border="1">
   <tr>
     <th></th>
     <th>Ops Manager</th>
-    <th>Pivotal Platform Automation</th>
+    <th>Platform Automation Toolkit</th>
   </tr><tr>
     <th>When to Use</th>
     <th>First install and minor upgrades</th>

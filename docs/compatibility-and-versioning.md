@@ -1,4 +1,4 @@
-This topic describes Pivotal Platform Automation dependencies and semantic versioning.
+This topic describes Platform Automation Toolkit dependencies and semantic versioning.
 
 ## External Dependencies
 Platform Automation is designed to work with these dependencies.
