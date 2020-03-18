@@ -1,9 +1,5 @@
 ---
 # code_snippet cpa-gcp-ops-file start yaml
-# REMOVE when released: https://github.com/concourse/concourse-bosh-release/commit/20c9cad3c6de402d85a54a9941855d1fc4e70cd4
-- type: replace
-  path: /instance_groups/name=web/jobs/name=web/properties/lets_encrypt?/acme_url
-  value: https://acme-v02.api.letsencrypt.org/directory
 - type: replace
   path: /instance_groups/name=web/vm_extensions?/-
   value: concourse-lb

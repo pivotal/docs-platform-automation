@@ -1,9 +1,6 @@
 ---
 # code_snippet cpa-azure-ops-file start yaml
 - type: replace
-  path: /instance_groups/name=web/jobs/name=web/properties/lets_encrypt?/acme_url
-  value: https://acme-v02.api.letsencrypt.org/directory
-- type: replace
   path: /instance_groups/name=web/vm_extensions?/-
   value: concourse-lb
 - type: replace
