@@ -72,6 +72,15 @@ resources:
   type: time
   source: {interval: 999h}
 
+- name: pivnet-rc
+  type: pivnet
+  source:
+    access_key_id: ((pivnet_aws_access_key))
+    api_token: ((pivnet_token))
+    product_slug: p-concourse
+    product_version: \d+\.\d+\.\d+\.*
+    secret_access_key: ((pivnet_aws_secret_key))
+
 jobs:
 <% ["gcp", "aws", "azure"].each do |iaas| %>
 - name: create-opsman-<%= iaas %>
@@ -283,7 +292,7 @@ jobs:
   - *generate-config
 
   - &download-bosh-releases
-    task: download-bosh-releases
+    task: download-all-bosh-releases
     image: platform-automation-image
     config:
       inputs:
@@ -311,7 +320,7 @@ jobs:
           om interpolate --path /releases --skip-missing | \
           grep url | \
           awk '{ print $2 }' | \
-          xargs wget --content-disposition -P releases
+          xargs wget -nc --content-disposition -P releases
 
   - task: deploy-it
     image: platform-automation-image
@@ -644,15 +653,15 @@ jobs:
   plan:
     - in_parallel:
       - get: concourse-bosh-deployment
-        #passed:
-        #  - deploy-and-test-aws
-        #  - deploy-and-test-azure
-        #  - deploy-and-test-gcp
+        passed:
+          - deploy-and-test-aws
+          - deploy-and-test-azure
+          - deploy-and-test-gcp
       - get: docs-platform-automation
-        #passed:
-        #  - deploy-and-test-aws
-        #  - deploy-and-test-azure
-        #  - deploy-and-test-gcp
+        passed:
+          - deploy-and-test-aws
+          - deploy-and-test-azure
+          - deploy-and-test-gcp
       - get: ci
       - get: platform-automation-image
         params:
@@ -662,8 +671,7 @@ jobs:
       file: ci/tasks/package-for-release/cpa.yml
     - task: generate-metadata
       file: ci/tasks/pivnet-release/generate-cpa-metadata.yml
-#    - put: pivnet-rc
-#      params:
-#        file_glob: packaged-product/*
-#        metadata_file: metadata/metadata.yml
-#        s3_filepath_prefix: ((pivnet_s3_filepath_prefix))
+    - put: pivnet-rc
+      params:
+        file_glob: packaged-product/*
+        metadata_file: metadata/metadata.yml
