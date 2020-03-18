@@ -7,15 +7,15 @@ These Concourse pipelines are examples on how to use the [tasks](../tasks.md). I
 * Deployed Concourse
 
 !!! info
-    Pivotal Platform Automation is based on Concourse CI.
+    Platform Automation Toolkit is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials][concourse-tutorial] would be a good place to start.
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
+* A set of valid [download-product-config][download-product-config] files: Each product has a configuration YAML of what version to download from VMware Tanzu Network.
 * Pivnet access to [Platform Automation][pivnet-platform-automation]
-* A set of valid [download-product-config][download-product-config] files: Each product has a configuration YAML of what version to download from Pivotal Network.
 
-## Retrieval from Pivotal Network
+## Retrieval from VMware Tanzu Network
 
 {% include "./.opsman_filename_change_note.md" %}
 

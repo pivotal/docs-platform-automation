@@ -247,7 +247,7 @@ and you should use whichever method is right for you and your setup.
 **Terraform**:
 
 There are open source terraforming scripts
-we recommend for use, as they are maintained by the Pivotal organization.
+we recommend for use, as they are maintained by the VMware.
 These scripts are found in open source repos under the `pivotal-cf` org in GitHub.
 
 - [terraforming-aws][terraforming-aws]
@@ -266,7 +266,7 @@ you can overwrite _some_ properties using an [override.tf][terraform-override] f
 
 **Manual Installation**:
 
-Pivotal has extensive documentation to manually create the resources needed
+VMware has extensive documentation to manually create the resources needed
 if you are unable or do not wish to use Terraform.
 As with the Terraform solution, however,
 there are different docs depending on the IaaS
