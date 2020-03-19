@@ -75,7 +75,7 @@ Changes you make will be updated locally in your web browser.
    create a pull request (PR) 
    and reference the issue that the changes in the PR are addressing. 
    Ensure the PR is made against the correct version of the docs,
-   which are branched by the release version on Pivnet,
+   which are branched by the release version on Tanzu Network,
    or contribute new docs directly to `develop`.
 1. Your pull request will be reviewed by one or more maintainers.
    You may also receive feedback from others in the community.

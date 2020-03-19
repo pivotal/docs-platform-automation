@@ -261,7 +261,7 @@ Released December 3, 2019
   The configuration `storage_sku` and `vm_size` use the Azure values accordingly.
 - The [`download-product`][download-product] task now supports the `SOURCE` param
   to specify where to download products and stemcells from.
-  The supported blobstores are Pivnet, S3, Azure, and GCS.
+  The supported sources are the Azure(`azure`), GCS(`gcs`), S3(`s3`), Tanzu Network(`pivnet`).
 - [`configure-authentication`][configure-authentication],
   [`configure-ldap-authentication`][configure-ldap-authentication], and
   [`configure-saml-authentication`][configure-saml-authentication]
@@ -476,7 +476,7 @@ Released October 21, 2019
   ```
 
 - [Telemetry][telemetry-docs] support has been added!
-  To opt in, you must get the Telemetry tool from [Pivnet][telemetry],
+  To opt in, you must get the Telemetry tool from [Tanzu Network][telemetry],
   create a [config file][telemetry-config],
   and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline.
   For an example, please see the [Reference Pipelines][reference-pipeline].
@@ -1162,7 +1162,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - `om` now has support for `config-template` (a Platform Automation encouraged replacement of
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
-   [Creating a Product Config File][product-configuration-from-pivnet].
+   [Creating a Product Config File][product-configuration-from-tanzu-network].
 - [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
   This allows you to define an expected `shasum` that will validate the calculated shasum of the provided
   `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`][upload-product]
