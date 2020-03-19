@@ -1,5 +1,5 @@
-##  Pivotal Platform Automation Tasks
-This document lists each Pivotal Platform Automation task,
+## Platform Automation Toolkit Tasks
+This document lists each Platform Automation Toolkit task,
 and provides information about their intentions, inputs, and outputs.
 
 The tasks are presented, in their entirety,
@@ -56,17 +56,17 @@ when automating the [configure-product][configure-product]/[apply-changes][apply
 
 ### collect-telemetry
 Collects foundation information
-using the [Pivotal Telemetry][telemetry-docs] tool.
+using the [Telemetry Collector][telemetry-docs] tool.
 
 This task requires the `telemetry-collector-binary` as an input.
-The binary is available on [Pivotal Network][telemetry];
+The binary is available on [Tanzu Network][telemetry];
 you will need to define a `resource` to supply the binary.
 
 This task requires a [config file][telemetry-config].
 
 After using this task,
 the [send-telemetry][send-telemetry]
-may be used to send telemetry data to Pivotal.
+may be used to send telemetry data to VMware.
 
 {% code_snippet 'tasks', 'collect-telemetry', 'Task' %}
 {% code_snippet 'tasks', 'collect-telemetry-script', 'Implementation' %}
@@ -323,14 +323,14 @@ This avoids breaking current pipelines.
     The new file format preserves the original filename, so it is still possible to match on that -
     but if you need to match from the beginning of the filename, that will have been replaced by the prefix described above.
 
-!!! info "When specifying Pivotal Application Service-Windows"
+!!! info "When specifying Tanzu Application Service-Windows"
     This task will automatically download and inject the winfs for pas-windows.
 
-!!! warning "When specifying Pivotal Application Service-Windows on Vsphere"
+!!! warning "When specifying Tanzu Application Service-Windows on Vsphere"
     This task cannot download the stemcell for pas-windows on vSphere.
     To build this stemcell manually, please reference the
     [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
-    in Pivotal Documentation.
+    in VMware Documentation.
 
 !!! info "When only downloading from Pivnet"
     When the download product config only has Pivnet credentials,
@@ -531,12 +531,12 @@ This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
 ### send-telemetry
 Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
-to Pivotal.
+to VMware.
 
 !!! info Telemetry Key
     In order to use this task,
     you will need to acquire a license key.
-    Contact your Pivotal Representative.
+    Contact your VMware Representative.
 
 {% code_snippet 'tasks', 'send-telemetry', 'Task' %}
 {% code_snippet 'tasks', 'send-telemetry-script', 'Implementation' %}
