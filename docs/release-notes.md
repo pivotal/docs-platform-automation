@@ -238,7 +238,7 @@ Released December 3, 2019
 
   Usage:
 
-  1. Get the Pivotal Platform Automation image from Pivotal Network.
+  1. Get the Platform Automation Toolkit image from Tanzu Network.
   1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
   1. Create a [state file][state] that represents your current VM and IAAS.
   1. Invoke the `p-automator` CLI to get the configuration.
@@ -1141,8 +1141,8 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 ### What's New
 - The new command [`assign-multi-stemcell`][assign-multi-stemcell] assigns multiple stemcells to a provided product.
   This feature is only available in OpsMan 2.6+.
-- [`download-product`][download-product] ensures sha sum checking when downloading the file from Pivotal Network.
-- [`download-product`][download-product] can now disable ssl validation when connecting to Pivotal Network.
+- [`download-product`][download-product] ensures sha sum checking when downloading the file from Tanzu Network.
+- [`download-product`][download-product] can now disable ssl validation when connecting to Tanzu Network.
   This helps with environments with SSL and proxying issues.
   Add `pivnet-disable-ssl: true` in your [download-product-config][download-product-config] to use this feature.
 - On [GCP][inputs-outputs-gcp], if you did not assign a public IP, Google would assign

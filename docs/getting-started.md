@@ -21,9 +21,9 @@ with Platform Automation:
 To see an example of a finished pipeline,
 see one of the following reference pipelines:
 
-- A [single-product pipeline][reference-pipeline-pks] using [Pivotal Container Service][pks]
+- A [single-product pipeline][reference-pipeline-pks] using [VMware Tanzu PKS][pks]
 - A [multi-product pipeline][reference-pipeline]
-  with [Pivotal Application Service][pas] and [Healthwatch][healthwatch].
+  with [Tanzu Application Service][pas] and [Healthwatch][healthwatch].
 
 ## Other References
 

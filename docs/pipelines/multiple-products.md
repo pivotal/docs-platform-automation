@@ -7,13 +7,13 @@ These Concourse pipelines are examples on how to use the [tasks](../tasks.md). I
 * Deployed Concourse
 
 !!! info
-    Pivotal Platform Automation is based on Concourse CI.
+    Platform Automation Toolkit is based on Concourse CI.
     We recommend that you have some familiarity with Concourse before getting started.
     If you are new to Concourse, [Concourse CI Tutorials][concourse-tutorial] would be a good place to start.
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * A valid [generating-env-file][generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
-It is used by every task within Pivotal Platform Automation
+It is used by every task within Platform Automation Toolkit
 * A valid [auth-file][auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
@@ -30,12 +30,12 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 
 
 !!! info "Retrieving products from Pivnet"
-    Please ensure products have been procured from Pivotal Network using the [reference-resources][reference-resources].
+    Please ensure products have been procured from Tanzu Network using the [reference-resources][reference-resources].
 
 ## Installing Ops Manager and multiple products
 
 The pipeline shows how to compose the tasks
-to install Ops Manager and the Pivotal Application Service and Healthwatch products.
+to install Ops Manager and the Tanzu Application Service and Healthwatch products.
 Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline][reference-resources].
 
@@ -47,13 +47,13 @@ These can either be uploaded manually or from the [reference resources pipeline]
 
 {% code_snippet 'examples', 'multiple-product-resources-s3' %}
   
-!!! tip "Pivotal Application Service-Windows with S3"
+!!! tip "Tanzu Application Service-Windows with S3"
     If retrieving `pas-windows` and `pas-windows-stemcell` from an S3 bucket,
     you must use the built in S3 concourse resource.
     This is done in the example above.
     The `download-product` task with `SOURCE: s3` does not persist meta information 
     about necessary stemcell for `pas-windows`
-    because Pivotal does not distribute the Window's file system. 
+    because VMware does not distribute the Window's file system. 
     
 Alternatively, products may be downloaded using the `download-product` task with
 the param `SOURCE` set to `s3|azure|gcs`.
