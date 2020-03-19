@@ -165,13 +165,13 @@ jobs:
 
           # code_snippet cpa-terraform-refresh start bash
           terraform refresh \
-            -var-file terraform.tfvars
+            -var-file=terraform.tfvars
           # code_snippet cpa-terraform-refresh end bash
 
           # code_snippet cpa-terraform-plan start bash
           terraform plan \
-            -out terraform.tfplan \
-            -var-file terraform.tfvars
+            -out=terraform.tfplan \
+            -var-file=terraform.tfvars
           # code_snippet cpa-terraform-plan end bash
 
           # code_snippet cpa-terraform-apply start bash
@@ -408,7 +408,7 @@ jobs:
           # code_snippet cpa-upload-releases end bash
 
           # code_snippet cpa-upload-stemcell start bash
-          bosh upload-stemcell stemcell.tgz
+          bosh upload-stemcell *stemcell*.tgz
           # code_snippet cpa-upload-stemcell end bash
 
 
