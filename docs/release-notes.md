@@ -132,7 +132,7 @@ Released December 3, 2019
 
   Usage:
 
-  1. Get the Pivotal Platform Automation image from Pivotal Network.
+  1. Get the Platform Automation Toolkit image from Tanzu Network.
   1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
   1. Create a [state file][state] that represents your current VM and IAAS.
   1. Invoke the `p-automator` CLI to get the configuration.
@@ -148,14 +148,14 @@ Released December 3, 2019
     --aws-access-key-id some-access-key
   ```
 
-  The outputted `opsman.yml` contains the information needed for Pivotal Platform Automation to manage the Ops Manager VM.
+  The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Ops Manager VM.
 
 - When creating an `create-vm` task for Azure,
   the disk type and VM type can be specified.
   The configuration `storage_sku` and `vm_size` use the Azure values accordingly.
 - The [`download-product`][download-product] task now supports the `SOURCE` param
   to specify where to download products and stemcells from.
-  The supported blobstores are Pivnet, S3, Azure, and GCS.
+  The supported sources are the Azure(`azure`), GCS(`gcs`), S3(`s3`), Tanzu Network(`pivnet`).
 - [`configure-authentication`][configure-authentication],
   [`configure-ldap-authentication`][configure-ldap-authentication], and
   [`configure-saml-authentication`][configure-saml-authentication]
@@ -370,7 +370,7 @@ Released October 21, 2019
   ```
 
 - [Telemetry][telemetry-docs] support has been added!
-  To opt in, you must get the Telemetry tool from [Pivnet][telemetry],
+  To opt in, you must get the Telemetry tool from [Tanzu Network][telemetry],
   create a [config file][telemetry-config],
   and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline.
   For an example, please see the [Reference Pipelines][reference-pipeline].
@@ -390,7 +390,7 @@ Released October 21, 2019
 
 ### Deprecation Notices
 - The `host` field in the vcenter section of the [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
-  Platform Automation can initially choose where the VM is placed
+  Platform Automation Toolkit can initially choose where the VM is placed
   but cannot guarantee that it stays there
   or that other generated VMs are assigned to the same host.
 - The `vpc_subnet` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
@@ -1035,8 +1035,8 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 ### What's New
 - The new command [`assign-multi-stemcell`][assign-multi-stemcell] assigns multiple stemcells to a provided product.
   This feature is only available in OpsMan 2.6+.
-- [`download-product`][download-product] ensures sha sum checking when downloading the file from Pivotal Network.
-- [`download-product`][download-product] can now disable ssl validation when connecting to Pivotal Network.
+- [`download-product`][download-product] ensures sha sum checking when downloading the file from Tanzu Network.
+- [`download-product`][download-product] can now disable ssl validation when connecting to Tanzu Network.
   This helps with environments with SSL and proxying issues.
   Add `pivnet-disable-ssl: true` in your [download-product-config][download-product-config] to use this feature.
 - On [GCP][inputs-outputs-gcp], if you did not assign a public IP, Google would assign
@@ -1053,17 +1053,17 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - the [reference pipeline][reference-pipeline] has been updated to give an example of
   [`credhub-interpolate`][credhub-interpolate] in practice. For more information
   about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
-- `om` now has support for `config-template` (a Platform Automation encouraged replacement of
+- `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
-   [Creating a Product Config File][product-configuration-from-pivnet].
+   [Creating a Product Config File][product-configuration-from-tanzu-network].
 - [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
   This allows you to define an expected `shasum` that will validate the calculated shasum of the provided
   `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`][upload-product]
 - [Azure][inputs-outputs-azure] now allows NSG(network security group) to be optional.
   This change was made because NSGs can be assigned at the subnet level rather than just the VM level. This
   param is also not required by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest).
-  Platform Automation now reflects this.
+  Platform Automation Toolkit now reflects this.
 - [staged-director-config][staged-director-config] now supports returning multiple IaaS
   configurations. `iaas-configurations` is a top level key returned in Ops Manager 2.2+. If using an Ops
   Manager 2.1 or earlier, `iaas_configuration` will continue to be a key nested under `properties-configuration`.
