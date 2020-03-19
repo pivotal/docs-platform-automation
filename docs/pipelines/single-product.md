@@ -30,7 +30,7 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 
 
 !!! info "Retrieving products from pivnet"
-    Please ensure products have been procured from VMware Tanzu Network
+    Please ensure products have been procured from Tanzu Network
     using the [reference-resources][reference-resources].
 
 ## Installing Ops Manager and a single product

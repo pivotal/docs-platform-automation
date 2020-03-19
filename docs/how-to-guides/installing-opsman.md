@@ -19,7 +19,7 @@ We can do this by changing:
 
 Our first task within the job should be [`download-product`][download-product].
 It has an additional required input;
-we need the `config` file `download-product` uses to talk to Pivnet.
+we need the `config` file `download-product` uses to talk to VMware Tanzu Network.
 
 We'll write that file and make it available as a resource in a moment,
 for now, we'll just `get` it

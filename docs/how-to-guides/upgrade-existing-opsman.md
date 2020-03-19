@@ -516,7 +516,7 @@ Finally, we need the image for the new Ops Manager version.
 
 We'll use the [`download-product`][download-product] task.
 It requires a config file to specify which Ops Manager to get,
-and to provide VMware Tanzu Network credentials.
+and to provide Tanzu Network credentials.
 Name this file `download-opsman.yml`:
 
 ```yaml
