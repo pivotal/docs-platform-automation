@@ -216,7 +216,7 @@ This works for Ops Managers that are already running and useful when [migrating 
 
 Usage:
 
-1. Get the Pivotal Platform Automation image from Pivotal Network.
+1. Get the Platform Automation Toolkit image from Tanzu Network.
 1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
 1. Create a [state file][state] that represents your current VM and IAAS.
 1. Invoke the `p-automator` CLI to get the configuration.
@@ -232,7 +232,7 @@ p-automator export-opsman-config \
 --aws-access-key-id some-access-key
 ```
 
-The outputted `opsman.yml` contains the information needed for Pivotal Platform Automation to manage the Ops Manager VM.
+The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Ops Manager VM.
 
 #### download-product task
 
@@ -323,7 +323,7 @@ product-version-regex: ^170\..*$
 
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
 
-Here's an example of how to pull the Pivotal Application Service tile
+Here's an example of how to pull the Tanzu Application Service tile
 using the [download-product][download-product] task.
 
 #### product.yml
@@ -371,7 +371,7 @@ The configuration of the `download-config.yml` looks like this:
 ### telemetry
 
 The `config` input for the [collect-telemetry][collect-telemetry] task 
-can be used with a `telemetry.yml` file to collect data for Pivotal
+can be used with a `telemetry.yml` file to collect data for VMware
 so they can learn and measure results 
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:

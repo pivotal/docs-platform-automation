@@ -22,9 +22,10 @@ and configuration files are not difficult to understand.
 This is the strategy used throughout the
 [Install Ops Man How to Guide][install-how-to] and the
 [Upgrading an Existing Ops Manager How to Guide][upgrade-how-to].
-This is also the strategy implicit in our Pivotal Application Service reference pipeline.
+This is also the strategy implicit
+in our Tanzu Application Service reference pipeline.
 
-The [Pivotal Application Service reference pipeline][reference-pipeline]
+The [Tanzu Application Service reference pipeline][reference-pipeline]
 is an example pipeline that can be used
 as a reference for your own foundation.
 Let's examine an example configuration repository
