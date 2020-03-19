@@ -235,7 +235,7 @@ git push
 
 ### Creating Resources for Your Ops Manager
 
-Before Platform Automation can create a VM for your Ops Manager installation,
+Before Platform Automation Toolkit can create a VM for your Ops Manager installation,
 there are a certain number of resources
 required by the VM creation and the Ops Manager director installation processes.
 These resources are created directly on the IaaS of your choice,
@@ -274,7 +274,7 @@ you are installing Ops Manager onto.
 
 When going through the documentation required for your IaaS,
 be sure to stop before deploying the Ops Manager image.
-Platform Automation will do this for you.
+Platform Automation Toolkit will do this for you.
 
 - [aws][manual-aws]
 - [azure][manual-azure]
@@ -493,7 +493,7 @@ jobs:
               FILE_SOURCE_PATH: state.yml
               FILE_DESTINATION_PATH: state.yml
               GIT_AUTHOR_EMAIL: "pcf-pipeline-bot@example.com"
-              GIT_AUTHOR_NAME: "Platform Automation Bot"
+              GIT_AUTHOR_NAME: "Platform Automation Toolkit Bot"
               COMMIT_MESSAGE: 'Update state file'
           - put: config
             params:

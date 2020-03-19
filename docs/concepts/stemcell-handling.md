@@ -14,7 +14,7 @@ one at a time to minimize downtime during apply changes. This is particularly be
 with large numbers of tiles that share the same stemcell. 
 
 ## How to use the Stemcell Handling Tasks in Automation
-Platform Automation has tasks that will assist in the manual handling of stemcells within 
+Platform Automation Toolkit has tasks that will assist in the manual handling of stemcells within
 Ops Manager. These tasks, in order, are:
 
 - [download-product][download-product]
@@ -85,7 +85,7 @@ product as normal.
 
 ## How to Download a Specific Stemcell
 
-Platform Automation can be used to download a specific stemcell. In order to do so, create a `config.yml` for this
+Platform Automation Toolkit can be used to download a specific stemcell. In order to do so, create a `config.yml` for this
 task using the [example provided][download-stemcell-product-config].
 
 {% with path="../" %}

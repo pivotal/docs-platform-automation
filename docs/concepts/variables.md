@@ -1,8 +1,8 @@
 # Variables
 
-## What are Platform Automation variables?
+## What are Platform Automation Toolkit variables?
 Variables provide a way to define parameters for a YAML document. Each variable has a value
-and can be referenced in one or more locations. Variables are used in the Platform Automation
+and can be referenced in one or more locations. Variables are used in the Platform Automation Toolkit
 [tasks][task-reference]. One example usage is in [configure director][configure-director]. 
 
 ## Why use variables?
@@ -13,7 +13,7 @@ require special syntax in the configuration files which need them. The resulting
 parametrized template for use.
 
 ## Using variables
-In the Platform Automation task, you can choose to parametrize the specific entries in the configuration
+In the Platform Automation Toolkit task, you can choose to parametrize the specific entries in the configuration
 file, by using the `((parametrized-value))` syntax, and then defining the `parametrized-value` in a
 separate variable file.
 For example, to add two variables to a YAML document (base.yml):
@@ -69,9 +69,9 @@ have a single `base_vars_template.yml` shared across foundations.
 {% include "./variables-interpolate-flowchart-mixed.mmd" %}
 
 
-## Using variables in the Platform Automation Tasks
+## Using variables in the Platform Automation Toolkit Tasks
 
-Some Platform Automation tasks have an optional vars input.
+Some Platform Automation Toolkit tasks have an optional vars input.
 Using the flow described above, these files can be plugged in to the tasks.
 
 We provide a [Test Task](../tasks.md#test-interpolate)

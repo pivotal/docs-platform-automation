@@ -1,5 +1,5 @@
 This topic provides an overview 
-of upgrading and recovering an Ops Manager using Platform Automation, 
+of upgrading and recovering an Ops Manager using Platform Automation Toolkit,
 including common errors.
 
 {% include "./.export_installation_note.md" %}
@@ -83,7 +83,7 @@ is a helpful resource to get started with the manual process below.
    
 1. Run `import-installation`.
    This command requires the exported installation of the original Ops Manager
-   and the `env.yml` used by Platform Automation
+   and the `env.yml` used by Platform Automation Toolkit
    ```bash
    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
    om --env env.yml import-installation --installation installation.zip

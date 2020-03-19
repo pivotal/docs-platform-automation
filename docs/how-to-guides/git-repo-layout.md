@@ -12,7 +12,7 @@ Changes can then be "pushed" to or "pulled" from remote copies of that repositor
 !!! Info "GitHub alternatives"
     There are many alternatives to GitHub including
     Gitlabs, Google Cloud Source Repositories, etc.
-    Any remote Git client will work with Platform Automation and Concourse.
+    Any remote Git client will work with Platform Automation Toolkit and Concourse.
     Refer to the [Concourse Git resource][concourse-git-resource] documentation for details.
 
 To learn more about Git and Github,
@@ -91,7 +91,7 @@ with the directories and empty files.
 
 You now have both a local Git repo and a remote on GitHub.
 The above commands give you the recommended structure
-for a Platform Automation configuration repo:
+for a Platform Automation Toolkit configuration repo:
 
 ```tree
 ├── my-platform-automation
@@ -156,9 +156,9 @@ There are many possibilities for structuring Git repos in these complex situatio
 For guidance on how to best set up your git's file structure,
 refer to the [Inputs and Outputs][inputs-outputs] documentation
 and take note of the `inputs` and `outputs` of the
-various [Platform Automation tasks][task-reference].
+various [Platform Automation Toolkit tasks][task-reference].
 As long as the various input / output mappings correctly correlate
-to the expected ins and outs of the Platform Automation tasks,
+to the expected ins and outs of the Platform Automation Toolkit tasks,
 any file structure could theoretically work.
 
 {% with path="../" %}
