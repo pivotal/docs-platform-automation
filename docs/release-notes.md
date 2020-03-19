@@ -254,7 +254,7 @@ Released December 3, 2019
     --aws-access-key-id some-access-key
   ```
 
-  The outputted `opsman.yml` contains the information needed for Pivotal Platform Automation to manage the Ops Manager VM.
+  The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Ops Manager VM.
 
 - When creating an `create-vm` task for Azure,
   the disk type and VM type can be specified.
