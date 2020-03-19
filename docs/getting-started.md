@@ -1,18 +1,18 @@
-If you are using Platform Automation for the first time,
+If you are using Platform Automation Toolkit for the first time,
 you have a few options.
 
-Our [Overview][overview] of Platform Automation describes it conceptually,
+Our [Overview][overview] of Platform Automation Toolkit describes it conceptually,
 and is useful to review prior to diving into more technical content.
 
 ## How-to Guides
 
 We have in-depth procedures for deploying a new Ops Manager and
 taking over management of an existing Ops Manager
-with Platform Automation:
+with Platform Automation Toolkit:
 
-- For more information about deploying Platform Automation
+- For more information about deploying Platform Automation Toolkit
   with a new Ops Manager, see [Installing Ops Manager][install-how-to].
-- For more information about deploying Platform Automation
+- For more information about deploying Platform Automation Toolkit
   with an existing Ops Manager, see
   [Upgrading an Existing Ops Manager][upgrade-how-to].
 

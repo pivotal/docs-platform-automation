@@ -13,7 +13,7 @@ These Concourse pipelines are examples on how to use the [tasks](../tasks.md). I
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * A set of valid [download-product-config][download-product-config] files: Each product has a configuration YAML of what version to download from Tanzu Network.
-* Tanzu Network access to [Platform Automation][tanzu-network-platform-automation]
+* Tanzu Network access to [Platform Automation Toolkit][tanzu-network-platform-automation]
 
 ## Retrieval from Tanzu Network
 
@@ -66,27 +66,27 @@ Below are examples that can be used.
 ### Resource Types
 
 This custom resource type uses the [pivnet-resource][pivnet-resource]
-to pull down and separate both pieces of the Platform Automation product (tasks and image)
+to pull down and separate both pieces of the Platform Automation Toolkit product (tasks and image)
 so they can be stored separately in S3.
 
 {% code_snippet 'examples', 'resources-pipeline-resource-types' %}
 
 ### Product Resources
 
-S3 resources where Platform Automation [`download-product`][download-product] outputs will be stored.
+S3 resources where Platform Automation Toolkit [`download-product`][download-product] outputs will be stored.
 Each product/stemcell needs a separate resource defined.
-Platform Automation will not create these resources for you.
+Platform Automation Toolkit will not create these resources for you.
 
 {% code_snippet 'examples', 'resources-pipeline-products' %}
 
-### Platform Automation Resources
+### Platform Automation Toolkit Resources
 
 `platform-automation-pivnet` is downloaded directly from Tanzu Network
 and will be used to download all other products from Tanzu Network.
 
 `platform-automation-tasks` and `platform-automation-image` are S3 resources
 that will be stored for internet-restricted, or faster, access.
-Platform Automation will not create this resource for you.
+Platform Automation Toolkit will not create this resource for you.
 
 {% code_snippet 'examples', 'resources-pipeline-platform-automation' %}
 
@@ -94,7 +94,7 @@ Platform Automation will not create this resource for you.
 
 You will need to add your [`download-product` configuration][download-product-config] configuration files
 to your configurations repo.
-Platform Automation will not create these resources for you.
+Platform Automation Toolkit will not create these resources for you.
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
 
 {% code_snippet 'examples', 'resources-pipeline-configurations' %}

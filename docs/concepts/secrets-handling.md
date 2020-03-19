@@ -2,7 +2,7 @@
 Secrets stores, such as Credhub, can be used to store secure properties that you don't want committed into a config file.
 Within your pipeline, the config file can then reference that secrets store value for runtime evaluation.
 
-Platform Automation Tasks contains two tasks to help with retrieving these credentials in the tasks that use them:
+Platform Automation Toolkit Tasks contains two tasks to help with retrieving these credentials in the tasks that use them:
 
 1. The [`prepare-tasks-with-secrets`](#using-prepare-tasks-with-secrets) task can be used with any Concourse supported [secrets store][concourse-secrets-handling].
 2. The [`credhub-interpolate`](#using-credhub-interpolate) task can only be used with Credhub.
@@ -34,7 +34,7 @@ The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task can be used 
     This will prevent those credentials from being added as environment variables to the task
     resulting in Concourse being unable to find them in the secrets store.
 
-To understand how `prepare-tasks-with-secrets` modifies the Platform Automation tasks,
+To understand how `prepare-tasks-with-secrets` modifies the Platform Automation Toolkit tasks,
 below is an example of how a task will be changed:
 
 1. Authenticate with your credhub instance.
@@ -107,7 +107,7 @@ Here's an example of what `prepare-tasks-with-secrets` is doing internally.
 Given an original task and the previously provided config/vars files:
 
 ```yaml
-# Original Platform Automation Task
+# Original Platform Automation Toolkit Task
 platform: linux
 
 inputs:
@@ -305,7 +305,7 @@ opsman-configuration:
     the ATC retrieves secrets from Credhub and passes them to the worker.
 
 ## Defining Multiline Certificates and Keys in Config Files
-There are three ways to include certificates in the yaml files that are used by Platform Automation tasks.
+There are three ways to include certificates in the yaml files that are used by Platform Automation Toolkit tasks.
 
 1. Direct inclusion in yaml file
 

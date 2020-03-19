@@ -59,7 +59,7 @@ These can either be uploaded manually or from the [reference resources pipeline]
 These contain values for
 opsman vm creation, director, product, foundation-specific vars, auth, and env files.
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
-Platform Automation will not create these resources for you.
+Platform Automation Toolkit will not create these resources for you.
 
 {% code_snippet 'examples', 'single-product-resources-configurations' %}
 

@@ -8,7 +8,7 @@ to retrieve and store objects.
 
 ## Why use S3?
 
-* Platform Automation Tanzu uses and produces
+* Platform Automation Toolkit uses and produces
 file artifacts that are too large to store in git.
 For example, many `.pivotal` product files are several gigabytes in size.
 Exported installation files may also be quite large.
@@ -26,7 +26,7 @@ and retrieve the latest product versions in offline environments.
 With S3, we can place product files
 and new versions of OpsMan
 into a network whitelisted S3 bucket
-to be used by Platform Automation tasks.
+to be used by Platform Automation Toolkit tasks.
 We can even create a [Resources Pipeline][reference-resources]
 that gets the latest version of products
 from Tanzu Network and places them into our S3 bucket automatically.
@@ -86,7 +86,7 @@ Now you are ready for buckets!
 
     For simplicity, in the rest of this guide,
     we will use the AWS root user
-    to show how a bucket may be set up and used with Platform Automation.
+    to show how a bucket may be set up and used with Platform Automation Toolkit.
 
 
 ## Your First Bucket
@@ -173,7 +173,7 @@ and which user can `Write` objects to the bucket.
 By default,
 an S3 bucket will be _unversioned_.
 An unversioned bucket will not allow different versions of the same object.
-In order to take advantage of using an S3 bucket with Platform Automation,
+In order to take advantage of using an S3 bucket with Platform Automation Toolkit,
 we will want to enable versioning. Enabling versioning is not required,
 but versioning does make the process easier,
 and will require less potential manual steps around naming updates to the new file
@@ -202,14 +202,14 @@ my-exported-installation.zip (version 121212)
 Any file that can be stored on a computer
 can be stored on S3. S3 is especially good at storing large files as it is designed to scale with large amounts of data while still being durable and fast.
 
-Platform Automation users may want to store the following files in S3:
+Platform Automation Toolkit users may want to store the following files in S3:
 
 - `.pivotal` product files
 - `.tgz` stemcell files
 - `.ova` Ops Manager files
 - `.zip` foundation exports
 
-Platform Automation users will likely **_NOT_** want to store the following in S3:
+Platform Automation Toolkit users will likely **_NOT_** want to store the following in S3:
 
 - `.yaml` configuration files - Better suited for [git][git]
 - `secrets.yaml` environment and secret files - There are a number of ways
@@ -281,7 +281,7 @@ The [resources pipeline][reference-resources]
 may be used to download dependencies from Tanzu Network
 and place them into a trusted S3 bucket.
 The various `resources_types` use the [Concourse S3 Resource type][concourse-s3-resource]
-and several Platform Automation tasks to accomplish this.
+and several Platform Automation Toolkit tasks to accomplish this.
 The following is an S3-specific breakdown of these components
 and where to find more information.
 
@@ -303,7 +303,7 @@ product-2.2-build99.pivotal
 ```
 
 Because Tanzu Network file names
-do not always have the necessary metadata required by Platform Automation,
+do not always have the necessary metadata required by Platform Automation Toolkit,
 the download product task will prepend the necessary information
 to the filename before it is placed into the S3 bucket:
 
