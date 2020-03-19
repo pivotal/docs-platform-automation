@@ -198,7 +198,7 @@ depending on your IAAS:
 
 ### opsman image
 
-This file is an [artifact from Pivnet](https://network.pivotal.io/products/ops-manager),
+This file is an [artifact from Tanzu Network](https://network.pivotal.io/products/ops-manager),
 which contains the VM image for a specific IaaS.
 For vsphere and openstack, it's a full disk image.
 For AWS, GCP, and Azure, it's a YAML file listing the location
@@ -256,12 +256,12 @@ This file can be imported to an Ops Manager VM using the [import-installation][i
     This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
 
 ### stemcell
-This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Pivnet.
+This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Tanzu Network.
 It must be in the original filename as that is used by Ops Manager to parse metadata.
 The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-go_agent.tgz`.
 
 !!! warning
-    This file cannot be manually created. It is a file that must retrieved from Pivnet.
+    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
 
 Here's an example of how to pull the vSphere stemcell
 using the [download-product][download-product] task.
@@ -321,7 +321,7 @@ product-version-regex: ^170\..*$
 
 ### product
 
-The `product` input requires a single tile file (`.pivotal`) as downloaded from Pivnet.
+The `product` input requires a single tile file (`.pivotal`) as downloaded from Tanzu Network.
 
 Here's an example of how to pull the Tanzu Application Service tile
 using the [download-product][download-product] task.
@@ -347,7 +347,7 @@ product-version-regex: ^2\.6\..*$
 ```
 
 !!! warning
-    This file cannot be manually created. It is a file that must retrieved from Pivnet.
+    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
 
 ### download-product-config
 
@@ -355,7 +355,7 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
-{% code_snippet 'examples', 'download-product-config-pivnet', 'Pivnet' %}
+{% code_snippet 'examples', 'download-product-config-pivnet', 'Tanzu Network' %}
 {% code_snippet 'examples', 'download-product-config-s3', 'S3' %}
 {% code_snippet 'examples', 'download-product-config-gcs', 'GCS' %}
 {% code_snippet 'examples', 'download-product-config-azure', 'Azure' %}

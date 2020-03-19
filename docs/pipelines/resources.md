@@ -13,7 +13,7 @@ These Concourse pipelines are examples on how to use the [tasks](../tasks.md). I
 
 * Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
 * A set of valid [download-product-config][download-product-config] files: Each product has a configuration YAML of what version to download from Tanzu Network.
-* Pivnet access to [Platform Automation][pivnet-platform-automation]
+* Tanzu Network access to [Platform Automation][tanzu-network-platform-automation]
 
 ## Retrieval from Tanzu Network
 
@@ -27,7 +27,7 @@ retrieve task dependencies.
 !!! tip "Blobstore filename prefixing"
     Note the unique regex format for blob names,
     for example: `\[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal`.
-    Pivnet filenames will not always contain the necessary metadata
+    Tanzu Network filenames will not always contain the necessary metadata
     to accurately download files from a blobstore (i.e. s3, gcs, azure).
     So, the product slug and version are prepended when using `download-product`.
     For more information on how this works,
@@ -65,7 +65,7 @@ Below are examples that can be used.
 
 ### Resource Types
 
-This custom resource type uses the pivnet resource
+This custom resource type uses the [pivnet-resource][pivnet-resource]
 to pull down and separate both pieces of the Platform Automation product (tasks and image)
 so they can be stored separately in S3.
 
@@ -81,8 +81,8 @@ Platform Automation will not create these resources for you.
 
 ### Platform Automation Resources
 
-`platform-automation-pivnet` is downloaded directly from Pivnet
-and will be used to download all other products from Pivnet.
+`platform-automation-pivnet` is downloaded directly from Tanzu Network
+and will be used to download all other products from Tanzu Network.
 
 `platform-automation-tasks` and `platform-automation-image` are S3 resources
 that will be stored for internet-restricted, or faster, access.

@@ -17,7 +17,7 @@ To execute commands in Docker:
 docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
 ```
 
-    Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Pivnet.
+    Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Tanzu Network.
 
 2. Then, you can use `docker run` to pass it arbitrary commands.
 Here, we're running the `p-automator` CLI to see what commands are available:
@@ -40,7 +40,7 @@ export OM_PASSWORD='ASDF' om --env ${ENV_FILE} staged-config --product-name ${PR
 ```
 
     `${ENV_FILE}` is the [environment file][env] required for all tasks.
-    `${PRODUCT_SLUG}` is the name of the product downloaded from [pivnet][pivnet].
+    `${PRODUCT_SLUG}` is the name of the product downloaded from [Tanzu Network][tanzu-network].
     The resulting file can then be parameterized, saved, and committed to a config repo.
 
 2. To get the director configuration:

@@ -40,7 +40,7 @@ Both methods require an exported installation.
    set for the state file resource.
    
 1. **Manual recovery**. The VM can always be recovered manually 
-   by deploying the Ops Manager OVA, raw, or yml from Pivnet.
+   by deploying the Ops Manager OVA, raw, or yml from Tanzu Network.
 
 Below is a list of common errors when running `upgrade-opsman`.
 
@@ -72,7 +72,7 @@ is a helpful resource to get started with the manual process below.
    
 1. Run `create-vm` using either an empty [`state.yml`][state]
    or the state output by the previous step. 
-   This command requires the image file from Pivnet
+   This command requires the image file from Tanzu Network
    of the original version that was deployed (yml, ova, raw).
    [`opsman.yml`][opsman-config] is required for this command.
     ```bash

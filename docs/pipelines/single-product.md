@@ -29,7 +29,7 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 * (Optional) A working [credhub][credhub] setup with its own UAA client and secret.
 
 
-!!! info "Retrieving products from pivnet"
+!!! info "Retrieving products from Tanzu Network"
     Please ensure products have been procured from Tanzu Network
     using the [reference-resources][reference-resources].
 

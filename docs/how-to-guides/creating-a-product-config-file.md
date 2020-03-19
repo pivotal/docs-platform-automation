@@ -4,7 +4,7 @@ Extracting a product configuration file, an externalized config that lives outsi
 - avoiding configuration drift
 - configuration promotion
 
-## From Pivnet
+## From Tanzu Network
 
 A configuration file can be generated from the tile metadata directly from Tanzu Network.
 

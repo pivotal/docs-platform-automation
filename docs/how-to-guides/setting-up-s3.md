@@ -13,9 +13,15 @@ file artifacts that are too large to store in git.
 For example, many `.pivotal` product files are several gigabytes in size.
 Exported installation files may also be quite large.
 
-* For environments that can't access the greater internet. This is a common security practice, but it also means that it's not possible to connect directly to PivNet to access the latest product versions for your upgrades.
+* For environments that can't access the greater internet.
+  This is a common security practice,
+  but it also means that it's not possible
+  to connect directly to Tanzu Network
+  to access the latest product versions for your upgrades.
 
-S3 and Concourse's native S3 integration makes it possible to store large file artifacts and retrieve the latest product versions in offline environments.   
+S3 and Concourse's native S3 integration
+makes it possible to store large file artifacts
+and retrieve the latest product versions in offline environments.
 
 With S3, we can place product files
 and new versions of OpsMan
@@ -23,7 +29,7 @@ into a network whitelisted S3 bucket
 to be used by Platform Automation tasks.
 We can even create a [Resources Pipeline][reference-resources]
 that gets the latest version of products
-from PivNet and places them into our S3 bucket automatically.
+from Tanzu Network and places them into our S3 bucket automatically.
 
 Alternatively, because a foundation's backup
 may be quite large,
@@ -272,7 +278,7 @@ for retrieving objects. The bucket name is required.
 ## Reference Resources Pipeline
 
 The [resources pipeline][reference-resources]
-may be used to download dependencies from Pivnet
+may be used to download dependencies from Tanzu Network
 and place them into a trusted S3 bucket.
 The various `resources_types` use the [Concourse S3 Resource type][concourse-s3-resource]
 and several Platform Automation tasks to accomplish this.
@@ -281,22 +287,22 @@ and where to find more information.
 
 #### The download-product task
 
-The [`download-product`][download-product] task lets you download products from PivNet.
+The [`download-product`][download-product] task lets you download products from Tanzu Network.
 If S3 properties are set in the [download config][download-product-config],
 these files can be placed into an S3 bucket.
 
 If S3 configurations are set,
 this task will perform a specific filename operation
 that will prepend meta data to the filename.
-If downloading the product `Example Product version 2.2.1` from PivNet
+If downloading the product `Example Product version 2.2.1` from Tanzu Network
 where the product slug is `example-product` and the version is `2.2.1`,
-when directly downloaded from PivNet, the file may appear as:
+when directly downloaded from Tanzu Network, the file may appear as:
 
 ```
 product-2.2-build99.pivotal
 ```
 
-Because PivNet file names
+Because Tanzu Network file names
 do not always have the necessary metadata required by Platform Automation,
 the download product task will prepend the necessary information
 to the filename before it is placed into the S3 bucket:

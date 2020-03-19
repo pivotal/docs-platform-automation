@@ -19,7 +19,7 @@ We can do this by changing:
 
 Our first task within the job should be [`download-product`][download-product].
 It has an additional required input;
-we need the `config` file `download-product` uses to talk to VMware Tanzu Network.
+we need the `config` file `download-product` uses to talk to Tanzu Network.
 
 We'll write that file and make it available as a resource in a moment,
 for now, we'll just `get` it
@@ -87,7 +87,7 @@ pipeline-repo: git@github.com:username/your-repo-name
 ```
 
 
-`download-ops-manager.yml` holds creds for communicating with Pivnet,
+`download-ops-manager.yml` holds creds for communicating with Tanzu Network,
 and uniquely identifies an Ops Manager image to download.
 
 An example `download-ops-manager.yml` is shown below.
@@ -134,7 +134,7 @@ Then, add this to the resources section of your pipeline file:
     branch: master
 ```
 
-We'll need to put the pivnet token in Crehub:
+We'll need to put the Tanzu Network token in Credhub:
 
 ```bash
 # note the starting space throughout

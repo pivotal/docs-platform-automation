@@ -168,15 +168,15 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 
 **AWS**
 
-1. Requires the image YAML file from Pivnet
+1. Requires the image YAML file from Tanzu Network
 2. Validates the existence of the VM if defined in the statefile, if so do nothing
-3. Chooses the correct ami to use based on the provided image YAML file from Pivnet
-4. Creates the vm configured via opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
+3. Chooses the correct ami to use based on the provided image YAML file from Tanzu Network
+4. Creates the VM configured via opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
 5. The public IP address, if provided, is assigned after successful creation
 
 **Azure**
 
-1. Requires the image YAML file from Pivnet
+1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account
 1. Creates the Ops Manager image
@@ -184,14 +184,14 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 
 **GCP**
 
-1. Requires the image YAML file from Pivnet
+1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Creates a compute image based on the region specific Ops Manager source URI in the specified Ops Manager account
 1. Creates a VM from the image. This will assign a public and/or private IP address, VM sizing, and tags. This does not create any new resources.
 
 **Openstack**
 
-1. Requires the image YAML file from Pivnet
+1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Recreates the image in openstack if it already exists to validate we are using the correct version of the image
 1. Creates a VM from the image. This does not create any new resources
@@ -199,9 +199,9 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 
 **Vsphere**
 
-1. Requires the OVA image from Pivnet
+1. Requires the OVA image from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
-1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is stored on the generated path. If folder is not provided, the vm will be placed in the datacenter.
+1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is stored on the generated path. If folder is not provided, the VM will be placed in the datacenter.
 1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources
 
 
@@ -262,13 +262,13 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 
 {% include "./.opsman_filename_change_note.md" %}
 
-Downloads a product specified in a config file from Pivnet, S3, GCS, or Azure.
+Downloads a product specified in a config file from Tanzu Network(`pivnet`), S3(`s3`), GCS(`gcs`), or Azure(`azure`).
 Optionally, also downloads the latest stemcell for that product.
 
 Downloads are cached, so files are not re-downloaded each time.
-When downloading from Pivnet,
+When downloading from Tanzu Network,
 the cached file is verified
-using the Pivnet checksum
+using the Tanzu Network checksum
 to validate the integrity of that file.
 If it does not, the file is re-downloaded.
 When downloading from a supported blobstore
@@ -311,17 +311,21 @@ For example:
   ```
 
 This is to allow the same config parameters
-that let us select a file from Pivnet
+that let us select a file from Tanzu Network
 select it again when pulling from the supported blobstore.
 Note that the filename will be unchanged
 if supported blobstore keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
 !!! warning "When using the s3 resource in concourse"
-    If you are using a `regexp` in your s3 resource definition that explicitly requires the pivnet filename to be the _start_ of the
-    regex, (i.e., the pattern starts with `^`) this won't work when using S3 config.
-    The new file format preserves the original filename, so it is still possible to match on that -
-    but if you need to match from the beginning of the filename, that will have been replaced by the prefix described above.
+    If you are using a `regexp` in your s3 resource definition
+    that explicitly requires the Tanzu Network filename
+    to be the _start_ of the regex, (i.e., the pattern starts with `^`)
+    this won't work when using S3 config.
+    The new file format preserves the original filename,
+    so it is still possible to match on that -
+    but if you need to match from the beginning of the filename,
+    that will have been replaced by the prefix described above.
 
 !!! info "When specifying Tanzu Application Service-Windows"
     This task will automatically download and inject the winfs for pas-windows.
@@ -332,15 +336,15 @@ This avoids breaking current pipelines.
     [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
     in VMware Documentation.
 
-!!! info "When only downloading from Pivnet"
-    When the download product config only has Pivnet credentials,
+!!! info "When only downloading from Tanzu Network"
+    When the download product config only has Tanzu Network credentials,
     it will not add the prefix to the downloaded product.
-    For example, `example-product.pivotal` from Pivnet will be outputed
+    For example, `example-product.pivotal` from Tanzu Network will be outputed
     as `example-product.pivotal`.
 
 {% code_snippet 'tasks', 'download-product', 'Task' %}
 {% code_snippet 'tasks', 'download-product-script', 'Implementation' %}
-{% code_snippet 'examples', 'download-product-usage', 'Pivnet Usage' %}
+{% code_snippet 'examples', 'download-product-usage', 'Tanzu Network Usage' %}
 {% code_snippet 'examples', 'download-product-usage-s3', 'S3 Usage' %}
 {% code_snippet 'examples', 'download-product-usage-gcs', 'GCS Usage' %}
 {% code_snippet 'examples', 'download-product-usage-azure', 'Azure Usage' %}
@@ -357,7 +361,7 @@ This is useful when retrieving assets in an offline environment.
 
 Downloads are cached, so files are not re-downloaded each time.
 
-This is intended to be used with files downloaded from Pivnet by [`download-product`][download-product]
+This is intended to be used with files downloaded from Tanzu Network by [`download-product`][download-product]
 and then persisted to a blobstore using a `put` step.
 
 Outputs can be used directly as an input to [upload-and-stage-product](#upload-and-stage-product)
@@ -372,14 +376,14 @@ The product files uploaded to s3 for download with this task require a specific 
 `[product-slug,semantic-version]`.
 This prefix is added by the [`download-product`][download-product] task
 when S3 keys are present in the configuration file.
-This is the meta information about the product from Pivnet,
+This is the meta information about the product from Tanzu Network,
 which is _not guaranteed_ to be in the original filename.
 This tasks uses the meta information to be able to perform
 consistent downloads from s3
 as defined in the provided download config.
 For example:
 
-- original-pivnet-filenames:
+- original-tanzu-network-filenames:
   ```
   ops-manager-aws-2.5.0-build.123.yml
   cf-2.5.0-build.45.pivotal
@@ -391,10 +395,10 @@ For example:
   [elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
   ```
 
-!!! info "When only downloading from Pivnet"
-    When the download product config only has Pivnet credentials,
+!!! info "When only downloading from Tanzu Network"
+    When the download product config only has Tanzu Network credentials,
     it will not add the prefix to the downloaded product.
-    For example, `example-product.pivotal` from Pivnet will be outputed
+    For example, `example-product.pivotal` from Tanzu Network will be outputted
     as `example-product.pivotal`.
 
 !!! info
@@ -634,7 +638,7 @@ with that shasum before uploading.
 ### upload-stemcell
 Uploads a stemcell to Ops Manager.
 
-Note that the filename of the stemcell must be exactly as downloaded from Pivnet.
+Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
 Ops Manager parses this filename to determine the version and OS of the stemcell.
 
 {% code_snippet 'tasks', 'upload-stemcell', 'Task' %}
