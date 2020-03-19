@@ -180,16 +180,16 @@ A configuration can be generated from a staged product on an already existing Op
 To extract the configuration for a product, you will first need to do the following:
 
 1. Upload and stage your desired product(s) to a fully deployed Ops Manager.
-For example, let's use [Tanzu Application Service][pas] on Vsphere with NSX-T
+For example, let's use [Tanzu Application Service][tas] on Vsphere with NSX-T
 1. Configure your product _manually_ according to the product's
-[install instructions][pas-install-vsphere].
+[install instructions][tas-install-vsphere].
 
 ### Workflow
 
 [om] has a command called [staged-config], which is used to extract staged product
 configuration present in the Ops Manager UI of the targeted foundation.
 
-Sample usage, using `om` directly and assuming the [Tanzu Application Service][pas] product:  
+Sample usage, using `om` directly and assuming the [Tanzu Application Service][tas] product:  
 `om --env env.yml staged-config --include-placeholders --product-name cf > tile-config.yml`  
 
 Most products will contain the following high level keys:
@@ -202,7 +202,7 @@ You can check the file in to git.
 
 For convenience, Platform Automation Toolkit provides you with two ways to use the
 `om staged-config` command. The command can be run as a [task][staged-config]
-inside of your pipeline. As an example of how to invoke this for the [Tanzu Application Service][pas] product
+inside of your pipeline. As an example of how to invoke this for the [Tanzu Application Service][tas] product
 in your pipeline.yml(resources not listed):
 ```yaml
 jobs:
@@ -250,7 +250,7 @@ In order to fully support multiple foundations, however, a bit more work is
 necessary. There are two ways to do this: using [secrets management][multi-foundation-secrets-handling] or ops files.
 This section will explain how to support multiple foundations using ops files.
 
-Starting with an **incomplete** [Tanzu Application Service][pas] config from **vSphere** as an example:
+Starting with an **incomplete** [Tanzu Application Service][tas] config from **vSphere** as an example:
 
 {% include ".cf-partial-config.md" %}
 

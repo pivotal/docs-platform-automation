@@ -41,11 +41,11 @@ Below are examples that can be used.
 {% include './examples/download-product-configs/healthwatch.yml' %}
 ```
 
-``` yaml tab="PAS"
+``` yaml tab="TAS"
 {% include './examples/download-product-configs/pas.yml' %}
 ```
 
-``` yaml tab="PAS Windows"
+``` yaml tab="TAS Windows"
 {% include './examples/download-product-configs/pas-windows.yml' %}
 ```
 
