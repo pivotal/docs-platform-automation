@@ -6,10 +6,10 @@ Extracting a product configuration file, an externalized config that lives outsi
 
 ## From Pivnet
 
-A configuration file can be generated from the tile metadata directly from VMware Tanzu Network.
+A configuration file can be generated from the tile metadata directly from Tanzu Network.
 
 ### Prerequisites
-1. A token for the [VMware Tanzu Network API](https://network.pivotal.io/docs/api#how-to-authenticate) is required.
+1. A token for the [Tanzu Network API](https://network.pivotal.io/docs/api#how-to-authenticate) is required.
 1. You'll need the Platform Automation Docker Image [imported and ready to run][running-commands-locally].
 1. For products that have multiple `.pivotal` files, you'll need a glob pattern uniquely matching one of them.
 
