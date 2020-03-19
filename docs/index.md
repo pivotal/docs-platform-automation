@@ -2,11 +2,11 @@ Platform Automation Toolkit provides building blocks
 to create repeatable and reusable automated pipeline(s)
 for upgrading and installing foundations.
 We also provide instructions on using these building blocks in various workflows.
-In this introduction, we'll provide a high-level overview of Platform Automation.
+In this introduction, we'll provide a high-level overview of Platform Automation Toolkit.
 To dive-deeper, check out the references section.
 
 See the [Getting Started][getting-started] section for instructions 
-on how to start using Platform Automation.
+on how to start using Platform Automation Toolkit.
 
 ## About
 
@@ -44,14 +44,14 @@ on how to start using Platform Automation.
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
 !!! info "Transitioning from PCF Pipelines"
-      Platform Automation takes a different approach than PCF Pipelines.
-      For instance, Platform Automation allows you
+      Platform Automation Toolkit takes a different approach than PCF Pipelines.
+      For instance, Platform Automation Toolkit allows you
       to perform installs and upgrades in the same pipeline.
-      We recommend trying out Platform Automation
+      We recommend trying out Platform Automation Toolkit
       to get a sense of the features and how they differ
       to understand the best transition method for your environment and needs.
 
-## Platform Automation and Upgrading Ops Manager
+## Platform Automation Toolkit and Upgrading Ops Manager
 
 Successful platform engineering teams know that a platform team
 that's always up to date is critical for their business.
@@ -81,7 +81,7 @@ A good place to start is to consume every patch.
 
 How do we do this?
 
-#### <a id=""></a> Small and Continuous Upgrades With Platform Automation
+#### <a id=""></a> Small and Continuous Upgrades With Platform Automation Toolkit
 
 With Platform Automation Toolkit,
 platform teams have the tools to create an automated perpetual upgrade machine,
@@ -95,7 +95,7 @@ In addition, Platform Automation Toolkit allows you to:
 
 * create pipelines that handle installs and upgrades to streamline workflows.
 
-## Platform Automation and Ops Manager
+## Platform Automation Toolkit and Ops Manager
 
 The following table compares how Ops Manager
 and Platform Automation Toolkit might run a typical sequence of Ops Manager operations:

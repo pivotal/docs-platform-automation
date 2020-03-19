@@ -1,7 +1,7 @@
 # Introduction
 
 This is the docs source for
-[Platform Automation](https://network.pivotal.io/products/platform-automation),
+[Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation),
 available from VMware Tanzu Network.
 
 The production docs are here:

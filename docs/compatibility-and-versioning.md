@@ -1,12 +1,12 @@
 This topic describes Platform Automation Toolkit dependencies and semantic versioning.
 
 ## External Dependencies
-Platform Automation is designed to work with these dependencies.
+Platform Automation Toolkit is designed to work with these dependencies.
 
 <table>
 <thead>
     <tr>
-        <th>Platform Automation</th>
+        <th>Platform Automation Toolkit</th>
         <th>Concourse</th>
         <th>Ops Manager</th>
         <th>Pivnet Resource</th>

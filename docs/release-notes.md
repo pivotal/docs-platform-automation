@@ -496,7 +496,7 @@ Released October 21, 2019
 
 ### Deprecation Notices
 - The `host` field in the vcenter section of the [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
-  Platform Automation can initially choose where the VM is placed
+  Platform Automation Toolkit can initially choose where the VM is placed
   but cannot guarantee that it stays there
   or that other generated VMs are assigned to the same host.
 - The `vpc_subnet` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
@@ -1159,7 +1159,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - the [reference pipeline][reference-pipeline] has been updated to give an example of
   [`credhub-interpolate`][credhub-interpolate] in practice. For more information
   about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
-- `om` now has support for `config-template` (a Platform Automation encouraged replacement of
+- `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
    [Creating a Product Config File][product-configuration-from-tanzu-network].
@@ -1169,7 +1169,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - [Azure][inputs-outputs-azure] now allows NSG(network security group) to be optional.
   This change was made because NSGs can be assigned at the subnet level rather than just the VM level. This
   param is also not required by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest).
-  Platform Automation now reflects this.
+  Platform Automation Toolkit now reflects this.
 - [staged-director-config][staged-director-config] now supports returning multiple IaaS
   configurations. `iaas-configurations` is a top level key returned in Ops Manager 2.2+. If using an Ops
   Manager 2.1 or earlier, `iaas_configuration` will continue to be a key nested under `properties-configuration`.

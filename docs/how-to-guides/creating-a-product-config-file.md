@@ -10,7 +10,7 @@ A configuration file can be generated from the tile metadata directly from Tanzu
 
 ### Prerequisites
 1. A token for the [Tanzu Network API](https://network.pivotal.io/docs/api#how-to-authenticate) is required.
-1. You'll need the Platform Automation Docker Image [imported and ready to run][running-commands-locally].
+1. You'll need the Platform Automation Toolkit Docker Image [imported and ready to run][running-commands-locally].
 1. For products that have multiple `.pivotal` files, you'll need a glob pattern uniquely matching one of them.
 
 ### Workflow
@@ -200,7 +200,7 @@ Most products will contain the following high level keys:
 
 You can check the file in to git.
 
-For convenience, Platform Automation provides you with two ways to use the
+For convenience, Platform Automation Toolkit provides you with two ways to use the
 `om staged-config` command. The command can be run as a [task][staged-config]
 inside of your pipeline. As an example of how to invoke this for the [Tanzu Application Service][pas] product
 in your pipeline.yml(resources not listed):
