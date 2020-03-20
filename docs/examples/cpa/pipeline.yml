@@ -252,8 +252,8 @@ jobs:
         file: platform-automation-tasks/tasks/make-git-commit.yml
         image: platform-automation-image
         params:
-          GIT_AUTHOR_NAME: norm-ci
-          GIT_AUTHOR_EMAIL: pcf-norm@pivotal.io
+          GIT_AUTHOR_NAME: platform-automation-ci
+          GIT_AUTHOR_EMAIL: platform-automation@pivotal.io
           COMMIT_MESSAGE: "create-vm update state file for cpa-<%= iaas %>"
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: cpa-<%= iaas %>/state.yml
@@ -549,8 +549,8 @@ jobs:
           file: platform-automation-tasks/tasks/make-git-commit.yml
           image: platform-automation-image
           params:
-            GIT_AUTHOR_NAME: norm-ci
-            GIT_AUTHOR_EMAIL: pcf-norm@pivotal.io
+            GIT_AUTHOR_NAME: platform-automation-ci
+            GIT_AUTHOR_EMAIL: platform-automation@pivotal.io
             COMMIT_MESSAGE: "delete-vm update state file for cpa-<%= iaas %>"
             FILE_SOURCE_PATH: state.yml
             FILE_DESTINATION_PATH: cpa-<%= iaas %>/state.yml
@@ -593,7 +593,7 @@ jobs:
               cp $terraform_path/terraform.tfstate $deployment_path
               pushd $deployment_path
                 git config --global user.name "platform-automation-ci"
-                git config --global user.email "pcf-platform-automation@pivotal.io"
+                git config --global user.email "platform-automation@pivotal.io"
                 git add terraform.tfstate
 
                 git commit -m "deleted infrastructure for $IAAS" || true
@@ -621,7 +621,7 @@ jobs:
         rebase: true
         repository: deployments
   # leftovers is purely a CI tool
-  # it is not officially supported by Pivotal
+  # it is not officially supported by VMware
   - task: leftovers
     attempts: 5
     file: ci/tasks/leftovers.yml
