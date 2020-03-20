@@ -44,7 +44,11 @@ Coming Soon
   For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now.
 - Heavy stemcells could not be downloaded. 
   Support has now been added.
-  Define `stemcell-heavy: true` in your [`download-product` config file][download-product-config] 
+  Define `stemcell-heavy: true` in your [`download-product` config file][download-product-config].
+- CVE update to container image. Resolves [USN-4298-1](https://usn.ubuntu.com/4298-1/).
+  This CVE is related to vulnerabilities with `libsqlite3`.
+- CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
+  This CVE is related to vulnerabilities with `libicu60`.
 
 ## v4.3.3
 Released February 26, 2020
@@ -149,7 +153,11 @@ Coming Soon
   For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now.
 - Heavy stemcells could not be downloaded. 
   Support has now been added.
-  Define `stemcell-heavy: true` in your `download-product` config file  
+  Define `stemcell-heavy: true` in your `download-product` config file.
+- CVE update to container image. Resolves [USN-4298-1](https://usn.ubuntu.com/4298-1/).
+  This CVE is related to vulnerabilities with `libsqlite3`.
+- CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
+  This CVE is related to vulnerabilities with `libicu60`.
 
 ## v4.2.6
 Released February 21, 2020
@@ -340,7 +348,11 @@ Coming Soon
   For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now. 
 - Heavy stemcells could not be downloaded. 
   Support has now been added.
-  Define `stemcell-heavy: true` in your `download-product` config file
+  Define `stemcell-heavy: true` in your `download-product` config file.
+- CVE update to container image. Resolves [USN-4298-1](https://usn.ubuntu.com/4298-1/).
+  This CVE is related to vulnerabilities with `libsqlite3`.
+- CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
+  This CVE is related to vulnerabilities with `libicu60`.
    
 ## v4.1.11
 Released February 25, 2020
@@ -542,7 +554,11 @@ Coming Soon
   this will resolve your issue.
   Please remove any custom globbing that might've been added to circumvent this issue.
   For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now. 
-
+- CVE update to container image. Resolves [USN-4298-1](https://usn.ubuntu.com/4298-1/).
+  This CVE is related to vulnerabilities with `libsqlite3`.
+- CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
+  This CVE is related to vulnerabilities with `libicu60`.
+  
 ## v4.0.11
 Released February 21, 2020
 
