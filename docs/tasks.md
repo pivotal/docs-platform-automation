@@ -516,6 +516,12 @@ Modifies task files to include variables needed for config files as environment 
 for run-time interpolation from a secret store.
 Learn more about [secrets handling][secrets-handling].
 
+!!! warn "Concourse 5+ Only"
+    This task uses a Concourse feature
+    that allows inputs and outputs to have the same name.
+    This feature is only available in Concourse 5+.
+    `prepare-tasks-with-secets` does not work with Concourse 4.
+
 {% code_snippet 'tasks', 'prepare-tasks-with-secrets', 'Task' %}
 {% code_snippet 'tasks', 'prepare-tasks-with-secrets-script', 'Implementation' %}
 {% code_snippet 'examples', 'prepare-tasks-with-secrets-usage', 'Usage' %}

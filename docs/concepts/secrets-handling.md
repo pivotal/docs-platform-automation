@@ -4,7 +4,8 @@ Within your pipeline, the config file can then reference that secrets store valu
 
 Platform Automation Toolkit Tasks contains two tasks to help with retrieving these credentials in the tasks that use them:
 
-1. The [`prepare-tasks-with-secrets`](#using-prepare-tasks-with-secrets) task can be used with any Concourse supported [secrets store][concourse-secrets-handling].
+1. If you're using Concourse version 5 or newer
+   the [`prepare-tasks-with-secrets`](#using-prepare-tasks-with-secrets) task can be used with any Concourse supported [secrets store][concourse-secrets-handling].
 2. The [`credhub-interpolate`](#using-credhub-interpolate) task can only be used with Credhub.
 
 ### Using prepare-tasks-with-secrets
