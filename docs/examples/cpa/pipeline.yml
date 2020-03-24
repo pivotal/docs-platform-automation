@@ -82,7 +82,16 @@ resources:
     secret_access_key: ((pivnet_aws_secret_key))
 
 jobs:
-<% ["gcp", "aws", "azure"].each do |iaas| %>
+<%
+  Config = Struct.new(:paving_name, :iaas, :stemcell_glob, :tag)
+
+  [
+    Config.new("gcp", "gcp", "light*google*", []),
+    Config.new("aws", "aws", "light*aws*", []),
+    Config.new("azure", "azure", "*azure*", []),
+  ].each do |config|
+    iaas = config.paving_name
+%>
 - name: create-opsman-<%= iaas %>
   serial_groups: [ install-<%= iaas %> ]
   serial: true
@@ -91,7 +100,7 @@ jobs:
     - get: opsman-image
       params:
         globs:
-        - '*<%= iaas %>*.yml'
+        - '*<%= config.iaas %>*.yml'
     - get: paving
     - get: platform-automation-tasks
       params:
@@ -282,13 +291,7 @@ jobs:
     - get: paving
     - get: ubuntu-xenial-stemcell
       params:
-        <% if iaas == "gcp" %>
-        globs: ["light*google*"]
-        <% elsif iaas == "azure" %>
-        globs: ["*<%= iaas %>*"]
-        <% else %>
-        globs: ["light*<%= iaas %>*"]
-        <% end %>
+        globs: [ "<%= config.stemcell_glob %>" ]
   - *generate-config
 
   - &download-bosh-releases
