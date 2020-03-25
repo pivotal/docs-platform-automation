@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.3.4
-Coming Soon
+Released March 25, 2020
 
 | Name | version |
 |---|---|
@@ -132,7 +132,7 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.7
-Coming Soon
+Released March 25, 2020
 
 | Name | version |
 |---|---|
@@ -327,7 +327,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
   
 ## v4.1.12
-Coming Soon
+Released March 25, 2020
 
 | Name | version |
 |---|---|
@@ -538,7 +538,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.12
-Coming Soon
+Released March 25, 2020
 
 | Name | version |
 |---|---|
