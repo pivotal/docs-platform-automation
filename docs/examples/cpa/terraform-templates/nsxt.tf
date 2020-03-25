@@ -62,3 +62,7 @@ variable "nsxt_lb_concourse_virtual_server_ip_address" {
   description = "IP Address for concourse loadbalancer"
   type        = "string"
 }
+
+output "concourse_url" {
+  value = var.nsxt_lb_concourse_virtual_server_ip_address
+}
