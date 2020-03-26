@@ -9,10 +9,20 @@ resource "nsxt_lb_service" "concourse_lb_service" {
   size              = "SMALL"
 
   depends_on        = ["nsxt_logical_router_link_port_on_tier1.t1_infrastructure_to_t0"]
+
+  tag {
+    scope = "terraform"
+    tag   = var.environment_name
+  }
 }
 
 resource "nsxt_ns_group" "concourse_ns_group" {
   display_name = "concourse_ns_group"
+
+  tag {
+    scope = "terraform"
+    tag   = var.environment_name
+  }
 }
 
 resource "nsxt_lb_tcp_monitor" "concourse_lb_tcp_monitor" {
@@ -22,6 +32,11 @@ resource "nsxt_lb_tcp_monitor" "concourse_lb_tcp_monitor" {
   rise_count    = 3
   fall_count    = 3
   timeout      = 15
+
+  tag {
+    scope = "terraform"
+    tag   = var.environment_name
+  }
 }
 
 resource "nsxt_lb_pool" "concourse_lb_pool" {
@@ -42,10 +57,19 @@ resource "nsxt_lb_pool" "concourse_lb_pool" {
     }
   }
 
+  tag {
+    scope = "terraform"
+    tag   = var.environment_name
+  }
 }
 
 resource "nsxt_lb_fast_tcp_application_profile" "tcp_profile" {
   display_name = "concourse_fast_tcp_profile"
+
+  tag {
+    scope = "terraform"
+    tag   = var.environment_name
+  }
 }
 
 resource "nsxt_lb_tcp_virtual_server" "concourse_lb_virtual_server" {
@@ -55,12 +79,22 @@ resource "nsxt_lb_tcp_virtual_server" "concourse_lb_virtual_server" {
   ip_address                 = "${var.nsxt_lb_concourse_virtual_server_ip_address}"
   ports                       = ["443","8443","8844"]
   pool_id                    = "${nsxt_lb_pool.concourse_lb_pool.id}"
+
+  tag {
+    scope = "terraform"
+    tag   = var.environment_name
+  }
 }
 
 variable "nsxt_lb_concourse_virtual_server_ip_address" {
   default     = ""
   description = "IP Address for concourse loadbalancer"
   type        = "string"
+
+  tag {
+    scope = "terraform"
+    tag   = var.environment_name
+  }
 }
 
 output "concourse_url" {
