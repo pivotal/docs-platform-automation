@@ -83,14 +83,15 @@ resources:
 
 jobs:
 <%
-  Config = Struct.new(:paving_name, :iaas, :stemcell_glob, :tag)
+  Config = Struct.new(:iaas, :opsman_glob, :stemcell_glob, :tag)
 
   [
-    Config.new("gcp", "gcp", "light*google*", []),
-    Config.new("aws", "aws", "light*aws*", []),
-    Config.new("azure", "azure", "*azure*", []),
+    Config.new("gcp", "*gcp*.yml", "light*google*", []),
+    Config.new("aws", "*aws*.yml", "light*aws*", []),
+    Config.new("azure", "*azure*.yml", "*azure*", []),
+    Config.new("nsxt", "*vsphere*.ova", "*vsphere*", ["openstack"]),
   ].each do |config|
-    iaas = config.paving_name
+    iaas = config.iaas
 %>
 - name: create-opsman-<%= iaas %>
   serial_groups: [ install-<%= iaas %> ]
@@ -100,20 +101,30 @@ jobs:
     - get: opsman-image
       params:
         globs:
-        - '*<%= config.iaas %>*.yml'
+        - "<%= config.opsman_glob %>"
+      tags: <%= config.tag.inspect %>
     - get: paving
+      tags: <%= config.tag.inspect %>
     - get: platform-automation-tasks
       params:
         unpack: true
+      tags: <%= config.tag.inspect %>
     - get: platform-automation-image
       params:
         unpack: true
+      tags: <%= config.tag.inspect %>
     - get: deployments
+      tags: <%= config.tag.inspect %>
     - get: ci
+      tags: <%= config.tag.inspect %>
     - get: docs-platform-automation
+      tags: <%= config.tag.inspect %>
     - get: lock
+      tags: <%= config.tag.inspect %>
   - put: lock
+    tags: <%= config.tag.inspect %>
   - task: run-terraform
+    tags: <%= config.tag.inspect %>
     config:
       platform: linux
       image_resource:
@@ -201,12 +212,13 @@ jobs:
 
     ensure:
       put: deployments
+      tags: <%= config.tag.inspect %>
       params:
         rebase: true
         repository: deployments
-
   - &generate-config
     task: generate-config
+    tags: <%= config.tag.inspect %>
     config:
       platform: linux
       image_resource:
@@ -249,6 +261,7 @@ jobs:
           echo "Config generation nominal"
 
   - task: create-vm
+    tags: <%= config.tag.inspect %>
     file: platform-automation-tasks/tasks/create-vm.yml
     params:
       RECREATE: true
@@ -258,6 +271,7 @@ jobs:
     ensure:
       do:
       - task: state-file
+        tags: <%= config.tag.inspect %>
         file: platform-automation-tasks/tasks/make-git-commit.yml
         image: platform-automation-image
         params:
@@ -270,6 +284,7 @@ jobs:
           repository: deployments
           file-source: generated-state
       - put: deployments
+        tags: <%= config.tag.inspect %>
         params:
           rebase: true
           repository: repository-commit
@@ -281,20 +296,29 @@ jobs:
     - get: platform-automation-image
       params:
         unpack: true
+      tags: <%= config.tag.inspect %>
     - get: deployments
+      tags: <%= config.tag.inspect %>
     - get: concourse-bosh-deployment
+      tags: <%= config.tag.inspect %>
     - get: docs-platform-automation
+      tags: <%= config.tag.inspect %>
     - get: lock
       trigger: true
       passed: [ create-opsman-<%= iaas %> ]
+      tags: <%= config.tag.inspect %>
     - get: ci
+      tags: <%= config.tag.inspect %>
     - get: paving
+      tags: <%= config.tag.inspect %>
     - get: ubuntu-xenial-stemcell
       params:
         globs: [ "<%= config.stemcell_glob %>" ]
+      tags: <%= config.tag.inspect %>
   - *generate-config
 
   - &download-bosh-releases
+    tags: <%= config.tag.inspect %>
     task: download-all-bosh-releases
     image: platform-automation-image
     config:
@@ -326,6 +350,7 @@ jobs:
           xargs wget -nc --content-disposition -P releases
 
   - task: deploy-it
+    tags: <%= config.tag.inspect %>
     image: platform-automation-image
     config:
       inputs:
@@ -516,21 +541,29 @@ jobs:
   plan:
   - in_parallel:
     - get: deployments
+      tags: <%= config.tag.inspect %>
     - get: ci
+      tags: <%= config.tag.inspect %>
     - get: platform-automation-image
       params:
         unpack: true
+      tags: <%= config.tag.inspect %>
     - get: docs-platform-automation
+      tags: <%= config.tag.inspect %>
     - get: lock
       passed: [ deploy-and-test-<%= iaas %> ]
       trigger: true
+      tags: <%= config.tag.inspect %>
     - get: platform-automation-tasks
       params:
         unpack: true
+      tags: <%= config.tag.inspect %>
     - get: paving
+      tags: <%= config.tag.inspect %>
   - *generate-config
   - try:
       task: delete-deployment
+      tags: <%= config.tag.inspect %>
       image: platform-automation-image
       file: ci/cpa/delete-deployment/task.yml
       params:
@@ -538,17 +571,20 @@ jobs:
         OM_TARGET: opsmanager.cpa-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-installation
+      tags: <%= config.tag.inspect %>
       image: platform-automation-image
       file: platform-automation-tasks/tasks/delete-installation.yml
       params:
         OM_TARGET: opsmanager.cpa-<%= iaas %>.<%= iaas %>.platform-automation.cf-app.com
   - try:
       task: delete-opsman-vm
+      tags: <%= config.tag.inspect %>
       file: platform-automation-tasks/tasks/delete-vm.yml
       image: platform-automation-image
       ensure:
         do:
         - task: state-file
+          tags: <%= config.tag.inspect %>
           file: platform-automation-tasks/tasks/make-git-commit.yml
           image: platform-automation-image
           params:
@@ -561,11 +597,13 @@ jobs:
             repository: deployments
             file-source: generated-state
         - put: deployments
+          tags: <%= config.tag.inspect %>
           params:
             rebase: true
             repository: repository-commit
   - try:
       task: delete-terraform
+      tags: <%= config.tag.inspect %>
       config:
         platform: linux
         image_resource:
@@ -623,9 +661,11 @@ jobs:
       params:
         rebase: true
         repository: deployments
+      tags: <%= config.tag.inspect %>
   # leftovers is purely a CI tool
   # it is not officially supported by VMware
   - task: leftovers
+    tags: <%= config.tag.inspect %>
     attempts: 5
     file: ci/tasks/leftovers.yml
     params:
@@ -642,6 +682,7 @@ jobs:
       DRY_RUN: false
       NO_CONFIRM: true
   - task: remove state files
+    tags: <%= config.tag.inspect %>
     file: ci/tasks/delete-state-file.yml
     params:
       DEPLOYMENT: cpa-<%= iaas %>
