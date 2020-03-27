@@ -873,7 +873,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
-   [Creating a Product Config File][product-configuration-from-tanzu-network].
+   [Creating a Product Config File][product-configuration-from-pivnet].
 - [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
   This allows you to define an expected `shasum` that will validate the calculated shasum of the provided
   `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`][upload-product]
