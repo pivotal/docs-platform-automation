@@ -235,7 +235,7 @@ Released March 25, 2020
   and the AWS heavy stemcell,
   this will resolve your issue.
   Please remove any custom globbing that might've been added to circumvent this issue.
-  For example, `stemcell-iaas: light*aws` should just be `stemcell-iaas: aws` now. 
+  For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now. 
 - Heavy stemcells could not be downloaded. 
   Support has now been added.
   Define `stemcell-heavy: true` in your `download-product` config file.
