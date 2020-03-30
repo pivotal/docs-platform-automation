@@ -1,6 +1,6 @@
 resource "nsxt_lb_service" "concourse_lb_service" {
   description  = "concourse lb_service"
-  display_name = "${var.environment_name}_lb_service"
+  display_name = "${var.environment_name}_concourse_lb_service"
 
   enabled           = true
   logical_router_id = nsxt_logical_tier1_router.t1_infrastructure.id
@@ -17,7 +17,7 @@ resource "nsxt_lb_service" "concourse_lb_service" {
 }
 
 resource "nsxt_ns_group" "concourse_ns_group" {
-  display_name = "concourse_ns_group"
+  display_name = "${var.environment_name}_concourse_ns_group"
 
   tag {
     scope = "terraform"
@@ -26,7 +26,7 @@ resource "nsxt_ns_group" "concourse_ns_group" {
 }
 
 resource "nsxt_lb_tcp_monitor" "concourse_lb_tcp_monitor" {
-  display_name = "concourse_lb_tcp_monitor"
+  display_name = "${var.environment_name}_concourse_lb_tcp_monitor"
   interval     = 5
   monitor_port  = 443
   rise_count    = 3
@@ -41,7 +41,7 @@ resource "nsxt_lb_tcp_monitor" "concourse_lb_tcp_monitor" {
 
 resource "nsxt_lb_pool" "concourse_lb_pool" {
   description              = "concourse_lb_pool provisioned by Terraform"
-  display_name             = "concourse_lb_pool"
+  display_name             = "${var.environment_name}_concourse_lb_pool"
   algorithm                = "WEIGHTED_ROUND_ROBIN"
   min_active_members       = 1
   tcp_multiplexing_enabled = false
@@ -64,7 +64,7 @@ resource "nsxt_lb_pool" "concourse_lb_pool" {
 }
 
 resource "nsxt_lb_fast_tcp_application_profile" "tcp_profile" {
-  display_name = "concourse_fast_tcp_profile"
+  display_name = "${var.environment_name}_concourse_fast_tcp_profile"
 
   tag {
     scope = "terraform"
@@ -74,7 +74,7 @@ resource "nsxt_lb_fast_tcp_application_profile" "tcp_profile" {
 
 resource "nsxt_lb_tcp_virtual_server" "concourse_lb_virtual_server" {
   description                = "concourse lb_virtual_server provisioned by terraform"
-  display_name               = "concourse virtual server"
+  display_name               = "${var.environment_name}_concourse virtual server"
   application_profile_id     = "${nsxt_lb_fast_tcp_application_profile.tcp_profile.id}"
   ip_address                 = "${var.nsxt_lb_concourse_virtual_server_ip_address}"
   ports                       = ["443","8443","8844"]
@@ -90,11 +90,6 @@ variable "nsxt_lb_concourse_virtual_server_ip_address" {
   default     = ""
   description = "IP Address for concourse loadbalancer"
   type        = "string"
-
-  tag {
-    scope = "terraform"
-    tag   = var.environment_name
-  }
 }
 
 output "concourse_url" {
