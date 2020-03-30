@@ -3,7 +3,7 @@ vmextensions-configuration:
     cloud_properties:
       nsxt:
         ns_groups:
-        - "concourse_ns_group"
+        - ((environment_name))_concourse_ns_group
   - name: increased-disk
     cloud_properties:
       disk: 512000
