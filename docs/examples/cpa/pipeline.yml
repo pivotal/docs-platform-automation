@@ -205,7 +205,7 @@ jobs:
           # code_snippet cpa-terraform-vars end bash
 
           # code_snippet cpa-terraform-concourse-url start bash
-          export CONCOURSE_URL=$(terraform output concourse_url)
+          export CONCOURSE_URL="$(terraform output concourse_url)"
           # code_snippet cpa-terraform-concourse-url end bash
 
           terraform output concourse_url > concourse-url.txt
