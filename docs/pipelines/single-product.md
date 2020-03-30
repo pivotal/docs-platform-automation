@@ -52,7 +52,7 @@ These can either be uploaded manually or from the [reference resources pipeline]
 
 {% include "./.export_installation_note.md" %}
 
-{% code_snippet 'examples', 'single-product-export-installation' %}
+{% code_snippet 'reference', 'export-installation-resource-usage' %}
 
 ### Configured Resources
 
