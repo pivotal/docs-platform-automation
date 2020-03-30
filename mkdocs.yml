@@ -16,6 +16,7 @@ plugins:
     dependent_sections:
       tasks: "../platform-automation"
       examples: "./docs/examples"
+      reference: "../docs-platform-automation-reference-pipeline-config"
 markdown_extensions:
 - codehilite:
     linenums: true

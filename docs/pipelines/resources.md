@@ -37,29 +37,11 @@ retrieve task dependencies.
 The pipeline requires configuration for the [download-product](../tasks.md#download-product) task.
 Below are examples that can be used.
 
-``` yaml tab="Healthwatch"
-{% include './examples/download-product-configs/healthwatch.yml' %}
-```
-
-``` yaml tab="TAS"
-{% include './examples/download-product-configs/pas.yml' %}
-```
-
-``` yaml tab="TAS Windows"
-{% include './examples/download-product-configs/pas-windows.yml' %}
-```
-
-``` yaml tab="OpsMan"
-{% include './examples/download-product-configs/opsman.yml' %}
-```
-
-``` yaml tab="PKS"
-{% include './examples/download-product-configs/pks.yml' %}
-```
-
-``` yaml tab="Telemetry"
-{% include './examples/download-product-configs/telemetry.yml' %}
-```
+{% code_snippet 'reference', 'download-healthwatch-from-pivnet-usage', 'Healthwatch' %}
+{% code_snippet 'reference', 'download-ops-manager-from-pivnet-usage', 'Ops Manager' %}
+{% code_snippet 'reference', 'download-pks-from-pivnet-usage', 'PKS' %}
+{% code_snippet 'reference', 'download-tas-from-pivnet-usage', 'TAS' %}
+{% code_snippet 'reference', 'download-tas-windows-from-pivnet-usage', 'TAS Windows' %}
 
 ## Pipeline Components
 
@@ -69,7 +51,7 @@ This custom resource type uses the [pivnet-resource][pivnet-resource]
 to pull down and separate both pieces of the Platform Automation Toolkit product (tasks and image)
 so they can be stored separately in S3.
 
-{% code_snippet 'examples', 'resources-pipeline-resource-types' %}
+{% code_snippet 'reference', 'resources-pipeline-resource-types' %}
 
 ### Product Resources
 
@@ -77,7 +59,7 @@ S3 resources where Platform Automation Toolkit [`download-product`][download-pro
 Each product/stemcell needs a separate resource defined.
 Platform Automation Toolkit will not create these resources for you.
 
-{% code_snippet 'examples', 'resources-pipeline-products' %}
+{% code_snippet 'reference', 'resources-pipeline-products' %}
 
 ### Platform Automation Toolkit Resources
 
@@ -88,7 +70,7 @@ and will be used to download all other products from Tanzu Network.
 that will be stored for internet-restricted, or faster, access.
 Platform Automation Toolkit will not create this resource for you.
 
-{% code_snippet 'examples', 'resources-pipeline-platform-automation' %}
+{% code_snippet 'reference', 'resources-pipeline-platform-automation' %}
 
 ### Configured Resources
 
@@ -97,11 +79,11 @@ to your configurations repo.
 Platform Automation Toolkit will not create these resources for you.
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
 
-{% code_snippet 'examples', 'resources-pipeline-configurations' %}
+{% code_snippet 'reference', 'resources-pipeline-configurations' %}
 
 ### Trigger Resources
 
-{% code_snippet 'examples', 'resources-pipeline-triggers' %}
+{% code_snippet 'reference', 'resources-pipeline-triggers' %}
 
 ### Secrets Handling
 
@@ -111,14 +93,14 @@ Concourse supports several [credential managers][concourse-secrets-handling] nat
 The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
 to load secrets from your external configuration files.
 
-{% code_snippet 'examples', 'resources-pipeline-prepare-tasks-with-secrets' %}
+{% code_snippet 'reference', 'resources-pipeline-prepare-tasks-with-secrets' %}
 
 ### Jobs
 
 Each job corresponds to a "box" on the visual representation of your Concourse pipeline.
 These jobs consume resources defined above.
 
-{% code_snippet 'examples', 'resources-pipeline-jobs' %}
+{% code_snippet 'reference', 'resources-pipeline-jobs' %}
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}
