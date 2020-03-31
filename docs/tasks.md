@@ -345,7 +345,7 @@ This avoids breaking current pipelines.
 {% code_snippet 'tasks', 'download-product', 'Task' %}
 {% code_snippet 'tasks', 'download-product-script', 'Implementation' %}
 {% code_snippet 'reference', 'download-product-usage', 'Tanzu Network Usage' %}
-{% code_snippet 'reference', 'download-product-usage-s3', 'S3 Usage' %}
+{% code_snippet 'reference', 'download-product-s3-usage', 'S3 Usage' %}
 {% code_snippet 'examples', 'download-product-usage-gcs', 'GCS Usage' %}
 {% code_snippet 'examples', 'download-product-usage-azure', 'Azure Usage' %}
 
@@ -408,7 +408,7 @@ For example:
 
 {% code_snippet 'tasks', 'download-product-s3', 'Task' %}
 {% code_snippet 'tasks', 'download-product-s3-script', 'Implementation' %}
-{% code_snippet 'reference', 'download-product-usage-s3', 'Usage' %}
+{% code_snippet 'reference', 'download-product-s3-usage', 'Usage' %}
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
