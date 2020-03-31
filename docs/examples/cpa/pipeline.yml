@@ -427,12 +427,12 @@ jobs:
 
           # code_snippet cpa-upload-releases start bash
           # upload releases
-          bosh upload-release concourse*.tgz
-          bosh upload-release bpm*.tgz
-          bosh upload-release postgres*.tgz
-          bosh upload-release uaa*.tgz
-          bosh upload-release credhub*.tgz
-          bosh upload-release backup-and-restore-sdk*.tgz
+          bosh upload-release concourse-release*.tgz
+          bosh upload-release bpm-release*.tgz
+          bosh upload-release postgres-release*.tgz
+          bosh upload-release uaa-release*.tgz
+          bosh upload-release credhub-release*.tgz
+          bosh upload-release backup-and-restore-sdk-release*.tgz
           # code_snippet cpa-upload-releases end bash
 
           # code_snippet cpa-upload-stemcell start bash
