@@ -3,6 +3,12 @@ This topic describes Platform Automation Toolkit dependencies and semantic versi
 ## External Dependencies
 Platform Automation Toolkit is designed to work with these dependencies.
 
+<style>
+    sup {
+        background-color: white;
+    }
+</style>
+
 <table>
 <thead>
     <tr>
@@ -14,31 +20,43 @@ Platform Automation Toolkit is designed to work with these dependencies.
 </thead>
 <tbody>
     <tr>
+        <td>v4.3.0</td>
+        <td><a href="https://concourse-ci.org"><code>v4.0.0+</code></a><sup>1</sup></td>
+        <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
+        <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
+    </tr>
+    <tr>
         <td>v4.2.0</td>
-        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://concourse-ci.org"><code>v4.0.0+</code></a></td>
         <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
     <tr>
         <td>v4.1.0</td>
-        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://concourse-ci.org"><code>v4.0.0+</code></a></td>
         <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
     <tr>
         <td>v4.0.0</td>
-        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://concourse-ci.org"><code>v4.0.0+</code></a></td>
         <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
     <tr>
         <td>v3.0.0</td>
-        <td><a href="https://concourse-ci.org"><code>v3.14.1+</a></td>
+        <td><a href="https://concourse-ci.org"><code>v4.0.0+</code></a></td>
         <td><a href="https://network.pivotal.io/products/ops-manager/">v2.3+</a></td>
         <td><a href="https://github.com/pivotal-cf/pivnet-resource">v0.31.15</a></td>
     </tr>
 </tbody>
 </table>
+
+<sup>1</sup> 
+    [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] replaces [`credhub-interpolate`][credhub-interpolate] in Concourse 5.x+ _only_. 
+    If using Concourse 4.x+, continue using `credhub-interpolate`.
+    If using Concourse 5.x+, it is strongly recommended to switch to `prepare-tasks-with-secrets`.
+    For more information about secrets handling, reference the [Secrets Handling Page][secrets-handling].
 
 {% include "./.opsman_filename_change_note.md" %}
 
