@@ -681,6 +681,23 @@ jobs:
       FILTER: cpa-<%= iaas %>
       DRY_RUN: false
       NO_CONFIRM: true
+  - task: leftovers
+    tags: <%= config.tag.inspect %>
+    attempts: 5
+    file: ci/tasks/leftovers.yml
+    params:
+      BBL_IAAS: <%= iaas %>
+      BBL_AWS_ACCESS_KEY_ID: ((s3.access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((s3.secret_access_key))
+      BBL_AWS_REGION: us-east-2
+      BBL_AZURE_CLIENT_ID: ((azure.client_id))
+      BBL_AZURE_CLIENT_SECRET: ((azure.client_secret))
+      BBL_AZURE_TENANT_ID: ((azure.tenant_id))
+      BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+      FILTER: engine-<%= iaas %>
+      DRY_RUN: false
+      NO_CONFIRM: true
   - task: remove state files
     tags: <%= config.tag.inspect %>
     file: ci/tasks/delete-state-file.yml
