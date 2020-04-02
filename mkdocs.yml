@@ -32,7 +32,6 @@ nav:
 - Getting Started: getting-started.md
 - Reference Pipelines:
   - Retrieving External Dependencies: pipelines/resources.md
-  - Ops Manager + Single Product: pipelines/single-product.md
   - Ops Manager + Multiple Products: pipelines/multiple-products.md
 - How-to Guides:
   - Installing Ops Manager: how-to-guides/installing-opsman.md
