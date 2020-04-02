@@ -567,7 +567,7 @@ Staged a product to the Ops Manager specified in the config file.
 
 {% code_snippet 'tasks', 'stage-product', 'Task' %}
 {% code_snippet 'tasks', 'stage-product-script', 'Implementation' %}
-{% code_snippet 'examples', 'stage-product-usage', 'Usage' %}
+{% code_snippet 'reference', 'stage-product-usage', 'Usage' %}
 
 ### staged-config
 Downloads the configuration for a product from Ops Manager.
