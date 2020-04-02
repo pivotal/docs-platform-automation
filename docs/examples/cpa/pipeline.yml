@@ -89,7 +89,7 @@ jobs:
     Config.new("gcp", "*gcp*.yml", "light*google*", []),
     Config.new("aws", "*aws*.yml", "light*aws*", []),
     Config.new("azure", "*azure*.yml", "*azure*", []),
-    Config.new("nsxt", "*vsphere*.ova", "*vsphere*", ["openstack"]),
+    Config.new("nsxt", "*vsphere*.ova", "*vsphere*", ["vsphere-pez"]),
   ].each do |config|
     iaas = config.iaas
 %>
