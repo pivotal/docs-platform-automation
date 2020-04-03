@@ -220,14 +220,14 @@ Delete the Ops Manager Installation
 
 {% code_snippet 'tasks', 'delete-installation', 'Task' %}
 {% code_snippet 'tasks', 'delete-installation-script', 'Implementation' %}
-{% code_snippet 'examples', 'delete-installation-usage', 'Usage' %}
+{% code_snippet 'reference', 'delete-installation-usage', 'Usage' %}
 
 ### delete-vm
 Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 {% code_snippet 'tasks', 'delete-vm', 'Task' %}
 {% code_snippet 'tasks', 'delete-vm-script', 'Implementation' %}
-{% code_snippet 'examples', 'delete-vm-usage', 'Usage' %}
+{% code_snippet 'reference', 'delete-vm-usage', 'Usage' %}
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
