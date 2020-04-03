@@ -33,7 +33,7 @@
   image: platform-automation-image
   file: platform-automation-tasks/tasks/import-installation.yml
   input_mapping:
-    env: interpolated-creds
+    env: configuration
   params:
     ENV_FILE: ((foundation))/env/env.yml
     INSTALLATION_FILE: installation-*.zip
@@ -78,8 +78,8 @@
     CONFIG_FILE: healthwatch.yml
   input_mapping:
     product: healthwatch-product
-    env: interpolated-creds
-    config: interpolated-creds
+    env: configuration
+    config: configuration
 # code_snippet stage-configure-apply-usage end
 # code_snippet download-product-usage-gcs start yaml
 - task: download-pas
@@ -89,7 +89,7 @@
     CONFIG_FILE: download-product/pas.yml
     SOURCE: gcs
   input_mapping:
-    config: interpolated-creds
+    config: configuration
   output_mapping:
     downloaded-product: pas-product
     downloaded-stemcell: pas-stemcell
@@ -102,7 +102,7 @@
     CONFIG_FILE: download-product/pas.yml
     SOURCE: azure
   input_mapping:
-    config: interpolated-creds
+    config: configuration
   output_mapping:
     downloaded-product: pas-product
     downloaded-stemcell: pas-stemcell
@@ -112,7 +112,7 @@
   image: platform-automation-image
   file: platform-automation-tasks/tasks/delete-installation.yml
   input_mapping:
-    env: interpolated-creds
+    env: configuration
 # code_snippet delete-installation-usage end
 # code_snippet delete-vm-usage start yaml
 - task: delete-vm
