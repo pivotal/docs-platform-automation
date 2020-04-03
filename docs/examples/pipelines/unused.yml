@@ -107,25 +107,6 @@
     downloaded-product: pas-product
     downloaded-stemcell: pas-stemcell
 # code_snippet download-product-usage-azure end
-# code_snippet delete-installation-usage start yaml
-- task: delete-installation
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/delete-installation.yml
-  input_mapping:
-    env: configuration
-# code_snippet delete-installation-usage end
-# code_snippet delete-vm-usage start yaml
-- task: delete-vm
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/delete-vm.yml
-  input_mapping:
-    config: configuration
-  ensure:
-    do:
-      - put: state
-        params:
-          file: generated-state/state.yml
-# code_snippet delete-vm-usage end
 # code_snippet staged-config-usage start yaml
 - task: staged-config
   image: platform-automation-image
