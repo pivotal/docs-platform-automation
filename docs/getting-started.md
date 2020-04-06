@@ -14,6 +14,8 @@ We have in-depth procedures for deploying a new Ops Manager and
 taking over management of an existing Ops Manager
 with Platform Automation:
 
+- For more information about deploying Concourse with Credhub and UAA,
+  see [Install Concourse for Platform Automation][concourse-for-pa].
 - For more information about deploying Platform Automation
   with a new Ops Manager, see [Installing Ops Manager][install-how-to].
 - For more information about deploying Platform Automation
