@@ -41,6 +41,10 @@ on how to start using Platform Automation.
       Pivotal Platform Automation is a set of tools to use alongside other tools,
       rather than a comprehensive solution.
 
+* A documented and supported deployment of Concourse CI to use with Platform Automation Toolkit.
+  The [Concourse for Platform Automation docs][concourse-for-pa] provide a step-by-step tutorial for how to get started.
+  This approach to deploying Concourse uses the BOSH Director deployed by Ops Manager to deploy and maintain Concourse, Credhub, and UAA.
+
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
 !!! info "Transitioning from PCF Pipelines"
