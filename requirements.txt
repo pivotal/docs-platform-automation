@@ -1,5 +1,5 @@
 mkdocs
-mkdocs-material
+mkdocs-material<5.0.0
 pygments
 git+https://github.com/pivotal/mkdocs-plugins.git#egg=mkdocs-jinja2&subdirectory=mkdocs-jinja2
 git+https://github.com/pivotal/mkdocs-pivotal-theme#egg=mkdocs-pivotal
