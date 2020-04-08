@@ -41,7 +41,6 @@ Below are examples that can be used.
 {% code_snippet 'reference', 'download-ops-manager-from-pivnet-usage', 'Ops Manager' %}
 {% code_snippet 'reference', 'download-pks-from-pivnet-usage', 'PKS' %}
 {% code_snippet 'reference', 'download-tas-from-pivnet-usage', 'TAS' %}
-{% code_snippet 'reference', 'download-tas-windows-from-pivnet-usage', 'TAS Windows' %}
 
 ## Pipeline Components
 
