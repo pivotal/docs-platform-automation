@@ -72,10 +72,9 @@ See the [`om` GitHub page][om] for a full list of supported environment variable
 
 ### Disable Verifiers
 
-In cases where verifiers are failing incorrectly,
-it will be necessary to disable those verifiers in order to apply changes.
-Depending on the failing verifier, `om` has commands to disable them:
-`disable-director-verifiers` and `disable-product-verifiers`.
+In cases where verifiers are incorrectly failing for known reasons,
+those specific verifiers should be disabled in order to apply changes.
+`om` has commands to disable individual verifiers:
 
 For director verifiers:
 ```bash
