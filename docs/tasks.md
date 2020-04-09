@@ -12,6 +12,8 @@ Use `--help` for more information. To learn more see the [running-commands-local
 
 Triggers an install on the Ops Manager described by the auth file.
 
+{% include '.disable-verifiers.md' %}
+
 {% code_snippet 'tasks', 'apply-changes', 'Task' %}
 {% code_snippet 'tasks', 'apply-changes-script', 'Implementation' %}
 {% code_snippet 'examples', 'apply-changes-usage', 'Usage' %}
@@ -19,6 +21,8 @@ Triggers an install on the Ops Manager described by the auth file.
 ### apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
+
+{% include '.disable-verifiers.md' %}
 
 {% code_snippet 'tasks', 'apply-director-changes', 'Task' %}
 {% code_snippet 'tasks', 'apply-director-changes-script', 'Implementation' %}
@@ -557,6 +561,7 @@ This is an _advanced task_.
 Stage a product to Ops Manager, configure that product, and apply changes
 only to that product without applying changes to the rest of the foundation.
 
+{% include '.disable-verifiers.md' %}
 
 {% code_snippet 'tasks', 'stage-configure-apply', 'Task' %}
 {% code_snippet 'tasks', 'stage-configure-apply-script', 'Implementation' %}
