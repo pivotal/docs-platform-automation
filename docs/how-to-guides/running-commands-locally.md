@@ -42,9 +42,9 @@ To execute commands in Docker:
     --product-name ${PRODUCT_SLUG} --include-placeholders
 ```
 
-    `${ENV_FILE}` is the [environment file][env] required for all tasks.
-    `${PRODUCT_SLUG}` is the name of the product downloaded from [pivnet][pivnet].
-    The resulting file can then be parameterized, saved, and committed to a config repo.
+`${ENV_FILE}` is the [environment file][env] required for all tasks.
+`${PRODUCT_SLUG}` is the name of the product downloaded from [pivnet][pivnet].
+The resulting file can then be parameterized, saved, and committed to a config repo.
 
 ### Retrieving Director Configuration
 
