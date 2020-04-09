@@ -22,7 +22,8 @@ markdown_extensions:
     linenums: true
 - sane_lists
 - admonition
-- pymdownx.superfences
+- pymdownx.superfences:
+    legacy_tab_classes: true
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
