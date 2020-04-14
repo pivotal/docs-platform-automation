@@ -17,11 +17,15 @@ plugins:
       tasks: "../platform-automation"
       examples: "./docs/examples"
       reference: "../docs-platform-automation-reference-pipeline-config"
+      paving: "../paving"
 markdown_extensions:
 - codehilite:
     linenums: true
 - sane_lists
 - admonition
+- pymdownx.extra
+- pymdownx.snippets:
+    check_paths: true
 - pymdownx.superfences:
     legacy_tab_classes: true
 extra_javascript:
