@@ -6,20 +6,8 @@ Extracting a director configuration file, an externalized config that lives outs
 
 
 ## Prerequisites
-To extract the configuration for an director, you will first need to do the following:
-
-1. Create the infrastructure for your installation. To make the infrastructure creation easier, consider using terraform to create the resources needed:
-
-      1. [terraforming-aws][terraforming-aws]
-      1. [terraforming-gcp][terraforming-gcp]
-      1. [terraforming-azure][terraforming-azure]
-      1. [terraforming-vsphere][terraforming-vsphere]
-      1. [terraforming-openstack][terraforming-openstack]
-
-1. Install Ops Manager using the [create-vm][create-vm] task
-
-1. (Optional) Configure Ops Manager _manually_ within the Ops Manager UI (Instructions for doing so can be found
-using the [Official Ops Manager Documentation][opsman-install-docs])
+To extract the configuration for a director, you will first need an Ops Manager vm.
+For detailed instructions, follow the [Installing Ops Manager][install-how-to] how-to guide.
 
 ## Extracting Configuration
 [om][om] has a command called [staged-director-config][staged-director-config], which is used to extract
