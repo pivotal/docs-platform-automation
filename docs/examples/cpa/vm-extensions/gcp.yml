@@ -1,0 +1,8 @@
+vmextensions-configuration:
+- name: concourse-lb
+  cloud_properties:
+    target_pool: ((environment_name))-concourse
+- name: increased-disk
+  cloud_properties:
+    root_disk_size_gb: 500
+    root_disk_type: pd-ssd

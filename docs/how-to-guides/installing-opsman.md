@@ -92,7 +92,7 @@ and uniquely identifies an Ops Manager image to download.
 
 An example `download-ops-manager.yml` is shown below.
 
-Write an `download-ops-manager.yml` for your Ops Manager.
+Create a `download-ops-manager.yml` for the IaaS you are using.
 
 {% include ".opsman-config.md" %}
 
@@ -104,7 +104,7 @@ git commit -m "Add download-ops-manager file for foundation"
 git push
 ```
 
-Now that the download-ops-manager file we need is in our git remote,
+Now that the download-ops-manager file we need is in git,
 we need to add a resource to tell Concourse how to get it as `config`.
 
 Since this is (probably) a private repo,
@@ -115,7 +115,7 @@ for creating a read-only deploy key.
 Then, put the private key in Credhub so we can use it in our pipeline:
 
 ```bash
-# note the starting space
+# note the space at the beginning of the next line
  credhub set \
          --name /concourse/your-team-name/plat-auto-pipes-deploy-key \
          --type ssh \
@@ -211,7 +211,7 @@ so Concourse's native integration can retrieve them
 and pass them as configuration to the `credhub-interpolate` task.
 
 ```bash
-# note the starting space throughout
+# note the starting spaces at the beginning of the credhub set lines
  credhub set \
         -n /concourse/your-team-name/credhub-client \
         -t value -v your-credhub-client
@@ -246,23 +246,102 @@ and you should use whichever method is right for you and your setup.
 
 **Terraform**:
 
-These are open source terraforming scripts
+These are open source terraforming files
 we recommend for use, as they are maintained by VMware.
-These scripts are found in open source repos under the `pivotal-cf` org in GitHub.
+These files are found in the open source [`paving`][paving] repo on GitHub.
 
-- [terraforming-aws][terraforming-aws]
-- [terraforming-azure][terraforming-azure]
-- [terraforming-gcp][terraforming-gcp]
-- [terraforming-openstack][terraforming-openstack]
-- [terraforming-vsphere][terraforming-vsphere]
+This is the recommended way to get these resources set up
+as the output can directly be used in subsequent steps as property configuration.
 
-Each of these repos contain instructions in their respective `README`s
-designed to get you started. Most of the manual keys that you need to fill out
+The `paving` repo provides instructions for use in the `README`.
+Any manual manual variables that you need to fill out
 will be in a [terraform.tfvars][terraform-vars] file
-(for more specific instruction, please consult the `README`).
+in the folder for the IaaS you are using
+(for more specific instruction, please consult the `README` for that IaaS).
 
-If there are specific aspects of the terraforming repos that do not work for you,
-you can overwrite _some_ properties using an [override.tf][terraform-override] file.
+If there are specific aspects of the `paving` repo that does not work for you,
+you can override _some_ properties using an [override.tf][terraform-override] file.
+
+Follow these steps to use the `paving` repository:
+
+1. Clone the repo on the command line:
+
+    ```bash
+    cd ../
+    git clone https://github.com/pivotal/paving.git
+    ```
+
+1. In the checked out repository there are directories for each IaaS.
+   Copy the terraform templates for the infrastructure of your choice
+   to a new directory outside of the paving repo, so you can modify it:
+
+    ```bash
+    # cp -Ra paving/${IAAS} paving-${IAAS}
+    mkdir paving-${IAAS}
+    cp -a paving/$IAAS/. paving-$IAAS
+    cd paving-${IAAS} 
+    ```
+
+    `IAAS` must be set to match one of the infrastructure directories
+    at the top level of the `paving` repo - for example,
+    `aws`, `azure`, `gcp`, or `nsxt`.
+
+1. Within the new directory, the `terraform.tfvars.example` file
+   shows what values are required for that IaaS.
+   Remove the `.example` from the filename,
+   and replace the examples with real values.
+
+1. Initialize Terraform which will download the required IaaS providers.
+
+    ```bash
+    terraform init
+    ```
+
+1. Run `terraform refresh` to update the state with what currently exists on the IaaS.
+
+    ```bash
+    terraform refresh \
+      -var-file=terraform.tfvars
+    ```
+
+1. Next, you can run `terraform plan`
+   to see what changes will be made to the infrastructure on the IaaS.
+
+    ```bash
+    terraform plan \
+      -out=terraform.tfplan \
+      -var-file=terraform.tfvars
+    ```
+
+1. Finally, you can run `terraform apply`
+   to create the required infrastructure on the IaaS.
+
+    ```bash
+    terraform apply \
+      -parallelism=5 \
+      terraform.tfplan 
+    ```
+
+1. Save off the output from `terraform output stable_config`
+   into the `vars.yml` file in `your-repo-name`:
+
+    ```bash
+    terraform output stable_config >> ../your-repo-name/vars.yml
+    ```
+
+1. Return to your working directory for the post-terraform steps:
+
+    ```bash
+    cd ../your-repo-name
+    ```
+
+1. Commit and push the updated `vars.yml` file:
+
+    ```bash
+    git add vars.yml
+    git commit -m "Update vars.yml with terraform output"
+    git push
+    ```
 
 **Manual Installation**:
 
@@ -284,7 +363,6 @@ Platform Automation Toolkit will do this for you.
 
 _NOTE_: if you need to install an earlier version of Ops Manager,
 select your desired version from the dropdown at the top of the page.
-
 
 ### Creating the Ops Manager VM
 
@@ -343,8 +421,7 @@ Looking over the list of inputs for `create-vm` we still need two required input
 The optional inputs are vars used with the config, so we'll get to those when we do `config`.
 
 Let's start with the config file.
-We'll write an [Ops Manager VM Configuration file][opsman-config]
-to `opsman.yml`.
+We'll write an Ops Manager VM Configuration file to `opsman.yml`.
 
 The properties available vary by IaaS, for example:
 
@@ -353,11 +430,56 @@ The properties available vary by IaaS, for example:
 * ssh key
 * datacenter/availability zone/region
 
+#### Terraform Outputs
+
+If you used the `paving` repository from the [Creating Resources for Your Ops Manager][creating-resources-for-your-ops-manager] section,
+the following steps will result in a filled out `opsman.yml`.
+
+1. Ops Manager needs to be deployed with IaaS specific configuration.
+   Platform Automation Toolkit provides a configuration file format that looks like this:
+
+    Copy and paste the YAML below for your IaaS
+    and save as `opsman.yml`.
+
+    ```yaml tab="AWS"
+    --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
+    ```
+
+    ```yaml tab="Azure"
+    --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
+    ```
+
+    ```yaml tab="GCP"
+    --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
+    ```
+   
+    ```yaml tab="vSphere+NSXT"
+    --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
+    ```
+
+     Where:
+     {: .tightSpacing }
+
+     * The `((parameters))` in these examples map to outputs from the `terraform-outputs.yml`,
+       which can be provided via vars file for YAML interpolation in a subsequent step.
+
+    !!! info "`opsman.yml` for an unlisted IaaS"
+        For a supported IaaS not listed above,
+        reference the [Platform Automation Toolkit docs](https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config).
+
+#### Manual Configuration
+
+If you created your infrastructure manually
+or would like additional configuration options,
+these are the acceptable keys for the `opsman.yml` file for each IaaS.
+
 {% code_snippet 'examples', 'aws-configuration', 'AWS' %}
 {% code_snippet 'examples', 'azure-configuration', 'Azure' %}
 {% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
 {% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
 {% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
+
+#### Using the Ops Manager Config file
 
 Once you have your config file, commit and push it:
 
@@ -369,8 +491,20 @@ git push
 
 The `state` input is a placeholder
 which will be filled in by the `create-vm` task output.
-This will be used later to keep track of the vm so it can be upgraded,
-which you can learn about in the [upgrade-how-to].
+This will be used later to keep track of the VM so it can be upgraded,
+which you can learn about in the [upgrade-how-to][upgrade-how-to].
+
+Add the following to your `resources` section of your `pipeline.yml`
+```yaml
+- name: vars
+  type: git
+  source:
+    uri: ((pipeline-repo))
+    private_key: ((plat-auto-pipes-deploy-key.private_key))
+    branch: master
+```
+
+This will allow `create-vm` to use the variables from `vars.yml` in the `opsman.yml` file.
 
 The `create-vm` task in the `install-opsman` will need to be updated to
 use the `download-product` image,
@@ -393,6 +527,7 @@ jobs:
         globs: ["*tasks*.zip"]
         unpack: true
     - get: config
+    - get: vars
     - task: credhub-interpolate
       image: platform-automation-image
       file: platform-automation-tasks/tasks/credhub-interpolate.yml

@@ -1,0 +1,9 @@
+vmextensions-configuration:
+  - name: concourse-lb
+    cloud_properties:
+      nsxt:
+        ns_groups:
+        - ((environment_name))_concourse_ns_group
+  - name: increased-disk
+    cloud_properties:
+      disk: 512000

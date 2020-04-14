@@ -1,0 +1,15 @@
+vmextensions-configuration:
+- name: concourse-lb
+  cloud_properties:
+    lb_target_groups:
+      - ((environment_name))-concourse-tg-tcp
+      - ((environment_name))-concourse-tg-ssh
+      - ((environment_name))-concourse-tg-credhub
+      - ((environment_name))-concourse-tg-uaa
+    security_groups:
+      - ((environment_name))-concourse-sg
+      - ((platform_vms_security_group_id))
+- name: increased-disk
+  cloud_properties:
+    type: gp2
+    size: 512000

@@ -10,9 +10,11 @@ product-version: 1.2.3
 
 # Optional
 # pivnet-disable-ssl: true  # default - false
-# stemcell-iaas: google     # aws|azure|google|openstack|vsphere
+# stemcell-iaas: aws        # aws|azure|google|openstack|vsphere
                             # will attempt to download the latest
                             # stemcell for the product (if available)
+# stemcell-heavy: true      # will force download of heavy stemcell
+                            # not available on all IaaSes
 # blobstore-bucket: bucket  # if set, product files will have their slug and
                             # version prepended. Set if the product will
                             # ever be stored in a blobstore

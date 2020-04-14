@@ -33,7 +33,7 @@
   image: platform-automation-image
   file: platform-automation-tasks/tasks/import-installation.yml
   input_mapping:
-    env: interpolated-creds
+    env: configuration
   params:
     ENV_FILE: ((foundation))/env/env.yml
     INSTALLATION_FILE: installation-*.zip
@@ -78,39 +78,66 @@
     CONFIG_FILE: healthwatch.yml
   input_mapping:
     product: healthwatch-product
-    env: interpolated-creds
-    config: interpolated-creds
+    env: configuration
+    config: configuration
 # code_snippet stage-configure-apply-usage end
-      # code_snippet download-product-usage-gcs start yaml
-      - task: download-pas
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product.yml
-        params:
-          CONFIG_FILE: download-product/pas.yml
-          SOURCE: gcs
-        input_mapping:
-          config: interpolated-creds
-        output_mapping:
-          downloaded-product: pas-product
-          downloaded-stemcell: pas-stemcell
-      # code_snippet download-product-usage-gcs end
-      # code_snippet download-product-usage-azure start yaml
-      - task: download-pas
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-product.yml
-        params:
-          CONFIG_FILE: download-product/pas.yml
-          SOURCE: azure
-        input_mapping:
-          config: interpolated-creds
-        output_mapping:
-          downloaded-product: pas-product
-          downloaded-stemcell: pas-stemcell
-      # code_snippet download-product-usage-azure end
-# code_snippet prepare-tasks-with-secrets-usage start yaml
-- task: prepare-tasks-with-secrets
+# code_snippet download-product-usage-gcs start yaml
+- task: download-pas
   image: platform-automation-image
-  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: gcs
   input_mapping:
-    tasks: platform-automation-tasks
-# code_snippet prepare-tasks-with-secrets-usage end
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+# code_snippet download-product-usage-gcs end
+# code_snippet download-product-usage-azure start yaml
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: azure
+  input_mapping:
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+# code_snippet download-product-usage-azure end
+# code_snippet staged-config-usage start yaml
+- task: staged-config
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/staged-config.yml
+  input_mapping:
+    env: configuration
+  params:
+    PRODUCT_NAME: cf
+  ensure:
+    do:
+      - put: state
+        params:
+          file: generated-state/state.yml
+# code_snippet staged-config-usage end
+# code_snippet staged-director-config-usage start yaml
+- task: staged-director-config
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/staged-director-config.yml
+  input_mapping:
+    env: configuration
+  ensure:
+    do:
+      - put: state
+        params:
+          file: generated-state/state.yml
+# code_snippet staged-director-config-usage end
+# code_snippet configure-director-usage start yaml
+- task: configure-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-director.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+# code_snippet configure-director-usage end

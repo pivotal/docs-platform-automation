@@ -11,7 +11,7 @@ saml-rbac-groups-attribute: myenterprise
 # https-proxy-url:                # proxy for outbound HTTPS network traffic
 # no-proxy:                       # comma-separated list of hosts that do not go
                                   # through the proxy
-# precreated-client-secret:       # create a UAA client on the Ops Manager vm.
+# precreated-client-secret:       # create a UAA client on the Ops Manager VM.
                                   # this will be client-secret in env.yml
                                   # client ID is precreated-client                                  
 # server-ssl-cert:                # the server certificate when using ldaps://

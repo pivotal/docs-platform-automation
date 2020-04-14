@@ -1,0 +1,15 @@
+---
+# code_snippet cpa-azure-ops-file start yaml
+- type: replace
+  path: /instance_groups/name=web/vm_extensions?/-
+  value: concourse-lb
+- type: replace
+  path: /instance_groups/name=web/vm_extensions?/-
+  value: public_ip
+- type: replace
+  path: /instance_groups/name=worker/vm_extensions?/-
+  value: public_ip
+- type: replace
+  path: /instance_groups/name=worker/vm_extensions?/-
+  value: increased-disk
+# code_snippet cpa-azure-ops-file end yaml

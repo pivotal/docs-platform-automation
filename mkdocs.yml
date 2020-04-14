@@ -16,11 +16,16 @@ plugins:
     dependent_sections:
       tasks: "../platform-automation"
       examples: "./docs/examples"
+      reference: "../docs-platform-automation-reference-pipeline-config"
+      paving: "../paving"
 markdown_extensions:
 - codehilite:
     linenums: true
 - sane_lists
 - admonition
+- pymdownx.extra
+- pymdownx.snippets:
+    check_paths: true
 - pymdownx.superfences:
     legacy_tab_classes: true
 extra_javascript:
@@ -32,7 +37,6 @@ nav:
 - Getting Started: getting-started.md
 - Reference Pipelines:
   - Retrieving External Dependencies: pipelines/resources.md
-  - Ops Manager + Single Product: pipelines/single-product.md
   - Ops Manager + Multiple Products: pipelines/multiple-products.md
 - How-to Guides:
   - Installing Ops Manager: how-to-guides/installing-opsman.md
