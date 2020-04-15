@@ -185,9 +185,9 @@ For brevity, this `product.yml` is a basic example for `healthwatch`.
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
 
-* `product-properties` - properties for the tile [Ops Manager API](https://docs.pivotal.io/platform/opsman-api/#configuring-products)
-* `network-properties` - a list of named networks to deploy the VMs to [Ops Manager API](https://docs.pivotal.io/platform/opsman-api/#configuring-networks-and-azs)
-* `resource-config` - for the jobs of the tile [Ops Manager API](https://docs.pivotal.io/platform/opsman-api/#configuring-resources-for-a-job)
+* `product-properties` - properties for the tile [Ops Manager API][opsman-api-config-products]
+* `network-properties` - a list of named networks to deploy the VMs to [Ops Manager API][opsman-api-network-az-assignment]
+* `resource-config` - for the jobs of the tile [Ops Manager API][opsman-api-config-resources]
 
 ### state
 This file contains that meta-information needed to manage the Ops Manager VM.
