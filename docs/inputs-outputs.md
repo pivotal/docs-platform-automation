@@ -133,7 +133,7 @@ and a link to the API documentation explaining any IAAS specific properties.
     * `director_configuration` - properties for the bosh director [Ops Manager API][opsman-api-director-properties]
     * `security_configuration` - security properties for the bosh director [Ops Manager API][opsman-api-director-properties]
     * `syslog_configuration` - configure the syslog sinks for the bosh director [Ops Manager API][opsman-api-director-properties]
-* `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-resource-config]
+* `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-config-resources]
 * `vmextensions-configuration` - create/update/delete vm extensions [Ops Manager API][opsman-api-vm-extension]
 
 #### GCP Shared VPC
