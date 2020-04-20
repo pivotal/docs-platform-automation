@@ -21,24 +21,6 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## Next Version
-Coming Soon
-
-| Name | version |
-|---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
-| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
-
-### What's New
-- The [`stage-product`][stage-product] and [`stage-configure-apply`][stage-configure-apply] tasks
-  have been updated to no longer require a `product` input.
-
-    This change allows tiles to be staged without requiring the product file to be passed to these tasks.
-    If the `product` input is not provided,
-    the `PRODUCT_METADATA_NAME` and `PRODUCT_METADATA_VERSION` params **are required**.
-
 ## v4.2.8
 Coming Soon
 
