@@ -21,6 +21,33 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.2.8
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- The `winfs-injector` has been bumped to support the new TAS Windows tile.
+  When downloading a product from Pivnet, the [`download-product`][download-product] task
+  uses `winfs-injector` to package the Windows rootfs in the tile.
+  Newer version of TAS Windows, use a new packaging method, which requires this bump.
+  
+    If you see the following error, you need this fix.
+  
+    ```
+    Checking if product needs winfs injected...+ '[' pas-windows == pas-windows ']'
+    + '[' pivnet == pivnet ']'
+    ++ basename downloaded-files/pas-windows-2.7.12-build.2.pivotal
+    + TILE_FILENAME=pas-windows-2.7.12-build.2.pivotal
+    + winfs-injector --input-tile downloaded-files/pas-windows-2.7.12-build.2.pivotal --output-tile downloaded-product/pas-windows-2.7.12-build.2.pivotal
+    open /tmp/015434627/extracted-tile/embed/windowsfs-release/src/code.cloudfoundry.org/windows2016fs/2019/IMAGE_TAG: no such file or directory
+    ``` 
+
 ## v4.2.7
 Released March 25, 2020
 
@@ -215,7 +242,34 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## v4.1.13
+Released April 20, 2020
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- The `winfs-injector` has been bumped to support the new TAS Windows tile.
+  When downloading a product from Pivnet, the [`download-product`][download-product] task
+  uses `winfs-injector` to package the Windows rootfs in the tile.
+  Newer version of TAS Windows, use a new packaging method, which requires this bump.
   
+    If you see the following error, you need this fix.
+  
+    ```
+    Checking if product needs winfs injected...+ '[' pas-windows == pas-windows ']'
+    + '[' pivnet == pivnet ']'
+    ++ basename downloaded-files/pas-windows-2.7.12-build.2.pivotal
+    + TILE_FILENAME=pas-windows-2.7.12-build.2.pivotal
+    + winfs-injector --input-tile downloaded-files/pas-windows-2.7.12-build.2.pivotal --output-tile downloaded-product/pas-windows-2.7.12-build.2.pivotal
+    open /tmp/015434627/extracted-tile/embed/windowsfs-release/src/code.cloudfoundry.org/windows2016fs/2019/IMAGE_TAG: no such file or directory
+    ``` 
+ 
 ## v4.1.12
 Released March 25, 2020
 
@@ -426,6 +480,33 @@ Released October 21, 2019
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
+## v4.0.13
+Released April 20, 2020
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- The `winfs-injector` has been bumped to support the new TAS Windows tile.
+  When downloading a product from Pivnet, the [`download-product`][download-product] task
+  uses `winfs-injector` to package the Windows rootfs in the tile.
+  Newer version of TAS Windows, use a new packaging method, which requires this bump.
+  
+    If you see the following error, you need this fix.
+  
+    ```
+    Checking if product needs winfs injected...+ '[' pas-windows == pas-windows ']'
+    + '[' pivnet == pivnet ']'
+    ++ basename downloaded-files/pas-windows-2.7.12-build.2.pivotal
+    + TILE_FILENAME=pas-windows-2.7.12-build.2.pivotal
+    + winfs-injector --input-tile downloaded-files/pas-windows-2.7.12-build.2.pivotal --output-tile downloaded-product/pas-windows-2.7.12-build.2.pivotal
+    open /tmp/015434627/extracted-tile/embed/windowsfs-release/src/code.cloudfoundry.org/windows2016fs/2019/IMAGE_TAG: no such file or directory
+    ``` 
 
 ## v4.0.12
 Released March 25, 2020
