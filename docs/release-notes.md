@@ -379,12 +379,9 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
-  
-## v4.1.12
-Released March 25, 2020
 
 ## v4.1.13
-Coming Soon
+Released April 20, 2020
 
 | Name | version |
 |---|---|
@@ -622,7 +619,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.13
-Coming Soon
+Released April 20, 2020
 
 | Name | version |
 |---|---|
