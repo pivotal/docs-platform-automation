@@ -381,7 +381,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.1.13
-Coming Soon
+Released April 20, 2020
 
 | Name | version |
 |---|---|
@@ -619,7 +619,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.13
-Coming Soon
+Released April 20, 2020
 
 | Name | version |
 |---|---|
