@@ -254,7 +254,7 @@ This is the recommended way to get these resources set up
 as the output can directly be used in subsequent steps as property configuration.
 
 The `paving` repo provides instructions for use in the `README`.
-Any manual manual variables that you need to fill out
+Any manual variables that you need to fill out
 will be in a [terraform.tfvars][terraform-vars] file
 in the folder for the IaaS you are using
 (for more specific instruction, please consult the `README` for that IaaS).
