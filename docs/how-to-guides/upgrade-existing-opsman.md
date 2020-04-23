@@ -141,7 +141,7 @@ we need to add a resource to tell Concourse how to get it as `env`.
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
 Follow [Github's instructions][git-deploy-keys]
-for creating a read-only deploy key.
+for creating a deploy key.
 
 Then, put the private key in Credhub so we can use it in our pipeline:
 
