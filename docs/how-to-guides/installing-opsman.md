@@ -79,13 +79,15 @@ We are using the ["Single Repository for Each Foundation"][single-foundation-pat
 pattern to structure our configurations.
 
 You will also need to add the repository URL
-to `vars.yml` so we can reference it later,
-when we declare the corresponding resource.
+to Credhub so we can reference it
+later when we declare the corresponding resource.
 
-```yaml
-pipeline-repo: git@github.com:username/your-repo-name
+```bash
+# note the starting space throughout
+ credhub set \
+        -n /concourse/your_team_name/foundation/pipeline-repo \
+        -t value -v git@github.com:username/your-repo-name
 ```
-
 
 `download-ops-manager.yml` holds creds for communicating with Tanzu Network,
 and uniquely identifies an Ops Manager image to download.
@@ -139,8 +141,8 @@ We'll need to put the Tanzu Network token in Credhub:
 ```bash
 # note the starting space throughout
  credhub set \
-        -n /concourse/your_team_name/foundation/pivnet_token \
-        -t value -v your-pivnet-token
+    -n /concourse/your_team_name/foundation/pivnet_token \
+    -t value -v your-pivnet-token
 ```
 
 {% include './.paths-and-pipeline-names.md' %}
@@ -323,10 +325,10 @@ Follow these steps to use the `paving` repository:
     ```
 
 1. Save off the output from `terraform output stable_config`
-   into the `vars.yml` file in `your-repo-name`:
+   into a `vars.yml` file in `your-repo-name` for future use:
 
     ```bash
-    terraform output stable_config >> ../your-repo-name/vars.yml
+    terraform output stable_config > ../your-repo-name/vars.yml
     ```
 
 1. Return to your working directory for the post-terraform steps:
@@ -513,7 +515,9 @@ Add the following to your `resources` section of your `pipeline.yml`
     branch: master
 ```
 
-This will allow `create-vm` to use the variables from `vars.yml` in the `opsman.yml` file.
+This resource definition will allow `create-vm`
+to use the variables from `vars.yml`
+in the `opsman.yml` file.
 
 The `create-vm` task in the `install-opsman` will need to be updated to
 use the `download-product` image,
