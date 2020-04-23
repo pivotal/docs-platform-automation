@@ -591,6 +591,14 @@ Set the pipeline one final time,
 run the job, and see it pass.
 
 ```bash
+fly -t control-plane set-pipeline \
+    -p foundation \
+    -c pipeline.yml
+```
+
+Commit the final changes to your repository.
+
+```bash
 git add pipeline.yml
 git commit -m "Install Ops Manager in CI"
 git push
