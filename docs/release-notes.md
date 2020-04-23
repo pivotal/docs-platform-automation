@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.3.5
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -159,7 +159,7 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.8
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
