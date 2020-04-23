@@ -146,7 +146,7 @@ We'll need to put the Tanzu Network token in Credhub:
 {% include './.paths-and-pipeline-names.md' %}
 
 In order to perform interpolation in one of our input files,
-we'll need the [`credhub-interpolate` task][credhub-interpolate]
+we'll need the [`prepare-tasks-with-secrets` task][prepare-tasks-with-secrets]
 Earlier, we relied on Concourse's native integration with Credhub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
@@ -155,7 +155,7 @@ We can add it to our job
 after we've retrieved our `download-ops-manager.yml` input,
 but before the `download-product` task:
 
-```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26 27 28 34 35"
+```yaml hl_lines="16 17 18 19 20 21 22 23"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -171,58 +171,30 @@ jobs:
         globs: ["*tasks*.zip"]
         unpack: true
     - get: config
-    - task: credhub-interpolate
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/credhub-interpolate.yml
-      params:
-        CREDHUB_CLIENT: ((credhub-client))
-        CREDHUB_SECRET: ((credhub-secret))
-        CREDHUB_SERVER: https://your-credhub.example.com
-        PREFIX: /concourse/your-team-name/foundation
+    - task: prepare-tasks-with-secrets
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
       input_mapping:
-        files: config
+        tasks: platform-automation-tasks
       output_mapping:
-        interpolated-files: interpolated-config
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
     - task: download-product        
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
         CONFIG_FILE: download-ops-manager.yml
-      input_mapping:
-        config: interpolated-config
 ```
 
-!!! info A bit on "output_mapping"
-    <p>The `credhub-interpolate` task for this job
-    maps the output from the task (`interpolated-files`)
-    to `interpolated-config`.
-    <p>This can be used by the next task in the job
-    to more explicitly define the inputs/outputs of each task.
-    It is also okay to leave the output as `interpolated-files`
-    if it is appropriately referenced in the next task
-
 Notice the [input mappings][concourse-input-mapping]
-of the `credhub-interpolate` and `download-product` tasks.
+of the `prepare-tasks-with-secrets` task.
 This allows us to use the output of one task
 as in input of another.
 
-We now need to put our `credhub_client` and `credhub_secret` into Credhub,
-so Concourse's native integration can retrieve them
-and pass them as configuration to the `credhub-interpolate` task.
-
-```bash
-# note the starting spaces at the beginning of the credhub set lines
- credhub set \
-        -n /concourse/your-team-name/credhub-client \
-        -t value -v your-credhub-client
- credhub set \
-        -n /concourse/your-team-name/credhub-secret \
-        -t value -v your-credhub-secret
-```
-
-Now, the `credhub-interpolate` task
-will interpolate our config input,
-and pass it to `download-product` as `config`.
+Now, the `prepare-tasks-with-secrets` task
+will find required credentials in the config files,
+and modify the tasks,
+so they will pull values from Concourse's integration of Credhub.
 
 The job will download the product now.
 This is a good commit point.
@@ -368,7 +340,7 @@ select your desired version from the dropdown at the top of the page.
 Now that we have an Ops Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
 
-```yaml hl_lines="35 36 37"
+```yaml hl_lines="29 30 31"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -384,25 +356,19 @@ jobs:
         globs: ["*tasks*.zip"]
         unpack: true
     - get: config
-    - task: credhub-interpolate
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/credhub-interpolate.yml
-      params:
-        CREDHUB_CLIENT: ((credhub-client))
-        CREDHUB_SECRET: ((credhub-secret))
-        CREDHUB_SERVER: https://your-credhub.example.com
-        PREFIX: /concourse/your-team-name/foundation
+    - task: prepare-tasks-with-secrets
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
       input_mapping:
-        files: config
+        tasks: platform-automation-tasks
       output_mapping:
-        interpolated-files: interpolated-config
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
     - task: download-product        
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
         CONFIG_FILE: download-ops-manager.yml
-      input_mapping:
-        config: interpolated-config
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
@@ -510,7 +476,7 @@ use the `download-product` image,
 Ops Manager configuration file,
 and the placeholder state file.
 
-```yaml hl_lines="39 40 41 42 43 44 45"
+```yaml hl_lines="33 34 35"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -527,30 +493,23 @@ jobs:
         unpack: true
     - get: config
     - get: vars
-    - task: credhub-interpolate
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/credhub-interpolate.yml
-      params:
-        CREDHUB_CLIENT: ((credhub-client))
-        CREDHUB_SECRET: ((credhub-secret))
-        CREDHUB_SERVER: https://your-credhub.example.com
-        PREFIX: /concourse/your-team-name/foundation
+    - task: prepare-tasks-with-secrets
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
       input_mapping:
-        files: config
+        tasks: platform-automation-tasks
       output_mapping:
-        interpolated-files: interpolated-config
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
     - task: download-product        
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
         CONFIG_FILE: download-ops-manager.yml
-      input_mapping:
-        config: interpolated-config
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
       input_mapping:
-        config: interpolated-config
         state: config
         image: downloaded-product
 ```
@@ -571,7 +530,7 @@ we should [`ensure`][ensure] that `state.yml` is always persisted
 regardless of whether the `install-opsman` job failed or passed.
 To do this, we can add the following section to the job:
 
-```yaml hl_lines="42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61"
+```yaml hl_lines="35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -587,30 +546,23 @@ jobs:
         globs: ["*tasks*.zip"]
         unpack: true
     - get: config
-    - task: credhub-interpolate
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/credhub-interpolate.yml
-      params:
-        CREDHUB_CLIENT: ((credhub-client))
-        CREDHUB_SECRET: ((credhub-secret))
-        CREDHUB_SERVER: https://your-credhub.example.com
-        PREFIX: /concourse/your-team-name/foundation
+    - task: prepare-tasks-with-secrets
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
       input_mapping:
-        files: config
+        tasks: platform-automation-tasks
       output_mapping:
-        interpolated-files: interpolated-config
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
     - task: download-product        
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
         CONFIG_FILE: download-ops-manager.yml
-      input_mapping:
-        config: interpolated-config
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
       input_mapping:
-        config: interpolated-config
         state: config
         image: downloaded-product
       ensure:
