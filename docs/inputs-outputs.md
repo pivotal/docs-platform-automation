@@ -44,13 +44,18 @@ The config for an Ops Manager described IAAS specific information for creating t
 The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.
 
-Specific examples for each IaaS are as follows:
+{% code_snippet 'examples', 'aws-configuration', "AWS" %}
+{% code_snippet 'examples', 'azure-configuration', "Azure" %}
+{% code_snippet 'examples', 'gcp-configuration', "GCP" %}
+{% code_snippet 'examples', 'openstack-configuration', "Openstack" %}
+{% code_snippet 'examples', 'vsphere-configuration', "vSphere" %}
+{% code_snippet 'examples', 'opsman-settings', "Additional Settings" %}
 
+Specific advice and features for the different IaaSs are documented below
 #### AWS
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on AWS][manual-aws]
 
-{% code_snippet 'examples', 'aws-configuration' %}
 {% include '.ip-addresses.md' %}
 
 !!! info "Using instance_profile to Avoid Secrets"
@@ -62,17 +67,15 @@ These required properties are adapted from the instructions outlined in
 
 
 #### Azure
-These required properties are adapted from the instructions outlined in
+The required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][manual-azure]
 
-{% code_snippet 'examples', 'azure-configuration' %}
 {% include '.ip-addresses.md' %}
 
 #### GCP
-These required properties are adapted from the instructions outlined in
+The required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP][manual-gcp]
 
-{% code_snippet 'examples', 'gcp-configuration' %}
 {% include '.ip-addresses.md' %}
 
 !!! info "Using a Service Account Name to Avoid Secrets"
@@ -91,18 +94,15 @@ For example:
 
 #### Openstack
 
-These required properties are adapted from the instructions outlined in
+The required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack][manual-openstack]
 
-{% code_snippet 'examples', 'openstack-configuration' %}
 {% include '.ip-addresses.md' %}
 
 #### vSphere
 
-These required properties are adapted from the instructions outlined in
+The required properties are adapted from the instructions outlined in
 [Deploying BOSH and Ops Manager to vSphere][manual-vsphere]
-
-{% code_snippet 'examples', 'vsphere-configuration' %}
 
 ### director config
 
