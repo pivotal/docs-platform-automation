@@ -38,6 +38,13 @@ Coming Soon
     This change allows tiles to be staged without requiring the product file to be passed to these tasks.
     If the `product` input is not provided,
     the `PRODUCT_METADATA_NAME` and `PRODUCT_METADATA_VERSION` params **are required**.
+    
+- [`upgrade-opsman`][upgrade-opsman] now supports configuring settings
+  on the Ops Manager Settings page in the UI. 
+  This utilizes the `configure-opsman` command from `om`, 
+  and runs after the upgrade command.
+  Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+  An example of all configurable properties can be found in the "Additional Settings" tab.
 
 ## v4.3.5
 Released April 24, 2020
