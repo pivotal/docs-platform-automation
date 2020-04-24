@@ -21,6 +21,320 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## Next Version
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### What's New
+- The [`stage-product`][stage-product] and [`stage-configure-apply`][stage-configure-apply] tasks
+  have been updated to no longer require a `product` input.
+
+    This change allows tiles to be staged without requiring the product file to be passed to these tasks.
+    If the `product` input is not provided,
+    the `PRODUCT_METADATA_NAME` and `PRODUCT_METADATA_VERSION` params **are required**.
+    
+- [`upgrade-opsman`][upgrade-opsman] now supports configuring settings
+  on the Ops Manager Settings page in the UI. 
+  This utilizes the `configure-opsman` command from `om`, 
+  and runs after the upgrade command.
+  Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+  An example of all configurable properties can be found in the "Additional Settings" tab.
+
+## v3.0.18
+Released February 20, 2020
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+### Bug Fixes
+- GCP [`create-vm`][create-vm] now correctly handles an empty tags list
+- CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
+  The CVEs are related to vulnerabilities with `libxml2`.
+- Bumped the following low-severity CVE packages: libsystemd0 libudev1
+
+## v3.0.17
+Released February 3, 2020
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
+  The CVEs are related to vulnerabilities with `libbsd`.
+- CVE update to container image. Resolves [USN-4249-1](https://usn.ubuntu.com/4249-1/).
+  The CVEs are related to vulnerabilities with `e2fsprogs`.
+- CVE update to container image. Resolves [USN-4233-2](https://usn.ubuntu.com/4233-2/).
+  The CVEs are related to vulnerabilities with `libgnutls30`.
+- CVE update to container image. Resolves [USN-4256-1](https://usn.ubuntu.com/4256-1/).
+  The CVEs are related to vulnerabilities with `libsasl2-2`.
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
+
+## v3.0.16
+Released January 28, 2020
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
+  The CVEs are related to vulnerabilities with `Libgcrypt`.
+- CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
+  The CVEs are related to vulnerabilities with `GnuTLS`.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
+
+## v3.0.15
+Released December 12, 2019
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
+  The CVEs are related to vulnerabilities with `git`.
+- Bumped the following low-severity CVE package: `linux-libc-dev`
+
+## v3.0.14
+Released December 3, 2019
+
+| Name | version |
+|---|---|
+| om | [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
+| winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
+  This CVE is related to vulnerabilities with `libsqlite3`.
+  None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## v3.0.13
+Released November 14, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
+  This CVE is related to vulnerabilities with `file` and `libmagic`.
+- CVE update to container image. Resolves [USN-4168-1](https://usn.ubuntu.com/4168-1/).
+  This CVE is related to vulnerabilities with `libidn2`.
+- Bump `bosh` CLI to v6.1.1
+- Bump `credhub` CLI to v2.6.1
+
+## v3.0.12
+Released October 25, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
+  This CVE is related to vulnerabilities with `python`.
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
+## v3.0.11
+
+Released October 15, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/).
+  (related to vulnerabilities with `e2fsprogs`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libcom-err2`, `libext2fs2`, `libss2`, `linux-libc-dev`
+
+## v3.0.10
+Released September 26, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/).
+  This CVE is related to vulnerabilities with `python`.
+  None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+- CVE update to container image. Resolves [USN-4129-1](https://usn.ubuntu.com/4129-1/).
+  (related to vulnerabilities with `curl` and `libcurl`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4132-1](https://usn.ubuntu.com/4132-1/).
+  (related to vulnerabilities with `expat`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages: `libsystemd0`, `libudev1`, `linux-libc-dev`
+
+## v3.0.8
+Released September 4, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/).
+  (related to vulnerabilities with `libzstd`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages:
+  `libpython2.7`, `libpython2.7-dev`, `libpython2.7-minimal`, `libpython2.7-stdlib`, `libssl1.1`
+  `openssl`, `python-cryptography`, `python2.7`, `python2.7-dev`, `python2.7-minimal`
+
+## v3.0.7
+Released August 28, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- When using AWS to create the Ops Manager VM with encrypted disks,
+  the task [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] will wait for disk encryption to be completed.
+  An exponential backoff will be and timeout after an hour if disk is not ready.
+- CVE update to container image. Resolves [USN-4071-1](https://usn.ubuntu.com/4071-1/).
+  (related to vulnerabilities with `patch`. While none of our code directly used these,
+  they are present on the image.)
+- Bumped the following low-severity CVE packages:
+  `linux-libc-dev`, `libldap-2.4-2`, `libldap-common`, `linux-libc-dev`
+
+## v3.0.5
+Released July 22, 2019, includes `om` version [3.0.0](https://github.com/pivotal-cf/om/releases/tag/3.0.0)
+
+### Bug Fixes
+- in [`credhub-interpolate`][credhub-interpolate], [`upload-product`][upload-product], and [`upload-stemcell`][upload-stemcell]
+  setting `SKIP_MISSING: false` the command would fail.
+  This has been fixed.  
+- [`upgrade-opsman`][upgrade-opsman] would fail on the [`import-installation`][import-installation] step
+  if the env file did not contain a target or decryption passphrase.
+  This will now fail before the upgrade process begins
+  to ensure faster feedback.
+- [`upgrade-opsman`][upgrade-opsman] now respects environment variables
+  when it makes calls internally to `om`
+  (env file still required).
+- [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
+- `om` CLI has been bumped to v3.0.0.
+  This includes the following bug fixes:
+    * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
+    * `upload-stemcell` now accepts `--floating false` in addition to `floating=false`.
+      This was done to offer consistency between all of the flags on the command.
+    * `skip-unchanged-products` was removed from `apply-changes`.
+      This option has had issues with consistent successful behaviour.
+      For example, if the apply changes fails for any reason, the subsequent apply changes cannot pick where it left off.
+      This usually happens in the case of errands that are used for services.
+
+        We are working on scoping a selective deploy feature that makes sense for users.
+        We would love to have feedback from users about this.
+
+    * remove `revert-staged-changes`
+      `unstage-product` functionally does the same thing,
+      but uses the API.
+- Bumped the following low-severity CVE packages: `unzip`
+
+## v3.0.4
+Released July 11, 2019, includes `om` version [2.0.0](https://github.com/pivotal-cf/om/releases/tag/2.0.0)
+
+### Bug Fixes
+- Both [`configure-ldap-authentication`][configure-ldap-authentication]
+  and [`configure-saml-authentication`][configure-saml-authentication]
+  will now automatically
+  create a BOSH UAA admin client as documented [here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#saml).
+  This is only supported in OpsManager 2.4 and greater.
+  You may specify the option `skip-create-bosh-admin-client` in your config YAML
+  to skip creating this client.
+  After the client has been created,
+  you can find the client ID and secret
+  by following [steps three and four found here](https://docs.pivotal.io/pivotalcf/2-5/customizing/opsmanager-create-bosh-client.html#-provision-admin-client).
+
+    _This feature needs to be enabled
+    to properly automate authentication for the bosh director when using LDAP and SAML._
+    If `skip-create-bosh-admin-client: true` is specified, manual steps are required,
+    and this task is no longer "automation".
+
+- [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] now function with `gcp_service_account_name` on GCP.
+  Previously, only providing a full `gcp_service_account` as a JSON blob worked.
+- Environment variables passed to [`create-vm`][create-vm], [`delete-vm`][delete-vm], and [`upgrade-opsman`][upgrade-opsman]
+  will be passed to the underlying IAAS CLI invocation.
+  This allows our tasks to work with the `https_proxy` and `no_proxy` variables
+  that can be [set in Concourse](https://github.com/concourse/concourse-bosh-release/blob/9764b66a6d85785735f6ea8ddcabf77785b5eddd/jobs/worker/spec#L50-L65).
+- [`download-product`][download-product] task output of `assign-stemcell.yml` will have the correct `product-name`
+- When using the `env.yml` for a task,
+  extra values passed in the env file will now fail if they are not recognized properties.
+  Invalid properties might now produce the following:
+    ```bash
+      $ om --env env.yml upload-product --product product.pivotal
+      could not parse env file: yaml: unmarshal errors:
+      line 5: field invalid-field not found in type main.options
+    ```
+
+- `credhub` CLI has been bumped to v2.5.1.
+  This includes a fix of not raising an error when processing an empty YAML file.
+- `om` CLI has been bumped to v2.0.0.
+  This includes the following bug fixes:
+    * `download-product` will now return a `download-file.json`
+      if `stemcell-iaas` is defined but the product has no stemcell.
+      Previously, this would exit gracefully, but not return a file.
+    * Non-string environment variables can now be read and passed as strings to Ops Manager.
+      For example, if your environment variable (`OM_NAME`) is set to `"123"` (with quotes escaped),
+      it will be evaluated in your config file with the quotes.
+
+        Given `config.yml`
+        ```yaml
+        value: ((NAME))
+        ```
+
+        `om interpolate -c config.yml --vars-env OM`
+
+        Will evaluate to:
+        ```yaml
+          value: "123"
+        ```
+
+    * `bosh-env` will now set `BOSH_ALL_PROXY` without a trailing slash if one is provided
+    * When using `bosh-env`, a check is done to ensure the SSH private key exists.
+      If does not the command will exit 1.
+    * `config-template` will enforce the default value for a property to always be `configurable: false`.
+      This is inline with the OpsManager behaviour.
+
+- CVE update to container image. Resolves [USN-4040-1](https://usn.ubuntu.com/4040-1/).
+  (related to vulnerabilities with `Expat`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4038-1](https://usn.ubuntu.com/4038-1/) and [USN-4038-3](https://usn.ubuntu.com/4038-3/).
+  (related to vulnerabilities with `bzip`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4019-1](https://usn.ubuntu.com/4019-1/).
+  (related to vulnerabilities with `SQLite`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [CVE-2019-11477](https://people.canonical.com/~ubuntu-security/cve/2019/CVE-2019-11477.html).
+  (related to vulnerabilities with `linux-libc-dev`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4049-1](https://usn.ubuntu.com/4049-1/).
+  (related to vulnerabilities with `libglib`. While none of our code directly used these,
+  they are present on the image.)
+
+## v3.0.2
+Released July 8, 2019, includes `om` version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4014-1](https://usn.ubuntu.com/4014-1/).
+  (related to vulnerabilities with `GLib`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4015-1](https://usn.ubuntu.com/4015-1/).
+  (related to vulnerabilities with `DBus`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-3999-1](https://usn.ubuntu.com/3999-1/).
+  (related to vulnerabilities with `GnuTLS`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4001-1](https://usn.ubuntu.com/4001-1/).
+  (related to vulnerabilities with `libseccomp`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-4004-1](https://usn.ubuntu.com/4004-1/).
+  (related to vulnerabilities with `Berkeley DB`. While none of our code directly used these,
+  they are present on the image.)
+- CVE update to container image. Resolves [USN-3993-1](https://usn.ubuntu.com/3993-1/).
+  (related to vulnerabilities with `curl`. While none of our code directly used these,
+  they are present on the image.)
+
 ## v3.0.1
 Released May 24, 2019, includes `om` version [1.0.0](https://github.com/pivotal-cf/om/releases/tag/1.0.0)
 
