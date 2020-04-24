@@ -46,6 +46,33 @@ Coming Soon
   Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
   An example of all configurable properties can be found in the "Additional Settings" tab.
 
+## v4.3.6
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+-  The `IGNORE_WARNINGS` parameter for the
+   `apply-changes`, `stage-configure-apply`, and `apply-director-changes` tasks
+   allows users to ignore all warnings from ignorable verifiers.
+   Some verifiers continue to return warnings even when disabled,
+   preventing deployment without the `IGNORE_WARNINGS: true` param set.
+   If the verifiers that are preventing deployment
+   are known issues based on the environment setup,
+   then it is safe to use the flag.
+   It is _highly recommended_ to disable verifiers before ignoring warnings.
+- CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
+  This CVE is related to vulnerabilities with `git`.
+- CVE update to container image. Resolves [USN-4334-1](https://usn.ubuntu.com/4334-1/).
+  This CVE is related to vulnerabilities with `git`. 
+- CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
+  This CVE is related to vulnerabilities with `python`. 
+
 ## v4.3.5
 Released April 24, 2020
 
@@ -182,6 +209,24 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.9
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
+  This CVE is related to vulnerabilities with `git`.
+- CVE update to container image. Resolves [USN-4334-1](https://usn.ubuntu.com/4334-1/).
+  This CVE is related to vulnerabilities with `git`. 
+- CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
+  This CVE is related to vulnerabilities with `python`. 
 
 ## v4.2.8
 Released April 24, 2020
@@ -404,6 +449,24 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## v4.1.14
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
+  This CVE is related to vulnerabilities with `git`.
+- CVE update to container image. Resolves [USN-4334-1](https://usn.ubuntu.com/4334-1/).
+  This CVE is related to vulnerabilities with `git`. 
+- CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
+  This CVE is related to vulnerabilities with `python`. 
 
 ## v4.1.13
 Released April 20, 2020
@@ -642,6 +705,24 @@ Released October 21, 2019
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
+## v4.0.14
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
+  This CVE is related to vulnerabilities with `git`.
+- CVE update to container image. Resolves [USN-4334-1](https://usn.ubuntu.com/4334-1/).
+  This CVE is related to vulnerabilities with `git`. 
+- CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
+  This CVE is related to vulnerabilities with `python`. 
 
 ## v4.0.13
 Released April 20, 2020
