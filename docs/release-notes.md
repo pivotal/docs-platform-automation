@@ -40,7 +40,7 @@ Coming Soon
     the `PRODUCT_METADATA_NAME` and `PRODUCT_METADATA_VERSION` params **are required**.
 
 ## v4.3.5
-Pending Final Approval
+Released April 24, 2020
 
 | Name | version |
 |---|---|
@@ -177,7 +177,7 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.8
-Pending Final Approval
+Released April 24, 2020
 
 | Name | version |
 |---|---|
