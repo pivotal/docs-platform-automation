@@ -76,6 +76,13 @@ Pending Final Approval
 ## v4.3.5
 Released April 24, 2020
 
+!!! bug "Known Issue"
+    This version attempted to remove some unnecessary dependencies from the image.
+    In this process, important utilities may have been removed as well.
+    In particular, we know that `ssh` is missing.
+    If you use this version and find any vital tools missing, please let us know.
+    A forthcoming patch version will restore `ssh` and any other identified tools.
+
 | Name | version |
 |---|---|
 | om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
@@ -230,6 +237,13 @@ Pending Final Approval
 
 ## v4.2.8
 Released April 24, 2020
+
+!!! bug "Known Issue"
+    This version attempted to remove some unnecessary dependencies from the image.
+    In this process, important utilities may have been removed as well.
+    In particular, we know that `ssh` is missing.
+    If you use this version and find any vital tools missing, please let us know.
+    A forthcoming patch version will restore `ssh` and any other identified tools.
 
 | Name | version |
 |---|---|
@@ -470,6 +484,13 @@ Pending Final Approval
 
 ## v4.1.13
 Released April 20, 2020
+
+!!! bug "Known Issue"
+    This version attempted to remove some unnecessary dependencies from the image.
+    In this process, important utilities may have been removed as well.
+    In particular, we know that `ssh` is missing.
+    If you use this version and find any vital tools missing, please let us know.
+    A forthcoming patch version will restore `ssh` and any other identified tools.
 
 | Name | version |
 |---|---|
@@ -726,6 +747,13 @@ Pending Final Approval
 
 ## v4.0.13
 Released April 20, 2020
+
+!!! bug "Known Issue"
+    This version attempted to remove some unnecessary dependencies from the image.
+    In this process, important utilities may have been removed as well.
+    In particular, we know that `ssh` is missing.
+    If you use this version and find any vital tools missing, please let us know.
+    A forthcoming patch version will restore `ssh` and any other identified tools.
 
 | Name | version |
 |---|---|
