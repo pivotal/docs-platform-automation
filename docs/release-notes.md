@@ -21,33 +21,8 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## Next Version
-Coming Soon
-
-| Name | version |
-|---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
-| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
-
-### What's New
-- The [`stage-product`][stage-product] and [`stage-configure-apply`][stage-configure-apply] tasks
-  have been updated to no longer require a `product` input.
-
-    This change allows tiles to be staged without requiring the product file to be passed to these tasks.
-    If the `product` input is not provided,
-    the `PRODUCT_METADATA_NAME` and `PRODUCT_METADATA_VERSION` params **are required**.
-    
-- [`upgrade-opsman`][upgrade-opsman] now supports configuring settings
-  on the Ops Manager Settings page in the UI. 
-  This utilizes the `configure-opsman` command from `om`, 
-  and runs after the upgrade command.
-  Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
-  An example of all configurable properties can be found in the "Additional Settings" tab.
-
 ## v4.0.14
-Pending Final Approval
+April 28, 2020
 
 | Name | version |
 |---|---|
@@ -63,9 +38,17 @@ Pending Final Approval
   This CVE is related to vulnerabilities with `git`. 
 - CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
   This CVE is related to vulnerabilities with `python`. 
+- Adding back the removed `ssh` Ubuntu package.
 
 ## v4.0.13
 Released April 20, 2020
+
+!!! bug "Known Issue"
+    This version attempted to remove some unnecessary dependencies from the image.
+    In this process, important utilities may have been removed as well.
+    In particular, we know that `ssh` is missing.
+    If you use this version and find any vital tools missing, please let us know.
+    A forthcoming patch version will restore `ssh` and any other identified tools.
 
 | Name | version |
 |---|---|
@@ -785,3 +768,28 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
+## vX.X.X
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### What's New
+- The [`stage-product`][stage-product] and [`stage-configure-apply`][stage-configure-apply] tasks
+  have been updated to no longer require a `product` input.
+
+    This change allows tiles to be staged without requiring the product file to be passed to these tasks.
+    If the `product` input is not provided,
+    the `PRODUCT_METADATA_NAME` and `PRODUCT_METADATA_VERSION` params **are required**.
+    
+- [`upgrade-opsman`][upgrade-opsman] now supports configuring settings
+  on the Ops Manager Settings page in the UI. 
+  This utilizes the `configure-opsman` command from `om`, 
+  and runs after the upgrade command.
+  Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+  An example of all configurable properties can be found in the "Additional Settings" tab.
+
