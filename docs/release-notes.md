@@ -21,7 +21,7 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## Next Version
+## vX.X.X
 Coming Soon
 
 | Name | version |
@@ -47,7 +47,7 @@ Coming Soon
   An example of all configurable properties can be found in the "Additional Settings" tab.
 
 ## v4.3.6
-Pending Final Approval
+April 28, 2020
 
 | Name | version |
 |---|---|
@@ -72,6 +72,7 @@ Pending Final Approval
   This CVE is related to vulnerabilities with `git`. 
 - CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
   This CVE is related to vulnerabilities with `python`. 
+- Adding back the removed `ssh` Ubuntu package.
 
 ## v4.3.5
 Released April 24, 2020
@@ -218,7 +219,7 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.9
-Pending Final Approval
+April 28, 2020
 
 | Name | version |
 |---|---|
@@ -465,7 +466,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.1.14
-Pending Final Approval
+April 28, 2020
 
 | Name | version |
 |---|---|
@@ -481,6 +482,7 @@ Pending Final Approval
   This CVE is related to vulnerabilities with `git`. 
 - CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
   This CVE is related to vulnerabilities with `python`. 
+- Adding back the removed `ssh` Ubuntu package.
 
 ## v4.1.13
 Released April 20, 2020
@@ -728,7 +730,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.14
-Pending Final Approval
+April 28, 2020
 
 | Name | version |
 |---|---|
@@ -744,6 +746,7 @@ Pending Final Approval
   This CVE is related to vulnerabilities with `git`. 
 - CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
   This CVE is related to vulnerabilities with `python`. 
+- Adding back the removed `ssh` Ubuntu package.
 
 ## v4.0.13
 Released April 20, 2020
