@@ -52,7 +52,7 @@ Next Version Pending
   
     An example config for downloading a product from Tanzu Network:
   
-    ```
+    ```yaml
     # download-product.yml
     ---
     pivnet-api-token: token
