@@ -45,6 +45,23 @@ Next Version Pending
   and runs after the upgrade command.
   Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
   An example of all configurable properties can be found in the "Additional Settings" tab.
+  
+- [`download-product`][download-product] now supports
+  specifying a version in the config file for the stemcell
+  if the latest stemcell for the product is not desired.
+  
+    An example config for downloading a product from Tanzu Network:
+  
+    ```
+    # download-product.yml
+    ---
+    pivnet-api-token: token
+    pivnet-file-glob: "*.pivotal"
+    pivnet-product-slug: product-slug
+    product-version: 1.2.3
+    stemcell-iaas: aws
+    stemcell-version: 90.90
+    ``` 
 
 ## v4.3.6
 April 28, 2020
