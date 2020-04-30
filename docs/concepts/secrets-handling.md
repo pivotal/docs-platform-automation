@@ -83,6 +83,7 @@ below is an example of how a task will be changed:
        ```yaml
        - task: prepare-tasks-with-secrets
          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+         image: platform-automation-image
          input_mapping:
            tasks: platform-automation-tasks
            config: deployments
