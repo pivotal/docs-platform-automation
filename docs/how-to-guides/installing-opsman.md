@@ -174,6 +174,7 @@ jobs:
         unpack: true
     - get: config
     - task: prepare-tasks-with-secrets
+      image: platform-automation-image
       file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
       input_mapping:
         tasks: platform-automation-tasks
