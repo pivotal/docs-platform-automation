@@ -141,3 +141,12 @@
     config: configuration
     env: configuration
 # code_snippet configure-director-usage end
+# code_snippet replicate-product-usage start yaml
+- task: replicate-tile
+  image: platform-automation-image
+  file: platform-automation/tasks/replicate-tile.yml
+  input_mapping:
+    product: pas-windows
+  params:
+    REPLICATED_NAME: iso-1
+# code_snippet replicate-product-usage end
