@@ -530,6 +530,15 @@ Learn more about [secrets handling][secrets-handling].
 {% code_snippet 'tasks', 'prepare-tasks-with-secrets-script', 'Implementation' %}
 {% code_snippet 'reference', 'prepare-tasks-with-secrets-usage', 'Usage' %}
 
+### replicate-product
+Will replicate the product for use in isolation segments.
+The task requires a downloaded product prior to replication.
+The output is a replicated tile with a new name in the metadata and filename.
+
+{% code_snippet 'tasks', 'replicate-product', 'Task' %}
+{% code_snippet 'tasks', 'replicate-product-script', 'Implementation' %}
+{% code_snippet 'examples', 'replicate-product-usage', 'Usage' %}
+
 ### revert-staged-changes
 Reverts all changes that are currently staged on the Ops Manager.
 This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
