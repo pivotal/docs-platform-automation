@@ -19,8 +19,6 @@ plugins:
       reference: "../docs-platform-automation-reference-pipeline-config"
       paving: "../paving"
 markdown_extensions:
-- codehilite:
-    linenums: true
 - sane_lists
 - admonition
 - pymdownx.extra
@@ -28,6 +26,8 @@ markdown_extensions:
     check_paths: true
 - pymdownx.superfences:
     legacy_tab_classes: true
+- pymdownx.highlight:
+    linenums: true
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
