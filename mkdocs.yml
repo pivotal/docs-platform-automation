@@ -17,12 +17,14 @@ plugins:
     dependent_sections:
       pivotal/platform-automation: "../platform-automation"
 markdown_extensions:
-- codehilite:
-    linenums: true
-- sane_lists
-- admonition
-- pymdownx.superfences:
-    legacy_tab_classes: true
+  - sane_lists
+  - admonition
+  - pymdownx.extra
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      linenums: true
 extra_css:
 - assets/custom.css
 extra_javascript:
