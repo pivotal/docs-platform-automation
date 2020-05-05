@@ -24,8 +24,7 @@ markdown_extensions:
 - pymdownx.extra
 - pymdownx.snippets:
     check_paths: true
-- pymdownx.superfences:
-    legacy_tab_classes: true
+- pymdownx.superfences
 - pymdownx.highlight:
     linenums: true
 extra_javascript:
