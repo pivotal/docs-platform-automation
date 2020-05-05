@@ -37,7 +37,7 @@ Next Version Pending
 
     This change allows tiles to be staged without requiring the product file to be passed to these tasks.
     If the `product` input is not provided,
-    the `PRODUCT_METADATA_NAME` and `PRODUCT_METADATA_VERSION` params **are required**.
+    the `CONFIG_FILE` and `STAGE_PRODUCT_CONFIG_FILE` params **are required** in their appropriate tasks.
     
 - [`upgrade-opsman`][upgrade-opsman] now supports configuring settings
   on the Ops Manager Settings page in the UI. 
