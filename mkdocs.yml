@@ -18,12 +18,14 @@ plugins:
       tasks: "../platform-automation"
       examples: "./docs/examples"
 markdown_extensions:
-- codehilite:
-    linenums: true
-- sane_lists
-- admonition
-- pymdownx.superfences:
-    legacy_tab_classes: true
+  - sane_lists
+  - admonition
+  - pymdownx.extra
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      linenums: true
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
