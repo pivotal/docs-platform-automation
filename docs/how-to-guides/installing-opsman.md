@@ -1,7 +1,6 @@
 # Writing a Pipeline to Install Ops Manager
-This how-to-guide shows you how to write a pipeline for installing a new Ops Manager - 
-including configuring and creating the Ops Manager VM and BOSH Director. 
-If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to]. 
+This how-to-guide shows you how to write a pipeline for installing a new Ops Manager.
+If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to].
 
 {% include ".getting-started.md" %}
 
