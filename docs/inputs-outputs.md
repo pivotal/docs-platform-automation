@@ -209,7 +209,7 @@ using the [download-product][download-product] task.
 
 #### opsman.yml
 
-{% include "how-to-guides/.opsman-config.md" %}
+{% include "how-to-guides/.opsman-config-tabs.md" %}
 
 The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP, AWS, Azure, and VSphere).
 This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].

@@ -95,7 +95,7 @@ An example `download-ops-manager.yml` is shown below.
 
 Create a `download-ops-manager.yml` for the IaaS you are using.
 
-{% include ".opsman-config.md" %}
+{% include ".opsman-config-tabs.md" %}
 
 Add and commit the new file:
 
