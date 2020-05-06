@@ -1,20 +1,134 @@
-Extracting a product configuration file, an externalized config that lives outside of Ops Manager, can make it easier to manage multiple foundations as well as help with:
+# Extending a Pipeline to Install a Product
 
-- traceability
-- avoiding configuration drift
-- configuration promotion
+This how-to-guide will teach you how to add a product to an existing pipeline.
+This includes downloading the product from Pivnet,
+generating configuration,
+and installing the configured product.
+If you don't already have an Ops Manager and deployed Director,
+check out [Installing Ops Manager][install-how-to] and
+[Deploying the Director][director-configuration] respectively.
+
+## Prerequisites
+1. A pipeline, such as one created in [Installing Ops Manager][install-how-to] 
+   or [Upgrading an Existing Ops Manager][upgrade-how-to].
+1. A fully configured Ops Manager and Director.
+1. The Platform Automation Toolkit Docker Image [imported and ready to run][running-commands-locally].
+1. A glob pattern uniquely matching one product file on Tanzu Network.
+
+### Assumptions About Your Existing Pipeline
+This guide assumes you're working
+from one of the pipelines created in previous guides,
+but you don't _have_ to have exactly that pipeline.
+If your pipeline is different, though,
+you may run into trouble with some of our assumptions.
+
+We assume:
+
+- resource declarations for
+  `configuration`,
+  `platform-automation-image` and `platform-automation-tasks`.
+- a pivnet token stored as a credential named `pivnet_token`.
+- a previous job responsible for deploying the director
+  called `apply-director-changes`.
+- you have created an `env.yml` from the [Configuring Env][generating-env-file]
+  how-to guide.
+- you have a `fly` target named `control-plane` with an existing pipeline called `foundation`.
+- you have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
+
+You should be able to use the pipeline YAML in this document with any pipeline,
+as long as you make sure the above names match up with what's in your pipeline,
+either by changing the example YAML, or your pipeline.
+
+## Download Upload And Stage Product to Ops Manager
+For this guide, we're going to add [TAS][tas].
+
+Before setting the pipeline, we will have to 
+create a config file for [`download-product`][download-product]
+in order to download TAS from Tanzu Network.
+
+Create a `download-tas.yml`.
+
+{% include ".download-tas-tabs.md" %}
+
+Add and commit this file to the same directory as the previous guides.
+This file should be accessible from the `configuration` resource.
+```bash
+git add download-tas.yml
+git commit -m "Add download-tas file for foundation"
+git push
+``` 
+
+Now that we have a config file, we can add the`download-product` task 
+to the `download-upload-and-stage-tas` job in your `pipeline.yml`.
+
+```yaml
+jobs:
+- name: download-upload-and-stage
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        tasks: platform-automation-tasks
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
+    - task: download-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      input_mapping:
+        config: configuration
+      params:
+        CONFIG_FILE: download-tas.yml
+      output_mapping:
+        downloaded-product: tas-product
+        downloaded-stemcell: tas-stemcell
+```
+
+Now that we have a runnable job, let's make a commit
+
+```bash
+git add pipeline.yml
+git commit -m 'download tas and its stemcell'
+```
+
+Then we can set the pipeline
+
+```bash
+fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+```
+
+If the pipeline sets without errors, run a `git push` of the config.
+
+!!! info "If fly set-pipeline returns an error"
+    Fix any and all errors until the pipeline can be set.
+    When the pipeline can be set properly, run
+    
+    ```bash
+    git add pipeline.yml
+    git commit --amend --no-edit
+    git push
+    ```
+
+#####WIP#####
+
+## Configure the Product Manually
+Before automating the configuration and install of the tile,
+you must first extract out a valid configuration of the tile
+from Ops Manager.
+
 
 ## From Tanzu Network
-
-A configuration file can be generated from the tile metadata directly from Tanzu Network.
-
-### Prerequisites
-1. A token for the [Tanzu Network API](https://network.pivotal.io/docs/api#how-to-authenticate) is required.
-1. You'll need the Platform Automation Toolkit Docker Image [imported and ready to run][running-commands-locally].
-1. For products that have multiple `.pivotal` files, you'll need a glob pattern uniquely matching one of them.
-
-### Workflow
-
 #### Generate the Config Template Directory
 
 ```bash

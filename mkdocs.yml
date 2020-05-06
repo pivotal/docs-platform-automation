@@ -43,7 +43,7 @@ nav:
   - Configuring Auth: how-to-guides/configuring-auth.md
   - Configuring Env: how-to-guides/configuring-env.md
   - Creating a Director Config File: how-to-guides/creating-a-director-config-file.md
-  - Creating a Product Config File: how-to-guides/creating-a-product-config-file.md
+  - Adding a Product: how-to-guides/adding-a-product.md
   - Git Repository Layout: how-to-guides/git-repo-layout.md
   - Running Commands Locally: how-to-guides/running-commands-locally.md
   - Setting Up S3 for File Storage: how-to-guides/setting-up-s3.md
