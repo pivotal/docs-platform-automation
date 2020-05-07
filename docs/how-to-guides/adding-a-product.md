@@ -131,7 +131,7 @@ If the pipeline sets without errors, run a `git push` of the config.
 We have a product downloaded and (potentially) cached on a Concourse worker.
 The next step is to upload and stage that product to Ops Manager.
 
-```yaml hl_lines="25-54"
+```yaml hl_lines="25-47"
 jobs:
 - name: download-upload-and-stage
   serial: true
@@ -195,18 +195,202 @@ git commit -m 'upload tas and stemcell to Ops Manager'
 git push
 ```
 
-## Configure the Product Manually
-Before automating the configuration and install of the tile,
-you must first extract out a valid configuration of the tile
-from Ops Manager.
+## Product Configuration
+Before automating the configuration and install of the product,
+we need a config file.
+The simplest way is to choose your config options in the Ops Manager UI,
+then pull its resulting configuration.
+
+!!! Info "Advanced Tile Config Option"
+    For an alternative that generates the configuration
+    from the product file, using ops files to select options, 
+    see the [Config Template][config-template] section.
 
 
-## From Tanzu Network
+#### Pulling Configuration from Ops Manager
+Configure the product _manually_ according to the product's install instructions.
+This guide installs [tas][tas-install-vsphere].
+Other install instructions may be found in [VMware Tanzu Docs][tanzu-docs].
+
+Once the product is fully configured, do not apply changes, and continue this guide.
+Note: if you applied changes, it's fine, it'll just take a little longer.
+
+[`om`][om] has a command called [staged-config][staged-config], 
+which is used to extract staged product
+configuration from the Ops Manager UI. 
+`om` requires a `env.yml`, which we already used in the `upload-and-stage` task.
+
+Most products will contain the following top-level keys:
+
+- network-properties
+- product-properties
+- resource-config
+
+The command can be run directly using Docker.
+We'll need to download the image to our local workstation, import it into Docker, 
+and then run `staged-config` for the [Tanzu Application Service][tas] product.
+For more information on Running Commands Locally,
+see the corresponding [How-to Guide][running-commands-locally].
+
+After the image has been downloaded from [Tanzu Network][tanzu-network-platform-automation]
+run the following commands in your working directory.
+
+```bash
+export ENV_FILE=env.yml
+docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+om --env ${ENV_FILE} staged-config --include-credentials --product-name cf > tas-config.yml
+```
+
+We have a configuration file for our tile ready to back up! Almost.
+There are a few more steps required before we're ready to commit.
+
+#### Parameterizing the Config 
+Look through your `tas-config.yml` for any sensitive values.
+These values should be ((parameterized)) 
+and saved off in a secrets store (in this example, we'll use Credhub).
+
+You should still be logged into Credhub.
+If not, login. Be sure to note the space at the beginning of the line.
+This will ensure your valuable secrets are not saved in terminal history.
+
+{% include ".logging-into-credhub.md" %}
+
+The example list of some sensitive values from our `tas-config.yml` are as follows,
+note that this is intentionally incomplete.
+```yaml
+product-properties:
+  .properties.cloud_controller.encrypt_key:
+    value:
+      secret: my-super-secure-secret
+  .properties.networking_poe_ssl_certs:
+    value:
+    - certificate:
+        cert_pem: |-
+          -----BEGIN CERTIFICATE-----
+          my-cert
+          -----END CERTIFICATE-----
+        private_key_pem: |-
+          -----BEGIN RSA PRIVATE KEY-----
+          my-private-key
+          -----END RSA PRIVATE KEY-----
+      name: certificate
+```
+
+We'll start with the Cloud Controller encrypt key.
+As this is a value that you might wish to rotate at some point,
+we're going to store it off as a `password` type into Credhub.
+
+```bash
+# note the starting space
+ credhub set \
+   --name /concourse/your-team-name/cloud_controller_encrypt_key \
+   --type password \
+   --password my-super-secure-secret
+```
+
+To validate that we set this correctly,
+we should run.
+
+```bash
+# no need for an extra space
+credhub get --name /concourse/your-team-name/cloud_controller_encrypt_key
+```
+
+and expect an output like
+```text
+id: <guid>
+name: /concourse/your-team-name/cloud_controller_encrypt_key
+type: password
+value: my-super-secure-secret
+version_created_at: "<timestamp>"
+```
+
+We are then going to store off the Networking POE certs
+as a `certificate` type in Credhub. 
+But first, we're going to save off the certificate and private key 
+as plain text files to simplify this process.
+We named these files `poe-cert.txt` and `poe-private-key.txt`.
+There should be no formatting or indentation in these files, only new lines.
+
+```bash
+# note the starting space
+ credhub set \
+   --name /concourse/your-team-name/networking_poe_ssl_certs \
+   --type rsa \
+   --public poe-cert.txt \
+   --private poe-private-key.txt
+```
+
+And again, we're going to validate that we set this correctly
+
+```bash
+# no need for an extra space
+credhub get --name /concourse/your-team-name/networking_poe_ssl_certs
+```
+
+and expect and output like
+
+```text
+id: <guid>
+name: /concourse/your-team-name/networking_poe_ssl_certs
+type: rsa
+value:
+  private_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    my-private-key
+    -----END RSA PRIVATE KEY-----
+  public_key: |
+    -----BEGIN CERTIFICATE-----
+    my-cert
+    -----END CERTIFICATE-----
+version_created_at: "<timestamp>"
+```
+
+!!! warning "Remove Credentials from Disk" 
+    Once we've validated that the certs are set correctly in Credhub, 
+    remember to delete `poe-cert.txt` and `poe-private-key.txt` from your working directory.
+    This will prevent a potential security leak, 
+    or an accidental commit of those credentials.
+    
+Repeat this process for all sensitive values found in your `tas-config.yml`.
+
+Once completed, we can remove those secrets from `tas-config.yml`
+and replace them with ((parameterized-values)).
+The parameterized value name should match the name in Credhub.
+For our example, we parameterized the config like:
+
+```yaml
+product-properties:
+  .properties.cloud_controller.encrypt_key:
+    value:
+      secret: ((cloud_controller_encrypt_key))
+  .properties.networking_poe_ssl_certs:
+    value:
+    - certificate:
+        cert_pem: ((networking_poe_ssl_certs.public_key))
+        private_key_pem: ((networking_poe_ssl_certs.private_key))
+      name: certificate
+```
+
+Once your `tas-config.yml` is parameterized to your liking,
+we can finally commit the config file.
+
+```bash
+git add download-tas.yml
+git commit -m "Add tas-config file for foundation"
+git push
+```
+
+
+#######WIP######
+
+
+## Config Template
 #### Generate the Config Template Directory
 
 ```bash
 export PIVNET_API_TOKEN='your-vmware-tanzu-network-api-token'
-
 ```
 (Alternatively, you can write the above to a file and `source` it to avoid credentials in your bash history.)
 
@@ -357,74 +541,6 @@ For vars that do not include credentials, you can check those vars files in, as 
 Handle vars that are secret [more carefully][secrets-handling].
 
 You can then dispose of the config template directory.
-
-## From A Staged Product
-
-A configuration can be generated from a staged product on an already existing Ops Manager.
-
-### Prerequisites
-
-To extract the configuration for a product, you will first need to do the following:
-
-1. Upload and stage your desired product(s) to a fully deployed Ops Manager.
-For example, let's use [Tanzu Application Service][tas] on Vsphere with NSX-T
-1. Configure your product _manually_ according to the product's
-[install instructions][tas-install-vsphere].
-
-### Workflow
-
-[om] has a command called [staged-config], which is used to extract staged product
-configuration present in the Ops Manager UI of the targeted foundation.
-
-Sample usage, using `om` directly and assuming the [Tanzu Application Service][tas] product:  
-`om --env env.yml staged-config --include-placeholders --product-name cf > tile-config.yml`  
-
-Most products will contain the following high level keys:
-
-- network-properties
-- product-properties
-- resource-config
-
-You can check the file in to git.
-
-For convenience, Platform Automation Toolkit provides you with two ways to use the
-`om staged-config` command. The command can be run as a [task][staged-config]
-inside of your pipeline. As an example of how to invoke this for the [Tanzu Application Service][tas] product
-in your pipeline.yml(resources not listed):
-```yaml
-jobs:
-- name: staged-pas-config
-  plan:
-  - aggregate:
-    - get: platform-automation-image
-      params:
-        unpack: true
-    - get: platform-automation-tasks
-      params:
-        unpack: true
-    - get: configuration
-    - get: variable
-  - task: staged-config
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/staged-config.yml
-    input_mapping:
-      env: configuration
-    params:
-      PRODUCT_NAME: cf
-      ENV_FILE: ((foundation))/env/env.yml
-      SUBSTITUTE_CREDENTIALS_WITH_PLACEHOLDERS: true
-  - put: configuration
-    params:
-      file: generated-config/pas.yml
-```
-This task will connect to the Ops Manager defined in your [`env.yml`][generating-env-file], download the current staged
-configuration of your product, and put it into a `generated-config` folder in the concourse job. The `put` in
-concourse allows you to persist this config outside the concourse container.
-
-Alternatively, this can be run external to concourse by using docker. An example
-of how to do this using on the linux/mac command line:
-
-{% include ".docker-import-tile.md" %}
 
 ## Using Ops Files for Multi-Foundation
 
