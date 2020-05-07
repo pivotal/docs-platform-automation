@@ -31,7 +31,7 @@ We assume:
 - a previous job responsible for deploying the director
   called `apply-director-changes`.
 - you have created an `env.yml` from the [Configuring Env][generating-env-file]
-  how-to guide.
+  how-to guide. This file exists in the `configuration` resource.
 - you have a `fly` target named `control-plane` with an existing pipeline called `foundation`.
 - you have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
 
@@ -42,6 +42,7 @@ either by changing the example YAML, or your pipeline.
 ## Download Upload And Stage Product to Ops Manager
 For this guide, we're going to add [TAS][tas].
 
+### Download
 Before setting the pipeline, we will have to 
 create a config file for [`download-product`][download-product]
 in order to download TAS from Tanzu Network.
@@ -120,7 +121,79 @@ If the pipeline sets without errors, run a `git push` of the config.
     git push
     ```
 
-#####WIP#####
+!!! note "Testing Your Pipeline"
+    We generally want to try things out right away to see if they're working right.
+    However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
+    you might want to hold off until we've got the job doing more,
+    so that if it works, you don't have to wait for the download again.
+
+### Upload and Stage
+We have a product downloaded and (potentially) cached on a Concourse worker.
+The next step is to upload and stage that product to Ops Manager.
+
+```yaml hl_lines="25-54"
+jobs:
+- name: download-upload-and-stage
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        tasks: platform-automation-tasks
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
+    - task: download-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      input_mapping:
+        config: configuration
+      params:
+        CONFIG_FILE: download-tas.yml
+      output_mapping:
+        downloaded-product: tas-product
+        downloaded-stemcell: tas-stemcell
+    - task: upload-tas-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upload-stemcell.yml
+      input_mapping:
+        env: configuration
+        stemcell: tas-stemcell
+      params:
+        ENV_FILE: config/env.yml
+    - task: upload-and-stage-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/stage-product.yml
+      input_mapping:
+        product: tas-product
+        env: configuration
+      params:
+        ENV_FILE: config/env.yml
+```
+
+Then we can re-set the pipeline
+
+```bash
+fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+```
+
+and if all is well, make a commit and push
+
+```bash
+git add pipeline.yml
+git commit -m 'upload tas and stemcell to Ops Manager'
+git push
+```
 
 ## Configure the Product Manually
 Before automating the configuration and install of the tile,
