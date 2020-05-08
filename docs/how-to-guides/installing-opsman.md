@@ -408,21 +408,29 @@ the following steps will result in a filled out `opsman.yml`.
     Copy and paste the YAML below for your IaaS
     and save as `opsman.yml`.
 
-    ```yaml tab="AWS"
-    --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
-    ```
+    === "AWS"
 
-    ```yaml tab="Azure"
-    --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
-    ```
+        ```yaml
+        --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
+        ```
 
-    ```yaml tab="GCP"
-    --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
-    ```
-   
-    ```yaml tab="vSphere+NSXT"
-    --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
-    ```
+    === "Azure"
+
+        ```yaml
+        --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
+        ```
+
+    === "GCP"
+
+        ```yaml
+        --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
+        ```
+
+    === "vSphere+NSXT"
+
+        ```yaml
+        --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
+        ```
 
      Where:
      {: .tightSpacing }
