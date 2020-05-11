@@ -2,7 +2,7 @@
 
 This how-to-guide will teach you how to add a product to an existing pipeline.
 This includes downloading the product from Pivnet,
-generating configuration,
+extracting configuration,
 and installing the configured product.
 If you don't already have an Ops Manager and deployed Director,
 check out [Installing Ops Manager][install-how-to] and
@@ -24,23 +24,23 @@ you may run into trouble with some of our assumptions.
 
 We assume:
 
-- resource declarations for
+- Resource declarations for
   `configuration`,
   `platform-automation-image` and `platform-automation-tasks`.
-- a pivnet token stored as a credential named `pivnet_token`.
-- a previous job responsible for deploying the director
+- A pivnet token stored in Credhub as a credential named `pivnet_token`.
+- A previous job responsible for deploying the director
   called `apply-director-changes`.
-- you have created an `env.yml` from the [Configuring Env][generating-env-file]
+- You have created an `env.yml` from the [Configuring Env][generating-env-file]
   how-to guide. This file exists in the `configuration` resource.
-- you have a `fly` target named `control-plane` with an existing pipeline called `foundation`.
-- you have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
+- You have a `fly` target named `control-plane` with an existing pipeline called `foundation`.
+- You have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
 
 You should be able to use the pipeline YAML in this document with any pipeline,
 as long as you make sure the above names match up with what's in your pipeline,
-either by changing the example YAML, or your pipeline.
+either by changing the example YAML or your pipeline.
 
 ## Download Upload And Stage Product to Ops Manager
-For this guide, we're going to add [TAS][tas].
+For this guide, we're going to add the [TAS][tas] product.
 
 ### Download
 Before setting the pipeline, we will have to 
@@ -62,7 +62,7 @@ git push
 Now that we have a config file,
 we can add a new `download-upload-and-stage-tas` job in your `pipeline.yml`.
 
-```yaml
+```yaml hl_lines="3-32"
 jobs: # Do not duplicate this if it already exists in your pipeline.yml,
       # just add the following lines to the jobs section
 - name: download-upload-and-stage-tas
@@ -171,10 +171,10 @@ jobs:
         env: configuration
         stemcell: tas-stemcell
       params:
-        ENV_FILE: config/env.yml
+        ENV_FILE: env.yml
     - task: upload-and-stage-tas
       image: platform-automation-image
-      file: platform-automation-tasks/tasks/stage-product.yml
+      file: platform-automation-tasks/tasks/upload-and-stage-product.yml
       input_mapping:
         product: tas-product
         env: configuration
@@ -231,12 +231,40 @@ and then run `staged-config` for the [Tanzu Application Service][tas] product.
 For more information on Running Commands Locally,
 see the corresponding [How-to Guide][running-commands-locally].
 
+
 After the image has been downloaded from [Tanzu Network][tanzu-network-platform-automation]
-run the following commands in your working directory.
+we're going to need the product name recognized by Ops Manager.
+This can be found using `om`, but first we should import the image
 
 ```bash
 export ENV_FILE=env.yml
 docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+```
+
+Then, we can run `om staged-products` to find the name of the product in Ops Manager.
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+om --env ${ENV_FILE} staged-products
+```
+
+The result should be a table that looks like the following
+```text
++---------------------------+-----------------+
+|           NAME            |     VERSION     |
++---------------------------+-----------------+
+| cf                        | <VERSION>       |
+| p-bosh                    | <VERSION>       |
++---------------------------+-----------------+
+```
+
+`p-bosh` is the name of the director.
+As `cf` is the only other product on our Ops Manager,
+we can safely assume that this is the product name for [TAS][tas].
+
+Using the product name `cf`,
+let's extract the current configuration from Ops Manager.
+
+```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 om --env ${ENV_FILE} staged-config --include-credentials --product-name cf > tas-config.yml
 ```
@@ -246,7 +274,7 @@ There are a few more steps required before we're ready to commit.
 
 #### Parameterizing the Config 
 Look through your `tas-config.yml` for any sensitive values.
-These values should be ((parameterized)) 
+These values should be `((parameterized))`
 and saved off in a secrets store (in this example, we'll use Credhub).
 
 You should still be logged into Credhub.
@@ -355,7 +383,7 @@ version_created_at: "<timestamp>"
 Repeat this process for all sensitive values found in your `tas-config.yml`.
 
 Once completed, we can remove those secrets from `tas-config.yml`
-and replace them with ((parameterized-values)).
+and replace them with `((parameterized-values))`.
 The parameterized value name should match the name in Credhub.
 For our example, we parameterized the config like:
 
@@ -388,7 +416,7 @@ we can now configure the product and apply changes.
 First, we need to update the pipeline
 to have a configure-product step.
 
-```yaml hl_lines="46-73"
+```yaml hl_lines="46-76"
 jobs:
 - name: download-upload-and-stage-tas
   serial: true
@@ -727,13 +755,8 @@ You can then dispose of the config template directory.
 
 ## Using Ops Files for Multi-Foundation
 
-`--include-placeholders` in the `om` command is a vital first step to externalizing
-your configuration for multiple foundations. This will search the Ops Manager product
-for fields marked as "secrets", and replace those values with
-`((placeholder_credentials))`.
-
-In order to fully support multiple foundations, however, a bit more work is
-necessary. There are two ways to do this: using [secrets management][multi-foundation-secrets-handling] or ops files.
+There are two recommended ways to support multiple foundation workflows:
+using [secrets management][multi-foundation-secrets-handling] or ops files.
 This section will explain how to support multiple foundations using ops files.
 
 Starting with an **incomplete** [Tanzu Application Service][tas] config from **vSphere** as an example:
