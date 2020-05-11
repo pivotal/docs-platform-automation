@@ -535,6 +535,12 @@ Will replicate the product for use in isolation segments.
 The task requires a downloaded product prior to replication.
 The output is a replicated tile with a new name in the metadata and filename.
 
+!!! info "Using replicate-product"
+    This command does not support storing the replicated product
+    in a non-versioned blobstore, because it cannot generate a unique name.
+    It is recommended to use the replicated tile immediately in the next task
+    rather than storing it and using it in a different job.
+
 {% code_snippet 'tasks', 'replicate-product', 'Task' %}
 {% code_snippet 'tasks', 'replicate-product-script', 'Implementation' %}
 {% code_snippet 'examples', 'replicate-product-usage', 'Usage' %}
