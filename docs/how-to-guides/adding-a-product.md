@@ -59,12 +59,13 @@ git commit -m "Add download-tas file for foundation"
 git push
 ``` 
 
-Now that we have a config file, we can add the`download-product` task 
-to the `download-upload-and-stage-tas` job in your `pipeline.yml`.
+Now that we have a config file,
+we can add a new `download-upload-and-stage-tas` job in your `pipeline.yml`.
 
 ```yaml
-jobs:
-- name: download-upload-and-stage
+jobs: # Do not duplicate this if it already exists in your pipeline.yml,
+      # just add the following lines to the jobs section
+- name: download-upload-and-stage-tas
   serial: true
   plan:
     - aggregate:
@@ -131,9 +132,9 @@ If the pipeline sets without errors, run a `git push` of the config.
 We have a product downloaded and (potentially) cached on a Concourse worker.
 The next step is to upload and stage that product to Ops Manager.
 
-```yaml hl_lines="25-47"
+```yaml hl_lines="32-45"
 jobs:
-- name: download-upload-and-stage
+- name: download-upload-and-stage-tas
   serial: true
   plan:
     - aggregate:
@@ -177,8 +178,6 @@ jobs:
       input_mapping:
         product: tas-product
         env: configuration
-      params:
-        ENV_FILE: config/env.yml
 ```
 
 Then we can re-set the pipeline
@@ -377,22 +376,206 @@ Once your `tas-config.yml` is parameterized to your liking,
 we can finally commit the config file.
 
 ```bash
-git add download-tas.yml
+git add tas-config.yml
 git commit -m "Add tas-config file for foundation"
 git push
 ```
 
+## Configure and Apply
+With the hard part out of the way,
+we can now configure the product and apply changes.
 
-#######WIP######
+First, we need to update the pipeline
+to have a configure-product step.
+
+```yaml hl_lines="46-73"
+jobs:
+- name: download-upload-and-stage-tas
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        tasks: platform-automation-tasks
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
+    - task: download-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      input_mapping:
+        config: configuration
+      params:
+        CONFIG_FILE: download-tas.yml
+      output_mapping:
+        downloaded-product: tas-product
+        downloaded-stemcell: tas-stemcell
+    - task: upload-tas-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upload-stemcell.yml
+      input_mapping:
+        env: configuration
+        stemcell: tas-stemcell
+      params:
+        ENV_FILE: env/env.yml
+    - task: upload-and-stage-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/stage-product.yml
+      input_mapping:
+        product: tas-product
+        env: configuration
+- name: configure-tas
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        passed: [download-upload-and-stage-tas]
+        trigger: true
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+        passed: [download-upload-and-stage-tas]
+    - task: prepare-tasks-with-secrets
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        tasks: platform-automation-tasks
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
+    - task: configure-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-product.yml
+      input_mapping:
+        config: configuration
+        env: configuration
+      params:
+        CONFIG_FILE: tas-config.yml
+```
+
+This new job will configure the TAS product
+with the config file we previously created.
+
+Next, we need to add an apply-changes job
+so that these changes will be applied by the Ops Manager.
+
+```yaml hl_lines="31-56"
+- name: configure-tas
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        trigger: true
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+        passed: [download-upload-and-stage-tas]
+    - task: prepare-tasks-with-secrets
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        tasks: platform-automation-tasks
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
+    - task: configure-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-product.yml
+      input_mapping:
+        config: configuration
+        env: configuration
+      params:
+        CONFIG_FILE: tas-config.yml
+- name: apply-changes
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+        passed: [configure-tas]
+    - task: prepare-tasks-with-secrets
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        tasks: platform-automation-tasks
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
+    - task: apply-changes
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/apply-changes.yml
+      input_mapping:
+        env: configuration
+```
+
+!!! info "Adding Multiple Products"
+    When adding multiple products, you can add the configure jobs as passed constraints
+    to the apply-changes job so that they all are applied at once.
+    Ops Manager will handle any inter-product dependency ordering.
+    This will speed up your apply changes
+    when compared with running an apply changes for each product separately.
+    
+    Example:
+    `passed: [configure-tas, configure-tas-windows, configure-healthwatch]`
 
 
-## Config Template
+Set the pipeline one final time,
+run the job, and see it pass.
+
+```bash
+fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+```
+
+Commit the final changes to your repository.
+
+```bash
+git add pipeline.yml
+git commit -m "configure-tas and apply-changes"
+git push
+```
+
+You have now successfully added a product to your automation pipeline.
+
+## Advanced Concepts
+### Config Template
+An alternative to the staged-config workflow
+outlined in the how-to guide is `config-template`.
+
+`config-template` is an `om` command that creates a base config file with optional ops files
+from a given tile or pivnet slug.
+
+This section will assume [TAS][tas], like the how-to guide above.
+
 #### Generate the Config Template Directory
 
 ```bash
-export PIVNET_API_TOKEN='your-vmware-tanzu-network-api-token'
+# note the leading space
+ export PIVNET_API_TOKEN='your-vmware-tanzu-network-api-token'
 ```
-(Alternatively, you can write the above to a file and `source` it to avoid credentials in your bash history.)
 
 ```bash
 docker run -it -v $HOME/configs:/configs platform-automation-image \
@@ -410,7 +593,7 @@ This will create or update a directory at `$HOME/configs/cf/2.5.0/`.
 
 #### Interpolate a Config
 
-The directory will contain a product.yml file.
+The directory will contain a `product.yml` file.
 This is the template for the product configuration you're about to build.
 Open it in an editor of your choice.
 Get familiar with what's in there.
@@ -439,7 +622,7 @@ we will refer to these vars as `required-vars.yml`.
 There may be situations that call for splitting your vars across multiple files.
 This can be useful if there are vars that need to be interpolated when you apply the configuration,
 rather than when you create the final template.
-You might consider creating a seperate vars file for each of the following cases:
+You might consider creating a separate vars file for each of the following cases:
 
 - credentials (these vars can then be [persisted separately/securely][secrets-handling])
 - foundation-specific variables when using the same template for multiple foundations
@@ -461,7 +644,7 @@ here are some approaches you can use:
 !!! info "When Using The Ops Manager Docs and UI"
     Be aware that the field names in the UI do not necessarily map directly to property names.
 
-##### Optional Features
+#### Optional Features
 The above process will get you a default installation,
 with no optional features or variables,
 that is entirely deployed in a single Availability Zone (AZ).
