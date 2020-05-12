@@ -45,7 +45,7 @@ which can be retrieved using [this pipeline][reference-resources].
 
 These can either be uploaded manually or from the [reference resources pipeline][reference-resources].
 
-{% code_snippet 'reference', 'reference-resources-s3' %}
+---excerpt--- "reference/reference-resources-s3"
   
 !!! tip "Tanzu Application Service-Windows with S3"
     If retrieving `pas-windows` and `pas-windows-stemcell` from an S3 bucket,
@@ -79,7 +79,7 @@ In a job, specify the following task:
 
 {% include "./.export_installation_note.md" %}
 
-{% code_snippet 'reference', 'export-installation-resource-usage' %}
+---excerpt--- "reference/export-installation-resource-usage"
 
 ### Configured Resources
 
@@ -88,11 +88,11 @@ opsman VM creation, director, product, foundation-specific vars, auth, and env f
 For more details, see the [Inputs and Outputs][inputs-outputs] section.
 Platform Automation Toolkit will not create these resources for you.
 
-{% code_snippet 'reference', 'resources-configurations' %}
+---excerpt--- "reference/resources-configurations"
 
 ### Trigger Resources
 
-{% code_snippet 'reference', 'resources-triggers' %}
+---excerpt--- "reference/resources-triggers"
 
 ### Secrets Handling
 
@@ -102,7 +102,7 @@ Concourse support several [credential managers][concourse-secrets-handling] nati
 The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
 to load secrets from your external configuration files.
 
-{% code_snippet 'reference', 'prepare-tasks-with-secrets-usage' %}
+---excerpt--- "reference/prepare-tasks-with-secrets-usage"
 
 ### Jobs
 
@@ -110,7 +110,7 @@ Each job corresponds to a "box"
 on the visual representation of your Concourse pipeline.
 These jobs consume resources defined above.
 
-{% code_snippet 'reference', 'reference-jobs' %}
+---excerpt--- "reference/reference-jobs"
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

@@ -4,13 +4,13 @@ The format of the configuration file varies
 according to the authentication method to be used.
 
 ### [configure-authentication][configure-authentication]:
-{% code_snippet 'examples', 'auth-configuration' %}
+---excerpt--- "examples/auth-configuration"
 
 ### [configure-ldap-authentication][configure-ldap-authentication]:
-{% code_snippet 'examples', 'ldap-auth-configuration' %}
+---excerpt--- "examples/ldap-auth-configuration"
 
 ### [configure-saml-authentication][configure-saml-authentication]:
-{% code_snippet 'examples', 'saml-auth-configuration' %}
+---excerpt--- "examples/saml-auth-configuration"
 
 ## Managing Configuration, Auth, and State Files
 To use all these files with the Concourse tasks that require them,

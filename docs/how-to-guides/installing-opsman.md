@@ -448,11 +448,16 @@ If you created your infrastructure manually
 or would like additional configuration options,
 these are the acceptable keys for the `opsman.yml` file for each IaaS.
 
-{% code_snippet 'examples', 'aws-configuration', 'AWS' %}
-{% code_snippet 'examples', 'azure-configuration', 'Azure' %}
-{% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
-{% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
-{% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
+=== "AWS"
+    ---excerpt--- "examples/aws-configuration"
+=== "Azure"
+    ---excerpt--- "examples/azure-configuration"
+=== "GCP"
+    ---excerpt--- "examples/gcp-configuration"
+=== "Openstack"
+    ---excerpt--- "examples/openstack-configuration"
+=== "vSphere"
+    ---excerpt--- "examples/vsphere-configuration"
 
 #### Using the Ops Manager Config file
 

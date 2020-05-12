@@ -193,7 +193,7 @@ If you are using vars files, the `vars` input and the `VARS_PATHS` param will al
 
 For example, if the existing `credhub-interpolate` task looks like this:
 
-{% code_snippet 'examples', 'credhub-interpolate-usage' %}
+---excerpt--- "examples/credhub-interpolate-usage"
 
 In the task definition (above), you've had to define the prefix and Credhub authorization credentials.
 The new `prepare-tasks-with-secrets` task uses concourse's native integration with Credhub (and other credential managers).

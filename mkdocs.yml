@@ -28,6 +28,12 @@ markdown_extensions:
 - pymdownx.superfences
 - pymdownx.tabbed
 - sane_lists
+- markdown-code-excerpt:
+    sections:
+      tasks: "../platform-automation"
+      examples: "./docs/examples"
+      reference: "../docs-platform-automation-reference-pipeline-config"
+      paving: "../paving"
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
