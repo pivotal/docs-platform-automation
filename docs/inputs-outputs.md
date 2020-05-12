@@ -8,10 +8,10 @@ The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Ops Manager API.
 
 #### basic authentication
-{% code_snippet 'examples', 'env' %}
+---excerpt--- "examples/env"
 
 #### uaa authentication
-{% code_snippet 'examples', 'env-uaa' %}
+---excerpt--- "examples/env-uaa"
 
 
 ##### Getting the `client-id` and `client-secret`
@@ -44,12 +44,18 @@ The config for an Ops Manager described IAAS specific information for creating t
 The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.
 
-{% code_snippet 'examples', 'aws-configuration', "AWS" %}
-{% code_snippet 'examples', 'azure-configuration', "Azure" %}
-{% code_snippet 'examples', 'gcp-configuration', "GCP" %}
-{% code_snippet 'examples', 'openstack-configuration', "Openstack" %}
-{% code_snippet 'examples', 'vsphere-configuration', "vSphere" %}
-{% code_snippet 'examples', 'opsman-settings', "Additional Settings" %}
+=== "AWS"
+    ---excerpt--- "examples/aws-configuration"
+=== "Azure"
+    ---excerpt--- "examples/azure-configuration"
+=== "GCP"
+    ---excerpt--- "examples/gcp-configuration"
+=== "Openstack"
+    ---excerpt--- "examples/openstack-configuration"
+=== "vSphere"
+    ---excerpt--- "examples/vsphere-configuration"
+=== "Additional Settings"
+    ---excerpt--- "examples/opsman-settings"
 
 Specific advice and features for the different IaaSs are documented below
 #### AWS
@@ -118,7 +124,7 @@ There are two ways to build a director config.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
 
-{% code_snippet 'examples', 'director-configuration' %}
+---excerpt--- "examples/director-configuration"
 
 The IAAS specific configuration can be found in the Ops Manager API documentation.
 
@@ -153,7 +159,7 @@ There are two ways to build a product config.
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
 
-{% code_snippet 'examples', 'product-configuration' %}
+---excerpt--- "examples/product-configuration"
 
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
@@ -176,25 +182,30 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IAAS:
 
-``` yaml tab="AWS"
-{% include './examples/state/aws.yml' %}
-```
+=== "AWS"
+    ``` yaml
+    --8<-- 'docs/examples/state/aws.yml'
+    ```
 
-``` yaml tab="Azure"
-{% include './examples/state/azure.yml' %}
-```
+=== "Azure"
+    ``` yaml
+    --8<-- 'docs/examples/state/azure.yml'
+    ```
 
-``` yaml tab="GCP"
-{% include './examples/state/gcp.yml' %}
-```
+=== "GCP"
+    ``` yaml
+    --8<-- 'docs/examples/state/gcp.yml'
+    ```
 
-``` yaml tab="OpenStack"
-{% include './examples/state/openstack.yml' %}
-```
+=== "OpenStack"
+    ``` yaml
+    --8<-- 'docs/examples/state/openstack.yml'
+    ```
 
-``` yaml tab="vSphere"
-{% include './examples/state/vsphere.yml' %}
-```
+=== "vSphere"
+    ``` yaml
+    --8<-- 'docs/examples/state/vsphere.yml'
+    ```
 
 ### opsman image
 
@@ -268,45 +279,50 @@ using the [download-product][download-product] task.
 
 #### stemcell.yml
 
-```yaml tab="AWS"
----
-pivnet-api-token: token
-pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
-pivnet-product-slug: stemcells-ubuntu-xenial
-product-version-regex: ^170\..*$
-```
+=== "AWS"
+    ```yaml
+    ---
+    pivnet-api-token: token
+    pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
+    pivnet-product-slug: stemcells-ubuntu-xenial
+    prod    uct-version-regex: ^170\..*$
+    ```
 
-```yaml tab="Azure"
----
-pivnet-api-token: token
-pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
-pivnet-product-slug: stemcells-ubuntu-xenial
-product-version-regex: ^170\..*$
-```
+=== "Azure"
+    ```yaml
+    ---
+    pivnet-api-token: token
+    pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
+    pivnet-product-slug: stemcells-ubuntu-xenial
+    product-version-regex: ^170\..*$
+    ```
 
-```yaml tab="GCP"
----
-pivnet-api-token: token
-pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
-pivnet-product-slug: stemcells-ubuntu-xenial
-product-version-regex: ^170\..*$
-```
+=== "GCP"
+    ```yaml
+    ---
+    pivnet-api-token: token
+    pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
+    pivnet-product-slug: stemcells-ubuntu-xenial
+    product-version-regex: ^170\..*$
+    ```
 
-```yaml tab="OpenStack"
----
-pivnet-api-token: token
-pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
-pivnet-product-slug: stemcells-ubuntu-xenial
-product-version-regex: ^170\..*$
-```
+=== "OpenStack"
+    ```yaml
+    ---
+    pivnet-api-token: token
+    pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
+    pivnet-product-slug: stemcells-ubuntu-xenial
+    product-version-regex: ^170\..*$
+    ```
 
-```yaml tab="vSphere"
----
-pivnet-api-token: token
-pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
-pivnet-product-slug: stemcells-ubuntu-xenial
-product-version-regex: ^170\..*$
-```
+=== "vSphere"
+    ```yaml
+    ---
+    pivnet-api-token: token
+    pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
+    pivnet-product-slug: stemcells-ubuntu-xenial
+    product-version-regex: ^170\..*$
+    ```
 
 
 #### download-product task
@@ -355,10 +371,14 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
-{% code_snippet 'examples', 'download-product-config-pivnet', 'Tanzu Network' %}
-{% code_snippet 'examples', 'download-product-config-s3', 'S3' %}
-{% code_snippet 'examples', 'download-product-config-gcs', 'GCS' %}
-{% code_snippet 'examples', 'download-product-config-azure', 'Azure' %}
+=== "Tanzu Network"
+    ---excerpt--- "examples/download-product-config-pivnet"
+=== "S3"
+    ---excerpt--- "examples/download-product-config-s3"
+=== "GCS"
+    ---excerpt--- "examples/download-product-config-gcs"
+=== "Azure"
+    ---excerpt--- "examples/download-product-config-azure"
 
 ### download-stemcell-product-config
 
@@ -366,7 +386,7 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a stemcell.
 The configuration of the `download-config.yml` looks like this:
 
-{% code_snippet 'examples', 'download-stemcell-product-config' %}
+---excerpt--- "examples/download-stemcell-product-config"
 
 ### telemetry
 
@@ -376,7 +396,7 @@ so they can learn and measure results
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 
-{% code_snippet 'examples', 'telemetry' %}
+---excerpt--- "examples/telemetry"
 
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}

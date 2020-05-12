@@ -49,7 +49,7 @@ _This minimizes parameter mapping in the platform-automation tasks_.
 For example, in the [`configure-director`][configure-director]
 step:
 
-{% code_snippet 'examples', 'configure-director-usage' %}
+---excerpt--- "examples/configure-director-usage"
 
 we map the config files 
 to the expected input named `env` of the `configure-director` task.
@@ -60,7 +60,7 @@ This also works for `director.yml`.
 
 For reference, here is the `configure-director` task:
 
-{% code_snippet 'tasks', 'configure-director' %}
+---excerpt--- "tasks/configure-director"
 
 ## Multiple Foundations with one Repository
 

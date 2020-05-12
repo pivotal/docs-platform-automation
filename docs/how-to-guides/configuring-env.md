@@ -6,13 +6,13 @@ There are two ways to provide auth information.
 If your configuration choices allow you to use `username` and `password` directly,
 you can do so:
 
-{% code_snippet 'examples', 'env' %}
+---excerpt--- "examples/env"
 
 However, if you're using an external identity provider
 via SAML or LDAP integration,
 you'll need to use a UAA client via `client-id` and `client-secret`:
 
-{% code_snippet 'examples', 'env-uaa' %}
+---excerpt--- "examples/env-uaa"
 
 While `decryption-passphrase` is nominally optional,
 if you intend to use a single `env.yml` for an entire pipeline,
