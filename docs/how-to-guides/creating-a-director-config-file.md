@@ -23,7 +23,7 @@ in to your VCS.
 
 The following is an example configuration file for Ops Manager that might return
 after running this command:
-{% code_snippet 'examples', 'director-configuration' %}
+---excerpt--- "examples/director-configuration"
 
 ## Configuring Director Using Config File
 Now you can modify the settings in the configuration file directly instead of

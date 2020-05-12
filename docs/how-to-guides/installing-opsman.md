@@ -441,21 +441,25 @@ the following steps will result in a filled out `opsman.yml`.
     Copy and paste the YAML below for your IaaS
     and save as `opsman.yml`.
 
-    ```yaml tab="AWS"
-    --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
-    ```
+    === "AWS"
+        ```yaml
+        --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
+        ```
 
-    ```yaml tab="Azure"
-    --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
-    ```
+    === "Azure"
+        ```yaml
+        --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
+        ```
 
-    ```yaml tab="GCP"
-    --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
-    ```
+    === "GCP"
+        ```yaml
+        --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
+        ```
    
-    ```yaml tab="vSphere+NSXT"
-    --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
-    ```
+    === "vSphere+NSXT"
+        ```yaml
+        --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
+        ```
 
      Where:
      {: .tightSpacing }
@@ -473,11 +477,16 @@ If you created your infrastructure manually
 or would like additional configuration options,
 these are the acceptable keys for the `opsman.yml` file for each IaaS.
 
-{% code_snippet 'examples', 'aws-configuration', 'AWS' %}
-{% code_snippet 'examples', 'azure-configuration', 'Azure' %}
-{% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
-{% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
-{% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
+=== "AWS"
+    ---excerpt--- "examples/aws-configuration"
+=== "Azure"
+    ---excerpt--- "examples/azure-configuration"
+=== "GCP"
+    ---excerpt--- "examples/gcp-configuration"
+=== "Openstack"
+    ---excerpt--- "examples/openstack-configuration"
+=== "vSphere"
+    ---excerpt--- "examples/vsphere-configuration"
 
 #### Using the Ops Manager Config file
 

@@ -408,25 +408,30 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
 
-``` yaml tab="AWS"
-{% include './examples/state/aws.yml' %}
-```
+=== "AWS"
+    ``` yaml
+    --8<-- 'docs/examples/state/aws.yml'
+    ```
 
-``` yaml tab="Azure"
-{% include './examples/state/azure.yml' %}
-```
+=== "Azure"
+    ``` yaml
+    --8<-- 'docs/examples/state/azure.yml'
+    ```
 
-``` yaml tab="GCP"
-{% include './examples/state/gcp.yml' %}
-```
+=== "GCP"
+    ``` yaml
+    --8<-- 'docs/examples/state/gcp.yml'
+    ```
 
-``` yaml tab="OpenStack"
-{% include './examples/state/openstack.yml' %}
-```
+=== "OpenStack"
+    ``` yaml
+    --8<-- 'docs/examples/state/openstack.yml'
+    ```
 
-``` yaml tab="vSphere"
-{% include './examples/state/vsphere.yml' %}
-```
+=== "vSphere"
+    ``` yaml
+    --8<-- 'docs/examples/state/vsphere.yml'
+    ```
 
 Find what you need for your IaaS,
 write it in your repo as `state.yml`,
@@ -452,57 +457,66 @@ in your IaaS's console
 look at your terraform outputs)
 to find the necessary values.
 
-{% code_snippet 'examples', 'aws-configuration', 'AWS' %}
-{% code_snippet 'examples', 'azure-configuration', 'Azure' %}
-{% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
-{% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
-{% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
+=== "AWS"
+    ---excerpt--- "examples/aws-configuration"
+=== "Azure"
+    ---excerpt--- "examples/azure-configuration"
+=== "GCP"
+    ---excerpt--- "examples/gcp-configuration"
+=== "Openstack"
+    ---excerpt--- "examples/openstack-configuration"
+=== "vSphere"
+    ---excerpt--- "examples/vsphere-configuration"
 
 Alternatively, you can auto-generate your opsman.yml
 using a `p-automator` command to output an opsman.yml file
 in the directory it is called from. 
 
-```bash tab="AWS"
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-  p-automator export-opsman-config \
-  --state-file generated-state/state.yml \
-  --config-file opsman.yml \
-  --aws-region "$AWS_REGION" \
-  --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-  --aws-access-key-id "$AWS_ACCESS_KEY_ID"
-```
+=== "AWS"
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+      p-automator export-opsman-config \
+      --state-file generated-state/state.yml \
+      --config-file opsman.yml \
+      --aws-region "$AWS_REGION" \
+      --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+      --aws-access-key-id "$AWS_ACCESS_KEY_ID"
+    ```
 
-```bash tab="Azure"
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-  p-automator export-opsman-config \
-  --state-file generated-state/state.yml \
-  --config-file opsman.yml \
-  --azure-subscription-id "$AZURE_SUBSCRIPTION_ID" \
-  --azure-tenant-id "$AZURE_TENANT_ID" \
-  --azure-client-id "$AZURE_CLIENT_ID" \
-  --azure-client-secret "$AZURE_CLIENT_SECRET" \
-  --azure-resource-group "$AZURE_RESOURCE_GROUP"
-```
+=== "Azure"
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+      p-automator export-opsman-config \
+      --state-file generated-state/state.yml \
+      --config-file opsman.yml \
+      --azure-subscription-id "$AZURE_SUBSCRIPTION_ID" \
+      --azure-tenant-id "$AZURE_TENANT_ID" \
+      --azure-client-id "$AZURE_CLIENT_ID" \
+      --azure-client-secret "$AZURE_CLIENT_SECRET" \
+      --azure-resource-group "$AZURE_RESOURCE_GROUP"
+    ```
 
-```bash tab="GCP"
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-  p-automator export-opsman-config \
-  --state-file generated-state/state.yml \
-  --config-file opsman.yml \
-  --gcp-zone "$GCP_ZONE" \
-  --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
-  --gcp-project-id "$GCP_PROJECT_ID"
-```
+=== "GCP"
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+      p-automator export-opsman-config \
+      --state-file generated-state/state.yml \
+      --config-file opsman.yml \
+      --gcp-zone "$GCP_ZONE" \
+      --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
+      --gcp-project-id "$GCP_PROJECT_ID"
+    ```
 
-```bash tab="vSphere"
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-  p-automator export-opsman-config \
-  --state-file generated-state/state.yml \
-  --config-file opsman.yml \
-  --vsphere-url "$VCENTER_URL" \
-  --vsphere-username "$VCENTER_USERNAME" \
-  --vsphere-password "$VCENTER_PASSWORD"
-```
+=== "vSphere"
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+      p-automator export-opsman-config \
+      --state-file generated-state/state.yml \
+      --config-file opsman.yml \
+      --vsphere-url "$VCENTER_URL" \
+      --vsphere-username "$VCENTER_USERNAME" \
+      --vsphere-password "$VCENTER_PASSWORD"
+    ```
 
 Once you have your config file, commit and push it:
 
