@@ -584,6 +584,20 @@ before an `apply-changes` could start.
 === "Usage"
     ---excerpt--- "reference/pre-deploy-check-usage"
 
+### prepare-image
+This task modifies the container image with runtime dependencies.
+`CA_CERTS` can be added,
+which can help secure HTTP connections with a proxy server
+and allows the use of a custom CA on the Ops Manager.
+
+
+=== "Task"
+    ---excerpt--- "tasks/prepare-image"
+=== "Implementation"
+    ---excerpt--- "tasks/prepare-image-script"
+=== "Usage"
+    ---excerpt--- "examples/prepare-image-usage"
+
 ### prepare-tasks-with-secrets
 Modifies task files to include variables needed for config files as environment variables
 for run-time interpolation from a secret store.
