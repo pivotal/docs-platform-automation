@@ -733,6 +733,17 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
 === "Usage"
     ---excerpt--- "reference/test-interpolate-usage"
 
+### update-runtime-config
+This is an _advanced task_.
+Updates a runtime config on the Ops Manager deployed BOSH director.
+
+=== "Task"
+    ---excerpt--- "tasks/update-runtime-config"
+=== "Implementation"
+    ---excerpt--- "tasks/update-runtime-config-script"
+=== "Usage"
+    ---excerpt--- "examples/update-runtime-config-usage"
+
 ### upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
 
