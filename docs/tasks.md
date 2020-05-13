@@ -590,13 +590,18 @@ This task modifies the container image with runtime dependencies.
 which can help secure HTTP connections with a proxy server
 and allows the use of a custom CA on the Ops Manager.
 
+!!! warn "Concourse 5+ Only"
+    This task uses a Concourse feature
+    that allows inputs and outputs to have the same name.
+    This feature is only available in Concourse 5+.
+    `prepare-image` does not work with Concourse 4.
 
 === "Task"
     ---excerpt--- "tasks/prepare-image"
 === "Implementation"
     ---excerpt--- "tasks/prepare-image-script"
 === "Usage"
-    ---excerpt--- "examples/prepare-image-usage"
+    ---excerpt--- "reference/prepare-image-usage"
 
 ### prepare-tasks-with-secrets
 Modifies task files to include variables needed for config files as environment variables
