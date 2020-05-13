@@ -169,4 +169,4 @@
   file: platform-automation/tasks/prepare-image.yml
   params:
     CA_CERTS: ((opsman-ca-cert))
-# code_snippet prepare-image-config-usage end
+# code_snippet prepare-image-usage end
