@@ -76,6 +76,14 @@ Next Version Pending
 
      For an example of how this fits into a `pipeline.yml`, check out the [Ops Manager + Multiple Products pipeline][reference-pipeline]
 
+- [`configure-opsman`][configure-opsman] task has been added.
+
+    This task supports configuring settings
+    on the Ops Manager Settings page in the UI. 
+
+    Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+    An example of all configurable properties can be found in the "Additional Settings" tab.
+
 ## v4.3.6
 April 28, 2020
 

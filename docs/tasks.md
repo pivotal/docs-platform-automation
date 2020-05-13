@@ -142,6 +142,25 @@ please refer to the [Ops Manager documentation][config-ldap].
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
+### configure-opsman
+This task supports configuring settings
+on the Ops Manager Settings page in the UI.
+For example, the SSL cert for the Ops Manager VM can be configured.
+
+Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+An example of all configurable properties can be found in the "Additional Settings" tab.
+
+The [`upgrade-opsman`][upgrade-opsman] task will automatically call `configure-opsman`,
+so there is no need to use this task then.
+It is recommended to use this task in the initial setup of the Ops Manager VM.
+
+=== "Task"
+    ---excerpt--- "tasks/configure-opsman"
+=== "Implementation"
+    ---excerpt--- "tasks/configure-opsman-script"
+=== "Usage"
+    ---excerpt--- "reference/configure-opsman-usage"
+
 ### configure-product
 Configures an individual, staged product with settings from a config file.
 
