@@ -84,6 +84,23 @@ Next Version Pending
 
      For an example of how this fits into a `pipeline.yml`, check out the [Ops Manager + Multiple Products pipeline][reference-pipeline]
 
+## v4.3.7
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- _sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
+  `govc[stderr]: panic: send on closed channel`
+  due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
+
+    These tasks have implemented the workaround described in the issue.
+
 ## v4.3.6
 April 28, 2020
 
@@ -255,6 +272,23 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.10
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- _sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
+  `govc[stderr]: panic: send on closed channel`
+  due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
+
+    These tasks have implemented the workaround described in the issue.
 
 ## v4.2.9
 April 28, 2020
@@ -502,6 +536,23 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## 4.1.15
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- _sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
+  `govc[stderr]: panic: send on closed channel`
+  due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
+
+    These tasks have implemented the workaround described in the issue.
 
 ## v4.1.14
 April 28, 2020
@@ -766,6 +817,23 @@ Released October 21, 2019
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
+## v4.0.15
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- _sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
+  `govc[stderr]: panic: send on closed channel`
+  due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
+
+    These tasks have implemented the workaround described in the issue.
 
 ## v4.0.14
 April 28, 2020
