@@ -38,14 +38,14 @@ Next Version Pending
     This change allows tiles to be staged without requiring the product file to be passed to these tasks.
     If the `product` input is not provided,
     the `CONFIG_FILE` and `STAGE_PRODUCT_CONFIG_FILE` params **are required** in their appropriate tasks.
-    
+
 - [`upgrade-opsman`][upgrade-opsman] now supports configuring settings
   on the Ops Manager Settings page in the UI. 
   This utilizes the `configure-opsman` command from `om`, 
   and runs after the upgrade command.
   Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
   An example of all configurable properties can be found in the "Additional Settings" tab.
-  
+
 - [`download-product`][download-product] now supports
   specifying a version in the config file for the stemcell
   if the latest stemcell for the product is not desired.
@@ -62,6 +62,19 @@ Next Version Pending
     stemcell-iaas: aws
     stemcell-version: 90.90
     ``` 
+
+-  The [`prepare-image`][prepare-image] task has been added.
+
+     This task allows you to temporarily inject a CA onto the Platform Automation image
+     for use in subsequent tasks within the same job.
+
+     This updated image _does not need to be persisted_,
+     and can be used directly by subsequent tasks with no other changes to `pipeline.yml`.
+
+     The task allows proper ssl validation when using `om` commands.
+     To fully take advantage of this feature, remove `skip-ssl-validation: true` from your `env.yml`.
+
+     For an example of how this fits into a `pipeline.yml`, check out the [Ops Manager + Multiple Products pipeline][reference-pipeline]
 
 ## v4.3.6
 April 28, 2020

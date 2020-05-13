@@ -163,10 +163,3 @@
     NAME: my-runtime-config
     OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
 # code_snippet update-runtime-config-usage end
-# code_snippet prepare-image-usage start yaml
-- task: prepare-image
-  image: platform-automation-image
-  file: platform-automation/tasks/prepare-image.yml
-  params:
-    CA_CERTS: ((opsman-ca-cert))
-# code_snippet prepare-image-usage end
