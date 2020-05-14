@@ -47,7 +47,7 @@ Finally, while it's fine for `test` to run in parallel,
 `export-installation` shouldn't.
 So, we'll add `serial: true` to the job, too.
 
-```yaml hl_lines="2 3 15 16 17 18 19 20 21"
+```yaml hl_lines="2 3 15-21"
 jobs:
 - name: export-installation
   serial: true
@@ -148,10 +148,10 @@ Then, put the private key in Credhub so we can use it in our pipeline:
 ```bash
 # note the starting space
  credhub set \
-         --name /concourse/your-team-name/plat-auto-pipes-deploy-key \
-         --type ssh \
-         --private the/filepath/of/the/key-id_rsa \
-         --public the/filepath/of/the/key-id_rsa.pub
+   --name /concourse/your-team-name/plat-auto-pipes-deploy-key \
+   --type ssh \
+   --private the/filepath/of/the/key-id_rsa \
+   --public the/filepath/of/the/key-id_rsa.pub
 ```
 
 Then, add this to the resources section of your pipeline file:
@@ -170,14 +170,14 @@ We'll put the credentials we need in Credhub:
 ```bash
 # note the starting space throughout
  credhub set \
-        -n /concourse/your-team-name/foundation/opsman-username \
-        -t value -v your-opsman-username
+   -n /concourse/your-team-name/foundation/opsman-username \
+   -t value -v your-opsman-username
  credhub set \
-        -n /concourse/your-team-name/foundation/opsman-password \
-        -t value -v your-opsman-password
+   -n /concourse/your-team-name/foundation/opsman-password \
+   -t value -v your-opsman-password
  credhub set \
-        -n /concourse/your-team-name/foundation/opsman-decryption-passphrase \
-        -t value -v your-opsman-decryption-passphrase
+   -n /concourse/your-team-name/foundation/opsman-decryption-passphrase \
+   -t value -v your-opsman-decryption-passphrase
 ```
 
 {% include './.paths-and-pipeline-names.md' %}
@@ -188,12 +188,11 @@ Earlier, we relied on Concourse's native integration with Credhub for interpolat
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
 
-
 We can add it to our job
 after we've retrieved our `env` input,
 but before the `export-installation` task:
 
-```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26"
+```yaml hl_lines="16-26"
 jobs:
 - name: export-installation
   serial: true
@@ -244,6 +243,9 @@ Notice the [input mappings][concourse-input-mapping]
 of the `credhub-interpolate` and `export-installation` tasks.
 This allows us to use the output of one task
 as in input of another.
+
+An alternative to `input_mappings` is discussed in
+[Configuration Management Strategies][advanced-pipeline-design].
 
 We now need to put our `credhub_client` and `credhub_secret` into Credhub,
 so Concourse's native integration can retrieve them
@@ -551,7 +553,7 @@ git push
 
 Now, we can put it all together:
 
-```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46"
+```yaml hl_lines="16-46"
 - name: upgrade-opsman
   serial: true
   plan:
@@ -612,7 +614,8 @@ Before we run the job,
 we should [`ensure`][ensure] that `state.yml` is always persisted
 regardless of whether the `upgrade-opsman` job failed or passed.
 To do this, we can add the following section to the job:
-```yaml hl_lines="49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68"
+
+```yaml hl_lines="49-68"
 - name: upgrade-opsman
   serial: true
   plan:

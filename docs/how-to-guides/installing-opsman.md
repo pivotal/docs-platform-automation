@@ -33,7 +33,7 @@ Finally, while it's fine for `test` to run in parallel,
 the install process shouldn't.
 So, we'll add `serial: true` to the job, too.
 
-```yaml hl_lines="2 3 15 16 17 18 19 20"
+```yaml hl_lines="2 3 15-20"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -156,7 +156,7 @@ We can add it to our job
 after we've retrieved our `download-ops-manager.yml` input,
 but before the `download-product` task:
 
-```yaml hl_lines="16 17 18 19 20 21 22 23"
+```yaml hl_lines="16-24"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -192,6 +192,9 @@ Notice the [input mappings][concourse-input-mapping]
 of the `prepare-tasks-with-secrets` task.
 This allows us to use the output of one task
 as in input of another.
+
+An alternative to `input_mappings` is discussed in
+[Configuration Management Strategies][advanced-pipeline-design].
 
 Now, the `prepare-tasks-with-secrets` task
 will find required credentials in the config files,
@@ -342,7 +345,7 @@ select your desired version from the dropdown at the top of the page.
 Now that we have an Ops Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
 
-```yaml hl_lines="29 30 31"
+```yaml hl_lines="29-31"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -493,7 +496,7 @@ use the `download-product` image,
 Ops Manager configuration file,
 and the placeholder state file.
 
-```yaml hl_lines="33 34 35"
+```yaml hl_lines="33-35"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -547,7 +550,7 @@ we should [`ensure`][ensure] that `state.yml` is always persisted
 regardless of whether the `install-opsman` job failed or passed.
 To do this, we can add the following section to the job:
 
-```yaml hl_lines="35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55"
+```yaml hl_lines="35-55"
 jobs:
 - name: install-ops-manager
   serial: true
