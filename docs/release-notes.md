@@ -296,7 +296,7 @@ Pending Final Approval
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
-- _sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
+- _Sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
   `govc[stderr]: panic: send on closed channel`
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
