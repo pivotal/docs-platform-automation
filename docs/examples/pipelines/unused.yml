@@ -141,6 +141,40 @@
     config: configuration
     env: configuration
 # code_snippet configure-director-usage end
+# code_snippet input-matched-resources-usage start yaml
+- name: config
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
+
+- name: env
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
+# code_snippet input-matched-resources-usage end
+# code_snippet configure-director-matched-resources-usage start yaml
+- name: configure-director
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: config
+        passed: [previous-job]
+      - get: env
+        passed: [previous-job]
+    - task: configure-director
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-director.yml
+# code_snippet configure-director-matched-resources-usage end
 # code_snippet replicate-product-usage start yaml
 - task: replicate-tile
   image: platform-automation-image

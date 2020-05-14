@@ -2,7 +2,8 @@
 
 When building pipelines,
 there are many possible strategies
-for structuring your configuration in source control.
+for structuring your configuration in source control
+as well as in pipeline design.
 No single method can cover all situations.
 After reading this document,
 we hope you feel equipped to select an approach.
@@ -51,12 +52,15 @@ step:
 
 ---excerpt--- "examples/configure-director-usage"
 
-we map the config files 
+We map the config files 
 to the expected input named `env` of the `configure-director` task.
 Because the `configure-director` task's default `ENV` parameter is `env.yml`,
 it automatically uses the `env.yml` file in our configuration repo. 
 We do not need to explicitly name the `ENV` parameter for the task.
 This also works for `director.yml`.
+
+Another option for mapping resources to inputs
+is discussed in the [Matching Resource Names and Input Names][matching-resource-names-and-input-names] section.
 
 For reference, here is the `configure-director` task:
 
@@ -90,9 +94,86 @@ For an example repo structure using this strategy,
 see the [config repo][reference-pipeline-config]
 used by the [Reference Pipeline][reference-pipeline] and the [Resources Pipeline][reference-resources]
 
-As our How To Guides expand,
-we will explore this strategy further.
-Stay tuned for more.
+
+
+## Advanced Pipeline Design
+
+### Matching Resource Names and Input Names
+
+Alternatively, we can create resources that match the input names
+on our tasks and bypass the need for using `input_mapping`.
+Even if these resources map to the same git repository and branch,
+they can be declared as separate inputs.
+
+---excerpt--- "examples/input-matched-resources-usage"
+
+As long as those resources have an associated `get: <resource-name>`
+in the job, they will automatically be mapped to the inputs of the tasks in that job:
+
+---excerpt--- "examples/configure-director-matched-resources-usage"
+
+!!! warning "Passed Constraints"
+     If you have two resources defined with the same git repository, such as env and config,
+     and have a passed constraint on only one of them,
+     there is a possibility that they will not be at the same SHA for any given job in your pipeline.
+     
+     Example:
+     ```yaml
+     - get: config
+     - get: env
+       passed: [previous-job]
+     ```
+
+### Modifying Resources in-place
+
+!!! info "Concourse 5+ Only"
+      This section uses a Concourse feature that allows inputs and outputs to have the same name.
+      This feature is only available in Concourse 5+. The following does not work with Concourse 4.
+
+In certain circumstances, resources can be modified by one task in a job
+for use later in that same job. A few tasks that offer this ability include:
+
+- [credhub-interpolate]
+- [prepare-tasks-with-secrets]
+- [prepare-image]
+
+For each of these tasks, `output_mapping` can be used to "overwrite"
+an input with a modified input for use with tasks later in that job.
+
+In the following example, `prepare-tasks-with-secrets` takes in the
+`platform-automation-tasks` input and modifies it for the `download-product`
+task. A more in-depth explanation of this can be found on the [secrets-handling][secrets-handling] page.
+
+```yaml
+- name: configure-director
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: config
+      - get: env
+    - task: prepare-tasks-with-secrets
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        tasks: platform-automation-tasks
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config
+    - task: download-product
+      image: platform-automation-image
+      # The following platform-automation-tasks have been modified
+      # by the prepare-tasks-with-secrets task
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-ops-manager.yml
+```
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

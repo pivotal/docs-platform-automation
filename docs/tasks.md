@@ -267,6 +267,10 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
 
+!!! info "prepare-tasks-with-secrets"
+      The [prepare-tasks-with-secrets] task replaces the credhub-interpolate task on Concourse versions 5.x+
+      and provides additional benefits.
+
 === "Task"
     ---excerpt--- "tasks/credhub-interpolate"
 === "Implementation"
