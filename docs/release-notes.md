@@ -85,7 +85,7 @@ Next Version Pending
      For an example of how this fits into a `pipeline.yml`, check out the [Ops Manager + Multiple Products pipeline][reference-pipeline]
 
 ## v4.3.7
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -100,6 +100,8 @@ Coming Soon
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+- CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
+  The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.3.6
 April 28, 2020
@@ -274,7 +276,7 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.10
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -289,6 +291,8 @@ Coming Soon
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+- CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
+  The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.2.9
 April 28, 2020
@@ -538,7 +542,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## 4.1.15
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -553,6 +557,8 @@ Coming Soon
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+- CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
+  The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.1.14
 April 28, 2020
@@ -819,7 +825,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.15
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -834,6 +840,8 @@ Coming Soon
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+- CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
+  The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.0.14
 April 28, 2020
