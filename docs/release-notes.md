@@ -21,6 +21,25 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.0.15
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- _sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
+  `govc[stderr]: panic: send on closed channel`
+  due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
+
+    These tasks have implemented the workaround described in the issue.
+- CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
+  The CVEs are related to vulnerabilities with `apt`.
+
 ## v4.0.14
 April 28, 2020
 
@@ -715,7 +734,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
    `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
-   [Creating a Product Config File][product-configuration-from-pivnet].
+   [Creating a Product Config File][config-template].
 - [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
   This allows you to define an expected `shasum` that will validate the calculated shasum of the provided
   `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`][upload-product]
