@@ -45,6 +45,7 @@ Next Version Pending
   and runs after the upgrade command.
   Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
   An example of all configurable properties can be found in the "Additional Settings" tab.
+
 - [`configure-opsman`][configure-opsman] task has been added.
 
     This task supports configuring settings
