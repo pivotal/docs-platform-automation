@@ -84,7 +84,7 @@ Next Version Pending
 
      For an example of how this fits into a `pipeline.yml`, check out the [Ops Manager + Multiple Products pipeline][reference-pipeline]
 
-## v4.3.7
+## v4.3.8
 Pending Final Approval
 
 | Name | version |
@@ -275,7 +275,7 @@ Released January 31, 2020
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
-## v4.2.10
+## v4.2.11
 Pending Final Approval
 
 | Name | version |
@@ -541,7 +541,7 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
-## 4.1.15
+## 4.1.16
 Pending Final Approval
 
 | Name | version |
@@ -824,7 +824,7 @@ Released October 21, 2019
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
-## v4.0.15
+## v4.0.16
 Pending Final Approval
 
 | Name | version |
