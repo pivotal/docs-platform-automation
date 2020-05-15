@@ -45,7 +45,6 @@ Next Version Pending
   and runs after the upgrade command.
   Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
   An example of all configurable properties can be found in the "Additional Settings" tab.
-
 - [`configure-opsman`][configure-opsman] task has been added.
 
     This task supports configuring settings
@@ -269,8 +268,10 @@ Released January 31, 2020
     - Support for all native Concourse secrets stores including Credhub and Vault.
     - Credhub credentials are no longer required by the task so they can be completely handled by concourse.
     - Credentials are no longer written to disk which alleviates some security concerns.
-  For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
-  To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secets does not work with Concourse 4.)
+
+    For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
+    To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secets does not work with Concourse 4.)
+
 - The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
 - Add the ability to recreate VMs to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
     - If `RECREATE: true`, these commands will recreate all product VMs for their relevant product(s).
@@ -300,6 +301,7 @@ Pending Final Approval
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+
 - CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
   The CVEs are related to vulnerabilities with `apt`.
 
@@ -566,6 +568,7 @@ Pending Final Approval
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+
 - CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
   The CVEs are related to vulnerabilities with `apt`.
 
@@ -849,6 +852,7 @@ Pending Final Approval
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+
 - CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
   The CVEs are related to vulnerabilities with `apt`.
 
