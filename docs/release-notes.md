@@ -21,7 +21,7 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## v4.2.10
+## v4.2.11
 Pending Final Approval
 
 | Name | version |
@@ -287,7 +287,7 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
-## 4.1.15
+## 4.1.16
 Pending Final Approval
 
 | Name | version |
@@ -570,7 +570,7 @@ Released October 21, 2019
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
-## v4.0.15
+## v4.0.16
 Pending Final Approval
 
 | Name | version |
