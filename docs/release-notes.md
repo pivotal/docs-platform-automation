@@ -84,6 +84,15 @@ Next Version Pending
 
      For an example of how this fits into a `pipeline.yml`, check out the [Ops Manager + Multiple Products pipeline][reference-pipeline]
 
+-  The [`replicate-product`][replicate-product] task has been added.
+   This task requires a downloaded product,
+   and will output the replicated product for isolation segments.
+
+     Supported products: `p-isolation-segment`, `p-windows-runtime`, `pas-windows`
+
+- The [`update-runtime-config`][update-runtime-config] task has been added.
+  Please note this is an advanced feature, and should be used at your own discretion.
+
 ## v4.3.8
 Pending Final Approval
 

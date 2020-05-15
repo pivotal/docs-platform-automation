@@ -778,6 +778,10 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
 ### update-runtime-config
 This is an _advanced task_.
 Updates a runtime config on the Ops Manager deployed BOSH director.
+The task will interact with the BOSH director (sometimes via SSH tunnel through the Ops Manager),
+upload BOSH releases,
+and set a named runtime config.
+This is useful when installing agents on BOSH deployed VMs that don't have a Ops Manager tile.
 
 === "Task"
     ---excerpt--- "tasks/update-runtime-config"
@@ -785,6 +789,11 @@ Updates a runtime config on the Ops Manager deployed BOSH director.
     ---excerpt--- "tasks/update-runtime-config-script"
 === "Usage"
     ---excerpt--- "examples/update-runtime-config-usage"
+
+!!! warn
+    When using runtime configs, Ops Manager _owns_ the default runtime config.
+    If you use this task to edit "default" it will be replaced on every Apply Changes.
+    Please use `NAME` param to provide a non-conflicting runtime config.
 
 ### upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
