@@ -285,7 +285,7 @@ Released October 21, 2019
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
-## v4.0.15
+## v4.0.16
 Pending Final Approval
 
 | Name | version |
