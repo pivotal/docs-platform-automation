@@ -93,6 +93,16 @@ Pending Final Approval
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   Please note this is an advanced feature, and should be used at your own discretion.
 
+## v4.3.9
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.7.0](https://github.com/pivotal-cf/om/releases/tag/4.7.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
 ## v4.3.8
 Pending Final Approval
 
@@ -285,6 +295,16 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.12
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.7.0](https://github.com/pivotal-cf/om/releases/tag/4.7.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ## v4.2.11
 Pending Final Approval
@@ -552,6 +572,16 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## 4.1.17
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.7.0](https://github.com/pivotal-cf/om/releases/tag/4.7.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ## 4.1.16
 Pending Final Approval
@@ -837,12 +867,22 @@ Released October 21, 2019
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
+## v4.0.17
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
 ## v4.0.16
 Pending Final Approval
 
 | Name | version |
 |---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
@@ -862,7 +902,7 @@ April 28, 2020
 
 | Name | version |
 |---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
@@ -888,7 +928,7 @@ Released April 20, 2020
 
 | Name | version |
 |---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
