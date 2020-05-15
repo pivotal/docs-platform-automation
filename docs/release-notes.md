@@ -301,6 +301,7 @@ Pending Final Approval
   due to a bug in [govc](https://github.com/vmware/govmomi/issues/1972).
 
     These tasks have implemented the workaround described in the issue.
+
 - CVE update to container image. Resolves [USN-4359-1](https://usn.ubuntu.com/4359-1/).
   The CVEs are related to vulnerabilities with `apt`.
 
