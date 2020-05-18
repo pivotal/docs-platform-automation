@@ -12,12 +12,7 @@ strict: true
 use_directory_urls: false
 plugins:
 - search: {}
-- jinja2:
-    dependent_sections:
-      tasks: "../platform-automation"
-      examples: "./docs/examples"
-      reference: "../docs-platform-automation-reference-pipeline-config"
-      paving: "../paving"
+- jinja2: {}
 markdown_extensions:
 - admonition
 - pymdownx.extra
@@ -32,8 +27,8 @@ markdown_extensions:
     sections:
       tasks: "../platform-automation"
       examples: "./docs/examples"
-      reference: "../docs-platform-automation-reference-pipeline-config"
-      paving: "../paving"
+      reference: "./external/docs-platform-automation-reference-pipeline-config"
+      paving: "./external/paving"
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
