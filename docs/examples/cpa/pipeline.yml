@@ -728,6 +728,10 @@ jobs:
         params:
           unpack: true
     - *download-bosh-releases
+    - task: show-SHAs-for-OSL
+      file: ci/tasks/concourse-oslo-info.yml
+      params:
+        GITHUB_TOKEN: ((om.access_token))
     - task: package-for-release
       file: ci/tasks/package-for-release/cpa.yml
     - task: generate-metadata
