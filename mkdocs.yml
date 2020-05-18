@@ -12,28 +12,23 @@ strict: true
 use_directory_urls: false
 plugins:
 - search: {}
-- jinja2:
-    dependent_sections:
+- jinja2: {}
+markdown_extensions:
+- admonition
+- pymdownx.extra
+- pymdownx.highlight:
+    linenums: true
+- pymdownx.snippets:
+    check_paths: true
+- pymdownx.superfences
+- pymdownx.tabbed
+- sane_lists
+- markdown-code-excerpt:
+    sections:
       tasks: "../platform-automation"
       examples: "./docs/examples"
-      reference: "../docs-platform-automation-reference-pipeline-config"
-      paving: "../paving"
-markdown_extensions:
-  - admonition
-  - pymdownx.extra
-  - pymdownx.highlight:
-      linenums: true
-  - pymdownx.snippets:
-      check_paths: true
-  - pymdownx.superfences
-  - pymdownx.tabbed
-  - sane_lists
-  - markdown-code-excerpt:
-      sections:
-        tasks: "../platform-automation"
-        examples: "./docs/examples"
-        reference: "../docs-platform-automation-reference-pipeline-config"
-        paving: "../paving"
+      reference: "./external/docs-platform-automation-reference-pipeline-config"
+      paving: "./external/paving"
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
