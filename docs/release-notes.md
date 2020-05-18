@@ -21,6 +21,13 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.0
+Coming Soon
+
+## Breaking Changes
+- The deprecated `download-product-s3` task has been removed.
+  For the same functionality, please use the [`download-product`][download-product] task.
+
 ## v4.4.0
 Pending Final Approval
 
