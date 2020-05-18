@@ -421,75 +421,11 @@ This avoids breaking current pipelines.
 === "Tanzu Network Usage"
     ---excerpt--- "reference/download-product-usage"
 === "S3 Usage"
-    ---excerpt--- "reference/download-product-s3-usage"
+    ---excerpt--- "reference/download-product-usage-s3"
 === "GCS Usage"
     ---excerpt--- "examples/download-product-usage-gcs"
 === "Azure Usage"
     ---excerpt--- "examples/download-product-usage-azure"
-
-### download-product-s3
-
-!!! warning "Deprecation Notice"
-    This task is deprecated in favor of [`download-product`][download-product],
-    which can now download from all supported blobstores.
-    Usage has been changed to reflect the preferred command.
-
-Downloads a product specified in a config file from an S3-compatible blobstore.
-This is useful when retrieving assets in an offline environment.
-
-Downloads are cached, so files are not re-downloaded each time.
-
-This is intended to be used with files downloaded from Tanzu Network by [`download-product`][download-product]
-and then persisted to a blobstore using a `put` step.
-
-Outputs can be used directly as an input to [upload-and-stage-product](#upload-and-stage-product)
-and [upload-stemcell](#upload-stemcell) tasks.
-
-This task requires a [download-product config file][download-product-config].
-The same configuration file should be used with both this task and [`download-product`][download-product].
-This ensures that the same file
-is being captured with both tasks.
-
-The product files uploaded to s3 for download with this task require a specific prefix:
-`[product-slug,semantic-version]`.
-This prefix is added by the [`download-product`][download-product] task
-when S3 keys are present in the configuration file.
-This is the meta information about the product from Tanzu Network,
-which is _not guaranteed_ to be in the original filename.
-This tasks uses the meta information to be able to perform
-consistent downloads from s3
-as defined in the provided download config.
-For example:
-
-- original-tanzu-network-filenames:
-  ```
-  ops-manager-aws-2.5.0-build.123.yml
-  cf-2.5.0-build.45.pivotal
-  ```
-
-- filenames expected by `download-product-s3` in a bucket:
-  ```
-  [ops-manager,2.5.0]ops-manager-aws-2.5.0-build.123.yml
-  [elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
-  ```
-
-!!! info "When only downloading from Tanzu Network"
-    When the download product config only has Tanzu Network credentials,
-    it will not add the prefix to the downloaded product.
-    For example, `example-product.pivotal` from Tanzu Network will be outputted
-    as `example-product.pivotal`.
-
-!!! info
-    It's possible to use IAM instance credentials
-    instead of providing S3 creds in the config file.
-    See [download-product config file][download-product-config] for details.
-
-=== "Task"
-    ---excerpt--- "tasks/download-product-s3"
-=== "Implementation"
-    ---excerpt--- "tasks/download-product-s3-script"
-=== "Usage"
-    ---excerpt--- "reference/download-product-s3-usage"
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
