@@ -25,8 +25,7 @@ you may run into trouble with some of our assumptions.
 We assume:
 
 - Resource declarations for
-  `configuration`,
-  `platform-automation-image` and `platform-automation-tasks`.
+  `config` and `platform-automation`.
 - A pivnet token stored in Credhub as a credential named `pivnet_token`.
 - A previous job responsible for deploying the director
   called `apply-director-changes`.
@@ -71,11 +70,13 @@ jobs: # Do not duplicate this if it already exists in your pipeline.yml,
     - aggregate:
       - get: platform-automation-image
         params:
+          globs: ["*image*.tgz"]
           unpack: true
       - get: platform-automation-tasks
         params:
+          globs: ["*tasks*.zip"]
           unpack: true
-      - get: configuration
+      - get: config
     - task: prepare-tasks-with-secrets
       image: platform-automation-image
       file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
@@ -89,7 +90,7 @@ jobs: # Do not duplicate this if it already exists in your pipeline.yml,
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       input_mapping:
-        config: configuration
+        config: config
       params:
         CONFIG_FILE: download-tas.yml
       output_mapping:
@@ -140,11 +141,13 @@ jobs:
     - aggregate:
       - get: platform-automation-image
         params:
+          globs: ["*image*.tgz"]
           unpack: true
       - get: platform-automation-tasks
         params:
+          globs: ["*tasks*.zip"]
           unpack: true
-      - get: configuration
+      - get: config
     - task: prepare-tasks-with-secrets
       image: platform-automation-image
       file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
@@ -158,7 +161,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       input_mapping:
-        config: configuration
+        config: config
       params:
         CONFIG_FILE: download-tas.yml
       output_mapping:
@@ -168,7 +171,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/upload-stemcell.yml
       input_mapping:
-        env: configuration
+        env: config
         stemcell: tas-stemcell
       params:
         ENV_FILE: env.yml
@@ -177,7 +180,7 @@ jobs:
       file: platform-automation-tasks/tasks/upload-and-stage-product.yml
       input_mapping:
         product: tas-product
-        env: configuration
+        env: config
 ```
 
 Then we can re-set the pipeline
@@ -423,12 +426,16 @@ jobs:
   plan:
     - aggregate:
       - get: platform-automation-image
+        resource: platform-automation
         params:
+          globs: ["*image*.tgz"]
           unpack: true
       - get: platform-automation-tasks
+        resource: platform-automation
         params:
+          globs: ["*tasks*.zip"]
           unpack: true
-      - get: configuration
+      - get: config
     - task: prepare-tasks-with-secrets
       image: platform-automation-image
       file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
@@ -442,7 +449,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       input_mapping:
-        config: configuration
+        config: config
       params:
         CONFIG_FILE: download-tas.yml
       output_mapping:
@@ -452,7 +459,7 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/upload-stemcell.yml
       input_mapping:
-        env: configuration
+        env: config
         stemcell: tas-stemcell
       params:
         ENV_FILE: env/env.yml
@@ -461,7 +468,7 @@ jobs:
       file: platform-automation-tasks/tasks/stage-product.yml
       input_mapping:
         product: tas-product
-        env: configuration
+        env: config
 - name: configure-tas
   serial: true
   plan:
@@ -470,11 +477,13 @@ jobs:
         passed: [download-upload-and-stage-tas]
         trigger: true
         params:
+          globs: ["*image*.tgz"]
           unpack: true
       - get: platform-automation-tasks
         params:
+          globs: ["*tasks*.zip"]
           unpack: true
-      - get: configuration
+      - get: config
         passed: [download-upload-and-stage-tas]
     - task: prepare-tasks-with-secrets
       image: platform-automation-image
@@ -489,8 +498,8 @@ jobs:
       image: platform-automation-image
       file: platform-automation-tasks/tasks/configure-product.yml
       input_mapping:
-        config: configuration
-        env: configuration
+        config: config
+        env: config
       params:
         CONFIG_FILE: tas-config.yml
 ```
@@ -509,11 +518,13 @@ so that these changes will be applied by the Ops Manager.
       - get: platform-automation-image
         trigger: true
         params:
+          globs: ["*image*.tgz"]
           unpack: true
       - get: platform-automation-tasks
         params:
+          globs: ["*tasks*.zip"]
           unpack: true
-      - get: configuration
+      - get: config
         passed: [download-upload-and-stage-tas]
     - task: prepare-tasks-with-secrets
       image: platform-automation-image
@@ -528,8 +539,8 @@ so that these changes will be applied by the Ops Manager.
       image: platform-automation-image
       file: platform-automation-tasks/tasks/configure-product.yml
       input_mapping:
-        config: configuration
-        env: configuration
+        config: config
+        env: config
       params:
         CONFIG_FILE: tas-config.yml
 - name: apply-changes
@@ -538,11 +549,13 @@ so that these changes will be applied by the Ops Manager.
     - aggregate:
       - get: platform-automation-image
         params:
+          globs: ["*image*.tgz"]
           unpack: true
       - get: platform-automation-tasks
         params:
+          globs: ["*tasks*.zip"]
           unpack: true
-      - get: configuration
+      - get: config
         passed: [configure-tas]
     - task: prepare-tasks-with-secrets
       image: platform-automation-image
@@ -557,7 +570,7 @@ so that these changes will be applied by the Ops Manager.
       image: platform-automation-image
       file: platform-automation-tasks/tasks/apply-changes.yml
       input_mapping:
-        env: configuration
+        env: config
 ```
 
 !!! info "Adding Multiple Products"
