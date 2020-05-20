@@ -214,8 +214,15 @@ Configure the product _manually_ according to the product's install instructions
 This guide installs [tas][tas-install-vsphere].
 Other install instructions may be found in [VMware Tanzu Docs][tanzu-docs].
 
-Once the product is fully configured, do not apply changes, and continue this guide.
-Note: if you applied changes, it's fine, it'll just take a little longer.
+Once the product is fully configured, apply changes in the Ops Manager UI, 
+and then continue this guide.
+
+!!! warning "If You Do Not Apply Changes"
+    Ops Manager cannot generate credentials for you
+    until you have applied changes (at least once).
+    You can still go through this process without an initial applying changes,
+    but you will be unable to use `om staged-config` with `--include-credentials`, 
+    and may have an incomplete configuration at the end of this process.
 
 [`om`][om] has a command called [staged-config][staged-config], 
 which is used to extract staged product
