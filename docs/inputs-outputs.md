@@ -51,6 +51,7 @@ These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on AWS][manual-aws]
 
 ---excerpt--- "examples/aws-configuration"
+
 {% include '.ip-addresses.md' %}
 
 !!! info "Using instance_profile to Avoid Secrets"
@@ -66,6 +67,7 @@ These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][manual-azure]
 
 ---excerpt--- "examples/azure-configuration"
+
 {% include '.ip-addresses.md' %}
 
 #### GCP
@@ -73,6 +75,7 @@ These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP][manual-gcp]
 
 ---excerpt--- "examples/gcp-configuration"
+
 {% include '.ip-addresses.md' %}
 
 !!! info "Using a Service Account Name to Avoid Secrets"
@@ -95,6 +98,7 @@ These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack][manual-openstack]
 
 ---excerpt--- "examples/openstack-configuration"
+
 {% include '.ip-addresses.md' %}
 
 #### vSphere
