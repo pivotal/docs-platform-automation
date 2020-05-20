@@ -21,8 +21,18 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.2.12
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.7.0](https://github.com/pivotal-cf/om/releases/tag/4.7.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
 ## v4.2.11
-Pending Final Approval
+Released May 20, 2020
 
 | Name | version |
 |---|---|
@@ -42,7 +52,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.2.9
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -256,7 +266,7 @@ Released December 3, 2019
     ```
 
 ### Deprecation Notices
-- The [`download-product-s3`][download-product-s3] task has been deprecated
+- The `download-product-s3` task has been deprecated
   in favor of the [`download-product`][download-product] task and setting the `SOURCE: s3` in `params`.
 
     For example, the `download-product-s3` in a pipeline:
@@ -288,6 +298,16 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
+## 4.1.17
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [4.7.0](https://github.com/pivotal-cf/om/releases/tag/4.7.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
 ## 4.1.16
 Pending Final Approval
 
@@ -309,7 +329,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.1.14
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -572,12 +592,22 @@ Released October 21, 2019
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
+## v4.0.17
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
 ## v4.0.16
 Pending Final Approval
 
 | Name | version |
 |---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
@@ -593,11 +623,11 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.0.14
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
@@ -623,7 +653,7 @@ Released April 20, 2020
 
 | Name | version |
 |---|---|
-| om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
+| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
@@ -1064,7 +1094,7 @@ Released July 22, 2019, includes `om` version [3.0.0](https://github.com/pivotal
 - [`upgrade-opsman`][upgrade-opsman] now respects environment variables
   when it makes calls internally to `om`
   (env file still required).
-- [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
+- `download-product-s3` does not require `pivnet-api-token` anymore.
 - `om` CLI has been bumped to v3.0.0.
   This includes the following bug fixes:
     * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
