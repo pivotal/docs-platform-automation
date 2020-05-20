@@ -111,7 +111,7 @@ Coming Soon
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ## v4.3.8
-Pending Final Approval
+Released May 20, 2020
 
 | Name | version |
 |---|---|
@@ -130,7 +130,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.3.6
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -314,7 +314,7 @@ Coming Soon
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ## v4.2.11
-Pending Final Approval
+Released May 20, 2020
 
 | Name | version |
 |---|---|
@@ -334,7 +334,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.2.9
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -611,7 +611,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.1.14
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -905,7 +905,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.0.14
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
