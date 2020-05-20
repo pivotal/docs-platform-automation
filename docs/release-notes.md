@@ -104,7 +104,7 @@ Coming Soon
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ## v4.3.8
-Pending Final Approval
+Released May 20, 2020
 
 | Name | version |
 |---|---|
@@ -123,7 +123,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.3.6
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -307,7 +307,7 @@ Coming Soon
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ## v4.2.11
-Pending Final Approval
+Released May 20, 2020
 
 | Name | version |
 |---|---|
@@ -327,7 +327,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.2.9
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -541,7 +541,7 @@ Released December 3, 2019
     ```
 
 ### Deprecation Notices
-- The [`download-product-s3`][download-product-s3] task has been deprecated
+- The `download-product-s3` task has been deprecated
   in favor of the [`download-product`][download-product] task and setting the `SOURCE: s3` in `params`.
 
     For example, the `download-product-s3` in a pipeline:
@@ -604,7 +604,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.1.14
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -898,7 +898,7 @@ Pending Final Approval
   The CVEs are related to vulnerabilities with `apt`.
 
 ## v4.0.14
-April 28, 2020
+Released April 28, 2020
 
 | Name | version |
 |---|---|
@@ -1369,7 +1369,7 @@ Released July 22, 2019, includes `om` version [3.0.0](https://github.com/pivotal
 - [`upgrade-opsman`][upgrade-opsman] now respects environment variables
   when it makes calls internally to `om`
   (env file still required).
-- [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
+- `download-product-s3` does not require `pivnet-api-token` anymore.
 - `om` CLI has been bumped to v3.0.0.
   This includes the following bug fixes:
     * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
