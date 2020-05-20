@@ -187,7 +187,7 @@ Released July 22, 2019, includes `om` version [3.0.0](https://github.com/pivotal
 - [`upgrade-opsman`][upgrade-opsman] now respects environment variables
   when it makes calls internally to `om`
   (env file still required).
-- [`download-product-s3`][download-product-s3] does not require `pivnet-api-token` anymore.
+- `download-product-s3` does not require `pivnet-api-token` anymore.
 - `om` CLI has been bumped to v3.0.0.
   This includes the following bug fixes:
     * `apply-changes --product <product>` will error with _product not found_ if that product has not been staged.
