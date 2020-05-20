@@ -70,38 +70,116 @@ For reference, here is the `configure-director` task:
 
 Multiple foundations may use a single Git configuration source
 but have different variables loaded 
-from a foundation specific vars file, Credhub, Git repository, etc.
-This approach is very similar to the Single Repository for Each Foundation
-described above,
-except that variables are loaded in from external sources.
+from a foundation specific vars file, Credhub, etc.
 
-The variable source may be loaded in a number of ways. For example,
-it may be loaded from a separate foundation specific Git repository,
-a foundation specific subdirectory in the configuration source, 
-or even a foundation specific vars file found in the base Git configuration.
-
-This strategy can reduce the number of overall configuration files
-and configuration repositories in play,
-and can reduce foundation drift (as the basic configuration is being pulled 
-from a single master source).
-However,
-configuration management and secrets handling
-can quickly become more challenging.
+This strategy can reduce foundation drift 
+and streamline the configuration promotion process between foundations.
 
 **This is the strategy used in our [Reference Pipeline][reference-pipeline]**
 
-For an example repo structure using this strategy,
-see the [config repo][reference-pipeline-config]
-used by the [Reference Pipeline][reference-pipeline] and the [Resources Pipeline][reference-resources]
+The [Reference Pipeline][reference-pipeline] uses a public [config repo][reference-pipeline-config]
+with all secrets stored in our Concourse Credhub.
 
+The design considerations for this strategy as implemented are as follows:
+
+- Prioritization of ease of configuration promotion
+  over minimization of configuration
+  file duplication between foundations.
+- Global, non-public variables can be overwritten by
+  foundation-specific variables based on VARS_FILES ordering. 
+- Product configuration can differ between product versions,
+  so the entire configuration file is promoted between foundations.
+- No outside tooling or additional preparation tasks
+  are required to use this strategy.
+  It makes use of only concepts and workflows
+  built-in to Platform Automation and Concourse.
+- No significant differences between the required setup of foundations.
+  This doesn't mean that this strategy cannot be used 
+  with more complicated differences.
+  If the pipelines need to be different for one reason or another,
+  you might want the `pipelines` directory to be at the foundation level
+  and for the `pipeline.yml` to be foundation-specific.
+  The Reference Pipeline handles the different environments via a `fly` variable.
+  The pipeline set script is found in the [`scripts`][ref-config-update-script] directory.
+
+### Config Promotion Example
+
+In this example, we will be updating PKS from 1.3.8 to 1.4.3.
+We will start with updating this tile in our Sandbox foundation
+and then promote the configuration to the development foundation.
+
+1. Update `download-product-pivnet/download-pks.yml`:
+
+    ```diff
+    - product-version-regex: ^1\.3\..*$
+    + product-version-regex: ^1\.4\..*$
+    ```
+
+1. Commit this change and run the [resource pipeline][ref-config-resource-pipeline]
+which will download the 1.4.3 PKS tile
+and make it available on S3.
+
+1. Update the versions file for sandbox:
+
+    ```diff
+    - pks-version: 1.3.8
+    + pks-version: 1.4.3
+    ```
+
+1. Run the `upload-and-stage-pks` job, but do not run the `configure-pks` or `apply-product-changes` jobs.
+
+    This makes it so that the `apply-changes` step won't automatically fail
+    if there are configuration changes
+    between what we currently have deployed
+    and the new tile.
+
+1. Login to the Ops Manager UI. If the tile has unconfigured properties:
+
+    1. Manually configure the tile and deploy
+
+    1. Re-export the staged-config:
+
+        ```
+        om -e env.yml staged-config --include-credentials -p pivotal-container-service
+        ```
+
+    1. Merge the resulting config with the existing `foundations/sandbox/config/pks.yml`.
+
+        Diffing the previous `pks.yml`
+        and the new one makes this process much easier.
+
+    1. Pull out new parameterizable variables
+       and store them in `foundations/vars/pks.yml` or `foundations/sandbox/vars/pks.yml`,
+       or directly into Credhub.
+       Note, there may be nothing new to parameterize.
+       This is okay, and makes the process go faster.
+
+    1. Commit any changes.
+
+1. Run the `configure-pks` and `apply-product-changes` jobs on the `sandbox` pipeline.
+
+1. Assuming the `sandbox` pipeline is all green,
+   copy the `foundations/sandbox/config` folder into `foundations/development/config`.
+
+1. Modify the `foundations/development/vars/versions.yml` and `foundations/development/vars/pks.yml` files
+   to have all of the property references that exist in their sandbox counterparts
+   as well as the foundation-specific values.
+
+1. Commit these changes and run the `development` pipeline all the way through.
+
+!!! info "A Quicker `development` Deploy Process"
+    Since all of the legwork was done manually in the `sandbox` environment
+    there is no need to login to the `development` Ops Manager environment.
+
+    If there are no configuration changes, the only file that needs to be promoted is `versions.yml`
 
 
 ## Advanced Pipeline Design
 
 ### Matching Resource Names and Input Names
 
-Alternatively, we can create resources that match the input names
-on our tasks and bypass the need for using `input_mapping`.
+As an alternative to `input_mapping`, 
+we can create resources that match the input names on our tasks.
 Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
 
