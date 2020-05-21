@@ -58,6 +58,17 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
     ---excerpt--- "tasks/assign-stemcell-script"
 === "Usage"
     ---excerpt--- "examples/assign-stemcell-usage"
+
+### backup-director
+
+Use BBR to backup a BOSH director deployed with Ops Manager.
+
+=== "Task"
+    ---excerpt--- "tasks/backup-director"
+=== "Implementation"
+    ---excerpt--- "tasks/backup-director-script"
+=== "Usage"
+    ---excerpt--- "examples/backup-director-usage"
     
 ### backup-product
 
