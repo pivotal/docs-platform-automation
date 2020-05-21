@@ -198,5 +198,17 @@
     OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
 # code_snippet update-runtime-config-usage end
 # code_snippet backup-product-usage start yaml
-UPDATE ME when figured out!
+- task: backup-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-product.yml
+  params:
+    PRODUCT_NAME: cf
+    OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
 # code_snippet backup-product-usage end
+# code_snippet backup-director-usage start yaml
+- task: backup-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-director.yml
+  params:
+    OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
+# code_snippet backup-director-usage end
