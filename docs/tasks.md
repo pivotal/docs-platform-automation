@@ -58,6 +58,17 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
     ---excerpt--- "tasks/assign-stemcell-script"
 === "Usage"
     ---excerpt--- "examples/assign-stemcell-usage"
+    
+### backup-product
+
+Use BBR to backup a product deployed with Ops Manager.
+
+=== "Task"
+    ---excerpt--- "tasks/backup-product"
+=== "Implementation"
+    ---excerpt--- "tasks/backup-product-script"
+=== "Usage"
+    ---excerpt--- "examples/backup-product-usage"
 
 ### check-pending-changes
 Returns a table of the current state of your Ops Manager
