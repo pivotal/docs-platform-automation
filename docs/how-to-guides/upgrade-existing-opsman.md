@@ -412,27 +412,27 @@ depending on your IaaS:
 
 === "AWS"
     ``` yaml
-    {% include './examples/state/aws.yml' %}
+    --8<-- 'docs/examples/state/aws.yml'
     ```
 
 === "Azure"
     ``` yaml
-    {% include './examples/state/azure.yml' %}
+    --8<-- 'docs/examples/state/azure.yml'
     ```
 
 === "GCP"
     ``` yaml
-    {% include './examples/state/gcp.yml' %}
+    --8<-- 'docs/examples/state/gcp.yml'
     ```
 
 === "OpenStack"
     ``` yaml
-    {% include './examples/state/openstack.yml' %}
+    --8<-- 'docs/examples/state/openstack.yml'
     ```
 
 === "vSphere"
     ``` yaml
-    {% include './examples/state/vsphere.yml' %}
+    --8<-- 'docs/examples/state/vsphere.yml'
     ```
 
 Find what you need for your IaaS,
