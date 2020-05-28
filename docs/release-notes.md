@@ -32,7 +32,7 @@ Coming Soon
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ## v4.0.16
-Pending Final Approval
+Released May 14, 2020
 
 | Name | version |
 |---|---|
