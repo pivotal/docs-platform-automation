@@ -24,6 +24,14 @@
 ## v5.0.0
 Coming Soon
 
+## Features
+- The [`backup-product`][backup-product] and [`backup-director`][backup-director] tasks have been added.
+  These tasks use [BOSH Backup and Restore][bbr] that backup artifacts to restore your director and products.
+
+    !!! warning "Backing up TKG (formerly known as PKS)"
+        At the moment, [`backup-product`][backup-product] will backup the artifacts of the product.
+        The dynamic clusters will not be backed and require additional work.
+
 ## Breaking Changes
 - The deprecated `download-product-s3` task has been removed.
   For the same functionality, please use the [`download-product`][download-product] task.
