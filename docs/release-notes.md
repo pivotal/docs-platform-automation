@@ -295,6 +295,19 @@ Coming Soon
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
+  The CVEs are related to vulnerabilities with `libssl`.
+- vSphere 7.0 with NSX-T 3.0 experienced a bug when using `create-vm` and `upgrade-opsman`.
+  If NSX-T deployed a network that was read in the vCenter as multiple port groups with the same name
+  those tasks would fail, and be unable to import the Ops Manager OVA file.
+  
+    The `network` property when creating an Ops Manager VM can take two new types of identifiers for identify a network.
+    
+    1. If using port groups, the `network` property must be `switch name/port group name`.
+       For example, `network: edge-cluster-w01-vc-AZ01-vds01/pas-infrastructure-az1-ls`.
+    1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used. 
+
 ## v4.0.16
 Released May 14, 2020
 
