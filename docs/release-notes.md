@@ -110,7 +110,7 @@ Pending Final Approval
   Please note this is an advanced feature, and should be used at your own discretion.
 
 ## v4.3.9
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -326,7 +326,7 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.12
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -616,7 +616,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## 4.1.17
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -923,7 +923,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.17
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
