@@ -286,7 +286,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.17
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
