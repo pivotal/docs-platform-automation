@@ -22,11 +22,11 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.2.12
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
-| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.7.0) |
+| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
@@ -312,11 +312,11 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## 4.1.17
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
-| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.7.0) |
+| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
@@ -619,7 +619,7 @@ Released October 21, 2019
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
 
 ## v4.0.17
-Coming Soon
+Pending Final Approval
 
 | Name | version |
 |---|---|
