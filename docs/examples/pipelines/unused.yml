@@ -141,3 +141,18 @@
     config: configuration
     env: configuration
 # code_snippet configure-director-usage end
+# code_snippet download-product-s3-usage start yaml
+- task: download-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  input_mapping:
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/download-pks.yml
+    VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+    SOURCE: s3
+  output_mapping:
+    downloaded-product: pks-product
+    downloaded-stemcell: pks-stemcell
+# code_snippet download-product-s3-usage end

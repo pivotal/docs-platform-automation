@@ -398,7 +398,7 @@ This avoids breaking current pipelines.
 === "Tanzu Network Usage"
     ---excerpt--- "reference/download-product-usage"
 === "S3 Usage"
-    ---excerpt--- "reference/download-product-s3-usage"
+    ---excerpt--- "examples/download-product-s3-usage"
 === "GCS Usage"
     ---excerpt--- "examples/download-product-usage-gcs"
 === "Azure Usage"
@@ -466,7 +466,7 @@ For example:
 === "Implementation"
     ---excerpt--- "tasks/download-product-s3-script"
 === "Usage"
-    ---excerpt--- "reference/download-product-s3-usage"
+    ---excerpt--- "examples/download-product-s3-usage"
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
