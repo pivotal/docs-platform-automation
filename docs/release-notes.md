@@ -24,7 +24,38 @@
 ## v5.0.0
 Coming Soon
 
-## Features
+## Features (Breaking)
+- There's an additional docker image for vSphere only.
+  Most of our users are on vSphere,
+  and excluding other IaaS-specific resources for the image greatly reduces
+  file size and security surface area.
+  The original image continues to work with all IaaSs, including vSphere,
+  but if you use our product on vSphere,
+  we recommend switching over to the new image.
+  The new image is named:
+  `vsphere-platform-automation-image-5.0.0.tar.gz`.
+  Note that the filename starts with `vsphere-`
+  and uses the alternate file extension `.tar.gz`
+  instead of `.tgz`.
+  This is to avoid breaking existing globs and patterns.
+
+    If you're getting our image with the Pivnet resource
+    as documented in the how to guides,
+    the new `get` configuration would look like this:
+
+    ```yaml
+    - get: platform-automation-image
+      resource: platform-automation
+      params:
+        globs: ["vsphere-platform-automation-image-*.tar.gz"]
+        unpack: true
+    ```
+
+- The deprecated `download-product-s3` task has been removed.
+  For the same functionality, please use [`download-product`][download-product]
+  and specify the `s3` `source`.
+
+## Features (non-breaking)
 - The [`backup-product`][backup-product] and [`backup-director`][backup-director] tasks have been added.
   These tasks use [BOSH Backup and Restore][bbr] to backup artifacts which can be used to restore your director and products.
   Note, there is no task to automate restoring from a backup. Restore cannot be guaranteed to be idempotent, and therefore cannot be safely automated. See the [BBR docs][bbr-restore] for information on restoring from a backup.
@@ -32,10 +63,6 @@ Coming Soon
     !!! warning "Backing up TKGI (formerly known as PKS)"
         At the moment, [`backup-product`][backup-product] will backup the artifacts of the product.
         The dynamic clusters will not be backed and will require additional work.
-
-## Breaking Changes
-- The deprecated `download-product-s3` task has been removed.
-  For the same functionality, please use the [`download-product`][download-product] task.
 
 ## v4.4.1
 Pending Final Approval
