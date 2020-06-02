@@ -20,7 +20,8 @@ opsman-configuration:
                                  # NOTE - not all regions support m5.large
     # assume_role: "arn:aws:iam::..." # necessary if a role is needed to authorize
                                       # the OpsMan VM instance profile
-
+    # tags: {key: value}              # key-value pair of tags assigned to the
+    #                                 # Ops Manager VM
     # Omit if using instance profiles
     # And instance profile OR access_key/secret_access_key is required
     # access_key_id: ((access-key-id))
