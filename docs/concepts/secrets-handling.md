@@ -201,11 +201,11 @@ The above definition can be replaced with the following:
 
 ```yaml
 - task: prepare-tasks-with-secrets
-  file: testing-secrets/task.yml
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
   input_mapping:
     tasks: platform-automation-tasks
-    config: deployments
-    vars: deployments  # required only if using vars
+    config: configuration
+    vars: configuration  # required only if using vars
   output_mapping:
     tasks: platform-automation-tasks
   params:
