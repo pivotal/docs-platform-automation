@@ -159,7 +159,57 @@ Released June 3, 2020
     
     1. If using port groups, the `network` property must be `switch name/port group name`.
        For example, `network: edge-cluster-w01-vc-AZ01-vds01/pas-infrastructure-az1-ls`.
-    1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used. 
+    1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used.
+    
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now supports ops manager syslog in tiles.
+  In the tile metadata, this property is turned on with the `opsmanager_syslog: true` field.
+  Tiles with this property enabled will now add the section to `product.yml` 
+  and create defaults in `default-vars.yml`.
+- Added shorthand flag consistency to multiple commands.
+  `--vars-file` shorthand is `-l` and `--var` shorthand is `-v`
+- **EXPERIMENTAL** `config-template` can specify the number of collection ops files using `--size-of-collections`.
+  Some use cases required that collections generate more ops-file for usage.
+  The default value is still `10`.
+- `config-template` has been updated to include placeholders for
+  `network_name`, `singleton_availability_zone`, and `service_network_name`
+  in `required-vars.yml` when appropriate.
+- `config-template` Bug Fix: Required collections now parametrize correctly in `product.yml`.
+  In the [om issue](https://github.com/pivotal-cf/om/issues/483)
+  for `p-dataflow`, the following was _incorrectly_ returned:
+  ```
+  .properties.maven_repositories:
+    value:
+    - key: spring
+      password: ((password))
+      url: https://repo.spring.io/libs-release
+      username: username
+  ```
+
+    `config-template` now returns the following correct subsection in `product.yml`:
+    ```
+    .properties.maven_repositories:
+      value:
+      - key: spring
+        password:
+          secret: ((password))
+        url: https://repo.spring.io/libs-release
+        username: username
+    ```
+  
+    **if you have used the workaround described in the issue**
+    (storing the value as a JSON object)
+    you will need to update the credential in Credhub
+    to not be a JSON object.
+- `config-template` generated `resource-vars.yml`
+  that had the potential to conflict with property names
+  (spring cloud dataflow had a configurable property called `max_in_flight`
+  which is also a resource config property).
+  `config-template` now prepends **all** resource-vars with `resource-var-`.
+  This prevents this entire class of conflicts.
+  If using `config-template` to update vars/ops-files/etc,
+  check your resource var names in any files vars may be drawn from.
+  This resolves om issue [#484](https://github.com/pivotal-cf/om/issues/484). 
 
 ## v4.3.8
 Released May 20, 2020
@@ -271,6 +321,9 @@ Released March 25, 2020
 - CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
   This CVE is related to vulnerabilities with `libicu60`.
 
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now includes the option to use a local product file with `--product-path`.
+
 ## v4.3.3
 Released February 26, 2020
 
@@ -379,6 +432,56 @@ Pending Final Approval
        For example, `network: edge-cluster-w01-vc-AZ01-vds01/pas-infrastructure-az1-ls`.
     1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used. 
 
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now supports ops manager syslog in tiles.
+  In the tile metadata, this property is turned on with the `opsmanager_syslog: true` field.
+  Tiles with this property enabled will now add the section to `product.yml` 
+  and create defaults in `default-vars.yml`.
+- Added shorthand flag consistency to multiple commands.
+  `--vars-file` shorthand is `-l` and `--var` shorthand is `-v`
+- **EXPERIMENTAL** `config-template` can specify the number of collection ops files using `--size-of-collections`.
+  Some use cases required that collections generate more ops-file for usage.
+  The default value is still `10`.
+- `config-template` has been updated to include placeholders for
+  `network_name`, `singleton_availability_zone`, and `service_network_name`
+  in `required-vars.yml` when appropriate.
+- `config-template` Bug Fix: Required collections now parametrize correctly in `product.yml`.
+  In the [om issue](https://github.com/pivotal-cf/om/issues/483)
+  for `p-dataflow`, the following was _incorrectly_ returned:
+  ```
+  .properties.maven_repositories:
+    value:
+    - key: spring
+      password: ((password))
+      url: https://repo.spring.io/libs-release
+      username: username
+  ```
+
+    `config-template` now returns the following correct subsection in `product.yml`:
+    ```
+    .properties.maven_repositories:
+      value:
+      - key: spring
+        password:
+          secret: ((password))
+        url: https://repo.spring.io/libs-release
+        username: username
+    ```
+  
+    **if you have used the workaround described in the issue**
+    (storing the value as a JSON object)
+    you will need to update the credential in Credhub
+    to not be a JSON object.
+- `config-template` generated `resource-vars.yml`
+  that had the potential to conflict with property names
+  (spring cloud dataflow had a configurable property called `max_in_flight`
+  which is also a resource config property).
+  `config-template` now prepends **all** resource-vars with `resource-var-`.
+  This prevents this entire class of conflicts.
+  If using `config-template` to update vars/ops-files/etc,
+  check your resource var names in any files vars may be drawn from.
+  This resolves om issue [#484](https://github.com/pivotal-cf/om/issues/484).
+
 ## v4.2.11
 Released May 20, 2020
 
@@ -478,6 +581,9 @@ Released March 25, 2020
   This CVE is related to vulnerabilities with `libsqlite3`.
 - CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
   This CVE is related to vulnerabilities with `libicu60`.
+
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now includes the option to use a local product file with `--product-path`.
 
 ## v4.2.6
 Released February 21, 2020
@@ -669,7 +775,57 @@ Pending Final Approval
     
     1. If using port groups, the `network` property must be `switch name/port group name`.
        For example, `network: edge-cluster-w01-vc-AZ01-vds01/pas-infrastructure-az1-ls`.
-    1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used. 
+    1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used.
+    
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now supports ops manager syslog in tiles.
+  In the tile metadata, this property is turned on with the `opsmanager_syslog: true` field.
+  Tiles with this property enabled will now add the section to `product.yml` 
+  and create defaults in `default-vars.yml`.
+- Added shorthand flag consistency to multiple commands.
+  `--vars-file` shorthand is `-l` and `--var` shorthand is `-v`
+- **EXPERIMENTAL** `config-template` can specify the number of collection ops files using `--size-of-collections`.
+  Some use cases required that collections generate more ops-file for usage.
+  The default value is still `10`.
+- `config-template` has been updated to include placeholders for
+  `network_name`, `singleton_availability_zone`, and `service_network_name`
+  in `required-vars.yml` when appropriate.
+- `config-template` Bug Fix: Required collections now parametrize correctly in `product.yml`.
+  In the [om issue](https://github.com/pivotal-cf/om/issues/483)
+  for `p-dataflow`, the following was _incorrectly_ returned:
+  ```
+  .properties.maven_repositories:
+    value:
+    - key: spring
+      password: ((password))
+      url: https://repo.spring.io/libs-release
+      username: username
+  ```
+
+    `config-template` now returns the following correct subsection in `product.yml`:
+    ```
+    .properties.maven_repositories:
+      value:
+      - key: spring
+        password:
+          secret: ((password))
+        url: https://repo.spring.io/libs-release
+        username: username
+    ```
+  
+    **if you have used the workaround described in the issue**
+    (storing the value as a JSON object)
+    you will need to update the credential in Credhub
+    to not be a JSON object.
+- `config-template` generated `resource-vars.yml`
+  that had the potential to conflict with property names
+  (spring cloud dataflow had a configurable property called `max_in_flight`
+  which is also a resource config property).
+  `config-template` now prepends **all** resource-vars with `resource-var-`.
+  This prevents this entire class of conflicts.
+  If using `config-template` to update vars/ops-files/etc,
+  check your resource var names in any files vars may be drawn from.
+  This resolves om issue [#484](https://github.com/pivotal-cf/om/issues/484). 
 
 ## 4.1.16
 Released May 14, 2020
@@ -771,7 +927,11 @@ Released March 25, 2020
   This CVE is related to vulnerabilities with `libsqlite3`.
 - CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
   This CVE is related to vulnerabilities with `libicu60`.
-   
+
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now includes the option to use a local product file with `--product-path`.
+  
+
 ## v4.1.11
 Released February 25, 2020
 
@@ -877,6 +1037,10 @@ Released November 19, 2019
 - Bump `bosh` CLI to v6.1.1
 - Bump `credhub` CLI to v2.6.1
 
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now supports the `--config`, `--var`, `--vars-file`, and `--vars-env` flags.
+- **EXPERIMENTAL** `config-template` now includes `max-in-flight` for all resources.
+
 ## v4.1.2
 Released October 21, 2019
 
@@ -954,6 +1118,11 @@ Released October 21, 2019
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
+
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now accepts `--pivnet-file-glob` instead of `--product-file-glob`.
+  This is to create consistency with the `download-product` command's naming conventions.
+  (PR: @poligraph)
    
 ## v4.0.16
 Released May 14, 2020
@@ -1049,7 +1218,18 @@ Released March 25, 2020
   This CVE is related to vulnerabilities with `libsqlite3`.
 - CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
   This CVE is related to vulnerabilities with `libicu60`.
-  
+
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now supports the `--exclude-version` flag.
+  If provided, the command will exclude the version directory in the `--output-directory` tree.
+  The contents will with or without the flag will remain the same.
+  Please note including the `--exclude-version` flag
+  will make it more difficult to track changes between versions
+  unless using a version control system (such as git).
+- **EXPERIMENTAL** `config-template` supports `--pivnet-disable-ssl` to skip SSL validation.
+- When using `config-template` (**EXPERIMENTAL**) or `download-product`,
+  the `--pivnet-skip-ssl` is honored when capturing the token.
+
 ## v4.0.11
 Released February 21, 2020
 
@@ -1270,6 +1450,12 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
       - [`upgrade-opsman`][upgrade-opsman]
 - [gcp opsman.yml][inputs-outputs-gcp] now supports `ssh_public_key`.
   This is used to ssh into the Ops Manager VM to manage non-tile bosh add-ons.
+- **EXPERIMENTAL** `config-template` now will provide required-vars in addition to default-vars.
+- **EXPERIMENTAL** `config-template` will define vars with an `_` instead of a `/`.
+  This is an aesthetically motivated change.
+  Ops files are denoted with `/`,
+  so changing the vars separators to `_` makes this easier to differentiate.
+- **EXPERIMENTAL** `config-template` output `product-default-vars.yml` has been changed to `default-vars.yml`
 
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`
@@ -1667,7 +1853,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   [`credhub-interpolate`][credhub-interpolate] in practice. For more information
   about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
 - `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
-   `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
+   `tile-config-generator`). This is an experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
    [Creating a Product Config File][config-template].
 - [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
