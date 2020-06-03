@@ -407,7 +407,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   [`credhub-interpolate`][credhub-interpolate] in practice. For more information
   about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
 - `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
-   `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
+   `tile-config-generator`). This is an experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
    [Creating a Product Config File][config-template].
 - [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
