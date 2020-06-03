@@ -94,7 +94,7 @@ Pending Final Approval
   Please note this is an advanced feature, and should be used at your own discretion.
 
 ## v4.3.9
-Pending Final Approval
+Released June 3, 2020
 
 | Name | version |
 |---|---|
