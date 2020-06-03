@@ -50,8 +50,8 @@ Released May 20, 2020
 | Name | version |
 |---|---|
 | om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
@@ -70,8 +70,8 @@ Released April 28, 2020
 | Name | version |
 |---|---|
 | om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
@@ -95,8 +95,8 @@ Released April 24, 2020
 | Name | version |
 |---|---|
 | om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
@@ -340,8 +340,8 @@ Released May 14, 2020
 | Name | version |
 |---|---|
 | om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
@@ -360,8 +360,8 @@ Released April 28, 2020
 | Name | version |
 |---|---|
 | om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
@@ -386,8 +386,8 @@ Released April 20, 2020
 | Name | version |
 |---|---|
 | om | [4.6.0](https://github.com/pivotal-cf/om/releases/tag/4.6.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
@@ -617,38 +617,15 @@ Released October 21, 2019
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
   None of our code calls `python` directly, but the IaaS CLIs rely on this package.
-
-## v4.0.17
-Pending Final Approval
-
-| Name | version |
-|---|---|
-| om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
-| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
-
-### Bug Fixes
-- CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
-  The CVEs are related to vulnerabilities with `libssl`.
-- vSphere 7.0 with NSX-T 3.0 experienced a bug when using `create-vm` and `upgrade-opsman`.
-  If NSX-T deployed a network that was read in the vCenter as multiple port groups with the same name
-  those tasks would fail, and be unable to import the Ops Manager OVA file.
-  
-    The `network` property when creating an Ops Manager VM can take two new types of identifiers for identify a network.
-    
-    1. If using port groups, the `network` property must be `switch name/port group name`.
-       For example, `network: edge-cluster-w01-vc-AZ01-vds01/pas-infrastructure-az1-ls`.
-    1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used. 
-
+   
 ## v4.0.16
 Released May 14, 2020
 
 | Name | version |
 |---|---|
 | om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
@@ -667,8 +644,8 @@ Released April 28, 2020
 | Name | version |
 |---|---|
 | om | [3.2.3](https://github.com/pivotal-cf/om/releases/tag/3.2.3) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
+| bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
+| credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Bug Fixes
