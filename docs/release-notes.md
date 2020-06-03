@@ -115,7 +115,18 @@ Released March 25, 2020
   This CVE is related to vulnerabilities with `libsqlite3`.
 - CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
   This CVE is related to vulnerabilities with `libicu60`.
-  
+
+### Experimental Features
+- **EXPERIMENTAL** `config-template` now supports the `--exclude-version` flag.
+  If provided, the command will exclude the version directory in the `--output-directory` tree.
+  The contents will with or without the flag will remain the same.
+  Please note including the `--exclude-version` flag
+  will make it more difficult to track changes between versions
+  unless using a version control system (such as git).
+- **EXPERIMENTAL** `config-template` supports `--pivnet-disable-ssl` to skip SSL validation.
+- When using `config-template` (**EXPERIMENTAL**) or `download-product`,
+  the `--pivnet-skip-ssl` is honored when capturing the token.
+
 ## v4.0.11
 Released February 21, 2020
 
@@ -336,6 +347,12 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
       - [`upgrade-opsman`][upgrade-opsman]
 - [gcp opsman.yml][inputs-outputs-gcp] now supports `ssh_public_key`.
   This is used to ssh into the Ops Manager VM to manage non-tile bosh add-ons.
+- **EXPERIMENTAL** `config-template` now will provide required-vars in addition to default-vars.
+- **EXPERIMENTAL** `config-template` will define vars with an `_` instead of a `/`.
+  This is an aesthetically motivated change.
+  Ops files are denoted with `/`,
+  so changing the vars separators to `_` makes this easier to differentiate.
+- **EXPERIMENTAL** `config-template` output `product-default-vars.yml` has been changed to `default-vars.yml`
 
 ### Bug Fixes
 - [`download-product`][download-product] will now return a `download-product.json`
@@ -733,7 +750,7 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
   [`credhub-interpolate`][credhub-interpolate] in practice. For more information
   about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
 - `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
-   `tile-config-generator`). This is a experimental command that can only be run currently using `docker run`.
+   `tile-config-generator`). This is an experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
    [Creating a Product Config File][config-template].
 - [`upload-stemcell`][upload-stemcell] now supports the ability to include a config file.
