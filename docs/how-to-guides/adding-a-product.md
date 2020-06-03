@@ -598,6 +598,16 @@ from a given tile or pivnet slug.
 
 This section will assume [TAS][tas], like the how-to guide above.
 
+!!! warning "Experimental Feature"
+    Please see the release notes for more information for the `config-template` command.
+    Since this is marked as experimental,
+    there were feature changes
+    that did not affect the semver of the Platform Automation Toolkit.
+    
+    In Platform Automation Toolkit v5.0.0,
+    the command `config-template` is no longer experimental.
+    
+
 #### Generate the Config Template Directory
 
 ```bash
