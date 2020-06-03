@@ -64,7 +64,7 @@ Coming Soon
         At the moment, [`backup-product`][backup-product] will backup the artifacts of the product.
         The dynamic clusters will not be backed and will require additional work.
 
-## v4.4.1
+## v4.4.2
 Pending Final Approval
 
 | Name | version |
@@ -136,7 +136,7 @@ Pending Final Approval
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   Please note this is an advanced feature, and should be used at your own discretion.
 
-## v4.3.9
+## v4.3.10
 Released June 3, 2020
 
 | Name | version |
@@ -149,6 +149,8 @@ Released June 3, 2020
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
   The CVEs are related to vulnerabilities with `libssl`.
+- CVE update to container image. Resolves [USN-4377-1](https://usn.ubuntu.com/4377-1/).
+  The CVEs are related to vulnerabilities with `ca-certificates`.
 - vSphere 7.0 with NSX-T 3.0 experienced a bug when using `create-vm` and `upgrade-opsman`.
   If NSX-T deployed a network that was read in the vCenter as multiple port groups with the same name
   those tasks would fail, and be unable to import the Ops Manager OVA file.
@@ -352,7 +354,7 @@ Released January 31, 2020
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
-## v4.2.12
+## v4.2.13
 Pending Final Approval
 
 | Name | version |
@@ -365,6 +367,8 @@ Pending Final Approval
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
   The CVEs are related to vulnerabilities with `libssl`.
+- CVE update to container image. Resolves [USN-4377-1](https://usn.ubuntu.com/4377-1/).
+  The CVEs are related to vulnerabilities with `ca-certificates`.
 - vSphere 7.0 with NSX-T 3.0 experienced a bug when using `create-vm` and `upgrade-opsman`.
   If NSX-T deployed a network that was read in the vCenter as multiple port groups with the same name
   those tasks would fail, and be unable to import the Ops Manager OVA file.
@@ -642,7 +646,7 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
-## 4.1.17
+## 4.1.18
 Pending Final Approval
 
 | Name | version |
@@ -655,6 +659,8 @@ Pending Final Approval
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
   The CVEs are related to vulnerabilities with `libssl`.
+- CVE update to container image. Resolves [USN-4377-1](https://usn.ubuntu.com/4377-1/).
+  The CVEs are related to vulnerabilities with `ca-certificates`.
 - vSphere 7.0 with NSX-T 3.0 experienced a bug when using `create-vm` and `upgrade-opsman`.
   If NSX-T deployed a network that was read in the vCenter as multiple port groups with the same name
   those tasks would fail, and be unable to import the Ops Manager OVA file.
