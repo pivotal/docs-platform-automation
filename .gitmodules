@@ -4,6 +4,3 @@
 [submodule "external/docs-platform-automation-reference-pipeline-config"]
 	path = external/docs-platform-automation-reference-pipeline-config
 	url = git@github.com:pivotal/docs-platform-automation-reference-pipeline-config
-[submodule "external/platform-automation"]
-	path = external/platform-automation
-	url = git@github.com:pivotal/platform-automation

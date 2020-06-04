@@ -25,7 +25,7 @@ markdown_extensions:
 - sane_lists
 - markdown-code-excerpt:
     sections:
-      tasks: "./external/platform-automation"
+      tasks: "../platform-automation"
       examples: "./docs/examples"
       reference: "./external/docs-platform-automation-reference-pipeline-config"
       paving: "./external/paving"
