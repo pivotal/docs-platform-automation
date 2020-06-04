@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.4.2
-Pending Final Approval
+Released June 4, 2020
 
 | Name | version |
 |---|---|
