@@ -65,7 +65,7 @@ Coming Soon
         The dynamic clusters will not be backed and will require additional work.
 
 ## v4.4.2
-Pending Final Approval
+Released June 4, 2020
 
 | Name | version |
 |---|---|
