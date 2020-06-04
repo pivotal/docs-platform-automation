@@ -64,6 +64,28 @@ Coming Soon
         At the moment, [`backup-product`][backup-product] will backup the artifacts of the product.
         The dynamic clusters will not be backed and will require additional work.
 
+## v4.4.3
+Coming Soon
+
+### Bug Fixes
+- When using [`update-runtime-config`][update-runtime-config] task,
+  we've added the `param` for `RELEASES_GLOB` to help limit the releases being uploaded.
+  This is especially useful when using the bosh-io-release concourse resource,
+  which has other files besides the `release.tgz` when it peforms a `get`. 
+- When using [`create-vm`][create-vm], AWS did not support tagging the VM.
+  This has been added to the [AWS opsman config][opsman-config]
+
+  Tags can be added to the config file in two formats:
+  ```yaml
+  tags: {key: value}
+  ```
+  or 
+  ```yaml
+  tags:
+    - key: value
+    - key2: value
+  ```
+
 ## v4.4.2
 Pending Final Approval
 
