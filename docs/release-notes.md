@@ -65,6 +65,20 @@ Coming Soon
         The dynamic clusters will not be backed and will require additional work.
 
 ## v4.4.2
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4377-1](https://usn.ubuntu.com/4377-1/).
+  The CVEs are related to vulnerabilities with `ca-certificates`.
+
+## v4.4.1
 Released June 4, 2020
 
 | Name | version |
