@@ -203,8 +203,17 @@
   file: platform-automation-tasks/tasks/backup-product.yml
   params:
     PRODUCT_NAME: cf
+    ENV_FILE: env.yml
     OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
 # code_snippet backup-product-usage end
+# code_snippet backup-tkgi-usage start yaml
+- task: backup-tkgi
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-tkgi.yml
+  params:
+    ENV_FILE: env.yml
+    OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
+# code_snippet backup-tkgi-usage end
 # code_snippet backup-director-usage start yaml
 - task: backup-director
   image: platform-automation-image
