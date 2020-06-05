@@ -342,7 +342,7 @@ Released April 24, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-v4.3.5" target="_blank">Download</a>
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.5" target="_blank">Download</a>
 
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
@@ -450,8 +450,6 @@ Released January 31, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.0" target="_blank">Download</a>
 
 ### What's New
 - The [`revert-staged-changes`][revert-staged-changes] task has been added.
@@ -723,8 +721,6 @@ Released January 28, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.4" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
   The CVEs are related to vulnerabilities with `Libgcrypt`.
@@ -742,8 +738,6 @@ Released December 12, 2019
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.3" target="_blank">Download</a>
-
 ### Bug Fixes
 - When specifying `StorageSKU` for azure, `p-automator` would append `--storage-sku` twice in the creating VM invocation.
   It does not affect anything, but we removed the second instance to avoid confusion.
@@ -760,8 +754,6 @@ Released December 3, 2019
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.2" target="_blank">Download</a>
 
 ### What's New
 - The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP and AWS Only at the moment).
@@ -1090,8 +1082,6 @@ Released January 22, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.9" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
   The CVEs are related to vulnerabilities with `Libgcrypt`.
@@ -1108,8 +1098,6 @@ Released December 12, 2019
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.8" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
   The CVEs are related to vulnerabilities with `git`.
@@ -1124,8 +1112,6 @@ Released December 3, 2019
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.7" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
@@ -1145,8 +1131,6 @@ Released November 19, 2019
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.5" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -1169,8 +1153,6 @@ Released October 21, 2019
 | bosh-cli | [6.1.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.0) |
 | credhub | [2.6.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.0) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.2" target="_blank">Download</a>
 
 ### What's New
 - [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
@@ -1410,8 +1392,6 @@ Released January 22, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.9" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
   The CVEs are related to vulnerabilities with `Libgcrypt`.
@@ -1429,8 +1409,6 @@ Released December 12, 2019
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.8" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
   The CVEs are related to vulnerabilities with `git`.
@@ -1446,8 +1424,6 @@ Released December 3, 2019
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.7" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
@@ -1462,8 +1438,6 @@ Released November 6, 2019
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.6" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4172-1](https://usn.ubuntu.com/4172-1/).
@@ -1483,8 +1457,6 @@ Released October 25, 2019
 | credhub | [2.5.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.5.2) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.5" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4151-1](https://usn.ubuntu.com/4151-1/).
   This CVE is related to vulnerabilities with `python`.
@@ -1493,7 +1465,6 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.0.4
 
 Released October 15, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.4" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4142-1](https://usn.ubuntu.com/4142-1/).
@@ -1504,7 +1475,6 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.0.3
 
 Released September 27, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.3" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4127-1](https://usn.ubuntu.com/4127-1/).
@@ -1521,7 +1491,6 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.0.1
 
 Released September 4, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.1" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4108-1](https://usn.ubuntu.com/4108-1/).
@@ -1532,7 +1501,6 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.0.0
 
 Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivotal-cf/om/releases/tag/3.1.0)
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.0" target="_blank">Download</a>
 
 ### Breaking Changes
 
@@ -1665,8 +1633,6 @@ Released January 28, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-3.0.16" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4236-1](https://usn.ubuntu.com/4236-1/).
   The CVEs are related to vulnerabilities with `Libgcrypt`.
@@ -1684,8 +1650,6 @@ Released December 12, 2019
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-3.0.15" target="_blank">Download</a>
-
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4220-1](https://usn.ubuntu.com/4220-1/).
   The CVEs are related to vulnerabilities with `git`.
@@ -1700,8 +1664,6 @@ Released December 3, 2019
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-3.0.14" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
