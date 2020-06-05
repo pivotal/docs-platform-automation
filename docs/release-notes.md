@@ -31,8 +31,6 @@ Coming Soon
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.0" target="_blank">Download</a>
-
 ### Breaking Changes
 - There's an additional docker image for vSphere only.
   Most of our users are on vSphere,
@@ -82,8 +80,6 @@ Coming Soon
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.3" target="_blank">Download</a>
 
 ### Bug Fixes
 - When using [`update-runtime-config`][update-runtime-config] task,
