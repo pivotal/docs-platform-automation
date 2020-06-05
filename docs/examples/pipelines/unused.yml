@@ -176,9 +176,9 @@
       file: platform-automation-tasks/tasks/configure-director.yml
 # code_snippet configure-director-matched-resources-usage end
 # code_snippet replicate-product-usage start yaml
-- task: replicate-tile
+- task: replicate-product
   image: platform-automation-image
-  file: platform-automation-tasks/tasks/replicate-tile.yml
+  file: platform-automation-tasks/tasks/replicate-product.yml
   input_mapping:
     product: pas-windows
   params:
