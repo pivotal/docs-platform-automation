@@ -66,10 +66,18 @@ Coming Soon
 - The [`backup-product`][backup-product] and [`backup-director`][backup-director] tasks have been added.
   These tasks use [BOSH Backup and Restore][bbr] to backup artifacts which can be used to restore your director and products.
   Note, there is no task to automate restoring from a backup. Restore cannot be guaranteed to be idempotent, and therefore cannot be safely automated. See the [BBR docs][bbr-restore] for information on restoring from a backup.
-
-    !!! warning "Backing up TKGI (formerly known as PKS)"
-        At the moment, [`backup-product`][backup-product] will backup the artifacts of the product.
-        The dynamic clusters will not be backed and will require additional work.
+- The [`backup-tkgi`][backup-tkgi] task has been added.
+  This task is specific to the Tanzu Kubernetes Grid Integrated Edition(TKGI) product.
+  It will backup the tile _and_ the TKGI clusters.
+  
+    To persist this backup to a blobstore, the blobstore resource can match the following regexes:
+    
+    - For TKGI tile: `product_*.tgz`
+    - For the TKGI clusters: `*_clusters_*.tgz`
+  
+    !!! info "PKS CLI may be Temporarily Unavailable"
+        During `backup-tkgi`, the PKS CLI is disabled.
+        Due to the nature of the backup, some commands may not work as expected.
 
 ## v4.4.3
 Coming Soon
