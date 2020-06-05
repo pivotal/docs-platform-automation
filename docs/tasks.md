@@ -80,6 +80,22 @@ Use BBR to backup a product deployed with Ops Manager.
     ---excerpt--- "tasks/backup-product-script"
 === "Usage"
     ---excerpt--- "examples/backup-product-usage"
+    
+### backup-tkgi
+
+Use BBR to backup Tanzu Kubernetes Grid Integrated Edition(TKGI)
+deployed with Ops Manager.
+
+!!! info "PKS CLI may be Temporarily Unavailable"
+    During the backup, the PKS CLI is disabled.
+    Due to the nature of the backup, some commands may not work as expected.
+
+=== "Task"
+    ---excerpt--- "tasks/backup-tkgi"
+=== "Implementation"
+    ---excerpt--- "tasks/backup-tkgi-script"
+=== "Usage"
+    ---excerpt--- "examples/backup-tkgi-usage"
 
 ### check-pending-changes
 Returns a table of the current state of your Ops Manager
