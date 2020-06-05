@@ -60,18 +60,45 @@ to describe the impact of changes to our concourse tasks. In order to take advan
 
 The following are considered part of our API:
 
-Our concourse tasks':
+- Our concourse tasks':
 
-- inputs and outputs (including the format/required information in config files)
-- specified parameters
-- intended and specified functionality
+    - inputs and outputs (including the format/required information in config files)
+    - specified parameters
+    - intended and specified functionality
 
-These are all documented for each task within the task files themselves.
+    These are all documented for each task within the task files themselves.
 
-Additionally, the minimum compatible version
-of Concourse and Ops Manager
-are part of the API,
-and are specified [here][external-deps].
+- The minimum compatible version
+  of Concourse and Ops Manager
+  are part of the API,
+  and are specified [here][external-deps].
+
+- The presence of the following binaries on the _combined image_:
+
+    - bash 
+    - build-essential 
+    - curl 
+    - gettext 
+    - git 
+    - netcat-openbsd 
+    - python3-pip 
+    - python3-setuptools 
+    - rsync 
+    - ssh 
+    - unzip 
+    - zip 
+    - gcloud
+    - python-openstackclient
+    - awscli
+    - azure-cli
+    - bbr-cli
+    - bosh-cli
+    - credhub-cli
+    - govc
+    - isolation-segment-replicator
+    - om
+    - p-automator
+    - winfs-injector
 
 The following are NOT covered:
 
@@ -82,11 +109,11 @@ The following are NOT covered:
   but not specified as a parameter on the task)
 - properties specific to particular product or ops manager versions in config files
   (which are governed by the product being configured, not our tooling)
+- Versions of the included binaries. 
+  The _presence_ of those binaries are guaranteed, but the _versions_ are not.
 
-In general, if we make any change that we anticipate could not be consumed
-automatically,
-without manual changes,
-by all users of our Concourse tasks,
+In general, if we make any change 
+that we anticipate could not be consumed without manual changes,
 we consider it a breaking change, and increment the major version accordingly.
 
 This assumes that the required image can be made automatically available;
