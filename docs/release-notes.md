@@ -24,7 +24,14 @@
 ## v5.0.0
 Coming Soon
 
-## Features (Breaking)
+| Name | version |
+|---|---|
+| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+### Breaking Changes
 - There's an additional docker image for vSphere only.
   Most of our users are on vSphere,
   and excluding other IaaS-specific resources for the image greatly reduces
@@ -55,7 +62,7 @@ Coming Soon
   For the same functionality, please use [`download-product`][download-product]
   and specify the `s3` `source`.
 
-## Features (non-breaking)
+### Features
 - The [`backup-product`][backup-product] and [`backup-director`][backup-director] tasks have been added.
   These tasks use [BOSH Backup and Restore][bbr] to backup artifacts which can be used to restore your director and products.
   Note, there is no task to automate restoring from a backup. Restore cannot be guaranteed to be idempotent, and therefore cannot be safely automated. See the [BBR docs][bbr-restore] for information on restoring from a backup.
@@ -75,16 +82,19 @@ Coming Soon
 - When using [`create-vm`][create-vm], AWS did not support tagging the VM.
   This has been added to the [AWS opsman config][opsman-config]
 
-  Tags can be added to the config file in two formats:
-  ```yaml
-  tags: {key: value}
-  ```
-  or 
-  ```yaml
-  tags:
-    - key: value
-    - key2: value
-  ```
+    Tags can be added to the config file in two formats:
+
+    ```yaml
+    tags: {key: value}
+    ```
+
+    or
+
+    ```yaml
+    tags:
+      - key: value
+      - key2: value
+    ```
 
 ## v4.4.2
 Pending Final Approval
