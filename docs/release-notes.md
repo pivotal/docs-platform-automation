@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.2.13
-Pending Final Approval
+Released June 5, 2020
 
 | Name | version |
 |---|---|
@@ -367,7 +367,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## 4.1.18
-Pending Final Approval
+Released June 5, 2020
 
 | Name | version |
 |---|---|
