@@ -31,6 +31,8 @@ Released June 3, 2020
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.10" target="_blank">Download</a>
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
   The CVEs are related to vulnerabilities with `libssl`.
@@ -106,6 +108,8 @@ Released May 20, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.8" target="_blank">Download</a>
+
 ### Bug Fixes
 - _Sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
   `govc[stderr]: panic: send on closed channel`
@@ -124,6 +128,8 @@ Released April 28, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.6" target="_blank">Download</a>
 
 ### Bug Fixes
 -  The `IGNORE_WARNINGS` parameter for the
@@ -160,6 +166,8 @@ Released April 24, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.5" target="_blank">Download</a>
+
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
   When downloading a product from Pivnet, the [`download-product`][download-product] task
@@ -186,6 +194,8 @@ Released March 25, 2020
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.4" target="_blank">Download</a>
 
 ### Bug Fixes
 - The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] now correctly allows for an optional vars input.
@@ -219,6 +229,8 @@ Released February 26, 2020
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.3" target="_blank">Download</a>
+
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 - All default VM names are now `ops-manager-vm` to conform with IAAS name requirements.
@@ -236,6 +248,8 @@ February 11, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.2" target="_blank">Download</a>
 
 ### What's New
 - The [config][download-product-config] for the `download-product` task now recommends using `file-glob` instead of `pivnet-file-glob`.
@@ -301,6 +315,8 @@ Released June 5, 2020
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.13" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
@@ -377,6 +393,8 @@ Released May 20, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.11" target="_blank">Download</a>
+
 ### Bug Fixes
 - _Sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
   `govc[stderr]: panic: send on closed channel`
@@ -396,6 +414,8 @@ Released April 28, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.9" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
@@ -421,6 +441,8 @@ Released April 24, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.8" target="_blank">Download</a>
 
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
@@ -448,6 +470,8 @@ Released March 25, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.7" target="_blank">Download</a>
 
 ### Bug Fixes
 - `configure-director` now correctly handles when you don't name your iaas_configuration `default` on vSphere.
@@ -480,6 +504,8 @@ Released February 21, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.6" target="_blank">Download</a>
+
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 - CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
@@ -495,6 +521,8 @@ Released February 10, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.5" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -637,7 +665,7 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
-## 4.1.18
+## v4.1.18
 Released June 5, 2020
 
 | Name | version |
@@ -646,6 +674,8 @@ Released June 5, 2020
 | bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.18" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4376-1](https://usn.ubuntu.com/4376-1/).
@@ -712,7 +742,7 @@ Released June 5, 2020
   check your resource var names in any files vars may be drawn from.
   This resolves om issue [#484](https://github.com/pivotal-cf/om/issues/484). 
 
-## 4.1.16
+## v4.1.16
 Released May 14, 2020
 
 | Name | version |
@@ -721,6 +751,8 @@ Released May 14, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.16" target="_blank">Download</a>
 
 ### Bug Fixes
 - _Sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
@@ -741,6 +773,8 @@ Released April 28, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.14" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
@@ -768,6 +802,8 @@ Released April 20, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.13" target="_blank">Download</a>
+
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
   When downloading a product from Pivnet, the [`download-product`][download-product] task
@@ -794,6 +830,8 @@ Released March 25, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.12" target="_blank">Download</a>
 
 ### Bug Fixes
 - `configure-director` now correctly handles when you don't name your iaas_configuration `default` on vSphere.
@@ -827,6 +865,8 @@ Released February 25, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.11" target="_blank">Download</a>
+
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 - CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
@@ -842,6 +882,8 @@ Released February 7, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.10" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -1019,6 +1061,8 @@ Released May 14, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.16" target="_blank">Download</a>
+
 ### Bug Fixes
 - _Sometimes_ vsphere `create-vm`/`delete-vm`/`upgrade-opsman` would fail with:
   `govc[stderr]: panic: send on closed channel`
@@ -1038,6 +1082,8 @@ Released April 28, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.14" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
@@ -1065,6 +1111,8 @@ Released April 20, 2020
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.13" target="_blank">Download</a>
+
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
   When downloading a product from Pivnet, the [`download-product`][download-product] task
@@ -1091,6 +1139,8 @@ Released March 25, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.12" target="_blank">Download</a>
 
 ### Bug Fixes
 - Downloading a stemcell associated with a product will try to download the light or heavy stemcell.
@@ -1125,6 +1175,8 @@ Released February 21, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.11" target="_blank">Download</a>
+
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 - CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
@@ -1140,6 +1192,8 @@ Released February 4, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.0.10" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -1362,6 +1416,8 @@ Released February 20, 2020
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-3.0.18" target="_blank">Download</a>
+
 ### Bug Fixes
 - GCP [`create-vm`][create-vm] now correctly handles an empty tags list
 - CVE update to container image. Resolves [USN-4274-1](https://usn.ubuntu.com/4274-1/).
@@ -1377,6 +1433,8 @@ Released February 3, 2020
 | bosh-cli | [6.1.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.1.1) |
 | credhub | [2.6.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.1) |
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-3.0.17" target="_blank">Download</a>
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
