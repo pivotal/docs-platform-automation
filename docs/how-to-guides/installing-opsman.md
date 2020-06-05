@@ -302,7 +302,7 @@ Follow these steps to use the `paving` repository:
    into a `vars.yml` file in `your-repo-name` for future use:
 
     ```bash
-    terraform output stable_config > ../your-repo-name/vars.yml
+    terraform output stable_config | jq -r . | ruby -ryaml -rjson -e 'puts YAML.dump(JSON.parse(STDIN.read))' | tail -n +2 >> ../your-repo-name/vars.yml
     ```
 
 1. Return to your working directory for the post-terraform steps:
@@ -494,6 +494,7 @@ in the `opsman.yml` file.
 The `create-vm` task in the `install-opsman` will need to be updated to
 use the `download-product` image,
 Ops Manager configuration file,
+variables file,
 and the placeholder state file.
 
 ```yaml hl_lines="33-35"
@@ -529,6 +530,8 @@ jobs:
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
+      params:
+        VARS_FILES: vars/vars.yml
       input_mapping:
         state: config
         image: downloaded-product
