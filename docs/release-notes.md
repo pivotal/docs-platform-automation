@@ -144,7 +144,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   Please note this is an advanced feature, and should be used at your own discretion.
 
 ## v4.3.10
-Released June 3, 2020
+Released June 8, 2020
 
 | Name | version |
 |---|---|
