@@ -522,9 +522,10 @@ in the `opsman.yml` file.
 The `create-vm` task in the `install-opsman` will need to be updated to
 use the `download-product` image,
 Ops Manager configuration file,
+variables file,
 and the placeholder state file.
 
-```yaml hl_lines="39 40 41 42 43 44 45"
+```yaml hl_lines="39-45"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -563,6 +564,8 @@ jobs:
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
+      params:
+        VARS_FILES: vars/vars.yml
       input_mapping:
         config: interpolated-config
         state: config
@@ -585,7 +588,7 @@ we should [`ensure`][ensure] that `state.yml` is always persisted
 regardless of whether the `install-opsman` job failed or passed.
 To do this, we can add the following section to the job:
 
-```yaml hl_lines="42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61"
+```yaml hl_lines="44-63"
 jobs:
 - name: install-ops-manager
   serial: true
@@ -623,6 +626,8 @@ jobs:
     - task: create-vm
       image: platform-automation-image
       file: platform-automation-tasks/tasks/create-vm.yml
+      params:
+        VARS_FILES: vars/vars.yml
       input_mapping:
         config: interpolated-config
         state: config
