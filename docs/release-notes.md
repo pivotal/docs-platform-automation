@@ -54,7 +54,7 @@ Coming Soon
     ```
 
 ## v4.4.2
-Pending Final Approval
+Released June 9, 2020
 
 | Name | version |
 |---|---|
