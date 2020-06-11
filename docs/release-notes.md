@@ -21,6 +21,22 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.3.11
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.10" target="_blank">Download</a>
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
+  The CVEs are related to vulnerabilities with `libsqlite`.
+  
 ## v4.3.10
 Released June 8, 2020
 
@@ -306,6 +322,22 @@ Released January 31, 2020
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
+## v4.2.14
+Pending Final Approval
+
+| Name | version |
+|---|---|
+| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.13" target="_blank">Download</a>
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
+  The CVEs are related to vulnerabilities with `libsqlite`.
+  
 ## v4.2.13
 Released June 5, 2020
 
@@ -665,6 +697,22 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
+## v4.1.19
+Pending Final Review
+
+| Name | version |
+|---|---|
+| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
+| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.19" target="_blank">Download</a>
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
+  The CVEs are related to vulnerabilities with `libsqlite`.
+  
 ## v4.1.18
 Released June 5, 2020
 
