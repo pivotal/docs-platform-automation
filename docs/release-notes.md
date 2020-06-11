@@ -78,22 +78,9 @@ Coming Soon
     !!! info "PKS CLI may be Temporarily Unavailable"
         During `backup-tkgi`, the PKS CLI is disabled.
         Due to the nature of the backup, some commands may not work as expected.
-## v4.4.4
-Pending Final Approval
-
-| Name | version |
-|---|---|
-| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
-| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
-
-### Bug Fixes
-- CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
-  The CVEs are related to vulnerabilities with `libsqlite`.
   
 ## v4.4.3
-Released June 11, 2020
+Pending Final Approval
 
 | Name | version |
 |---|---|
@@ -123,7 +110,9 @@ Released June 11, 2020
       - key: value
       - key2: value
     ```
-  
+- CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
+  The CVEs are related to vulnerabilities with `libsqlite`.
+    
 ## v4.4.2
 Released June 9, 2020
 
