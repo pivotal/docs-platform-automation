@@ -822,7 +822,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.1.19
-Pending Final Review
+Released June 15, 2020
 
 | Name | version |
 |---|---|
