@@ -115,6 +115,7 @@ Pending Final Approval
       - key: value
       - key2: value
     ```
+
 - CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
   The CVEs are related to vulnerabilities with `libsqlite`.
     
