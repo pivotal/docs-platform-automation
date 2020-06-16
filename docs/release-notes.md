@@ -31,7 +31,7 @@ Pending Final Approval
   which has other files besides the `release.tgz` when it peforms a `get`. 
   
 ## v4.4.3
-Pending Final Approval
+Released June 16, 2020
 
 | Name | version |
 |---|---|
