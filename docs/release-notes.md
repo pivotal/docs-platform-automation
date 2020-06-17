@@ -98,6 +98,8 @@ Released June 16, 2020
 | credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.3" target="_blank">Download</a>
+
 ### Bug Fixes
 - When using [`create-vm`][create-vm], AWS did not support tagging the VM.
   This has been added to the [AWS opsman config][opsman-config]
