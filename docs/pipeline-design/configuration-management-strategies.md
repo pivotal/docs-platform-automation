@@ -79,7 +79,7 @@ and streamline the configuration promotion process between foundations.
 
 ### Overview
 
-The [Reference Pipeline][reference-pipeline] uses a public [config repo][reference-pipeline-config]
+The [Reference Pipeline][reference-pipeline] uses a public [config repo][ref-config-repo]
 with all secrets stored in our Concourse's Credhub.
 
 The design considerations for this strategy as implemented are as follows:
