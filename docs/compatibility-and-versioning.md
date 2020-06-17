@@ -48,7 +48,7 @@ Platform Automation Toolkit is designed to work with these dependencies.
 
 <sup>1</sup> 
     [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] replaces [`credhub-interpolate`][credhub-interpolate] in Concourse 5.x+ _only_. 
-    If using Concourse 4.x+, continue using `credhub-interpolate`.
+    If using Concourse 4.x, continue using `credhub-interpolate`.
     If using Concourse 5.x+, it is strongly recommended to switch to `prepare-tasks-with-secrets`.
     For more information about secrets handling, reference the [Secrets Handling Page][secrets-handling].
 
