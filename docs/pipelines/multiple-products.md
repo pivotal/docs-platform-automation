@@ -39,6 +39,16 @@ to install Ops Manager and the Tanzu Application Service and Healthwatch product
 Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline][reference-resources].
 
+### Full Pipeline and Reference Configurations
+
+There is a [git repository][ref-config-repo]
+containing containing the [full pipeline file][ref-config-pipeline],
+along with other pipeline and configuration examples.
+
+This can be useful when you want to take
+a fully assembled pipeline as a starting point;
+the rest of this document covers the sections of the full pipeline in more detail.
+
 ## Pipeline Components
 
 ### S3 Resources
