@@ -47,7 +47,7 @@ Coming Soon
   This is to avoid breaking existing globs and patterns.
 
     If you're getting our image with the Pivnet resource
-    as documented in the how to guides,
+    as documented in the How-to guides,
     the new `get` configuration would look like this:
 
     ```yaml
