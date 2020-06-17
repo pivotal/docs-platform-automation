@@ -77,7 +77,7 @@ _only_ the version of the image that shipped with it.
 
 If we accidentally violate our semver,
 we will publish an additional version addressing the problem.
-In some cases, that may mean releasing ths same software with a corrected version,
+In some cases, that may mean releasing the same software with a corrected version,
 and shipping a new patch version identical to the version prior to the violation.
 In others, it may mean releasing an additional patch version
 which reverts an unintentional breaking change.
