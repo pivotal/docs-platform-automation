@@ -91,7 +91,7 @@ can quickly become more challenging.
 **This is the strategy used in our [Reference Pipeline][reference-pipeline]**
 
 For an example repo structure using this strategy,
-see the [config repo][reference-pipeline-config]
+see the [config repo][ref-config-repo]
 used by the [Reference Pipeline][reference-pipeline] and the [Resources Pipeline][reference-resources]
 
 
