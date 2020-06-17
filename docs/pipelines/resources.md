@@ -46,6 +46,17 @@ Below are examples that can be used.
 === "TAS"
     ---excerpt--- "reference/download-tas-from-pivnet-usage"
 
+
+### Full Pipeline and Reference Configurations
+
+There is a [git repository][ref-config-repo]
+containing containing the [full pipeline file][ref-config-resource-pipeline],
+along with other pipeline and configuration examples.
+
+This can be useful when you want to take
+a fully assembled pipeline as a starting point;
+the rest of this document covers the sections of the full pipeline in more detail.
+
 ## Pipeline Components
 
 ### Resource Types
