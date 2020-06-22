@@ -3,4 +3,4 @@
 	url = https://github.com/pivotal/paving
 [submodule "external/docs-platform-automation-reference-pipeline-config"]
 	path = external/docs-platform-automation-reference-pipeline-config
-	url = git@github.com:pivotal/docs-platform-automation-reference-pipeline-config
+	url = https://github.com/pivotal/docs-platform-automation-reference-pipeline-config
