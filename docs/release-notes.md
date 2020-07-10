@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.4.4
-Pending Final Approval
+Released July 10, 2020
 
 | Name | version |
 |---|---|
@@ -38,6 +38,8 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   we've added the `param` for `RELEASES_GLOB` to help limit the releases being uploaded.
   This is especially useful when using the bosh-io-release concourse resource,
   which has other files besides the `release.tgz` when it peforms a `get`.
+- CVE update to container image. Resolves [USN-4402-1](https://usn.ubuntu.com/4402-1/).
+  The CVEs are related to vulnerabilities with `curl` and related libraries.
 
 ## v4.4.3
 Released June 16, 2020
@@ -161,6 +163,13 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   Please note this is an advanced feature, and should be used at your own discretion.
+
+## v4.3.12
+Released July 10, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4402-1](https://usn.ubuntu.com/4402-1/).
+  The CVEs are related to vulnerabilities with `curl` and related libraries.
 
 ## v4.3.11
 Released June 15, 2020
@@ -462,6 +471,13 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.15
+Released July 10, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4402-1](https://usn.ubuntu.com/4402-1/).
+  The CVEs are related to vulnerabilities with `curl` and related libraries.
 
 ## v4.2.14
 Released June 15, 2020
@@ -837,6 +853,22 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## v4.1.20
+Released July 10, 2020
+
+| Name | version |
+|---|---|
+| om | [5.0.0](https://github.com/pivotal-cf/om/releases/tag/5.0.0) |
+| bosh-cli | [v6.3.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.3.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.20" target="_blank">Download</a>
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
+  The CVEs are related to vulnerabilities with `libsqlite`.
 
 ## v4.1.19
 Released June 15, 2020
