@@ -96,6 +96,8 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   we've added the `param` for `RELEASES_GLOB` to help limit the releases being uploaded.
   This is especially useful when using the bosh-io-release concourse resource,
   which has other files besides the `release.tgz` when it peforms a `get`.
+- CVE update to container image. Resolves [USN-4402-1](https://usn.ubuntu.com/4402-1/).
+  The CVEs are related to vulnerabilities with `curl` and related libraries.
 
 ## v4.4.3
 Released June 16, 2020
@@ -222,6 +224,10 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 ## v4.3.12
 Released July 10, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4402-1](https://usn.ubuntu.com/4402-1/).
+  The CVEs are related to vulnerabilities with `curl` and related libraries.
 
 ## v4.3.11
 Released June 15, 2020
@@ -526,6 +532,10 @@ Released January 31, 2020
 
 ## v4.2.15
 Released July 10, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4402-1](https://usn.ubuntu.com/4402-1/).
+  The CVEs are related to vulnerabilities with `curl` and related libraries.
 
 ## v4.2.14
 Released June 15, 2020
@@ -904,6 +914,10 @@ Released December 3, 2019
 
 ## v4.1.20
 Released July 10, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
+  The CVEs are related to vulnerabilities with `libsqlite`.
 
 ## v4.1.19
 Released June 15, 2020
