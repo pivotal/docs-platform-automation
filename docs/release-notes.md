@@ -533,6 +533,15 @@ Released January 31, 2020
 ## v4.2.15
 Released July 10, 2020
 
+| Name | version |
+|---|---|
+| om | [5.0.0](https://github.com/pivotal-cf/om/releases/tag/5.0.0) |
+| bosh-cli | [v6.3.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.3.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.15" target="_blank">Download</a>
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4402-1](https://usn.ubuntu.com/4402-1/).
   The CVEs are related to vulnerabilities with `curl` and related libraries.
