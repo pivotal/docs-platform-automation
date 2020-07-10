@@ -69,12 +69,12 @@ Coming Soon
 - The [`backup-tkgi`][backup-tkgi] task has been added.
   This task is specific to the Tanzu Kubernetes Grid Integrated Edition(TKGI) product.
   It will backup the tile _and_ the TKGI clusters.
-  
+
     To persist this backup to a blobstore, the blobstore resource can match the following regexes:
-    
+
     - For TKGI tile: `product_*.tgz`
     - For the TKGI clusters: `*_clusters_*.tgz`
-  
+
     !!! info "PKS CLI may be Temporarily Unavailable"
         During `backup-tkgi`, the PKS CLI is disabled.
         Due to the nature of the backup, some commands may not work as expected.
@@ -82,21 +82,12 @@ Coming Soon
 ## v4.4.4
 Pending Final Approval
 
-| Name | version |
-|---|---|
-| om | [5.0.0](https://github.com/pivotal-cf/om/releases/tag/5.0.0) |
-| bosh-cli | [v6.3.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.3.1) |
-| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
-| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.4" target="_blank">Download</a>
-
 ### Bug Fixes
 - When using [`update-runtime-config`][update-runtime-config] task,
   we've added the `param` for `RELEASES_GLOB` to help limit the releases being uploaded.
   This is especially useful when using the bosh-io-release concourse resource,
-  which has other files besides the `release.tgz` when it peforms a `get`. 
-  
+  which has other files besides the `release.tgz` when it peforms a `get`.
+
 ## v4.4.3
 Released June 16, 2020
 
@@ -129,7 +120,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 - CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
   The CVEs are related to vulnerabilities with `libsqlite`.
-    
+
 ## v4.4.2
 Released June 9, 2020
 
