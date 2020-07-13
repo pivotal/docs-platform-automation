@@ -235,7 +235,7 @@ The following is one way to set up your bucket's file structure:
 │   │
 │   ├── stemcells
 │   │   ├── healthwatch-stemcell
-│   │   │     ubuntu-trusty.tgz
+│   │   │     ubuntu-xenial.tgz
 │   │   ├── pas-stemcell
 │   │   │     ubuntu-xenial.tgz
 │   │   └── ...

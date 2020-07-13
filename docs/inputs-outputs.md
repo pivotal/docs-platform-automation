@@ -269,7 +269,7 @@ This file can be imported to an Ops Manager VM using the [import-installation][i
 ### stemcell
 This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Tanzu Network.
 It must be in the original filename as that is used by Ops Manager to parse metadata.
-The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-go_agent.tgz`.
+The filename could look like `bosh-stemcell-621.76-vsphere-esxi-ubuntu-xenial-go_agent.tgz`.
 
 !!! warning
     This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
@@ -285,7 +285,7 @@ using the [download-product][download-product] task.
     pivnet-api-token: token
     pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
     pivnet-product-slug: stemcells-ubuntu-xenial
-    prod    uct-version-regex: ^170\..*$
+    product-version-regex: ^170\..*$
     ```
 
 === "Azure"
