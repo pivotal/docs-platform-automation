@@ -32,6 +32,8 @@ Coming Soon
 | winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
 
 ### Breaking Changes
+- Platform Automation will now require Concourse 5.0+
+
 - There's an additional docker image for vSphere only.
   Most of our users are on vSphere,
   and excluding other IaaS-specific resources for the image greatly reduces
@@ -61,6 +63,14 @@ Coming Soon
 - The deprecated `download-product-s3` task has been removed.
   For the same functionality, please use [`download-product`][download-product]
   and specify the `s3` `source`.
+
+- The `download-product` task  will no longer copy files to the existing outputs.
+  Rather, these files will be written directly.
+  This speeds up `download-product` in general,
+  especially in systems where space IO might be a constraint.
+
+    This change _*requires*_ Concourse 5.0+.
+    If using an older version of Concourse, this task will error.
 
 ### Features
 - The [`backup-product`][backup-product] and [`backup-director`][backup-director] tasks have been added.
