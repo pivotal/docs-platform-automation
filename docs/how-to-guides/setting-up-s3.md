@@ -19,8 +19,8 @@ S3 and Concourse's native S3 integration makes it possible to store large file a
 
 With S3, we can place product files
 and new versions of OpsMan
-into a network whitelisted S3 bucket
-to be used by Platform Automation tasks.
+into a network allow-listed S3 bucket
+to be used by Platform Automation Toolkit tasks.
 We can even create a [Resources Pipeline][reference-resources]
 that gets the latest version of products
 from PivNet and places them into our S3 bucket automatically.
@@ -193,8 +193,10 @@ my-exported-installation.zip (version 121212)
 
 ## Storing Files in S3
 
-Any file that can be stored on a computer
-can be stored on S3. S3 is especially good at storing large files as it is designed to scale with large amounts of data while still being durable and fast.
+Any file that can be stored on a computer can be stored on S3.
+S3 is especially good at storing large files
+as it is designed to scale with large amounts of data
+while still being durable and fast.
 
 Platform Automation users may want to store the following files in S3:
 
@@ -210,7 +212,7 @@ Platform Automation users will likely **_NOT_** want to store the following in S
 to handle these types of files,
 but they should not be stored in S3.
 Check out the [Secrets Handling page][secrets-handling]
-for how to work with these types of files.  
+for how to work with these types of files.
 
 ## Structuring your Bucket
 

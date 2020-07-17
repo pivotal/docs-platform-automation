@@ -83,7 +83,7 @@ resources:
     source:
       private_key: ((docs-ref-pipeline-repo-key.private_key))
       uri: ((docs-ref-pipeline-repo-uri))
-      branch: master
+      branch: main
   # code_snippet multiple-product-resources-configurations end yaml
 
   # code_snippet multiple-product-resources-triggers start yaml

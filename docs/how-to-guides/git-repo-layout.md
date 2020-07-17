@@ -71,8 +71,8 @@ remote to the new GitHub repo:
 # enter the path for the new GitHub repo
 git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
 
-# push your changes to the master branch
-git push --set-upstream origin master
+# push your changes to the default branch
+git push --set-upstream origin main
 ```
 
 You should now see your GitHub repo populated
