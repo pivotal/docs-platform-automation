@@ -162,7 +162,7 @@ Then, add this to the resources section of your pipeline file:
   source:
     uri: ((pipeline-repo))
     private_key: ((plat-auto-pipes-deploy-key.private_key))
-    branch: master
+    branch: main
 ```
 
 We'll put the credentials we need in Credhub:
