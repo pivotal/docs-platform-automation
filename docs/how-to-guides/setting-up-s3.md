@@ -25,7 +25,7 @@ and retrieve the latest product versions in offline environments.
 
 With S3, we can place product files
 and new versions of OpsMan
-into a network whitelisted S3 bucket
+into a network allow-listed S3 bucket
 to be used by Platform Automation Toolkit tasks.
 We can even create a [Resources Pipeline][reference-resources]
 that gets the latest version of products
