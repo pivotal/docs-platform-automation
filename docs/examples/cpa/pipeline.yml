@@ -50,7 +50,7 @@ resources:
 - name: deployments
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((platform_automation_deployments.private_key))
     uri: git@github.com:pivotal/platform-automation-deployments
 

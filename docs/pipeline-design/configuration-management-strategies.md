@@ -52,10 +52,10 @@ step:
 
 ---excerpt--- "examples/configure-director-usage"
 
-We map the config files 
+We map the config files
 to the expected input named `env` of the `configure-director` task.
 Because the `configure-director` task's default `ENV` parameter is `env.yml`,
-it automatically uses the `env.yml` file in our configuration repo. 
+it automatically uses the `env.yml` file in our configuration repo.
 We do not need to explicitly name the `ENV` parameter for the task.
 This also works for `director.yml`.
 
@@ -69,7 +69,7 @@ For reference, here is the `configure-director` task:
 ## Multiple Foundations with one Repository
 
 Multiple foundations may use a single Git configuration source
-but have different variables loaded 
+but have different variables loaded
 from a foundation specific vars file, Credhub, Git repository, etc.
 This approach is very similar to the Single Repository for Each Foundation
 described above,
@@ -77,13 +77,13 @@ except that variables are loaded in from external sources.
 
 The variable source may be loaded in a number of ways. For example,
 it may be loaded from a separate foundation specific Git repository,
-a foundation specific subdirectory in the configuration source, 
+a foundation specific subdirectory in the configuration source,
 or even a foundation specific vars file found in the base Git configuration.
 
 This strategy can reduce the number of overall configuration files
 and configuration repositories in play,
-and can reduce foundation drift (as the basic configuration is being pulled 
-from a single master source).
+and can reduce foundation drift (as the basic configuration is being pulled
+from a single source).
 However,
 configuration management and secrets handling
 can quickly become more challenging.
