@@ -1,7 +1,7 @@
 # Writing a Pipeline to Install Ops Manager
-This how-to-guide shows you how to write a pipeline for installing a new Ops Manager - 
-including configuring and creating the Ops Manager VM and BOSH Director. 
-If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to]. 
+This how-to-guide shows you how to write a pipeline for installing a new Ops Manager -
+including configuring and creating the Ops Manager VM and BOSH Director.
+If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to].
 
 {% include ".getting-started.md" %}
 
@@ -131,7 +131,7 @@ Then, add this to the resources section of your pipeline file:
   source:
     uri: ((pipeline-repo))
     private_key: ((plat-auto-pipes-deploy-key.private_key))
-    branch: master
+    branch: main
 ```
 
 We'll need to put the pivnet token in Crehub:
@@ -183,7 +183,7 @@ jobs:
         files: config
       output_mapping:
         interpolated-files: interpolated-config
-    - task: download-product        
+    - task: download-product
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
@@ -319,7 +319,7 @@ jobs:
         files: config
       output_mapping:
         interpolated-files: interpolated-config
-    - task: download-product        
+    - task: download-product
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
@@ -369,8 +369,22 @@ git push
 
 The `state` input is a placeholder
 which will be filled in by the `create-vm` task output.
-This will be used later to keep track of the vm so it can be upgraded,
-which you can learn about in the [upgrade-how-to].
+This will be used later to keep track of the VM so it can be upgraded,
+which you can learn about in the [upgrade-how-to][upgrade-how-to].
+
+Add the following to your `resources` section of your `pipeline.yml`
+```yaml
+- name: vars
+  type: git
+  source:
+    uri: ((pipeline-repo))
+    private_key: ((plat-auto-pipes-deploy-key.private_key))
+    branch: main
+```
+
+This resource definition will allow `create-vm`
+to use the variables from `vars.yml`
+in the `opsman.yml` file.
 
 The `create-vm` task in the `install-opsman` will need to be updated to
 use the `download-product` image,
@@ -405,7 +419,7 @@ jobs:
         files: config
       output_mapping:
         interpolated-files: interpolated-config
-    - task: download-product        
+    - task: download-product
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:
@@ -425,9 +439,9 @@ jobs:
     We do not explicitly set the default parameters
     for `create-vm` in this example.
     Because `opsman.yml` is the default input to
-    `OPSMAN_CONFIG_FILE`, it is redundant 
-    to set this param in the pipeline. 
-    Refer to the [task definitions][task-reference] for a full range of the 
+    `OPSMAN_CONFIG_FILE`, it is redundant
+    to set this param in the pipeline.
+    Refer to the [task definitions][task-reference] for a full range of the
     available and default parameters.
 
 Set the pipeline.
@@ -465,7 +479,7 @@ jobs:
         files: config
       output_mapping:
         interpolated-files: interpolated-config
-    - task: download-product        
+    - task: download-product
       image: platform-automation-image
       file: platform-automation-tasks/tasks/download-product.yml
       params:

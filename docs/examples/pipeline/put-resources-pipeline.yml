@@ -129,7 +129,7 @@ resources:
   source:
     private_key: ((docs-ref-pipeline-repo-key.private_key))
     uri: ((docs-ref-pipeline-repo-uri))
-    branch: master
+    branch: main
     submodules: all
     depth: 1
 # code_snippet resources-pipeline-configurations end yaml
