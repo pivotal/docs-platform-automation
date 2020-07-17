@@ -132,7 +132,7 @@ Then, add this to the resources section of your pipeline file:
   source:
     uri: ((pipeline-repo))
     private_key: ((plat-auto-pipes-deploy-key.private_key))
-    branch: master
+    branch: main
 ```
 
 We'll need to put the Tanzu Network token in Credhub:
@@ -484,7 +484,7 @@ Add the following to your `resources` section of your `pipeline.yml`
   source:
     uri: ((pipeline-repo))
     private_key: ((plat-auto-pipes-deploy-key.private_key))
-    branch: master
+    branch: main
 ```
 
 This resource definition will allow `create-vm`
