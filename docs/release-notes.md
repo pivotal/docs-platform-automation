@@ -89,15 +89,15 @@ Coming Soon
         During `backup-tkgi`, the PKS CLI is disabled.
         Due to the nature of the backup, some commands may not work as expected.
 
-### Bug Fixes:
-- [`prepare-tasks-with-secrets`[prepare-tasks-with-secrets] will now inject a params block
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
 
 ## v4.4.5
 Coming Soon
 
-### Bug Fixes:
-- [`prepare-tasks-with-secrets`[prepare-tasks-with-secrets] will now inject a params block
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
 
 
@@ -247,8 +247,8 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.3.13
 Coming Soon
 
-### Bug Fixes:
-- [`prepare-tasks-with-secrets`[prepare-tasks-with-secrets] will now inject a params block
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
 
 ## v4.3.12
@@ -571,8 +571,8 @@ Released January 31, 2020
 ## v4.2.16
 Coming Soon
 
-### Bug Fixes:
-- [`prepare-tasks-with-secrets`[prepare-tasks-with-secrets] will now inject a params block
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
 
 ## v4.2.15
@@ -969,8 +969,8 @@ Released December 3, 2019
 ## 4.1.21
 Coming Soon
 
-### Bug Fixes:
-- [`prepare-tasks-with-secrets`[prepare-tasks-with-secrets] will now inject a params block
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
 
 ## v4.1.20
