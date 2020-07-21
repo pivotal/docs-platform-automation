@@ -89,6 +89,9 @@ Coming Soon
         During `backup-tkgi`, the PKS CLI is disabled.
         Due to the nature of the backup, some commands may not work as expected.
 
+- [`prepare-tasks-with-secrets`[prepare-tasks-with-secrets] will now inject a params block
+  into the passed in task if it is missing.
+
 ## v4.4.4
 Released July 10, 2020
 
