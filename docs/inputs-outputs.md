@@ -2,6 +2,71 @@
 These are the inputs that can be provided to the tasks.
 Each task can only take a specific set, indicated under the `inputs` property of the YAML.
 
+### director config
+
+The config director will set the bosh tile (director) on Ops Manager.
+
+The `config` input for a director task expects to have a `director.yml` file.
+The configuration of the `director.yml` is IAAS specific for some properties -- i.e. networking.
+
+There are two ways to build a director config.
+
+1. Using an already deployed Ops Manager, you can extract the config using [staged-director-config].
+2. Deploying a brand new Ops Manager requires more effort for a `director.yml`.
+   The configuration of director is variables based on the features enabled.
+   For brevity, this `director.yml` is a basic example for vsphere.
+
+---excerpt--- "examples/director-configuration"
+
+The IAAS specific configuration can be found in the Ops Manager API documentation.
+
+Included below is a list of properties that can be set in the `director.yml`
+and a link to the API documentation explaining any IAAS specific properties.
+
+* `az-configuration` - a list of availability zones [Ops Manager API][opsman-api-azs]
+* `network-assignment` - the network the bosh director is deployed to [Ops Manager API][opsman-api-network-az-assignment]
+* `networks-configuration` - a list of named networks [Ops Manager API][opsman-api-networks]
+* `properties-configuration`
+    * `iaas_configuration` - configuration for the bosh IAAS CPI [Ops Manager API][opsman-api-director-properties]
+    * `director_configuration` - properties for the bosh director [Ops Manager API][opsman-api-director-properties]
+    * `security_configuration` - security properties for the bosh director [Ops Manager API][opsman-api-director-properties]
+    * `syslog_configuration` - configure the syslog sinks for the bosh director [Ops Manager API][opsman-api-director-properties]
+* `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-config-resources]
+* `vmextensions-configuration` - create/update/delete VM extensions [Ops Manager API][opsman-api-vm-extension]
+
+#### GCP Shared VPC
+
+Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet][gcp-create-network],
+which includes the host project id, region of the subnet, and the subnet name.
+
+For example:
+
+`[HOST_PROJECT_ID]/[NETWORK]/[SUBNET]/[REGION]`
+
+
+### download-product-config
+
+The `config` input for a download product task 
+can be used with a `download-config.yml` file to download a tile.
+The configuration of the `download-config.yml` looks like this:
+
+=== "Tanzu Network"
+    ---excerpt--- "examples/download-product-config-pivnet"
+=== "S3"
+    ---excerpt--- "examples/download-product-config-s3"
+=== "GCS"
+    ---excerpt--- "examples/download-product-config-gcs"
+=== "Azure"
+    ---excerpt--- "examples/download-product-config-azure"
+
+### download-stemcell-product-config
+
+The `config` input for a download product task 
+can be used with a `download-config.yml` file to download a stemcell.
+The configuration of the `download-config.yml` looks like this:
+
+---excerpt--- "examples/download-stemcell-product-config"
+
 ### env
 
 The `env` input for a task expects to have a `env.yml` file.
@@ -37,6 +102,17 @@ redirect uri (list):
 autoapprove (list):
 signup redirect url (url):
 ```
+
+### installation
+
+The file contains the information to restore an Ops Manager VM.
+The `installation` input for a opsman VM task expects to have a `installation.zip` file.
+
+This file can be exported from an Ops Manager VM using the [export-installation][export-installation].
+This file can be imported to an Ops Manager VM using the [import-installation][import-installation].
+
+!!! warning
+    This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
 
 ### Ops Manager config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
@@ -108,46 +184,83 @@ These required properties are adapted from the instructions outlined in
 
 ---excerpt--- "examples/vsphere-configuration"
 
-### director config
+### opsman image
 
-The config director will set the bosh tile (director) on Ops Manager.
+This file is an [artifact from Tanzu Network](https://network.pivotal.io/products/ops-manager),
+which contains the VM image for a specific IaaS.
+For vsphere and openstack, it's a full disk image.
+For AWS, GCP, and Azure, it's a YAML file listing the location
+of images that are already available on the IaaS.
 
-The `config` input for a director task expects to have a `director.yml` file.
-The configuration of the `director.yml` is IAAS specific for some properties -- i.e. networking.
+These are examples to download the image artifact for each IaaS
+using the [download-product][download-product] task.
 
-There are two ways to build a director config.
+#### opsman.yml
 
-1. Using an already deployed Ops Manager, you can extract the config using [staged-director-config].
-2. Deploying a brand new Ops Manager requires more effort for a `director.yml`.
-   The configuration of director is variables based on the features enabled.
-   For brevity, this `director.yml` is a basic example for vsphere.
+{% include "how-to-guides/.opsman-config.md" %}
 
----excerpt--- "examples/director-configuration"
+The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP, AWS, Azure, and VSphere).
+This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
 
-The IAAS specific configuration can be found in the Ops Manager API documentation.
+Usage:
 
-Included below is a list of properties that can be set in the `director.yml`
-and a link to the API documentation explaining any IAAS specific properties.
+1. Get the Platform Automation Toolkit image from Tanzu Network.
+1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
+1. Create a [state file][state] that represents your current VM and IAAS.
+1. Invoke the `p-automator` CLI to get the configuration.
 
-* `az-configuration` - a list of availability zones [Ops Manager API][opsman-api-azs]
-* `network-assignment` - the network the bosh director is deployed to [Ops Manager API][opsman-api-network-az-assignment]
-* `networks-configuration` - a list of named networks [Ops Manager API][opsman-api-networks]
-* `properties-configuration`
-    * `iaas_configuration` - configuration for the bosh IAAS CPI [Ops Manager API][opsman-api-director-properties]
-    * `director_configuration` - properties for the bosh director [Ops Manager API][opsman-api-director-properties]
-    * `security_configuration` - security properties for the bosh director [Ops Manager API][opsman-api-director-properties]
-    * `syslog_configuration` - configure the syslog sinks for the bosh director [Ops Manager API][opsman-api-director-properties]
-* `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-config-resources]
-* `vmextensions-configuration` - create/update/delete VM extensions [Ops Manager API][opsman-api-vm-extension]
+For example, on AWS with an access key and secret key:
 
-#### GCP Shared VPC
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+p-automator export-opsman-config \
+--state-file=state.yml \
+--aws-region=us-west-1 \
+--aws-secret-access-key some-secret-key \
+--aws-access-key-id some-access-key
+```
 
-Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet][gcp-create-network],
-which includes the host project id, region of the subnet, and the subnet name.
+The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Ops Manager VM.
 
-For example:
+#### download-product task
 
-`[HOST_PROJECT_ID]/[NETWORK]/[SUBNET]/[REGION]`
+```yaml
+- task: download-opsman-image
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: opsman.yml
+```
+
+### product
+
+The `product` input requires a single tile file (`.pivotal`) as downloaded from Tanzu Network.
+
+Here's an example of how to pull the Tanzu Application Service tile
+using the [download-product][download-product] task.
+
+#### product.yml
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "cf-*.pivotal"
+pivnet-product-slug: elastic-runtime
+product-version-regex: ^2\.6\..*$
+```
+
+#### download-product task
+
+```yaml
+- task: download-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: product.yml
+```
+
+!!! warning
+    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
 
 ### product config
 
@@ -204,65 +317,6 @@ depending on your IAAS:
     ``` yaml
     --8<-- 'docs/examples/state/vsphere.yml'
     ```
-
-### opsman image
-
-This file is an [artifact from Tanzu Network](https://network.pivotal.io/products/ops-manager),
-which contains the VM image for a specific IaaS.
-For vsphere and openstack, it's a full disk image.
-For AWS, GCP, and Azure, it's a YAML file listing the location
-of images that are already available on the IaaS.
-
-These are examples to download the image artifact for each IaaS
-using the [download-product][download-product] task.
-
-#### opsman.yml
-
-{% include "how-to-guides/.opsman-config.md" %}
-
-The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP, AWS, Azure, and VSphere).
-This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
-
-Usage:
-
-1. Get the Platform Automation Toolkit image from Tanzu Network.
-1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
-1. Create a [state file][state] that represents your current VM and IAAS.
-1. Invoke the `p-automator` CLI to get the configuration.
-
-For example, on AWS with an access key and secret key:
-
-```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-p-automator export-opsman-config \
---state-file=state.yml \
---aws-region=us-west-1 \
---aws-secret-access-key some-secret-key \
---aws-access-key-id some-access-key
-```
-
-The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Ops Manager VM.
-
-#### download-product task
-
-```yaml
-- task: download-opsman-image
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/download-product.yml
-  params:
-    CONFIG_FILE: opsman.yml
-```
-
-### installation
-
-The file contains the information to restore an Ops Manager VM.
-The `installation` input for a opsman VM task expects to have a `installation.zip` file.
-
-This file can be exported from an Ops Manager VM using the [export-installation][export-installation].
-This file can be imported to an Ops Manager VM using the [import-installation][import-installation].
-
-!!! warning
-    This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
 
 ### stemcell
 This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Tanzu Network.
@@ -332,59 +386,6 @@ using the [download-product][download-product] task.
   params:
     CONFIG_FILE: stemcell.yml
 ```
-
-### product
-
-The `product` input requires a single tile file (`.pivotal`) as downloaded from Tanzu Network.
-
-Here's an example of how to pull the Tanzu Application Service tile
-using the [download-product][download-product] task.
-
-#### product.yml
-
-```yaml
----
-pivnet-api-token: token
-pivnet-file-glob: "cf-*.pivotal"
-pivnet-product-slug: elastic-runtime
-product-version-regex: ^2\.6\..*$
-```
-
-#### download-product task
-
-```yaml
-- task: download-stemcell
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/download-product.yml
-  params:
-    CONFIG_FILE: product.yml
-```
-
-!!! warning
-    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
-
-### download-product-config
-
-The `config` input for a download product task 
-can be used with a `download-config.yml` file to download a tile.
-The configuration of the `download-config.yml` looks like this:
-
-=== "Tanzu Network"
-    ---excerpt--- "examples/download-product-config-pivnet"
-=== "S3"
-    ---excerpt--- "examples/download-product-config-s3"
-=== "GCS"
-    ---excerpt--- "examples/download-product-config-gcs"
-=== "Azure"
-    ---excerpt--- "examples/download-product-config-azure"
-
-### download-stemcell-product-config
-
-The `config` input for a download product task 
-can be used with a `download-config.yml` file to download a stemcell.
-The configuration of the `download-config.yml` looks like this:
-
----excerpt--- "examples/download-stemcell-product-config"
 
 ### telemetry
 
