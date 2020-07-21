@@ -99,6 +99,31 @@ redirect uri (list):
 autoapprove (list):
 signup redirect url (url):
 ```
+
+### errand config
+
+The `ERRAND_CONFIG_FILE` input for the [`apply-changes`][apply-changes] task.
+This file contains properties for enabling and disabling errands
+for a particular run of `apply-changes`.
+
+To retrieve the default configuration of your product's errands,
+[`staged-config`][staged-config] can be used.
+
+The expected format for this errand config is as follows:
+
+  ```yaml
+  errands:
+    sample-product-1:
+      run_post_deploy:
+        smoke_tests: default
+        push-app: false
+      run_pre_delete:
+        smoke_tests: true
+    sample-product-2:
+      run_post_deploy:
+        smoke_tests: default
+  ```
+
 ### installation
 
 The file contains the information to restore an Ops Manager VM.

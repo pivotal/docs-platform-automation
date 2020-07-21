@@ -89,6 +89,25 @@ Coming Soon
         During `backup-tkgi`, the PKS CLI is disabled.
         Due to the nature of the backup, some commands may not work as expected.
 
+- [`apply-changes`][apply-changes] now supports the optional input `ERRAND_CONFIG_FILE`.
+  If provided, `apply-changes` can enable/disable an errand for a particular run.
+  To retrieve the default configuration of your product's errands,
+  `om staged-config` can be used.
+  The expected format for this errand config is as follows:
+
+    ```yaml
+    errands:
+      sample-product-1:
+        run_post_deploy:
+          smoke_tests: default
+          push-app: false
+        run_pre_delete:
+          smoke_tests: true
+      sample-product-2:
+        run_post_deploy:
+          smoke_tests: default
+    ```
+
 ### Bug Fixes
 - [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
