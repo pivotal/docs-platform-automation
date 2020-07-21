@@ -6,11 +6,16 @@ The tasks are presented, in their entirety,
 as they are found in the product.
 
 The docker image can be used to invoke the commands in each task locally.
-Use `--help` for more information. To learn more see the [running-commands-locally][running-commands-locally] section.
+Use `--help` for more information. 
+To learn more see the [running-commands-locally][running-commands-locally] section.
 
 ### apply-changes
 
 Triggers an install on the Ops Manager described by the auth file.
+
+To optionally provide an errand file to manually control errands
+for a particular of run of `apply-changes`.
+To see an example of this config file, see the [Inputs and Outputs][errand-config] section.
 
 {% include '.disable-verifiers.md' %}
 
