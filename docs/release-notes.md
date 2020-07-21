@@ -25,8 +25,6 @@
 Coming Soon
 
 ### Bug Fixes
-- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
-  into the passed in task if it is missing.
 
 ## v4.2.15
 Released July 10, 2020
@@ -423,8 +421,6 @@ Released December 3, 2019
 Coming Soon
 
 ### Bug Fixes
-- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
-  into the passed in task if it is missing.
 
 ## v4.1.20
 Released July 10, 2020
