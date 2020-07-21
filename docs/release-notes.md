@@ -21,6 +21,13 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.3.13
+Coming Soon
+
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
+  into the passed in task if it is missing.
+
 ## v4.3.12
 Released July 10, 2020
 
@@ -337,6 +344,13 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.16
+Coming Soon
+
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
+  into the passed in task if it is missing.
 
 ## v4.2.15
 Released July 10, 2020
@@ -728,6 +742,13 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## 4.1.21
+Coming Soon
+
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
+  into the passed in task if it is missing.
 
 ## v4.1.20
 Released July 10, 2020
