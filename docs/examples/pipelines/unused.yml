@@ -221,3 +221,14 @@
   params:
     OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
 # code_snippet backup-director-usage end
+# code_snippet download-and-upload-product-usage start yaml
+- task: download-and-upload-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-and-upload-product.yml
+  input_mapping:
+    env: configuration
+    config: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    CONFIG_FILE: download-product-pivnet/download-tas.yml
+# code_snippet download-and-upload-product-usage end

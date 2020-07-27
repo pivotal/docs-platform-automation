@@ -373,6 +373,27 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 
 1. Deletes the VM
 
+### download-and-upload-product
+This is an _advanced task_.
+If a product (and its associated stemcell) has already been uploaded to Ops Manager
+then it will not re-download and upload.
+This is helpful when looking for a fast-feedback loop for building pipelines.
+
+This task is similar to [`download-product`][download-product],
+as it takes the same product config.
+There are no `outputs` for this task
+because the products (and stemcell) don't need to be shared downstream.
+
+!!! warning
+    This currently only works with product source being Tanzunet (Pivotal Network).
+
+=== "Task"
+    ---excerpt--- "tasks/download-and-upload-product"
+=== "Implementation"
+    ---excerpt--- "tasks/download-and-upload-product-script"
+=== "Usage"
+    ---excerpt--- "examples/download-and-upload-product-usage"
+
 ### download-product
 
 {% include "./.opsman_filename_change_note.md" %}
