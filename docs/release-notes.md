@@ -73,6 +73,12 @@ Coming Soon
     If using an older version of Concourse, this task will error.
 
 ### What's New
+- The [`download-and-upload-product`][download-and-upload-product] task has been added.
+  This task optimize the steps of download and upload a product file to an Ops Manager.
+  Before downloading, Ops Manager is checked to see if the product/stemcell has been uploaded already.
+  If it has, the download and upload is skipped.
+  There are no outputs on this task.
+  At the moment, only Tanzunet (Pivotal Network) is supported.
 - The [`backup-product`][backup-product] and [`backup-director`][backup-director] tasks have been added.
   These tasks use [BOSH Backup and Restore][bbr] to backup artifacts which can be used to restore your director and products.
   Note, there is no task to automate restoring from a backup. Restore cannot be guaranteed to be idempotent, and therefore cannot be safely automated. See the [BBR docs][bbr-restore] for information on restoring from a backup.
