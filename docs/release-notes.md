@@ -121,6 +121,15 @@ Released July 30, 2020
 ## v4.4.5
 Released July 30, 2020
 
+| Name | version |
+|---|---|
+| om | [6.1.0](https://github.com/pivotal-cf/om/releases/tag/6.1.0) |
+| bosh-cli | [v6.3.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.3.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.5" target="_blank">Download</a>
+
 ### Bug Fixes
 - [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
