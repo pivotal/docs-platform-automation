@@ -22,9 +22,13 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.2.16
-Coming Soon
+Released July 30, 2020
 
 ### Bug Fixes
+- CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
+  The CVEs are related to vulnerabilities with `libc6` and related libraries.
+- CVE update to container image. Resolves [USN-4428-1](https://usn.ubuntu.com/4428-1/).
+  The CVEs are related to vulnerabilities with `python2.7`, `python2.7-minimal`, `python3.5`, `python3.5-minimal` and related libraries.
 
 ## v4.2.15
 Released July 10, 2020
@@ -418,9 +422,13 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## 4.1.21
-Coming Soon
+Released July 30, 2020
 
 ### Bug Fixes
+- CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
+  The CVEs are related to vulnerabilities with `libc6` and related libraries.
+- CVE update to container image. Resolves [USN-4428-1](https://usn.ubuntu.com/4428-1/).
+  The CVEs are related to vulnerabilities with `python2.7`, `python2.7-minimal`, `python3.5`, `python3.5-minimal` and related libraries.
 
 ## v4.1.20
 Released July 10, 2020
