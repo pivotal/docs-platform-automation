@@ -22,12 +22,15 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.4.5
-Coming Soon
+Released July 30, 2020
 
 ### Bug Fixes
 - [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
-
+- CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
+  The CVEs are related to vulnerabilities with `libc6` and related libraries.
+- CVE update to container image. Resolves [USN-4428-1](https://usn.ubuntu.com/4428-1/).
+  The CVEs are related to vulnerabilities with `python2.7`, `python2.7-minimal`, `python3.5`, `python3.5-minimal` and related libraries.
 
 ## v4.4.4
 Released July 10, 2020
@@ -173,11 +176,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   Please note this is an advanced feature, and should be used at your own discretion.
 
 ## v4.3.13
-Coming Soon
+Released July 30, 2020
 
 ### Bug Fixes
 - [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
+- CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
+  The CVEs are related to vulnerabilities with `libc6` and related libraries.
+- CVE update to container image. Resolves [USN-4428-1](https://usn.ubuntu.com/4428-1/).
+  The CVEs are related to vulnerabilities with `python2.7`, `python2.7-minimal`, `python3.5`, `python3.5-minimal` and related libraries.
 
 ## v4.3.12
 Released July 10, 2020
@@ -497,9 +504,13 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.16
-Coming Soon
+Released July 30, 2020
 
 ### Bug Fixes
+- CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
+  The CVEs are related to vulnerabilities with `libc6` and related libraries.
+- CVE update to container image. Resolves [USN-4428-1](https://usn.ubuntu.com/4428-1/).
+  The CVEs are related to vulnerabilities with `python2.7`, `python2.7-minimal`, `python3.5`, `python3.5-minimal` and related libraries.
 
 ## v4.2.15
 Released July 10, 2020
@@ -893,9 +904,13 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## 4.1.21
-Coming Soon
+Released July 30, 2020
 
 ### Bug Fixes
+- CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
+  The CVEs are related to vulnerabilities with `libc6` and related libraries.
+- CVE update to container image. Resolves [USN-4428-1](https://usn.ubuntu.com/4428-1/).
+  The CVEs are related to vulnerabilities with `python2.7`, `python2.7-minimal`, `python3.5`, `python3.5-minimal` and related libraries.
 
 ## v4.1.20
 Released July 10, 2020
