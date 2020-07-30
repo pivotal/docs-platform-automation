@@ -21,6 +21,15 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.1.21
+Released July 30, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
+  The CVEs are related to vulnerabilities with `libc6` and related libraries.
+- CVE update to container image. Resolves [USN-4428-1](https://usn.ubuntu.com/4428-1/).
+  The CVEs are related to vulnerabilities with `python2.7`, `python2.7-minimal`, `python3.5`, `python3.5-minimal` and related libraries.
+
 ## v4.1.20
 Released July 10, 2020
 
