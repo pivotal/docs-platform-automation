@@ -749,7 +749,7 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
-## 4.1.21
+## v4.1.21
 Released July 30, 2020
 
 ### Bug Fixes
