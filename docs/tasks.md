@@ -385,7 +385,7 @@ There are no `outputs` for this task
 because the products (and stemcell) don't need to be shared downstream.
 
 !!! warning
-    This currently only works with product source being Tanzunet (Pivotal Network).
+    This currently only works with product source being Tanzu Network (Pivotal Network).
 
 === "Task"
     ---excerpt--- "tasks/download-and-upload-product"
