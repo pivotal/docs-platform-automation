@@ -114,6 +114,9 @@ Released July 30, 2020
           smoke_tests: default
     ```
 
+- `prepare-tasks-with-secrets` will now inject a params block
+  if one is not already present in the task.
+
 ### Bug Fixes
 - [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   into the passed in task if it is missing.
