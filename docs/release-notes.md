@@ -21,6 +21,14 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.1.22
+Coming Soon
+
+### Bug Fixes
+- `configure-product` will no longer assign a new GUID for unnamed collections.
+  This means that for some tiles,
+  configure-product will now avoid unnecessary changes to collections.
+
 ## v4.1.21
 Released July 30, 2020
 
