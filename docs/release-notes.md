@@ -21,6 +21,14 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.6
+Coming Soon
+
+### Bug Fixes
+- `configure-product` will no longer assign a new GUID for unnamed collections.
+  This means that for some tiles,
+  configure-product will now avoid unnecessary changes to collections.
+
 ## v4.4.5
 Released July 30, 2020
 
@@ -183,6 +191,14 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   Please note this is an advanced feature, and should be used at your own discretion.
+
+## v4.3.14
+Coming Soon
+
+### Bug Fixes
+- `configure-product` will no longer assign a new GUID for unnamed collections.
+  This means that for some tiles,
+  configure-product will now avoid unnecessary changes to collections.
 
 ## v4.3.13
 Released July 30, 2020
@@ -520,6 +536,14 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.17
+Coming Soon
+
+### Bug Fixes
+- `configure-product` will no longer assign a new GUID for unnamed collections.
+  This means that for some tiles,
+  configure-product will now avoid unnecessary changes to collections.
 
 ## v4.2.16
 Released July 30, 2020
@@ -929,6 +953,14 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## v4.1.22
+Coming Soon
+
+### Bug Fixes
+- `configure-product` will no longer assign a new GUID for unnamed collections.
+  This means that for some tiles,
+  configure-product will now avoid unnecessary changes to collections.
 
 ## v4.1.21
 Released July 30, 2020
