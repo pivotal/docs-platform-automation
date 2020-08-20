@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.1.22
-Coming Soon
+Released August 20, 2020
 
 | Name | version |
 |---|---|
@@ -37,6 +37,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - `configure-product` will no longer assign a new GUID for unnamed collections.
   This means that for some tiles,
   configure-product will now avoid unnecessary changes to collections.
+- `download-product` will work with supported versions of TAS Windows
+  released after Friday August 20th, 2020.
+  These versions do not work with older versions of Platform Automation.
+  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  in the tile itself.
+  Platform Automation needed to bump the winfs-injector version
+  to ensure compatibility with this new arrangement.
+- CVE updates to container image. Resolves [USN-4466-1](https://ubuntu.com/security/notices/USN-4466-1)
+  The CVE is related to vulnerabilities in curl and libcurl.
 
 ## v4.1.21
 Released July 30, 2020
@@ -87,7 +96,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
   The CVEs are related to vulnerabilities with `libsqlite`.
-  
+
 ## v4.1.18
 Released June 5, 2020
 
@@ -108,17 +117,17 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - vSphere 7.0 with NSX-T 3.0 experienced a bug when using `create-vm` and `upgrade-opsman`.
   If NSX-T deployed a network that was read in the vCenter as multiple port groups with the same name
   those tasks would fail, and be unable to import the Ops Manager OVA file.
-  
+
     The `network` property when creating an Ops Manager VM can take two new types of identifiers for identify a network.
-    
+
     1. If using port groups, the `network` property must be `switch name/port group name`.
        For example, `network: edge-cluster-w01-vc-AZ01-vds01/pas-infrastructure-az1-ls`.
     1. [MO reference](https://kb.vmware.com/s/article/1017126) can also be used.
-    
+
 ### Experimental Features
 - **EXPERIMENTAL** `config-template` now supports ops manager syslog in tiles.
   In the tile metadata, this property is turned on with the `opsmanager_syslog: true` field.
-  Tiles with this property enabled will now add the section to `product.yml` 
+  Tiles with this property enabled will now add the section to `product.yml`
   and create defaults in `default-vars.yml`.
 - Added shorthand flag consistency to multiple commands.
   `--vars-file` shorthand is `-l` and `--var` shorthand is `-v`
@@ -150,7 +159,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
         url: https://repo.spring.io/libs-release
         username: username
     ```
-  
+
     **if you have used the workaround described in the issue**
     (storing the value as a JSON object)
     you will need to update the credential in Credhub
@@ -163,7 +172,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   This prevents this entire class of conflicts.
   If using `config-template` to update vars/ops-files/etc,
   check your resource var names in any files vars may be drawn from.
-  This resolves om issue [#484](https://github.com/pivotal-cf/om/issues/484). 
+  This resolves om issue [#484](https://github.com/pivotal-cf/om/issues/484).
 
 ## v4.1.16
 Released May 14, 2020
@@ -203,9 +212,9 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - CVE update to container image. Resolves [USN-4329-1](https://usn.ubuntu.com/4329-1/).
   This CVE is related to vulnerabilities with `git`.
 - CVE update to container image. Resolves [USN-4334-1](https://usn.ubuntu.com/4334-1/).
-  This CVE is related to vulnerabilities with `git`. 
+  This CVE is related to vulnerabilities with `git`.
 - CVE update to container image. Resolves [USN-4333-1](https://usn.ubuntu.com/4333-1/).
-  This CVE is related to vulnerabilities with `python`. 
+  This CVE is related to vulnerabilities with `python`.
 - Adding back the removed `ssh` Ubuntu package.
 
 ## v4.1.13
@@ -232,9 +241,9 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   When downloading a product from Pivnet, the [`download-product`][download-product] task
   uses `winfs-injector` to package the Windows rootfs in the tile.
   Newer version of TAS Windows, use a new packaging method, which requires this bump.
-  
+
     If you see the following error, you need this fix.
-  
+
     ```
     Checking if product needs winfs injected...+ '[' pas-windows == pas-windows ']'
     + '[' pivnet == pivnet ']'
@@ -242,8 +251,8 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
     + TILE_FILENAME=pas-windows-2.7.12-build.2.pivotal
     + winfs-injector --input-tile downloaded-files/pas-windows-2.7.12-build.2.pivotal --output-tile downloaded-product/pas-windows-2.7.12-build.2.pivotal
     open /tmp/015434627/extracted-tile/embed/windowsfs-release/src/code.cloudfoundry.org/windows2016fs/2019/IMAGE_TAG: no such file or directory
-    ``` 
- 
+    ```
+
 ## v4.1.12
 Released March 25, 2020
 
@@ -265,8 +274,8 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   and the AWS heavy stemcell,
   this will resolve your issue.
   Please remove any custom globbing that might've been added to circumvent this issue.
-  For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now. 
-- Heavy stemcells could not be downloaded. 
+  For example, `stemcall-iaas: light*aws` should just be `stemcell-iaas: aws` now.
+- Heavy stemcells could not be downloaded.
   Support has now been added.
   Define `stemcell-heavy: true` in your `download-product` config file.
 - CVE update to container image. Resolves [USN-4298-1](https://usn.ubuntu.com/4298-1/).
@@ -276,7 +285,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 ### Experimental Features
 - **EXPERIMENTAL** `config-template` now includes the option to use a local product file with `--product-path`.
-  
+
 
 ## v4.1.11
 Released February 25, 2020
