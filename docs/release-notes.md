@@ -1063,6 +1063,15 @@ Released December 3, 2019
 ## v4.1.22
 Coming Soon
 
+| Name | version |
+|---|---|
+| om | [6.1.0](https://github.com/pivotal-cf/om/releases/tag/6.1.0) |
+| bosh-cli | [v6.3.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.3.1) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.18.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.18.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.1.22" target="_blank">Download</a>
+
 ### Bug Fixes
 - `configure-product` will no longer assign a new GUID for unnamed collections.
   This means that for some tiles,
