@@ -134,7 +134,7 @@ Coming Soon
   into the passed in task if it is missing.
 
 ## v4.4.6
-Coming Soon
+Released August 20, 2020
 
 | Name | version |
 |---|---|
@@ -149,6 +149,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - `configure-product` will no longer assign a new GUID for unnamed collections.
   This means that for some tiles,
   configure-product will now avoid unnecessary changes to collections.
+- `download-product` will work with supported versions of TAS Windows
+  released after Friday August 20th, 2020.
+  These versions do not work with older versions of Platform Automation.
+  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  in the tile itself.
+  Platform Automation needed to bump the winfs-injector version
+  to ensure compatibility with this new arrangement.
+- CVE updates to container image. Resolves [USN-4466-1](https://ubuntu.com/security/notices/USN-4466-1)
+  The CVE is related to vulnerabilities in curl and libcurl.
 
 ## v4.4.5
 Released July 30, 2020
@@ -314,7 +323,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   Please note this is an advanced feature, and should be used at your own discretion.
 
 ## v4.3.14
-Coming Soon
+Released August 20, 2020
 
 | Name | version |
 |---|---|
@@ -329,6 +338,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - `configure-product` will no longer assign a new GUID for unnamed collections.
   This means that for some tiles,
   configure-product will now avoid unnecessary changes to collections.
+- `download-product` will work with supported versions of TAS Windows
+  released after Friday August 20th, 2020.
+  These versions do not work with older versions of Platform Automation.
+  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  in the tile itself.
+  Platform Automation needed to bump the winfs-injector version
+  to ensure compatibility with this new arrangement.
+- CVE updates to container image. Resolves [USN-4466-1](https://ubuntu.com/security/notices/USN-4466-1)
+  The CVE is related to vulnerabilities in curl and libcurl.
 
 ## v4.3.13
 Released July 30, 2020
@@ -668,12 +686,21 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.17
-Coming Soon
+Released August 20, 2020
 
 ### Bug Fixes
 - `configure-product` will no longer assign a new GUID for unnamed collections.
   This means that for some tiles,
   configure-product will now avoid unnecessary changes to collections.
+- `download-product` will work with supported versions of TAS Windows
+  released after Friday August 20th, 2020.
+  These versions do not work with older versions of Platform Automation.
+  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  in the tile itself.
+  Platform Automation needed to bump the winfs-injector version
+  to ensure compatibility with this new arrangement.
+- CVE updates to container image. Resolves [USN-4466-1](https://ubuntu.com/security/notices/USN-4466-1)
+  The CVE is related to vulnerabilities in curl and libcurl.
 
 ## v4.2.16
 Released July 30, 2020
@@ -1085,7 +1112,7 @@ Released December 3, 2019
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
 ## v4.1.22
-Coming Soon
+Released August 20, 2020
 
 | Name | version |
 |---|---|
@@ -1100,6 +1127,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - `configure-product` will no longer assign a new GUID for unnamed collections.
   This means that for some tiles,
   configure-product will now avoid unnecessary changes to collections.
+- `download-product` will work with supported versions of TAS Windows
+  released after Friday August 20th, 2020.
+  These versions do not work with older versions of Platform Automation.
+  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  in the tile itself.
+  Platform Automation needed to bump the winfs-injector version
+  to ensure compatibility with this new arrangement.
+- CVE updates to container image. Resolves [USN-4466-1](https://ubuntu.com/security/notices/USN-4466-1)
+  The CVE is related to vulnerabilities in curl and libcurl.
 
 ## v4.1.21
 Released July 30, 2020
