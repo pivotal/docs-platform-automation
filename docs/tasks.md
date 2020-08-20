@@ -688,7 +688,7 @@ by tunneling through Ops Manager.
 === "Implementation"
     ---excerpt--- "tasks/run-bosh-errand-script"
 === "Usage"
-    Usage not yet documented.
+    ---excerpt--- "reference/run-bosh-errand-usage"
 
 ### send-telemetry
 Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
