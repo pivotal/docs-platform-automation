@@ -57,7 +57,8 @@ Coming Soon
   For the same functionality, please use [`download-product`][download-product]
   and specify the `s3` `source`.
 
-- The [`download-product`][download-product] task  will no longer copy files to the existing outputs.
+- The [`download-product`][download-product] task
+  will no longer copy files to the existing outputs.
   Rather, these files will be written directly.
   This speeds up `download-product` in general,
   especially in systems where space IO might be a constraint.
@@ -73,7 +74,8 @@ Coming Soon
   There are no outputs on this task.
   At the moment, this task only supports downloading from Tanzu Network (Pivotal Network).
 - The [`backup-product`][backup-product] and [`backup-director`][backup-director] tasks have been added.
-  These tasks use [BOSH Backup and Restore][bbr] to backup artifacts which can be used to restore your director and products.
+  These tasks use [BOSH Backup and Restore][bbr]
+  to backup artifacts which can be used to restore your director and products.
   Note, there is no task to automate restoring from a backup.
   Restore cannot be guaranteed to be idempotent, and therefore cannot be safely automated.
   See the [BBR docs][bbr-restore] for information on restoring from a backup.
@@ -117,8 +119,10 @@ Coming Soon
   (this can be the same as your normal config, but must be mapped to this name in your `pipeline.yml`).
 
     If you wish to upload a stemcell, there are two new (optional) `params`:<br />
-    - `FLOATING_STEMCELL`: this is equivalent to the `FLOATING_STEMCELL` param of [`upload-stemcell`][upload-stemcell].<br />
-    - `UPLOAD_STEMCELL_CONFIG_FILE`: this is equivalent to the `CONFIG_FILE` param of [`upload-stemcell`][upload-stemcell].<br />
+    - `FLOATING_STEMCELL`:
+      this is equivalent to the `FLOATING_STEMCELL` param of [`upload-stemcell`][upload-stemcell].<br />
+    - `UPLOAD_STEMCELL_CONFIG_FILE`:
+      this is equivalent to the `CONFIG_FILE` param of [`upload-stemcell`][upload-stemcell].<br />
 
     If you wish to assign a specific stemcell to the staged product,
     you need to provide the `assign-stemcell-config` input
