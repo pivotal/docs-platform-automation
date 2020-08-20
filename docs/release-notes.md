@@ -24,13 +24,6 @@
 ## v5.0.0
 Coming Soon
 
-| Name | version |
-|---|---|
-| om | [4.8.0](https://github.com/pivotal-cf/om/releases/tag/4.8.0) |
-| bosh-cli | [6.2.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.2.1) |
-| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
-| winfs-injector | [0.16.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.16.0) |
-
 ### Breaking Changes
 - Platform Automation will now require Concourse 5.0+
 
@@ -64,7 +57,7 @@ Coming Soon
   For the same functionality, please use [`download-product`][download-product]
   and specify the `s3` `source`.
 
-- The `download-product` task  will no longer copy files to the existing outputs.
+- The [`download-product`][download-product] task  will no longer copy files to the existing outputs.
   Rather, these files will be written directly.
   This speeds up `download-product` in general,
   especially in systems where space IO might be a constraint.
@@ -114,8 +107,21 @@ Coming Soon
           smoke_tests: default
     ```
 
-- `prepare-tasks-with-secrets` will now inject a params block
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
   if one is not already present in the task.
+- [`stage-configure-apply`][stage-configure-apply] now offers the ability to optionally upload and/or assign a stemcell.
+  To upload a stemcell, provide a `stemcell` input as you would for [`upload-stemcell`][upload-stemcell].
+  To assign a stemcell, provide an `assign-stemcell-config` input
+  (this can be the same as your normal config, but must be mapped to this name in your `pipeline.yml`).
+
+    If you wish to upload a stemcell, there are two new (optional) `params`:<br />
+    - `FLOATING_STEMCELL`: this is equivalent to the `FLOATING_STEMCELL` param of [`upload-stemcell`][upload-stemcell].<br />
+    - `UPLOAD_STEMCELL_CONFIG_FILE`: this is equivalent to the `CONFIG_FILE` param of [`upload-stemcell`][upload-stemcell].<br />
+
+    If you wish to assign a specific stemcell to the staged product,
+    you need to provide the `assign-stemcell-config` input
+    and define the `ASSIGN_STEMCELL_CONFIG_FILE` param.
+    This param is equivalent to the `CONFIG_FILE` param of [`assign-stemcell`][assign-stemcell].
 
 ### Bug Fixes
 - [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
