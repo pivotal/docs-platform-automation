@@ -6,7 +6,7 @@ The tasks are presented, in their entirety,
 as they are found in the product.
 
 The docker image can be used to invoke the commands in each task locally.
-Use `--help` for more information. 
+Use `--help` for more information.
 To learn more see the [running-commands-locally][running-commands-locally] section.
 
 ### apply-changes
@@ -74,7 +74,7 @@ Use BBR to backup a BOSH director deployed with Ops Manager.
     ---excerpt--- "tasks/backup-director-script"
 === "Usage"
     ---excerpt--- "examples/backup-director-usage"
-    
+
 ### backup-product
 
 Use BBR to backup a product deployed with Ops Manager.
@@ -85,7 +85,7 @@ Use BBR to backup a product deployed with Ops Manager.
     ---excerpt--- "tasks/backup-product-script"
 === "Usage"
     ---excerpt--- "examples/backup-product-usage"
-    
+
 ### backup-tkgi
 
 Use BBR to backup Tanzu Kubernetes Grid Integrated Edition(TKGI)
@@ -678,6 +678,15 @@ This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
     ---excerpt--- "tasks/revert-staged-changes-script"
 === "Usage"
     ---excerpt--- "reference/revert-staged-changes-usage"
+
+### run-bosh-errand
+Runs a specified BOSH errand directly on the BOSH Director
+by tunneling through Ops Manager.
+
+=== "Task"
+    ---excerpt--- "tasks/run-bosh-errand"
+=== "Implementation"
+    ---excerpt--- "tasks/run-bosh-errand-script"
 
 ### send-telemetry
 Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
