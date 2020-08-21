@@ -129,9 +129,11 @@ Coming Soon
     and define the `ASSIGN_STEMCELL_CONFIG_FILE` param.
     This param is equivalent to the `CONFIG_FILE` param of [`assign-stemcell`][assign-stemcell].
 
-### Bug Fixes
-- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
-  into the passed in task if it is missing.
+- [`run-bosh-errand`][run-bosh-errand] task has been added.
+  This task runs a specified BOSH errand directly on the BOSH director
+  by tunneling through the Ops Manager.
+  As such, any errand run in this way does not have visibility within the Ops Manager.
+  *Please note this is an advanced feature, and should be used at your own discretion.* 
 
 ## v4.4.6
 Released August 20, 2020
@@ -320,7 +322,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
      Supported products: `p-isolation-segment`, `p-windows-runtime`, `pas-windows`
 
 - The [`update-runtime-config`][update-runtime-config] task has been added.
-  Please note this is an advanced feature, and should be used at your own discretion.
+  *Please note this is an advanced feature, and should be used at your own discretion.*
 
 ## v4.3.14
 Released August 20, 2020
@@ -1903,9 +1905,9 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   This may be specified in the [Ops Manager config for GCP][inputs-outputs-gcp].
   For more information on setting GCP scopes, refer to the [GCP scope][gcp-scope] docs.
 - [`configure-director`][configure-director] now support [VM Extensions][vm-extensions].
-  Please note this is an advanced feature, and should be used at your own discretion.  
+  *Please note this is an advanced feature, and should be used at your own discretion.*  
 - [`configure-director`][configure-director] now support [VM Types][vm-types].
-  Please note this is an advanced feature, and should be used at your own discretion.
+  *Please note this is an advanced feature, and should be used at your own discretion.*
 - Add support for new NSX and NSXT format in Ops Manager 2.7+
   when calling [`staged-config`][staged-config] and [`staged-director-config`][staged-director-config]
 - [state][state] can now be defined in a `state-$timestamp.yml` format (like [`export-installation`][export-installation]).
