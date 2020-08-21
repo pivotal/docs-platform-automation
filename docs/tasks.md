@@ -683,6 +683,21 @@ This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 Runs a specified BOSH errand directly on the BOSH Director
 by tunneling through Ops Manager.
 
+!!! warning "Interacting with the BOSH Director"
+    Ops Manager is the main interface for interacting with BOSH,
+    and it has no way of knowing what is happening to the BOSH Director
+    outside of the Ops Manager UI context.
+    By using this tasks, you are accepting the risk
+    that what you are doing cannot be tracked by your Ops Manager.
+
+!!! warning "Retrying Errands"
+    Ops Manager, by design, will re-run failed errands for you.
+    As this task interacts with BOSH directly,
+    your errand will not be re-run if it fails.
+    To simulate this behavior in your pipeline,
+    you can take advantage of the [`attempts`][concourse-attempts] feature
+    of Concourse to run the task more than once.
+
 === "Task"
     ---excerpt--- "tasks/run-bosh-errand"
 === "Implementation"
