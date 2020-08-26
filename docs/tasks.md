@@ -687,14 +687,14 @@ by tunneling through Ops Manager.
     Ops Manager is the main interface for interacting with BOSH,
     and it has no way of knowing what is happening to the BOSH Director
     outside of the Ops Manager UI context.
-    By using this tasks, you are accepting the risk
+    By using this task, you are accepting the risk
     that what you are doing cannot be tracked by your Ops Manager.
 
 !!! warning "Retrying Errands"
     Ops Manager, by design, will re-run failed errands for you.
     As this task interacts with BOSH directly,
     your errand will not be re-run if it fails.
-    To simulate this behavior in your pipeline,
+    To replicate this retry behavior in your pipeline,
     you can take advantage of the [`attempts`][concourse-attempts] feature
     of Concourse to run the task more than once.
 
