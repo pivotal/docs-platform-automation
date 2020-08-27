@@ -135,6 +135,12 @@ Coming Soon
   As such, any errand run in this way does not have visibility within the Ops Manager.
   *Please note this is an advanced feature, and should be used at your own discretion.* 
 
+## v4.4.7
+Coming Soon
+
+### Bug Fixes
+- The container image has been fixed to support the `registry-image` Concourse resource
+
 ## v4.4.6
 Released August 20, 2020
 
@@ -323,6 +329,12 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   *Please note this is an advanced feature, and should be used at your own discretion.*
+
+## v4.3.15
+Coming Soon
+
+### Bug Fixes
+- The container image has been fixed to support the `registry-image` Concourse resource
 
 ## v4.3.14
 Released August 20, 2020
@@ -686,6 +698,12 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.18
+Coming Soon
+
+### Bug Fixes
+- The container image has been fixed to support the `registry-image` Concourse resource
 
 ## v4.2.17
 Released August 20, 2020
@@ -1121,6 +1139,12 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
+
+## v4.1.23
+Coming Soon
+
+### Bug Fixes
+- The container image has been fixed to support the `registry-image` Concourse resource
 
 ## v4.1.22
 Released August 20, 2020
