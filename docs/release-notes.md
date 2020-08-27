@@ -21,6 +21,12 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.1.23
+Coming Soon
+
+### Bug Fixes
+- The container image has been fixed to support the `registry-image` Concourse resource
+
 ## v4.1.22
 Released August 20, 2020
 
@@ -804,9 +810,9 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   This may be specified in the [Ops Manager config for GCP][inputs-outputs-gcp].
   For more information on setting GCP scopes, refer to the [GCP scope][gcp-scope] docs.
 - [`configure-director`][configure-director] now support [VM Extensions][vm-extensions].
-  Please note this is an advanced feature, and should be used at your own discretion.  
+  *Please note this is an advanced feature, and should be used at your own discretion.*  
 - [`configure-director`][configure-director] now support [VM Types][vm-types].
-  Please note this is an advanced feature, and should be used at your own discretion.
+  *Please note this is an advanced feature, and should be used at your own discretion.*
 - Add support for new NSX and NSXT format in Ops Manager 2.7+
   when calling [`staged-config`][staged-config] and [`staged-director-config`][staged-director-config]
 - [state][state] can now be defined in a `state-$timestamp.yml` format (like [`export-installation`][export-installation]).
