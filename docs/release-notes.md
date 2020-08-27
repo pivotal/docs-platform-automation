@@ -1140,12 +1140,6 @@ Released December 3, 2019
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
 
-## v4.1.23
-Coming Soon
-
-### Bug Fixes
-- The container image has been fixed to support the `registry-image` Concourse resource
-
 ## v4.1.22
 Released August 20, 2020
 
