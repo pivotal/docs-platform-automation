@@ -310,6 +310,9 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
 
+!!! warning "Deprecation Notice"
+    This task will be deprecated in future _major_ versions of Platform Automation Toolkit.
+
 !!! info "prepare-tasks-with-secrets"
       The [prepare-tasks-with-secrets] task replaces the credhub-interpolate task on Concourse versions 5.x+
       and provides additional benefits.
