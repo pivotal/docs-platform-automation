@@ -105,6 +105,16 @@ The following are considered part of our API:
     - om
     - p-automator
     - winfs-injector
+    
+- The patterns necessary to specify our files on Tanzu Network:
+  We will consider it a breaking change
+  if any of the following glob patterns for the Platform Automation Toolkit image and tasks
+  fail to return a single match
+  when used with the `pivnet-resource` and/or `download-product` task:
+    - `platform-automation-image-*.tgz`             # all IaaSes image
+    - `vsphere-platform-automation-image-*.tar.gz`  # vSphere only image
+    - `platform-automation-tasks-*.zip`             # tasks
+
 
 The following are NOT covered:
 

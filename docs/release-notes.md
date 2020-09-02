@@ -40,6 +40,7 @@ Released September 2, 2020
   and uses the alternate file extension `.tar.gz`
   instead of `.tgz`.
   This is to avoid breaking existing globs and patterns.
+  See the following (API Declaration Change) for more information.
 
     If you're getting our image with the Pivnet resource
     as documented in the How-to guides,
@@ -51,7 +52,21 @@ Released September 2, 2020
       params:
         globs: ["vsphere-platform-automation-image-*.tar.gz"]
         unpack: true
-    ```
+    ```  
+
+- Change to API Declaration Notice:
+
+    As of 5.0 we are considering the patterns necessary to specify our files
+    on Tanzu Network part of our API.
+    Specificially, we will consider it a breaking change
+    if any of the following glob patterns for the Platform Automation Toolkit image and tasks
+    fail to return a single match
+    when used with the `pivnet-resource` and/or `download-product` task:
+    
+      - `platform-automation-image-*.tgz`             # all IaaSes image
+      - `vsphere-platform-automation-image-*.tar.gz`  # vSphere only image
+      - `platform-automation-tasks-*.zip`             # tasks
+
 
 - The deprecated `download-product-s3` task has been removed.
   For the same functionality, please use [`download-product`][download-product]
