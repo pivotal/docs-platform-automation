@@ -26,7 +26,31 @@ Coming Soon
 
 ### Bug Fixes
 - The container image has been fixed to support the `registry-image` Concourse resource
-
+- With [`credhub-interpolate`][credhub-interpolate] task,
+  users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
+  This allowed not having ot repeat the same value in Credhub for each var value.
+  Support has been added to the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] workflow to support secrets evaluation.
+  
+    For example, given a `config.yml`,
+  
+    ```yaml
+    product-name: some
+    product-properties:
+      email-password: ((email-password))
+      ssh-password: ((ssh-password))
+    ```
+  
+    And given a `vars.yml`,
+    
+    ```yaml
+    email-password: ((password))
+    ssh-password: ((password))
+    ```
+    
+    Each task will now fully evaluate the parameter `((password))` as a value from the Concourse configured secret manager.
+    This fixes the issue where `((password))` would have been the actual _string_ value for
+    `email-password` and `ssh-password`.
+    
 ## v4.2.17
 Released August 20, 2020
 
@@ -461,12 +485,6 @@ Released December 3, 2019
 - CVE update to container image. Resolves [USN-4205-1](https://usn.ubuntu.com/4205-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
   None of our code calls `libsqlite3` directly, but the IaaS CLIs rely on this package.
-
-## v4.1.23
-Coming Soon
-
-### Bug Fixes
-- The container image has been fixed to support the `registry-image` Concourse resource
 
 ## v4.1.22
 Released August 20, 2020
