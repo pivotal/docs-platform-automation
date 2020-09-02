@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v5.0.0
-Coming Soon
+Released September 2, 2020
 
 ### Breaking Changes
 - Platform Automation will now require Concourse 5.0+
