@@ -22,9 +22,42 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v4.4.7
-Coming Soon
+Released September 4, 2020
 
 ### Bug Fixes
+- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+  
+  ```bash
+  creating the new opsman vm
+  Using gcp...
+  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+    line 6: cannot unmarshal !!map into string
+  ```
+
+  With GCP OpsManager, the image YAML file format includes a new key.
+  
+  The original format of the image YAML was:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  ```
+  
+  The new format includes the `image` key:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  image:
+   name: ops-manager-2-9-10-build-177
+   project: pivotal-ops-manager-images
+  ```
+  
+  This patch ignores this value, where previously it would've not been able to parse it.
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`][credhub-interpolate] task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
@@ -241,9 +274,51 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   *Please note this is an advanced feature, and should be used at your own discretion.*
 
 ## v4.3.15
-Coming Soon
+Released September 4, 2020
+
+| Name | version |
+|---|---|
+| om | [6.1.0](https://github.com/pivotal-cf/om/releases/tag/6.1.0) |
+| bosh-cli | [v6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
+| credhub | [2.7.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.7.0) |
+| winfs-injector | [0.18.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.18.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.15" target="_blank">Download</a>
 
 ### Bug Fixes
+- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+  
+  ```bash
+  creating the new opsman vm
+  Using gcp...
+  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+    line 6: cannot unmarshal !!map into string
+  ```
+
+  With GCP OpsManager, the image YAML file format includes a new key.
+  
+  The original format of the image YAML was:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  ```
+  
+  The new format includes the `image` key:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  image:
+   name: ops-manager-2-9-10-build-177
+   project: pivotal-ops-manager-images
+  ```
+  
+  This patch ignores this value, where previously it would've not been able to parse it.
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`][credhub-interpolate] task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
@@ -634,9 +709,42 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.18
-Coming Soon
+Released September 4, 2020
 
 ### Bug Fixes
+- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+  
+  ```bash
+  creating the new opsman vm
+  Using gcp...
+  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+    line 6: cannot unmarshal !!map into string
+  ```
+
+  With GCP OpsManager, the image YAML file format includes a new key.
+  
+  The original format of the image YAML was:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  ```
+  
+  The new format includes the `image` key:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  image:
+   name: ops-manager-2-9-10-build-177
+   project: pivotal-ops-manager-images
+  ```
+  
+  This patch ignores this value, where previously it would've not been able to parse it.
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`][credhub-interpolate] task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
