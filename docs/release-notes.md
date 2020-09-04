@@ -21,6 +21,45 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.1
+Released September 4, 2020
+
+### Bug Fixes
+- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+  
+  ```bash
+  creating the new opsman vm
+  Using gcp...
+  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+    line 6: cannot unmarshal !!map into string
+  ```
+
+  With GCP OpsManager, the image YAML file format includes a new key.
+  
+  The original format of the image YAML was:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  ```
+  
+  The new format includes the `image` key:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  image:
+   name: ops-manager-2-9-10-build-177
+   project: pivotal-ops-manager-images
+  ```
+  
+  This patch ignores this value, where previously it would've not been able to parse it.
+  
+
 ## v5.0.0
 Released September 2, 2020
 
@@ -154,10 +193,45 @@ Released September 2, 2020
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
 
+
+
 ## v4.4.7
-Coming Soon
+Released September 4, 2020
 
 ### Bug Fixes
+- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+  
+  ```bash
+  creating the new opsman vm
+  Using gcp...
+  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+    line 6: cannot unmarshal !!map into string
+  ```
+
+  With GCP OpsManager, the image YAML file format includes a new key.
+  
+  The original format of the image YAML was:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  ```
+  
+  The new format includes the `image` key:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  image:
+   name: ops-manager-2-9-10-build-177
+   project: pivotal-ops-manager-images
+  ```
+  
+  This patch ignores this value, where previously it would've not been able to parse it.
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`][credhub-interpolate] task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
@@ -374,9 +448,42 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   *Please note this is an advanced feature, and should be used at your own discretion.*
 
 ## v4.3.15
-Coming Soon
+Released September 4, 2020
 
 ### Bug Fixes
+- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+  
+  ```bash
+  creating the new opsman vm
+  Using gcp...
+  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+    line 6: cannot unmarshal !!map into string
+  ```
+
+  With GCP OpsManager, the image YAML file format includes a new key.
+  
+  The original format of the image YAML was:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  ```
+  
+  The new format includes the `image` key:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  image:
+   name: ops-manager-2-9-10-build-177
+   project: pivotal-ops-manager-images
+  ```
+  
+  This patch ignores this value, where previously it would've not been able to parse it.
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`][credhub-interpolate] task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
@@ -767,9 +874,42 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.18
-Coming Soon
+Released September 4, 2020
 
 ### Bug Fixes
+- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+  
+  ```bash
+  creating the new opsman vm
+  Using gcp...
+  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+    line 6: cannot unmarshal !!map into string
+  ```
+
+  With GCP OpsManager, the image YAML file format includes a new key.
+  
+  The original format of the image YAML was:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+  ```
+  
+  The new format includes the `image` key:
+  
+  ```yaml
+  ---
+  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+  image:
+   name: ops-manager-2-9-10-build-177
+   project: pivotal-ops-manager-images
+  ```
+  
+  This patch ignores this value, where previously it would've not been able to parse it.
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`][credhub-interpolate] task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
