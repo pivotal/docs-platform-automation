@@ -21,6 +21,12 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.3.16
+Coming Soon
+
+### Bug Fixes
+- Bump the CLIs for `om`, `credhub`, and `winfs-injector`.
+
 ## v4.3.15
 Released September 4, 2020
 
@@ -455,6 +461,21 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.19
+Coming Soon
+
+| Name | version |
+|---|---|
+| om | [6.2.0](https://github.com/pivotal-cf/om/releases/tag/6.2.0) |
+| bosh-cli | [v6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
+| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.19" target="_blank">Download</a>
+
+### Bug Fixes
+- Bump the CLIs for `om`, `credhub`, and `winfs-injector`.
 
 ## v4.2.18
 Released September 4, 2020
