@@ -479,6 +479,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.3.16
 Coming Soon
 
+| Name | version |
+|---|---|
+| om | [6.2.0](https://github.com/pivotal-cf/om/releases/tag/6.2.0) |
+| bosh-cli | [v6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
+| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.16" target="_blank">Download</a>
+
 ### Bug Fixes
 - Bump the CLIs for `om`, `credhub`, and `winfs-injector`.
 
