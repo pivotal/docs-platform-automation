@@ -22,7 +22,7 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v5.0.2
-Coming Soon
+September 9, 2020
 
 | Name | version |
 |---|---|
@@ -48,6 +48,11 @@ Released September 4, 2020
 | winfs-injector | [0.18.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.18.0) |
 
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.1" target="_blank">Download</a>
+
+!!! warning "Removed from Releases"
+    There was a regression introduced in v5.0.1.
+    It will be removed form Tanzu Network.
+    Please use v5.0.2 instead.
 
 ### Bug Fixes
 - tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
@@ -219,7 +224,7 @@ Released September 2, 2020
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
 
 ## v4.4.8
-Coming Soon
+September 9, 2020
 
 | Name | version |
 |---|---|
@@ -495,7 +500,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   *Please note this is an advanced feature, and should be used at your own discretion.*
 
 ## v4.3.16
-Coming Soon
+September 9, 2020
 
 | Name | version |
 |---|---|
@@ -945,7 +950,7 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
 ## v4.2.19
-Coming Soon
+September 9, 2020
 
 | Name | version |
 |---|---|
