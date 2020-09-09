@@ -83,10 +83,6 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   
   This patch ignores this value, where previously it would've not been able to parse it.
 - The container image has been fixed to support the `registry-image` Concourse resource
-- With [`credhub-interpolate`][credhub-interpolate] task,
-  users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
-  This allowed not having ot repeat the same value in Credhub for each var value.
-  Support has been added to the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] workflow to support secrets evaluation.
   
     For example, given a `config.yml`,
   
