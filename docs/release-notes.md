@@ -21,6 +21,23 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.3.17
+September 15, 2020
+
+### Bug Fixes
+- There was an issue with how `om` retrieved credentials
+  within the new heuristic logic for collections updates.
+  In particular, this impacted the upgrade from TAS 2.6 to 2.7,
+  and caused `configure-product` to fail.
+  The error message looked something like this:
+  
+    ```bash
+    2020/09/01 06:35:54 could not execute "configure-product": failed to configure product: failed to associate guids for property ".properties.credhub_internal_provider_keys" because:
+    request failed: unexpected response from /api/v0/deployed/products/cf-6bdb4038d37667f9f424/credentials/.properties.credhub_internal_provider_keys[0].key:
+    HTTP/1.1 404 Not Found
+    ...more HTTP headers...
+    ```
+
 ## v4.3.16
 September 9, 2020
 
@@ -470,6 +487,23 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.20
+September 15, 2020
+
+### Bug Fixes
+- There was an issue with how `om` retrieved credentials
+  within the new heuristic logic for collections updates.
+  In particular, this impacted the upgrade from TAS 2.6 to 2.7,
+  and caused `configure-product` to fail.
+  The error message looked something like this:
+  
+    ```bash
+    2020/09/01 06:35:54 could not execute "configure-product": failed to configure product: failed to associate guids for property ".properties.credhub_internal_provider_keys" because:
+    request failed: unexpected response from /api/v0/deployed/products/cf-6bdb4038d37667f9f424/credentials/.properties.credhub_internal_provider_keys[0].key:
+    HTTP/1.1 404 Not Found
+    ...more HTTP headers...
+    ```
 
 ## v4.2.19
 September 9, 2020
