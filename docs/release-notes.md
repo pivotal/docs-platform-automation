@@ -68,37 +68,38 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ### Bug Fixes
 - tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
   
-  ```bash
-  creating the new opsman vm
-  Using gcp...
-  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
-    line 6: cannot unmarshal !!map into string
-  ```
-
-  With GCP OpsManager, the image YAML file format includes a new key.
+    ```bash
+    creating the new opsman vm
+    Using gcp...
+    Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+      line 6: cannot unmarshal !!map into string
+    ```
   
-  The original format of the image YAML was:
-  
-  ```yaml
-  ---
-  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
-  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
-  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
-  ```
-  
-  The new format includes the `image` key:
-  
-  ```yaml
-  ---
-  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
-  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
-  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
-  image:
-   name: ops-manager-2-9-10-build-177
-   project: pivotal-ops-manager-images
-  ```
-  
-  This patch ignores this value, where previously it would've not been able to parse it.
+    With GCP OpsManager, the image YAML file format includes a new key.
+    
+    The original format of the image YAML was:
+    
+    ```yaml
+    ---
+    us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+    eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+    asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+    ```
+    
+    The new format includes the `image` key:
+    
+    ```yaml
+    ---
+    us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+    eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+    asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+    image:
+     name: ops-manager-2-9-10-build-177
+     project: pivotal-ops-manager-images
+    ```
+    
+    This patch ignores this value, where previously it would've not been able to parse it.
+    
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`][credhub-interpolate] task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
@@ -535,37 +536,38 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ### Bug Fixes
 - tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
   
-  ```bash
-  creating the new opsman vm
-  Using gcp...
-  Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
-    line 6: cannot unmarshal !!map into string
-  ```
-
-  With GCP OpsManager, the image YAML file format includes a new key.
+    ```bash
+    creating the new opsman vm
+    Using gcp...
+    Error: unexpected error: could not marshal image file: yaml: unmarshal errors:
+      line 6: cannot unmarshal !!map into string
+    ```
   
-  The original format of the image YAML was:
-  
-  ```yaml
-  ---
-  us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
-  eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
-  asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
-  ```
-  
-  The new format includes the `image` key:
-  
-  ```yaml
-  ---
-  us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
-  eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
-  asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
-  image:
-   name: ops-manager-2-9-10-build-177
-   project: pivotal-ops-manager-images
-  ```
-  
-  This patch ignores this value, where previously it would've not been able to parse it.
+    With GCP OpsManager, the image YAML file format includes a new key.
+    
+    The original format of the image YAML was:
+    
+    ```yaml
+    ---
+    us: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+    eu: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+    asia: ops-manager-us/pcf-gcp-2.9.9-build.164.tar.gz
+    ```
+    
+    The new format includes the `image` key:
+    
+    ```yaml
+    ---
+    us: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+    eu: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+    asia: ops-manager-us/pcf-gcp-2.9.10-build.177.tar.gz
+    image:
+     name: ops-manager-2-9-10-build-177
+     project: pivotal-ops-manager-images
+    ```
+    
+    This patch ignores this value, where previously it would've not been able to parse it.
+    
 - The container image has been fixed to support the `registry-image` Concourse resource
   
     For example, given a `config.yml`,
