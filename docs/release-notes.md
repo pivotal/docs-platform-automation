@@ -243,6 +243,15 @@ Released September 2, 2020
 ## v4.4.9
 September 15, 2020
 
+| Name | version |
+|---|---|
+| om | [6.3.0](https://github.com/pivotal-cf/om/releases/tag/6.3.0) |
+| bosh-cli | [v6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
+| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.9" target="_blank">Download</a>
+
 ### Bug Fixes
 - There was an issue with how `om` retrieved credentials
   within the new heuristic logic for collections updates.
