@@ -411,28 +411,28 @@ here are examples for what this file should look like,
 depending on your IaaS:
 
 === "AWS"
-    ``` yaml
-    {% include './examples/state/aws.yml' %}
+    ```yaml
+    --8<-- './docs/examples/state/aws.yml'
     ```
 
 === "Azure"
-    ``` yaml
-    {% include './examples/state/azure.yml' %}
+    ```yaml
+    --8<-- './docs/examples/state/azure.yml'
     ```
 
 === "GCP"
-    ``` yaml
-    {% include './examples/state/gcp.yml' %}
+    ```yaml
+    --8<-- './docs/examples/state/gcp.yml'
     ```
 
 === "OpenStack"
-    ``` yaml
-    {% include './examples/state/openstack.yml' %}
+    ```yaml
+    --8<-- './docs/examples/state/openstack.yml'
     ```
 
 === "vSphere"
-    ``` yaml
-    {% include './examples/state/vsphere.yml' %}
+    ```yaml
+    --8<-- './docs/examples/state/vsphere.yml'
     ```
 
 Find what you need for your IaaS,
