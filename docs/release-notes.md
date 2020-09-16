@@ -21,6 +21,15 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.4
+Coming Soon
+
+## Bug Fixes
+- The [`download-and-upload-product`][download-and-upload-product] task did not provide the option to leave the stemcell floating.
+  A new param (`FLOATING_STEMCELL`) allows floating for a stemcell to be set.
+  Its default value is set to `true`.
+  The expectation is to affect one product, not all products.
+
 ## v5.0.3
 September 15, 2020
 
