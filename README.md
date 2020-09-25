@@ -55,10 +55,18 @@ Please see the [contribution doc](CONTRIBUTING.md) for more information.
    then download the `image-receipt-x.x.x` from AWS S3
    (this link is also be available in the release notes for each version).
 
+Note: if,for some reason, any `update-vX.X` job fails,
+the job can be re-run and will not re-generate release notes.
+However, the release date of the job
+will be whatever the date of the first run for the patch was.
+The task that generates the release notes for each minor/major version
+is called `create-release-notes-for-patch`.
+This task exists in all `update-vX.X` jobs.
+
+
 ### Updating the Release Notes Manually
 There is an easy (manual) way to undo the docs created for CVE patching.
 This could be due to:
-- a failed build
 - failure to update the `cve-patch-notes.md` before creating the patch
 - some other reason
 
