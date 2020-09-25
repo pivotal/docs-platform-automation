@@ -136,6 +136,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v5.0.0
 Released September 2, 2020
 
+| Name | version |
+|---|---|
+| om | [6.2.0](https://github.com/pivotal-cf/om/releases/tag/6.2.0) |
+| bosh-cli | [v6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
+| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.0" target="_blank">Download</a>
+
 ### Breaking Changes
 - Platform Automation will now require Concourse 5.0+
 
@@ -1061,6 +1070,16 @@ Released January 31, 2020
   The CVEs are related to vulnerabilities with `Libgcrypt`.
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
+
+## v4.2.21
+September 25, 2020
+
+### Bug Fixes
+ - CVE update to container image. Resolves [USN-4512-1](https://usn.ubuntu.com/4512-1/).
+   The CVEs are related to vulnerabilities with `util-linux` and related libraries.
+ - CVE update to container image. Resolves [USN-4504-1](https://usn.ubuntu.com/4504-1/).
+   The CVEs are related to vulnerabilities with `libssl` and related libraries.
+
 
 ## v4.2.20
 September 15, 2020
