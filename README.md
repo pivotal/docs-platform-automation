@@ -55,8 +55,17 @@ Please see the [contribution doc](CONTRIBUTING.md) for more information.
    then download the `image-receipt-x.x.x` from AWS S3
    (this link is also be available in the release notes for each version).
 
-### What if I Forgot to Update the CVE Patch File?
-There is an easy (manual) way to undo the docs created for CVE patching
+### Updating the Release Notes Manually
+There is an easy (manual) way to undo the docs created for CVE patching.
+This could be due to:
+- a failed build
+- failure to update the `cve-patch-notes.md` before creating the patch
+- some other reason
+
+The following steps are a manual process to "revert"
+the generated release notes and re-create them manually.
+Note: if due to a failed build, you _must_ stop before the last step.
+CI will fail if the version already exists.
 1. `git clone https://github.com/pivotal/platform-automation-ci` (private)
 1. git pull in `docs-platform-automation`
 1. `git submodule update --init --recursive` in `docs-platform-automation`
