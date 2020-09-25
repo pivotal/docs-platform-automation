@@ -21,6 +21,14 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.10
+September 25, 2020
+
+### Bug Fixes
+- bug fix 1
+- bug fix 2 
+
+
 ## v4.4.9
 September 15, 2020
 
@@ -323,6 +331,14 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   *Please note this is an advanced feature, and should be used at your own discretion.*
+
+## v4.3.18
+September 25, 2020
+
+### Bug Fixes
+- bug fix 1
+- bug fix 2 
+
 
 ## v4.3.17
 September 15, 2020
