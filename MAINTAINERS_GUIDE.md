@@ -1,6 +1,17 @@
 # Maintainer's Guide Notes
 
-## CVEs and Patching
+It is our intention to centralize our notes
+about how we maintain and release Platform Automation Toolkit here.
+Keeping in mind that this is a _public repository_,
+so secrets and some details will necessarily be stored
+in other systems,
+though their existence and location should be documented here.
+
+Many of these links require VMware VPN access or other credentials;
+these instructions are public as an implementation detail,
+and are not intended to be useful to the public.
+
+## CVEs and Patching Steps
 1. Update the release notes for patching CVEs (and/or other security/package updates).
    This should be updated in `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`
    The bug fixes for the last release should be already populated.
@@ -66,12 +77,16 @@ CI will fail if the version already exists.
    so no more manual work is necessary.
 
 ### What if I Need to Add Release Notes for a Feature or Breaking Change to a Patch Version?
-Dont. Revert any such changes to those patch versions.
+Don't. Revert any such changes to those patch versions.
 
 Platform Automation is strictly [semvered](https://semver.org/)
 with an API defined in our [docs](https://docs-pcf-staging.cfapps.io/platform-automation/develop/compatibility-and-versioning.html#semantic-versioning).
 
 Patching of this product should _never_ include features or breaking changes.
+
+In the event that we _do_ release such changes
+despite our best intentions and efforts,
+we should release a subsequent patch that documents and reverts the changes.
 
 ## ODP and OSL
 In the bump pipeline, the [`test-image-dependency-stability`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/bump/jobs/test-image-dependency-stability/builds/100) job
@@ -86,7 +101,7 @@ This is a fully manual process. Please reference [VMware's guides](https://osm.e
 OSLs can be downloaded directly from the OSM tool, and subsequently uploaded to s3.
 
 ### ODP
-The ODP tool is completely manual at the moment. 
+The ODP tool is completely manual at the moment.
 Kris's instructions: https://confluence.eng.vmware.com/display/CNA/ODP+for+Pivotal+Alumni+-+A+Crash+Course
 (Requires VMware VPN).
 The super basic generic walkthrough (check Kris' instructions for better detail):
@@ -99,8 +114,8 @@ The super basic generic walkthrough (check Kris' instructions for better detail)
 1. zip the ODP directory
 1. upload ODP to s3
 
-#### GOTCHAS FROM PAST ODPS
-ERROR from the osstpclients tool: 
+#### GOTCHAS FROM PAST ODPs
+ERROR from the osstpclients tool:
 ```
 Creating/updating the skeleton directory "./VMware-tanzu-platform-automation-toolkit-5.0.0-ODP"
 Processing 1 command line defined packages
@@ -110,7 +125,7 @@ The packages that could not be created are:
     #2456833 Other "ct-tracker-ubuntu - none"
 ```
 ANALYSIS:
- the ODP tool did not like the `ct-tracker-ubuntu` package. 
+ the ODP tool did not like the `ct-tracker-ubuntu` package.
     1. We had to go down the "clone chain"(`Cloned from 2361434 / View clone chain` if in OSM) until there is no more clone chain.
     1. Click "View" on the master package: `Master Package RESOLVED / APPROVED (View)`
     1. Click "View list of Packages": `Use Packages View list of Use Packages (133)`
@@ -119,7 +134,8 @@ ANALYSIS:
     1. complete Kris's instructions as normal
 
 #### BUILD.txt and INSTALL.txt
-If any dependencies require SBR, add the following 2 files into the generated folder
+If any dependencies require SBR,
+add the following 2 files into the generated folder
 before zipping the directory:
 
 BUILD.txt

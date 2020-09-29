@@ -19,7 +19,7 @@ To use it locally, it will require `python3` to be installed.
 pip3 install -U -r requirements.txt
 brew install ripgrep
 mkdocs serve
-``` 
+```
 
 **Notes**
 * `serve`ing the app will check for broken external links.
@@ -38,3 +38,9 @@ Exited with 1 warnings in strict mode.
 # Contributing
 
 Please see the [contribution doc](CONTRIBUTING.md) for more information.
+
+# Notes for Maintainers
+
+There is a separate [Maintainers' Guide](MAINTAINERS_GUIDE.md)
+intended for personnel allocated to maintenance
+of the Platform Automation Toolkit.
