@@ -170,3 +170,54 @@ INSTALL.txt
 # assuming you have followed the BUILD.txt instruction to build
 dpkg -i <package-version>.deb
 ```
+
+## [Reference Pipeline](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) Maintenance
+The reference pipeline (not "example pipeline") from our [docs](https://docs-pcf-staging.cfapps.io/platform-automation/develop/pipelines/multiple-products.html)
+is fully tested in [CI](https://platform-automation.ci.cf-app.com/teams/main/pipelines/reference-pipeline).
+It is currently deployed on GCP,
+though history of the repo will reveal that it was previously deployed on vSphere.
+
+When making any new features for the product, the reference pipeline should be run,
+and should be completely green before release. The [`additional-task-testing`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/additional-task-testing/builds/170) job
+relies on the reference-pipeline being successfully up and deployed.
+This ci pipeline task _is explicitly_ a release blocker, while the reference pipeline is not explicitly a blocker.
+
+The reference pipeline exists in the [docs-platform-automation-reference-pipeline-config](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) repo.
+The repo is organized to represent a [multi-foundation configuration structure](https://docs-pcf-staging.cfapps.io/platform-automation/develop/pipeline-design/configuration-management-strategies.html#multiple-foundations-with-one-repository).
+The reference pipeline is the `sandbox` directory in that repo. 
+
+`auth.yml` and `env.yml` are shared between foundations.
+Values for these files are set on a per-foundation/per-pipeline basis,
+and the values are stored in Credhub.
+
+Terraform files for the reference pipeline can be found in the [deployments](https://github.com/pivotal/platform-automation-deployments) repo.
+The deployments repo also contains all relevant terraform/vars for all of our ci test pipelines.
+The reference pipeline is saved in the `reference-gcp` directory.
+
+`terraform-outputs.json` is present for convenience, and was crafted by executing the following commands inside the `reference-gcp` directory:
+```
+terraform output stable_config_opsmanager > terraform-outputs.yml
+terraform output stable_config_pas >> terraform-outputs.yml
+terraform output stable_config_pks >> terraform-outputs.yml
+```
+The file can then be manually updated to remove the extra `{}` so that the outputs are in one JSON block.
+Again, this is a convenience file. If the terraform outputs are updated for any reason, you need to either:
+1. Update the value in Credhub (cert, key or secret)
+1. Update the value in the appropriate vars file
+Vars files for the reference pipeline can be found in `docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars`.
+Mapping for the vars files are:
+    ```
+    `vars/director.yml` <-> terraform output stable_config_opsmanager
+    `vars/pks.yml` <-> terraform output stable_config_pks
+    `vars/tas.yml <-> terraform output stable_config_pas
+    ```
+
+**_REMEMBER_*: `docs-platform-automation-reference-pipeline-config` is a public repo.
+_Do not store secrets in a public repo_
+
+To store/edit values in Credhub, export the vars from the `.envrc` in `concourse-credhub`,
+and access Credhub as normal.
+Alternatively, edit the `concourse-credhub/export.yml` file with any updated values, then run:
+```bash
+credhub import -f export.yml
+```
