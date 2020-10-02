@@ -22,13 +22,19 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v5.0.4
-Coming Soon
+Released October 2, 2020
 
 ## Bug Fixes
 - The [`download-and-upload-product`][download-and-upload-product] task did not provide the option to leave the stemcell floating.
   A new param (`FLOATING_STEMCELL`) allows floating for a stemcell to be set.
   Its default value is set to `true`.
   The expectation is to affect one product, not all products.
+- The [`backup-tkgi`][backup-tkgi] task had a misnamed param.
+  `$deployment_name` has been renamed to `$DEPLOYMENT_NAME` as was necessary.
+- CVE update to container image. Resolves [USN-4512-1](https://usn.ubuntu.com/4512-1/).
+The CVEs are related to vulnerabilities with `util-linux` and related libraries.
+- CVE update to container image. Resolves [USN-4504-1](https://usn.ubuntu.com/4504-1/).
+The CVEs are related to vulnerabilities with `libssl` and related libraries.
 
 ## v5.0.3
 September 15, 2020
