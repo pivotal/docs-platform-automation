@@ -197,34 +197,6 @@ Terraform files for the reference pipeline can be found in the [deployments](htt
 The deployments repo also contains all relevant terraform/vars for all of our ci test pipelines.
 The reference pipeline is saved in the `reference-gcp` directory.
 
-`terraform-outputs.json` is present for convenience, and was crafted by executing the following commands inside the `reference-gcp` directory:
-```
-terraform output stable_config_opsmanager > terraform-outputs.yml
-terraform output stable_config_pas >> terraform-outputs.yml
-terraform output stable_config_pks >> terraform-outputs.yml
-```
-The file can then be manually updated to remove the extra `{}` so that the outputs are in one JSON block.
-Again, this is a convenience file. If the terraform outputs are updated for any reason, you need to either:
-1. Update the value in Credhub (cert, key or secret)
-1. Update the value in the appropriate vars file
-Vars files for the reference pipeline can be found in `docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars`.
-Mapping for the vars files are:
-    ```
-    `vars/director.yml` <-> terraform output stable_config_opsmanager
-    `vars/pks.yml` <-> terraform output stable_config_pks
-    `vars/tas.yml <-> terraform output stable_config_pas
-    ```
-
-**_REMEMBER_*: `docs-platform-automation-reference-pipeline-config` is a public repo.
-_Do not store secrets in a public repo_
-
-To store/edit values in Credhub, export the vars from the `.envrc` in `concourse-credhub`,
-and access Credhub as normal.
-Alternatively, edit the `concourse-credhub/export.yml` file with any updated values, then run:
-```bash
-credhub import -f export.yml
-```
-
 ### Recreating the reference pipeline
 
 If the reference pipeline needs to recreated for any reason,
@@ -236,6 +208,49 @@ the following steps must be executed.
    * delete the terraform infrastructure
    * use [leftovers](https://github.com/genevieve/leftovers) to cleanup all extra resources with the `reference-gcp` tag
 
+1. Recreate the terraform infrastructure using the instructions in platform-automation-deployments [`reference-gcp` README](https://github.com/pivotal/platform-automation-deployments/blob/main/reference-gcp/README.md)
+1. Commit the terraform.tfstate
+1. (Optional) `platform-automation-deployments/reference-gcp/terraform-outputs.json` is present for convenience, and was crafted by executing the following commands inside the `reference-gcp` directory:
+
+   ```
+   terraform output stable_config_opsmanager > terraform-outputs.yml
+   terraform output stable_config_pas >> terraform-outputs.yml
+   terraform output stable_config_pks >> terraform-outputs.yml
+   ```
+       
+1. Recreate the vars files for the reference pipeline by extracting the terraform vars:
+   Vars files for the reference pipeline can be found in `docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars`.
+   To update these files, from inside the platform-automation-deployments/reference-gcp directory:
+
+   ```bash
+   terraform output stable_config_opsmanager > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/director.yml
+   terraform output stable_config_pas > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
+   terraform output stable_config_pks > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
+   ```
+
+1. The terraform outputs contain secrets. 
+   **_REMEMBER_**: `docs-platform-automation-reference-pipeline-config` is a public repo.
+   _Do not store secrets in a public repo_
+   
+   Update the following values in [`export.yml`](https://github.com/pivotal/platform-automation-deployments/blob/main/concourse-credhub/export.yml) using values from the terraform outputs:
+
+   * /concourse/main/reference-pipeline/service_account_key
+   * /concourse/main/reference-pipeline/ops_manager_service_account_key
+   * /concourse/main/reference-pipeline/ssl_certificate
+   * /concourse/main/reference-pipeline/ssl_private_key
+   * /concourse/main/reference-pipeline/ops_manager_ssh_private_key
+   * /concourse/main/reference-pipeline/ops_manager_ssh_public_key
+       
+   Remove the above secrets from `vars/director.yml`, `vars/tas.yml`, `vars/pks.yml`
+   Also update any other secrets from the terraform outputs in the `export.yml`
+
+1. To store/edit values in Credhub, export the vars from the `.envrc` in `platform-automation-deployments/concourse-credhub`.
+   You can now access Credhub as normal. Run:
+    ```bash
+    credhub import -f export.yml
+    ```
+
+1. Commit all changes
 1. Update the [`state-sandbox.yml`](https://ref-pipeline-state.s3-us-west-2.amazonaws.com/state-sandbox.yml) to be empty-file.
 1. Delete the `reference-pipeline`: (this is done to reset any pipeline triggers)
    ```
