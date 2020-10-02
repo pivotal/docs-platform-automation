@@ -224,3 +224,28 @@ Alternatively, edit the `concourse-credhub/export.yml` file with any updated val
 ```bash
 credhub import -f export.yml
 ```
+
+### Recreating the reference pipeline
+
+#### Create a cluster
+
+We need to create a PKS cluster because we test the `backup-tkgi` task in [additional task testing.](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/additional-task-testing/builds/185)
+
+1. Get the Private SSH key for the Ops Manager VM, this will be available in the terraform outputs. 
+1. Create a user that will be the owner of the cluster.
+    ```bash
+    ssh -i /tmp/key ubuntu@opsmanager.reference-gcp.gcp.platform-automation.cf-app.com
+    uaac target https://api.pks.reference-gcp.gcp.platform-automation.cf-app.com:8443 --ca-cert /var/tempest/workspaces/default/root_ca_certificate
+    uaac token client get admin -s <uaa admin management secret>
+    uaac user add platform-automation --emails platform-automation@example.com -p <super-secret-password>
+    uaac member add pks.clusters.admin platform-automation
+    ```
+
+1. Create a PKS cluster
+    ```bash
+    ./pks login -a api.pks.reference-gcp.gcp.platform-automation.cf-app.com -u platform-automation -p <super-secret-password> --skip-ssl-verification
+    ./pks create-cluster my-cluster --plan small --external-hostname example.hostname
+    watch ./pks cluster my-cluster # eventually this will have a status of "complete"
+    ```
+
+1. Wait up to 30 minutes for the cluster to be created.
