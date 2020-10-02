@@ -324,6 +324,16 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   *Please note this is an advanced feature, and should be used at your own discretion.*
 
+## v4.3.18
+October 2, 2020
+
+### Bug Fixes
+ - CVE update to container image. Resolves [USN-4512-1](https://usn.ubuntu.com/4512-1/).
+   The CVEs are related to vulnerabilities with `util-linux` and related libraries.
+ - CVE update to container image. Resolves [USN-4504-1](https://usn.ubuntu.com/4504-1/).
+   The CVEs are related to vulnerabilities with `libssl` and related libraries.
+
+
 ## v4.3.17
 September 15, 2020
 
