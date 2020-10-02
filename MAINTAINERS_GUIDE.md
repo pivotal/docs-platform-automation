@@ -227,6 +227,34 @@ credhub import -f export.yml
 
 ### Recreating the reference pipeline
 
+If the reference pipeline needs to recreated for any reason,
+the following steps must be executed.
+
+1. Run the [`reference-gcp-delete-infrastructure`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/reference-gcp-delete-infrastructure) job.
+   This job will attempt to, in the following order: 
+   * delete the deployment
+   * delete the terraform infrastructure
+   * use [leftovers](https://github.com/genevieve/leftovers) to cleanup all extra resources with the `reference-gcp` tag
+
+1. Update the [`state-sandbox.yml`](https://ref-pipeline-state.s3-us-west-2.amazonaws.com/state-sandbox.yml) to be empty-file.
+1. Delete the `reference-pipeline`: (this is done to reset any pipeline triggers)
+   ```
+   fly -t ci dp -p reference-pipeline
+   ```
+
+1. Refly the reference pipeline
+   ```
+   cd ~/workspace/docs-platform-automation-reference-pipeline-config
+   ./scripts/update-reference-pipeline.sh
+   ```
+   
+1. Rerun the reference-pipeline from the beginning.
+   The pipeline triggers should function as normal,
+   and you should expect a new reference pipeline env in approximately 2-3 hours.
+   We recommend checking in on the pipeline every now and then
+   to validate it is running smoothly.
+    
+
 #### Create a cluster
 
 We need to create a PKS cluster because we test the `backup-tkgi` task in [additional task testing.](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/additional-task-testing/builds/185)
