@@ -33,6 +33,9 @@ The task that generates the release notes for each minor/major version
 is called `create-release-notes-for-patch`.
 This task exists in all `update-vX.X` jobs.
 
+Once the job is completed, you're done!
+The job pushes each patch directly to Tanzunet for all users.
+Check that the patches are present as expected. 
 
 ### Updating the Release Notes Manually
 There is an easy (manual) way to undo the docs created for CVE patching.
