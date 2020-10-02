@@ -267,6 +267,16 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
 
+## v4.4.10
+October 2, 2020
+
+### Bug Fixes
+ - CVE update to container image. Resolves [USN-4512-1](https://usn.ubuntu.com/4512-1/).
+   The CVEs are related to vulnerabilities with `util-linux` and related libraries.
+ - CVE update to container image. Resolves [USN-4504-1](https://usn.ubuntu.com/4504-1/).
+   The CVEs are related to vulnerabilities with `libssl` and related libraries.
+
+
 ## v4.4.9
 September 15, 2020
 
