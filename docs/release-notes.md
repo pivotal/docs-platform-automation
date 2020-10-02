@@ -24,6 +24,15 @@
 ## v5.0.4
 Released October 2, 2020
 
+| Name | version |
+|---|---|
+| om | [6.3.0](https://github.com/pivotal-cf/om/releases/tag/6.3.0) |
+| bosh-cli | [v6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
+| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.4" target="_blank">Download</a>
+
 ## Bug Fixes
 - The [`download-and-upload-product`][download-and-upload-product] task did not provide the option to leave the stemcell floating.
   A new param (`FLOATING_STEMCELL`) allows floating for a stemcell to be set.
