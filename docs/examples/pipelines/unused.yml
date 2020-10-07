@@ -70,17 +70,6 @@
   output_mapping:
     interpolated-files: interpolated-configs
 # code_snippet credhub-interpolate-usage end
-# code_snippet stage-configure-apply-usage start yaml
-- task: stage-configure-apply-healthwatch
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/stage-configure-apply.yml
-  params:
-    CONFIG_FILE: healthwatch.yml
-  input_mapping:
-    product: healthwatch-product
-    env: configuration
-    config: configuration
-# code_snippet stage-configure-apply-usage end
 # code_snippet download-product-usage-gcs start yaml
 - task: download-pas
   image: platform-automation-image

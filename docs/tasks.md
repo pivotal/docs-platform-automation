@@ -736,7 +736,7 @@ only to that product without applying changes to the rest of the foundation.
 === "Implementation"
     ---excerpt--- "tasks/stage-configure-apply-script"
 === "Usage"
-    ---excerpt--- "examples/stage-configure-apply-usage"
+    ---excerpt--- "reference/stage-configure-apply-usage"
 
 ### stage-product
 Staged a product to the Ops Manager specified in the config file.
