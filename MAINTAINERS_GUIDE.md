@@ -49,8 +49,7 @@ This could be due to:
 - some other reason
 
 The following steps are a manual process to "revert"
-the generated release notes and re-create them manually.
-
+the generated release notes and re-create them manually.<br />
 **Note:** if due to a failed build, you _must_ stop before the last step.
 CI will fail if the version already exists.
 1. `git clone https://github.com/pivotal/platform-automation-ci` (private)
