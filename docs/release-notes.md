@@ -517,6 +517,22 @@ Released January 31, 2020
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
+## v4.2.24
+October 9, 2020
+
+### Bug Fixes
+- The "bug fixes" for collections in `om` 6.1.2+
+  were causing unexpected issues in some tiles.
+  The collection work has been reverted
+  to its original functionality.
+- [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
+  would always fail if a product is unconfigured, new, or missing a stemcell,
+  regardless of whether `ALLOW_PENDING_CHANGES` was set.
+  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: true`.
+
+- test patch notes
+
+
 ## v4.2.20
 September 15, 2020
 
