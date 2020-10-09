@@ -17,8 +17,7 @@ and are not intended to be useful to the public.
    The bug fixes for the last release should be already populated.
    _Replace the existing release notes with the release notes for the newest patch._
    
-   **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.
-   
+   **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
 1. Commit and push the changes
 1. Trigger the `build-all-versions-image` job in the [`bump`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/bump) pipeline
