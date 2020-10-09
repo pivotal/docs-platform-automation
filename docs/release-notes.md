@@ -1069,6 +1069,8 @@ Released January 31, 2020
 | credhub | [2.6.2](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.6.2) |
 | winfs-injector | [0.14.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.14.0) |
 
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.0" target="_blank">Download</a>
+
 ### What's New
 - The [`revert-staged-changes`][revert-staged-changes] task has been added.
   This allows changes that weren't part of the pipeline to be undone,
