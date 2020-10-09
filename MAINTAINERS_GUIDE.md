@@ -84,7 +84,7 @@ CI will fail if the version already exists.
    The changes are pushed, and develop is re-checked out,
    so no more manual work is necessary.
 
-1. b. If there are bug fixes for specific versions, do not do `a.`,
+   b. If there are bug fixes for specific versions, do not do `a.`,
    but instead create the release notes for each version individually.
    
    with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
