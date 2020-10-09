@@ -21,6 +21,26 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.11
+October 9, 2020
+
+### Bug Fixes
+- The "bug fixes" for collections in `om` 6.1.2+
+  were causing unexpected issues in some tiles.
+  The collection work has been reverted
+  to its original functionality.
+- [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
+  would always fail if a product is unconfigured, new, or missing a stemcell,
+  regardless of whether `ALLOW_PENDING_CHANGES` was set.
+  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: true`.
+- [`stage-product`][stage-product] and [`stage-configure-apply`][stage-configure-apply] 
+  will now accept `latest` as the `product-version`
+  if you are providing a `CONFIG_FILE`/`STAGE_PRODUCT_CONFIG_FILE`.
+  This fixes an issue that required users to update their config file
+  every time a new version was available on Ops Manager.
+- [`stage-configure-apply`][stage-configure-apply] will now treat the `product` input
+  as truly optional if `CONFIG_FILE` is provided. 
+
 ## v4.4.10
 October 2, 2020
 
