@@ -839,6 +839,15 @@ Released January 31, 2020
 - CVE update to container image. Resolves [USN-4233-1](https://usn.ubuntu.com/4233-1/).
   The CVEs are related to vulnerabilities with `GnuTLS`.
 
+## v4.2.24
+October 9, 2020
+
+### Bug Fixes
+- [`pending-changes`][pending-changes] would always fail if installation incomplete, product unconfigured, or stemcell missing
+   regardless of whether `ALLOW_PENDING_CHANGES` was true or false.
+   This has been fixed so that the implied and intended behavior is reflected in the ouput of the command.
+   The also allows [`stage-configure-apply`][stage-configure-apply] to actually work when installing new tiles. 
+
 ## v4.2.20
 September 15, 2020
 
