@@ -321,3 +321,125 @@ The task will perform the following steps, documented here for the purposes of m
     ```
 
 1. Wait up to 30 minutes for the cluster to be created.
+
+## Docs Maintenance
+Most of the docs are found here in this `docs-platform-automation` repo.
+Locked versions for the docs are for every minor version released.
+
+The docs are built using `mkdocs` (see [README](https://github.com/pivotal/docs-platform-automation/blob/develop/README.md) for build instructions). 
+The docs make use of the [`mkdocs-pivotal-theme`](https://github.com/pivotal/mkdocs-pivotal-theme) for
+the vmware-common formatting/css/etc for the docs site. 
+
+### Link Linter
+Inside of `mkdocs-pivotal-theme`, there is a helpful tool
+that we use to make sure the links across all versions
+are valid and working.
+In the [ci](https://platform-automation.ci.cf-app.com/), this linter is used in the `deploy-to-staging` job in the `docs` pipeline.
+
+#### Broken Links
+The link linter is very aggressive.
+Sometimes the errors from the link linter are benign, and require a re-run:
+```
+https://docs-pcf-staging.cfapps.io/platform-automation/v5.0/concepts/stemcell-handling.html
+	timeout	https://bosh.io/docs/stemcell/
+```
+
+Others require a little more manual work:
+```
+https://docs-pcf-staging.cfapps.io/platform-automation/v5.0/release-notes.html
+	403	https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.5
+# REQUIRED FIX: download the 5.0.5 image,
+# run dpkg -l > image-receipt-5.0.5,
+# then upload to the platform-automation-release-candidate bucket in S3
+```
+
+Another example:
+```
+# From https://platform-automation.ci.cf-app.com/teams/main/pipelines/docs/jobs/deploy-to-staging/builds/1964
+https://docs-pcf-staging.cfapps.io/platform-automation/v4.0/index.html
+	404	http://docs.pivotal.io/platform/customizing/pcf-interface.html
+```
+The steps to fix this link were:
+1. search for the link in `docs-platform-automation/docs/.external_link_url.md`
+1. use the same url for a version of Ops Manager known to have worked with the link
+   (in this case, we navigated to: http://docs.pivotal.io/platform/2-7/customizing/pcf-interface.html)
+1. switch the docs branch to the most recent version
+1. remove the version information from the new url, and update it in the `.external_link_url` file
+   (in this case, we used: https://docs.pivotal.io/ops-manager/pcf-interface.html)
+1. Commit changes, push, and allow the link linter to run again
+
+#### "undefined code blocks"
+The Link Linter will also check to make sure that there are no code blocks (` ``` ``` `)
+in the documentation itself.
+This is usually a sign that we are referencing a code snippet
+that the docs don't know about,
+or we updated the docs in that area in a way that made it so
+mkdocs could not properly parse the code block.
+
+In `docs-platform-automation/mkdocs.yml`, you will find the following:
+```
+- markdown-code-excerpt:
+    sections:
+      tasks: "../platform-automation"
+      examples: "./docs/examples"
+      reference: "./external/docs-platform-automation-reference-pipeline-config"
+      paving: "./external/paving"
+```
+with this defined, we can reference any snippets in .yml from the listed repos.
+
+The format for a snippet is (let's assume this is in `examples`):
+```yaml
+# code_snippet awesome-snippet-name start yaml
+some-snippet
+# code_snippet awesome-snippet-name end
+```
+
+This is used in the docs like so:
+```
+---excerpt--- "examples/awesome-snippet-name"
+```
+
+As long as the snippet is available, mkdocs will render it in the docs. 
+If it is not available, it will be rendered as written above.
+
+Because our docs take advantage of mkdocs tabbing (`=== "Tab Name"`),
+the display often comes out incorrect with the code block used to format the snippet.
+The link linter returns an error like the following if this happens:
+```
+Running a check for undefined code blocks (```)...
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2281 <p>``` yaml
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2287     ```</p>
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2289 <p>``` yaml
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2295     ```</p>
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2297 <p>``` yaml
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2303     ```</p>
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2305 <p>``` yaml
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2311     ```</p>
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2313 <p>``` yaml
+./platform-automation/v4.4/how-to-guides/upgrade-existing-opsman.html:2319     ```</p>
+Generated HTML contains undefined code blocks!
+```
+
+To fix this problem, if requires you to go into the `.md` of the effected file
+and do a syntax check of the affected area.
+
+#### "unidentified reference-style links"
+The links in the docs are kept in `docs-platform-automation/docs/.internal_link_url.md` and `docs-platform-automation/docs/.external_link_url.md`
+for easy updating and reference. 
+
+When we use the links elsewhere in the docs, instead of using the `[link-name](link-url)` format,
+we use [link-name][link-reference].
+
+The link linter checks to make sure these custom references all go somewhere.
+If they do no, you will get an error like the following:
+```
+Running a check for undefined reference-style links...
+./platform-automation/develop/release-notes.html:6961 <li>[<code>pending-changes</code>][pending-changes] would always fail if installation incomplete, product unconfigured, or stemcell missing
+./platform-automation/v4.2/release-notes.html:3928 <li>[<code>pending-changes</code>][pending-changes] would always fail if installation incomplete, product unconfigured, or stemcell missing
+./platform-automation/v4.3/release-notes.html:5441 <li>[<code>pending-changes</code>][pending-changes] would always fail if installation incomplete, product unconfigured, or stemcell missing
+./platform-automation/v4.4/release-notes.html:6361 <li>[<code>pending-changes</code>][pending-changes] would always fail if installation incomplete, product unconfigured, or stemcell missing
+./platform-automation/v5.0/release-notes.html:6961 <li>[<code>pending-changes</code>][pending-changes] would always fail if installation incomplete, product unconfigured, or stemcell missing
+Generated HTML contains undefined links!
+
+# SOLUTION: add the missing link to .external_link_url or .internal_link_url
+```
