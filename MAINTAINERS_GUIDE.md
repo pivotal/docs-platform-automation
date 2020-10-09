@@ -274,6 +274,10 @@ the following steps must be executed.
 
 We need to create a PKS cluster because we test the `backup-tkgi` task in [additional task testing.](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/additional-task-testing/builds/185)
 
+This has been **_automated_** by the [create-pks-cluster-in-reference-pipeline task](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/create-pks-cluster-in-reference-pipeline/builds/24).
+
+The task will perform the following steps, documented here for the purposes of manual creation should the need arise:
+
 1. Get the Private SSH key for the Ops Manager VM, this will be available in the terraform outputs. 
 1. Create a user that will be the owner of the cluster.
     ```bash
