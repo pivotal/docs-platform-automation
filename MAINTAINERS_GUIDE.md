@@ -13,16 +13,19 @@ and are not intended to be useful to the public.
 
 ## CVEs and Patching Steps
 1. Update the release notes for patching CVEs (and/or other security/package updates).
-   This should be updated in `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`
+   This should be updated in `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
    The bug fixes for the last release should be already populated.
    Replace the existing release notes with the release notes for the newest patch.
-1. Commit the changes
+   
+   **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.
+   To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
+1. Commit and push the changes
 1. Trigger the `build-all-versions-image` job in the [`bump`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/bump) pipeline
 
-   This will trigger the CVE process.
+   This will trigger the CVE/patch process.
    To validate the appropriate CVEs were updated in supported versions,
    wait until the `update-vX.X` job has completed,
-   then download the `image-receipt-x.x.x` from AWS S3
+   then download the `image-receipt-X.X.X` from AWS S3
    (this link is also be available in the release notes for each version).
 
 Note: if,for some reason, any `update-vX.X` job fails,
@@ -61,7 +64,7 @@ CI will fail if the version already exists.
    --docs-dir /path/to/docs-platform-automation
    ```
 
-1. with an updated `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`
+1. a. with an updated `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`
    and the list of each supported full patch version,
    run the following command:
 
@@ -78,6 +81,22 @@ CI will fail if the version already exists.
    with the current date and the data written in `cve-patch-notes.md`.
    The changes are pushed, and develop is re-checked out,
    so no more manual work is necessary.
+
+1. b. If there are bug fixes for specific versions, do not do `a.`,
+   but instead create the release notes for each version individually.
+   
+   with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
+   and an updated `docs-platform-automation/ci/patch-notes/X.X-patch-notes.md`
+   and a _specific_ patch version,
+   run the following command:
+   
+   ```bash
+   go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
+   --docs-dir /path/to/docs-platform-automation \
+   --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
+   --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/X.X-patch-notes.md \
+   --cve-patch-versions X.X.X 
+   ```
 
 ### What if I Need to Add Release Notes for a Feature or Breaking Change to a Patch Version?
 Don't. Revert any such changes to those patch versions.
