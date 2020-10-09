@@ -66,39 +66,42 @@ CI will fail if the version already exists.
    --docs-dir /path/to/docs-platform-automation
    ```
 
-1. a. with an updated `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`
-   and the list of each supported full patch version,
-   run the following command:
-
-   ```bash
-   go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
-   --docs-dir /path/to/docs-platform-automation \
-   --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
-   --cve-patch-versions x.x.x \
-   --cve-patch-versions y.y.y \
-   --cve-patch-versions z.z.z
-   ```
-
-   This command will generate a new section for each patch version provided
-   with the current date and the data written in `cve-patch-notes.md`.
-   The changes are pushed, and develop is re-checked out,
-   so no more manual work is necessary.
-
-   b. If there are bug fixes for specific versions, do not do `a.`,
-   but instead create the release notes for each version individually.
+1. If there are bug fixes for specific versions, do not create release notes for all versions (a.),
+   but instead create the release notes for each version individually(b.).
    
-   with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
-   and an updated `docs-platform-automation/ci/patch-notes/X.X-patch-notes.md`
-   and a _specific_ patch version,
-   run the following command:
+   **a.** all versions
    
-   ```bash
-   go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
-   --docs-dir /path/to/docs-platform-automation \
-   --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
-   --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/X.X-patch-notes.md \
-   --cve-patch-versions X.X.X 
-   ```
+     with an updated `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`
+     and the list of each supported full patch version,
+     run the following command:
+
+     ```bash
+     go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
+     --docs-dir /path/to/docs-platform-automation \
+     --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
+     --cve-patch-versions x.x.x \
+     --cve-patch-versions y.y.y \
+     --cve-patch-versions z.z.z
+     ```
+
+     This command will generate a new section for each patch version provided
+     with the current date and the data written in `cve-patch-notes.md`.
+     The changes are pushed, and develop is re-checked out,
+     so no more manual work is necessary.
+
+   **b.** individual versions
+     with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
+     and an updated `docs-platform-automation/ci/patch-notes/X.X-patch-notes.md`
+     and a _specific_ patch version,
+     run the following command:
+     
+     ```bash
+     go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
+     --docs-dir /path/to/docs-platform-automation \
+     --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
+     --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/X.X-patch-notes.md \
+     --cve-patch-versions X.X.X 
+     ```
 
 ### What if I Need to Add Release Notes for a Feature or Breaking Change to a Patch Version?
 Don't. Revert any such changes to those patch versions.
