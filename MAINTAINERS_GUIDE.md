@@ -71,7 +71,7 @@ CI will fail if the version already exists.
    
    **a.** all versions
    
-     with an updated `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`
+     with an updated `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`,
      and the list of each supported full patch version,
      run the following command:
 
@@ -91,8 +91,8 @@ CI will fail if the version already exists.
 
    **b.** individual versions
    
-     with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
-     and an updated `docs-platform-automation/ci/patch-notes/X.X-patch-notes.md`
+     with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`,
+     and an updated `docs-platform-automation/ci/patch-notes/X.X-patch-notes.md`,
      and a _specific_ patch version,
      run the following command:
      
