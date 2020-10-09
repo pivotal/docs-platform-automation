@@ -90,6 +90,7 @@ CI will fail if the version already exists.
      so no more manual work is necessary.
 
    **b.** individual versions
+   
      with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
      and an updated `docs-platform-automation/ci/patch-notes/X.X-patch-notes.md`
      and a _specific_ patch version,
