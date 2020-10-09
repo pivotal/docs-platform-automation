@@ -43,7 +43,9 @@ Check that the patches are present as expected.
 ### Updating the Release Notes Manually
 There is an easy (manual) way to undo the docs created for CVE patching.
 This could be due to:
-- failure to update the `cve-patch-notes.md` before creating the patch
+- failure to update the `cve-patch-notes.md` before creating patch,
+  so the release notes are wrong
+- there were additional bug fixes that were left out
 - some other reason
 
 The following steps are a manual process to "revert"
