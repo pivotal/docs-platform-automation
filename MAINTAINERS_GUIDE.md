@@ -15,7 +15,7 @@ and are not intended to be useful to the public.
 1. Update the release notes for patching CVEs (and/or other security/package updates).
    This should be updated in `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
    The bug fixes for the last release should be already populated.
-   Replace the existing release notes with the release notes for the newest patch.
+   _Replace the existing release notes with the release notes for the newest patch._
    
    **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
