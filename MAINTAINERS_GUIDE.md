@@ -443,3 +443,62 @@ Generated HTML contains undefined links!
 
 # SOLUTION: add the missing link to .external_link_url or .internal_link_url
 ```
+
+## Slack and Support
+
+### Webhooks
+There are 3 webhooks that will show up in the `#pcf-automation-priv` channel.
+
+1. After triggering `bump-previous-versions-trigger`,
+   this webhook will alert the team that the bump
+   of a particular version has traversed CI and been publicly released.
+   ```
+   # webhook text
+   A new patch version was released to Tanzunet: vX.X
+   ```
+   
+1. A beta test of the features included in Platform Automation Toolkit 5.0
+   was released to a small subset of customers for earlier versions
+   of the toolkit. This webhook indicates the security patch
+   for that beta has been released.
+   The mitigation pipeline will auto-trigger after the non-mitigation version
+   is available on Pivnet.
+   ```
+   # webhook text
+   A new version of the python mitigation image has been Release on Tanzunet.
+   ```
+
+1. The `check-for-secrets-in-tasks` job in CI will daily check the tasks
+   to make sure no secrets from Credhub or vars files are printed in our tasks.
+   There is an allow-list that will not trigger a failure.
+   Objects in this allow list are objects printed by CLIs we don't control (ie, azure, aws, gcp, bosh, etc).
+   We trust that the CLIs are handling their own redaction.
+   If we find a secret that is printed unexpectedly by a change in the tasks, we alert Slack.
+   ```
+   # webhook text
+   Found a secret in a build! See concourse(https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci) for more details.
+   ```
+
+### Bugs in [Tracker](https://www.pivotaltracker.com/n/projects/1472134)
+#### Github issues
+When an issue is opened on the `om` or `docs-platform-automation`
+a bug is auto-created in the Pivotal Tracker icebox.
+Bugs generally have the format `git-org/project` with the name of the issue.
+
+Ideally, issues should have a response from a dev 1+/wk
+until an agreed-upon solution-proposal is found.
+If there is no response from the issue opener,
+give a reminder on the issue after 1 week.
+After a second week, if there is still no response,
+close the issue with a kind message and leave it up to the poster to reopen.
+If the issue is reopened, a new bug will be generated in the Pivotal Tracker icebox.
+
+#### CVEs
+Ubuntu CVEs will also auto-populate in the Pivotal Tracker icebox.
+These have the format:
+```
+**[Security Notice]** New USN
+affecting Platform Automation Toolkit:
+USN-####-#: pkg-name vulnerability
+```
+These should be handled using the steps detailed in the `CVEs and Patching Steps` section.
