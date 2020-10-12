@@ -334,6 +334,20 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
 
+## v4.4.12
+October 12, 2020
+
+### Bug Fixes
+- The "bug fixes" for collections in `om` 6.1.2+
+  were causing unexpected issues in some tiles.
+  The collection work has been reverted
+  to its original functionality.
+- [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
+  would always fail if a product is unconfigured, new, or missing a stemcell,
+  regardless of whether `ALLOW_PENDING_CHANGES` was set.
+  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: true`.
+
+
 ## v4.4.11
 October 9, 2020
 
