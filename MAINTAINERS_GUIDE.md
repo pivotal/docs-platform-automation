@@ -20,6 +20,7 @@ and are not intended to be useful to the public.
    **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
 1. Commit and push the changes
+1. In the `ci` pipeline, click the `bump` tab. 
 1. Trigger the `bump-previous-versions-trigger` job in the [`ci`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci) pipeline
 
    This will trigger the CVE/patch process.
