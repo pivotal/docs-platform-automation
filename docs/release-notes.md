@@ -41,7 +41,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
   would always fail if a product is unconfigured, new, or missing a stemcell,
   regardless of whether `ALLOW_PENDING_CHANGES` was set.
-  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: true`.
+  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: false`.
 
 
 ## v4.3.18
