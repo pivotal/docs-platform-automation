@@ -20,7 +20,7 @@ and are not intended to be useful to the public.
    **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
 1. Commit and push the changes
-1. Trigger the `build-all-versions-image` job in the [`bump`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/bump) pipeline
+1. Trigger the `bump-previous-versions-trigger` job in the [`ci`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci) pipeline
 
    This will trigger the CVE/patch process.
    To validate the appropriate CVEs were updated in supported versions,
@@ -117,7 +117,7 @@ despite our best intentions and efforts,
 we should release a subsequent patch that documents and reverts the changes.
 
 ## ODP and OSL
-In the bump pipeline, the [`test-image-dependency-stability`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/bump/jobs/test-image-dependency-stability/builds/100) job
+In the `ci` pipeline, the [`bump-test-image-dependency-stability`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-test-image-dependency-stability/builds/1) job
 validates that our packages have not changed.
 This is because we do not have to request a new OSL if there are no new packages.
 
