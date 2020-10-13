@@ -21,29 +21,6 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## v5.0.6
-October 12, 2020
-
-| Name | version |
-|---|---|
-| om | [6.4.1](https://github.com/pivotal-cf/om/releases/tag/6.4.1) |
-| bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/6.4.0) |
-| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
-| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.6" target="_blank">Download</a>
-
-### Bug Fixes
-- The "bug fixes" for collections in `om` 6.1.2+
-  were causing unexpected issues in some tiles.
-  The collection work has been reverted
-  to its original functionality.
-- [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
-  would always fail if a product is unconfigured, new, or missing a stemcell,
-  regardless of whether `ALLOW_PENDING_CHANGES` was set.
-  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: true`.
-
-
 ## v5.0.5
 October 9, 2020
 
@@ -333,29 +310,6 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ### Deprecation Notices
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
-
-## v4.4.12
-October 12, 2020
-
-| Name | version |
-|---|---|
-| om | [6.4.1](https://github.com/pivotal-cf/om/releases/tag/6.4.1) |
-| bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/6.4.0) |
-| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
-| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.12" target="_blank">Download</a>
-
-### Bug Fixes
-- The "bug fixes" for collections in `om` 6.1.2+
-  were causing unexpected issues in some tiles.
-  The collection work has been reverted
-  to its original functionality.
-- [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
-  would always fail if a product is unconfigured, new, or missing a stemcell,
-  regardless of whether `ALLOW_PENDING_CHANGES` was set.
-  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: true`.
-
 
 ## v4.4.11
 October 9, 2020
@@ -707,29 +661,6 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   *Please note this is an advanced feature, and should be used at your own discretion.*
-
-## v4.3.20
-October 12, 2020
-
-| Name | version |
-|---|---|
-| om | [6.4.1](https://github.com/pivotal-cf/om/releases/tag/6.4.1) |
-| bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/6.4.0) |
-| credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
-| winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
-
-The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.20" target="_blank">Download</a>
-
-### Bug Fixes
-- The "bug fixes" for collections in `om` 6.1.2+
-  were causing unexpected issues in some tiles.
-  The collection work has been reverted
-  to its original functionality.
-- [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
-  would always fail if a product is unconfigured, new, or missing a stemcell,
-  regardless of whether `ALLOW_PENDING_CHANGES` was set.
-  This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: true`.
-
 
 ## v4.3.19
 October 9, 2020
