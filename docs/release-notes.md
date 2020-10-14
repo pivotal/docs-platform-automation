@@ -424,6 +424,21 @@ Released June 4, 2020
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   *Please note this is an advanced feature, and should be used at your own discretion.*
 
+## v4.3.20
+October 14, 2020
+
+!!! note "Updates to CLI versions"
+    We've now updated our list of CLI versions.
+    It includes the supported IAAS CLIs.
+
+### Bug Fixes
+- Do to a release packaging issue,
+  the previous patch version had issues invoking `openstack` CLI.
+  This release ensures this has been fixed.
+  We've also added further release testing to ensure it doesn't happen again.
+
+
+
 ## v4.3.19
 October 9, 2020
 
