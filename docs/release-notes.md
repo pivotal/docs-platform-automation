@@ -353,6 +353,21 @@ Released September 2, 2020
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
 
+## v4.4.12
+October 14, 2020
+
+!!! note "Updates to CLI versions"
+    We've now updated our list of CLI versions.
+    It includes the supported IAAS CLIs.
+
+### Bug Fixes
+- Do to a release packaging issue,
+  the previous patch version had issues invoking `openstack` CLI.
+  This release ensures this has been fixed.
+  We've also added further release testing to ensure it doesn't happen again.
+
+
+
 ## v4.4.11
 October 9, 2020
 
