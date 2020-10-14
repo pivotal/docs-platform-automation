@@ -763,6 +763,21 @@ October 14, 2020
     We've now updated our list of CLI versions.
     It includes the supported IAAS CLIs.
 
+??? "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.157 |
+    | azure-cli | 2.13.0 |
+    | bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/6.4.0) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 314.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | [6.4.1](https://github.com/pivotal-cf/om/releases/tag/6.4.1) |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.20" target="_blank">Download</a>
+
 ### Bug Fixes
 - Do to a release packaging issue,
   the previous patch version had issues invoking `openstack` CLI.
