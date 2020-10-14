@@ -34,7 +34,7 @@ October 14, 2020
     |---|---|
     | aws-cli | 1.18.157 |
     | azure-cli | 2.13.0 |
-    | bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/6.4.0) |
+    | bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
     | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
     | gcloud-cli | 314.0.0 |
     | govc-cli | 0.23.0 |
@@ -437,7 +437,7 @@ October 14, 2020
     |---|---|
     | aws-cli | 1.18.157 |
     | azure-cli | 2.13.0 |
-    | bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/6.4.0) |
+    | bosh-cli | [6.4.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.0) |
     | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
     | gcloud-cli | 314.0.0 |
     | govc-cli | 0.23.0 |
