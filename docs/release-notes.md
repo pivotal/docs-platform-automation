@@ -21,6 +21,21 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.6
+October 14, 2020
+
+!!! note "Updates to CLI versions"
+    We've now updated our list of CLI versions.
+    It includes the supported IAAS CLIs.
+
+### Bug Fixes
+- Do to a release packaging issue,
+  the previous patch version had issues invoking `openstack` CLI.
+  This release ensures this has been fixed.
+  We've also added further release testing to ensure it doesn't happen again.
+
+
+
 ## v5.0.5
 October 9, 2020
 
