@@ -28,7 +28,7 @@ October 14, 2020
     We've now updated our list of CLI versions.
     It includes the supported IAAS CLIs.
 
-??? "CLI Versions"
+??? info "CLI Versions"
 
     | Name | version |
     |---|---|
@@ -360,7 +360,7 @@ October 14, 2020
     We've now updated our list of CLI versions.
     It includes the supported IAAS CLIs.
 
-??? "CLI Versions"
+??? info "CLI Versions"
 
     | Name | version |
     |---|---|
@@ -763,7 +763,7 @@ October 14, 2020
     We've now updated our list of CLI versions.
     It includes the supported IAAS CLIs.
 
-??? "CLI Versions"
+??? info "CLI Versions"
 
     | Name | version |
     |---|---|
