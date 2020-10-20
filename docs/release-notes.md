@@ -48,7 +48,9 @@ October 14, 2020
   the previous patch version had issues invoking `openstack` CLI.
   This release ensures this has been fixed.
   We've also added further release testing to ensure it doesn't happen again.
-
+- [`download-and-upload-product`][download-and-upload-product] did not upload the stemcell as expected.
+  The task now properly uploads the stemcell if `stemcell-iaas`
+  is provided in the config file. 
 
 
 ## v5.0.5
