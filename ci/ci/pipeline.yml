@@ -375,7 +375,7 @@ jobs:
   - get: docs-platform-automation
   - put: ci-image
     params:
-      build: ci
+      build: docs-platform-automation
       dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
     get_params:
       skip_download: "true"
