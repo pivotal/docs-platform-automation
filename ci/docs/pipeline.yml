@@ -97,7 +97,6 @@ jobs:
       - name: #@ "docs-platform-automation-" + version.branch
 #@ end
       - name: docs-platform-automation-reference-pipeline-config
-      - name: ci
       outputs:
       - name: docs
       image_resource:
@@ -171,7 +170,6 @@ jobs:
       - name: #@ "docs-platform-automation-" + version.branch
 #@ end
       - name: docs-platform-automation-reference-pipeline-config
-      - name: ci
       outputs:
         - name: docs
       image_resource:

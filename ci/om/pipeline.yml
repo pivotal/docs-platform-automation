@@ -168,7 +168,7 @@ jobs:
     - get: ops-manager-example-prod
   - put: om-image
     params:
-      build: ci
+      build: docs-platform-automation
       dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.om
   - task: run-terraform
     file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
