@@ -28,11 +28,6 @@ groups:
   - #@ "update-" + version.number
   - empty-cve-patch-notes-file
 resources:
-- name: ci
-  type: git
-  source:
-    branch: develop
-    uri: https://github.com/pivotal/docs-platform-automation
 - name: docs-platform-automation-reference-pipeline-config
   type: git
   source:
@@ -357,7 +352,7 @@ jobs:
 - name: bump-clis
   plan:
   - in_parallel:
-    - get: ci
+    - get: docs-platform-automation
     - get: govc-cli
       trigger: true
     - get: om-cli
@@ -368,7 +363,7 @@ jobs:
       trigger: true
     - get: platform-automation
   - task: bump-src-deps
-    file: ci/ci/tasks/update-deps.yml
+    file: docs-platform-automation/ci/tasks/update-deps.yml
   - put: platform-automation
     params:
       rebase: true
@@ -377,12 +372,11 @@ jobs:
   plan:
   - get: daily
     trigger: true
-  - get: ci
-    trigger: true
+  - get: docs-platform-automation
   - put: ci-image
     params:
       build: ci
-      dockerfile: ci/ci/dockerfiles/Dockerfile.ci
+      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
     get_params:
       skip_download: "true"
 - name: build-packages-image
@@ -390,11 +384,11 @@ jobs:
   - get: daily
     trigger: true
   - get: platform-automation
-  - get: ci
+  - get: docs-platform-automation
   - put: packages-image
     params:
       build: platform-automation
-      dockerfile: ci/ci/dockerfiles/Dockerfile.packages
+      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
     get_params:
       save: true
 - name: build-binaries-image-combined
@@ -439,7 +433,6 @@ jobs:
       params:
         globs:
         - '*linux'
-    - get: ci
     - get: platform-automation
       trigger: true
     - get: docs-platform-automation
@@ -453,11 +446,11 @@ jobs:
       params:
         pre: rc
   - task: test-and-build-p-automator
-    file: ci/ci/tasks/test-and-build-p-automator/task.yml
+    file: docs-platform-automation/ci/tasks/test-and-build-p-automator/task.yml
   - put: binaries-image
     params:
       build: .
-      dockerfile: ci/ci/dockerfiles/Dockerfile.binaries
+      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
       load_bases:
       - packages-image
     get_params:
@@ -465,30 +458,30 @@ jobs:
   - put: vsphere-only-image
     params:
       build: .
-      dockerfile: ci/ci/dockerfiles/Dockerfile.vsphere-only
+      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
       load_bases:
       - binaries-image
   - in_parallel:
     - task: generate-dpkg-list-for-OSL
-      file: ci/ci/tasks/generate-dpkg-list-for-OSL.yml
+      file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
     - task: generate-dpkg-list-for-OSL
-      file: ci/ci/tasks/generate-dpkg-list-for-OSL.yml
+      file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       output_mapping:
         rc-image-receipt-s3: rc-vsphere-image-receipt-s3
       image: vsphere-only-image
     - task: create-release-file
-      file: ci/ci/tasks/package-for-release/platform-automation.yml
+      file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
       input_mapping:
         platform-automation-image: binaries-image
         vsphere-platform-automation-image: vsphere-only-image
   - in_parallel:
     - task: test-docker-import
       privileged: true
-      file: ci/ci/tasks/test-docker-import/task.yml
+      file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
     - task: test-docker-import
       privileged: true
-      file: ci/ci/tasks/test-docker-import/task.yml
+      file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
       params:
         PRODUCT_PATH: vsphere-platform-automation-image-*.tar.gz
   - in_parallel:
@@ -517,7 +510,7 @@ jobs:
         skip_download: "true"
   - task: define-cli-versions
     image: binaries-image
-    file: ci/ci/tasks/pivnet-release/define-cli-versions.yml
+    file: docs-platform-automation/ci/tasks/pivnet-release/define-cli-versions.yml
   - put: binaries-table
     params:
       file: cli-versions-table/bump-image-cli-versions*
@@ -528,7 +521,7 @@ jobs:
 - name: test-image-dependency-stability
   plan:
   - in_parallel:
-    - get: ci
+    - get: docs-platform-automation
     - get: binaries-image
       resource: rc-image-s3
       passed: [ build-binaries-image-combined ]
@@ -554,10 +547,10 @@ jobs:
           set -eux
           echo "test" > version/version
   - task: generate-dpkg-list-for-OSL
-    file: ci/ci/tasks/generate-dpkg-list-for-OSL.yml
+    file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: binaries-image
   - task: check-osl-reuse-validity
-    file: ci/ci/tasks/check-osl-reuse-validity.yml
+    file: docs-platform-automation/ci/tasks/check-osl-reuse-validity.yml
 - name: bump-version-to-major
   plan:
   - put: version
@@ -567,7 +560,7 @@ jobs:
   plan:
   - in_parallel:
     - get: osl
-    - get: ci
+    - get: docs-platform-automation
     - get: rc-image-s3
       passed:
       - run-tasks-in-ci-azure-job
@@ -604,17 +597,17 @@ jobs:
       params:
         bump: final
   - task: create-release-file
-    file: ci/ci/tasks/package-for-release/platform-automation.yml
+    file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
       platform-automation-image: rc-image-s3
       vsphere-platform-automation-image: rc-image-s3-vsphere
   - task: test-docker-import
     privileged: true
-    file: ci/ci/tasks/test-docker-import/task.yml
+    file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
   - task: generate-platform-automation-metadata
-    file: ci/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.0.yml
+    file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.0.yml
   - task: generate-dpkg-list-for-OSL
-    file: ci/ci/tasks/generate-dpkg-list-for-OSL.yml
+    file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: rc-image-s3
   - put: pivnet-rc
     params:
@@ -678,7 +671,7 @@ jobs:
     - get: binaries-table
       passed:
       - build-binaries-image-combined
-    - get: ci
+    - get: docs-platform-automation
     - get: paving
     - get: deployments
     - get: platform-automation-image
@@ -705,7 +698,7 @@ jobs:
         globs:
         - '*gcp*.yml'
   - task: run-terraform
-    file: ci/ci/tasks/create-infrastructure/task.yml
+    file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
       IAAS: gcp
       DEPLOYMENT_NAME: ci-upgrade
@@ -960,7 +953,7 @@ jobs:
       passed:
       - build-binaries-image-combined
       tags: #@ tags
-    - get: ci
+    - get: docs-platform-automation
       tags: #@ tags
     - get: paving
       tags: #@ tags
@@ -1001,7 +994,7 @@ jobs:
       tags: #@ tags
   - task: run-terraform
     tags: #@ tags
-    file: ci/ci/tasks/create-infrastructure/task.yml
+    file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
       IAAS: #@ paving_dir
       DEPLOYMENT_NAME: #@ env_name
@@ -1252,7 +1245,7 @@ jobs:
   - try:
       task: delete-infrastructure
       tags: #@ tags
-      file: ci/ci/tasks/delete-infrastructure/task.yml
+      file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
       params:
         IAAS: #@ paving_dir
         DEPLOYMENT_NAME: #@ env_name
@@ -1265,7 +1258,7 @@ jobs:
           repository: deployments
   - task: leftovers
     tags: #@ tags
-    file: ci/ci/tasks/leftovers.yml
+    file: docs-platform-automation/ci/tasks/leftovers.yml
     params:
       BBL_IAAS: #@ paving_dir
       BBL_AWS_ACCESS_KEY_ID: ((s3.access_key_id))
@@ -1284,7 +1277,7 @@ jobs:
       NO_CONFIRM: true
   - task: remove state files
     tags: #@ tags
-    file: ci/ci/tasks/delete-state-file.yml
+    file: docs-platform-automation/ci/tasks/delete-state-file.yml
     params:
       DEPLOYMENT: #@ env_name
       PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
@@ -1297,12 +1290,13 @@ jobs:
 #@ end
 - name: check-for-secrets-in-tasks
   plan:
-  - get: daily
-    trigger: true
-  - get: deployments
-  - get: ci
+  - in_parallel:
+    - get: daily
+      trigger: true
+    - get: deployments
+    - get: docs-platform-automation
   - task: check-for-secrets
-    file: ci/ci/tasks/secrets-verifier/task.yml
+    file: docs-platform-automation/ci/tasks/secrets-verifier/task.yml
     timeout: 30m
     params:
       FLY_USERNAME: ((fly.username))
@@ -1312,7 +1306,7 @@ jobs:
     on_failure:
       do:
       - task: create-secret-slack-notification
-        file: ci/ci/tasks/create-secret-slack-notification.yml
+        file: docs-platform-automation/ci/tasks/create-secret-slack-notification.yml
       - put: slack
         params:
           silent: true
@@ -1321,7 +1315,7 @@ jobs:
   serial: true
   plan:
   - in_parallel:
-    - get: ci
+    - get: docs-platform-automation
     - get: deployments
     - get: pks-cli
       params:
@@ -1338,7 +1332,7 @@ jobs:
         - build-binaries-image-combined
       trigger: true
   - task: create-pks-cluster
-    file: ci/ci/tasks/create-pks-cluster/task.yml
+    file: docs-platform-automation/ci/tasks/create-pks-cluster/task.yml
     params:
       ENV_FILE: deployments/reference-gcp/env.yml
 - name: additional-task-testing
@@ -1555,7 +1549,7 @@ jobs:
 - name: bump-test-image-dependency-stability
   plan:
   - in_parallel:
-    - get: ci
+    - get: docs-platform-automation
     - get: binaries-image
       resource: rc-image-s3
       passed: [ bump-previous-versions-trigger ]
@@ -1581,10 +1575,10 @@ jobs:
           set -eux
           echo "test" > version/version
   - task: generate-dpkg-list-for-OSL
-    file: ci/ci/tasks/generate-dpkg-list-for-OSL.yml
+    file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: binaries-image
   - task: check-osl-reuse-validity
-    file: ci/ci/tasks/check-osl-reuse-validity.yml
+    file: docs-platform-automation/ci/tasks/check-osl-reuse-validity.yml
 #@ for version in data.values.versions:
 - name: #@ "update-" + version.number
   serial_groups: [ bump ]
@@ -1592,11 +1586,9 @@ jobs:
   - in_parallel:
     - get: osl
     - get: odp
-    - get: platform-automation
-      resource: #@ "platform-automation-" + version.number
+    - get: #@ "platform-automation-" + version.number
+    - get: #@ "docs-platform-automation-" + version.number
     - get: docs-platform-automation
-      resource: #@ "docs-platform-automation-" + version.number
-    - get: ci
     - get: version
       resource: #@ "version-" + version.number
       params:
@@ -1614,31 +1606,35 @@ jobs:
     - get: binaries-table
       passed: [ bump-previous-versions-trigger ]
   - task: create-release-notes-for-patch
-    file: ci/ci/tasks/pivnet-release/generate-release-notes.yml
+    file: docs-platform-automation/ci/tasks/pivnet-release/generate-release-notes.yml
     params:
       GITHUB_SSH_KEY: ((platform_automation_docs.private_key))
   - task: test-and-build-p-automator
-    file: ci/ci/tasks/test-and-build-p-automator/task.yml
-  - task: create-release-file
-    file: ci/ci/tasks/package-for-release/platform-automation.yml
+    file: docs-platform-automation/ci/tasks/test-and-build-p-automator/task.yml
     input_mapping:
+      platform-automation: #@ "platform-automation-" + version.number
+      docs-platform-automation: #@ "docs-platform-automation-" + version.number
+  - task: create-release-file
+    file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
+    input_mapping:
+      platform-automation: #@ "platform-automation-" + version.number
       platform-automation-image: binaries-image
       #@ if version.vsphere_image:
       vsphere-platform-automation-image: rc-image-s3-vsphere
       #@ end
   - in_parallel:
     - task: test-docker-import
-      file: ci/ci/tasks/test-docker-import/task.yml
+      file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
       privileged: true
     - task: test-task
-      file: platform-automation/tasks/test.yml
+      file: #@ "platform-automation-" + version.number + "/tasks/test.yml"
       image: platform-automation-image
       input_mapping:
-        platform-automation-tasks: platform-automation
+        platform-automation-tasks: #@ "platform-automation-" + version.number
     - task: generate-platform-automation-metadata
-      file: ci/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
+      file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
     - task: generate-dpkg-list-for-OSL
-      file: ci/ci/tasks/generate-dpkg-list-for-OSL.yml
+      file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
   - in_parallel:
     - put: #@ "platform-automation-" + version.number
@@ -1672,10 +1668,9 @@ jobs:
         - #@ "update-" + version.number
         #@ end
         trigger: true
-      - get: ci
       - get: docs-platform-automation
     - task: empty-cve-patch-notes
-      file: ci/ci/tasks/pivnet-release/empty-cve-patch-notes.yml
+      file: docs-platform-automation/ci/tasks/pivnet-release/empty-cve-patch-notes.yml
     - put: docs-platform-automation
       params:
         repository: docs-platform-automation

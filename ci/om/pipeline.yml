@@ -12,7 +12,7 @@ resource_types:
     tag: latest-final
 
 resources:
-- name: ci
+- name: docs-platform-automation
   type: git
   source:
     uri: https://github.com/pivotal/docs-platform-automation
@@ -104,12 +104,12 @@ jobs:
   - in_parallel:
     - get: om
       trigger: true
-    - get: ci
+    - get: docs-platform-automation
   - in_parallel:
     - task: download-product
       params:
         OM_pivnet_token: ((pivnet_token))
-      file: ci/ci/tasks/download-product.yml
+      file: docs-platform-automation/ci/tasks/download-product.yml
     - task: test
       attempts: 3
       file: om/ci/tasks/tests/task.yml
@@ -162,16 +162,16 @@ jobs:
           - '*gcp*.yml'
           - '*GCP.yml'
     - get: om-image
-    - get: ci
+    - get: docs-platform-automation
     - get: paving
     - get: deployments
     - get: ops-manager-example-prod
   - put: om-image
     params:
       build: ci
-      dockerfile: ci/ci/dockerfiles/Dockerfile.om
+      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.om
   - task: run-terraform
-    file: ci/ci/tasks/create-infrastructure/task.yml
+    file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
       IAAS: gcp
       DEPLOYMENT_NAME: ci-om
@@ -345,7 +345,7 @@ jobs:
           rebase: true
           repository: repository-commit
   - task: delete-infrastructure
-    file: ci/ci/tasks/delete-infrastructure/task.yml
+    file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
     params:
       IAAS: gcp
       DEPLOYMENT_NAME: ci-om
@@ -360,11 +360,11 @@ jobs:
   serial: true
   plan:
   - in_parallel:
-    - get: ci
+    - get: docs-platform-automation
     - get: deployments
     - get: paving
   - task: delete-infrastructure
-    file: ci/ci/tasks/delete-infrastructure/task.yml
+    file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
     params:
       IAAS: gcp
       DEPLOYMENT_NAME: ci-om

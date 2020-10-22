@@ -39,7 +39,7 @@ resources:
     source:
       uri: https://github.com/pivotal/paving
 
-  - name: ci
+  - name: docs-platform-automation
     type: git
     source:
       uri: https://github.com/pivotal/docs-platform-automation
@@ -100,9 +100,9 @@ jobs:
       params:
         unpack: true
     - get: deployments
-    - get: ci
+    - get: docs-platform-automation
   - task: run-terraform
-    file: ci/ci/tasks/create-infrastructure/task.yml
+    file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
       IAAS: gcp
       DEPLOYMENT_NAME: ci-support
@@ -254,7 +254,7 @@ jobs:
             rebase: true
             repository: repository-commit
   - task: delete-infrastructure
-    file: ci/ci/tasks/delete-infrastructure/task.yml
+    file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
     params:
       IAAS: gcp
       DEPLOYMENT_NAME: ci-support
@@ -266,7 +266,7 @@ jobs:
         repository: deployments
   ensure:
     task: leftovers
-    file: ci/ci/tasks/leftovers.yml
+    file: docs-platform-automation/ci/tasks/leftovers.yml
     params:
       BBL_IAAS: gcp
       BBL_AWS_ACCESS_KEY_ID: ((s3.access_key_id))

@@ -9,7 +9,6 @@ image_resource:
 params:
   GITHUB_SSH_KEY:
 inputs:
-- name: ci
 - name: version
 - name: binaries-table
 
@@ -41,17 +40,17 @@ run:
     set -e
     
     echo "Generating release notes for $VERSION..."
-    pushd ci
+    pushd docs-platform-automation/ci
       go run ./scripts/generate-release-notes/generate-release-notes.go \
-        --docs-dir ../docs-platform-automation \
-        --patch-notes-path ../docs-platform-automation/ci/patch-notes/cve-patch-notes.md \
-        --patch-notes-path ../docs-platform-automation/ci/patch-notes/"$DOC_VERSION"-patch-notes.md \
+        --docs-dir ../../docs-platform-automation \
+        --patch-notes-path ../../docs-platform-automation/ci/patch-notes/cve-patch-notes.md \
+        --patch-notes-path ../../docs-platform-automation/ci/patch-notes/"$DOC_VERSION"-patch-notes.md \
         --patch-versions "$VERSION"
 
       echo "Inserting version table into release notes..."
       go run ./scripts/insert-cli-versions-into-release-notes/insert-cli-versions-into-release-notes.go \
-         ../docs-platform-automation/docs/release-notes.md \
-         ../binaries-table/bump-image-cli-versions* \
+         ../../docs-platform-automation/docs/release-notes.md \
+         ../../binaries-table/bump-image-cli-versions* \
          "$VERSION"
     popd
 
@@ -64,10 +63,10 @@ run:
       git push
     popd 
 
-    pushd ci
+    pushd docs-platform-automation/ci
       echo "Porting version table to previous branches..."
       go run ./scripts/generate-release-notes/generate-release-notes.go \
-        --docs-dir ../docs-platform-automation
+        --docs-dir ../../docs-platform-automation
     popd
 
     pushd docs-platform-automation

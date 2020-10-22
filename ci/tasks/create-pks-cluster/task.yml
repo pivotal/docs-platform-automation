@@ -6,7 +6,7 @@ image_resource:
     tag: testing
 inputs:
   - name: pks-cli
-  - name: ci
+  - name: docs-platform-automation
   - name: deployments
 params:
   DOMAIN: reference-gcp.gcp.platform-automation.cf-app.com
@@ -14,4 +14,4 @@ params:
   SLEEP_INTERVAL: 1m
   ENV_FILE:
 run:
-  path: ci/ci/tasks/create-pks-cluster/task.sh
+  path: docs-platform-automation/ci/tasks/create-pks-cluster/task.sh

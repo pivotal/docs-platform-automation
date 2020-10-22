@@ -12,7 +12,7 @@ resource_types:
     repository: cfcommunity/slack-notification-resource
     tag: latest
 resources:
-- name: ci
+- name: docs-platform-automation
   type: git
   source:
     uri: https://github.com/pivotal/docs-platform-automation
@@ -95,11 +95,9 @@ jobs:
 - name: #@ "update-" + version.branch_name
   plan:
   - in_parallel:
-    - get: platform-automation
-      resource: #@ "platform-automation-" + version.branch_name
+    - get: #@ "platform-automation-" + version.branch_name
+    - get: #@ "docs-platform-automation-" + version.branch_name
     - get: docs-platform-automation
-      resource: #@ "docs-platform-automation-" + version.branch_name
-    - get: ci
     - get: platform-automation-image
       resource: #@ "pivnet-release-" + version.branch_name
       trigger: true
@@ -128,23 +126,26 @@ jobs:
             echo $version
             echo "$version+python-mitigation" > version/version
   - task: remove-python
-    file: ci/ci/tasks/python-mitigation.yml
+    file: docs-platform-automation/ci/tasks/python-mitigation.yml
+    input_mapping:
+      platform_automation: #@ "platform-automation-" + version.number
     privileged: true
   - task: create-release-file
-    file: ci/ci/tasks/package-for-release/platform-automation.yml
+    file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
       platform-automation-image: bumped-platform-automation-image
+      platform_automation: #@ "platform-automation-" + version.number
   - in_parallel:
     - task: test-docker-import
-      file: ci/ci/tasks/test-docker-import/task.yml
+      file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
       privileged: true
     - task: test-task
-      file: platform-automation/tasks/test.yml
+      file: #@ "platform-automation-" + version.number + "/tasks/test.yml"
       image: platform-automation-image
       input_mapping:
         platform-automation-tasks: platform-automation
     - task: generate-platform-automation-metadata
-      file: ci/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
+      file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
   - put: #@ "pivnet-release-" + version.branch_name + "-python-mitigation"
     params:
       file_glob: packaged-product/*
