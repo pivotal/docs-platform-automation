@@ -19,6 +19,7 @@ run:
 
     AWS_VERSION="$(aws --version | awk '{ print $1 }' | cut -d '/' -f 2)"
     AZURE_VERSION="$(az --version | grep azure-cli | awk '{ print $2 }' | head -n1)"
+    BBR_VERSION="$(bbr version | awk '{ print $3 }')"
     BOSH_VERSION="$(cat bosh-cli/tag)"
     CREDHUB_VERSION="$(cat credhub-cli/tag)"
     GCLOUD_VERSION="$(gcloud --version | grep 'Google Cloud SDK' | awk '{ print $4 }' | head -n1)"
@@ -33,6 +34,7 @@ run:
         |---|---|
         | aws-cli | $AWS_VERSION |
         | azure-cli | $AZURE_VERSION |
+        | bbr-cli | $BBR_VERSION |
         | bosh-cli | [$BOSH_VERSION](https://github.com/cloudfoundry/bosh-cli/releases/tag/$BOSH_VERSION) |
         | credhub | [$CREDHUB_VERSION](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/$CREDHUB_VERSION) |
         | gcloud-cli | $GCLOUD_VERSION |
