@@ -1,8 +1,0 @@
-vmextensions-configuration:
-- name: concourse-lb
-  cloud_properties:
-    load_balancer: ((environment_name))-concourse-lb
-- name: increased-disk
-  cloud_properties:
-    ephemeral_disk:
-      size: 512000
