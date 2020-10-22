@@ -6,7 +6,7 @@ image_resource:
     repository: ubuntu
 inputs:
 - name: docs
-- name: ci
+- name: docs-platform-automation
 outputs:
 - name: docs
 run:
@@ -16,4 +16,4 @@ run:
   - |
     set -eux
 
-    cat ci/ci/tasks/docs-nginx-rewrite-rules.conf >> docs/nginx/conf/redirect.conf
+    cat docs-platform-automation/ci/tasks/docs-nginx-rewrite-rules.conf >> docs/nginx/conf/redirect.conf

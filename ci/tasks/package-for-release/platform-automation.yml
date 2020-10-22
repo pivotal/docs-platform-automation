@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-- name: ci
+- name: docs-platform-automation
 - name: version
 - name: platform-automation
 - name: platform-automation-image

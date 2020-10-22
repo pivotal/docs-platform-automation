@@ -2,7 +2,7 @@
 platform: linux
 inputs:
 - name: deployments
-- name: ci
+- name: docs-platform-automation
 image_resource:
   type: registry-image
   source:
@@ -15,9 +15,9 @@ run:
     - |
       set -eux
 
-      pushd ci/tasks/secrets-verifier
+      pushd docs-platform-automation/tasks/secrets-verifier
         bundle install
       popd
-      ./ci/ci/tasks/secrets-verifier/finder.rb
+      ./docs-platform-automation/ci/tasks/secrets-verifier/finder.rb
 params:
   RUBYOPT: "-E utf-8:utf-8"

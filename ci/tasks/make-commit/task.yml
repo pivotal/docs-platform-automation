@@ -3,7 +3,7 @@ platform: linux
 inputs:
 - name: generated-state
 - name: deployments
-- name: ci
+- name: docs-platform-automation
 outputs:
 - name: deployments-updated
 image_resource:
@@ -14,4 +14,4 @@ image_resource:
 params:
   IAAS:
 run:
-  path: ci/ci/tasks/make-commit/task.sh
+  path: docs-platform-automation/ci/tasks/make-commit/task.sh

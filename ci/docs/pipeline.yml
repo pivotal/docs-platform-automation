@@ -27,7 +27,7 @@ resources:
     tag_filter: #@ tag_filter
 #@ end
 #@ end
-- name: ci
+- name: docs-platform-automation
   type: git
   source:
     uri: https://github.com/pivotal/docs-platform-automation
@@ -86,7 +86,7 @@ jobs:
       trigger: true
 #@ end
     - get: docs-platform-automation-reference-pipeline-config
-    - get: ci
+    - get: docs-platform-automation
   - task: generate-docs-app
     config:
       platform: linux
@@ -122,7 +122,7 @@ jobs:
           - '--exclude-from-dropdown'
           - #@ excluded_versions
   - task: set-redirects
-    file: ci/ci/tasks/additional-nginx-rewrite-rules.yml
+    file: docs-platform-automation/ci/tasks/additional-nginx-rewrite-rules.yml
   - put: docs-app-staging
     params:
       manifest: docs/manifest.yml
@@ -160,7 +160,7 @@ jobs:
 #@ end
     - get: mkdocs-pivotal-theme
     - get: docs-platform-automation-reference-pipeline-config
-    - get: ci
+    - get: docs-platform-automation
   - task: generate-docs-app
     config:
       platform: linux
@@ -196,7 +196,7 @@ jobs:
           - '--exclude-from-dropdown'
           - #@ excluded_versions
   - task: set-redirects
-    file: ci/ci/tasks/additional-nginx-rewrite-rules.yml
+    file: docs-platform-automation/ci/tasks/additional-nginx-rewrite-rules.yml
   - put: docs-app-production
     params:
       manifest: docs/manifest.yml

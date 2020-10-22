@@ -2,7 +2,7 @@
 platform: linux
 inputs:
 - name: deployments
-- name: ci
+- name: docs-platform-automation
 outputs:
 - name: config
 - name: env
@@ -16,4 +16,4 @@ image_resource:
 params:
   IAAS:
 run:
-  path: ci/ci/tasks/generate-config/task.sh
+  path: docs-platform-automation/ci/tasks/generate-config/task.sh

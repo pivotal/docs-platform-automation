@@ -2,7 +2,7 @@
 platform: linux
 inputs:
 - name: pas-windows-stemcell-pivnet
-- name: ci
+- name: docs-platform-automation
 outputs:
 - name: stemcell
 image_resource:
@@ -11,4 +11,4 @@ image_resource:
     repository: ((docker.ci-repository))
     tag: testing
 run:
-  path: ci/ci/tasks/rename-windows-stemcell/task.rb
+  path: docs-platform-automation/ci/tasks/rename-windows-stemcell/task.rb
