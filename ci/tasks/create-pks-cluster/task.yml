@@ -1,0 +1,17 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+inputs:
+  - name: pks-cli
+  - name: ci
+  - name: deployments
+params:
+  DOMAIN: reference-gcp.gcp.platform-automation.cf-app.com
+  CLUSTER_NAME: test-additional-tasks-cluster
+  SLEEP_INTERVAL: 1m
+  ENV_FILE:
+run:
+  path: ci/ci/tasks/create-pks-cluster/task.sh

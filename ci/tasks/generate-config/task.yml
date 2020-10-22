@@ -1,0 +1,19 @@
+---
+platform: linux
+inputs:
+- name: deployments
+- name: ci
+outputs:
+- name: config
+- name: env
+- name: vars
+- name: state
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+params:
+  IAAS:
+run:
+  path: ci/ci/tasks/generate-config/task.sh

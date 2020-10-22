@@ -1,0 +1,44 @@
+FROM ubuntu:bionic
+
+# Install necessary binary
+RUN apt-get update && apt-get -y --no-install-recommends install \
+    bash \
+    build-essential \
+    curl \
+    gettext \
+    git \
+    netcat-openbsd \
+    python3-pip \
+    python3-dev \
+    python3-setuptools \
+    rsync \
+    ssh \
+    unzip \
+    zip \
+    && true
+# netcat for `bosh ssh` -- the why is explained here: https://github.com/cloudfoundry/bosh-cli/issues/374
+
+# pip
+RUN pip3 install --upgrade pip
+
+# gcloud
+RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
+ENV PATH /root/google-cloud-sdk/bin:$PATH
+RUN ln -s /root/google-cloud-sdk/bin/* /usr/local/bin/
+RUN gcloud --version
+
+# azure
+RUN pip3 install azure-cli --use-feature=2020-resolver
+RUN az --version
+
+# aws
+RUN pip3 install awscli --use-feature=2020-resolver
+RUN aws --version
+
+# openstack
+RUN pip3 install python-openstackclient --use-feature=2020-resolver
+RUN openstack --version
+
+# Upgrade all packages
+RUN apt-get upgrade -y
+RUN apt-get autoremove -y build-essential python3-dev

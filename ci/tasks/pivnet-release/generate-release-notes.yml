@@ -1,0 +1,81 @@
+---
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+
+params:
+  GITHUB_SSH_KEY:
+inputs:
+- name: ci
+- name: version
+- name: binaries-table
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    echo "Setting git key..."
+    echo "$GITHUB_SSH_KEY" > key
+    chmod 0600 key
+    export GIT_SSH_COMMAND="ssh -i $PWD/key -o IdentitiesOnly=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+
+    VERSION="$(cat version/version)"
+    DOC_VERSION=$(echo "$VERSION" | cut -f 1,2 -d '.' --output-delimiter='.')
+  
+    git clone git@github.com:pivotal/docs-platform-automation
+
+    echo "Checking presence of release notes..."
+    set +e
+    grep -q "^## v$VERSION$" docs-platform-automation/docs/release-notes.md
+    version_exists=$?
+    if [ "$version_exists" == "0" ]; then
+      echo "Release Notes already exist for $VERSION. Skipping..."
+      exit 0
+    fi
+    set -e
+    
+    echo "Generating release notes for $VERSION..."
+    pushd ci
+      go run ./scripts/generate-release-notes/generate-release-notes.go \
+        --docs-dir ../docs-platform-automation \
+        --patch-notes-path ../docs-platform-automation/ci/patch-notes/cve-patch-notes.md \
+        --patch-notes-path ../docs-platform-automation/ci/patch-notes/"$DOC_VERSION"-patch-notes.md \
+        --patch-versions "$VERSION"
+
+      echo "Inserting version table into release notes..."
+      go run ./scripts/insert-cli-versions-into-release-notes/insert-cli-versions-into-release-notes.go \
+         ../docs-platform-automation/docs/release-notes.md \
+         ../binaries-table/bump-image-cli-versions* \
+         "$VERSION"
+    popd
+
+    pushd docs-platform-automation
+      git config --global user.name "platform-automation"
+      git config --global user.email "platformautomation@groups.vmware.com"
+      git add -A
+      git commit -m "Add release notes table" || true
+      git pull -r
+      git push
+    popd 
+
+    pushd ci
+      echo "Porting version table to previous branches..."
+      go run ./scripts/generate-release-notes/generate-release-notes.go \
+        --docs-dir ../docs-platform-automation
+    popd
+
+    pushd docs-platform-automation
+      cat /dev/null > ci/patch-notes/"$DOC_VERSION"-patch-notes.md
+      if [[ -n $(git status --porcelain) ]]; then
+        git add -A
+        git commit -m "remove documented release notes for $DOC_VERSION"
+        git pull -r
+        git push
+      fi
+    popd

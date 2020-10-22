@@ -1,0 +1,15 @@
+---
+platform: linux
+inputs:
+- name: ci
+- name: deployments
+- name: paving
+outputs:
+- name: deployments
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+run:
+  path: ci/ci/tasks/create-infrastructure/task.sh

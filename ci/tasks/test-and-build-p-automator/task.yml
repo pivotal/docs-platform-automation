@@ -1,0 +1,30 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    export GOPATH="${PWD}"/gopath
+
+    cd platform-automation
+    go mod download
+    ginkgo -nodes 5 -r -p -randomizeSuites --randomizeAllSpecs
+
+    # build the binary, we already have the modules downloaded
+    go build -o ../p-automator-cli/p-automator \
+      --ldflags "-X main.version=$(git rev-list --format=format:'%H-%aI' --max-count=1 "$(git rev-parse HEAD)" | tail -1)" github.com/pivotal/platform-automation/cmd/p-automator
+
+inputs:
+- name: platform-automation
+- name: docs-platform-automation
+outputs:
+- name: p-automator-cli
+caches:
+- path: gopath
