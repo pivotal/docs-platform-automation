@@ -1170,7 +1170,7 @@ jobs:
       trigger: true
       tags: #@ tags
 #@ end
-    - get: ci
+    - get: docs-platform-automation
       tags: #@ tags
     - get: paving
       tags: #@ tags
@@ -1339,8 +1339,9 @@ jobs:
   serial: true
   plan:
   - in_parallel:
-    - get: ci
     - get: os-conf-release
+      version:
+        version: 22.0.0
     - get: docs-platform-automation-reference-pipeline-config
     - get: rc-image-s3-vsphere
       passed:
