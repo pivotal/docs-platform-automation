@@ -1339,6 +1339,7 @@ jobs:
   serial: true
   plan:
   - in_parallel:
+    - get: docs-platform-automation
     - get: os-conf-release
       version:
         version: 22.0.0
@@ -1508,7 +1509,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/update-runtime-config.yml
         input_mapping:
-          config: ci
+          config: docs-platform-automation
           releases: os-conf-release
         params:
           ENV_FILE: foundations/config/env.yml
