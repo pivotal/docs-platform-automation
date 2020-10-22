@@ -63,7 +63,7 @@ CI will fail if the version already exists.
 1. run the following command to remove those sections from the previous branches
 
    ```bash
-   go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
+   go run docs-platform-automation/ci/scripts/generate-release-notes/generate-release-notes.go \
    --docs-dir /path/to/docs-platform-automation
    ```
 
@@ -77,7 +77,7 @@ CI will fail if the version already exists.
      run the following command:
 
      ```bash
-     go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
+     go run docs-platform-automation/ci/scripts/generate-release-notes/generate-release-notes.go \
      --docs-dir /path/to/docs-platform-automation \
      --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
      --cve-patch-versions x.x.x \
@@ -98,7 +98,7 @@ CI will fail if the version already exists.
      run the following command:
      
      ```bash
-     go run platform-automation-ci/scripts/generate-release-notes/generate-release-notes.go \
+     go run docs-platform-automation/ci/scripts/generate-release-notes/generate-release-notes.go \
      --docs-dir /path/to/docs-platform-automation \
      --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
      --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/X.X-patch-notes.md \

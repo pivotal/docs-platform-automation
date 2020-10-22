@@ -1,0 +1,18 @@
+FROM internalpcfplatformautomation/platform-automation:testing
+
+# remove azure cli
+RUN pip3 install pip-autoremove
+RUN pip-autoremove -y azure-cli
+
+# remove AWS CLI
+RUN pip-autoremove -y awscli
+
+# remove Openstack CLI
+RUN pip-autoremove -y python-openstackclient
+
+# remove pip
+RUN pip3 uninstall -y pip-autoremove pip
+
+# remove gcloud CLI
+RUN rm -Rf /usr/local/bin/gcloud
+RUN rm -Rf /root/google-cloud-sdk

@@ -1,0 +1,25 @@
+FROM internalpcfplatformautomation/platform-automation:packages
+
+# copy files directly from the inputs/resource of concourse
+COPY bbr-cli/*linux* /usr/bin/bbr
+COPY bosh-cli/bosh-cli-* /usr/bin/bosh
+COPY isolation-segment-replicator/replicator-linux /usr/bin/iso-replicator
+COPY om-cli/om-linux-* /usr/bin/om
+COPY p-automator-cli/p-automator /usr/bin/p-automator
+COPY winfs-injector/winfs-injector-linux /usr/bin/winfs-injector
+COPY govc-cli/*linux* /tmp
+COPY credhub-cli/*linux* /tmp
+
+RUN gunzip /tmp/govc* && mv /tmp/govc_linux* /usr/bin/govc
+RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
+
+# Make copied binaries executable
+RUN chmod +x \
+    /usr/bin/bbr \
+    /usr/bin/bosh \
+    /usr/bin/credhub \
+    /usr/bin/govc \
+    /usr/bin/iso-replicator \
+    /usr/bin/om \
+    /usr/bin/p-automator \
+    /usr/bin/winfs-injector

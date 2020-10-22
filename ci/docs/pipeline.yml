@@ -1,0 +1,205 @@
+#@ load("@ytt:data", "data")
+---
+#@ excluded_versions = []
+#@ for version in data.values.versions:
+#@   if getattr(version, "exclude_from_dropdown", False):
+#@     excluded_versions.append(version.branch)
+#@   end
+#@ end
+#@ excluded_versions = ",".join(excluded_versions)
+resources:
+#@ for version in data.values.versions:
+#@   branch = version.branch
+#@   tag_filter = getattr(version, "tag_filter", False)
+- name: #@ "docs-platform-automation-" + branch
+  type: git
+  source:
+    branch: #@ branch
+    uri: git@github.com:pivotal/docs-platform-automation
+    private_key: ((platform_automation_docs.private_key))
+- name: #@ "platform-automation-" + branch
+  type: git
+  source:
+    branch: #@ branch
+    private_key: ((platform_automation.private_key))
+    uri: git@github.com:pivotal/platform-automation
+#@ if tag_filter:
+    tag_filter: #@ tag_filter
+#@ end
+#@ end
+- name: ci
+  type: git
+  source:
+    uri: https://github.com/pivotal/docs-platform-automation
+- name: docs-platform-automation-reference-pipeline-config
+  type: git
+  source:
+    branch: develop
+    private_key: ((platform_automation_ci.private_key))
+    uri: git@github.com:pivotal/docs-platform-automation-reference-pipeline-config
+- name: docs-app-staging
+  type: cf
+  source:
+    api: api.run.pivotal.io
+    client_id: ((docs-uaa-username))
+    client_secret: ((docs-uaa-password))
+    organization: ((docs-org))
+    space: ((docs-staging-space))
+- name: docs-app-production
+  type: cf
+  source:
+    api: api.run.pivotal.io
+    client_id: ((docs-uaa-username))
+    client_secret: ((docs-uaa-password))
+    organization: ((docs-org))
+    space: ((docs-prod-space))
+- name: mkdocs-pivotal-theme
+  type: git
+  source:
+    uri: https://github.com/pivotal/mkdocs-pivotal-theme
+- name: image
+  type: docker-image
+  source:
+    password: ((docker.password))
+    repository: ((docker.docs-repository))
+    username: ((docker.username))
+
+jobs:
+- name: create-image
+  serial: true
+  plan:
+  - get: mkdocs-pivotal-theme
+    trigger: true
+  - put: image
+    params:
+      build: mkdocs-pivotal-theme/ci
+
+- name: deploy-to-staging
+  serial: true
+  plan:
+  - in_parallel:
+    - get: mkdocs-pivotal-theme
+#@ for version in data.values.versions:
+    - get: #@ "platform-automation-" + version.branch
+      trigger: true
+    - get: #@ "docs-platform-automation-" + version.branch
+      trigger: true
+#@ end
+    - get: docs-platform-automation-reference-pipeline-config
+    - get: ci
+  - task: generate-docs-app
+    config:
+      platform: linux
+      inputs:
+      - name: mkdocs-pivotal-theme
+#@ for version in data.values.versions:
+      - name: #@ "platform-automation-" + version.branch
+      - name: #@ "docs-platform-automation-" + version.branch
+#@ end
+      - name: docs-platform-automation-reference-pipeline-config
+      - name: ci
+      outputs:
+      - name: docs
+      image_resource:
+        type: registry-image
+        source:
+          repository: ((docker.docs-repository))
+      run:
+        path: mkdocs-pivotal-theme/ci/build-docs/build_docs.rb
+        args:
+          - '--output-dir'
+          - './docs'
+          - '--docs-dir'
+          - '.'
+          - '--docs-prefix'
+          - 'docs-platform-automation'
+          - '--site-prefix'
+          - 'platform-automation'
+          - '--domains'
+          - 'docs-pcf-staging.cfapps.io'
+          - '--ignore-directories'
+          - 'docs-platform-automation-reference-pipeline-config'
+          - '--exclude-from-dropdown'
+          - #@ excluded_versions
+  - task: set-redirects
+    file: ci/ci/tasks/additional-nginx-rewrite-rules.yml
+  - put: docs-app-staging
+    params:
+      manifest: docs/manifest.yml
+      path: docs
+      current_app_name: docs-platform-automation
+      show_app_log: true
+  - task: prepare-for-lint
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: ((docker.docs-repository))
+      run:
+        path: sleep
+        args: ['1m']
+
+  - task: link-linter
+    file: mkdocs-pivotal-theme/ci/linter/task.yml
+    input_mapping:
+      site: docs
+    vars:
+      site_url: http://docs-pcf-staging.cfapps.io/platform-automation
+      allow_list: "github.com.*edit|v3.0/pipeline-design/configuration-management-strategies.html|https://fonts.gstatic.com|https://concourse-ci.org/task-step.html#input_mapping|https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules|https://github.com/concourse/s3-resource#source-configuration|#L\\d+"
+
+- name: deploy-to-production
+  serial: true
+  plan:
+  - in_parallel:
+    - get: image
+#@ for version in data.values.versions:
+    - get: #@ "platform-automation-" + version.branch
+    - get: #@ "docs-platform-automation-" + version.branch
+      trigger: true
+#@ end
+    - get: mkdocs-pivotal-theme
+    - get: docs-platform-automation-reference-pipeline-config
+    - get: ci
+  - task: generate-docs-app
+    config:
+      platform: linux
+      inputs:
+      - name: mkdocs-pivotal-theme
+#@ for version in data.values.versions:
+      - name: #@ "platform-automation-" + version.branch
+      - name: #@ "docs-platform-automation-" + version.branch
+#@ end
+      - name: docs-platform-automation-reference-pipeline-config
+      - name: ci
+      outputs:
+        - name: docs
+      image_resource:
+        type: registry-image
+        source:
+          repository: ((docker.docs-repository))
+      run:
+        path: mkdocs-pivotal-theme/ci/build-docs/build_docs.rb
+        args:
+          - '--output-dir'
+          - './docs'
+          - '--docs-dir'
+          - '.'
+          - '--docs-prefix'
+          - 'docs-platform-automation'
+          - '--site-prefix'
+          - 'platform-automation'
+          - '--domains'
+          - 'docs.pivotal.io'
+          - '--ignore-directories'
+          - 'docs-platform-automation-reference-pipeline-config'
+          - '--exclude-from-dropdown'
+          - #@ excluded_versions
+  - task: set-redirects
+    file: ci/ci/tasks/additional-nginx-rewrite-rules.yml
+  - put: docs-app-production
+    params:
+      manifest: docs/manifest.yml
+      path: docs
+      current_app_name: docs-platform-automation
+      show_app_log: true

@@ -1,0 +1,33 @@
+#@data/values
+---
+versions:
+  - branch: develop
+  - branch: v1.0
+    tag_filter: v1.0*
+    exclude_from_dropdown: true
+  - branch: v1.1
+    tag_filter: v1.1*
+    exclude_from_dropdown: true
+  - branch: v2.0
+    tag_filter: v2.0*
+    exclude_from_dropdown: true
+  - branch: v2.1
+    tag_filter: v2.1*
+    exclude_from_dropdown: true
+  - branch: v2.2
+    tag_filter: v2.2*
+    exclude_from_dropdown: true
+  - branch: v3.0
+    tag_filter: v3.0*
+  - branch: v4.0
+    tag_filter: v4.0*
+  - branch: v4.1
+    tag_filter: v4.1*
+  - branch: v4.2
+    tag_filter: v4.2*
+  - branch: v4.3
+    tag_filter: v4.3*
+  - branch: v4.4
+    tag_filter: v4.4*
+  - branch: v5.0
+    tag_filter: v5.0*

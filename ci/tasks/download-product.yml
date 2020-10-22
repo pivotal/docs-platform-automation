@@ -1,0 +1,74 @@
+inputs:
+- name: om
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+params:
+  OM_pivnet_token:
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    pushd om
+      go mod download
+      go build -o /usr/bin/om main.go
+    popd
+
+    mkdir config
+    mkdir downloads-pivnet
+    mkdir downloads-s3
+    mkdir data
+
+    export MINIO_ACCESS_KEY=minio
+    export MINIO_SECRET_KEY=password
+    minio server --config-dir "$PWD"/data --address :9000 "$PWD"/data &
+
+    # shellcheck disable=SC2154
+    cat > config/download-product.yml <<EOL
+    ---
+    pivnet-api-token: $OM_pivnet_token
+    pivnet-file-glob: "*.pivotal"
+    pivnet-product-slug: p-healthwatch
+    product-version: 1.4.4
+    stemcell-iaas: google
+
+    s3-access-key-id: minio
+    s3-secret-access-key: password
+    s3-bucket: bucket
+    s3-region-name: unknown
+    s3-endpoint: http://localhost:9000
+    EOL
+
+    om download-product \
+      --output-directory "$PWD"/downloads-pivnet \
+      -c config/download-product.yml \
+      --vars-env OM
+
+    test -e downloads-pivnet/\[p-healthwatch,*\]*.pivotal
+    test -e downloads-pivnet/\[stemcells-ubuntu-xenial,*\]*.tgz
+
+    ls downloads-pivnet/
+
+    mc config host add local http://localhost:9000 minio password
+    mc mb local/bucket
+    mc cp -q "$PWD"/downloads-pivnet/*.pivotal local/bucket/product-path/
+    mc cp -q "$PWD"/downloads-pivnet/*.tgz local/bucket/stemcell-path/
+
+    om download-product \
+      --output-directory "$PWD"/downloads-s3 \
+      --source s3 \
+      -c config/download-product.yml \
+      --vars-env OM \
+      --s3-stemcell-path /stemcell-path/ \
+      --s3-product-path /product-path/
+
+
+    test -e downloads-s3/\[p-healthwatch,*\]*.pivotal
+    test -e downloads-s3/\[stemcells-ubuntu-xenial,*\]*.tgz
+    pkill -9 minio

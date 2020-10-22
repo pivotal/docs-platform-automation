@@ -1,0 +1,17 @@
+---
+platform: linux
+inputs:
+- name: generated-state
+- name: deployments
+- name: ci
+outputs:
+- name: deployments-updated
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+params:
+  IAAS:
+run:
+  path: ci/ci/tasks/make-commit/task.sh

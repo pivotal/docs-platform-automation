@@ -1,0 +1,171 @@
+#@ load("@ytt:data", "data")
+---
+resource_types:
+- name: pivnet
+  type: registry-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+- name: slack-notification
+  type: registry-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
+resources:
+- name: ci
+  type: git
+  source:
+    uri: https://github.com/pivotal/docs-platform-automation
+#@ for version in data.values.versions:
+- name: #@ "docs-platform-automation-" + version.branch_name
+  type: git
+  source:
+    branch: #@ version.branch_name
+    private_key: ((platform_automation_docs.private_key))
+    uri: git@github.com:pivotal/docs-platform-automation
+- name: #@ "platform-automation-" + version.branch_name
+  type: git
+  source:
+    branch: #@ version.branch_name
+    private_key: ((platform_automation.private_key))
+    uri: git@github.com:pivotal/platform-automation
+- name: #@ "pivnet-release-" + version.branch_name
+  type: pivnet
+  source:
+    access_key_id: ((pivnet_aws_access_key))
+    api_token: ((pivnet_token))
+    product_slug: platform-automation
+    product_version: #@ "^" + version.product_version_regex + "$"
+    secret_access_key: ((pivnet_aws_secret_key))
+- name: #@ "pivnet-release-" + version.branch_name + "-python-mitigation"
+  type: pivnet
+  source:
+    access_key_id: ((pivnet_aws_access_key))
+    api_token: ((pivnet_token))
+    product_slug: platform-automation
+    product_version: #@ version.product_version_regex
+    secret_access_key: ((pivnet_aws_secret_key))
+#@ end
+- name: osl
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.release_candidate))
+    regexp: open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_(.*)_GA.txt
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+- name: odp
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.release_candidate))
+    regexp: VMware-Tanzu-platform-automation-toolkit-(.*)-ODP.tar.gz
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+- name: image-receipt-s3
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.release_candidate))
+    regexp: image-receipt-(.*)
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+- name: rc-image-s3
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.release_candidate))
+    regexp: platform-automation-image-(.*).tgz
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+- name: rc-tasks-s3
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.release_candidate))
+    regexp: platform-automation-tasks-(.*).zip
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+- name: slack
+  type: slack-notification
+  source:
+    url: ((slack_webhook_url))
+jobs:
+#@ for version in data.values.versions:
+- name: #@ "update-" + version.branch_name
+  plan:
+  - in_parallel:
+    - get: platform-automation
+      resource: #@ "platform-automation-" + version.branch_name
+    - get: docs-platform-automation
+      resource: #@ "docs-platform-automation-" + version.branch_name
+    - get: ci
+    - get: platform-automation-image
+      resource: #@ "pivnet-release-" + version.branch_name
+      trigger: true
+      params: { globs: ["*.tgz"] }
+    - get: osl
+    - get: odp
+  - task: generate-version
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: ((docker.ci-repository))
+          tag: testing
+      inputs:
+        - name: platform-automation-image
+      outputs:
+        - name: version
+      run:
+        path: bash
+        args:
+          - -c
+          - |
+            set -eux
+            version="$(bosh int platform-automation-image/metadata.yaml --path /release/version)"
+            echo $version
+            echo "$version+python-mitigation" > version/version
+  - task: remove-python
+    file: ci/ci/tasks/python-mitigation.yml
+    privileged: true
+  - task: create-release-file
+    file: ci/ci/tasks/package-for-release/platform-automation.yml
+    input_mapping:
+      platform-automation-image: bumped-platform-automation-image
+  - in_parallel:
+    - task: test-docker-import
+      file: ci/ci/tasks/test-docker-import/task.yml
+      privileged: true
+    - task: test-task
+      file: platform-automation/tasks/test.yml
+      image: platform-automation-image
+      input_mapping:
+        platform-automation-tasks: platform-automation
+    - task: generate-platform-automation-metadata
+      file: ci/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
+  - put: #@ "pivnet-release-" + version.branch_name + "-python-mitigation"
+    params:
+      file_glob: packaged-product/*
+      metadata_file: metadata/metadata.yml
+      s3_filepath_prefix: ((pivnet_s3_filepath_prefix))
+  - put: image-receipt-s3
+    params:
+      file: image-receipt/image-receipt-*
+      acl: public-read
+  - put: rc-image-s3
+    params:
+      file: packaged-product/platform-automation-image-*.tgz
+    get_params:
+      skip_download: "true"
+  - put: rc-tasks-s3
+    params:
+      file: packaged-product/platform-automation-tasks-*.zip
+    get_params:
+      skip_download: "true"
+  - put: slack
+    params:
+      silent: true
+      text: "A new version of the python mitigation image has been Release on Tanzunet."
+#@ end

@@ -1,0 +1,34 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: golang
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    git clone platform-automation platform-automation-updated
+
+    pushd platform-automation-updated
+    go get github.com/pivotal-cf/om
+    go get -u -a code.cloudfoundry.org/credhub-cli
+    go get -u -a github.com/cloudfoundry/bosh-cli
+    go get -u -a github.com/vmware/govmomi
+    go mod tidy
+
+    git config --global user.name "platform-automation"
+    git config --global user.email "platformautomation@groups.vmware.com"
+    git add -A
+    git commit -m "update deps for om, bosh-cli, and credhub" || true
+    popd
+inputs:
+- name: platform-automation
+- name: om-cli
+- name: bosh-cli
+- name: credhub-cli
+- name: govc-cli
+outputs:
+- name: platform-automation-updated

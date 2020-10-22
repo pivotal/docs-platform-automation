@@ -1,0 +1,32 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    gunzip govc-cli/*linux*
+    cp govc-cli/govc*linux* platform-automation/
+    cp om-cli/*linux* platform-automation/
+    cp bosh-cli/*linux* platform-automation/
+    cp winfs-injector/*linux* platform-automation/
+    cp p-automator-cli/p-automator platform-automation/
+
+    tar xvf credhub-cli/*linux*
+    cp credhub platform-automation/
+inputs:
+- name: platform-automation
+- name: govc-cli
+- name: om-cli
+- name: bosh-cli
+- name: credhub-cli
+- name: winfs-injector
+- name: p-automator-cli
+outputs:
+- name: platform-automation

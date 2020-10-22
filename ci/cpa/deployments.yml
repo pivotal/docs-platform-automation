@@ -1,0 +1,21 @@
+#@data/values
+---
+deployments_uri: git@github.com:pivotal/platform-automation-deployments
+deployments_branch: main
+deployments:
+  - iaas: gcp
+    opsman_glob: "*gcp*.yml"
+    stemcell_glob: "light*google*.tgz"
+    tags: []
+  - iaas: aws
+    opsman_glob: "*aws*.yml"
+    stemcell_glob: "light*aws*.tgz"
+    tags: []
+  - iaas: azure
+    opsman_glob: "*azure*.yml"
+    stemcell_glob: "*azure*.tgz"
+    tags: []
+  - iaas: nsxt
+    opsman_glob: "*vsphere*.ova"
+    stemcell_glob: "*vsphere*.tgz"
+    tags: [vsphere-pez]

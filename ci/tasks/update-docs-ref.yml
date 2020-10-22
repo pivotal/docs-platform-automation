@@ -1,0 +1,30 @@
+platform: linux
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    git clone deployments deployments-updated
+    cd deployments-updated
+    git submodule init
+    git submodule update
+    pushd docs-platform-automation
+      git checkout develop
+      git pull
+    popd
+    git config --global user.name "platform-automation"
+    git config --global user.email "platformautomation@groups.vmware.com"
+    git add docs-platform-automation
+    git commit -m 'updated docs submodule ref' || true
+inputs:
+- name: deployments
+- name: docs-platform-automation
+outputs:
+- name: deployments-updated
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing

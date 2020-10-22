@@ -1,0 +1,23 @@
+---
+platform: linux
+inputs:
+- name: deployments
+- name: ci
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+run:
+  path: bash
+  args:
+    - -c
+    - |
+      set -eux
+
+      pushd ci/tasks/secrets-verifier
+        bundle install
+      popd
+      ./ci/ci/tasks/secrets-verifier/finder.rb
+params:
+  RUBYOPT: "-E utf-8:utf-8"
