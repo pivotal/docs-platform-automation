@@ -34,7 +34,7 @@ run:
         |---|---|
         | aws-cli | $AWS_VERSION |
         | azure-cli | $AZURE_VERSION |
-        | bbr-cli | $BBR_VERSION |
+        | bbr-cli | [$BBR_VERSION](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v$BBR_VERSION) |
         | bosh-cli | [$BOSH_VERSION](https://github.com/cloudfoundry/bosh-cli/releases/tag/$BOSH_VERSION) |
         | credhub | [$CREDHUB_VERSION](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/$CREDHUB_VERSION) |
         | gcloud-cli | $GCLOUD_VERSION |
