@@ -21,6 +21,18 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.13
+October 23, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4581-1](https://usn.ubuntu.com/4581-1/).
+  The CVEs are related to vulnerabilities with `python3.6` and related libraries.
+  This affects the all IAAS container images only.
+- CVE update to container image. Resolves [USN-4601-1](https://usn.ubuntu.com/4601-1/).
+  The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
+  This affects the all IAAS container images only.
+
+
 ## v4.4.12
 October 14, 2020
 
