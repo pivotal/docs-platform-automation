@@ -355,6 +355,18 @@ Released September 2, 2020
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
 
+## v4.4.13
+October 23, 2020
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4581-1](https://usn.ubuntu.com/4581-1/).
+  The CVEs are related to vulnerabilities with `python3.6` and related libraries.
+  This affects the all IAAS container images only.
+- CVE update to container image. Resolves [USN-4601-1](https://usn.ubuntu.com/4601-1/).
+  The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
+  This affects the all IAAS container images only.
+
+
 ## v4.4.12
 October 14, 2020
 
