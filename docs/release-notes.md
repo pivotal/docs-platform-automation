@@ -24,6 +24,22 @@
 ## v4.3.21
 October 23, 2020
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.163 |
+    | azure-cli | 2.13.0 |
+    | bbr-cli | 1.8.0 |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 315.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | [6.4.2](https://github.com/pivotal-cf/om/releases/tag/6.4.2) |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.21" target="_blank">Download</a>
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4581-1](https://usn.ubuntu.com/4581-1/).
   The CVEs are related to vulnerabilities with `python3.6` and related libraries.
