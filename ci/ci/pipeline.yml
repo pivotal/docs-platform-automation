@@ -1641,7 +1641,7 @@ jobs:
   - in_parallel:
     - put: #@ "platform-automation-" + version.number
       params:
-        repository: platform-automation
+        repository: #@ "platform-automation-" + version.number
         tag: version/version
         tag_prefix: v
     - put: image-receipt-s3
