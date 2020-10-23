@@ -21,18 +21,6 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## v5.0.7
-October 23, 2020
-
-### Bug Fixes
-- CVE update to container image. Resolves [USN-4581-1](https://usn.ubuntu.com/4581-1/).
-  The CVEs are related to vulnerabilities with `python3.6` and related libraries.
-  This affects the all IAAS container images only.
-- CVE update to container image. Resolves [USN-4601-1](https://usn.ubuntu.com/4601-1/).
-  The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
-  This affects the all IAAS container images only.
-
-
 ## v5.0.6
 October 14, 2020
 
@@ -366,18 +354,6 @@ Released September 2, 2020
 ### Deprecation Notices
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
-
-## v4.4.13
-October 23, 2020
-
-### Bug Fixes
-- CVE update to container image. Resolves [USN-4581-1](https://usn.ubuntu.com/4581-1/).
-  The CVEs are related to vulnerabilities with `python3.6` and related libraries.
-  This affects the all IAAS container images only.
-- CVE update to container image. Resolves [USN-4601-1](https://usn.ubuntu.com/4601-1/).
-  The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
-  This affects the all IAAS container images only.
-
 
 ## v4.4.12
 October 14, 2020
@@ -781,18 +757,6 @@ Released June 4, 2020
 
 - The [`update-runtime-config`][update-runtime-config] task has been added.
   *Please note this is an advanced feature, and should be used at your own discretion.*
-
-## v4.3.21
-October 23, 2020
-
-### Bug Fixes
-- CVE update to container image. Resolves [USN-4581-1](https://usn.ubuntu.com/4581-1/).
-  The CVEs are related to vulnerabilities with `python3.6` and related libraries.
-  This affects the all IAAS container images only.
-- CVE update to container image. Resolves [USN-4601-1](https://usn.ubuntu.com/4601-1/).
-  The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
-  This affects the all IAAS container images only.
-
 
 ## v4.3.20
 October 14, 2020
