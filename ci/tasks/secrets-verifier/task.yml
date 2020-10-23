@@ -15,7 +15,7 @@ run:
     - |
       set -eux
 
-      pushd docs-platform-automation/tasks/secrets-verifier
+      pushd docs-platform-automation/ci/tasks/secrets-verifier
         bundle install
       popd
       ./docs-platform-automation/ci/tasks/secrets-verifier/finder.rb
