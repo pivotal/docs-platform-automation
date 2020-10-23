@@ -21,7 +21,7 @@ func main() {
 
 	releaseNotes, err := ioutil.ReadFile(releaseNotesFile)
 	if err != nil {
-		log.Fatal("Could not read release notes file")
+		log.Fatalf("Could not read release notes file: %s", err)
 	}
 
 	versionSeparator := []byte("## v" + version)
@@ -29,12 +29,12 @@ func main() {
 
 	err = checkVersionExists(releaseNotes, versionSeparator)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatalf("could not check versions exists: %s", err)
 	}
 
 	versionTable, err := ioutil.ReadFile(versionTableFile)
 	if err != nil {
-		log.Fatal("Could not read version table file")
+		log.Fatalf("Could not read version table file: %s", err)
 	}
 
 
@@ -44,7 +44,7 @@ func main() {
 
 	err = checkVersionTableExists(targetVersionSectionBisected[0])
 	if err!= nil {
-		log.Fatal(err.Error())
+		log.Fatalf("could not check versions table: %s", err)
 	}
 
 	injectVersionTableAndImage(targetVersionSectionBisected, versionTable, version)
@@ -55,7 +55,7 @@ func main() {
 
 	err = ioutil.WriteFile(os.Args[1], []byte(newContents), os.FileMode(0644))
 	if err != nil {
-		log.Fatal("Could not write table to release notes")
+		log.Fatalf("Could not write table to release notes: %s", err)
 	}
 
 	os.Exit(0)
