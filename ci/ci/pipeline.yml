@@ -1513,7 +1513,7 @@ jobs:
           releases: os-conf-release
         params:
           ENV_FILE: foundations/config/env.yml
-          CONFIG_FILE: config/runtime-config.yml
+          CONFIG_FILE: ci/config/runtime-config.yml
           NAME: my-runtime-config
           OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
 
