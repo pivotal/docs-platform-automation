@@ -128,13 +128,13 @@ jobs:
   - task: remove-python
     file: docs-platform-automation/ci/tasks/python-mitigation.yml
     input_mapping:
-      platform_automation: #@ "platform-automation-" + version.branch_name
+      platform-automation: #@ "platform-automation-" + version.branch_name
     privileged: true
   - task: create-release-file
     file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
       platform-automation-image: bumped-platform-automation-image
-      platform_automation: #@ "platform-automation-" + version.branch_name
+      platform-automation: #@ "platform-automation-" + version.branch_name
   - in_parallel:
     - task: test-docker-import
       file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
