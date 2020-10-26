@@ -60,7 +60,7 @@ RUN pip3 install awscli
 RUN go get github.com/vmware/govmomi/govc
 
 # openstack
-RUN pip3 install python-openstackclient --use-feature=2020-resolver
+RUN pip3 install python-openstackclient
 
 # gcloud
 RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-bionic main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
