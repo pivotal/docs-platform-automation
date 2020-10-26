@@ -57,7 +57,7 @@ RUN gem install cf-uaac
 RUN pip install awscli
 
 # govc
-RUN go install github.com/vmware/govmomi/govc
+RUN go get github.com/vmware/govmomi/govc
 
 # openstack
 RUN pip3 install python-openstackclient --use-feature=2020-resolver
