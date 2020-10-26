@@ -56,6 +56,12 @@ RUN gem install cf-uaac
 # used by `delete-terraformed-ops-manager`
 RUN pip install awscli
 
+# govc
+go install github.com/vmware/govmomi/govc
+
+# openstack
+RUN pip3 install python-openstackclient --use-feature=2020-resolver
+
 # gcloud
 RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-bionic main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
