@@ -48,6 +48,24 @@ October 23, 2020
   The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
   This affects the all IAAS container images only.
 
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+
+    For example,
+
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
 
 ## v5.0.6
 October 14, 2020
@@ -80,6 +98,24 @@ October 14, 2020
   The task now properly uploads the stemcell if `stemcell-iaas`
   is provided in the config file. 
 
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+  
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
 
 ## v5.0.5
 October 9, 2020
@@ -112,6 +148,25 @@ October 9, 2020
 - [`stage-configure-apply`][stage-configure-apply] will now treat the `product` input
   as truly optional if `CONFIG_FILE` is provided. 
 
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+  
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
+
 ## v5.0.4
 Released October 2, 2020
 
@@ -137,6 +192,25 @@ Released October 2, 2020
 The CVEs are related to vulnerabilities with `util-linux` and related libraries.
 - CVE update to container image. Resolves [USN-4504-1](https://usn.ubuntu.com/4504-1/).
 The CVEs are related to vulnerabilities with `libssl` and related libraries.
+
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+  
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
 
 ## v5.0.3
 September 15, 2020
@@ -166,6 +240,25 @@ September 15, 2020
     ...more HTTP headers...
     ```
 
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+  
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
+
 ## v5.0.2
 September 9, 2020
 
@@ -183,6 +276,25 @@ September 9, 2020
 ### Bug Fixes
 - Releasing the vSphere only-image, sorry about that in v5.0.1.
 - Bump the CLIs for `om`, `credhub`, and `winfs-injector`.
+
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+  
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
 
 ## v5.0.1
 Released September 4, 2020
@@ -237,7 +349,25 @@ Released September 4, 2020
     ```
     
     This patch ignores this value, where previously it would've not been able to parse it.
+
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
   
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
 
 ## v5.0.0
 Released September 2, 2020
@@ -383,6 +513,25 @@ Released September 2, 2020
 - In future _major_ versions of Platform Automation, the [`credhub-interpolate`][credhub-interpolate] task will be removed.
   Please use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task in its place.
 
+### Known Issues
+- When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+  the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+  When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+  this environment variable tries to honor the `no_proxy` settings.
+  The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+  
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
+
 ## v4.4.13
 October 23, 2020
 
@@ -409,7 +558,6 @@ October 23, 2020
 - CVE update to container image. Resolves [USN-4601-1](https://usn.ubuntu.com/4601-1/).
   The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
   This affects the all IAAS container images only.
-
 
 ## v4.4.12
 October 14, 2020
