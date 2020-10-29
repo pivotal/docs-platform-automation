@@ -48,7 +48,6 @@ October 23, 2020
   The CVEs are related to vulnerabilities with `python3-pip` and related libraries.
   This affects the all IAAS container images only.
 
-
 ## v4.4.12
 October 14, 2020
 
