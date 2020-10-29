@@ -94,6 +94,26 @@ deployed with Ops Manager.
 !!! info "PKS CLI may be Temporarily Unavailable"
     During the backup, the PKS CLI is disabled.
     Due to the nature of the backup, some commands may not work as expected.
+    
+??? warning "Known Issue"
+
+    When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
+    the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
+    When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
+    this environment variable tries to honor the `no_proxy` settings.
+    The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
+  
+    If you experience an error, such as an SSH connection refused or connection timeout,
+    try setting the `no_proxy: ""` as `params` on the task.
+    
+    For example,
+    
+    ```yaml
+    - task: backup-tkgi
+      file: platform-automation-tasks/tasks/backup-tkgi.yml
+      params:
+        no_proxy: ""
+    ```
 
 === "Task"
     ---excerpt--- "tasks/backup-tkgi"
