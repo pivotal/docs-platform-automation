@@ -410,6 +410,16 @@ using the [download-product][download-product] task.
     CONFIG_FILE: stemcell.yml
 ```
 
+#### assign-stemcell-task
+This artifact is an output of [`download-product`][download-product]
+located in the `assign-stemcell-config` output directory.
+
+This file should resemble the following:
+```yaml
+product: cf
+stemcell: "97.190"
+```
+
 ### telemetry
 
 The `config` input for the [collect-telemetry][collect-telemetry] task 
