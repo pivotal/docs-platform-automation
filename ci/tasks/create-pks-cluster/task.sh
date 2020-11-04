@@ -10,7 +10,7 @@ uaac target --skip-ssl-validation "https://api.pks.$DOMAIN":8443
 secret="$(om --env "$ENV_FILE" \
   credentials \
   -p pivotal-container-service \
-  --credential-reference '.properties.pks_uaa_management_admin_client' -format json | jq -r .secret)"
+  --credential-reference '.properties.pks_uaa_management_admin_client' --format json | jq -r .secret)"
 uaac token client get admin -s "$secret"
 
 userExists="$(uaac user get platform-automation)"
