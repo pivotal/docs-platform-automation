@@ -24,7 +24,7 @@ run:
     CREDHUB_VERSION="$(cat credhub-cli/tag)"
     GCLOUD_VERSION="$(gcloud --version | grep 'Google Cloud SDK' | awk '{ print $4 }' | head -n1)"
     GOVC_VERSION="$(govc version | awk '{ print $2 }' | head -n1)"
-    OM_VERSION="$(cat om-cli/tag)"
+    OM_VERSION="$(om --version)"
     WINFS_VERSION="$(cat winfs-injector/tag)"
 
     cat >> cli-versions-table/bump-image-cli-versions-"$(cat version/version)".md <<EOF
@@ -39,7 +39,7 @@ run:
         | credhub | [$CREDHUB_VERSION](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/$CREDHUB_VERSION) |
         | gcloud-cli | $GCLOUD_VERSION |
         | govc-cli | $GOVC_VERSION |
-        | om | [$OM_VERSION](https://github.com/pivotal-cf/om/releases/tag/$OM_VERSION) |
+        | om | $OM_VERSION |
         | winfs-injector | [$WINFS_VERSION](https://github.com/pivotal-cf/winfs-injector/releases/tag/$WINFS_VERSION) |
 
     EOF
