@@ -33,9 +33,6 @@ deployments:
     tags: [ ]
     enable_timed_trigger: false
 versions:
-  - number: v4.3
-    regex: 4\.3\..*
-    vsphere_image: false
   - number: v4.4
     regex: 4\.4\..*
     vsphere_image: false
