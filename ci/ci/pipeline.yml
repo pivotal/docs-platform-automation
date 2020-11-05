@@ -1,4 +1,5 @@
 #@ load("@ytt:data", "data")
+#@ deployments_without_gcp = [x for x in data.values.deployments if x.paving_dir != "gcp"]
 groups:
 - name: ci
   jobs:
@@ -9,15 +10,14 @@ groups:
   - bump-clis
   - bump-version-to-major
   - check-for-secrets-in-tasks
-#@ for/end deployment in data.values.deployments:
+  #@ for/end deployment in data.values.deployments:
   - #@ deployment.env_name + "-delete-infrastructure"
+  #@ for/end deployment in deployments_without_gcp:
+  - #@ "run-tasks-in-" + deployment.env_name + "-job"
   - create-pks-cluster-in-reference-pipeline
   - prepare-resource-for-reference-pipeline
   - promote-to-final
   - reference-gcp-delete-infrastructure
-  - run-tasks-in-ci-aws-job
-  - run-tasks-in-ci-azure-job
-  - run-tasks-in-ci-vsphere-job
   - test-image-dependency-stability
   - upgrade-opsman-gcp
 - name: bump
@@ -27,6 +27,10 @@ groups:
   #@ for/end version in data.values.versions:
   - #@ "update-" + version.number
   - empty-cve-patch-notes-file
+- name: om
+  jobs:
+  #@ for/end bump in ["patch", "minor", "major"]:
+  - #@ "bump-om-" + bump
 resources:
 - name: docs-platform-automation-reference-pipeline-config
   type: git
@@ -254,12 +258,6 @@ resources:
     access_token: ((om.access_token))
     owner: vmware
     repository: govmomi
-- name: om-cli
-  type: github-release
-  source:
-    access_token: ((om.access_token))
-    owner: pivotal-cf
-    repository: om
 - name: credhub-cli
   type: github-release
   source:
@@ -337,6 +335,26 @@ resources:
     regexp: bump-image-cli-versions-(.*).md
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
+- name: om
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf/om.git
+    branch: main
+    ignore_paths:
+    - version
+    - README.md
+    - docs
+    private_key: ((om.private_key))
+    fetch_tags: false
+- name: om-version
+  type: semver
+  source:
+    initial_version: 0.0.0
+    driver: git
+    uri: git@github.com:pivotal-cf/om.git
+    branch: main
+    file: version
+    private_key: ((om.private_key))
 resource_types:
 - name: pivnet
   type: registry-image
@@ -354,8 +372,6 @@ jobs:
   - in_parallel:
     - get: docs-platform-automation
     - get: govc-cli
-      trigger: true
-    - get: om-cli
       trigger: true
     - get: bosh-cli
       trigger: true
@@ -398,16 +414,13 @@ jobs:
   plan:
   - in_parallel:
     - get: osl
+    - get: om
+      trigger: true
     - get: govc-cli
       trigger: true
       params:
         globs:
           - 'govc_linux_amd64*'
-    - get: om-cli
-      trigger: true
-      params:
-        globs:
-        - '*linux*[^.gz]'
     - get: bosh-cli
       trigger: true
       params:
@@ -445,8 +458,65 @@ jobs:
     - get: version
       params:
         pre: rc
-  - task: test-and-build-p-automator
-    file: docs-platform-automation/ci/tasks/test-and-build-p-automator/task.yml
+  - in_parallel:
+    - task: download-product
+      params:
+        OM_pivnet_token: ((pivnet_token))
+      file: docs-platform-automation/ci/tasks/download-product.yml
+    - task: test
+      attempts: 3
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: internalpcfplatformautomation/ci
+            tag: testing
+        inputs:
+        - name: om
+        - name: docs-platform-automation
+        outputs:
+        - name: om-cli
+        caches:
+        - path: go
+        params:
+          TEST_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+          TEST_GCP_PROJECT_ID: ((gcp.project_id))
+          TEST_AZURE_STORAGE_ACCOUNT: ((azure.storage.account))
+          TEST_AZURE_STORAGE_KEY: ((azure.storage.key))
+          TEST_AZURE_CONTAINER_NAME: ((azure.storage.container))
+          TEST_PIVNET_TOKEN: ((pivnet_token))
+        run:
+          path: "/bin/bash"
+          args:
+          - "-c"
+          - |
+            set -exu
+            export GOPATH="$(pwd)/go"
+
+            go get github.com/onsi/ginkgo/ginkgo
+
+            export PATH="${PATH}:${GOPATH}/bin"
+
+            pushd "om" > /dev/null
+              go mod download
+
+            #  CGO_ENABLED=1 ginkgo \
+            #    -r \
+            #    -p \
+            #    -race \
+            #    -succinct \
+            #    -nodes 5 \
+            #    -randomizeAllSpecs \
+            #    -randomizeSuites \
+            #    -keepGoing \
+            #    .
+
+              go build -o ../om-cli/om \
+                --ldflags "-X main.version=$(git rev-list --format=format:'%H-%aI' --max-count=1 "$(git rev-parse HEAD)" | tail -1)" \
+                main.go
+            popd > /dev/null
+
   - put: binaries-image
     params:
       build: .
@@ -462,6 +532,9 @@ jobs:
       load_bases:
       - binaries-image
   - in_parallel:
+    - task: define-cli-versions
+      image: binaries-image
+      file: docs-platform-automation/ci/tasks/pivnet-release/define-cli-versions.yml
     - task: generate-dpkg-list-for-OSL
       file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
@@ -508,9 +581,6 @@ jobs:
         file: packaged-product/platform-automation-tasks-*.zip
       get_params:
         skip_download: "true"
-  - task: define-cli-versions
-    image: binaries-image
-    file: docs-platform-automation/ci/tasks/pivnet-release/define-cli-versions.yml
   - put: binaries-table
     params:
       file: cli-versions-table/bump-image-cli-versions*
@@ -563,9 +633,8 @@ jobs:
     - get: docs-platform-automation
     - get: rc-image-s3
       passed:
-      - run-tasks-in-ci-azure-job
-      - run-tasks-in-ci-aws-job
-      - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
       - additional-task-testing
       params:
@@ -578,21 +647,18 @@ jobs:
     - get: platform-automation-tasks
       resource: rc-tasks-s3
       passed:
-      - run-tasks-in-ci-azure-job
-      - run-tasks-in-ci-aws-job
-      - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
     - get: platform-automation
       passed:
-      - run-tasks-in-ci-azure-job
-      - run-tasks-in-ci-aws-job
-      - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
     - get: version
       passed:
-      - run-tasks-in-ci-azure-job
-      - run-tasks-in-ci-aws-job
-      - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
       params:
         bump: final
@@ -656,6 +722,9 @@ jobs:
   serial_groups: [ ci-upgrade ]
   plan:
   - in_parallel:
+    - get: om
+      passed:
+      - build-binaries-image-combined
     - get: platform-automation
       passed:
       - build-binaries-image-combined
@@ -920,10 +989,7 @@ jobs:
           repository: repository-commit
 
 
-#@ for deployment in data.values.deployments:
-#@ if deployment.paving_dir == "gcp":
-#@   continue
-#@ end
+#@ for deployment in deployments_without_gcp:
 #@ env_name = deployment.env_name
 #@ opsman_glob = deployment.opsman_glob
 #@ tags = deployment.tags
@@ -934,6 +1000,10 @@ jobs:
   - #@ env_name
   plan:
   - in_parallel:
+    - get: om
+      passed:
+      - build-binaries-image-combined
+      tags: #@ tags
     - get: platform-automation
       passed:
       - build-binaries-image-combined
@@ -1361,6 +1431,9 @@ jobs:
       passed:
         - create-pks-cluster-in-reference-pipeline
       trigger: true
+    - get: om
+      passed:
+      - build-binaries-image-combined
     - get: binaries-table
       passed:
       - build-binaries-image-combined
@@ -1393,7 +1466,6 @@ jobs:
               credhub --version
               winfs-injector --help
               om --version
-              p-automator --version
     - do:
       - task: replicate-product
         image: platform-automation-image
@@ -1526,26 +1598,23 @@ jobs:
       trigger: true
     - get: rc-image-s3-vsphere
       passed:
-      - run-tasks-in-ci-azure-job
-      - run-tasks-in-ci-aws-job
-      - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
       - additional-task-testing
     - get: binaries-image
       resource: rc-image-s3
       passed:
-      - run-tasks-in-ci-azure-job
-      - run-tasks-in-ci-aws-job
-      - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
       - additional-task-testing
       params:
         unpack: true
     - get: binaries-table
       passed:
-      - run-tasks-in-ci-azure-job
-      - run-tasks-in-ci-aws-job
-      - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
       - additional-task-testing
 - name: bump-test-image-dependency-stability
@@ -1611,11 +1680,6 @@ jobs:
     file: docs-platform-automation/ci/tasks/pivnet-release/generate-release-notes.yml
     params:
       GITHUB_SSH_KEY: ((platform_automation_docs.private_key))
-  - task: test-and-build-p-automator
-    file: docs-platform-automation/ci/tasks/test-and-build-p-automator/task.yml
-    input_mapping:
-      platform-automation: #@ "platform-automation-" + version.number
-      docs-platform-automation: #@ "docs-platform-automation-" + version.number
   - task: create-release-file
     file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
@@ -1677,3 +1741,29 @@ jobs:
       params:
         repository: docs-platform-automation
         rebase: true
+#@ for bump in ["patch", "minor", "major"]:
+- name: #@ "bump-om-" + bump
+  plan:
+  - in_parallel:
+    - get: om
+      passed:
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - upgrade-opsman-gcp
+      - additional-task-testing
+    - get: om-version
+      params:
+        bump: #@ bump
+  - put: om
+    params:
+      repository: om
+      only_tag: true
+      tag: om-version/version
+  - task: build
+    file: om/ci/tasks/build/task.yml
+    params:
+      GITHUB_TOKEN: ((om.access_token))
+  - put: om-version
+    params:
+      bump: #@ bump
+#@ end
