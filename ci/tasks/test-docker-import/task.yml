@@ -27,4 +27,4 @@ run:
 
       # shellcheck disable=SC2086
       docker import packaged-product/${PRODUCT_PATH} testing
-      docker run testing p-automator --version
+      docker run testing om --version
