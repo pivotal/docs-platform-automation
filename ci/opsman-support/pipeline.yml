@@ -1,5 +1,6 @@
 ---
-#@ versions = ["2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "2.10"]
+#@ opsman_versions = ["2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "2.10"]
+#@ pat_versions = ["4.4", "5.0"]
 
 resource_types:
 - name: pivnet
@@ -16,24 +17,25 @@ resources:
       start: 4:00 AM
       stop: 11:00 AM
 
-  - name: platform-automation-tasks
+#@ for pat_version in pat_versions:
+  - name: #@ "platform-automation-tasks-" + pat_version
     type: s3
     source:
       access_key_id: ((s3.access_key_id))
       secret_access_key: ((s3.secret_access_key))
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.pivnet_products))
-      regexp: .*tasks-(.*).zip
+      regexp: #@ ".*tasks-(" + pat_version.replace('.', '\.') + ".*).zip"
 
-  - name: platform-automation-image
+  - name: #@ "platform-automation-image-" + pat_version
     type: s3
     source:
       access_key_id: ((s3.access_key_id))
       secret_access_key: ((s3.secret_access_key))
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.pivnet_products))
-      regexp: .*image-(.*).tgz
-
+      regexp: #@ ".*image-(" + pat_version.replace('.', '\.') + ".*).tgz"
+#@ end
   - name: paving
     type: git
     source:
@@ -51,20 +53,20 @@ resources:
       private_key: ((platform_automation_deployments.private_key))
       uri: git@github.com:pivotal/platform-automation-deployments
 
-#@ for version in versions:
-  - name: #@ "opsman-image-" + version
+#@ for opsman_version in opsman_versions:
+  - name: #@ "opsman-image-" + opsman_version
     type: pivnet
     source:
       api_token: ((pivnet_token))
       product_slug: ops-manager
-      product_version: #@ "^" + version.replace('.', '\.') + "\.\d+$"
+      product_version: #@ "^" + opsman_version.replace('.', '\.') + "\.\d+$"
 
-  - name: #@ "example-product-" + version
+  - name: #@ "example-product-" + opsman_version
     type: s3
     source:
       bucket: example-product-pivotal-files
       private: false
-      regexp: #@ "^example-product-(" + version.replace('.', '\.') + ".*)\.pivotal$"
+      regexp: #@ "^example-product-(" + opsman_version.replace('.', '\.') + ".*)\.pivotal$"
 #@ end
   - name: stemcells-ubuntu-xenial
     type: pivnet
@@ -74,8 +76,9 @@ resources:
       product_version: ^97\..*
 
 jobs:
-#@ for version in versions:
-- name: #@ "test-opsman-" + version + "-with-latest"
+#@ for pat_version in pat_versions:
+#@ for opsman_version in opsman_versions:
+- name: #@ "test-opsman-" + opsman_version + "-with-pat-version-" + pat_version
   serial: true
   serial_groups: ["install"]
   plan:
@@ -84,8 +87,8 @@ jobs:
       params:
         globs:
           - '*google*.tgz'
-    - get: #@ "example-product-" + version
-    - get: #@ "opsman-image-" + version
+    - get: #@ "example-product-" + opsman_version
+    - get: #@ "opsman-image-" + opsman_version
       params:
         globs:
           - '*gcp*.yml'
@@ -94,9 +97,11 @@ jobs:
       trigger: true
     - get: paving
     - get: platform-automation-tasks
+      resource: #@ "platform-automation-tasks-" + pat_version
       params:
         unpack: true
     - get: platform-automation-image
+      resource: #@ "platform-automation-image-" + pat_version
       params:
         unpack: true
     - get: deployments
@@ -129,7 +134,7 @@ jobs:
   - task: create-vm
     file: platform-automation-tasks/tasks/create-vm.yml
     input_mapping:
-      image: #@ "opsman-image-" + version
+      image: #@ "opsman-image-" + opsman_version
       state: deployments
       config: paving
       vars: deployments
@@ -145,7 +150,7 @@ jobs:
           params:
             GIT_AUTHOR_NAME: platform-automation-bot
             GIT_AUTHOR_EMAIL: ((platform-automation-email))
-            COMMIT_MESSAGE: #@ "create-vm update state file for support at " + version
+            COMMIT_MESSAGE: #@ "create-vm update state file for support at " + opsman_version
             FILE_SOURCE_PATH: state.yml
             FILE_DESTINATION_PATH: ci-support/state.yml
           input_mapping:
@@ -203,14 +208,14 @@ jobs:
     file: platform-automation-tasks/tasks/upload-product.yml
     input_mapping:
       env: deployments
-      product: #@ "example-product-" + version
+      product: #@ "example-product-" + opsman_version
     params:
       ENV_FILE: ci-support/env.yml
   - task: stage-configure-apply
     image: platform-automation-image
     file: platform-automation-tasks/tasks/stage-configure-apply.yml
     input_mapping:
-      product: #@ "example-product-" + version
+      product: #@ "example-product-" + opsman_version
       env: deployments
       config: deployments
     params:
@@ -242,7 +247,7 @@ jobs:
           params:
             GIT_AUTHOR_NAME: platform-automation-bot
             GIT_AUTHOR_EMAIL: ((platform-automation-email))
-            COMMIT_MESSAGE: #@ "delete-vm update state file for support at " + version
+            COMMIT_MESSAGE: #@ "delete-vm update state file for support at " + opsman_version
             FILE_SOURCE_PATH: state.yml
             FILE_DESTINATION_PATH: ci-support/state.yml
           input_mapping:
@@ -280,4 +285,5 @@ jobs:
       FILTER: ci-support
       DRY_RUN: false
       NO_CONFIRM: true
+#@ end
 #@ end
