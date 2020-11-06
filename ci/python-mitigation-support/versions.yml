@@ -1,7 +1,5 @@
 #@data/values
 ---
 versions:
-  - branch_name: v4.3
-    product_version_regex: 4\.3\.\d+
   - branch_name: v4.4
     product_version_regex: 4\.4\.\d+
