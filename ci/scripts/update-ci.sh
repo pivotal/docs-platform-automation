@@ -30,9 +30,6 @@ if [ -d $WORKING_DIR/../../../concourse-for-platform-automation/ ]; then
     -c <(ytt -f $WORKING_DIR/../../../concourse-for-platform-automation/pipeline.yml -f $WORKING_DIR/../cpa/deployments.yml)
 fi
 
-fly -t ci sp -p om -c <(ytt -f $WORKING_DIR/../om/) \
-  --check-creds
-
 echo "Setting support pipeline..."
 
 fly -t ci sp -p support-pipeline -c <(ytt -f $WORKING_DIR/../opsman-support) \
