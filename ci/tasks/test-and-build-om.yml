@@ -1,0 +1,50 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: internalpcfplatformautomation/ci
+    tag: testing
+inputs:
+- name: om
+- name: docs-platform-automation
+outputs:
+- name: om-cli
+caches:
+- path: go
+params:
+  TEST_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+  TEST_GCP_PROJECT_ID: ((gcp.project_id))
+  TEST_AZURE_STORAGE_ACCOUNT: ((azure.storage.account))
+  TEST_AZURE_STORAGE_KEY: ((azure.storage.key))
+  TEST_AZURE_CONTAINER_NAME: ((azure.storage.container))
+  TEST_PIVNET_TOKEN: ((pivnet_token))
+run:
+  path: "/bin/bash"
+  args:
+  - "-c"
+  - |
+    set -exu
+    export GOPATH="$(pwd)/go"
+
+    go get github.com/onsi/ginkgo/ginkgo
+
+    export PATH="${PATH}:${GOPATH}/bin"
+
+    pushd "om" > /dev/null
+      go mod download
+
+      CGO_ENABLED=1 ginkgo \
+        -r \
+        -p \
+        -race \
+        -succinct \
+        -nodes 5 \
+        -randomizeAllSpecs \
+        -randomizeSuites \
+        -keepGoing \
+        .
+
+      go build -o ../om-cli/om \
+        --ldflags "-X main.version=$(git rev-list --format=format:'%H-%aI' --max-count=1 "$(git rev-parse HEAD)" | tail -1)" \
+        main.go
+    popd > /dev/null
