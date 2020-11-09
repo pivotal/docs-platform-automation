@@ -1431,7 +1431,14 @@ jobs:
           - name: replicated-product
           run:
             path: bash
-            args: ['-c', 'test -e replicated-product/awesome.pivotal']
+            args:
+              - -c
+              - |
+                set -eux
+
+                test -e replicated-product/awesome.pivotal
+                unzip -t replicated-product/awesome.pivotal
+
     - do:
       - task: get-ca-cert
         image: platform-automation-image
@@ -1496,7 +1503,13 @@ jobs:
             - name: backup
           run:
             path: bash
-            args: [ '-c', 'test -e backup/pivotal-container-service*_clusters_*.tgz' ]
+            args:
+              - -c
+              - |
+                set -eux
+
+                test -e backup/pivotal-container-service*_clusters_*.tgz
+                unzip -t backup/pivotal-container-service*_clusters_*.tgz
     - do:
       - *credhub-interpolate
       - task: download-and-upload-product
@@ -1523,7 +1536,13 @@ jobs:
             - name: backup
           run:
             path: bash
-            args: ['-c', 'test -e backup/director_*.tgz']
+            args:
+              - -c
+              - |
+                set -eux
+
+                test -e backup/director_*.tgz
+                unzip -t backup/director_*.tgz
     - do:
       - *credhub-interpolate
       - task: update-runtime-config
