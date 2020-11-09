@@ -21,6 +21,14 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.8
+Coming Soon
+
+### Bug Fixes
+- The `backup` scripts did not have the correct command line options to compress the tarball.
+  It is still a valid tarball, just not compressed.
+  This has been fixed by changing `tar -cvf` to `tar -zcvf`.
+
 ## v5.0.7
 October 23, 2020
 
