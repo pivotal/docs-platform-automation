@@ -1509,7 +1509,7 @@ jobs:
                 set -eux
 
                 test -e backup/pivotal-container-service*_clusters_*.tgz
-                unzip -t backup/pivotal-container-service*_clusters_*.tgz
+                tar -tzf backup/pivotal-container-service*_clusters_*.tgz > /dev/null
     - do:
       - *credhub-interpolate
       - task: download-and-upload-product
@@ -1542,7 +1542,7 @@ jobs:
                 set -eux
 
                 test -e backup/director_*.tgz
-                unzip -t backup/director_*.tgz
+                tar -tzf  backup/director_*.tgz > /dev/null
     - do:
       - *credhub-interpolate
       - task: update-runtime-config
