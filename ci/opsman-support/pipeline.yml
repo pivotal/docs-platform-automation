@@ -31,22 +31,18 @@ resources:
 
 #@ for pat_version in pat_versions:
   - name: #@ "platform-automation-tasks-" + pat_version
-    type: s3
+    type: pivnet
     source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: #@ ".*tasks-(" + pat_version.replace('.', '\.') + ".*).zip"
+      api_token: ((pivnet_token))
+      product_slug: platform-automation
+      regexp: #@ pat_version
 
   - name: #@ "platform-automation-image-" + pat_version
-    type: s3
+    type: pivnet
     source:
-      access_key_id: ((s3.access_key_id))
-      secret_access_key: ((s3.secret_access_key))
-      region_name: ((s3.region_name))
-      bucket: ((s3.buckets.pivnet_products))
-      regexp: #@ ".*image-(" + pat_version.replace('.', '\.') + ".*).tgz"
+      api_token: ((pivnet_token))
+      product_slug: platform-automation
+      regexp: #@ pat_version
 #@ end
   - name: paving
     type: git
@@ -112,10 +108,14 @@ jobs:
       resource: #@ "platform-automation-tasks-" + pat_version
       params:
         unpack: true
+        globs:
+        - "*tasks*.zip"
     - get: platform-automation-image
       resource: #@ "platform-automation-image-" + pat_version
       params:
         unpack: true
+        globs:
+        - "*image*.tgz"
     - get: deployments
     - get: docs-platform-automation
   - task: run-terraform
