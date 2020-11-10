@@ -4,7 +4,7 @@ require 'English'
 require 'yaml'
 require 'tempfile'
 
-Dir['tasks/**/*.sh'].each do |script|
+Dir[File.join(__dir__, '..', 'tasks/**/*.sh')].each do |script|
   print "shellcheck #{script} - "
   output = `shellcheck #{script}`
   if $CHILD_STATUS.exitstatus == 0
@@ -15,7 +15,7 @@ Dir['tasks/**/*.sh'].each do |script|
   end
 end
 
-Dir['tasks/**/*.yml'].each do |file|
+Dir[File.join(__dir__, '..', 'tasks/**/*.yml')].each do |file|
     task = YAML.load_file(file)
 
     if task.dig('run', 'path') == 'bash'
