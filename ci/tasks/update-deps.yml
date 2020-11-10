@@ -13,7 +13,6 @@ run:
     git clone platform-automation platform-automation-updated
 
     pushd platform-automation-updated
-    go get github.com/pivotal-cf/om
     go get -u -a code.cloudfoundry.org/credhub-cli
     go get -u -a github.com/cloudfoundry/bosh-cli
     go get -u -a github.com/vmware/govmomi
@@ -25,10 +24,9 @@ run:
     git commit -m "update deps for om, bosh-cli, and credhub" || true
     popd
 inputs:
-- name: platform-automation
-- name: om-cli
+- name: om
 - name: bosh-cli
 - name: credhub-cli
 - name: govc-cli
 outputs:
-- name: platform-automation-updated
+- name: om-updated
