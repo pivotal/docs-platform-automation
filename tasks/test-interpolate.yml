@@ -1,0 +1,35 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet test-interpolate start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: config # contains the base configuration file
+- name: vars # variable files to be made available
+  optional: true
+
+params:
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the vars yaml file
+  # - The path is relative to root of the task build
+  # - These vars can come from the `vars` or `config` inputs
+
+  CONFIG_FILE: base.yml
+  # - Required
+  # - Filepath to the base yaml file to interpolate from
+  # - The path is relative to root of the task build
+
+  SKIP_MISSING: true
+  # - Optional
+  # - Change to false to have strict interpolation
+  #   and fail if params are missing from vars
+
+run:
+  path: platform-automation-tasks/tasks/test-interpolate.sh
+# code_snippet test-interpolate end

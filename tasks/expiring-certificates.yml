@@ -1,0 +1,29 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet expiring-certificates start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  EXPIRES_WITHIN:
+  # - Required
+  # - Example: "3m" is 3 months
+  # - Check for certificates expiring within the defined time period
+  # - Supports a time period defined with a suffix of:
+  #   days(d), weeks(w), months(m) and years(y)
+
+run:
+  path: platform-automation-tasks/tasks/expiring-certificates.sh
+# code_snippet expiring-certificates end

@@ -1,0 +1,47 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet configure-director start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: config # contains the director configuration file
+- name: env # contains the env file with target OpsMan Information
+- name: vars # variable files to be made available
+  optional: true
+- name: secrets
+  # secret files to be made available
+  # separate from vars, so they can be store securely
+  optional: true
+- name: ops-files # operations files to custom configure the product
+  optional: true
+
+params:
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the Ops Manager vars yaml file
+  # - The path is relative to root of the task build,
+  #   so `vars` and `secrets` can be used.
+
+  OPS_FILES:
+  # - Optional
+  # - Filepath to the Ops Manager operations yaml files
+  # - The path is relative to root of the task build
+
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  DIRECTOR_CONFIG_FILE: director.yml
+  # - Required
+  # - Filepath to the director configuration yaml file
+  # - The path is relative to the root of the `config` input
+
+run:
+  path: platform-automation-tasks/tasks/configure-director.sh
+# code_snippet configure-director end

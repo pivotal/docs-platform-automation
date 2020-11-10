@@ -1,0 +1,58 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet update-runtime-config start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: config # contains the runtime config file
+- name: releases # contains the releases to be uploaded for use with the runtime config
+  optional: true
+- name: vars # variable files to be made available
+  optional: true
+- name: env # contains the env file with target OpsMan Information
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to the root of the `env` input
+
+  CONFIG_FILE: config.yml
+  # - Required
+  # - Filepath of the runtime config YAML
+  # - The path is relative to the root of the `config` input
+  # - Information on BOSH runtime configs: https://bosh.io/docs/runtime-config/
+
+  NAME:
+  # - Required
+  # - The name of the runtime config that will be updated
+
+  RELEASES_GLOB: "*.tgz"
+  # - Required
+  # - The glob to identify releases with in the releases input.
+  # - When using the bosh-io-release resource in Concourse,
+  #   it includes release.tgz, sha1, url, and version files.
+
+  OPSMAN_SSH_PRIVATE_KEY:
+  # - Optional
+  # - May be required to communicate with the Ops Manager BOSH director
+  # - This is the private key for the Ops Manager VM (used during VM creation)
+
+  OPSMAN_SSH_USERNAME: ubuntu
+  # - Optional
+  # - May be required to communicate with the Ops Manager BOSH director
+  # - This is the username used when tunneling through the Ops Manager VM
+
+  VARS_FILES:
+  # - Optional
+  # - Filepaths of the product configuration vars yaml file
+  # - The path is relative to the root of the task build,
+  #   so `vars` can be used.
+run:
+  path: platform-automation-tasks/tasks/update-runtime-config.sh
+# code_snippet update-runtime-config end
