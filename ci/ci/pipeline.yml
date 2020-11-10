@@ -484,10 +484,10 @@ jobs:
     - task: define-cli-versions
       image: binaries-image
       file: docs-platform-automation/ci/tasks/pivnet-release/define-cli-versions.yml
-    - task: generate-dpkg-list-for-OSL
+    - task: generate-dpkg-list-for-osl
       file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
-    - task: generate-dpkg-list-for-OSL
+    - task: generate-dpkg-list-for-osl
       file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       output_mapping:
         rc-image-receipt-s3: rc-vsphere-image-receipt-s3
@@ -565,7 +565,7 @@ jobs:
         - |
           set -eux
           echo "test" > version/version
-  - task: generate-dpkg-list-for-OSL
+  - task: generate-dpkg-list-for-osl
     file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: binaries-image
   - task: check-osl-reuse-validity
@@ -621,7 +621,7 @@ jobs:
     file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
   - task: generate-platform-automation-metadata
     file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.0.yml
-  - task: generate-dpkg-list-for-OSL
+  - task: generate-dpkg-list-for-osl
     file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: rc-image-s3
   - put: pivnet-rc
@@ -1294,7 +1294,7 @@ jobs:
       FILTER: #@ env_name
       DRY_RUN: false
       NO_CONFIRM: true
-  - task: remove state files
+  - task: remove-state-files
     tags: #@ tags
     file: docs-platform-automation/ci/tasks/delete-state-file.yml
     params:
@@ -1613,7 +1613,7 @@ jobs:
         - |
           set -eux
           echo "test" > version/version
-  - task: generate-dpkg-list-for-OSL
+  - task: generate-dpkg-list-for-osl
     file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: binaries-image
   - task: check-osl-reuse-validity
@@ -1667,7 +1667,7 @@ jobs:
         platform-automation-tasks: #@ "platform-automation-" + version.number
     - task: generate-platform-automation-metadata
       file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
-    - task: generate-dpkg-list-for-OSL
+    - task: generate-dpkg-list-for-osl
       file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
   - in_parallel:
