@@ -44,17 +44,17 @@ run:
     echo "Generating release notes for $VERSION..."
     pushd docs-platform-automation/ci
       go run ./scripts/generate-release-notes/generate-release-notes.go \
-        --docs-dir $workspace/docs-platform-automation \
-        --patch-notes-path $workspace/docs-platform-automation/ci/patch-notes/cve-patch-notes.md \
-        --patch-notes-path $workspace/docs-platform-automation/ci/patch-notes/"$DOC_VERSION"-patch-notes.md \
+        --docs-dir "$workspace"/docs-platform-automation \
+        --patch-notes-path "$workspace"/docs-platform-automation/ci/patch-notes/cve-patch-notes.md \
+        --patch-notes-path "$workspace"/docs-platform-automation/ci/patch-notes/"$DOC_VERSION"-patch-notes.md \
         --patch-versions "$VERSION"
     popd
 
     pushd docs-platform-automation/ci
       echo "Inserting version table into release notes..."
       go run ./scripts/insert-cli-versions-into-release-notes/insert-cli-versions-into-release-notes.go \
-         $workspace/docs-platform-automation/docs/release-notes.md \
-         $workspace/binaries-table/bump-image-cli-versions* \
+         "$workspace"/docs-platform-automation/docs/release-notes.md \
+         "$workspace"/binaries-table/bump-image-cli-versions* \
          "$VERSION"
     popd
 
@@ -70,7 +70,7 @@ run:
     pushd docs-platform-automation/ci
       echo "Porting version table to previous branches..."
       go run ./scripts/generate-release-notes/generate-release-notes.go \
-        --docs-dir $workspace/docs-platform-automation
+        --docs-dir "$workspace"/docs-platform-automation
     popd
 
     pushd docs-platform-automation
