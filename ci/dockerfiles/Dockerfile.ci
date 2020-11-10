@@ -1,4 +1,4 @@
-FROM golang:1.14
+FROM golang:1.15
 
 RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq python3-pip git wget tar xz-utils
 
