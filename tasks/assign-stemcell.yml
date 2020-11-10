@@ -1,0 +1,33 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet assign-stemcell start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+- name: config # contains the configuration file for assign-stemcell command
+  # - Can consume the output of `download-product` task directly
+  # - Example config:
+  # ---
+  # product: cf
+  # stemcell: 3468.86
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  CONFIG_FILE: config.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `assign-stemcell-config` input
+
+run:
+  path: platform-automation-tasks/tasks/assign-stemcell.sh
+# code_snippet assign-stemcell end

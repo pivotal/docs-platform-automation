@@ -1,0 +1,26 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet replicate-product start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: product
+# product to be replicated (p-isolation-segment, p-windows-runtime, pas-windows)
+
+outputs:
+- name: replicated-product
+
+params:
+  REPLICATED_NAME:
+  # - Required
+  # - The desired name for the replicated product (10 character MAX)
+  # - The resulting tile will be "$REPLICATED_NAME.pivotal"
+
+run:
+  path: platform-automation-tasks/tasks/replicate-product.sh
+# code_snippet replicate-product end

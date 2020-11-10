@@ -1,0 +1,75 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet stage-configure-apply start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: config # contains the product configuration file
+- name: env # contains the env file with target OpsMan Information
+- name: vars # variable files to be made available
+  optional: true
+- name: secrets
+  # secret files to be made available
+  # separate from vars, so they can be store securely
+  optional: true
+- name: ops-files # operations files to custom configure the product
+  optional: true
+- name: product # contains the product file to be staged
+  optional: true
+
+params:
+  CONFIG_FILE:
+  # - Required
+  # - Filepath to the product configuration yaml file
+  # - The path is relative to the root of the `config` input
+
+  STAGE_PRODUCT_CONFIG_FILE:
+  # - Optional
+  # - If not using a product file, this is required
+  # - If set, this will be the CONFIG_FILE used
+  #   for the stage-product step
+  # - The path is relative to root of the `config` input
+  # - Required config properties:
+  # product-name: cf
+  # product-version: 2.9.0
+
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the product configuration vars yaml file
+  # - The path is relative to root of the task build,
+  #   so `vars` and `secrets` can be used.
+
+  OPS_FILES:
+  # - Optional
+  # - Filepath to the product configuration operations yaml files
+  # - The path is relative to root of the task build
+
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  ALLOW_PENDING_CHANGES: false
+  # - Optional
+  # - If false, will fail if there are pending changes in OpsMan
+
+  RECREATE: false
+  # - Optional
+  # - If true, will recreate the vms for the product
+  # - If true, will also recreate the director vm if there are changes
+
+  IGNORE_WARNINGS: false
+  # - Optional
+  # - If true, will not fail when verifiers have warnings,
+  #   it will still fail for any errors.
+  # - This is not recommended unless unless the warning failure(s)
+  #   are well understood.
+
+run:
+  path: platform-automation-tasks/tasks/stage-configure-apply.sh
+# code_snippet stage-configure-apply end

@@ -1,0 +1,40 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet upload-stemcell start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+- name: stemcell # contains the stemcell tarball
+# - The stemcell filename is important and must be preserved.
+#   if using the bosh.io concourse resource,
+#   set `params.preserve_filename: true` on your GET.
+
+params:
+  CONFIG_FILE:
+  # - Optional
+  # - Path to the config file for the product
+  # - Relative to the root of the `config` input
+  # - If empty, no config will be used; version and sha256 will not be checked
+  # - Example config:
+  # ---
+  # shasum: 6daededd8fb4c341d0cd437a669d732d2fde62cb89716498e6b16f34607a1498
+
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  FLOATING_STEMCELL: true
+  # - Optional
+  # - Assigns the stemcell to all compatible products
+  # - If false, a user is required to run the assign-stemcell task
+
+run:
+  path: platform-automation-tasks/tasks/upload-stemcell.sh
+# code_snippet upload-stemcell end

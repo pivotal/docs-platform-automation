@@ -1,0 +1,36 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet stage-product start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: product # contains the product file to be staged
+  optional: true
+- name: config # contains a file with product name and version to be staged
+  optional: true
+- name: env # contains the env file with target OpsMan Information
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  CONFIG_FILE:
+  # - Optional
+  # - Filepath of the stage-product config YAML
+  # - This may be used instead of a product file
+  # - The path is relative to root of the `config` input
+  # - Example config:
+  # ---
+  # product-name: cf
+  # product-version: 2.9.0
+
+run:
+  path: platform-automation-tasks/tasks/stage-product.sh
+# code_snippet stage-product end

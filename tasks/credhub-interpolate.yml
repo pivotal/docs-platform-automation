@@ -1,0 +1,64 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet credhub-interpolate start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: files
+# contains YAML files with extension `.yml`.
+# Each one of these files will have their values interpolated from credhub.
+# For examples, run: `credhub interpolate --help`
+# (minimum version >= 2.1.0 required)
+
+outputs:
+- name: interpolated-files
+# Contains only yaml files found and interpolated by this task.
+# Maintains the filestructure of the `files` input.
+
+# all params are required to be filled out
+params:
+
+  CREDHUB_CLIENT:
+  CREDHUB_SECRET:
+  CREDHUB_SERVER:
+  # - Required
+  # - Credentials to talk to credhub server
+
+  CREDHUB_CA_CERT:
+  # - Optional
+  # - This is only necessary if your Concourse worker
+  #   is not already configured to trust the CA used for Credhub.
+  # - If more than one CA cert is required (ie the UAA),
+  #   the CA certs can be concatenated together and separated by a newline.
+  #   For example,
+  #   CREDHUB_CA_CERT: |
+  #     -----BEGIN CERTIFICATE-----
+  #     ...credhub cert...
+  #     -----END CERTIFICATE-----
+  #     -----BEGIN CERTIFICATE-----
+  #     ...UAA cert...
+  #     -----END CERTIFICATE-----
+
+  PREFIX:
+  # - Required
+  # - Prefix flag used by credhub interpolate
+
+  INTERPOLATION_PATHS: '.'
+  # - Required
+  # - Path the contains the files to read from
+  # - This is a space separated list of directories
+  #   the paths are all evaluated relative to files/
+
+  SKIP_MISSING: true
+  # Optional
+  # Change to false to have strict interpolation
+  # and fail if params are missing from vars
+
+run:
+  path: platform-automation-tasks/tasks/credhub-interpolate.sh
+# code_snippet credhub-interpolate end

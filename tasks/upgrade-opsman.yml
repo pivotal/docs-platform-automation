@@ -1,0 +1,68 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet upgrade-opsman start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: state # contains the state for the vm
+- name: config # contains the OpsMan configuration file
+- name: image # contains the image file to be installed
+- name: installation # contains the installation to be imported
+- name: env # contains the environment information for OpsMan
+- name: vars # variable files to be made available
+  optional: true
+- name: secrets # secret files to be made available
+  # separate from vars, so they can be stored securely
+  optional: true
+
+outputs:
+- name: generated-state #contains the updated state file
+
+params:
+  VARS_FILES:
+  # - Optional
+  # - space-seperated array of filepaths to YAML vars files
+  #   to be loaded with the OPSMAN_CONFIG_FILE
+  # - relative to root of the task build,
+  #   so both `vars` and `secrets` can be used.
+
+  ENV_FILE: env.yml
+  # - Required
+  # - filepath of the env config YAML
+  # - relative to root of the `env` input
+
+  OPSMAN_CONFIG_FILE: opsman.yml
+  # - Required
+  # - filepath of the opsman config YAML
+  # - relative to root of the `config` input
+  # - to configure Ops Manager Application Settings
+  #   (such as banner, pivnet token, etc)
+  #   add this configuration to your opsman.yml
+
+  STATE_FILE: state.yml
+  # - Required
+  # - Filepath of the state yaml file
+  # - The path is relative to root of the `state` output
+  # - if the filename includes "$timestamp",
+  #   for example "state-$timestamp.yml",
+  #   the final filename will include the current timestamp.
+  #   - this is necessary if using an "S3 compatible" blobstore
+  #     that doesn't support versioned blobs
+  #   - timestamped filenames will need to be represented
+  #     with a glob-style wildcard in tasks that use this state file
+  #     (such as state-*.yml)
+
+  INSTALLATION_FILE: installation*.zip
+  # - Required
+  # - filepath of the installation ZIP file
+  # - can be wildcard expanded
+  # - relative to root of the `installation` input
+
+run:
+  path: platform-automation-tasks/tasks/upgrade-opsman.sh
+# code_snippet upgrade-opsman end

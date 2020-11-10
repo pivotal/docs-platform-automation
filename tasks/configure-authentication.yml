@@ -1,0 +1,34 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet configure-authentication start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+- name: config # contains the auth configuration
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  AUTH_CONFIG_FILE: auth.yml
+  # - Required
+  # - Filepath of the authorization config YAML
+  # - The path is relative to root of the `config` input
+
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the Ops Manager vars yaml file
+  # - The path is relative to root of the task build
+  # - These vars can come from the `env` or `config` inputs
+
+run:
+  path: platform-automation-tasks/tasks/configure-authentication.sh
+# code_snippet configure-authentication end

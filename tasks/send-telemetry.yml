@@ -1,0 +1,25 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet send-telemetry start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: telemetry-collector-binary
+- name: collected-telemetry-data
+
+params:
+  API_KEY:
+  # required
+  # The API key provided by Pivotal after accepting the EULA
+
+  DATA_FILE_PATH:
+  # required
+
+run:
+  path: platform-automation-tasks/tasks/send-telemetry.sh
+# code_snippet send-telemetry end

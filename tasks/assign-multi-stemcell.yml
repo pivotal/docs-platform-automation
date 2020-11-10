@@ -1,0 +1,35 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet assign-multi-stemcell start yaml
+# This feature is only available in OpsMan 2.6+.
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+- name: config # contains the configuration file for assign-multi-stemcell command
+  # - Example config:
+  # ---
+  # product: cf
+  # stemcell:
+  # - ubuntu-trusty:1234.6
+  # - ubuntu-xenial:latest
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  CONFIG_FILE: config.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `assign-multi-stemcell-config` input
+
+run:
+  path: platform-automation-tasks/tasks/assign-multi-stemcell.sh
+# code_snippet assign-multi-stemcell end
