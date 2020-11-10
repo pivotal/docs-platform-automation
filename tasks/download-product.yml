@@ -1,0 +1,48 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet download-product start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: config # contains download-file config file
+- name: vars # variable files to be made available
+  optional: true
+- name: secrets
+  # secret files to be made available
+  # separate from vars, so they can be store securely
+  optional: true
+
+outputs:
+- name: downloaded-product
+- name: downloaded-stemcell
+- name: assign-stemcell-config
+
+caches:
+- path: downloaded-product
+- path: downloaded-stemcell
+
+params:
+  CONFIG_FILE: download-config.yml
+  # - Required
+  # - Filepath to the product configuration yaml file
+  # - The path is relative to the root of the `config` input
+
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the product configuration vars yaml file
+  # - The path is relative to root of the task build,
+  #   so `vars` and `secrets` can be used.
+
+  SOURCE: pivnet
+  # - Required
+  # - The source location where products and stemcells are downloaded from.
+  # - Values: pivnet, s3, gcs, azure
+
+run:
+  path: platform-automation-tasks/tasks/download-product.sh
+# code_snippet download-product end

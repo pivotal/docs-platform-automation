@@ -1,0 +1,33 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet prepare-image start yaml
+---
+platform: linux
+
+inputs:
+  - name: platform-automation-tasks
+  - name: platform-automation-image
+  - name: config
+    optional: true
+
+outputs:
+  - name: platform-automation-image
+    # contains the modify image with the ca-certs
+
+params:
+  # One or both of the following must be set.
+  CA_CERTS:
+  # - Optional
+  # - Multiple certificates can be concatenated
+  #   into a single multi-line string or param
+  CA_CERT_FILES:
+  # - Optional
+  # - Space-separated list of file-paths to valid CA files.
+  # - Paths are relative to the `config` input.
+
+run:
+  path: platform-automation-tasks/tasks/prepare-image.sh
+# code_snippet prepare-image end

@@ -1,0 +1,54 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet make-git-commit start yaml
+---
+platform: linux
+
+inputs:
+  - name: platform-automation-tasks
+  - name: repository
+  # - This must be an initialized git repository.
+  # - Note that any changes present in this input
+  #   will be committed along with the file copied in
+  #   by this task.
+  - name: file-source
+  # - This is the input folder containing the file to be committed.
+  #   Typically, this will from some other task
+  #   with an output that needs to be persisted.
+
+outputs:
+  - name: repository-commit
+
+params:
+  FILE_SOURCE_PATH:
+  # - Required
+  # - Filepath to be copied into the git repo
+  #   before a commit is created
+  # - Relative to the root of the `file-source` input
+
+  FILE_DESTINATION_PATH:
+  # - Required
+  # - Filepath to write the file specified by FILE_SOURCE_PATH
+  # - Relative to the root of the `repository` input
+
+  GIT_AUTHOR_NAME:
+  # - Required
+  # - Used to configure the human-readable
+  #   name in the `author` field of the commit
+
+  GIT_AUTHOR_EMAIL:
+  # - Required
+  # - Used to configure the email address
+  #   in the `author` field of the commit
+
+  COMMIT_MESSAGE:
+  # - Required
+  # - Specify a commit message to be used
+  #   for all commits made by this task.
+
+run:
+  path: platform-automation-tasks/tasks/make-git-commit.sh
+# code_snippet make-git-commit end

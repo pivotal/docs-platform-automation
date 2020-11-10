@@ -1,0 +1,31 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet import-installation start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the environment information about the OpsMan
+- name: installation # contains the installation to be imported
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the environment config YAML
+  # - The path is relative to root of the `env` input
+  # - The env file _must_ contain the `decryption-passphrase`
+  #   while it's optional for other tasks, this one requires it.
+
+  INSTALLATION_FILE: installation*.zip
+  # - Required
+  # - Filepath of the installation ZIP file
+  # - The filepath provided can be wildcard expanded.
+  # - The path is relative to root of the `installation` input
+
+run:
+  path: platform-automation-tasks/tasks/import-installation.sh
+# code_snippet import-installation end

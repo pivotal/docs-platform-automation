@@ -1,0 +1,44 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet download-and-upload-product start yaml
+---
+platform: linux
+
+inputs:
+  - name: platform-automation-tasks
+  - name: config # contains download-file config file
+  - name: env # contains the env file with target OpsMan Information
+  - name: vars # variable files to be made available
+    optional: true
+  - name: secrets
+    # secret files to be made available
+    # separate from vars, so they can be store securely
+    optional: true
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  CONFIG_FILE: download-config.yml
+  # - Required
+  # - Filepath to the product configuration yaml file
+  # - The path is relative to the root of the `config` input
+
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the product configuration vars yaml file
+  # - The path is relative to root of the task build,
+  #   so `vars` and `secrets` can be used.
+
+  FLOATING_STEMCELL: true
+  # - Optional
+  # - Assigns the stemcell to all compatible products
+  # - If false, a user is required to run the assign-stemcell task
+
+run:
+  path: platform-automation-tasks/tasks/download-and-upload-product.sh
+# code_snippet download-and-upload-product end

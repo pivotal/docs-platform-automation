@@ -1,0 +1,41 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet collect-telemetry start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: telemetry-collector-binary
+- name: env # contains the env file with target OpsMan Information
+- name: config # contains the product configuration file
+  # - Example config:
+  # ---
+  # env_type: sandbox | development | qa | pre-production | production
+  # with_credhub_info: false
+  # cf_api_url: cf.example.com
+  # usage_service_url: service.example.com
+  # usage_service_client_id: client
+  # usage_service_client_secret: secret
+  # usage_service_insecure_skip_tls_verify: false
+
+outputs:
+- name: collected-telemetry-data
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  CONFIG_FILE: config.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `config` input
+
+run:
+  path: platform-automation-tasks/tasks/collect-telemetry.sh
+# code_snippet collect-telemetry end
