@@ -1,0 +1,57 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet run-bosh-errand start yaml
+---
+platform: linux
+
+inputs:
+- name: env
+- name: platform-automation-tasks
+
+params:
+  PRODUCT_NAME:
+  # - Required
+  # - Product containing the errand
+  # - Use the product name from the metadata/ops manager api,
+  #   not the Tanzu Network slug
+
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to the root of the `env` input
+
+  ERRAND_NAME:
+  # - Required
+  # - The name of the errand to be run
+  # - The task lists valid errand names as part of execution
+
+  OPSMAN_SSH_PRIVATE_KEY:
+  # - Optional
+  # - May be required to communicate with the Ops Manager BOSH director
+  #   if your Concourse worker doesn't otherwise have a route
+  #   to your bosh director.
+  # - This is the private key for the Ops Manager VM
+  #   (used during VM creation)
+
+  OPSMAN_SSH_USERNAME: ubuntu
+  # - Will only be used if OPSMAN_SSH_PRIVATE_KEY is set
+  # - This is the username used when tunneling via the Ops Manager VM;
+  #   the default should work for most cases.
+
+  INSTANCE:
+  # - Optional
+  # - The instance group the errand will be run on
+  # - The errand must already be declared on the instance group
+  #   in the deployment manifest.
+  # - If INSTANCE is not specified,
+  #   the errand will run on all eligible instances in parallel.
+  # - Instance group can be further specified with an optional
+  #   `/instance-id` - `/first` is valid
+  #   if you just want to run on one VM.
+
+run:
+  path: platform-automation-tasks/tasks/run-bosh-errand.sh
+# code_snippet run-bosh-errand end

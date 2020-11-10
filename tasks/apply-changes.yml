@@ -1,0 +1,43 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet apply-changes start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+- name: errand-config # contains the errand configuration file
+  optional: true
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  RECREATE: false
+  # - Optional
+  # - If true, will recreate all product vms
+  # - If true, will also recreate the director vm if there are changes
+
+  ERRAND_CONFIG_FILE:
+  # - Optional
+  # - Filepath of the errand config file
+  # - Relative to root of the task build;
+  #   for example, `errand-config/errands.yml`
+  #   or `env/errands.yml`
+
+  IGNORE_WARNINGS: false
+  # - Optional
+  # - If true, will not fail when verifiers have warnings,
+  #   it will still fail for any errors.
+  # - This is not recommended unless unless the warning failure(s)
+  #   are well understood.
+
+run:
+  path: platform-automation-tasks/tasks/apply-changes.sh
+# code_snippet apply-changes end

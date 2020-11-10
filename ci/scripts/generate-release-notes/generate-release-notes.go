@@ -159,7 +159,7 @@ func (c *command) execute() error {
 			return fmt.Errorf("could not generate release notes for %s: %s", minorVersion, err)
 		}
 
-		err = pushReleaseNotes(c.DocsRepoDir, minorVersion)
+		err = pushReleaseNotes(c.DocsRepoDir, fmt.Sprintf("v%s", minorVersion))
 		if err != nil {
 			return fmt.Errorf("could not push release notes for %s: %s", minorVersion, err)
 		}
@@ -321,7 +321,7 @@ func pushReleaseNotes(docsRepoDir, minorVersion string) error {
 
 		err, _ = runCommand(
 			docsRepoDir,
-			"git", "push",
+			"git", "push", "-u", "origin", minorVersion,
 		)
 
 		if err != nil {

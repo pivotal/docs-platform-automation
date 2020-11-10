@@ -10,7 +10,7 @@ import (
 
 func TestScripts(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Scripts Suite")
+	RunSpecs(t, "Insert CLI Versions Suite")
 }
 
 var _ = AfterSuite(func(){

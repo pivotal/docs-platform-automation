@@ -1,0 +1,38 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet backup-tkgi start yaml
+---
+platform: linux
+
+inputs:
+  - name: platform-automation-tasks
+  - name: env # contains the env file with target OpsMan Information
+outputs:
+  - name: backup
+    # This will output two *.tgz of the entire backup.
+    # One is the backup of the tkgi tile
+    # One is the backup of the tkgi clusters
+    # The filename includes the timestamp.
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to the root of the `env` input
+
+  OPSMAN_SSH_PRIVATE_KEY:
+  # - Optional
+  # - May be required to communicate with the Ops Manager BOSH director
+  # - This is the private key for the Ops Manager VM (used during VM creation)
+
+  OPSMAN_SSH_USERNAME: ubuntu
+  # - Optional
+  # - May be required to communicate with the Ops Manager BOSH director
+  # - This is the username used when tunneling through the Ops Manager VM
+
+run:
+  path: platform-automation-tasks/tasks/backup-tkgi.sh
+# code_snippet backup-tkgi end

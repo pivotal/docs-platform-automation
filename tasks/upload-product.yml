@@ -1,0 +1,34 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet upload-product start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: product # contains the product file to be uploaded and staged
+- name: env # contains the env file with target OpsMan Information
+- name: config # contains the product configuration file
+  optional: true
+
+params:
+  CONFIG_FILE:
+  # - Optional
+  # - Path to the config file for the product
+  # - Relative to the root of the `config` input
+  # - If empty, no config will be used; version and sha256 will not be checked
+  # - Example config:
+  # ---
+  # product-version: 1.2.3-build.4
+  # shasum: 6daededd8fb4c341d0cd437a669d732d2fde62cb89716498e6b16f34607a1498
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - Relative to root of the `env` input
+
+run:
+  path: platform-automation-tasks/tasks/upload-product.sh
+# code_snippet upload-product end

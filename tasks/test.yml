@@ -1,0 +1,15 @@
+# The inputs, outputs, params, filename, and filepath
+# of this task file are part of its semantically versioned API.
+# See our documentation for a detailed discussion of our semver API.
+# See www.semver.org for an explanation of semantic versioning.
+
+# code_snippet test start yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+
+run:
+  path: platform-automation-tasks/tasks/test.sh
+# code_snippet test end
