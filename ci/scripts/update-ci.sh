@@ -24,12 +24,6 @@ fly -t ci sp -p docs -c <(ytt -f $WORKING_DIR/../docs/) \
 fly -t ci sp -p python-mitigation-support -c <(ytt -f $WORKING_DIR/../python-mitigation-support/) \
   --check-creds
 
-if [ -d $WORKING_DIR/../../../concourse-for-platform-automation/ ]; then
-  fly -t ci sp -p concourse-for-platform-automation \
-    --check-creds \
-    -c <(ytt -f $WORKING_DIR/../../../concourse-for-platform-automation/pipeline.yml -f $WORKING_DIR/../cpa/deployments.yml)
-fi
-
 echo "Setting support pipeline..."
 
 fly -t ci sp -p support-pipeline -c <(ytt -f $WORKING_DIR/../opsman-support) \
