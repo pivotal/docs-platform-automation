@@ -4,7 +4,6 @@ platform: linux
 inputs:
 - name: docs-platform-automation
 - name: version
-- name: platform-automation
 - name: platform-automation-image
   optional: true
 - name: vsphere-platform-automation-image
@@ -40,7 +39,7 @@ run:
       mkdir file-store
 
       # copy tasks to working folder
-      mv platform-automation/tasks file-store/tasks
+      mv docs-platform-automation/tasks file-store/tasks
 
       # pack the tasks to output
       pushd file-store
