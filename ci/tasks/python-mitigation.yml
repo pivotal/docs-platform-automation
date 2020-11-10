@@ -5,7 +5,6 @@ image_resource:
     repository: concourse/docker-image-resource
 inputs:
 - name: platform-automation-image
-- name: platform-automation
 - name: version
 - name: docs-platform-automation
 outputs:
