@@ -2,6 +2,13 @@
 ---
 versions:
   - branch: develop
+    supported: true
+  - branch: v4.4
+    tag_filter: v4.4*
+    supported: true
+  - branch: v5.0
+    tag_filter: v5.0*
+    supported: true
   - branch: v1.0
     tag_filter: v1.0*
     exclude_from_dropdown: true
@@ -27,7 +34,3 @@ versions:
     tag_filter: v4.2*
   - branch: v4.3
     tag_filter: v4.3*
-  - branch: v4.4
-    tag_filter: v4.4*
-  - branch: v5.0
-    tag_filter: v5.0*

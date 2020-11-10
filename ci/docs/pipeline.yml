@@ -87,6 +87,16 @@ jobs:
 #@ end
     - get: docs-platform-automation-reference-pipeline-config
     - get: docs-platform-automation
+  - in_parallel:
+#@ for version in data.values.versions:
+#@ if not getattr(version, "supported", False):
+#@   continue
+#@ end
+    - task: #@ "run-test-for-tasks-in-docs-platform-automation-" + version.branch
+      file: docs-platform-automation/ci/tasks/docs-task-test.yml
+      input_mapping:
+        docs-platform-automation: #@ "docs-platform-automation-" + version.branch
+#@ end
   - task: generate-docs-app
     config:
       platform: linux
