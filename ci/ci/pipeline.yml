@@ -7,7 +7,6 @@ groups:
   - build-binaries-image-combined
   - build-ci-image
   - build-packages-image
-  - bump-clis
   - bump-version-to-major
   - check-for-secrets-in-tasks
   #@ for/end deployment in data.values.deployments:
@@ -84,13 +83,7 @@ resources:
     product_slug: pivotal-container-service
     product_version: 1\.9\.[0-9]+$
     sort_by: semver
-- name: platform-automation
-  type: git
-  source:
-    branch: develop
-    private_key: ((platform_automation.private_key))
-    uri: git@github.com:pivotal/platform-automation
-- name: platform-automation-release
+- name: docs-platform-automation-release
   type: git
   source:
     branch: release
@@ -367,23 +360,6 @@ resource_types:
     repository: cfcommunity/slack-notification-resource
     tag: latest
 jobs:
-- name: bump-clis
-  plan:
-  - in_parallel:
-    - get: docs-platform-automation
-    - get: govc-cli
-      trigger: true
-    - get: bosh-cli
-      trigger: true
-    - get: credhub-cli
-      trigger: true
-    - get: platform-automation
-  - task: bump-src-deps
-    file: docs-platform-automation/ci/tasks/update-deps.yml
-  - put: platform-automation
-    params:
-      rebase: true
-      repository: platform-automation-updated
 - name: build-ci-image
   plan:
   - get: daily
@@ -399,11 +375,11 @@ jobs:
   plan:
   - get: daily
     trigger: true
-  - get: platform-automation
+  - get: om
   - get: docs-platform-automation
   - put: packages-image
     params:
-      build: platform-automation
+      build: docs-platform-automation
       dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
     get_params:
       save: true
@@ -414,8 +390,6 @@ jobs:
   plan:
   - in_parallel:
     - get: osl
-    - get: om
-      trigger: true
     - get: govc-cli
       trigger: true
       params:
@@ -446,9 +420,10 @@ jobs:
       params:
         globs:
         - '*linux'
-    - get: platform-automation
+    - get: om
       trigger: true
     - get: docs-platform-automation
+      trigger: true
     - get: packages-image
       trigger: true
       passed:
@@ -599,7 +574,7 @@ jobs:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
-    - get: platform-automation
+    - get: om
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
@@ -629,9 +604,9 @@ jobs:
       file_glob: packaged-product/*
       metadata_file: metadata/metadata.yml
       s3_filepath_prefix: ((pivnet_s3_filepath_prefix))
-  - put: platform-automation-release
+  - put: docs-platform-automation-release
     params:
-      repository: platform-automation
+      repository: docs-platform-automation
       tag: version/version
       tag_prefix: v
   - put: version
@@ -672,9 +647,6 @@ jobs:
   plan:
   - in_parallel:
     - get: om
-      passed:
-      - build-binaries-image-combined
-    - get: platform-automation
       passed:
       - build-binaries-image-combined
     - get: version
@@ -950,10 +922,6 @@ jobs:
   plan:
   - in_parallel:
     - get: om
-      passed:
-      - build-binaries-image-combined
-      tags: #@ tags
-    - get: platform-automation
       passed:
       - build-binaries-image-combined
       tags: #@ tags
