@@ -28,6 +28,11 @@ Coming Soon
 - The `backup` scripts did not have the correct command line options to compress the tarball.
   It is still a valid tarball, just not compressed.
   This has been fixed by changing `tar -cvf` to `tar -zcvf`.
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] could not be used with other tasks.
+  For example, if you had written custom tasks.
+  The `TASK_PATH` was added, so custom paths of tasks could be prepared, too.
+- [`stage-configure-apply`][stage-configure-apply] was missing the ability to configure errands.
+  We've added the `ERRAND_CONFIG_FILE` parameter.
 
 ## v5.0.7
 October 23, 2020
@@ -189,7 +194,7 @@ Released October 2, 2020
 
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.4" target="_blank">Download</a>
 
-## Bug Fixes
+### Bug Fixes
 - The [`download-and-upload-product`][download-and-upload-product] task did not provide the option to leave the stemcell floating.
   A new param (`FLOATING_STEMCELL`) allows floating for a stemcell to be set.
   Its default value is set to `true`.
@@ -539,6 +544,17 @@ Released September 2, 2020
       params:
         no_proxy: ""
     ```
+
+## v4.4.14
+Coming Soon
+
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] could not be used with other tasks.
+  For example, if you had written custom tasks.
+  The `TASK_PATH` was added, so custom paths of tasks could be prepared, too.
+- [`stage-configure-apply`][stage-configure-apply] was missing the ability to configure errands.
+  We've added the `ERRAND_CONFIG_FILE` parameter.
+
 
 ## v4.4.13
 October 23, 2020
