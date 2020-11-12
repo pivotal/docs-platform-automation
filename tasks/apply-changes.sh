@@ -7,7 +7,7 @@ set -eux
 flags=("--reattach")
 
 if [ "${RECREATE}" == "true" ]; then
-  flags=("--recreate-vms")
+  flags+=("--recreate-vms")
 fi
 
 if [ "${IGNORE_WARNINGS}" == "true" ]; then

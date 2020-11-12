@@ -96,6 +96,13 @@ params:
   # - If true, will recreate the vms for the product
   # - If true, will also recreate the director vm if there are changes
 
+  ERRAND_CONFIG_FILE:
+  # - Optional
+  # - Filepath of the errand config file
+  # - Relative to root of the task build;
+  #   for example, `errand-config/errands.yml`
+  #   or `env/errands.yml`
+
   IGNORE_WARNINGS: false
   # - Optional
   # - If true, will not fail when verifiers have warnings,
