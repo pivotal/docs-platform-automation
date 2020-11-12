@@ -28,7 +28,7 @@ resources:
   source:
     branch: #@ version.branch_name
     private_key: ((platform_automation.private_key))
-    uri: git@github.com:pivotal/platform-automation
+    uri: git@github.com:pivotal/docs-platform-automation
 - name: #@ "pivnet-release-" + version.branch_name
   type: pivnet
   source:

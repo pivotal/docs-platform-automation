@@ -83,12 +83,6 @@ resources:
     product_slug: pivotal-container-service
     product_version: 1\.9\.[0-9]+$
     sort_by: semver
-- name: docs-platform-automation-release
-  type: git
-  source:
-    branch: release
-    private_key: ((platform_automation.private_key))
-    uri: git@github.com:pivotal/platform-automation
 - name: packages-image
   type: docker-image
   source:
@@ -301,7 +295,7 @@ resources:
   source:
     branch: #@ version.number
     private_key: ((platform_automation.private_key))
-    uri: git@github.com:pivotal/platform-automation
+    uri: git@github.com:pivotal/docs-platform-automation
 - name: #@ "pivnet-release-" + version.number
   type: pivnet
   source:
@@ -604,7 +598,7 @@ jobs:
       file_glob: packaged-product/*
       metadata_file: metadata/metadata.yml
       s3_filepath_prefix: ((pivnet_s3_filepath_prefix))
-  - put: docs-platform-automation-release
+  - put: docs-platform-automation
     params:
       repository: docs-platform-automation
       tag: version/version
