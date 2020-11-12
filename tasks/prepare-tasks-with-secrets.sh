@@ -22,7 +22,7 @@ done
 # ${vars_paths_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
 om vm-lifecycle prepare-tasks-with-secrets \
-  --task-dir tasks \
+  --task-dir "$TASK_PATH" \
   ${config_file_args[@]} \
   ${vars_file_args[@]}
 
