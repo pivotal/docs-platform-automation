@@ -13,7 +13,8 @@ fi
 CONFIG_FILE="${STAGE_PRODUCT_CONFIG_FILE}" platform-automation-tasks/tasks/stage-product.sh
 
 if [ -n "${ASSIGN_STEMCELL_CONFIG_FILE}" ]; then
-  CONFIG_FILE="${ASSIGN_STEMCELL_CONFIG_FILE}" platform-automation-tasks/tasks/assign-stemcell.sh
+  om --env env/"${ENV_FILE}" assign-stemcell \
+  --config assign-stemcell-config/"$ASSIGN_STEMCELL_CONFIG_FILE"
 fi
 
 platform-automation-tasks/tasks/configure-product.sh
