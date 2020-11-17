@@ -68,7 +68,7 @@ if [ "${IGNORE_WARNINGS}" == "true" ]; then
 fi
 
 if [ -n "${ERRAND_CONFIG_FILE}" ]; then
-  flags+=("--config" "${ERRAND_CONFIG_FILE}")
+  flags+=("--config" "config/${ERRAND_CONFIG_FILE}")
 fi
 
 # ${flags[@] needs to be globbed to pass through properly
