@@ -13,19 +13,11 @@ fi
 CONFIG_FILE="${STAGE_PRODUCT_CONFIG_FILE}" platform-automation-tasks/tasks/stage-product.sh
 
 if [ -n "${ASSIGN_STEMCELL_CONFIG_FILE}" ]; then
-  CONFIG_FILE="${ASSIGN_STEMCELL_CONFIG_FILE}" platform-automation-tasks/tasks/assign-stemcell.sh
+  om --env env/"${ENV_FILE}" assign-stemcell \
+  --config assign-stemcell-config/"$ASSIGN_STEMCELL_CONFIG_FILE"
 fi
 
 platform-automation-tasks/tasks/configure-product.sh
-
-flags=("")
-if [ "${RECREATE}" == "true" ]; then
-  flags=("--recreate-vms")
-fi
-
-if [ "${IGNORE_WARNINGS}" == "true" ]; then
-  flags+=("--ignore-warnings")
-fi
 
 product_file="$(find product/*.pivotal 2>/dev/null | head -n1)"
 if [ -f "${product_file}" ]; then
@@ -63,6 +55,20 @@ else
     ${vars_files_args[@]} \
     ${ops_files_args[@]}
   )"
+fi
+
+flags=()
+
+if [ "${RECREATE}" == "true" ]; then
+  flags+=("--recreate-vms")
+fi
+
+if [ "${IGNORE_WARNINGS}" == "true" ]; then
+  flags+=("--ignore-warnings")
+fi
+
+if [ -n "${ERRAND_CONFIG_FILE}" ]; then
+  flags+=("--config" "config/${ERRAND_CONFIG_FILE}")
 fi
 
 # ${flags[@] needs to be globbed to pass through properly
