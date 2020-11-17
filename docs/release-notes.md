@@ -33,6 +33,8 @@ Coming Soon
   The `TASK_PATH` was added, so custom paths of tasks could be prepared, too.
 - [`stage-configure-apply`][stage-configure-apply] was missing the ability to configure errands.
   We've added the `ERRAND_CONFIG_FILE` parameter.
+- [`stage-configure-apply`][stage-configure-apply] was using the incorrect path relative to the input.
+  It was using `config` instead of `assign-stemcell-config`.
 
 ## v5.0.7
 October 23, 2020
@@ -552,9 +554,6 @@ Coming Soon
 - [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] could not be used with other tasks.
   For example, if you had written custom tasks.
   The `TASK_PATH` was added, so custom paths of tasks could be prepared, too.
-- [`stage-configure-apply`][stage-configure-apply] was missing the ability to configure errands.
-  We've added the `ERRAND_CONFIG_FILE` parameter.
-
 
 ## v4.4.13
 October 23, 2020
