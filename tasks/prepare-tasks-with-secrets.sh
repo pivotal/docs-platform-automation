@@ -5,18 +5,16 @@ cat /var/version && echo ""
 set -eux
 
 config_file_args=("")
-for cp in ${CONFIG_PATHS}
-do
+for cp in ${CONFIG_PATHS}; do
   config_file_args+=("--config-dir ${cp}")
 done
 
-if [[ -d "vars" && -z "$VARS_PATHS" ]]; then
-    VARS_PATHS=vars
+if [[ -d "vars" && -z "${VARS_PATHS}" ]]; then
+  VARS_PATHS=vars
 fi
 
 vars_file_args=("")
-for vf in ${VARS_PATHS}
-do
+for vf in ${VARS_PATHS}; do
   vars_file_args+=("--var-dir ${vf}")
 done
 
@@ -24,7 +22,7 @@ done
 # ${vars_paths_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
 om vm-lifecycle prepare-tasks-with-secrets \
-  --task-dir tasks \
+  --task-dir "$TASK_PATH" \
   ${config_file_args[@]} \
   ${vars_file_args[@]}
 
