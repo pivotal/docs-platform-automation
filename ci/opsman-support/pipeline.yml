@@ -35,14 +35,14 @@ resources:
     source:
       api_token: ((pivnet_token))
       product_slug: platform-automation
-      regexp: #@ pat_version
+      product_version: #@ pat_version.replace('.', '\.')
 
   - name: #@ "platform-automation-image-" + pat_version
     type: pivnet
     source:
       api_token: ((pivnet_token))
       product_slug: platform-automation
-      regexp: #@ pat_version
+      product_version: #@ pat_version.replace('.', '\.')
 #@ end
   - name: paving
     type: git
