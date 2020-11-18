@@ -53,7 +53,7 @@ run:
     
     cat >> metadata/metadata.yml <<EOF
       release_type: Maintenance Release
-      eula_slug: "pivotal_software_eula"
+      eula_slug: "vmware_eula"
       eccn: "EAR99"
       license_exception: "NLR"
     product_files:
