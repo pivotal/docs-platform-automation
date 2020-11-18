@@ -17,8 +17,10 @@ if [ -n "${OPSMAN_SSH_PRIVATE_KEY}" ]; then
   }
   trap cleanup EXIT
 
+  OPSMAN_SSH_TARGET=${OPSMAN_SSH_TARGET:-$host}
+
   echo "${OPSMAN_SSH_PRIVATE_KEY}" | ssh-add -
-  ssh -o StrictHostKeyChecking=no -4 -D 12345 -fNC "${OPSMAN_SSH_USERNAME}"@"${host}"
+  ssh -o StrictHostKeyChecking=no -4 -D 12345 -fNC "${OPSMAN_SSH_USERNAME}"@"${OPSMAN_SSH_TARGET}"
 
   export BOSH_ALL_PROXY=socks5://localhost:12345
 else
