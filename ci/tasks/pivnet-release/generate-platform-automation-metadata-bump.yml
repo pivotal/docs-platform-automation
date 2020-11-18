@@ -40,9 +40,15 @@ run:
         - 356 # See private pivotal/platform-automation-ci git history for more info
     EOF
     else
+      if [[ "$ALL_USERS" == "true" ]]; then
     cat >> metadata/metadata.yml <<EOF
       availability: All Users
     EOF
+      else
+    cat >> metadata/metadata.yml <<EOF
+      availability: Admins Only
+    EOF
+      fi
     fi
     
     cat >> metadata/metadata.yml <<EOF
