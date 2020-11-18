@@ -1629,6 +1629,8 @@ jobs:
         platform-automation-tasks: #@ "platform-automation-" + version.number
     - task: generate-platform-automation-metadata
       file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
+      params:
+        ALL_USERS: false
     - task: generate-dpkg-list-for-osl
       file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
