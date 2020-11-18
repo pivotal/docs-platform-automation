@@ -294,7 +294,7 @@ resources:
   type: git
   source:
     branch: #@ version.number
-    private_key: ((platform_automation.private_key))
+    private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
 - name: #@ "pivnet-release-" + version.number
   type: pivnet
