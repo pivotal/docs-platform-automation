@@ -1640,6 +1640,7 @@ jobs:
         repository: #@ "platform-automation-" + version.number
         tag: version/version
         tag_prefix: v
+        rebase: true
     - put: image-receipt-s3
       params:
         file: rc-image-receipt-s3/image-receipt-*
