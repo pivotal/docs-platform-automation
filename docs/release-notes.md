@@ -21,6 +21,14 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.14
+Coming Soon
+
+### Bug Fixes
+- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] could not be used with other tasks.
+  For example, if you had written custom tasks.
+  The `TASK_PATH` was added, so custom paths of tasks could be prepared, too.
+
 ## v4.4.13
 October 23, 2020
 
