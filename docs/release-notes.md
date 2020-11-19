@@ -30,6 +30,22 @@ November 19, 2020
 ## v5.0.8
 Coming Soon
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.180 |
+    | azure-cli | 2.15.0 |
+    | bbr-cli | [1.8.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.8.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 319.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | d424cdfe525f3d9ec4f7b6995c160d7b80c4a6f1-2020-11-18T09:51:49-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.9" target="_blank">Download</a>
+
 ### Bug Fixes
 - The `backup` scripts did not have the correct command line options to compress the tarball.
   It is still a valid tarball, just not compressed.
