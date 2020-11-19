@@ -26,7 +26,7 @@ run:
     destination="$PWD/bumped-platform-automation-image"
 
     docker import platform-automation-image/*.tgz "$image_name"
-    docker build -t "$image_name" -f docs-platform-automation/ci/dockerfiles/Dockerfile.python-mitigation platform-automation/
+    docker build -t "$image_name" -f docs-platform-automation/ci/dockerfiles/Dockerfile.python-mitigation docs-platform-automation/
     docker run \
       --rm \
       "$image_name" \
