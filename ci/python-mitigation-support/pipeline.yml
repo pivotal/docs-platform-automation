@@ -6,11 +6,6 @@ resource_types:
   source:
     repository: pivotalcf/pivnet-resource
     tag: latest-final
-- name: slack-notification
-  type: registry-image
-  source:
-    repository: cfcommunity/slack-notification-resource
-    tag: latest
 resources:
 - name: docs-platform-automation
   type: git
@@ -86,10 +81,6 @@ resources:
     regexp: platform-automation-tasks-(.*).zip
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-- name: slack
-  type: slack-notification
-  source:
-    url: ((slack_webhook_url))
 jobs:
 #@ for version in data.values.versions:
 - name: #@ "update-" + version.branch_name
@@ -127,8 +118,6 @@ jobs:
             echo "$version+python-mitigation" > version/version
   - task: remove-python
     file: docs-platform-automation/ci/tasks/python-mitigation.yml
-    input_mapping:
-      platform-automation: #@ "platform-automation-" + version.branch_name
     privileged: true
   - task: create-release-file
     file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
@@ -165,8 +154,4 @@ jobs:
       file: packaged-product/platform-automation-tasks-*.zip
     get_params:
       skip_download: "true"
-  - put: slack
-    params:
-      silent: true
-      text: "A new version of the python mitigation image has been Release on Tanzunet."
 #@ end
