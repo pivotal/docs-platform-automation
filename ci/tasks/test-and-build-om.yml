@@ -35,7 +35,6 @@ run:
 
       CGO_ENABLED=1 ginkgo \
         -r \
-        -p \
         -race \
         -succinct \
         -nodes 1 \
