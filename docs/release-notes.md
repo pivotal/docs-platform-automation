@@ -21,6 +21,12 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.16
+November 24, 2020
+
+
+
+
 ## v4.4.15
 November 19, 2020
 
