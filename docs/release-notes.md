@@ -569,6 +569,12 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.16
+November 24, 2020
+
+
+
+
 ## v4.4.15
 November 19, 2020
 
