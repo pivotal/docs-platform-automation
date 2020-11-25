@@ -24,8 +24,22 @@
 ## v5.0.10
 November 24, 2020
 
+??? info "CLI Versions"
 
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.184 |
+    | azure-cli | 2.15.1 |
+    | bbr-cli | [1.8.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.8.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 319.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | 3a7d703bacb004220450d5984b01a5ea6ebe5087-2020-11-23T14:34:44-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
 
+### Bug Fixes
+- Fixes an issue where `stemcell-heavy` in `download-product` had a regression with boolean values.
 
 ## v5.0.9
 November 19, 2020
@@ -572,8 +586,22 @@ Released September 2, 2020
 ## v4.4.16
 November 24, 2020
 
+??? info "CLI Versions"
 
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.184 |
+    | azure-cli | 2.15.1 |
+    | bbr-cli | [1.8.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.8.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 319.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | 3a7d703bacb004220450d5984b01a5ea6ebe5087-2020-11-23T14:34:44-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
 
+### Bug Fixes
+- Fixes an issue where `stemcell-heavy` in `download-product` had a regression with boolean values.
 
 ## v4.4.15
 November 19, 2020
