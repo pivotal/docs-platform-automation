@@ -28,7 +28,7 @@ run:
 
     go get github.com/onsi/ginkgo/ginkgo
 
-    export PATH="${PATH}:${GOPATH}/bin"
+    export PATH="${GOPATH}/bin:${PATH}"
 
     pushd "om" > /dev/null
       go mod download
