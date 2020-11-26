@@ -32,6 +32,7 @@ run:
 
     pushd "om" > /dev/null
       go mod download
+      go install github.com/pivotal-cf/om
 
       CGO_ENABLED=1 ginkgo \
         -r \
