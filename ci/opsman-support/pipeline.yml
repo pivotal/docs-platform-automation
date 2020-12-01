@@ -22,14 +22,14 @@ resources:
     source:
       api_token: ((pivnet_token))
       product_slug: platform-automation
-      product_version: #@ pat_version.replace('.', '\.')
+      product_version: #@ "^" + pat_version.replace('.', '\.') + "\.\d+$"
 
   - name: #@ "platform-automation-image-" + pat_version
     type: pivnet
     source:
       api_token: ((pivnet_token))
       product_slug: platform-automation
-      product_version: #@ pat_version.replace('.', '\.')
+      product_version: #@ "^" + pat_version.replace('.', '\.') + "\.\d+$"
 #@ end
   - name: paving
     type: git
