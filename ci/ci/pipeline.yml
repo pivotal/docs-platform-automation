@@ -561,7 +561,10 @@ jobs:
       params:
         unpack: true
       passed:
-        - run-tasks-in-ci-vsphere-job
+      #@ for/end deployment in deployments_without_gcp:
+      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - upgrade-opsman-gcp
+      - additional-task-testing
     - get: platform-automation-tasks
       resource: rc-tasks-s3
       passed:
