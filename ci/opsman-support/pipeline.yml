@@ -1,19 +1,6 @@
 ---
 #@ opsman_versions = ["2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "2.10"]
 #@ pat_versions = ["4.4", "5.0"]
-groups:
-#@ for opsman_version in opsman_versions:
-- name: #@ "opsman-" + opsman_version
-  jobs:
-  #@ for/end pat_version in pat_versions:
-  - #@ "test-opsman-" + opsman_version + "-with-pat-version-" + pat_version
-#@ end
-- name: all
-  jobs:
-  #@ for opsman_version in opsman_versions:
-  #@ for/end pat_version in pat_versions:
-  - #@ "test-opsman-" + opsman_version + "-with-pat-version-" + pat_version
-  #@ end
 resource_types:
 - name: pivnet
   type: registry-image
@@ -84,8 +71,14 @@ resources:
       product_version: ^97\..*
 
 jobs:
+#@ flipflop = 0
 #@ for pat_version in pat_versions:
+#@ flipflop = flipflop + 1
 #@ for opsman_version in opsman_versions:
+#@ flipflop = flipflop + 1
+#@ if flipflop % 2 != 0:
+#@   continue
+#@ end
 - name: #@ "test-opsman-" + opsman_version + "-with-pat-version-" + pat_version
   serial: true
   serial_groups: ["install"]
