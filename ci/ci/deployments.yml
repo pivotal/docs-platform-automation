@@ -11,12 +11,12 @@ deployments:
     opsman_glob: "*azure*.yml"
     tags: [ ]
     enable_timed_trigger: true
-  - env_name: ci-vsphere
-    paving_dir: nsxt
-    opsman_glob: "*vsphere*.ova"
-    tags:
-      - vsphere-pez
-    enable_timed_trigger: true
+#!  - env_name: ci-vsphere
+#!    paving_dir: nsxt
+#!    opsman_glob: "*vsphere*.ova"
+#!    tags:
+#!      - vsphere-pez
+#!    enable_timed_trigger: true
   - env_name: ci-upgrade
     paving_dir: gcp
     opsman_glob: "*gcp*.yml"
