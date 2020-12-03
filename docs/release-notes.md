@@ -20,6 +20,17 @@
      ```
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
+     
+## v5.0.11
+
+### Bug Fixes
+- [`update-runtime-config`][update-runtime-config] task has the `releases` input as optional.
+  When looking for `releases`, if the input wasn't there then the task would fail.
+  A check has been added to ensure the input is there.
+- With long-running tasks (using `om` commands),
+  sometimes the authentication token would expire.
+  If possible the token will be refreshed.
+  This should help with HTTP retries.  
 
 ## v5.0.10
 November 24, 2020
@@ -582,6 +593,17 @@ Released September 2, 2020
       params:
         no_proxy: ""
     ```
+
+## v4.4.17
+
+### Bug Fixes
+- [`update-runtime-config`][update-runtime-config] task has the `releases` input as optional.
+  When looking for `releases`, if the input wasn't there then the task would fail.
+  A check has been added to ensure the input is there.
+- With long-running tasks (using `om` commands),
+  sometimes the authentication token would expire.
+  If possible the token will be refreshed.
+  This should help with HTTP retries.  
 
 ## v4.4.16
 November 24, 2020
