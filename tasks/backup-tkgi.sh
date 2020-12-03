@@ -8,6 +8,7 @@ export PRODUCT_NAME="pivotal-container-service"
 
 # shellcheck source=./setup-bosh-env.sh
 source ./platform-automation-tasks/tasks/setup-bosh-env.sh
+set -x
 
 # shellcheck disable=SC2016
 echo 'Backing up TKGI, the `pks` CLI may be unavailable'
