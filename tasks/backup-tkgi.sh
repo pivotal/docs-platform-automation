@@ -8,7 +8,6 @@ export PRODUCT_NAME="pivotal-container-service"
 
 # shellcheck source=./setup-bosh-env.sh
 source ./platform-automation-tasks/tasks/setup-bosh-env.sh
-set -x
 
 # shellcheck disable=SC2016
 echo 'Backing up TKGI, the `pks` CLI may be unavailable'
@@ -19,6 +18,8 @@ source ./platform-automation-tasks/tasks/backup-product.sh
 bosh_team_creds="$(om --env env/"${ENV_FILE}" curl -p /api/v0/deployed/products/"${DEPLOYMENT_NAME}"/uaa_client_credentials)"
 bosh_team_client="$(echo "${bosh_team_creds}" | om interpolate --path /uaa_client_name)"
 bosh_team_client_secret="$(echo "${bosh_team_creds}" | om interpolate --path /uaa_client_secret)"
+
+set -x
 
 pushd backup
   bbr deployment \

@@ -6,10 +6,11 @@ set -eu
 
 # shellcheck source=./setup-bosh-env.sh
 source ./platform-automation-tasks/tasks/setup-bosh-env.sh
-set -x
 
 bosh_username="bbr"
 bosh_private_key="$(om --env env/"${ENV_FILE}" curl -p /api/v0/deployed/director/credentials/bbr_ssh_credentials | om interpolate --path /credential/value/private_key_pem)"
+
+set -x
 
 pushd backup
   bbr director \
