@@ -11,6 +11,7 @@ fi
 
 # shellcheck source=./setup-bosh-env.sh
 source ./platform-automation-tasks/tasks/setup-bosh-env.sh
+set -x
 
 if [ -e "releases/" ]; then
   # $RELEASES_GLOB needs to be globbed to pass through properly

@@ -11,6 +11,7 @@ fi
 
 # shellcheck source=./setup-bosh-env.sh
 source ./platform-automation-tasks/tasks/setup-bosh-env.sh
+set -x
 
 # exported for use in other tasks
 export DEPLOYMENT_NAME
