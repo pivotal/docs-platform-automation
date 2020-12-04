@@ -24,7 +24,7 @@
 ## v5.0.11
 
 ### Features
-- [`configre-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
+- [`configure-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
    
    ```yaml
    tokens-expiration:
@@ -607,7 +607,7 @@ Released September 2, 2020
 ## v4.4.17
 
 ### Features
-- [`configre-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
+- [`configure-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
 
    ```yaml
    tokens-expiration:
