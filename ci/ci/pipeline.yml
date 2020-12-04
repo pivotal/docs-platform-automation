@@ -1355,6 +1355,20 @@ jobs:
       params:
         globs:
           - '*.pivotal'
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    input_mapping:
+      files: docs-platform-automation-reference-pipeline-config
+    output_mapping:
+      interpolated-files: env
+    params:
+      CREDHUB_CLIENT: ((credhub-client))
+      CREDHUB_SECRET: ((credhub-secret))
+      CREDHUB_SERVER: ((credhub-server))
+      CREDHUB_CA_CERT: ((credhub-ca-cert))
+      PREFIX: /concourse/main/reference-pipeline
+      INTERPOLATION_PATHS: .
   - in_parallel:
     - do:
       - task: ensure-clis-versions-run
@@ -1439,21 +1453,6 @@ jobs:
 
                 curl -vvv -L https://self-signed.badssl.com
     - do:
-      - &credhub-interpolate
-        task: credhub-interpolate
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/credhub-interpolate.yml
-        input_mapping:
-          files: docs-platform-automation-reference-pipeline-config
-        output_mapping:
-          interpolated-files: env
-        params:
-          CREDHUB_CLIENT: ((credhub-client))
-          CREDHUB_SECRET: ((credhub-secret))
-          CREDHUB_SERVER: ((credhub-server))
-          CREDHUB_CA_CERT: ((credhub-ca-cert))
-          PREFIX: /concourse/main/reference-pipeline
-          INTERPOLATION_PATHS: .
       - task: backup-tkgi
         image: platform-automation-image
         file: platform-automation-tasks/tasks/backup-tkgi.yml
@@ -1476,7 +1475,6 @@ jobs:
                 test -e backup/pivotal-container-service*_clusters_*.tgz
                 tar -tzf backup/pivotal-container-service*_clusters_*.tgz > /dev/null
     - do:
-      - *credhub-interpolate
       - task: download-and-upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-and-upload-product.yml
@@ -1486,7 +1484,6 @@ jobs:
           ENV_FILE: foundations/config/env.yml
           CONFIG_FILE: download-product-pivnet/download-healthwatch.yml
     - do:
-      - *credhub-interpolate
       - task: backup-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/backup-director.yml
@@ -1509,7 +1506,6 @@ jobs:
                 test -e backup/director_*.tgz
                 tar -tzf  backup/director_*.tgz > /dev/null
     - do:
-      - *credhub-interpolate
       - task: update-runtime-config
         image: platform-automation-image
         file: platform-automation-tasks/tasks/update-runtime-config.yml
