@@ -23,6 +23,20 @@
      
 ## v5.0.11
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.189 |
+    | azure-cli | 2.15.1 |
+    | bbr-cli | [1.8.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.8.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 319.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | acfd93675b65c8ca8a7f584cd53796d09e5fc88b-2020-12-03T07:19:52-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
 ### Features
 - [`configure-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
    
@@ -609,6 +623,20 @@ Released September 2, 2020
     ```
 
 ## v4.4.17
+
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.189 |
+    | azure-cli | 2.15.1 |
+    | bbr-cli | [1.8.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.8.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 319.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | acfd93675b65c8ca8a7f584cd53796d09e5fc88b-2020-12-03T07:19:52-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
 
 ### Features
 - [`configure-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
