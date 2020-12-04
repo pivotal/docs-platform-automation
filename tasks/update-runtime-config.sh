@@ -31,14 +31,16 @@ else
   eval "$(om --env env/"${ENV_FILE}" bosh-env)"
 fi
 
-# $RELEASES_GLOB needs to be globbed to pass through properly
-# shellcheck disable=SC2086
-RELEASE_FILES="$(find releases/$RELEASES_GLOB 2>/dev/null)"
-if [ -n "${RELEASE_FILES}" ]; then
-  for rf in ${RELEASE_FILES}
-  do
-    bosh upload-release "${rf}"
-  done
+if [ -e "releases/" ]; then
+  # $RELEASES_GLOB needs to be globbed to pass through properly
+  # shellcheck disable=SC2086
+  RELEASE_FILES="$(find releases/$RELEASES_GLOB 2>/dev/null)"
+  if [ -n "${RELEASE_FILES}" ]; then
+    for rf in ${RELEASE_FILES}
+    do
+      bosh upload-release "${rf}"
+    done
+  fi
 fi
 
 vars_files_args=("")
