@@ -16,13 +16,13 @@ pushd backup
   bbr director \
     --host "${BOSH_ENVIRONMENT}" \
     --username "${bosh_username}" \
-    --private-key-path <(echo "${bosh_private_key}") \
+    --private-key-path <(set +x; echo "${bosh_private_key}") \
     backup-cleanup
 
   bbr director \
     --host "${BOSH_ENVIRONMENT}" \
     --username "${bosh_username}" \
-    --private-key-path <(echo "${bosh_private_key}") \
+    --private-key-path <(set +x; echo "${bosh_private_key}") \
     backup
 
   tar -zcvf director_"$( date +"%Y-%m-%d-%H-%M-%S" )".tgz --remove-files -- */*
