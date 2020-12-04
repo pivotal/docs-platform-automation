@@ -40,7 +40,11 @@
 - With long-running tasks (using `om` commands),
   sometimes the authentication token would expire.
   If possible the token will be refreshed.
-  This should help with HTTP retries.  
+  This should help with HTTP retries.
+- CVE update to container image. Resolves [USN-4608-1](https://ubuntu.com/security/notices/USN-4608-1).
+  The CVEs are related to vulnerabilities with `ca-certificates` and related libraries.
+- CVE update to container image. Resolves [USN-4635-1](https://ubuntu.com/security/notices/USN-4635-1).
+  The CVEs are related to vulnerabilities with `krb5` and related libraries.
 
 ## v5.0.10
 November 24, 2020
@@ -624,6 +628,10 @@ Released September 2, 2020
   sometimes the authentication token would expire.
   If possible the token will be refreshed.
   This should help with HTTP retries.  
+- CVE update to container image. Resolves [USN-4608-1](https://ubuntu.com/security/notices/USN-4608-1).
+  The CVEs are related to vulnerabilities with `ca-certificates` and related libraries.
+- CVE update to container image. Resolves [USN-4635-1](https://ubuntu.com/security/notices/USN-4635-1).
+  The CVEs are related to vulnerabilities with `krb5` and related libraries.
 
 ## v4.4.16
 November 24, 2020
