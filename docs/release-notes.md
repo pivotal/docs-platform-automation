@@ -23,6 +23,16 @@
      
 ## v5.0.11
 
+### Features
+- [`configre-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
+   
+   ```yaml
+   tokens-expiration:
+     access_token_expiration: 10
+     refresh_token_expiration: 10
+     session_idle_timeout: 10
+   ```
+
 ### Bug Fixes
 - [`update-runtime-config`][update-runtime-config] task has the `releases` input as optional.
   When looking for `releases`, if the input wasn't there then the task would fail.
@@ -595,6 +605,16 @@ Released September 2, 2020
     ```
 
 ## v4.4.17
+
+### Features
+- [`configre-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
+
+   ```yaml
+   tokens-expiration:
+     access_token_expiration: 10
+     refresh_token_expiration: 10
+     session_idle_timeout: 10
+   ```
 
 ### Bug Fixes
 - [`update-runtime-config`][update-runtime-config] task has the `releases` input as optional.
