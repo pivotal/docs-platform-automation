@@ -20,6 +20,45 @@
      ```
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
+     
+## v5.0.11
+
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.189 |
+    | azure-cli | 2.15.1 |
+    | bbr-cli | [1.8.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.8.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 319.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | acfd93675b65c8ca8a7f584cd53796d09e5fc88b-2020-12-03T07:19:52-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+### Features
+- [`configure-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
+   
+   ```yaml
+   tokens-expiration:
+     access_token_expiration: 10
+     refresh_token_expiration: 10
+     session_idle_timeout: 10
+   ```
+
+### Bug Fixes
+- [`update-runtime-config`][update-runtime-config] task has the `releases` input as optional.
+  When looking for `releases`, if the input wasn't there then the task would fail.
+  A check has been added to ensure the input is there.
+- With long-running tasks (using `om` commands),
+  sometimes the authentication token would expire.
+  If possible the token will be refreshed.
+  This should help with HTTP retries.
+- CVE update to container image. Resolves [USN-4608-1](https://ubuntu.com/security/notices/USN-4608-1).
+  The CVEs are related to vulnerabilities with `ca-certificates` and related libraries.
+- CVE update to container image. Resolves [USN-4635-1](https://ubuntu.com/security/notices/USN-4635-1).
+  The CVEs are related to vulnerabilities with `krb5` and related libraries.
 
 ## v5.0.10
 November 24, 2020
@@ -582,6 +621,45 @@ Released September 2, 2020
       params:
         no_proxy: ""
     ```
+
+## v4.4.17
+
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.189 |
+    | azure-cli | 2.15.1 |
+    | bbr-cli | [1.8.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.8.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.8.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.8.0) |
+    | gcloud-cli | 319.0.0 |
+    | govc-cli | 0.23.0 |
+    | om | acfd93675b65c8ca8a7f584cd53796d09e5fc88b-2020-12-03T07:19:52-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+### Features
+- [`configure-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
+
+   ```yaml
+   tokens-expiration:
+     access_token_expiration: 10
+     refresh_token_expiration: 10
+     session_idle_timeout: 10
+   ```
+
+### Bug Fixes
+- [`update-runtime-config`][update-runtime-config] task has the `releases` input as optional.
+  When looking for `releases`, if the input wasn't there then the task would fail.
+  A check has been added to ensure the input is there.
+- With long-running tasks (using `om` commands),
+  sometimes the authentication token would expire.
+  If possible the token will be refreshed.
+  This should help with HTTP retries.  
+- CVE update to container image. Resolves [USN-4608-1](https://ubuntu.com/security/notices/USN-4608-1).
+  The CVEs are related to vulnerabilities with `ca-certificates` and related libraries.
+- CVE update to container image. Resolves [USN-4635-1](https://ubuntu.com/security/notices/USN-4635-1).
+  The CVEs are related to vulnerabilities with `krb5` and related libraries.
 
 ## v4.4.16
 November 24, 2020
