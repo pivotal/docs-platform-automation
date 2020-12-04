@@ -11,14 +11,17 @@ fi
 
 # shellcheck source=./setup-bosh-env.sh
 source ./platform-automation-tasks/tasks/setup-bosh-env.sh
+set -x
 
-# $RELEASES_GLOB needs to be globbed to pass through properly
-# shellcheck disable=SC2086
-release_files="$(find releases/${RELEASES_GLOB} 2>/dev/null)"
-if [ -n "${release_files}" ]; then
-  for rf in ${release_files}; do
-    bosh upload-release "${rf}"
-  done
+if [ -e "releases/" ]; then
+  # $RELEASES_GLOB needs to be globbed to pass through properly
+  # shellcheck disable=SC2086
+  release_files="$(find releases/${RELEASES_GLOB} 2>/dev/null)"
+  if [ -n "${release_files}" ]; then
+    for rf in ${release_files}; do
+      bosh upload-release "${rf}"
+    done
+  fi
 fi
 
 vars_files_args=("")

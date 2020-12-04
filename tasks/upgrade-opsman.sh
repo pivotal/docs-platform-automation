@@ -2,7 +2,7 @@
 # code_snippet upgrade-opsman-script start bash
 
 cat /var/version && echo ""
-om vm-lifecycle -v
+om -v
 set -eux
 
 vars_files_args=("")

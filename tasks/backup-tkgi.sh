@@ -19,6 +19,8 @@ bosh_team_creds="$(om --env env/"${ENV_FILE}" curl -p /api/v0/deployed/products/
 bosh_team_client="$(echo "${bosh_team_creds}" | om interpolate --path /uaa_client_name)"
 bosh_team_client_secret="$(echo "${bosh_team_creds}" | om interpolate --path /uaa_client_secret)"
 
+set -x
+
 pushd backup
   bbr deployment \
     --username "${bosh_team_client}" \

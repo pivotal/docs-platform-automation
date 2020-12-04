@@ -16,6 +16,8 @@ source ./platform-automation-tasks/tasks/setup-bosh-env.sh
 export DEPLOYMENT_NAME
 DEPLOYMENT_NAME="$(om --env env/"${ENV_FILE}" curl -p /api/v0/deployed/products | om interpolate --path "/type=${PRODUCT_NAME}/guid")"
 
+set -x
+
 pushd backup
   bbr deployment \
       --deployment "${DEPLOYMENT_NAME}" \

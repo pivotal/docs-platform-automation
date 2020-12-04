@@ -26,7 +26,7 @@ params:
   CONFIG_FILE: config.yml
   # - Required
   # - Filepath of the assign-stemcell config YAML
-  # - The path is relative to root of the `assign-stemcell-config` input
+  # - The path is relative to root of the `config` input
 
 run:
   path: platform-automation-tasks/tasks/assign-stemcell.sh
