@@ -31,7 +31,7 @@ run:
         See docs for details.
       availability: All Users
       release_type: Maintenance Release
-      eula_slug: "pivotal_software_eula"
+      eula_slug: "vmware_eula"
       eccn: "EAR99"
       license_exception: "NLR"
     product_files:
