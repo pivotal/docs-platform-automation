@@ -622,6 +622,12 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.18
+December 13, 2020
+
+
+
+
 ## v4.4.17
 
 ??? info "CLI Versions"
