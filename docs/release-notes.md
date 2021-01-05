@@ -24,6 +24,22 @@
 ## v4.4.18
 January 5, 2021
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.208 |
+    | azure-cli | 2.17.1 |
+    | bbr-cli | [1.9.0](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.0) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.9.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.0) |
+    | gcloud-cli | 321.0.0 |
+    | govc-cli | v0.24.0 |
+    | om | dc7ecb856d9d6e8a5538512922e688bd337ab246-2021-01-04T09:19:13-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+
+### Bug Fixes
 - CVE update to container image. Resolves [USN-4672-1](https://ubuntu.com/security/notices/USN-4672-1).
   The CVEs are related to vulnerabilities with `unzip` and related libraries.
 - CVE update to container image. Resolves [USN-4667-1](https://ubuntu.com/security/notices/USN-4667-1).
