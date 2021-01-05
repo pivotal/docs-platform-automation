@@ -637,6 +637,21 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.18
+January 5, 2021
+
+- CVE update to container image. Resolves [USN-4672-1](https://ubuntu.com/security/notices/USN-4672-1).
+  The CVEs are related to vulnerabilities with `unzip` and related libraries.
+- CVE update to container image. Resolves [USN-4667-1](https://ubuntu.com/security/notices/USN-4667-1).
+  The CVEs are related to vulnerabilities with `apt` and related libraries.
+- CVE update to container image. Resolves [USN-4665-1](https://ubuntu.com/security/notices/USN-4665-1).
+  The CVEs are related to vulnerabilities with `curl` and related libraries.
+- CVE update to container image. Resolves [USN-4662-1](https://ubuntu.com/security/notices/USN-4662-1).
+  The CVEs are related to vulnerabilities with `libssl` and related libraries.
+- CVE update to container image. Resolves [USN-4677-1](https://ubuntu.com/security/notices/USN-4677-1).
+  The CVEs are related to vulnerabilities with `p11` and related libraries.
+
+
 ## v4.4.17
 
 ??? info "CLI Versions"
