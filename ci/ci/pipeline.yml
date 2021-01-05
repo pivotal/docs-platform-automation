@@ -217,11 +217,6 @@ resources:
     location: America/Denver
     start: 5:00 AM
     stop: 6:00 AM
-- name: monthly
-  type: time
-  source:
-    interval: 730h
-    location: America/Denver
 - name: nightly
   type: time
   source:
@@ -1523,8 +1518,6 @@ jobs:
   serial: true
   plan:
   - in_parallel:
-    - get: monthly
-      trigger: true
     - get: rc-image-s3-vsphere
       passed:
       #@ for/end deployment in deployments_without_gcp:
