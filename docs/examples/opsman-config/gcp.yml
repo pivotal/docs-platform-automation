@@ -26,6 +26,7 @@ opsman-configuration:
     # custom_memory: 8         # default - 8
     # boot_disk_size: 100      # default - 100
     # scopes: ["my-scope"]
+    # hostname: custom.hostname # info: https://cloud.google.com/compute/docs/instances/custom-hostname-vm
 
   # Optional Ops Manager UI Settings for upgrade-opsman
   # ssl-certificate: ...
