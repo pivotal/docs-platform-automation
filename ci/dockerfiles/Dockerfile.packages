@@ -43,4 +43,4 @@ RUN openstack --version
 
 # Upgrade all packages
 RUN apt-get upgrade -y
-RUN apt-get autoremove -y build-essential ca-certificates python3-dev
+RUN apt-get autoremove -y build-essential python3-dev
