@@ -22,8 +22,26 @@
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
 ## v5.0.13
+January 15, 2021
+
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.18.215 |
+    | azure-cli | 2.17.1 |
+    | bbr-cli | [1.9.1](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.1) |
+    | bosh-cli | [v6.4.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.1) |
+    | credhub | [2.9.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.0) |
+    | gcloud-cli | 323.0.0 |
+    | govc-cli | v0.24.0 |
+    | om | 39fd21c57e46588e76bb07826a2d8809e29382e9-2021-01-12T08:23:20-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.19" target="_blank">Download</a>
 
 ### Bug Fixes
+- Use [`pip` documented](https://pip.pypa.io/en/stable/installing/) method for installing it on the container image
 - With new GCP practices, defining a [`hostname`](https://cloud.google.com/compute/docs/instances/custom-hostname-vm) on the VM can be required.
   When creating an Ops Manager VM on GCP, the attribute can be set via the configuration file.
   
