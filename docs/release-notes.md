@@ -678,6 +678,13 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.19
+January 15, 2021
+
+### Bug Fixes
+- Use [`pip` documented](https://pip.pypa.io/en/stable/installing/) method for installing it on the container image
+
+
 ## v4.4.18
 January 5, 2021
 
