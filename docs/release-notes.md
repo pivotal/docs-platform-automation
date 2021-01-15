@@ -21,6 +21,31 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.13
+
+### Bug Fixes
+- With new GCP practices, defining a [`hostname`](https://cloud.google.com/compute/docs/instances/custom-hostname-vm) on the VM can be required.
+  When creating an Ops Manager VM on GCP, the attribute can be set via the configuration file.
+  
+    ```yaml
+    ---
+      opsman-configuration:
+        gcp:
+          boot_disk_size: 100
+          custom_cpu: 4
+          custom_memory: 16
+          gcp_service_account: ((service_account_key))
+          project: ((project))
+          public_ip: ((ops_manager_public_ip))
+          region: ((region))
+          ssh_public_key: ((ops_manager_ssh_public_key))
+          tags: ((ops_manager_tags))
+          vm_name: ((environment_name))-ops-manager-vm
+          vpc_subnet: ((management_subnet_name))
+          zone: ((availability_zones.0))
+          hostname: testing.some.domain
+    ```
+
 ## v5.0.12
 January 5, 2021
 
@@ -652,6 +677,13 @@ Released September 2, 2020
       params:
         no_proxy: ""
     ```
+
+## v4.4.19
+January 15, 2021
+
+### Bug Fixes
+- Use [`pip` documented](https://pip.pypa.io/en/stable/installing/) method for installing it on the container image
+
 
 ## v4.4.18
 January 5, 2021
