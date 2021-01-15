@@ -12,6 +12,47 @@ these instructions are public as an implementation detail,
 and are not intended to be useful to the public.
 
 ## CVEs and Patching Steps
+
+### Identifying CVE notices
+
+[Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation) distributes two artifacts.
+This includes a zip file of Cocnourse YAML tasks and tarball of a container image.
+
+The container image uses Ubuntu and it's package manager to install most dependencies.
+VMware (through Pivotal) has a support license, which provides timely security updates to these packages.
+
+This document contains instructions of how the container is updated and released for security purposes.
+
+#### Workflow
+
+##### Updating container image for CVEs
+
+At the moment, the process involves a Pivotal Tracker project. These instructions are written with that assumption.
+
+1. [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/1472134) stories are automatically created identifying there is a CVE on our container image.
+
+   <img width="390" alt="Screen Shot 2021-01-13 at 9 29 42 AM" src="https://user-images.githubusercontent.com/75184/104483047-e6bb2300-5584-11eb-81e2-e1ccfb89b9a6.png">
+
+1. Start the available tracker stories and assign accordingly.
+1. Inspect the story description for the package name and version number, which will be the CVE fix.
+   The container image is built upon `Ubuntu 18.04`.
+   <img width="377" alt="Screen Shot 2021-01-13 at 9 54 02 AM" src="https://user-images.githubusercontent.com/75184/104483369-46193300-5585-11eb-9370-111ea383d6c7.png">
+1. Given the package and version (`ca-certificates 20201027ubuntu0.18.04.1`), let's inspect our container image to see if has this package and version. Platform Automation generates an artifact on every container build, so it easy to find this information.
+1. Goto the Platform Automation [CI pipeline](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci), click on `build-binaries-image-combined`, and look for the `put` of the resource named `rc-image-receipt-s3`.
+   <img width="1257" alt="Screen Shot 2021-01-13 at 10 01 38 AM" src="https://user-images.githubusercontent.com/75184/104484289-5c73be80-5586-11eb-9ef8-ec98e724d316.png">
+   Download the file in the `url` attribute. It automatically public, so no need to log into s3.
+1. With the file just downloaded (`image-receipt-5.1.0-rc.129`), open in your text editor of choice.
+   Search for the package name (`ca-certificates`) and ensure the version number is correct.
+   <img width="975" alt="Screen Shot 2021-01-13 at 10 04 49 AM" src="https://user-images.githubusercontent.com/75184/104484653-c7bd9080-5586-11eb-864b-556904ecaa93.png">
+   In this example, it is the wrong version (purposely).
+1. Since the container image does have the correct version, the pipeline needs to be triggered to pull in the latest package.
+   Note: The container image build process is built in two steps. This allows CD to happen when contributing code to our source repo. The packages for the Ubuntu image are installed in the `build-packages-image` job on the pipeline.
+1. Trigger the job [`build-packages-image`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-packages-image/builds/947) to start the container build process, which installs the latest packages.
+   Note: When this job finishes, it will trigger downstream `build-binaries-image-combined`, and then those following jobs.
+1. When the `build-binaries-image-combined` is finished from its upstream trigger, reinspect the image receipt to if it updated.
+
+### Updating cve path notes
+
 1. Update the release notes for patching CVEs (and/or other security/package updates).
    This should be updated in `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
    The bug fixes for the last release should be already populated.
