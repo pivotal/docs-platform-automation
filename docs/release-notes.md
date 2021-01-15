@@ -21,6 +21,13 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.19
+January 15, 2021
+
+### Bug Fixes
+- Use [`pip` documented](https://pip.pypa.io/en/stable/installing/) method for installing it on the container image
+
+
 ## v4.4.18
 January 5, 2021
 
