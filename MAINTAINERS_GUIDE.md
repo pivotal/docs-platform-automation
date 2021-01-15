@@ -488,39 +488,6 @@ Generated HTML contains undefined links!
 
 ## Slack and Support
 
-### Webhooks
-There are 3 webhooks that will show up in the `#pcf-automation-priv` channel.
-
-1. After triggering `bump-previous-versions-trigger`,
-   this webhook will alert the team that the bump
-   of a particular version has traversed CI and been publicly released.
-   ```
-   # webhook text
-   A new patch version was released to Tanzunet: vX.X
-   ```
-   
-1. A beta test of the features included in Platform Automation Toolkit 5.0
-   was released to a small subset of customers for earlier versions
-   of the toolkit. This webhook indicates the security patch
-   for that beta has been released.
-   The mitigation pipeline will auto-trigger after the non-mitigation version
-   is available on Pivnet.
-   ```
-   # webhook text
-   A new version of the python mitigation image has been Release on Tanzunet.
-   ```
-
-1. The `check-for-secrets-in-tasks` job in CI will daily check the tasks
-   to make sure no secrets from Credhub or vars files are printed in our tasks.
-   There is an allow-list that will not trigger a failure.
-   Objects in this allow list are objects printed by CLIs we don't control (ie, azure, aws, gcp, bosh, etc).
-   We trust that the CLIs are handling their own redaction.
-   If we find a secret that is printed unexpectedly by a change in the tasks, we alert Slack.
-   ```
-   # webhook text
-   Found a secret in a build! See concourse(https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci) for more details.
-   ```
-
 ### Bugs in [Tracker](https://www.pivotaltracker.com/n/projects/1472134)
 #### Github issues
 When an issue is opened on the `om` or `docs-platform-automation`
