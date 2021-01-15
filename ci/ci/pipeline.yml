@@ -173,9 +173,11 @@ resources:
   source:
     access_key_id: ((s3.access_key_id))
     bucket: ((s3.buckets.release_candidate))
-    regexp: image-receipt-(4\.4\.3)
+    regexp: image-receipt-(.*)
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
+  version:
+    path: image-receipt-5.1.0-rc.139
 - name: image-receipt-s3
   type: s3
   source:
