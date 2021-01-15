@@ -24,7 +24,7 @@ username: $OM_USERNAME
 password: $OM_PASSWORD
 decryption-passphrase: $OM_PASSWORD
 skip-ssl-validation: true
-connection-timeout: 60
+connect-timeout: 60
 EOL
     git add env.yml
     git commit -m "updated terraform state for $DEPLOYMENT_NAME & updated env.yml" || true
