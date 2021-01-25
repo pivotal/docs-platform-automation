@@ -35,7 +35,8 @@ At the moment, the process involves a Pivotal Tracker project. These instruction
 
 1. Start the available tracker stories and assign accordingly.
 1. Inspect the story description for the package name and version number, which will be the CVE fix.
-   The container image is built upon `Ubuntu 18.04`.
+   The container image is built upon `Ubuntu 18.04`. Follow the Davos Notice
+   link to verify that the versions tagged are not "Out of Support".
    <img width="377" alt="Screen Shot 2021-01-13 at 9 54 02 AM" src="https://user-images.githubusercontent.com/75184/104483369-46193300-5585-11eb-9370-111ea383d6c7.png">
 1. Given the package and version (`ca-certificates 20201027ubuntu0.18.04.1`), let's inspect our container image to see if has this package and version. Platform Automation generates an artifact on every container build, so it easy to find this information.
 1. Goto the Platform Automation [CI pipeline](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci), click on `build-binaries-image-combined`, and look for the `put` of the resource named `rc-image-receipt-s3`.
