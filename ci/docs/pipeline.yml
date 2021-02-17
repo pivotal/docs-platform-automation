@@ -35,7 +35,7 @@ resources:
   type: git
   source:
     branch: develop
-    private_key: ((platform_automation_ci.private_key))
+    private_key: ((platform_automation_docs_reference.private_key))
     uri: git@github.com:pivotal/docs-platform-automation-reference-pipeline-config
 - name: docs-app-staging
   type: cf
