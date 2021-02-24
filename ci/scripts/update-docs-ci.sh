@@ -14,5 +14,5 @@ which fly || (
 )
 
 echo "Setting Docs CI pipeline on Runway..."
-fly -t runway sp -p docs-runway -c <(ytt -f "$WORKING_DIR/../docs/") \
+fly -t runway sp -p platform-automation -c <(ytt -f "$WORKING_DIR/../docs/") \
   --check-creds
