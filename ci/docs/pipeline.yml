@@ -40,19 +40,19 @@ resources:
 - name: docs-app-staging
   type: cf
   source:
-    api: api.run.pivotal.io
-    client_id: ((docs-uaa-username))
-    client_secret: ((docs-uaa-password))
-    organization: ((docs-org))
-    space: ((docs-staging-space))
+    api: ((pcf1.api-endpoint))
+    username: ((pcf1.docs-uaa-username))
+    password: ((pcf1.docs-uaa-password))
+    organization: ((pcf1.docs-org))
+    space: ((pcf1.docs-staging-space))
 - name: docs-app-production
   type: cf
   source:
-    api: api.run.pivotal.io
-    client_id: ((docs-uaa-username))
-    client_secret: ((docs-uaa-password))
-    organization: ((docs-org))
-    space: ((docs-prod-space))
+    api: ((pcf1.api-endpoint))
+    username: ((pcf1.docs-uaa-username))
+    password: ((pcf1.docs-uaa-password))
+    organization: ((pcf1.docs-org))
+    space: ((pcf1.docs-prod-space))
 - name: mkdocs-pivotal-theme
   type: git
   source:
@@ -127,7 +127,7 @@ jobs:
           - '--site-prefix'
           - 'platform-automation'
           - '--domains'
-          - 'docs-pcf-staging.cfapps.io'
+          - 'docs-pcf-staging.sc2-04-pcf1-apps.oc.vmware.com'
           - '--ignore-directories'
           - 'docs-platform-automation-reference-pipeline-config'
           - '--exclude-from-dropdown'
@@ -202,7 +202,8 @@ jobs:
           - '--site-prefix'
           - 'platform-automation'
           - '--domains'
-          - 'docs.pivotal.io'
+          - 'docs.pivotal.io docs-test.pivotal.io'
+          - 'pvtl-docs.sc2-04-pcf1-apps.oc.vmware.com'
           - '--ignore-directories'
           - 'docs-platform-automation-reference-pipeline-config'
           - '--exclude-from-dropdown'
