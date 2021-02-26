@@ -42,8 +42,6 @@ February 25, 2021
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4719-1](https://ubuntu.com/security/notices/USN-4719-1).
-- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl` and related libraries.
-- CVE update to container image. Resolves [USN-4754-1](https://ubuntu.com/security/notices/USN-4754-1). The CVEs are related to vulnerabilities with `python` and related libraries.
 
 
 ## v5.0.13
@@ -742,8 +740,6 @@ February 25, 2021
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4719-1](https://ubuntu.com/security/notices/USN-4719-1).
-- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl` and related libraries.
-- CVE update to container image. Resolves [USN-4754-1](https://ubuntu.com/security/notices/USN-4754-1). The CVEs are related to vulnerabilities with `python` and related libraries.
 
 
 ## v4.4.19
