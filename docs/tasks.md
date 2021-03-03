@@ -659,7 +659,7 @@ Learn more about [secrets handling][secrets-handling].
     This task uses a Concourse feature
     that allows inputs and outputs to have the same name.
     This feature is only available in Concourse 5+.
-    `prepare-tasks-with-secets` does not work with Concourse 4.
+    `prepare-tasks-with-secrets` does not work with Concourse 4.
 
 === "Task"
     ---excerpt--- "tasks/prepare-tasks-with-secrets"
