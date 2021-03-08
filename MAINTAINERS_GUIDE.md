@@ -46,7 +46,7 @@ At the moment, the process involves a Pivotal Tracker project. These instruction
    Search for the package name (`ca-certificates`) and ensure the version number is correct.
    <img width="975" alt="Screen Shot 2021-01-13 at 10 04 49 AM" src="https://user-images.githubusercontent.com/75184/104484653-c7bd9080-5586-11eb-864b-556904ecaa93.png">
    In this example, it is the wrong version (purposely).
-1. Since the container image does have the correct version, the pipeline needs to be triggered to pull in the latest package.
+1. If the container image does not have the correct version, the pipeline needs to be triggered to pull in the latest package.
    Note: The container image build process is built in two steps. This allows CD to happen when contributing code to our source repo. The packages for the Ubuntu image are installed in the `build-packages-image` job on the pipeline.
 1. Trigger the job [`build-packages-image`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-packages-image/builds/947) to start the container build process, which installs the latest packages.
    Note: When this job finishes, it will trigger downstream `build-binaries-image-combined`, and then those following jobs.
@@ -62,7 +62,7 @@ At the moment, the process involves a Pivotal Tracker project. These instruction
    **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
 1. Commit and push the changes
-1. In the `ci` pipeline, click the `bump` tab. 
+1. In the `ci` pipeline, make sure the build has passed all jobs that are not `promote-to-final`. Click the `bump` tab. 
 1. Trigger the `bump-previous-versions-trigger` job in the [`ci`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci) pipeline
 
    This will trigger the CVE/patch process.
