@@ -308,9 +308,12 @@ the following steps must be executed.
    * /concourse/main/reference-pipeline/ssl_private_key
    * /concourse/main/reference-pipeline/ops_manager_ssh_private_key
    * /concourse/main/reference-pipeline/ops_manager_ssh_public_key
-       
-   Remove the above secrets from `vars/director.yml`, `vars/tas.yml`, `vars/pks.yml`
+
    Also update any other secrets from the terraform outputs in the `export.yml`
+
+   * /concourse/main/vsphere_private_ssh_key should have the same value as ops_manager_ssh_private_key
+
+   Remove the above secrets from `vars/director.yml`, `vars/tas.yml`, `vars/pks.yml`
 
 1. To store/edit values in Credhub, export the vars from the `.envrc` in `platform-automation-deployments/concourse-credhub`.
    You can now access Credhub as normal. Run:
