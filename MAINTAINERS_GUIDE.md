@@ -79,9 +79,10 @@ The task that generates the release notes for each minor/major version
 is called `create-release-notes-for-patch`.
 This task exists in all `update-vX.X` jobs.
 
-Once the job is completed, you're done!
-The job pushes each patch directly to Tanzunet for all users.
-Check that the patches are present as expected. 
+The job pushes each patch directly to Tanzunet for Admins Only.
+Use the `platform-automation-pivnet` credential in Lastpass to log into [TanzuNet](https://network.pivotal.io/).
+Update the EOGS and the availability to All Users. 
+You're done!
 
 ### Updating the Release Notes Manually
 There is an easy (manual) way to undo the docs created for CVE patching.
