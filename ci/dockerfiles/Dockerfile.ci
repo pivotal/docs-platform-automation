@@ -1,6 +1,7 @@
 FROM golang:1.15
 
-RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq python3-pip git wget tar xz-utils
+RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq python3-pip python3-dev git wget tar xz-utils
+RUN pip3 install --upgrade pip
 
 RUN wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
     tar --xz -xvf shellcheck-stable.linux.x86_64.tar.xz && \
