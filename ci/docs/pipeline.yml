@@ -41,16 +41,16 @@ resources:
   type: cf
   source:
     api: ((pcf1.api-endpoint))
-    client_id: ((pcf1.docs-uaa-id))
-    client_secret: ((pcf1.docs-uaa-secret))
+    username: ((pcf1.svc-account-name))
+    password: ((pcf1.svc-account-password))
     organization: ((pcf1.docs-org))
     space: ((pcf1.docs-staging-space))
 - name: docs-app-production
   type: cf
   source:
     api: ((pcf1.api-endpoint))
-    client_id: ((pcf1.docs-uaa-id))
-    client_secret: ((pcf1.docs-uaa-secret))
+    username: ((pcf1.svc-account-name))
+    password: ((pcf1.svc-account-password))
     organization: ((pcf1.docs-org))
     space: ((pcf1.docs-prod-space))
 - name: mkdocs-pivotal-theme
