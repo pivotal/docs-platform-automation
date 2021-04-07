@@ -15,16 +15,13 @@ which fly || (
 
 echo "Setting CI pipeline..."
 
-fly -t ci sp -p ci -c <(ytt -f $WORKING_DIR/../ci/) \
+fly -t platform-automation sp -p ci -c <(ytt -f $WORKING_DIR/../ci/) \
   --check-creds
 
-fly -t ci sp -p docs -c <(ytt -f $WORKING_DIR/../docs/) \
-  --check-creds
-
-fly -t ci sp -p python-mitigation-support -c <(ytt -f $WORKING_DIR/../python-mitigation-support/) \
+fly -t platform-automation sp -p python-mitigation-support -c <(ytt -f $WORKING_DIR/../python-mitigation-support/) \
   --check-creds
 
 echo "Setting support pipeline..."
 
-fly -t ci sp -p support-pipeline -c <(ytt -f $WORKING_DIR/../opsman-support) \
+fly -t platform-automation sp -p support-pipeline -c <(ytt -f $WORKING_DIR/../opsman-support) \
   --check-creds
