@@ -58,21 +58,37 @@ resources:
   source:
     uri: https://github.com/pivotal/mkdocs-pivotal-theme
 - name: image
-  type: docker-image
+  type: registry-image
   source:
-    password: ((docker.password))
-    repository: ((docker.docs-repository))
-    username: ((docker.username))
+    password: ((harbor.password))
+    repository: ((harbor.docs-repository))
+    username: ((harbor.username))
 
 jobs:
-- name: create-image
+- name: build-and-push-image
   serial: true
   plan:
   - get: mkdocs-pivotal-theme
     trigger: true
+  - task: build
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: harbor-repo.vmware.com/dockerhub-proxy-cache/vito/oci-build-task
+      params:
+        DOCKERFILE: mkdocs-pivotal-theme/ci/Dockerfile
+        BUILD_ARG_IMAGE: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:bionic
+      inputs:
+      - name: mkdocs-pivotal-theme
+      outputs:
+      - name: image
+      run:
+        path: build
   - put: image
-    params:
-      build: mkdocs-pivotal-theme/ci
+    params: {image: image/image.tar}
 
 - name: deploy-to-staging
   serial: true
@@ -114,7 +130,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((docker.docs-repository))
+          repository: ((harbor.docs-repository))
       run:
         path: mkdocs-pivotal-theme/ci/build-docs/build_docs.rb
         args:
@@ -146,7 +162,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((docker.docs-repository))
+          repository: ((harbor.docs-repository))
       run:
         path: sleep
         args: ['1m']
@@ -156,6 +172,7 @@ jobs:
     input_mapping:
       site: docs
     vars:
+      docs_repository: ((harbor.docs-repository))
       site_url: http://docs-pcf-staging.cfapps.io/platform-automation
       allow_list: "github.com.*edit|v3.0/pipeline-design/configuration-management-strategies.html|https://fonts.gstatic.com|https://concourse-ci.org/task-step.html#input_mapping|https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules|https://github.com/concourse/s3-resource#source-configuration|#L\\d+"
 
@@ -189,7 +206,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((docker.docs-repository))
+          repository: ((harbor.docs-repository))
       run:
         path: mkdocs-pivotal-theme/ci/build-docs/build_docs.rb
         args:
