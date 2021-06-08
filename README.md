@@ -8,7 +8,7 @@ The production docs are here:
 https://docs.pivotal.io/platform-automation/
 
 There is a public staging copy here:
-https://docs-pcf-staging.cfapps.io/platform-automation/
+https://docs-pcf-staging.tas.vmware.com/platform-automation/
 
 # Usage
 
