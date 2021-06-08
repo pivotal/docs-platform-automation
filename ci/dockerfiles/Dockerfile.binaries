@@ -6,10 +6,10 @@ COPY bosh-cli/bosh-cli-* /usr/bin/bosh
 COPY isolation-segment-replicator/replicator-linux /usr/bin/iso-replicator
 COPY om-cli/om /usr/bin/om
 COPY winfs-injector/winfs-injector-linux /usr/bin/winfs-injector
-COPY govc-cli/*linux* /tmp
+COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
 
-RUN gunzip /tmp/govc* && mv /tmp/govc_linux* /usr/bin/govc
+RUN gunzip /tmp/govc* && mv /tmp/govc /usr/bin/govc
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
 
 # Make copied binaries executable

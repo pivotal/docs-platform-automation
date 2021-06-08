@@ -385,7 +385,7 @@ jobs:
       trigger: true
       params:
         globs:
-          - 'govc_linux_amd64*'
+          - 'govc_Linux_x86_64*'
     - get: bosh-cli
       trigger: true
       params:
