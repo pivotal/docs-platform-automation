@@ -44,6 +44,7 @@ run:
         -keepGoing \
         .
 
+      go version
       go build -o ../om-cli/om \
         --ldflags "-X main.version=$(git rev-list --format=format:'%H-%aI' --max-count=1 "$(git rev-parse HEAD)" | tail -1)" \
         main.go
