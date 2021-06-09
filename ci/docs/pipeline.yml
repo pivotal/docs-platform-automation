@@ -143,7 +143,7 @@ jobs:
           - '--site-prefix'
           - 'platform-automation'
           - '--domains'
-          - 'docs-pcf-staging.sc2-04-pcf1-apps.oc.vmware.com'
+          - 'docs-pcf-staging.tas.vmware.com docs-pcf-staging.sc2-04-pcf1-apps.oc.vmware.com'
           - '--ignore-directories'
           - 'docs-platform-automation-reference-pipeline-config'
           - '--exclude-from-dropdown'
@@ -173,7 +173,7 @@ jobs:
       site: docs
     vars:
       docs_repository: ((harbor.docs-repository))
-      site_url: http://docs-pcf-staging.cfapps.io/platform-automation
+      site_url: https://docs-pcf-staging.tas.vmware.com/platform-automation/
       allow_list: "github.com.*edit|v3.0/pipeline-design/configuration-management-strategies.html|https://fonts.gstatic.com|https://concourse-ci.org/task-step.html#input_mapping|https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules|https://github.com/concourse/s3-resource#source-configuration|#L\\d+"
 
 - name: deploy-to-production
@@ -220,7 +220,6 @@ jobs:
           - 'platform-automation'
           - '--domains'
           - 'docs.pivotal.io docs-test.pivotal.io'
-          - 'pvtl-docs.sc2-04-pcf1-apps.oc.vmware.com'
           - '--ignore-directories'
           - 'docs-platform-automation-reference-pipeline-config'
           - '--exclude-from-dropdown'
