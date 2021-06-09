@@ -9,7 +9,7 @@ COPY winfs-injector/winfs-injector-linux /usr/bin/winfs-injector
 COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
 
-RUN gunzip /tmp/govc* && mv /tmp/govc /usr/bin/govc
+RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
 
 # Make copied binaries executable
