@@ -1,4 +1,4 @@
-FROM golang:1.15
+FROM golang:latest
 
 RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq python3-pip python3-dev git wget tar xz-utils
 RUN pip3 install --upgrade pip
