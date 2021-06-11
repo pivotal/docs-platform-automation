@@ -21,6 +21,39 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.16
+
+### Features
+- When creating an Ops Manager VM on Vsphere, the disk size can be set via the configuration file to sizes larger than the default of 160 (GB).
+
+    ```yaml
+    ---
+      opsman-configuration:
+        vsphere:
+          disk_size: 200
+          vm_name: ops-manager-vm
+          cpu: 4
+          memory: 16
+          disk_type: thin
+          dns: 8.8.8.8
+          gateway: 192.168.10.1
+          hostname: ops-manager.example.com
+          netmask: 255.255.255.192
+          network: example-virtual-network
+          ntp: ntp.ubuntu.com
+          private_ip: 10.0.0.10
+          ssh_public_key: ssh-rsa ......
+          vcenter:
+            ca_cert: cert
+            datacenter: example-dc
+            datastore: example-ds-1
+            folder: /example-dc/vm/Folder
+            url: vcenter.example.com
+            username: ((vcenter-username))
+            password: ((vcenter-password))
+            resource_pool: /example-dc/host/example-cluster/Resources/example-pool
+    ```
+
 ## v5.0.15
 March 9, 2021
 
