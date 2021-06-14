@@ -378,8 +378,6 @@ jobs:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
   - put: packages-image
     params: { image: image/image.tar }
-    get_params:
-      save: true
 
 - name: build-binaries-image-combined
   serial_groups:
@@ -426,8 +424,6 @@ jobs:
       trigger: true
       passed:
       - build-packages-image
-      params:
-        save: true
     - get: version
       params:
         pre: rc
@@ -446,8 +442,6 @@ jobs:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
   - put: binaries-image
     params: { image: image/image.tar }
-    get_params:
-      save: true
   - task: build-vsphere-image
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
