@@ -1,0 +1,16 @@
+---
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/vito/oci-build-task
+
+inputs:
+- name: docs-platform-automation
+outputs:
+- name: image
+params:
+  DOCKERFILE:
+
+run:
+  path: build
