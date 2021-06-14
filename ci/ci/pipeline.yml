@@ -37,7 +37,7 @@ resources:
     branch: develop
     uri: https://github.com/pivotal/docs-platform-automation-reference-pipeline-config
 - name: ci-image
-  type: docker-image
+  type: registry-image
   source:
     password: ((docker.password))
     repository: ((docker.ci-repository))
@@ -84,21 +84,21 @@ resources:
     product_version: 1\.9\.[0-9]+$
     sort_by: semver
 - name: packages-image
-  type: docker-image
+  type: registry-image
   source:
     password: ((docker.password))
     repository: internalpcfplatformautomation/platform-automation
     tag: packages
     username: ((docker.username))
 - name: binaries-image
-  type: docker-image
+  type: registry-image
   source:
     password: ((docker.password))
     repository: internalpcfplatformautomation/platform-automation
     tag: testing
     username: ((docker.username))
 - name: vsphere-only-image
-  type: docker-image
+  type: registry-image
   source:
     password: ((docker.password))
     repository: internalpcfplatformautomation/platform-automation
@@ -356,24 +356,31 @@ jobs:
   - get: daily
     trigger: true
   - get: docs-platform-automation
-  - put: ci-image
+  - task: build-ci-image
+    privileged: true
+    file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
-      build: docs-platform-automation
-      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
+  - put: ci-image
+    params: { image: image/image.tar }
     get_params:
       skip_download: "true"
+
 - name: build-packages-image
   plan:
   - get: daily
     trigger: true
-  - get: om
   - get: docs-platform-automation
-  - put: packages-image
+  - task: build-packages-image
+    privileged: true
+    file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
-      build: docs-platform-automation
-      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
+  - put: packages-image
+    params: { image: image/image.tar }
     get_params:
       save: true
+
 - name: build-binaries-image-combined
   serial_groups:
   - image
@@ -432,20 +439,22 @@ jobs:
     - task: test
       attempts: 3
       file: docs-platform-automation/ci/tasks/test-and-build-om.yml
-  - put: binaries-image
+  - task: build-binaries-image
+    privileged: true
+    file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
-      build: .
-      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
-      load_bases:
-      - packages-image
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
+  - put: binaries-image
+    params: { image: image/image.tar }
     get_params:
       save: true
-  - put: vsphere-only-image
+  - task: build-vsphere-image
+    privileged: true
+    file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
-      build: .
-      dockerfile: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
-      load_bases:
-      - binaries-image
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
+  - put: vsphere-only-image
+    params: { image: image/image.tar }
   - in_parallel:
     - task: define-cli-versions
       image: binaries-image
