@@ -11,6 +11,7 @@ outputs:
 - name: image
 params:
   DOCKERFILE:
+  IMAGE_ARG_base_image:
 
 run:
   path: build

@@ -1,4 +1,5 @@
-FROM internalpcfplatformautomation/platform-automation:testing
+ARG base_image=internalpcfplatformautomation/platform-automation:testing
+FROM ${base_image}
 
 # remove azure cli
 RUN pip3 install pip-autoremove
