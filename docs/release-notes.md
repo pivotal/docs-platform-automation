@@ -54,6 +54,26 @@
             resource_pool: /example-dc/host/example-cluster/Resources/example-pool
     ```
 
+- When creating or updating an Ops Manager VM on Azure, you can set an optional tags argument for creating tags on the Ops Manager VM.
+
+    ```yaml
+    ---
+    opsman-configuration:
+      azure:
+        tags: Key=Value
+        vm_name: ops-manager-vm
+        boot_disk_size: 200
+        tenant_id: 3e52862f-a01e-4b97-98d5-f31a409df682
+        subscription_id: 90f35f10-ea9e-4e80-aac4-d6778b995532
+        client_id: 5782deb6-9195-4827-83ae-a13fda90aa0d
+        client_secret: ((opsman-client-secret))
+        location: westus
+        resource_group: res-group
+        storage_account: opsman
+        ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ... 
+        subnet_id: /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<VNET>/subnets/<SUBNET>
+        private_ip: 10.0.0.3
+    ```
 ## v5.0.15
 March 9, 2021
 
