@@ -34,6 +34,7 @@ opsman-configuration:
     # ssh_password: ((ssh-password)) # REQUIRED if ssh_public_key not defined
                                      # (Ops Manager < 2.6 ONLY)
     # vm_name: ops-manager-vm        # default - ops-manager-vm
+    # disk_size: 200                 # default - 160 (GB), only larger values allowed
 
   # Optional Ops Manager UI Settings for upgrade-opsman
   # ssl-certificate: ...
