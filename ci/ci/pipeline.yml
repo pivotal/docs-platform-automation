@@ -90,6 +90,13 @@ resources:
     repository: internalpcfplatformautomation/platform-automation
     tag: packages
     username: ((docker.username))
+- name: packages-image-oci
+  type: registry-image
+  source:
+    password: ((docker.password))
+    repository: internalpcfplatformautomation/platform-automation
+    tag: packages
+    username: ((docker.username))
 - name: binaries-image
   type: registry-image
   source:
@@ -363,8 +370,7 @@ jobs:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
   - put: ci-image
     params: { image: image/image.tar }
-    get_params:
-      skip_download: "true"
+    get_params: { skip_download: true }
 
 - name: build-packages-image
   plan:
@@ -424,6 +430,8 @@ jobs:
       trigger: true
       passed:
       - build-packages-image
+    - get: packages-image-oci
+      params: { format: oci }
     - get: version
       params:
         pre: rc
@@ -437,16 +445,50 @@ jobs:
       file: docs-platform-automation/ci/tasks/test-and-build-om.yml
   - task: build-binaries-image
     privileged: true
-    file: docs-platform-automation/ci/tasks/build-oci-image.yml
-    params:
-      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      params:
+        DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
+        IMAGE_ARG_base_image: packages-image-oci/image.tar
+      inputs:
+        - name: bbr-cli
+        - name: bosh-cli
+        - name: isolation-segment-replicator
+        - name: om-cli
+        - name: winfs-injector
+        - name: govc-cli
+        - name: credhub-cli
+        - name: docs-platform-automation
+        - name: packages-image-oci
+      outputs:
+        - name: image
+      run:
+        path: build
+    output_mapping: { image: binaries-image-oci }
   - put: binaries-image
-    params: { image: image/image.tar }
+    params: { image: binaries-image-oci/image.tar }
   - task: build-vsphere-image
     privileged: true
-    file: docs-platform-automation/ci/tasks/build-oci-image.yml
-    params:
-      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      params:
+        DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
+        IMAGE_ARG_base_image: binaries-image-oci/image.tar
+      inputs:
+        - name: docs-platform-automation
+        - name: binaries-image-oci
+      outputs:
+        - name: image
+      run:
+        path: build
   - put: vsphere-only-image
     params: { image: image/image.tar }
   - in_parallel:
