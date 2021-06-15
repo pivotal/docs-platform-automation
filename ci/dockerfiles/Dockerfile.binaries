@@ -1,4 +1,5 @@
-FROM internalpcfplatformautomation/platform-automation:packages
+ARG base_image=internalpcfplatformautomation/platform-automation:packages
+FROM ${base_image}
 
 # copy files directly from the inputs/resource of concourse
 COPY bbr-cli/*linux* /usr/bin/bbr
