@@ -364,7 +364,7 @@ jobs:
   - put: ci-image
     params: { image: image/image.tar }
     get_params:
-      skip_download: true
+      skip_download: "true"
 
 - name: build-packages-image
   plan:
