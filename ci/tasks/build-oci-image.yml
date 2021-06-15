@@ -12,8 +12,5 @@ outputs:
 params:
   DOCKERFILE:
 
-caches:
-- path: cache
-
 run:
   path: build
