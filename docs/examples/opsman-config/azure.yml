@@ -41,6 +41,8 @@ opsman-configuration:
     # vm_size: Standard_DS1_v2        # the size of the Ops Manager VM
                                       # default - Standard_DS2_v2
                                       # Allowed values: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes-general
+    # tags: Project=ECommerce         # Space-separated tags: key[=value] [key[=value] ...]. Use '' to
+                                      # clear existing tags.
     # vpc_subnet: /subscriptions/...  # DEPRECATED - use subnet_id
     # use_unmanaged_disk: false       # DEPRECATED - use use_managed_disk
 
