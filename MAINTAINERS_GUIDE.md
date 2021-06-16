@@ -324,7 +324,7 @@ the following steps must be executed.
     ```
 
 1. Commit all changes
-1. Update the [`state-sandbox.yml`](https://ref-pipeline-state.s3-us-west-2.amazonaws.com/state-sandbox.yml) to be empty-file.
+1. Update the [`state-sandbox.yml`](https://s3.console.aws.amazon.com/s3/buckets/ref-pipeline-state?region=us-west-2&tab=objects) to be empty-file.
 1. Delete the `reference-pipeline`: (this is done to reset any pipeline triggers)
    ```
    fly -t ci dp -p reference-pipeline
