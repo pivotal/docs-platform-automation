@@ -293,9 +293,9 @@ the following steps must be executed.
    To update these files, from inside the platform-automation-deployments/reference-gcp directory:
 
    ```bash
-   terraform output -json stable_config_opsmanager | jq -r > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/director.yml
-   terraform output -json stable_config_pas | jq -r > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
-   terraform output -json stable_config_pks | jq -r > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
+   terraform output -json stable_config_opsmanager | jq -r | jq > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/director.yml
+   terraform output -json stable_config_pas | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
+   terraform output -json stable_config_pks | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
    ```
 
 1. The terraform outputs contain secrets. 
