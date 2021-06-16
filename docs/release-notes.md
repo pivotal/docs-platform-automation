@@ -94,8 +94,10 @@ March 9, 2021
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.15" target="_blank">Download</a>
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl` and related libraries.
+- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl`.
 - CVE update to container image. Resolves [USN-4754-1](https://ubuntu.com/security/notices/USN-4754-1). The CVEs are related to vulnerabilities with `python` and related libraries.
+- CVE update to container image. Resolves [USN-4759-1](https://ubuntu.com/security/notices/USN-4759-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
+- CVE update to container image. Resolves [USN-4760-1](https://ubuntu.com/security/notices/USN-4760-1). The CVEs are related to vulnerabilities with `libzstd` and related libraries.
 
 
 ## v5.0.14
@@ -816,8 +818,10 @@ March 9, 2021
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.21" target="_blank">Download</a>
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl` and related libraries.
+- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl`.
 - CVE update to container image. Resolves [USN-4754-1](https://ubuntu.com/security/notices/USN-4754-1). The CVEs are related to vulnerabilities with `python` and related libraries.
+- CVE update to container image. Resolves [USN-4759-1](https://ubuntu.com/security/notices/USN-4759-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
+- CVE update to container image. Resolves [USN-4760-1](https://ubuntu.com/security/notices/USN-4760-1). The CVEs are related to vulnerabilities with `libzstd` and related libraries.
 
 
 ## v4.4.20
