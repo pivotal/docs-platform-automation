@@ -277,14 +277,15 @@ the following steps must be executed.
    * delete the terraform infrastructure
    * use [leftovers](https://github.com/genevieve/leftovers) to cleanup all extra resources with the `reference-gcp` tag
 
-1. Recreate the terraform infrastructure using the instructions in platform-automation-deployments [`reference-gcp` README](https://github.com/pivotal/platform-automation-deployments/blob/main/reference-gcp/README.md)
-1. Commit the terraform.tfstate
-1. (Optional) `platform-automation-deployments/reference-gcp/terraform-outputs.json` is present for convenience, and was crafted by executing the following commands inside the `reference-gcp` directory:
+1. Make sure you are using Terraform 0.14+
+2. Recreate the terraform infrastructure using the instructions in platform-automation-deployments [`reference-gcp` README](https://github.com/pivotal/platform-automation-deployments/blob/main/reference-gcp/README.md)
+3. Commit the terraform.tfstate
+4. (Optional) `platform-automation-deployments/reference-gcp/terraform-outputs.json` is present for convenience, and was crafted by executing the following commands inside the `reference-gcp` directory:
 
    ```
-   terraform output stable_config_opsmanager > terraform-outputs.yml
-   terraform output stable_config_pas >> terraform-outputs.yml
-   terraform output stable_config_pks >> terraform-outputs.yml
+   terraform output -json stable_config_opsmanager | jq -r > terraform-outputs.json
+   terraform output -json stable_config_pas | jq -r >> terraform-outputs.json
+   terraform output -json stable_config_pks | jq -r >> terraform-outputs.json
    ```
        
 1. Recreate the vars files for the reference pipeline by extracting the terraform vars:
@@ -292,9 +293,9 @@ the following steps must be executed.
    To update these files, from inside the platform-automation-deployments/reference-gcp directory:
 
    ```bash
-   terraform output stable_config_opsmanager > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/director.yml
-   terraform output stable_config_pas > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
-   terraform output stable_config_pks > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
+   terraform output -json stable_config_opsmanager | jq -r > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/director.yml
+   terraform output -json stable_config_pas | jq -r > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
+   terraform output -json stable_config_pks | jq -r > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
    ```
 
 1. The terraform outputs contain secrets. 
