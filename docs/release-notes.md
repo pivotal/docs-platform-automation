@@ -40,13 +40,7 @@ June 17, 2021
 
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.16" target="_blank">Download</a>
 
-### Bug Fixes
-- CVE update to container image. Resolves [USN-4891-1](https://ubuntu.com/security/notices/USN-4891-1). The CVEs are related to vulnerabilities with `libssl`.
-- CVE update to container image. Resolves [USN-4968-1](https://ubuntu.com/security/notices/USN-4968-1). The CVEs are related to vulnerabilities with `liblz4-1`.
-- CVE update to container image. Resolves [USN-4906-1](https://ubuntu.com/security/notices/USN-4906-1) and [USN-4990-1](https://ubuntu.com/security/notices/USN-4990-1). The CVEs are related to vulnerabilities with `libnettle6`.
-- CVE update to container image. Resolves [USN-4898-1](https://ubuntu.com/security/notices/USN-4898-1). The CVEs are related to vulnerabilities with `curl` and related libraries.
-- CVE update to container image. Resolves [USN-4764-1](https://ubuntu.com/security/notices/USN-4764-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
-- CVE update to container image. Resolves [USN-4761-1](https://ubuntu.com/security/notices/USN-4761-1). The CVEs are related to vulnerabilities with `git`.
+### Features
 - When creating an Ops Manager VM on Vsphere, the disk size can be set via the configuration file to sizes larger than the default of 160 (GB).
 
     ```yaml
@@ -97,6 +91,15 @@ June 17, 2021
         subnet_id: /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<VNET>/subnets/<SUBNET>
         private_ip: 10.0.0.3
     ```
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4891-1](https://ubuntu.com/security/notices/USN-4891-1). The CVEs are related to vulnerabilities with `libssl`.
+- CVE update to container image. Resolves [USN-4968-1](https://ubuntu.com/security/notices/USN-4968-1). The CVEs are related to vulnerabilities with `liblz4-1`.
+- CVE update to container image. Resolves [USN-4906-1](https://ubuntu.com/security/notices/USN-4906-1) and [USN-4990-1](https://ubuntu.com/security/notices/USN-4990-1). The CVEs are related to vulnerabilities with `libnettle6`.
+- CVE update to container image. Resolves [USN-4898-1](https://ubuntu.com/security/notices/USN-4898-1). The CVEs are related to vulnerabilities with `curl` and related libraries.
+- CVE update to container image. Resolves [USN-4764-1](https://ubuntu.com/security/notices/USN-4764-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
+- CVE update to container image. Resolves [USN-4761-1](https://ubuntu.com/security/notices/USN-4761-1). The CVEs are related to vulnerabilities with `git`.
+
 
 ## v5.0.15
 March 9, 2021
