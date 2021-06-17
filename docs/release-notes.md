@@ -619,7 +619,7 @@ Released January 31, 2020
     - Credentials are no longer written to disk which alleviates some security concerns.
 
     For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
-    To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secets does not work with Concourse 4.)
+    To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secrets does not work with Concourse 4.)
 
 - The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
 - Add the ability to recreate VMs to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
