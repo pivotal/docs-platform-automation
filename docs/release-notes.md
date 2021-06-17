@@ -21,6 +21,59 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.16
+
+### Features
+- When creating an Ops Manager VM on Vsphere, the disk size can be set via the configuration file to sizes larger than the default of 160 (GB).
+
+    ```yaml
+    ---
+      opsman-configuration:
+        vsphere:
+          disk_size: 200
+          vm_name: ops-manager-vm
+          cpu: 4
+          memory: 16
+          disk_type: thin
+          dns: 8.8.8.8
+          gateway: 192.168.10.1
+          hostname: ops-manager.example.com
+          netmask: 255.255.255.192
+          network: example-virtual-network
+          ntp: ntp.ubuntu.com
+          private_ip: 10.0.0.10
+          ssh_public_key: ssh-rsa ......
+          vcenter:
+            ca_cert: cert
+            datacenter: example-dc
+            datastore: example-ds-1
+            folder: /example-dc/vm/Folder
+            url: vcenter.example.com
+            username: ((vcenter-username))
+            password: ((vcenter-password))
+            resource_pool: /example-dc/host/example-cluster/Resources/example-pool
+    ```
+
+- When creating or updating an Ops Manager VM on Azure, you can set an optional tags argument for creating tags on the Ops Manager VM.
+
+    ```yaml
+    ---
+    opsman-configuration:
+      azure:
+        tags: Key=Value
+        vm_name: ops-manager-vm
+        boot_disk_size: 200
+        tenant_id: 3e52862f-a01e-4b97-98d5-f31a409df682
+        subscription_id: 90f35f10-ea9e-4e80-aac4-d6778b995532
+        client_id: 5782deb6-9195-4827-83ae-a13fda90aa0d
+        client_secret: ((opsman-client-secret))
+        location: westus
+        resource_group: res-group
+        storage_account: opsman
+        ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ... 
+        subnet_id: /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<VNET>/subnets/<SUBNET>
+        private_ip: 10.0.0.3
+    ```
 ## v5.0.15
 March 9, 2021
 
@@ -41,8 +94,10 @@ March 9, 2021
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.15" target="_blank">Download</a>
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl` and related libraries.
+- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl`.
 - CVE update to container image. Resolves [USN-4754-1](https://ubuntu.com/security/notices/USN-4754-1). The CVEs are related to vulnerabilities with `python` and related libraries.
+- CVE update to container image. Resolves [USN-4759-1](https://ubuntu.com/security/notices/USN-4759-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
+- CVE update to container image. Resolves [USN-4760-1](https://ubuntu.com/security/notices/USN-4760-1). The CVEs are related to vulnerabilities with `libzstd` and related libraries.
 
 
 ## v5.0.14
@@ -743,6 +798,18 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.22
+June 17, 2021
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4891-1](https://ubuntu.com/security/notices/USN-4891-1). The CVEs are related to vulnerabilities with `libssl`.
+- CVE update to container image. Resolves [USN-4968-1](https://ubuntu.com/security/notices/USN-4968-1). The CVEs are related to vulnerabilities with `liblz4-1`.
+- CVE update to container image. Resolves [USN-4906-1](https://ubuntu.com/security/notices/USN-4906-1) and [USN-4990-1](https://ubuntu.com/security/notices/USN-4990-1). The CVEs are related to vulnerabilities with `libnettle6`.
+- CVE update to container image. Resolves [USN-4898-1](https://ubuntu.com/security/notices/USN-4898-1). The CVEs are related to vulnerabilities with `curl` and related libraries.
+- CVE update to container image. Resolves [USN-4764-1](https://ubuntu.com/security/notices/USN-4764-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
+- CVE update to container image. Resolves [USN-4761-1](https://ubuntu.com/security/notices/USN-4761-1). The CVEs are related to vulnerabilities with `git`.
+
+
 ## v4.4.21
 March 9, 2021
 
@@ -763,8 +830,10 @@ March 9, 2021
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.21" target="_blank">Download</a>
 
 ### Bug Fixes
-- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl` and related libraries.
+- CVE update to container image. Resolves [USN-4738-1](https://ubuntu.com/security/notices/USN-4738-1). The CVEs are related to vulnerabilities with `libssl`.
 - CVE update to container image. Resolves [USN-4754-1](https://ubuntu.com/security/notices/USN-4754-1). The CVEs are related to vulnerabilities with `python` and related libraries.
+- CVE update to container image. Resolves [USN-4759-1](https://ubuntu.com/security/notices/USN-4759-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
+- CVE update to container image. Resolves [USN-4760-1](https://ubuntu.com/security/notices/USN-4760-1). The CVEs are related to vulnerabilities with `libzstd` and related libraries.
 
 
 ## v4.4.20
@@ -1955,7 +2024,7 @@ Released January 31, 2020
     - Credentials are no longer written to disk which alleviates some security concerns.
 
     For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
-    To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secets does not work with Concourse 4.)
+    To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secrets does not work with Concourse 4.)
 
 - The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
 - Add the ability to recreate VMs to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
