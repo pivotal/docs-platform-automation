@@ -71,15 +71,14 @@ At the moment, the process involves a Pivotal Tracker project. These instruction
    then download the `image-receipt-X.X.X` from AWS S3
    (this link is also be available in the release notes for each version).
 
-Note: if,for some reason, any `update-vX.X` job fails,
-the job can be re-run and will not re-generate release notes.
-However, the release date of the job
-will be whatever the date of the first run for the patch was.
-The task that generates the release notes for each minor/major version
-is called `create-release-notes-for-patch`.
-This task exists in all `update-vX.X` jobs.
+   **NOTE**: if any `update-vX.X` job fails during uploading to TanzuNet,
+   delete the release and any files that were uploaded manually on the UI.
+   Then re-run the job. The job will not re-generate release notes.
+   However, the release date of the job will be whatever the date of the 
+   first run for the patch was. The task that generates the release notes 
+   for each minor/major version is called `create-release-notes-for-patch`.
 
-The job pushes each patch directly to Tanzunet for Admins Only.
+1. The job pushes each patch directly to Tanzunet for Admins Only.
 Use the `platform-automation-pivnet` credential in Lastpass to log into [TanzuNet](https://network.pivotal.io/).
 Update the EOGS and the availability to All Users. 
 You're done!
