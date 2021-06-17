@@ -21,6 +21,67 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.16
+June 17, 2021
+
+### Bug Fixes
+- CVE update to container image. Resolves [USN-4891-1](https://ubuntu.com/security/notices/USN-4891-1). The CVEs are related to vulnerabilities with `libssl`.
+- CVE update to container image. Resolves [USN-4968-1](https://ubuntu.com/security/notices/USN-4968-1). The CVEs are related to vulnerabilities with `liblz4-1`.
+- CVE update to container image. Resolves [USN-4906-1](https://ubuntu.com/security/notices/USN-4906-1) and [USN-4990-1](https://ubuntu.com/security/notices/USN-4990-1). The CVEs are related to vulnerabilities with `libnettle6`.
+- CVE update to container image. Resolves [USN-4898-1](https://ubuntu.com/security/notices/USN-4898-1). The CVEs are related to vulnerabilities with `curl` and related libraries.
+- CVE update to container image. Resolves [USN-4764-1](https://ubuntu.com/security/notices/USN-4764-1). The CVEs are related to vulnerabilities with `libglib2.0-0`.
+- CVE update to container image. Resolves [USN-4761-1](https://ubuntu.com/security/notices/USN-4761-1). The CVEs are related to vulnerabilities with `git`.
+- When creating an Ops Manager VM on Vsphere, the disk size can be set via the configuration file to sizes larger than the default of 160 (GB).
+
+    ```yaml
+    ---
+      opsman-configuration:
+        vsphere:
+          disk_size: 200
+          vm_name: ops-manager-vm
+          cpu: 4
+          memory: 16
+          disk_type: thin
+          dns: 8.8.8.8
+          gateway: 192.168.10.1
+          hostname: ops-manager.example.com
+          netmask: 255.255.255.192
+          network: example-virtual-network
+          ntp: ntp.ubuntu.com
+          private_ip: 10.0.0.10
+          ssh_public_key: ssh-rsa ......
+          vcenter:
+            ca_cert: cert
+            datacenter: example-dc
+            datastore: example-ds-1
+            folder: /example-dc/vm/Folder
+            url: vcenter.example.com
+            username: ((vcenter-username))
+            password: ((vcenter-password))
+            resource_pool: /example-dc/host/example-cluster/Resources/example-pool
+    ```
+
+- When creating or updating an Ops Manager VM on Azure, you can set an optional tags argument for creating tags on the Ops Manager VM.
+
+    ```yaml
+    ---
+    opsman-configuration:
+      azure:
+        tags: Key=Value
+        vm_name: ops-manager-vm
+        boot_disk_size: 200
+        tenant_id: 3e52862f-a01e-4b97-98d5-f31a409df682
+        subscription_id: 90f35f10-ea9e-4e80-aac4-d6778b995532
+        client_id: 5782deb6-9195-4827-83ae-a13fda90aa0d
+        client_secret: ((opsman-client-secret))
+        location: westus
+        resource_group: res-group
+        storage_account: opsman
+        ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ... 
+        subnet_id: /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<VNET>/subnets/<SUBNET>
+        private_ip: 10.0.0.3
+    ```
+
 ## v5.0.15
 March 9, 2021
 
