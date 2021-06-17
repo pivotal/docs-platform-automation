@@ -49,6 +49,14 @@ resources:
     branch: develop
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
+    ignore_paths:
+      - docs
+- name: docs-platform-automation-with-docs
+  type: git
+  source:
+    branch: develop
+    private_key: ((platform_automation_docs.private_key))
+    uri: git@github.com:pivotal/docs-platform-automation
 - name: pas-windows
   type: pivnet
   source:
@@ -1628,7 +1636,7 @@ jobs:
     - get: odp
     - get: #@ "platform-automation-" + version.number
     - get: #@ "docs-platform-automation-" + version.number
-    - get: docs-platform-automation
+    - get: docs-platform-automation-with-docs
     - get: version
       resource: #@ "version-" + version.number
       params:
@@ -1646,12 +1654,13 @@ jobs:
     - get: binaries-table
       passed: [ bump-previous-versions-trigger ]
   - task: create-release-notes-for-patch
-    file: docs-platform-automation/ci/tasks/pivnet-release/generate-release-notes.yml
+    file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-release-notes.yml
     params:
       GITHUB_SSH_KEY: ((platform_automation_docs.private_key))
   - task: create-release-file
-    file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
+    file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
+      docs-platform-automation: docs-platform-automation-with-docs
       platform-automation: #@ "platform-automation-" + version.number
       platform-automation-image: binaries-image
       #@ if version.vsphere_image:
@@ -1659,7 +1668,7 @@ jobs:
       #@ end
   - in_parallel:
     - task: test-docker-import
-      file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
+      file: docs-platform-automation-with-docs/ci/tasks/test-docker-import/task.yml
       privileged: true
     - task: test-task
       file: #@ "platform-automation-" + version.number + "/tasks/test.yml"
@@ -1667,11 +1676,11 @@ jobs:
       input_mapping:
         platform-automation-tasks: #@ "platform-automation-" + version.number
     - task: generate-platform-automation-metadata
-      file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
+      file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
       params:
         ALL_USERS: false
     - task: generate-dpkg-list-for-osl
-      file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
+      file: docs-platform-automation-with-docs/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
   - in_parallel:
     - put: #@ "platform-automation-" + version.number
@@ -1706,10 +1715,12 @@ jobs:
         - #@ "update-" + version.number
         #@ end
         trigger: true
-      - get: docs-platform-automation
+      - get: docs-platform-automation-with-docs
     - task: empty-cve-patch-notes
-      file: docs-platform-automation/ci/tasks/pivnet-release/empty-cve-patch-notes.yml
-    - put: docs-platform-automation
+      file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/empty-cve-patch-notes.yml
+      input_mapping:
+        docs-platform-automation: docs-platform-automation-with-docs
+    - put: docs-platform-automation-with-docs
       params:
         repository: docs-platform-automation
         rebase: true
