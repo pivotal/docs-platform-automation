@@ -801,6 +801,22 @@ Released September 2, 2020
 ## v4.4.22
 June 17, 2021
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.19.96 |
+    | azure-cli | 2.25.0 |
+    | bbr-cli | [1.9.7](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.7) |
+    | bosh-cli | [v6.4.4](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.4) |
+    | credhub | [2.9.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.0) |
+    | gcloud-cli | 345.0.0 |
+    | govc-cli | 0.26.0 |
+    | om | f0370bb68d212b136c1d673684c36bd57173665c-2021-06-17T08:25:19-06:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.22" target="_blank">Download</a>
+
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4891-1](https://ubuntu.com/security/notices/USN-4891-1). The CVEs are related to vulnerabilities with `libssl`.
 - CVE update to container image. Resolves [USN-4968-1](https://ubuntu.com/security/notices/USN-4968-1). The CVEs are related to vulnerabilities with `liblz4-1`.
