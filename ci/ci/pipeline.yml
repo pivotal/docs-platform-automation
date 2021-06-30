@@ -735,6 +735,7 @@ jobs:
         globs:
         - '*gcp*.yml'
   - task: run-terraform
+    attempts: 2
     file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
       IAAS: gcp

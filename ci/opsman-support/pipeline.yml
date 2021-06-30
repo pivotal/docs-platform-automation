@@ -112,6 +112,7 @@ jobs:
     - get: deployments
     - get: docs-platform-automation
   - task: run-terraform
+    attempts: 2
     file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
       IAAS: gcp
