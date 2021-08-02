@@ -91,7 +91,7 @@ June 17, 2021
         subnet_id: /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<VNET>/subnets/<SUBNET>
         private_ip: 10.0.0.3
     ```
-
+  
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4891-1](https://ubuntu.com/security/notices/USN-4891-1). The CVEs are related to vulnerabilities with `libssl`.
 - CVE update to container image. Resolves [USN-4968-1](https://ubuntu.com/security/notices/USN-4968-1). The CVEs are related to vulnerabilities with `liblz4-1`.
@@ -824,6 +824,25 @@ Released September 2, 2020
       params:
         no_proxy: ""
     ```
+
+## v4.4.23
+August 2, 2021
+
+### Bug Fixes
+- The `om` CLI has been explicitly requesting `opaque` tokens.
+  This was an unintentional and incidental change;
+  previously it used `jwt`,
+  the token format UAA provides by default.
+  The `opaque` token may have been contributing to
+  a hard-to-reproduce issue in a customer environment,
+  so we're explicitly switching back to `jwt` tokens.
+- CVE update to container image.
+  Resolves [USN 5021-1](https://ubuntu.com/security/notices/USN-5021-1),
+  an issue related to libcurl.
+- CVE update to container image.
+  Resolves [USN 4991-1](https://ubuntu.com/security/notices/USN-4991-1),
+  an issue related to libxml2.
+
 
 ## v4.4.22
 June 17, 2021
