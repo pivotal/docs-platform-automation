@@ -21,6 +21,25 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.17
+August 2, 2021
+
+### Bug Fixes
+- The `om` CLI has been explicitly requesting `opaque` tokens.
+  This was an unintentional and incidental change;
+  previously it used `jwt`,
+  the token format UAA provides by default.
+  The `opaque` token may have been contributing to
+  a hard-to-reproduce issue in a customer environment,
+  so we're explicitly switching back to `jwt` tokens.
+- CVE update to container image.
+  Resolves [USN 5021-1](https://ubuntu.com/security/notices/USN-5021-1),
+  an issue related to libcurl.
+- CVE update to container image.
+  Resolves [USN 4991-1](https://ubuntu.com/security/notices/USN-4991-1),
+  an issue related to libxml2.
+
+
 ## v5.0.16
 June 17, 2021
 
