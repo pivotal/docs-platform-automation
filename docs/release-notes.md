@@ -24,6 +24,22 @@
 ## v5.0.17
 August 2, 2021
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.20.11 |
+    | azure-cli | 2.26.1 |
+    | bbr-cli | [1.9.11](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.11) |
+    | bosh-cli | [v6.4.4](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.4) |
+    | credhub | [2.9.0](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.0) |
+    | gcloud-cli | 350.0.0 |
+    | govc-cli | 0.26.0 |
+    | om | c9895b73b2b111a24b7c4ae787a7603d7f8a2723-2021-08-01T20:26:31-06:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.17" target="_blank">Download</a>
+
 ### Bug Fixes
 - The `om` CLI has been explicitly requesting `opaque` tokens.
   This was an unintentional and incidental change;
