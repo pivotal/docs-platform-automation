@@ -49,7 +49,7 @@ RUN cd om && \
 # rspec
 RUN apt-get -y install ruby ruby-dev && \
     echo "gem: --no-document" >> /etc/gemrc && \
-    gem install rspec english bundle
+    gem install rspec english bundler
 
 # uaac
 RUN gem install cf-uaac
