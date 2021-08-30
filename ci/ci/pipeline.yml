@@ -448,9 +448,11 @@ jobs:
       params:
         OM_pivnet_token: ((pivnet_token))
       file: docs-platform-automation/ci/tasks/download-product.yml
+      privileged: true
     - task: test
       attempts: 3
       file: docs-platform-automation/ci/tasks/test-and-build-om.yml
+      privileged: true
   - task: build-binaries-image
     privileged: true
     config:
@@ -512,6 +514,7 @@ jobs:
         rc-image-receipt-s3: rc-vsphere-image-receipt-s3
       image: vsphere-only-image
     - task: create-release-file
+      privileged: true
       file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
       input_mapping:
         platform-automation-image: binaries-image
