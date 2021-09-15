@@ -450,7 +450,7 @@ jobs:
       file: docs-platform-automation/ci/tasks/download-product.yml
       privileged: true
     - task: test
-      attempts: 3
+      attempts: 5
       file: docs-platform-automation/ci/tasks/test-and-build-om.yml
       privileged: true
   - task: build-binaries-image
