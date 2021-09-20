@@ -2,7 +2,6 @@
 # code_snippet configure-opsman-script start bash
 
 cat /var/version && echo ""
-om vm-lifecycle -v
 set -eux
 
 vars_files_args=("")
