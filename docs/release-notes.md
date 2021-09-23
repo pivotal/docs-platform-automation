@@ -21,11 +21,6 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
-## v5.0.18
-September 23, 2021
-
-
-
 ## v5.0.17
 August 2, 2021
 
@@ -865,11 +860,6 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
-## v4.4.24
-September 23, 2021
-
-
-
 ## v4.4.23
 August 2, 2021
 
@@ -1453,7 +1443,7 @@ Released June 16, 2020
     ```
 
 - CVE update to container image. Resolves [USN-4394-1](https://usn.ubuntu.com/4394-1/).
-  The CVEs are related to vulnerabilities with `libsqlite`.
+  The CVEs are related to vulnerabilities with `libsqlite`.4.
 
 ## v4.4.2
 Released June 9, 2020
