@@ -21,6 +21,35 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.25
+September 28, 2021
+
+### Bug Fixes
+
+- Fixed an issue on the `tasks/configure-opsman.sh`, which had a line that printed `om` help messages.
+- CVE update to container image.
+  Resolves [USN 5079-3](https://ubuntu.com/security/notices/USN-5079-3),
+  an issue related to curl.
+- CVE update to container image.
+  Resolves [USN-5080-1](https://ubuntu.com/security/notices/USN-5080-1),
+  an issue related to libgcrypt.
+- CVE update to container image.
+  Resolves [USN-5079-1](https://ubuntu.com/security/notices/USN-5079-1),
+  an issue related to curl.
+- CVE update to container image.
+  Resolves [USN-5076-1](https://ubuntu.com/security/notices/USN-5076-1),
+  an issue related to git.
+- CVE update to container image.
+  Resolves [USN-5051-3](https://ubuntu.com/security/notices/USN-5051-3),
+  an issue related to OpenSSL.
+- CVE update to container image.
+  Resolves [USN-5051-1](https://ubuntu.com/security/notices/USN-5051-1),
+  an issue related to OpenSSL.
+- CVE update to container image.
+  Resolves [USN-3809-2](https://ubuntu.com/security/notices/USN-3809-2),
+  an issue related to OpenSSH.
+
+
 ## v4.4.24
 September 23, 2021
 
