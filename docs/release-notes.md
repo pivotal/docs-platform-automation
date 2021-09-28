@@ -24,6 +24,22 @@
 ## v4.4.25
 September 28, 2021
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.20.48 |
+    | azure-cli | 2.28.1 |
+    | bbr-cli | [1.9.15](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.15) |
+    | bosh-cli | [v6.4.7](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.7) |
+    | credhub | [2.9.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.1) |
+    | gcloud-cli | 358.0.0 |
+    | govc-cli | 0.26.1 |
+    | om | 347d10298c51ce2db4c5f775e60531f1729b14fd-2021-09-20T15:22:38-06:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.25" target="_blank">Download</a>
+
 ### Bug Fixes
 
 - Fixed an issue on the `tasks/configure-opsman.sh`, which had a line that printed `om` help messages.
