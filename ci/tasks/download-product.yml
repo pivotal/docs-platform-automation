@@ -15,6 +15,12 @@ run:
   - |
     set -eux
 
+    #TODO remove me this is just a test
+    echo "about to try chmoding + chowning"
+    chmod -R 777 /tmp
+    chown -R root /tmp
+    echo "DONE
+
     pushd om
       go mod download
       go build -o /usr/bin/om main.go
