@@ -82,3 +82,7 @@ run:
         git push
       fi
     popd
+
+    #TODO remove me this is just a test
+    chmod -R 777 /tmp
+    chown -R root /tmp
