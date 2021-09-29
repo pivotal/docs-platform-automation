@@ -86,6 +86,7 @@ RUN wget -O /usr/bin/leftovers "https://github.com/genevieve/leftovers/releases/
 RUN chmod +x /usr/bin/leftovers
 
 # update temp path permissions (read, write, & exec to all users)
-RUN chmod 777 /tmp
+RUN chmod -R 777 /tmp
+RUN chown -R root /tmp
 
 ENV CGO_ENABLED=0
