@@ -1,0 +1,47 @@
+resources:
+  - name: ci-image
+    type: registry-image
+    source:
+      password: ((docker.password))
+      repository: ((docker.ci-repository))
+      tag: testing
+      username: ((docker.username))
+  - name: docs-platform-automation
+    type: git
+    source:
+      branch: debug-download-problem
+      private_key: ((platform_automation_docs.private_key))
+      uri: git@github.com:pivotal/docs-platform-automation
+      ignore_paths:
+        - docs
+
+jobs:
+#  - name: test-customer-issue-their-config
+#    plan:
+#      - get: platform-automation-image
+#        params:
+#          unpack: true
+#      - get: platform-automation-tasks
+#        params:
+#          unpack: true
+#      - task: download-pks-product-and-stemcell
+#        image: platform-automation-image
+#        file: platform-automation-tasks/tasks/download-product.yml
+#        params:
+#          CONFIG_FILE: docs-platform-automation/pks-product-info.yml
+##        privileged: true
+
+  - name: test-customer-issue-our-config
+    plan:
+      - get: ci-image
+        params:
+      - get: docs-platform-automation
+        params:
+      - task: download-product
+        image: ci-image
+        params:
+          CONFIG_FILE: docs-platform-automation/pks-product-info.yml
+          pivnet_token: ((pivnet_token))
+        file: docs-platform-automation/tasks/download-product-our-config.yml
+      #        privileged: true
+
