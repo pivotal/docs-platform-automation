@@ -27,6 +27,7 @@ caches:
 - path: downloaded-stemcell
 
 params:
+  pivnet_token:
   CONFIG_FILE: download-config.yml
   # - Required
   # - Filepath to the product configuration yaml file
