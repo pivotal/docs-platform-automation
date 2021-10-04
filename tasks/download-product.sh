@@ -22,7 +22,7 @@ pivnet-api-token: ${pivnet_token}
 pivnet-file-glob: \"pivotal-container-service-*.pivotal\"
 pivnet-product-slug: pivotal-container-service
 product-version: '1.11.4'
-stemcell-version: '621.154'
+stemcell-version: 621.154
 stemcell-iaas: vsphere
 " > $CONFIG_FILE
 
