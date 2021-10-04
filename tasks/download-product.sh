@@ -20,7 +20,7 @@ export CACHE_CLEANUP="I acknowledge this will delete files in the output directo
 # ${vars_files_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
 om download-product \
-  --config config/"${CONFIG_FILE}" ${vars_files_args[@]} \
+  --config "${CONFIG_FILE}" ${vars_files_args[@]} \
   --output-directory downloaded-product \
   --stemcell-output-directory downloaded-stemcell \
   --source "${SOURCE}"
@@ -28,7 +28,7 @@ om download-product \
 { printf "\nChecking if product needs winfs injected..."; } 2>/dev/null
 # shellcheck disable=SC2068
 product_slug=$(om interpolate \
-  --config config/"${CONFIG_FILE}" ${vars_files_args[@]} \
+  --config "${CONFIG_FILE}" ${vars_files_args[@]} \
   --path /pivnet-product-slug)
 
 if [ "${product_slug}" == "pas-windows" ] && [ "${SOURCE}" == "pivnet" ]; then
