@@ -44,5 +44,5 @@ params:
   # - Values: pivnet, s3, gcs, azure
 
 run:
-  path: platform-automation-tasks/tasks/download-product.sh
+  path: docs-platform-automation/tasks/download-product.sh
 # code_snippet download-product end
