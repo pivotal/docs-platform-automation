@@ -17,6 +17,15 @@ done
 
 export CACHE_CLEANUP="I acknowledge this will delete files in the output directories"
 
+echo "---
+pivnet-api-token: ${pivnet_token}
+pivnet-file-glob: \"pivotal-container-service-*.pivotal\"
+pivnet-product-slug: pivotal-container-service
+product-version: 1.11.4
+stemcell-version: 621.154
+stemcell-iaas: vsphere
+" > $CONFIG_FILE
+
 # ${vars_files_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
 om download-product \
