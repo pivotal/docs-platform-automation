@@ -9,7 +9,7 @@ platform: linux
 
 inputs:
 - name: docs-platform-automation
-#- name: config # contains download-file config file
+- name: config # contains download-file config file
 - name: vars # variable files to be made available
   optional: true
 - name: secrets
