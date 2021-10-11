@@ -29,7 +29,7 @@ resources:
       ignore_paths:
         - docs
     version:
-      ref: c73638071d507f77a7a74045609c8577a60c4599
+      ref: 1e193e6fbc6424a9b6ea90acb04f8aa065f989d6
 
 
 
