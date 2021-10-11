@@ -14,6 +14,24 @@ resources:
       uri: git@github.com:pivotal/docs-platform-automation
       ignore_paths:
         - docs
+#  - name: platform-automation-tasks
+#    type: github-release
+#    source:
+#      access_token: ((om.access_token))
+#      owner: pivotal
+#      repository: docs-platform-automation
+  - name: docs-platform-automation-5-0-17
+    type: git
+    source:
+      private_key: ((platform_automation_docs.private_key))
+      uri: git@github.com:pivotal/docs-platform-automation
+      branch: develop
+      ignore_paths:
+        - docs
+    version:
+      ref: c73638071d507f77a7a74045609c8577a60c4599
+
+
 
 jobs:
 #  - name: test-customer-issue-their-config
@@ -31,17 +49,71 @@ jobs:
 #          CONFIG_FILE: docs-platform-automation/pks-product-info.yml
 ##        privileged: true
 
+  - name: test-customer-issue-our-config-plus-pa-5-0-17
+    plan:
+      #      - get: platform-automation-image
+      #        params:
+      #          unpack: true
+      - get: ci-image
+        params:
+      - get: docs-platform-automation
+        params:
+      - get: docs-platform-automation-5-0-17
+        params:
+      - task: make-config-directory
+        image: ci-image
+        config:
+          platform: linux
+          outputs:
+            - name: config
+          run:
+            path: bash
+            args:
+              - -exc
+              - |
+                echo "---
+                pivnet-file-glob: \"pivotal-container-service-*.pivotal\"
+                pivnet-product-slug: pivotal-container-service
+                product-version: '1.11.4'
+                stemcell-version: '621.154'
+                stemcell-iaas: vsphere
+                " > config/pks-product-info.yml
+      - task: download-pks-product-and-stemcell
+        image: ci-image
+        params:
+          CONFIG_FILE: pks-product-info.yml
+        file: docs-platform-automation-5-0-17/tasks/download-product.yml
+  #        privileged: true
+
+
   - name: test-customer-issue-our-config
     plan:
       - get: ci-image
         params:
       - get: docs-platform-automation
         params:
+      - task: make-config-directory
+        image: ci-image
+        config:
+          platform: linux
+          outputs:
+            - name: config
+          run:
+            path: bash
+            args:
+            - -exc
+            - |
+              echo "---
+              pivnet-file-glob: \"pivotal-container-service-*.pivotal\"
+              pivnet-product-slug: pivotal-container-service
+              product-version: '1.11.4'
+              stemcell-version: 621.154
+              stemcell-iaas: vsphere
+              " > config/pks-product-info.yml
       - task: download-product
         image: ci-image
         params:
-          CONFIG_FILE: docs-platform-automation/pks-product-info.yml
-          pivnet_token: ((pivnet_token))
+          CONFIG_FILE: pks-product-info.yml
         file: docs-platform-automation/tasks/download-product-our-config.yml
       #        privileged: true
 
