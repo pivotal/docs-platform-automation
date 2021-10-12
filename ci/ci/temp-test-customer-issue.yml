@@ -25,11 +25,8 @@ resources:
     source:
       private_key: ((platform_automation_docs.private_key))
       uri: git@github.com:pivotal/docs-platform-automation
-      branch: develop
-      ignore_paths:
-        - docs
-    version:
-      ref: 1e193e6fbc6424a9b6ea90acb04f8aa065f989d6
+      tag: v5.0.17
+
 
 
 
@@ -79,6 +76,8 @@ jobs:
                 stemcell-iaas: vsphere
                 " > config/pks-product-info.yml
       - task: download-pks-product-and-stemcell
+        input_mapping:
+          platform-automation-tasks: docs-platform-automation-5-0-17
         image: ci-image
         params:
           CONFIG_FILE: pks-product-info.yml
