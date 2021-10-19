@@ -2,7 +2,7 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: concourse/docker-image-resource
+    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/concourse/docker-image-resource
 inputs:
 - name: platform-automation-image
 - name: version

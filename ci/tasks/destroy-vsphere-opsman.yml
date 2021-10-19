@@ -2,7 +2,7 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: paasmule/govc
+    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/paasmule/govc
 params:
   GOVC_DATASTORE: vnx5600-toronto-2
   GOVC_PASSWORD: ((vsphere.password))

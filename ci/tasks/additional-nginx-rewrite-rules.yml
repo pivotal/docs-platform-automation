@@ -3,7 +3,7 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: ubuntu
+    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu
 inputs:
 - name: docs
 - name: docs-platform-automation
