@@ -2,7 +2,7 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/internalpcfplatformautomation/ci
+    repository: internalpcfplatformautomation/ci
     tag: testing
 inputs:
 - name: om
