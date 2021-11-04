@@ -71,18 +71,18 @@ resources:
     product_slug: ops-manager
     product_version: 2\.[0-9]+\.[0-9]+$
     sort_by: semver
-- name: opsman-image-2.2.1
+- name: opsman-image-2.9.1
   type: pivnet
   source:
     api_token: ((pivnet_token))
     product_slug: ops-manager
-    product_version: 2\.2\.1$
-- name: opsman-image-2.2.x
+    product_version: 2\.9\.1$
+- name: opsman-image-2.9.x
   type: pivnet
   source:
     api_token: ((pivnet_token))
     product_slug: ops-manager
-    product_version: 2\.2\.[0-9]+$
+    product_version: 2\.9\.[0-9]+$
     sort_by: semver
 - name: pks-cli
   type: pivnet
@@ -724,14 +724,14 @@ jobs:
     - get: rc-image-s3-vsphere
       passed:
       - build-binaries-image-combined
-    - get: opsman-image-2.2.1
+    - get: opsman-image-2.9.1
       params:
         globs:
-        - '*onGCP.yml'
-    - get: opsman-image-2.2.x
+        - '*gcp*.yml'
+    - get: opsman-image-2.9.x
       params:
         globs:
-        - '*onGCP.yml'
+        - '*gcp*.yml'
     - get: opsman-image
       trigger: true
       params:
@@ -767,7 +767,7 @@ jobs:
     - task: create-vm
       file: platform-automation-tasks/tasks/create-vm.yml
       input_mapping:
-        image: opsman-image-2.2.1
+        image: opsman-image-2.9.1
         state: deployments
         config: paving
         vars: deployments
@@ -846,7 +846,7 @@ jobs:
   - task: upgrade-opsman-patch
     file: platform-automation-tasks/tasks/upgrade-opsman.yml
     input_mapping:
-      image: opsman-image-2.2.x
+      image: opsman-image-2.9.x
       state: deployments
       config: paving
       vars: deployments
@@ -1031,6 +1031,7 @@ jobs:
         - #@ opsman_glob
       tags: #@ tags
   - task: run-terraform
+    attempts: 2
     tags: #@ tags
     file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
