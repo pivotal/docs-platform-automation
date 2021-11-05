@@ -801,6 +801,21 @@ jobs:
         config: deployments
       params:
         CONFIG_FILE: ci-upgrade/download-tas-windows.yml
+    - task: download-telemetry-product
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      input_mapping:
+        config: deployments
+      params:
+        CONFIG_FILE: ci-upgrade/download-telemetry.yml
+    - task: upload-telemetry
+      file: platform-automation-tasks/tasks/upload-product.yml
+      image: platform-automation-image
+      input_mapping:
+        product: downloaded-product
+        env: deployments
+      params:
+        ENV_FILE: ci-upgrade/env.yml
   - task: configure-authentication
     file: platform-automation-tasks/tasks/configure-authentication.yml
     image: platform-automation-image
