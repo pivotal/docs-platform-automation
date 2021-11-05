@@ -808,11 +808,13 @@ jobs:
         config: deployments
       params:
         CONFIG_FILE: ci-upgrade/download-telemetry.yml
-    - task: upload-telemetry
-      file: platform-automation-tasks/tasks/upload-product.yml
+      output_mapping:
+        downloaded-product: telemetry-product
+    - task: upload-and-stage-telemetry
+      file: platform-automation-tasks/tasks/upload-and-stage-product.yml
       image: platform-automation-image
       input_mapping:
-        product: downloaded-product
+        product: telemetry-product
         env: deployments
       params:
         ENV_FILE: ci-upgrade/env.yml
