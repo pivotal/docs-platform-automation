@@ -11,6 +11,16 @@ Many of these links require VMware VPN access or other credentials;
 these instructions are public as an implementation detail,
 and are not intended to be useful to the public.
 
+## Platform Automation Github Repositories
+
+* https://github.com/pivotal/docs-platform-automation
+* https://github.com/pivotal/docs-platform-automation-reference-pipeline-config
+* https://github.com/pivotal/platform-automation-deployments
+* https://github.com/pivotal-cf/om
+* https://github.com/pivotal/paving
+* https://github.com/pivotal/mkdocs-pivotal-theme/
+* https://github.com/pivotal/mkdocs-plugins
+
 ## CVEs and Patching Steps
 
 ### Identifying CVE notices
