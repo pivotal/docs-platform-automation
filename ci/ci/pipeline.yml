@@ -829,6 +829,20 @@ jobs:
       env: deployments
     params:
       ENV_FILE: ci-upgrade/env.yml
+  - task: stage-configure-apply-telemetry
+    file: platform-automation-tasks/tasks/stage-configure-apply.yml
+    image: platform-automation-image
+    timeout: 10m
+    attempts: 3
+    input_mapping:
+      env: deployments
+      config: deployments
+      vars: deployments
+    params:
+      ENV_FILE: ci-upgrade/env.yml
+      CONFIG_FILE: ci-upgrade/p-telemetry.yml
+      STAGE_PRODUCT_CONFIG_FILE: ci-upgrade/p-telemetry.yml
+      VARS_FILE: env/ci-upgrade/terraform-vars.yml
   - task: staged-director-config
     file: platform-automation-tasks/tasks/staged-director-config.yml
     image: platform-automation-image
