@@ -825,7 +825,6 @@ jobs:
   - task: stage-configure-apply-telemetry
     file: platform-automation-tasks/tasks/stage-configure-apply.yml
     image: platform-automation-image
-    timeout: 10m
     attempts: 3
     input_mapping:
       env: deployments
@@ -1335,7 +1334,6 @@ jobs:
     - get: docs-platform-automation
   - task: check-for-secrets
     file: docs-platform-automation/ci/tasks/secrets-verifier/task.yml
-    timeout: 30m
     params:
       FLY_USERNAME: ((fly.username))
       FLY_PASSWORD: ((fly.password))
