@@ -161,7 +161,7 @@ CI will fail if the version already exists.
 Don't. Revert any such changes to those patch versions.
 
 Platform Automation is strictly [semvered](https://semver.org/)
-with an API defined in our [docs](http://docs-pcf-staging.tas.vmware.com/platform-automation/develop/compatibility-and-versioning.html#semantic-versioning).
+with an API defined in our [docs](https://docs-pcf-staging.tas.vmware.com/platform-automation/develop/compatibility-and-versioning.html#semantic-versioning).
 
 Patching of this product should _never_ include features or breaking changes.
 
@@ -253,7 +253,7 @@ dpkg -i <package-version>.deb
 ```
 
 ## [Reference Pipeline](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) Maintenance
-The reference pipeline (not "example pipeline") from our [docs](http://docs-pcf-staging.tas.vmware.com/platform-automation/develop/pipelines/multiple-products.html)
+The reference pipeline (not "example pipeline") from our [docs](https://docs-pcf-staging.tas.vmware.com/platform-automation/develop/pipelines/multiple-products.html)
 is fully tested in [CI](https://platform-automation.ci.cf-app.com/teams/main/pipelines/reference-pipeline).
 It is currently deployed on GCP,
 though history of the repo will reveal that it was previously deployed on vSphere.
@@ -414,12 +414,12 @@ Another example:
 ```
 # From https://platform-automation.ci.cf-app.com/teams/main/pipelines/docs/jobs/deploy-to-staging/builds/1964
 https://docs-pcf-staging.cfapps.io/platform-automation/v4.0/index.html
-	404	http://docs.pivotal.io/platform/customizing/pcf-interface.html
+	404	https://docs.pivotal.io/platform/customizing/pcf-interface.html
 ```
 The steps to fix this link were:
 1. search for the link in `docs-platform-automation/docs/.external_link_url.md`
 1. use the same url for a version of Ops Manager known to have worked with the link
-   (in this case, we navigated to: http://docs.pivotal.io/platform/2-10/customizing/pcf-interface.html)
+   (in this case, we navigated to: https://docs.pivotal.io/platform/2-10/customizing/pcf-interface.html)
 1. switch the docs branch to the most recent version
 1. remove the version information from the new url, and update it in the `.external_link_url` file
    (in this case, we used: https://docs.pivotal.io/ops-manager/pcf-interface.html)
