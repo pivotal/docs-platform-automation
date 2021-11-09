@@ -161,7 +161,7 @@ CI will fail if the version already exists.
 Don't. Revert any such changes to those patch versions.
 
 Platform Automation is strictly [semvered](https://semver.org/)
-with an API defined in our [docs](https://docs-pcf-staging.cfapps.io/platform-automation/develop/compatibility-and-versioning.html#semantic-versioning).
+with an API defined in our [docs](http://docs-pcf-staging.tas.vmware.com/platform-automation/develop/compatibility-and-versioning.html#semantic-versioning).
 
 Patching of this product should _never_ include features or breaking changes.
 
@@ -253,7 +253,7 @@ dpkg -i <package-version>.deb
 ```
 
 ## [Reference Pipeline](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) Maintenance
-The reference pipeline (not "example pipeline") from our [docs](https://docs-pcf-staging.cfapps.io/platform-automation/develop/pipelines/multiple-products.html)
+The reference pipeline (not "example pipeline") from our [docs](http://docs-pcf-staging.tas.vmware.com/platform-automation/develop/pipelines/multiple-products.html)
 is fully tested in [CI](https://platform-automation.ci.cf-app.com/teams/main/pipelines/reference-pipeline).
 It is currently deployed on GCP,
 though history of the repo will reveal that it was previously deployed on vSphere.
@@ -264,7 +264,7 @@ relies on the reference-pipeline being successfully up and deployed.
 This ci pipeline task _is explicitly_ a release blocker, while the reference pipeline is not explicitly a blocker.
 
 The reference pipeline exists in the [docs-platform-automation-reference-pipeline-config](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) repo.
-The repo is organized to represent a [multi-foundation configuration structure](https://docs-pcf-staging.cfapps.io/platform-automation/develop/pipeline-design/configuration-management-strategies.html#multiple-foundations-with-one-repository).
+The repo is organized to represent a [multi-foundation configuration structure](https://docs-pcf-staging.tas.vmware.com/platform-automation/develop/pipeline-design/configuration-management-strategies.html#multiple-foundations-with-one-repository).
 The reference pipeline is the `sandbox` directory in that repo. 
 
 `auth.yml` and `env.yml` are shared between foundations.
@@ -391,7 +391,7 @@ the vmware-common formatting/css/etc for the docs site.
 Inside of `mkdocs-pivotal-theme`, there is a helpful tool
 that we use to make sure the links across all versions
 are valid and working.
-In the [ci](https://platform-automation.ci.cf-app.com/), this linter is used in the `deploy-to-staging` job in the `docs` pipeline.
+In the [ci](https://runway-ci.eng.vmware.com/teams/ppe-platform-automation/pipelines/platform-automation-docs), this linter is used in the `deploy-to-staging` job in the `docs` pipeline.
 
 #### Broken Links
 The link linter is very aggressive.
@@ -419,7 +419,7 @@ https://docs-pcf-staging.cfapps.io/platform-automation/v4.0/index.html
 The steps to fix this link were:
 1. search for the link in `docs-platform-automation/docs/.external_link_url.md`
 1. use the same url for a version of Ops Manager known to have worked with the link
-   (in this case, we navigated to: http://docs.pivotal.io/platform/2-7/customizing/pcf-interface.html)
+   (in this case, we navigated to: http://docs.pivotal.io/platform/2-10/customizing/pcf-interface.html)
 1. switch the docs branch to the most recent version
 1. remove the version information from the new url, and update it in the `.external_link_url` file
    (in this case, we used: https://docs.pivotal.io/ops-manager/pcf-interface.html)
@@ -503,7 +503,7 @@ Generated HTML contains undefined links!
 
 ## Slack and Support
 
-### Bugs in [Tracker](https://www.pivotaltracker.com/n/projects/1472134)
+### Bugs in [Tracker](https://www.pivotaltracker.com/n/projects/2535033)
 #### Github issues
 When an issue is opened on the `om` or `docs-platform-automation`
 a bug is auto-created in the Pivotal Tracker icebox.
