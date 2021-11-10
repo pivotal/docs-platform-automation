@@ -26,9 +26,9 @@ and are not intended to be useful to the public.
 ### Identifying CVE notices
 
 [Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation) distributes two artifacts.
-This includes a zip file of Cocnourse YAML tasks and tarball of a container image.
+This includes a zip file of Concourse YAML tasks and tarball of a container image.
 
-The container image uses Ubuntu and it's package manager to install most dependencies.
+The container image uses Ubuntu and its package manager to install most dependencies.
 VMware (through Pivotal) has a support license, which provides timely security updates to these packages.
 
 This document contains instructions of how the container is updated and released for security purposes.
