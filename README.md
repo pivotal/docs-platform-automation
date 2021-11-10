@@ -18,6 +18,7 @@ To use it locally, it will require `python3` to be installed.
 ```
 pip3 install -U -r requirements.txt
 brew install ripgrep
+git submodule update --init --recursive
 mkdocs serve
 ```
 
