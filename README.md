@@ -36,6 +36,14 @@ WARNING -  Documentation file 'task-reference.md' contains a link to 'asdfasdf.h
 Exited with 1 warnings in strict mode.
 ```
 
+# CI
+
+Platform Automation
+[ci](https://platform-automation.ci.cf-app.com/teams/main/pipelines/python-mitigation-support),
+[support-pipeline](https://platform-automation.ci.cf-app.com/teams/main/pipelines/support-pipeline),
+and
+[python-mitigation-support](https://platform-automation.ci.cf-app.com/teams/main/pipelines/python-mitigation-support) pipelines are managed from this repo in the ci directory.
+
 # Contributing
 
 Please see the [contribution doc](CONTRIBUTING.md) for more information.
