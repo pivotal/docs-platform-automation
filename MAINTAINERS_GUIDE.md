@@ -25,8 +25,9 @@ and are not intended to be useful to the public.
 
 ### Identifying CVE notices
 
-[Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation) distributes two artifacts.
-This includes a zip file of Concourse YAML tasks and tarball of a container image.
+[Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation) distributes three artifacts.
+This includes a zip file of Concourse YAML tasks and two tarballs of container images, one smaller, vsphere-only image and one larger
+image that can be used on all platforms.
 
 The container image uses Ubuntu and its package manager to install most dependencies.
 VMware (through Pivotal) has a support license, which provides timely security updates to these packages.
@@ -57,20 +58,25 @@ At the moment, the process involves a Pivotal Tracker project. These instruction
    <img width="975" alt="Screen Shot 2021-01-13 at 10 04 49 AM" src="https://user-images.githubusercontent.com/75184/104484653-c7bd9080-5586-11eb-864b-556904ecaa93.png">
    In this example, it is the wrong version (purposely).
 1. If the container image does not have the correct version, the pipeline needs to be triggered to pull in the latest package.
-   Note: The container image build process is built in two steps. This allows CD to happen when contributing code to our source repo. The packages for the Ubuntu image are installed in the `build-packages-image` job on the pipeline.
+   The packages for the Ubuntu image are installed in the `build-packages-image` job on the pipeline.
 1. Trigger the job [`build-packages-image`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-packages-image/builds/947) to start the container build process, which installs the latest packages.
    Note: When this job finishes, it will trigger downstream `build-binaries-image-combined`, and then those following jobs.
-1. When the `build-binaries-image-combined` is finished from its upstream trigger, reinspect the image receipt to if it updated.
+1. When the `build-binaries-image-combined` is finished from its upstream trigger, reinspect the image receipt to confirm it was updated.
 
-### Updating cve path notes
-
-1. Update the release notes for patching CVEs (and/or other security/package updates).
-   This should be updated in `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`
-   The bug fixes for the last release should be already populated.
-   _Replace the existing release notes with the release notes for the newest patch._
+### Updating CVE Patch Notes
+1. Update the release notes with features, bug fixes, and CVEs.
+   The release notes are found in: `docs-platform-automation/ci/patch-notes`
    
    **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
+   
+   ex.
+   ```
+   ### Bug Fixes
+   - CVE update to container image.
+   Resolves [USN 5133-1](https://ubuntu.com/security/notices/USN-5133-1),
+   an issue related to ICU crashing
+   ```
 1. Commit and push the changes
 1. In the `ci` pipeline, make sure the build has passed all jobs that are not `promote-to-final`. Click the `bump` tab. 
 1. Trigger the `bump-previous-versions-trigger` job in the [`ci`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci) pipeline
