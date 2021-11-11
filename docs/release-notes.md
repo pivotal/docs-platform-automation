@@ -24,6 +24,22 @@
 ## v5.0.19
 November 11, 2021
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.22.3 |
+    | azure-cli | 2.30.0 |
+    | bbr-cli | [1.9.18](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.18) |
+    | bosh-cli | [v6.4.7](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.7) |
+    | credhub | [2.9.1](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.1) |
+    | gcloud-cli | 364.0.0 |
+    | govc-cli | 0.27.1 |
+    | om | a9865819e957ebd1512c9fb1af41ab4a4ff0e834-2021-11-11T06:57:05-07:00 |
+    | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.19" target="_blank">Download</a>
+
 ### Bug Fixes
 - CVE update to container image.
   Resolves [USN 5133-1](https://ubuntu.com/security/notices/USN-5133-1),
