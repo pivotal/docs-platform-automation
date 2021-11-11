@@ -433,7 +433,7 @@ jobs:
     - get: om
       trigger: true
     - get: docs-platform-automation
-      trigger: true
+      trigger: false
     - get: packages-image
       trigger: true
       passed:
@@ -529,29 +529,31 @@ jobs:
       params:
         PRODUCT_PATH: vsphere-platform-automation-image-*.tar.gz
   - in_parallel:
-    - put: rc-image-receipt-s3
-      params:
-        file: rc-image-receipt-s3/image-receipt-*
-        acl: public-read
-    - put: rc-vsphere-image-receipt-s3
-      params:
-        file: rc-vsphere-image-receipt-s3/image-receipt-*
-        acl: public-read
-    - put: rc-image-s3
-      params:
-        file: packaged-product/platform-automation-image-*.tgz
-      get_params:
-        skip_download: "true"
-    - put: rc-image-s3-vsphere
-      params:
-        file: packaged-product/vsphere-platform-automation-image-*.tar.gz
-      get_params:
-        skip_download: "true"
-    - put: rc-tasks-s3
-      params:
-        file: packaged-product/platform-automation-tasks-*.zip
-      get_params:
-        skip_download: "true"
+      limit: 3
+      steps:
+      - put: rc-image-receipt-s3
+        params:
+          file: rc-image-receipt-s3/image-receipt-*
+          acl: public-read
+      - put: rc-vsphere-image-receipt-s3
+        params:
+          file: rc-vsphere-image-receipt-s3/image-receipt-*
+          acl: public-read
+      - put: rc-image-s3
+        params:
+          file: packaged-product/platform-automation-image-*.tgz
+        get_params:
+          skip_download: "true"
+      - put: rc-image-s3-vsphere
+        params:
+          file: packaged-product/vsphere-platform-automation-image-*.tar.gz
+        get_params:
+          skip_download: "true"
+      - put: rc-tasks-s3
+        params:
+          file: packaged-product/platform-automation-tasks-*.zip
+        get_params:
+          skip_download: "true"
   - put: binaries-table
     params:
       file: cli-versions-table/bump-image-cli-versions*
