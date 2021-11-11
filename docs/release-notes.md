@@ -890,6 +890,15 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.26
+November 11, 2021
+
+### Bug Fixes
+- CVE update to container image.
+  Resolves [USN 5133-1](https://ubuntu.com/security/notices/USN-5133-1),
+  an issue related to ICU crashing
+
+
 ## v4.4.25
 September 28, 2021
 
