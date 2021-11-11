@@ -27,6 +27,9 @@ September 23, 2021
 ### Bug Fixes
 - Fixed an issue on the `tasks/configure-opsman.sh`, which had a line that printed `om` help messages.
 - CVE update to container image.
+  Resolves [USN 5089-1](https://ubuntu.com/security/notices/USN-5089-1),
+  an issue related to expiring ca certificate.
+- CVE update to container image.
   Resolves [USN 5079-3](https://ubuntu.com/security/notices/USN-5079-3),
   an issue related to curl.
 - CVE update to container image.
@@ -910,6 +913,9 @@ September 28, 2021
 
 - Fixed an issue on the `tasks/configure-opsman.sh`, which had a line that printed `om` help messages.
 - CVE update to container image.
+  Resolves [USN 5089-1](https://ubuntu.com/security/notices/USN-5089-1),
+  an issue related to expiring ca certificate.
+- CVE update to container image.
   Resolves [USN 5079-3](https://ubuntu.com/security/notices/USN-5079-3),
   an issue related to curl.
 - CVE update to container image.
@@ -937,6 +943,9 @@ September 23, 2021
 
 ### Bug Fixes
 - Fixed an issue on the `tasks/configure-opsman.sh`, which had a line that printed `om` help messages.
+- CVE update to container image.
+  Resolves [USN 5089-1](https://ubuntu.com/security/notices/USN-5089-1),
+  an issue related to expiring ca certificate.
 - CVE update to container image.
   Resolves [USN 5079-3](https://ubuntu.com/security/notices/USN-5079-3),
   an issue related to curl.
