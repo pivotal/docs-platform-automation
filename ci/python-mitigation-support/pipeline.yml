@@ -120,6 +120,7 @@ jobs:
     file: docs-platform-automation/ci/tasks/python-mitigation.yml
     privileged: true
   - task: create-release-file
+    privileged: true
     file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
       platform-automation-image: bumped-platform-automation-image
