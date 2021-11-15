@@ -1,0 +1,41 @@
+
+jobs:
+- name: build-ci-image
+  plan:
+
+  - get: docs-platform-automation
+  - file: docs-platform-automation/ci/tasks/build-oci-image.yml
+    params:
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
+    privileged: true
+    task: build-ci-image
+  - get_params:
+      skip_download: true
+    params:
+      image: image/image.tar
+    put: ci-image
+
+
+
+resources:
+
+- name: ci-image
+  source:
+    password: ((docker.password))
+    repository: ((docker.ci-repository))
+    tag: terraform-upgrade-0.14.0
+    username: ((docker.username))
+  type: registry-image
+- name: docs-platform-automation
+  source:
+    branch: terraform-upgrade
+    ignore_paths:
+    - docs
+    private_key: ((platform_automation_docs.private_key))
+    uri: git@github.com:pivotal/docs-platform-automation
+  type: git
+- name: paving
+  source:
+    uri: https://github.com/pivotal/paving
+    branch: terraform-upgrade
+  type: git
