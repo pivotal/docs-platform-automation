@@ -34,8 +34,3 @@ resources:
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
   type: git
-- name: paving
-  source:
-    uri: https://github.com/pivotal/paving
-    branch: terraform-upgrade
-  type: git
