@@ -38,6 +38,8 @@ cp "$deployment_path"/terraform.tfvars "$terraform_path"
 
 cd "$terraform_path"
 
+terraform version
+
 terraform init
 
 terraform refresh \
