@@ -15,8 +15,8 @@ RUN wget "https://dl.minio.io/client/mc/release/linux-amd64/mc" && \
     chmod +x mc && \
     mv mc /usr/bin/mc
 
-RUN wget https://releases.hashicorp.com/terraform/0.14.11/terraform_0.14.11_linux_amd64.zip && \
-    unzip terraform_0.14.11_linux_amd64.zip -d /usr/bin
+RUN wget https://releases.hashicorp.com/terraform/1.0.11/terraform_1.0.11_linux_amd64.zip && \
+    unzip terraform_1.0.11_linux_amd64.zip -d /usr/bin
 
 # install BOSH
 RUN wget "https://github.com/cloudfoundry/bosh-cli/releases/download/v6.2.1/bosh-cli-6.2.1-linux-amd64" -O bosh
