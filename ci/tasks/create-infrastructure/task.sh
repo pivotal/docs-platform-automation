@@ -60,7 +60,8 @@ terraform_major_version=$(terraform version | head -n1 | cut -d " " -f2 | cut -d
 terraform_minor_version=$(terraform version | head -n1 | cut -d " " -f2 | cut -d "." -f2)
 
 # If terraform version is 13 or below use terraform output without format option
-if [[ $terraform_major_version == "v0" && $terraform_minor_version -le 13 ]]then
+if [[ $terraform_major_version == "v0" && $terraform_minor_version -le 13 ]]
+then
   terraform output stable_config_opsmanager > terraform-vars.yml
 else
   terraform output -raw stable_config_opsmanager > terraform-vars.yml
