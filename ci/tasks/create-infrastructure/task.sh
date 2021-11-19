@@ -56,4 +56,4 @@ terraform apply \
   -parallelism=5 \
   terraform.tfplan
 
-terraform output stable_config_opsmanager > terraform-vars.yml
+terraform output -json stable_config_opsmanager > terraform-vars.yml
