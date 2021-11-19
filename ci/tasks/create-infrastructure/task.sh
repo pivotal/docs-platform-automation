@@ -56,4 +56,12 @@ terraform apply \
   -parallelism=5 \
   terraform.tfplan
 
-terraform output stable_config_opsmanager > terraform-vars.yml
+terraform_major_version = $(terraform version | head -n1 | cut -d " " -f2 | cut -d "." -f1)
+terraform_minor_version = $(terraform version | head -n1 | cut -d " " -f2 | cut -d "." -f2)
+
+# If terraform version is 13 or below use old version of terraform output
+if [[ $terraform_major_version == "v0" && $terraform_minor_version -le 13 ]]then
+  terraform output stable_config_opsmanager > terraform-vars.yml
+else
+  terraform output -raw stable_config_opsmanager > terraform-vars.yml
+fi
