@@ -424,7 +424,7 @@ jobs:
       trigger: true
       params:
         globs:
-        - '*linux'
+        - '*linux-*[^z]'
     - get: isolation-segment-replicator
       trigger: true
       params:
