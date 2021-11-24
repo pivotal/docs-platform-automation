@@ -6,7 +6,7 @@ COPY bbr-cli/*linux* /usr/bin/bbr
 COPY bosh-cli/bosh-cli-* /usr/bin/bosh
 COPY isolation-segment-replicator/replicator-linux /usr/bin/iso-replicator
 COPY om-cli/om /usr/bin/om
-COPY winfs-injector/winfs-injector-linux /usr/bin/winfs-injector
+COPY winfs-injector/winfs-injector-linux* /usr/bin/winfs-injector
 COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
 
