@@ -424,12 +424,12 @@ jobs:
       trigger: true
       params:
         globs:
-        - '*linux-*[^gz]'
+        - '*linux'
     - get: isolation-segment-replicator
       trigger: true
       params:
         globs:
-        - '*linux-*[^gz]'
+        - '*linux'
     - get: om
       trigger: true
     - get: docs-platform-automation
