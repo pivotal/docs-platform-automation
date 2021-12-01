@@ -1095,19 +1095,6 @@ jobs:
         params:
           rebase: true
           repository: repository-commit
-  - task: create-vm
-    tags: #@ tags
-    file: platform-automation-tasks/tasks/create-vm.yml
-    input_mapping:
-      image: opsman-image
-      state: deployments
-      config: paving
-      vars: deployments
-    params:
-      STATE_FILE: #@ env_name + "/state.yml"
-      OPSMAN_CONFIG_FILE: #@ "ci/configuration/" + paving_dir + "/ops-manager.yml"
-      VARS_FILES: #@ "vars/" + env_name + "/terraform-vars.yml"
-    image: platform-automation-image
   - task: configure-authentication
     tags: #@ tags
     file: platform-automation-tasks/tasks/configure-authentication.yml
