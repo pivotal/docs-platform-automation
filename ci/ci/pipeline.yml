@@ -529,7 +529,7 @@ jobs:
       params:
         PRODUCT_PATH: vsphere-platform-automation-image-*.tar.gz
   - in_parallel:
-      limit: 3
+      limit: 2
       steps:
       - put: rc-image-receipt-s3
         params:
