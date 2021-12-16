@@ -372,7 +372,6 @@ jobs:
     trigger: true
   - get: docs-platform-automation
   - task: build-ci-image
-    privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
@@ -386,7 +385,6 @@ jobs:
     trigger: true
   - get: docs-platform-automation
   - task: build-packages-image
-    privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
@@ -448,13 +446,10 @@ jobs:
       params:
         OM_pivnet_token: ((pivnet_token))
       file: docs-platform-automation/ci/tasks/download-product.yml
-      privileged: true
     - task: test
       attempts: 3
       file: docs-platform-automation/ci/tasks/test-and-build-om.yml
-      privileged: true
   - task: build-binaries-image
-    privileged: true
     config:
       platform: linux
       image_resource:
@@ -482,7 +477,6 @@ jobs:
   - put: binaries-image
     params: { image: binaries-image-oci/image.tar }
   - task: build-vsphere-image
-    privileged: true
     config:
       platform: linux
       image_resource:
@@ -514,17 +508,14 @@ jobs:
         rc-image-receipt-s3: rc-vsphere-image-receipt-s3
       image: vsphere-only-image
     - task: create-release-file
-      privileged: true
       file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
       input_mapping:
         platform-automation-image: binaries-image
         vsphere-platform-automation-image: vsphere-only-image
   - in_parallel:
     - task: test-docker-import
-      privileged: true
       file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
     - task: test-docker-import
-      privileged: true
       file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
       params:
         PRODUCT_PATH: vsphere-platform-automation-image-*.tar.gz
@@ -639,13 +630,11 @@ jobs:
       params:
         bump: final
   - task: create-release-file
-    privileged: true
     file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
       platform-automation-image: rc-image-s3
       vsphere-platform-automation-image: rc-image-s3-vsphere
   - task: test-docker-import
-    privileged: true
     file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
   - task: generate-platform-automation-metadata
     file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.0.yml
@@ -1651,7 +1640,6 @@ jobs:
     params:
       GITHUB_SSH_KEY: ((platform_automation_docs.private_key))
   - task: create-release-file
-    privileged: true
     file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
       docs-platform-automation: docs-platform-automation-with-docs
@@ -1663,7 +1651,6 @@ jobs:
   - in_parallel:
     - task: test-docker-import
       file: docs-platform-automation-with-docs/ci/tasks/test-docker-import/task.yml
-      privileged: true
     - task: test-task
       file: #@ "platform-automation-" + version.number + "/tasks/test.yml"
       image: platform-automation-image
