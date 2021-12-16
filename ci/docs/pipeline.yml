@@ -71,7 +71,6 @@ jobs:
   - get: mkdocs-pivotal-theme
     trigger: true
   - task: build
-    privileged: true
     config:
       platform: linux
       image_resource:
