@@ -372,6 +372,7 @@ jobs:
     trigger: true
   - get: docs-platform-automation
   - task: build-ci-image
+    privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
@@ -385,6 +386,7 @@ jobs:
     trigger: true
   - get: docs-platform-automation
   - task: build-packages-image
+    privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
