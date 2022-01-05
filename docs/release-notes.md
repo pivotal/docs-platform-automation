@@ -21,6 +21,18 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v4.4.27
+January 5, 2022
+
+### Bug Fixes
+- CVE update to container image.
+Resolves [USN-5199-1](https://ubuntu.com/security/notices/USN-5199-1),
+an issue related to python3.6.
+- CVE update to container image.
+Resolves [USN-5189-1](https://ubuntu.com/security/notices/USN-5189-1),
+an issue related to glib2.0.
+
+
 ## v4.4.26
 November 11, 2021
 
