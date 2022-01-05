@@ -452,6 +452,7 @@ jobs:
       attempts: 3
       file: docs-platform-automation/ci/tasks/test-and-build-om.yml
   - task: build-binaries-image
+    privileged: true
     config:
       platform: linux
       image_resource:
@@ -479,6 +480,7 @@ jobs:
   - put: binaries-image
     params: { image: binaries-image-oci/image.tar }
   - task: build-vsphere-image
+    privileged: true
     config:
       platform: linux
       image_resource:
@@ -516,8 +518,10 @@ jobs:
         vsphere-platform-automation-image: vsphere-only-image
   - in_parallel:
     - task: test-docker-import
+      privileged: true
       file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
-    - task: test-docker-import
+    - task: test-vsphere-docker-import
+      privileged: true
       file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
       params:
         PRODUCT_PATH: vsphere-platform-automation-image-*.tar.gz
@@ -637,6 +641,7 @@ jobs:
       platform-automation-image: rc-image-s3
       vsphere-platform-automation-image: rc-image-s3-vsphere
   - task: test-docker-import
+    privileged: true
     file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
   - task: generate-platform-automation-metadata
     file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.0.yml
@@ -1652,6 +1657,7 @@ jobs:
       #@ end
   - in_parallel:
     - task: test-docker-import
+      privileged: true
       file: docs-platform-automation-with-docs/ci/tasks/test-docker-import/task.yml
     - task: test-task
       file: #@ "platform-automation-" + version.number + "/tasks/test.yml"
