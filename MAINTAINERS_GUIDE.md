@@ -23,8 +23,6 @@ and are not intended to be useful to the public.
 
 ## CVEs and Patching Steps
 
-### Identifying CVE notices
-
 [Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation) distributes three artifacts.
 This includes a zip file of Concourse YAML tasks and two tarballs of container images, one smaller, vsphere-only image and one larger
 image that can be used on all platforms.
@@ -32,54 +30,59 @@ image that can be used on all platforms.
 The container image uses Ubuntu and its package manager to install most dependencies.
 VMware (through Pivotal) has a support license, which provides timely security updates to these packages.
 
-This document contains instructions of how the container is updated and released for security purposes.
+This document contains instructions of how the container is updated and released for security purposes:
 
-#### Workflow
+1. [Identifying CVE notices](#identifying-cve-notices)
+1. [Patching CVEs](#patching-cves)
+1. [Updating CVE Patch Notes](#updating-cve-patch-notes)
+1. [Release the CVE Patch](#release-the-cve-patch)
 
-##### Updating container image for CVEs
+### Identifying CVE notices
 
-At the moment, the process involves a Pivotal Tracker project. These instructions are written with that assumption.
-
-1. [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/1472134) stories are automatically created identifying there is a CVE on our container image.
+Stories are automatically created in [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2535033) identifying there is a CVE on our container image.
 
    <img width="390" alt="Screen Shot 2021-01-13 at 9 29 42 AM" src="https://user-images.githubusercontent.com/75184/104483047-e6bb2300-5584-11eb-81e2-e1ccfb89b9a6.png">
 
-1. Start the available tracker stories and assign accordingly.
-1. Inspect the story description for the package name and version number, which will be the CVE fix.
-   The container image is built upon `Ubuntu 18.04`. Follow the Davos Notice
-   link to verify that the versions tagged are not "Out of Support".
+With each story,
+1. Inspect the description for the package name and version number. 
+   The container image is built upon `Ubuntu 18.04`. The version listed in the description has the the CVE fix.
+
    <img width="377" alt="Screen Shot 2021-01-13 at 9 54 02 AM" src="https://user-images.githubusercontent.com/75184/104483369-46193300-5585-11eb-9370-111ea383d6c7.png">
-1. Given the package and version (`ca-certificates 20201027ubuntu0.18.04.1`), let's inspect our container image to see if has this package and version. Platform Automation generates an artifact on every container build, so it easy to find this information.
-1. Goto the Platform Automation [CI pipeline](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci), click on `build-binaries-image-combined`, and look for the `put` of the resource named `rc-image-receipt-s3`.
+1. Inpect our container image to see if has this package and version. 
+   - Go to the Platform Automation [CI pipeline](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci), click on [`build-binaries-image-combined`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-binaries-image-combined/builds/latest), and look for the `put` of the resource named `rc-image-receipt-s3`. Download the public file in the `url` attribute.
    <img width="1257" alt="Screen Shot 2021-01-13 at 10 01 38 AM" src="https://user-images.githubusercontent.com/75184/104484289-5c73be80-5586-11eb-9ef8-ec98e724d316.png">
-   Download the file in the `url` attribute. It automatically public, so no need to log into s3.
-1. With the file just downloaded (`image-receipt-5.1.0-rc.129`), open in your text editor of choice.
-   Search for the package name (`ca-certificates`) and ensure the version number is correct.
+   
+   - With the file just downloaded (e.g. `image-receipt-5.1.0-rc.129`), open in your text editor of choice.
+   Search for the package name (e.g. `ca-certificates`) and ensure the version number is correct.
    <img width="975" alt="Screen Shot 2021-01-13 at 10 04 49 AM" src="https://user-images.githubusercontent.com/75184/104484653-c7bd9080-5586-11eb-864b-556904ecaa93.png">
-   In this example, it is the wrong version (purposely).
-1. If the container image does not have the correct version, the pipeline needs to be triggered to pull in the latest package.
-   The packages for the Ubuntu image are installed in the `build-packages-image` job on the pipeline.
-1. Trigger the job [`build-packages-image`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-packages-image/builds/947) to start the container build process, which installs the latest packages.
-   Note: When this job finishes, it will trigger downstream `build-binaries-image-combined`, and then those following jobs.
+   > **Note:** In this example, it is the wrong version (purposely). It should be `ca-certificates 20201027ubuntu0.18.04.1`
+
+### Patching CVEs
+If the container image does not have the correct version, the pipeline needs to be triggered to pull in the latest package.
+1. Trigger the [`build-packages-image`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-packages-image/builds/latest) job to start the container build process, which installs the latest packages.
+   > **Note:** When this job finishes, it will trigger downstream `build-binaries-image-combined` and subsequent jobs.
 1. When the `build-binaries-image-combined` is finished from its upstream trigger, reinspect the image receipt to confirm it was updated.
 
 ### Updating CVE Patch Notes
 1. Update the release notes with features, bug fixes, and CVEs.
-   The release notes are found in: `docs-platform-automation/ci/patch-notes`
+   The release notes are found in: [`docs-platform-automation/ci/patch-notes`](https://github.com/pivotal/docs-platform-automation/tree/develop/ci/patch-notes)
    
-   **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
+   > **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
    
-   ex.
+    ex.
    ```
    ### Bug Fixes
    - CVE update to container image.
    Resolves [USN 5133-1](https://ubuntu.com/security/notices/USN-5133-1),
    an issue related to ICU crashing
    ```
+   If needed, see [Platform Automation Toolkit v5.0 Release Notes](https://docs.pivotal.io/platform-automation/v5.0/release-notes.html) for more examples.
 1. Commit and push the changes
-1. In the `ci` pipeline, make sure the build has passed all jobs that are not `promote-to-final`. Click the `bump` tab. 
-1. Trigger the `bump-previous-versions-trigger` job in the [`ci`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci) pipeline
+
+### Release the CVE Patch
+1. In the `ci` pipeline, make sure the build has passed all jobs that are not `promote-to-final`.
+1. In the `bump` group, trigger the [`bump-previous-versions-trigger`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/29) job.
 
    This will trigger the CVE/patch process.
    To validate the appropriate CVEs were updated in supported versions,
@@ -87,7 +90,7 @@ At the moment, the process involves a Pivotal Tracker project. These instruction
    then download the `image-receipt-X.X.X` from AWS S3
    (this link is also be available in the release notes for each version).
 
-   **NOTE**: if any `update-vX.X` job fails during uploading to TanzuNet,
+   >**NOTE**: if any `update-vX.X` job fails during uploading to TanzuNet,
    delete the release and any files that were uploaded manually on the UI.
    Then re-run the job. The job will not re-generate release notes.
    However, the release date of the job will be whatever the date of the 
@@ -101,7 +104,7 @@ You're almost done!
 
 1. New releases of v4.4.x trigger an additional pipeline, [python-mitigation-support](https://platform-automation.ci.cf-app.com/teams/main/pipelines/python-mitigation-support).  Ensure that this pipeline goes green and you are now done.  FWIW.. this pipeline builds a special TanzuNet release for a customer with the python-based `az` and `gcloud` clis removed so their security scans don't complain.  Once that customer upgrades to v5.x this pipeline can be removed.  
 
-### Updating the Release Notes Manually
+### If Needed, Updating the Release Notes Manually
 There is an easy (manual) way to undo the docs created for CVE patching.
 This could be due to:
 - failure to update the `cve-patch-notes.md` before creating patch,
