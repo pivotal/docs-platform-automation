@@ -97,7 +97,9 @@ At the moment, the process involves a Pivotal Tracker project. These instruction
 1. The job pushes each patch directly to Tanzunet for Admins Only.
 Use the `platform-automation-pivnet` credential in Lastpass to log into [TanzuNet](https://network.pivotal.io/).
 Update the EOGS and the availability to All Users. 
-You're done!
+You're almost done!
+
+1. New releases of v4.4.x trigger an additional pipeline, [python-mitigation-support](https://platform-automation.ci.cf-app.com/teams/main/pipelines/python-mitigation-support).  Ensure that this pipeline goes green and you are now done.  FWIW.. this pipeline builds a special TanzuNet release for a customer with the python-based `az` and `gcloud` clis removed so their security scans don't complain.  Once that customer upgrades to v5.x this pipeline can be removed.  
 
 ### Updating the Release Notes Manually
 There is an easy (manual) way to undo the docs created for CVE patching.
