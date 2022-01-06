@@ -55,19 +55,20 @@ With each story,
    - With the file just downloaded (e.g. `image-receipt-5.1.0-rc.129`), open in your text editor of choice.
    Search for the package name (e.g. `ca-certificates`) and ensure the version number is correct.
    <img width="975" alt="Screen Shot 2021-01-13 at 10 04 49 AM" src="https://user-images.githubusercontent.com/75184/104484653-c7bd9080-5586-11eb-864b-556904ecaa93.png">
-   > **Note:** In this example, it is the wrong version (purposely). It should be `ca-certificates 20201027ubuntu0.18.04.1`
+   
+   > **NOTE:** In this example, it is the wrong version (purposely). It should be `ca-certificates 20201027ubuntu0.18.04.1`
 
 ### Patching CVEs
 If the container image does not have the correct version, the pipeline needs to be triggered to pull in the latest package.
 1. Trigger the [`build-packages-image`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-packages-image/builds/latest) job to start the container build process, which installs the latest packages.
-   > **Note:** When this job finishes, it will trigger downstream `build-binaries-image-combined` and subsequent jobs.
+   > **NOTE:** When this job finishes, it will trigger downstream `build-binaries-image-combined` and subsequent jobs.
 1. When the `build-binaries-image-combined` is finished from its upstream trigger, reinspect the image receipt to confirm it was updated.
 
 ### Updating CVE Patch Notes
 1. Update the release notes with features, bug fixes, and CVEs.
    The release notes are found in: [`docs-platform-automation/ci/patch-notes`](https://github.com/pivotal/docs-platform-automation/tree/develop/ci/patch-notes)
    
-   > **NOTE** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
+   > **NOTE:** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
    
     ex.
@@ -90,7 +91,7 @@ If the container image does not have the correct version, the pipeline needs to 
    then download the `image-receipt-X.X.X` from AWS S3
    (this link is also be available in the release notes for each version).
 
-   >**NOTE**: if any `update-vX.X` job fails during uploading to TanzuNet,
+   >**NOTE:** if any `update-vX.X` job fails during uploading to TanzuNet,
    delete the release and any files that were uploaded manually on the UI.
    Then re-run the job. The job will not re-generate release notes.
    However, the release date of the job will be whatever the date of the 
@@ -114,7 +115,7 @@ This could be due to:
 
 The following steps are a manual process to "revert"
 the generated release notes and re-create them manually.<br />
-**Note:** if due to a failed build, you _must_ stop before the last step.
+**NOTE:** if due to a failed build, you _must_ stop before the last step.
 CI will fail if the version already exists.
 1. `git clone https://github.com/pivotal/platform-automation-ci` (private)
 1. git pull in `docs-platform-automation`
