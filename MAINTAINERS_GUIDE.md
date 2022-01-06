@@ -83,7 +83,7 @@ If the container image does not have the correct version, the pipeline needs to 
 
 ### Release the CVE Patch
 1. In the `ci` pipeline, make sure the build has passed all jobs that are not `promote-to-final`.
-1. In the `bump` group, trigger the [`bump-previous-versions-trigger`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/29) job.
+1. In the `bump` group, trigger the [`bump-previous-versions-trigger`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/29) job. The `get`s should have the same version as the `put`s from the [`build-binaries-image-combined`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-binaries-image-combined/builds/latest) job.
 
    This will trigger the CVE/patch process.
    To validate the appropriate CVEs were updated in supported versions,
@@ -100,7 +100,7 @@ If the container image does not have the correct version, the pipeline needs to 
 
 1. The job pushes each patch directly to Tanzunet for Admins Only.
 Use the `platform-automation-pivnet` credential in Lastpass to log into [TanzuNet](https://network.pivotal.io/).
-Update the EOGS and the availability to All Users. 
+Update the EOGS (same as the other patches) and the availability to All Users. 
 You're almost done!
 
 1. New releases of v4.4.x trigger an additional pipeline, [python-mitigation-support](https://platform-automation.ci.cf-app.com/teams/main/pipelines/python-mitigation-support).  Ensure that this pipeline goes green and you are now done.  FWIW.. this pipeline builds a special TanzuNet release for a customer with the python-based `az` and `gcloud` clis removed so their security scans don't complain.  Once that customer upgrades to v5.x this pipeline can be removed.  
