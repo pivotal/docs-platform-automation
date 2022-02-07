@@ -20,7 +20,9 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
 
 # pip
 # Install via source as upgrading the pip installed from Ubuntu leaves unwanted artifacts.
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+# ERROR: This script does not work on Python 3.6 The minimum supported Python version is 3.7.
+# Please use https://bootstrap.pypa.io/pip/3.6/get-pip.py instead.
+RUN curl https://bootstrap.pypa.io/pip/3.6/get-pip.py -o get-pip.py && \
     python3 get-pip.py
 
 # gcloud
