@@ -58,7 +58,7 @@ RUN gem install cf-uaac
 RUN pip3 install awscli
 
 # govc
-RUN go get github.com/vmware/govmomi/govc
+RUN go install github.com/vmware/govmomi/govc@latest
 
 # openstack
 RUN pip3 install python-openstackclient
@@ -78,8 +78,8 @@ RUN git config --global user.name "platform-automation"
 RUN git config --global user.email "platformautomation@groups.vmware.com"
 
 # used by test
-RUN go get github.com/onsi/ginkgo/ginkgo
-RUN go get github.com/onsi/gomega
+RUN go install github.com/onsi/ginkgo/ginkgo@latest
+RUN go install github.com/onsi/gomega@latest
 
 # use to cleanup IAASes
 RUN wget -O /usr/bin/leftovers "https://github.com/genevieve/leftovers/releases/download/v0.59.0/leftovers-v0.59.0-linux-amd64"

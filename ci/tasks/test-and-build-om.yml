@@ -26,7 +26,7 @@ run:
     set -exu
     export GOPATH="$(pwd)/go"
 
-    go get github.com/onsi/ginkgo/ginkgo
+    go install github.com/onsi/ginkgo/ginkgo@latest
 
     export PATH="${GOPATH}/bin:${PATH}"
 
