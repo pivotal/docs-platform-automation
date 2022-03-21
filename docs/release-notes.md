@@ -24,7 +24,8 @@
 ## v5.0.21
 March 21, 2022
 
-
+### Bug Fixes
+- Bump versions of included binaries
 
 
 ## v5.0.20
@@ -952,7 +953,8 @@ Released September 2, 2020
 ## v4.4.28
 March 21, 2022
 
-
+### Bug Fixes
+- Bump versions of included binaries
 
 
 ## v4.4.27
