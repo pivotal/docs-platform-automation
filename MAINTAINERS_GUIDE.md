@@ -33,9 +33,9 @@ VMware (through Pivotal) has a support license, which provides timely security u
 This document contains instructions of how the container is updated and released for security purposes:
 
 1. [Identifying CVE notices](#identifying-cve-notices)
-1. [Patching CVEs](#patching-cves)
-1. [Updating CVE Patch Notes](#updating-cve-patch-notes)
-1. [Release the CVE Patch](#release-the-cve-patch)
+1. [Verifying the Patch](#verifying-the-patch)
+1. [Updating Patch Notes](#updating-patch-notes)
+1. [Release the Patch](#release-the-patch)
 
 ### Identifying CVE notices
 
@@ -58,16 +58,17 @@ With each story,
    
    > **NOTE:** In this example, it is the wrong version (purposely). It should be `ca-certificates 20201027ubuntu0.18.04.1`
 
-### Patching CVEs
+### Verifying the Patch
 If the container image does not have the correct version, the pipeline needs to be triggered to pull in the latest package.
 1. Trigger the [`build-packages-image`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-packages-image/builds/latest) job to start the container build process, which installs the latest packages.
    > **NOTE:** When this job finishes, it will trigger downstream `build-binaries-image-combined` and subsequent jobs.
 1. When the `build-binaries-image-combined` is finished from its upstream trigger, reinspect the image receipt to confirm it was updated.
 
-### Updating CVE Patch Notes
+### Updating Patch Notes
 1. Update the release notes with features, bug fixes, and CVEs.
    The release notes are found in: [`docs-platform-automation/ci/patch-notes`](https://github.com/pivotal/docs-platform-automation/tree/develop/ci/patch-notes)
    
+   > **NOTE:** Release notes are _required_ for every release. If patch notes are omitted, CI will fail `create-release-notes-for-patch` job in `update-v5.0` and `update-v4.4` jobs.
    > **NOTE:** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
    
@@ -81,7 +82,7 @@ If the container image does not have the correct version, the pipeline needs to 
    If needed, see [Platform Automation Toolkit v5.0 Release Notes](https://docs.pivotal.io/platform-automation/v5.0/release-notes.html) for more examples.
 1. Commit and push the changes
 
-### Release the CVE Patch
+### Release the Patch
 1. In the `ci` pipeline, make sure the build has passed all jobs that are not `promote-to-final`.
 1. In the `bump` group, trigger the [`bump-previous-versions-trigger`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/29) job. The `get`s should have the same version as the `put`s from the [`build-binaries-image-combined`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-binaries-image-combined/builds/latest) job.
 
