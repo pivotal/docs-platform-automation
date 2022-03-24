@@ -1,8 +1,4 @@
-#FROM golang:latest
-#
-# Pinning Golang until govmomi is compatible with v1.18
-# https://github.com/vmware/govmomi/issues/2785
-FROM golang:latest@sha256:c7c94588b6445f5254fbc34df941afa10de04706deb330e62831740c9f0f2030
+FROM golang:latest
 
 RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq python3-pip python3-dev git wget tar xz-utils
 RUN pip3 install --upgrade pip
@@ -62,7 +58,11 @@ RUN gem install cf-uaac
 RUN pip3 install awscli
 
 # govc
-RUN go install github.com/vmware/govmomi/govc@latest
+#RUN go install github.com/vmware/govmomi/govc@latest
+
+# govc binary
+RUN wget https://github.com/vmware/govmomi/releases/latest/download/govc_Linux_x86_64.tar.gz && \
+    tar xvfz govc_Linux_x86_64.tar.gz -C  /usr/local/bin govc
 
 # openstack
 RUN pip3 install python-openstackclient
