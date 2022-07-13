@@ -30,6 +30,9 @@ groups:
   jobs:
   #@ for/end bump in ["patch", "minor", "major"]:
   - #@ "bump-om-" + bump
+- name: vmware-srp-report
+  jobs:
+  - send-srp-report
 resources:
 - name: docs-platform-automation-reference-pipeline-config
   type: git
@@ -46,7 +49,7 @@ resources:
 - name: docs-platform-automation
   type: git
   source:
-    branch: develop
+    branch: feat/srp-onboarding
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:
@@ -127,6 +130,12 @@ resources:
     product_slug: platform-automation
     product_version: \d+\.\d+\.\d+
     secret_access_key: ((pivnet_aws_secret_key))
+- name: srp-helper
+  type: registry-image
+  source:
+    repository: harbor.dhaka.cf-app.com/srp/srp-helper-task 
+    username: ((srp-cli-registry-creds.username))
+    password: ((srp-cli-registry-creds.password))
 - name: osl
   type: s3
   source:
@@ -1739,3 +1748,26 @@ jobs:
     params:
       bump: #@ bump
 #@ end
+- name: send-srp-report
+  plan:
+  - get: srp-helper
+  - task: srp-init
+    file: docs-platform-automation/ci/tasks/srp-init/task.yml
+    input_mapping:
+      CLIENT_ID: ((srp-mds-client-id))    
+      CLIENT_SECRET: ((srp-mds-client-secrets))
+      DOMAIN: https://platform-automation.ci.cf-app.com/    
+  - task: srp-tile
+    image: srp-helper
+    config:
+      platform: linux
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - |
+          set -e
+          srp --version
+          # many SRP commands need to know where the external URL for the metadata store is because they default to internal hosts
+
+          # srp metadata submit --url https://apigw.vmware.com/v1/s1/api/helix-beta

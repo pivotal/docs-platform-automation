@@ -1,0 +1,15 @@
+---
+platform: linux
+inputs:
+outputs:
+- name: srp-data
+image: srp-helper
+params:
+  CLIENT_ID:  
+    optional: false
+  CLIENT_SECRET:
+    optional: false
+  DOMAIN:
+    optional: true
+run:
+  path: docs-platform-automation/ci/tasks/make-commit/task.sh

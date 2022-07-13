@@ -1,0 +1,29 @@
+#!/bin/bash
+set -euo pipefail
+
+trap 'catch' ERR
+catch() {
+  echo "An error has occurred removing SRP data"
+  rm -rf ./srp_data
+}
+
+#$if [ -n "${DOMAIN}" ]; then
+#  DOMAIN="domain='${DOMAIN}',"
+#fi
+# uid.obj.build.concourse(instance='opsmanager',namespace='main',pipeline='my-pipeline',job='my-job',build_id='124169698')
+SRP_UID="uid.obj.build.concourse(instance='${DOMAIN}',namespace='main',pipeline='vmware-srp-report',job='srp-init',build_id='124169698')"
+echo "SRP component UID generated: $SRP_UID"
+
+mkdir -p srp_data/
+
+echo "$SRP_UID" > srp_data/srp_uid
+echo "SRP component UID stored in: srp_data/srp_uid"
+
+echo "${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}" > srp_data/build_number
+echo "Build number stored in:      srp_data/build_number"
+
+srp config auth --client-id "$CLIENT_ID" --client-secret "$CLIENT_SECRET"
+cp "$HOME/.srp/config.yml" srp_data/config.yml
+echo "SRP CLI config stored in:    srp_data/config.yml"
+echo "SRP CLI version:             $(srp --version)"
+exit 1
