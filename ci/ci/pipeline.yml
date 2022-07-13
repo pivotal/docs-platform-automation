@@ -1750,13 +1750,19 @@ jobs:
 #@ end
 - name: send-srp-report
   plan:
-  - get: srp-helper
+  - in_parallel:
+    - get: srp-helper
+    - get: docs-platform-automation
   - task: srp-init
     file: docs-platform-automation/ci/tasks/srp-init/task.yml
     input_mapping:
-      CLIENT_ID: ((srp-mds-client-id))    
+      CLIENT_ID: ((srp-mds-client-id))
       CLIENT_SECRET: ((srp-mds-client-secrets))
-      DOMAIN: https://platform-automation.ci.cf-app.com/    
+      DOMAIN: https://platform-automation.ci.cf-app.com/
+      BUILD_NAME: (( BUILD_NAME ))
+      BUILD_TEAM_NAME: (( BUILD_TEAM_NAME ))
+      BUILD_PIPELINE_NAME: (( BUILD_PIPELINE_NAME ))
+      BUILD_JOB_NAME: (( BUILD_JOB_NAME ))
   - task: srp-tile
     image: srp-helper
     config:

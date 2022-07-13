@@ -11,7 +11,7 @@ catch() {
 #  DOMAIN="domain='${DOMAIN}',"
 #fi
 # uid.obj.build.concourse(instance='opsmanager',namespace='main',pipeline='my-pipeline',job='my-job',build_id='124169698')
-SRP_UID="uid.obj.build.concourse(instance='${DOMAIN}',namespace='main',pipeline='vmware-srp-report',job='srp-init',build_id='124169698')"
+SRP_UID="uid.obj.build.concourse(instance='${DOMAIN}',namespace='${BUILD_TEAM_NAME}',pipeline='${BUILD_PIPELINE_NAME}',job='${BUILD_JOB_NAME}',build_id='${BUILD_NAME}')"
 echo "SRP component UID generated: $SRP_UID"
 
 mkdir -p srp_data/
@@ -19,7 +19,7 @@ mkdir -p srp_data/
 echo "$SRP_UID" > srp_data/srp_uid
 echo "SRP component UID stored in: srp_data/srp_uid"
 
-echo "${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}" > srp_data/build_number
+echo "${BUILD_NAME}_${GITHUB_RUN_ATTEMPT}" > srp_data/build_number
 echo "Build number stored in:      srp_data/build_number"
 
 srp config auth --client-id "$CLIENT_ID" --client-secret "$CLIENT_SECRET"

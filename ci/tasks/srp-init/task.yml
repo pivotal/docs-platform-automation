@@ -1,15 +1,25 @@
 ---
 platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: harbor.dhaka.cf-app.com/srp/srp-helper-task 
+    username: ((srp-cli-registry-creds.username))
+    password: ((srp-cli-registry-creds.password))
+
 inputs:
+- name: docs-platform-automation
+
 outputs:
 - name: srp-data
-image: srp-helper
 params:
   CLIENT_ID:  
-    optional: false
   CLIENT_SECRET:
-    optional: false
   DOMAIN:
-    optional: true
+  BUILD_NAME:
+  BUILD_TEAM_NAME:
+  BUILD_PIPELINE_NAME:
+  BUILD_JOB_NAME:
 run:
-  path: docs-platform-automation/ci/tasks/make-commit/task.sh
+  path: docs-platform-automation/ci/tasks/srp-init/task
