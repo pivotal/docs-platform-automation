@@ -1807,26 +1807,9 @@ jobs:
       metadata:
         key3: value3
 
-
-  - task: srp-init
-    file: docs-platform-automation/ci/tasks/srp-init/task.yml
+  - task: srp-collect-and-submit
+    file: docs-platform-automation/ci/tasks/srp-collect-and-submit/task.yml
     params:
       CLIENT_ID: ((srp-mds-client-id))
       CLIENT_SECRET: ((srp-mds-client-secrets))
       DOMAIN: platform-automation
-  - task: srp-tile
-    image: srp-helper
-    config:
-      platform: linux
-      inputs:
-        - name: concourse-build-info
-      run:
-        path: /bin/bash
-        args:
-        - -c
-        - |
-          set -e
-          srp --version
-          # many SRP commands need to know where the external URL for the metadata store is because they default to internal hosts
-
-          # srp metadata submit --url https://apigw.vmware.com/v1/s1/api/helix-beta
