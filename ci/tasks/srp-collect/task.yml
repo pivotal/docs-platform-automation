@@ -11,9 +11,11 @@ image_resource:
 inputs:
 - name: docs-platform-automation
 - name: concourse-build-info
+- name: srp-data
+- name: version
 
 outputs:
-- name: srp-data
+
 params:
   CLIENT_ID:  
   CLIENT_SECRET:

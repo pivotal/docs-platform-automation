@@ -32,7 +32,9 @@ groups:
   - #@ "bump-om-" + bump
 - name: vmware-srp-report
   jobs:
+  - build-concourse-buildinfo-image
   - send-srp-report
+
 resources:
 - name: docs-platform-automation-reference-pipeline-config
   type: git
@@ -364,11 +366,20 @@ resources:
     file: version
     private_key: ((om.private_key))
 - name: concourse-build-info
-  type: build-info
+  type: buildinfo
+  icon: tag-text-outline
+  expose_build_created_by: true
   source:
     metadata:
-      project: platform_automation
+      project: aloha
       key2: value2
+- name: build-info-image
+  type: registry-image
+  source:
+    password: ((docker.password))
+    repository: ((docker.ci-repository))
+    tag: buildinfo
+    username: ((docker.username))
 
 resource_types:
 - name: pivnet
@@ -381,11 +392,11 @@ resource_types:
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
-- name: build-info
+- name: buildinfo
   type: registry-image
   source:
-    repository: vito/build-metadata-resource
-    branch: main
+    repository: ((docker.ci-repository))
+    tag: buildinfo
 
 jobs:
 - name: build-ci-image
@@ -1761,18 +1772,45 @@ jobs:
     params:
       bump: #@ bump
 #@ end
+- name: build-concourse-buildinfo-image
+  plan:
+  - in_parallel:
+    - get: docs-platform-automation
+  - task: build-image
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: docs-platform-automation
+      outputs:
+      - name: image
+      params:
+        CONTEXT: docs-platform-automation/ci/dockerfiles
+        DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.build-info-resource
+      run:
+        path: build
+  - put: build-info-image
+    params:
+      image: image/image.tar
 - name: send-srp-report
   plan:
   - in_parallel:
     - get: srp-helper
     - get: docs-platform-automation
-    - put: concourse-build-info
-      params:
-        metadata:
-          key3: value3
+    - get: version
+  - put: concourse-build-info
+    params:
+      metadata:
+        key3: value3
+
+
   - task: srp-init
     file: docs-platform-automation/ci/tasks/srp-init/task.yml
-    input_mapping:
+    params:
       CLIENT_ID: ((srp-mds-client-id))
       CLIENT_SECRET: ((srp-mds-client-secrets))
       DOMAIN: platform-automation
@@ -1780,6 +1818,8 @@ jobs:
     image: srp-helper
     config:
       platform: linux
+      inputs:
+        - name: concourse-build-info
       run:
         path: /bin/bash
         args:

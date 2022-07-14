@@ -17,29 +17,39 @@ fi
 SRP_UID="$(xargs echo -n < ./srp_data/srp_uid)"
 BUILD_NUM="$(xargs echo -n < ./srp_data/build_number)"
 
-for REPO in $GIT_REPOS; do
-    echo "Collecting source provenance for '$REPO' via SRP CLI"
-    if [ -f "./srp_data/source_provenance.json" ]; then
-        srp provenance source \
-            --path "$REPO" \
-            --comp-uid "$SRP_UID" \
-            --all-ephemeral true \
-            --scm-type "$SCM_TYPE" \
-            --build-type "$BUILD_TYPE" \
-            --build-number "$BUILD_NUM" \
-            --saveto "./srp_data/source_provenance.json" \
-            --append
-    else
-        srp provenance source \
-            --path "$REPO" \
-            --comp-uid "$SRP_UID" \
-            --all-ephemeral true \
-            --scm-type "$SCM_TYPE" \
-            --build-type "$BUILD_TYPE" \
-            --build-number "$BUILD_NUM" \
-            --saveto "./srp_data/source_provenance.json"
-    fi
-done
+# for REPO in $GIT_REPOS; do
+#     echo "Collecting source provenance for '$REPO' via SRP CLI"
+#     if [ -f "./srp_data/source_provenance.json" ]; then
+#         srp provenance source \
+#             --path "$REPO" \
+#             --comp-uid "$SRP_UID" \
+#             --all-ephemeral true \
+#             --scm-type "$SCM_TYPE" \
+#             --build-type "$BUILD_TYPE" \
+#             --build-number "$BUILD_NUM" \
+#             --saveto "./srp_data/source_provenance.json" \
+#             --append
+#     else
+#         srp provenance source \
+#             --path "$REPO" \
+#             --comp-uid "$SRP_UID" \
+#             --all-ephemeral true \
+#             --scm-type "$SCM_TYPE" \
+#             --build-type "$BUILD_TYPE" \
+#             --build-number "$BUILD_NUM" \
+#             --saveto "./srp_data/source_provenance.json"
+#     fi
+# done
+srp provenance source \
+    --scm-type git \
+    --name "opsmanager" \
+    --path installation/ \
+    --saveto ./provenance/source.json \
+    --build-number "$OPS_MANAGER_BUILD_NUMBER" \
+    --version "$OPS_MANAGER_VERSION" \
+    --all-ephemeral true \
+    --build-type release \
+    --comp-uid "$COMP_UID"
 
 echo "Provenance stored in: ./srp_data/source_provenance.json"
 echo "Collected provenance:"
