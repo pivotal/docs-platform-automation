@@ -51,7 +51,7 @@ resources:
 - name: docs-platform-automation
   type: git
   source:
-    branch: feat/srp-onboarding
+    branch: develop
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:
