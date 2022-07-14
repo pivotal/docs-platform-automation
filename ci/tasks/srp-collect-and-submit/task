@@ -1,0 +1,58 @@
+#!/bin/bash
+set -euo pipefail
+
+trap 'catch' ERR
+catch() {
+  echo "An error has occurred removing SRP data"
+  rm -rf ./srp_data
+}
+PAT_VERSION+=$(cat version-v5.0/number)
+BUILD_PIPELINE_NAME=$(cat concourse-build-info/build-pipeline-name)
+BUILD_JOB_NAME=$(cat concourse-build-info/build-job-name)
+BUILD_ID=$(cat concourse-build-info/build-id)
+
+#$if [ -n "${DOMAIN}" ]; then
+#  DOMAIN="domain='${DOMAIN}',"
+#fi
+# uid.obj.build.concourse(instance='opsmanager',namespace='main',pipeline='my-pipeline',job='my-job',build_id='124169698')
+SRP_UID="uid.obj.build.concourse(instance='${DOMAIN}',namespace='main',pipeline='${BUILD_PIPELINE_NAME}',job='${BUILD_JOB_NAME}',build_id='${BUILD_ID}')"
+echo "SRP component UID generated: $SRP_UID"
+
+mkdir -p srp_data/
+
+echo "$SRP_UID" > srp_data/srp_uid
+echo "SRP component UID stored in: srp_data/srp_uid"
+
+echo "${BUILD_ID}}" > srp_data/build_number
+echo "Build number stored in:      srp_data/build_number"
+
+srp config auth --client-id "$CLIENT_ID" --client-secret "$CLIENT_SECRET"
+cp "$HOME/.srp/config.yml" srp_data/config.yml
+echo "SRP CLI config stored in:    srp_data/config.yml"
+echo "SRP CLI version:             $(srp --version)"
+
+srp provenance source \
+    --scm-type git \
+    --name "platform-automation" \
+    --path ./docs-platform-automation-v5.0 \
+    --saveto ./provenance/source.json \
+    --build-number "$BUILD_ID" \
+    --version "$PAT_VERSION" \
+    --all-ephemeral true \
+    --build-type release \
+    --comp-uid "$SRP_UID"
+
+  echo "SRP Provenance info: "
+  cat ./provenance/source.json
+
+
+  # submit the merged provenance to SRP
+SRP_UID="$(sed 's|/|%2F|g' < ./srp_data/srp_uid)"
+FULL_SRP_UID="uid.mtd.provenance_2_5.fragment(obj_uid=$SRP_UID,revision='')"
+echo ""
+echo "Full SRP UID that will be used for upload:"
+echo "$FULL_SRP_UID"
+
+srp metadata submit \  
+    --uid "$FULL_SRP_UID" \
+    --path ./provenance/source.json

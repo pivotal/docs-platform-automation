@@ -30,6 +30,11 @@ groups:
   jobs:
   #@ for/end bump in ["patch", "minor", "major"]:
   - #@ "bump-om-" + bump
+- name: vmware-srp-report
+  jobs:
+  - build-concourse-buildinfo-image
+  - send-srp-report
+
 resources:
 - name: docs-platform-automation-reference-pipeline-config
   type: git
@@ -127,6 +132,12 @@ resources:
     product_slug: platform-automation
     product_version: \d+\.\d+\.\d+
     secret_access_key: ((pivnet_aws_secret_key))
+- name: srp-helper
+  type: registry-image
+  source:
+    repository: harbor.dhaka.cf-app.com/srp/srp-helper-task 
+    username: ((srp-cli-registry-creds.username))
+    password: ((srp-cli-registry-creds.password))
 - name: osl
   type: s3
   source:
@@ -354,6 +365,22 @@ resources:
     branch: main
     file: version
     private_key: ((om.private_key))
+- name: concourse-build-info
+  type: buildinfo
+  icon: tag-text-outline
+  expose_build_created_by: true
+  source:
+    metadata:
+      project: aloha
+      key2: value2
+- name: build-info-image
+  type: registry-image
+  source:
+    password: ((docker.password))
+    repository: ((docker.ci-repository))
+    tag: buildinfo
+    username: ((docker.username))
+
 resource_types:
 - name: pivnet
   type: registry-image
@@ -365,6 +392,12 @@ resource_types:
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
+- name: buildinfo
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: buildinfo
+
 jobs:
 - name: build-ci-image
   plan:
@@ -1739,3 +1772,45 @@ jobs:
     params:
       bump: #@ bump
 #@ end
+- name: build-concourse-buildinfo-image
+  plan:
+  - in_parallel:
+    - get: docs-platform-automation
+  - task: build-image
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: docs-platform-automation
+      outputs:
+      - name: image
+      params:
+        CONTEXT: docs-platform-automation/ci/dockerfiles
+        DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.build-info-resource
+      run:
+        path: build
+  - put: build-info-image
+    params:
+      image: image/image.tar
+- name: send-srp-report
+  plan:
+  - in_parallel:
+    - get: srp-helper
+    - get: docs-platform-automation
+    - get: docs-platform-automation-v5.0
+    - get: version-v5.0
+  - put: concourse-build-info
+    params:
+      metadata:
+        key3: value3
+
+  - task: srp-collect-and-submit
+    file: docs-platform-automation/ci/tasks/srp-collect-and-submit/task.yml
+    params:
+      CLIENT_ID: ((srp-mds-client-id))
+      CLIENT_SECRET: ((srp-mds-client-secrets))
+      DOMAIN: platform-automation
