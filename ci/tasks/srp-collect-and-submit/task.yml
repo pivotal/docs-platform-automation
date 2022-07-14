@@ -1,0 +1,27 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: harbor.dhaka.cf-app.com/srp/srp-helper-task 
+    username: ((srp-cli-registry-creds.username))
+    password: ((srp-cli-registry-creds.password))
+
+inputs:
+- name: docs-platform-automation
+- name: docs-platform-automation-v5.0
+- name: concourse-build-info
+- name: version-v5.0
+
+outputs:
+- name: srp-data
+- name: provenance
+
+params:
+  CLIENT_ID:  
+  CLIENT_SECRET:
+  DOMAIN:
+
+run:
+  path: docs-platform-automation/ci/tasks/srp-collect-and-submit/task
