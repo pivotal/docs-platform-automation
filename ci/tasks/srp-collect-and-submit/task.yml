@@ -10,6 +10,7 @@ image_resource:
 
 inputs:
 - name: docs-platform-automation
+- name: docs-platform-automation-v5.0
 - name: concourse-build-info
 - name: version
 

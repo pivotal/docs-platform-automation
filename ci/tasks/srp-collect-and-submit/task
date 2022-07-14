@@ -34,7 +34,7 @@ echo "SRP CLI version:             $(srp --version)"
 srp provenance source \
     --scm-type git \
     --name "platform-automation" \
-    --path ./docs-platform-automation \
+    --path ./docs-platform-automation-v5.0 \
     --saveto ./provenance/source.json \
     --build-number "$BUILD_ID" \
     --version "$PAT_VERSION" \

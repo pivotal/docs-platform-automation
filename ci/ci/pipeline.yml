@@ -1801,6 +1801,7 @@ jobs:
   - in_parallel:
     - get: srp-helper
     - get: docs-platform-automation
+    - get: docs-platform-automation-v5.0
     - get: version
   - put: concourse-build-info
     params:
