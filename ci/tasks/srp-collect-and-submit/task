@@ -54,6 +54,6 @@ echo "Full SRP UID that will be used for upload:"
 echo "$FULL_SRP_UID"
 
 srp metadata submit \
-    --url https://apigw.vmware.com/v1/s1/api/helix-beta
+    --url https://apigw.vmware.com/v1/s1/api/helix-beta \
     --uid "$FULL_SRP_UID" \
     --path ./provenance/source.json
