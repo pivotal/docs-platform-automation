@@ -1802,7 +1802,7 @@ jobs:
     - get: srp-helper
     - get: docs-platform-automation
     - get: docs-platform-automation-v5.0
-    - get: version
+    - get: version-v5.0
   - put: concourse-build-info
     params:
       metadata:

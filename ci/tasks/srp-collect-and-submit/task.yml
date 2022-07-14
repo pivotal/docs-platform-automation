@@ -12,7 +12,7 @@ inputs:
 - name: docs-platform-automation
 - name: docs-platform-automation-v5.0
 - name: concourse-build-info
-- name: version
+- name: version-v5.0
 
 outputs:
 - name: srp-data
