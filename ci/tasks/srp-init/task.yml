@@ -10,6 +10,7 @@ image_resource:
 
 inputs:
 - name: docs-platform-automation
+- name: build-info
 
 outputs:
 - name: srp-data
@@ -17,9 +18,6 @@ params:
   CLIENT_ID:  
   CLIENT_SECRET:
   DOMAIN:
-  BUILD_NAME:
-  BUILD_TEAM_NAME:
-  BUILD_PIPELINE_NAME:
-  BUILD_JOB_NAME:
+
 run:
   path: docs-platform-automation/ci/tasks/srp-init/task

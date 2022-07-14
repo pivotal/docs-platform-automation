@@ -363,6 +363,13 @@ resources:
     branch: main
     file: version
     private_key: ((om.private_key))
+- name: concourse-build-info
+  type: build-info
+  source:
+    metadata:
+      project: platform_automation
+      key2: value2
+
 resource_types:
 - name: pivnet
   type: registry-image
@@ -374,6 +381,12 @@ resource_types:
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
+- name: build-info
+  type: registry-image
+  source:
+    repository: vito/build-metadata-resource
+    branch: main
+
 jobs:
 - name: build-ci-image
   plan:
@@ -1753,16 +1766,16 @@ jobs:
   - in_parallel:
     - get: srp-helper
     - get: docs-platform-automation
+    - put: concourse-build-info
+      params:
+        metadata:
+          key3: value3
   - task: srp-init
     file: docs-platform-automation/ci/tasks/srp-init/task.yml
     input_mapping:
       CLIENT_ID: ((srp-mds-client-id))
       CLIENT_SECRET: ((srp-mds-client-secrets))
-      DOMAIN: https://platform-automation.ci.cf-app.com/
-      BUILD_NAME: (( BUILD_NAME ))
-      BUILD_TEAM_NAME: (( BUILD_TEAM_NAME ))
-      BUILD_PIPELINE_NAME: (( BUILD_PIPELINE_NAME ))
-      BUILD_JOB_NAME: (( BUILD_JOB_NAME ))
+      DOMAIN: platform-automation
   - task: srp-tile
     image: srp-helper
     config:
