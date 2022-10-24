@@ -989,6 +989,13 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.29
+October 24, 2022
+
+### Bug Fixes
+    Bump versions of included binaries
+
+
 ## v4.4.28
 March 21, 2022
 
