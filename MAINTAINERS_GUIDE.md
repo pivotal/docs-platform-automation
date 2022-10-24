@@ -514,6 +514,13 @@ Generated HTML contains undefined links!
 # SOLUTION: add the missing link to .external_link_url or .internal_link_url
 ```
 
+## OM [Releases]( https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci?group=om ) 
+
+[Depending what kind of release you need to do](https://semver.org/), trigger a new build.
+After the CI has completed go to [Github](https://github.com/pivotal-cf/om/releases) and update the release notes.
+
+Most OM cli users will consume these upgrades through the Platform Automation toolkit, so every om cli bump should be accompanied by a Platform Automation release.
+
 ## Slack and Support
 
 ### Bugs in [Tracker](https://www.pivotaltracker.com/n/projects/2535033)
@@ -539,10 +546,3 @@ affecting Platform Automation Toolkit:
 USN-####-#: pkg-name vulnerability
 ```
 These should be handled using the steps detailed in the `CVEs and Patching Steps` section.
-
-#### OM [Releases]( https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci?group=om ) 
-
-[Depending what kind of release you need to do](https://semver.org/), trigger a new build.
-After the CI has completed go to [Github](https://github.com/pivotal-cf/om/releases) and update the release notes.
-
-
