@@ -21,6 +21,13 @@
      To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
      [`staged-director-config`][staged-director-config] to update your `director.yml`.
 
+## v5.0.22
+October 24, 2022
+
+### Bug Fixes
+    Bump versions of included binaries
+
+
 ## v5.0.21
 March 21, 2022
 
@@ -969,7 +976,24 @@ Released September 2, 2020
 ## v4.4.28
 March 21, 2022
 
+??? info "CLI Versions"
 
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.22.77 |
+    | azure-cli | 2.34.1 |
+    | bbr-cli | [1.9.26](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.26) |
+    | bosh-cli | [v6.4.17](https://github.com/cloudfoundry/bosh-cli/releases/tag/v6.4.17) |
+    | credhub | [2.9.3](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.3) |
+    | gcloud-cli | 377.0.0 |
+    | govc-cli | 0.27.4 |
+    | om | 2aeff1d15cfe3e192567098afc107d718110b33f-2022-03-07T14:07:08-05:00 |
+    | winfs-injector | [0.21.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.21.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.28" target="_blank">Download</a>
+
+### Bug Fixes
+- Bump versions of included binaries
 
 
 ## v4.4.27
