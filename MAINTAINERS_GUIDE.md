@@ -539,3 +539,10 @@ affecting Platform Automation Toolkit:
 USN-####-#: pkg-name vulnerability
 ```
 These should be handled using the steps detailed in the `CVEs and Patching Steps` section.
+
+#### [OM releases] ( https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci?group=om ) 
+
+[Depending what kind of release you need to do](https://semver.org/), trigger a new build.
+After the CI has completed go to [Github](https://github.com/pivotal-cf/om/releases) and update the release notes.
+
+
