@@ -63,6 +63,7 @@ resources:
     password: ((harbor.password))
     repository: ((harbor.docs-repository))
     username: ((harbor.username))
+    tag: latest
 
 jobs:
 - name: build-and-push-image
