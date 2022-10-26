@@ -81,7 +81,7 @@ jobs:
           repository: harbor-repo.vmware.com/dockerhub-proxy-cache/vito/oci-build-task
       params:
         DOCKERFILE: mkdocs-pivotal-theme/ci/Dockerfile
-        BUILD_ARG_IMAGE: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:bionic
+        BUILD_ARG_IMAGE: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:focal
       inputs:
       - name: mkdocs-pivotal-theme
       outputs:
