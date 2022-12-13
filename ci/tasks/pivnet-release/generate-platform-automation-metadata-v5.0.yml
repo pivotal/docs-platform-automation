@@ -73,6 +73,8 @@ run:
         product_slug: ops-manager
       - specifier: 2.10.*
         product_slug: ops-manager
+      - specifier: 3.0.*
+        product_slug: ops-manager
       upgrade_path_specifiers:
       - specifier: 4.1.*
       - specifier: 4.0.*
