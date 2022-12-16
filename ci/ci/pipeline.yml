@@ -76,12 +76,12 @@ resources:
     product_slug: ops-manager
     product_version: 2\.[0-9]+\.[0-9]+$
     sort_by: semver
-- name: opsman-image-2.9.1
+- name: opsman-image-2.9.42
   type: pivnet
   source:
     api_token: ((pivnet_token))
     product_slug: ops-manager
-    product_version: 2\.9\.1$
+    product_version: 2\.9\.42$
 - name: opsman-image-2.9.x
   type: pivnet
   source:
@@ -756,7 +756,7 @@ jobs:
     - get: rc-image-s3-vsphere
       passed:
       - build-binaries-image-combined
-    - get: opsman-image-2.9.1
+    - get: opsman-image-2.9.42
       params:
         globs:
         - '*gcp*.yml'
@@ -799,7 +799,7 @@ jobs:
     - task: create-vm
       file: platform-automation-tasks/tasks/create-vm.yml
       input_mapping:
-        image: opsman-image-2.9.1
+        image: opsman-image-2.9.42
         state: deployments
         config: paving
         vars: deployments
