@@ -989,6 +989,13 @@ Released September 2, 2020
         no_proxy: ""
     ```
 
+## v4.4.30
+January 4, 2023
+
+### Bug Fixes
+- bump bundled iso-replicator binary to 0.13.0, compiled with Golang 1.19.4
+
+
 ## v4.4.29
 October 24, 2022
 
