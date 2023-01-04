@@ -24,6 +24,22 @@
 ## v5.0.23
 January 4, 2023
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.24.10 |
+    | azure-cli | 2.39.0 |
+    | bbr-cli | [1.9.38](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.38) |
+    | bosh-cli | [v7.1.0](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.1.0) |
+    | credhub | [2.9.9](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.9) |
+    | gcloud-cli | 412.0.0 |
+    | govc-cli | 0.30.0 |
+    | om | 694a983454bf38737eb32bf348a6e54099c5618d-2022-10-24T10:50:20-06:00 |
+    | winfs-injector | [0.21.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.21.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.23" target="_blank">Download</a>
+
 ### Bug Fixes
 - bump bundled iso-replicator binary to 0.13.0, compiled with Golang 1.19.4
 
