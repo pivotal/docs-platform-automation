@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:bionic
 
 # Install necessary binary
 RUN apt-get update && apt-get -y --no-install-recommends install \
@@ -19,7 +19,10 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
 # netcat for `bosh ssh` -- the why is explained here: https://github.com/cloudfoundry/bosh-cli/issues/374
 
 # pip
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+# Install via source as upgrading the pip installed from Ubuntu leaves unwanted artifacts.
+# ERROR: This script does not work on Python 3.6 The minimum supported Python version is 3.7.
+# Please use https://bootstrap.pypa.io/pip/3.6/get-pip.py instead.
+RUN curl https://bootstrap.pypa.io/pip/3.6/get-pip.py -o get-pip.py && \
     python3 get-pip.py
 
 # gcloud
@@ -29,15 +32,15 @@ RUN ln -s /root/google-cloud-sdk/bin/* /usr/local/bin/
 RUN gcloud --version
 
 # azure
-RUN pip3 install azure-cli
+RUN pip3 install azure-cli --use-feature=2020-resolver
 RUN az --version
 
 # aws
-RUN pip3 install awscli
+RUN pip3 install awscli --use-feature=2020-resolver
 RUN aws --version
 
 # openstack
-RUN pip3 install python-openstackclient
+RUN pip3 install python-openstackclient --use-feature=2020-resolver
 RUN openstack --version
 
 # Upgrade all packages
