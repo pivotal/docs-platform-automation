@@ -3,28 +3,28 @@
 # See our documentation for a detailed discussion of our semver API.
 # See www.semver.org for an explanation of semantic versioning.
 
-# code_snippet create-certificate-authority start yaml
+# code_snippet generate-certificate start yaml
 ---
 platform: linux
 
 inputs:
 - name: platform-automation-tasks
 - name: env # contains the env file with target OpsMan Information
-- name: new-ca-guid # contains the newly created CA guid
+
+outputs:
+- name: certificate.pem # contains the newly created Certificate PEM
+- name: privatekey.pem # contains the newly created Private Key PEM
 
 params:
-  CERTIFICATE_PEM: cert.pem
+  DOMAINS:
   # - Required
-  # - Certificate for the new certificate authority
-
-  PRIVATE_KEY_PEM: privatekey.pem
-  # - Required
-  # - Private key for the new certificate authority
+  # - The domains required to generate the certificates
 
   ENV_FILE: env.yml
   # - Required
   # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
 
 run:
-  path: platform-automation-tasks/tasks/create-certificate-authority.sh
-# code_snippet create-certificate-authority end
+  path: platform-automation-tasks/tasks/generate-certificate.sh
+# code_snippet generate-certificate end
