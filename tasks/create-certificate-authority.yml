@@ -3,7 +3,7 @@
 # See our documentation for a detailed discussion of our semver API.
 # See www.semver.org for an explanation of semantic versioning.
 
-# code_snippet activate-certificate-authority start yaml
+# code_snippet create-certificate-authority start yaml
 ---
 platform: linux
 
@@ -14,10 +14,13 @@ inputs:
 
 params:
   ENV_FILE: env.yml
+  CERTIFICATE_PEM: cert.pem
+  PRIVATE_KEY_PEM: privatekey.pem
   # - Required
   # - Filepath of the env config YAML
-  # - The path is relative to root of the `env` input
+  # - Certificate for the new certificate authority
+  # - Private key for the new certificate authority
 
 run:
-  path: platform-automation-tasks/tasks/activate-certificate-authority.sh
-# code_snippet activate-certificate-authority end
+  path: platform-automation-tasks/tasks/create-certificate-authority.sh
+# code_snippet create-certificate-authority end
