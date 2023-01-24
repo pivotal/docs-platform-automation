@@ -12,7 +12,7 @@ inputs:
 - name: env # contains the env file with target OpsMan Information
 
 outputs:
-- name: ca-guid # contains the newly created CA guid
+- name: new-ca-guid # contains the newly created CA guid
 
 params:
   ENV_FILE: env.yml
