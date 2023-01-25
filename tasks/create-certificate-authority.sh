@@ -4,5 +4,9 @@
 cat /var/version && echo ""
 set -eux
 
-om --env env/"${ENV_FILE}" create-certificate-authority --certificate-pem "${CERTIFICATE_PEM}" --private-key-pem "${PRIVATE_KEY_PEM}"
+om --env env/"${ENV_FILE}" create-certificate-authority \
+   --format json \
+   --certificate-pem "$(<certs/certificate.pem)" \
+   --private-key-pem "$(<certs/privatekey.pem)" > CA.json
+om interpolate -c CA.json --path /guid > new-ca/guid
 # code_snippet create-certificate-authority end

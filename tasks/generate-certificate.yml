@@ -12,8 +12,7 @@ inputs:
 - name: env # contains the env file with target OpsMan Information
 
 outputs:
-- name: certificate.pem # contains the newly created Certificate PEM
-- name: privatekey.pem # contains the newly created Private Key PEM
+- name: certificate # contains the newly created Certificate and private key
 
 params:
   DOMAINS:

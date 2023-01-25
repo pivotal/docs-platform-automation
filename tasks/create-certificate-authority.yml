@@ -10,17 +10,13 @@ platform: linux
 inputs:
 - name: platform-automation-tasks
 - name: env # contains the env file with target OpsMan Information
-- name: new-ca-guid # contains the newly created CA guid
+- name: certs # contains the cert and private key for the CA
+  # certs/certificate.pem and certs/privatekey.pem will be in inside the certs folder
+
+outputs:
+- name: new-ca # contains the newly created CA guid
 
 params:
-  CERTIFICATE_PEM: cert.pem
-  # - Required
-  # - Certificate for the new certificate authority
-
-  PRIVATE_KEY_PEM: privatekey.pem
-  # - Required
-  # - Private key for the new certificate authority
-
   ENV_FILE: env.yml
   # - Required
   # - Filepath of the env config YAML
