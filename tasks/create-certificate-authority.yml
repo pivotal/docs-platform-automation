@@ -13,9 +13,6 @@ inputs:
 - name: certs # contains the cert and private key for the CA
   # certs/certificate.pem and certs/privatekey.pem will be in inside the certs folder
 
-outputs:
-- name: new-ca # contains the newly created CA guid
-
 params:
   ENV_FILE: env.yml
   # - Required

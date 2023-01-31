@@ -10,7 +10,6 @@ platform: linux
 inputs:
 - name: platform-automation-tasks
 - name: env # contains the env file with target OpsMan Information
-- name: new-ca # contains the newly created CA guid
 
 params:
   ENV_FILE: env.yml
