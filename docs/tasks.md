@@ -9,6 +9,20 @@ The docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information.
 To learn more see the [running-commands-locally][running-commands-locally] section.
 
+### activate-certificate-authority
+
+Activates the certificate authority configured on Ops Manager with the specified
+GUID.
+
+This task requires a GUID passed in via the `new-ca/guid` file.
+
+=== "Task"
+    ---excerpt--- "tasks/activate-certificate-authority"
+=== "Implementation"
+    ---excerpt--- "tasks/activate-certificate-authority-script"
+<!-- === "Usage"
+    ---excerpt--- "reference/activate-certificate-authority-usage" -->
+
 ### apply-changes
 
 Triggers an install on the Ops Manager described by the auth file.
@@ -244,6 +258,21 @@ which can stage a product that's been uploaded.
 === "Usage"
     ---excerpt--- "reference/configure-product-usage"
 
+### configure-new-certificate-authority
+
+Create a certificate authority on Ops Manager with a provided certificate and
+private key.
+
+This task requires `certs` as an input, containing `certificate.pem` and
+`privatekey.pem` for the new CA.
+
+=== "Task"
+    ---excerpt--- "tasks/configure-new-certificate-authority"
+=== "Implementation"
+    ---excerpt--- "tasks/configure-new-certificate-authority-script"
+<!-- === "Usage"
+    ---excerpt--- "reference/configure-new-certificate-authority-usage" -->
+
 ### configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
@@ -346,6 +375,17 @@ Interpolate credhub entries into configuration files
 
 This task requires a valid credhub with UAA client and secret. For information on how to
 set this up, see [Secrets Handling][secrets-handling]
+
+### delete-certificate-authority
+
+Delete all inactive certificate authorities from the Ops Manager.
+
+=== "Task"
+    ---excerpt--- "tasks/delete-certificate-authority"
+=== "Implementation"
+    ---excerpt--- "tasks/delete-certificate-authority-script"
+<!-- === "Usage"
+    ---excerpt--- "reference/delete-certificate-authority-usage" -->
 
 ### delete-installation
 Delete the Ops Manager Installation
@@ -558,6 +598,21 @@ params:
 
 {% include "./.export_installation_note.md" %}
 
+### generate-certificate
+
+Generate a certificate, signed by the active Ops Manager certificate authority,
+for the domains specified in the `DOMAINS` environment variable.
+
+This task outputs `certificate`, containing `certificate.pem` and
+`privatekey.pem` for the new certificate.
+
+=== "Task"
+    ---excerpt--- "tasks/generate-certificate"
+=== "Implementation"
+    ---excerpt--- "tasks/generate-certificate-script"
+<!-- === "Usage"
+    ---excerpt--- "reference/generate-certificate-usage" -->
+
 ### import-installation
 Imports a previously exported installation to Ops Manager.
 
@@ -667,6 +722,18 @@ Learn more about [secrets handling][secrets-handling].
     ---excerpt--- "tasks/prepare-tasks-with-secrets-script"
 === "Usage"
     ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
+
+### regenerate-certificates
+
+Regenerates all non-configurable leaf certificates managed by Ops Manager using
+the active certificate authority.
+
+=== "Task"
+    ---excerpt--- "tasks/regenerate-certificates"
+=== "Implementation"
+    ---excerpt--- "tasks/regenerate-certificates-script"
+<!-- === "Usage"
+    ---excerpt--- "reference/regenerate-certificates-usage" -->
 
 ### replicate-product
 Will replicate the product for use in isolation segments.

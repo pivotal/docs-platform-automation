@@ -49,6 +49,7 @@ nav:
   - Git Repository Layout: how-to-guides/git-repo-layout.md
   - Running Commands Locally: how-to-guides/running-commands-locally.md
   - Setting Up S3 for File Storage: how-to-guides/setting-up-s3.md
+  - Rotating Certificate Authority: how-to-guides/rotating-certificate-authority.md
 - Concepts:
   - Secrets Handling: concepts/secrets-handling.md
   - Stemcell Handling: concepts/stemcell-handling.md
