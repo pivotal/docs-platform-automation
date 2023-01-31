@@ -11,9 +11,6 @@ inputs:
 - name: platform-automation-tasks
 - name: env # contains the env file with target OpsMan Information
 
-outputs:
-- name: new-ca # contains the newly created CA
-
 params:
   ENV_FILE: env.yml
   # - Required
