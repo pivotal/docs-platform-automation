@@ -145,7 +145,7 @@ om -e env.yml regenerate-certificates
 This will delete the existing certificates from Credhub, which causes Credhub to generate new certificates on the next run of Apply Changes.
 
 ### Configurable Certificates
-Any manually configured certificates that are signed by the foudation root certificate authority need to be regenerated as well. Tanzu Application Service needs at least two configurable certificates, one for networking components and one for UAA.
+Any manually configured certificates that are signed by the foundation root certificate authority need to be regenerated as well. Tanzu Application Service needs at least two configurable certificates, one for networking components and one for UAA.
 After generating a new certificate, it needs to be configured in Ops Manager with a manifest file specific to the certificate. For the UAA SAML service provider credentials, here is an example manifest titled `uaa_update_template.yml`:
 ```yml
 product-name: cf
