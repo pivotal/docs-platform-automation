@@ -51,6 +51,11 @@ Manager:
 1. Use Ops Manager to generate a new certificate authority.
 1. Give Ops Manager an existing root certificate authority to use.
 
+!!! warning "Use with `pivotal-container-service` tile"
+    Rotating certificate authority with the pivotal-container-service
+    tile installed will cause warnings in the pipeline. Only certificates
+    managed by Ops Manager will be rotated in this process!
+
 Regardless of method, we are going to add our first job to the pipeline.
 ```yaml
 jobs:
