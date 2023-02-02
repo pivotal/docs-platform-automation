@@ -38,6 +38,12 @@ params:
   # - This is not recommended unless unless the warning failure(s)
   #   are well understood.
 
+  PRODUCTS:
+  # - Optional
+  # - Defaults to all products.
+  # - Colon separated string of products;
+  #   for example, `cf:pivotal-telemetry-om:...`
+
 run:
   path: platform-automation-tasks/tasks/apply-changes.sh
 # code_snippet apply-changes end
