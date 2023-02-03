@@ -11,10 +11,7 @@ To learn more see the [running-commands-locally][running-commands-locally] secti
 
 ### activate-certificate-authority
 
-Activates the certificate authority configured on Ops Manager with the specified
-GUID.
-
-This task requires a GUID passed in via the `new-ca/guid` file.
+Ensures that the newest certificate authority on Ops Manager is active.
 
 === "Task"
     ---excerpt--- "tasks/activate-certificate-authority"
