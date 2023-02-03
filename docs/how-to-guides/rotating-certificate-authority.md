@@ -121,67 +121,112 @@ job.
 ```yaml
 - name: apply-changes
   plan:
-  - get: config
+  - get: env
+    resource: config
+    passed:
+    - configure-new-ca
   - task: apply-new-ca
     image: platform-automation-image
     file: platform-automation-tasks/tasks/apply-changes.yml
-    input_mapping:
-        env: config
 ```
 
 ## Activate the New Certificate Authority
 We need to set our new certificate authority as the active certificate authority. After this, any certificates created by the Credhub will be signed by the new CA.
-```bash
-om -e env.yml activate-certificate-authority --id <new-ca-guid>
+Append a new job to the end of the jobs list.
+```yaml
+- name: activate-new-ca
+  plan:
+  - get: env
+    resource: config
+    passed:
+    - apply-changes
+  - get: platform-automation-image
+    resource: platform-automation
+    params:
+      globs: ["*image*.tgz"]
+      unpack: true
+  - get: platform-automation-tasks
+    resource: platform-automation
+    params:
+      globs: ["*tasks*.zip"]
+      unpack: true
+  - task: activate-new-ca
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/activate-certificate-authority.yml
 ```
 
 ## Regenerate Certificates
 
 ### Non-configurable Leaf Certificates
-Now that a new certificate authority is active, any internal, non-configurable certificates need to be regenerated and signed by the new CA. The Ops Manager API has a function to delete all non-configurable certificates and generate new ones using the current, active CA:
-```bash
-om -e env.yml regenerate-certificates
+Now that a new certificate authority is active, any internal, non-configurable certificates need to be regenerated and signed by the new CA. We are going to add another job that will regenerate the non configurable leaf certificates.
+```yaml
+- name: regenerate-non-configurable-leaf-certificates
+  plan:
+  - get: env
+    resource: config
+    passed:
+    - activate-new-ca
+  - get: platform-automation-image
+    resource: platform-automation
+    params:
+      globs: ["*image*.tgz"]
+      unpack: true
+  - get: platform-automation-tasks
+    resource: platform-automation
+    params:
+      globs: ["*tasks*.zip"]
+      unpack: true
+  - task: regenerate-certificates
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/regenerate-certificates.yml
 ```
 This will delete the existing certificates from Credhub, which causes Credhub to generate new certificates on the next run of Apply Changes.
 
 ### Configurable Certificates
 Any manually configured certificates that are signed by the foundation root certificate authority need to be regenerated as well. Tanzu Application Service needs at least two configurable certificates, one for networking components and one for UAA.
-After generating a new certificate, it needs to be configured in Ops Manager with a manifest file specific to the certificate. For the UAA SAML service provider credentials, here is an example manifest titled `uaa_update_template.yml`:
-```yml
-product-name: cf
-product-properties:
-  .uaa.service_provider_key_credentials:
-    value:
-      cert_pem: ((certificate))
-      private_key_pem: ((key))
-```
-<!-- ```yml
-product-name: cf
-product-properties:
-  .properties.networking_poe_ssl_certs[0].certificate:
-    value:
-      cert_pem: ((certificate))
-      private_key_pem: ((key))
-``` -->
+After generating a new certificate, it needs to be configured in Ops Manager with a manifest file specific to the certificate.
 
-```bash
-om --env env.yml generate-certificate --domains "apps.foundation.example.com" > new-cert.json
-om interpolate --config key_update_template.yml --vars-file new-cert.json > key_manifest.yml
-om --env env.yml configure-product -c key_manifest.yml
-```
-
-We can fetch the list of configurable certificates from the Ops Manager API:
-```bash
-om -e env.yml curl -p /api/v0/deployed/certificates | jq '.certificates[] | select(.configurable==true)'
-```
+Please check the docs on how to [rotate CAs and leaf certificates](https://docs.pivotal.io/ops-manager/2-10/security/pcf-infrastructure/rotate-cas-and-leaf-certs.html#rotate-config-after-new-root) to manually rotate.
 
 ### Apply Changes
-Finally, we need to apply changes one last time in order to create and use the new certificates.
+Now we need to apply changes in order to create and use the new certificates.
+```yaml
+- name: apply-certificate-changes
+  plan:
+  - get: env
+    resource: config
+    passed:
+    - regenerate-non-configurable-leaf-certificates
+  - task: apply-new-ca
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/apply-changes.yml
+```
 
 ## Cleaning Up
-Once the function of the foundation is validated with new certificates, the old certificate authority can be deleted.
-```bash
-om -e env.yml delete-certificate-authority --all-inactive
+Once the function of the foundation is validated with new certificates, the old certificate authority can be deleted by adding a job that will cleanup the certificate authority and applying the changes.
+```yaml
+- name: cleanup-certificate-authorities
+  plan:
+  - get: env
+    resource: config
+    passed:
+    - apply-certificate-changes
+  - get: platform-automation-image
+    resource: platform-automation
+    params:
+      globs: ["*image*.tgz"]
+      unpack: true
+  - get: platform-automation-tasks
+    resource: platform-automation
+    params:
+      globs: ["*tasks*.zip"]
+      unpack: true
+  - task: delete-certificate-authority
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/delete-certificate-authority.yml
+  - task: apply-new-ca
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/apply-changes.yml
 ```
 
 {% with path="../" %}
