@@ -38,6 +38,10 @@ params:
   # - This is not recommended unless unless the warning failure(s)
   #   are well understood.
 
+  SELECTIVE_DEPLOY_PRODUCTS:
+  # - Optional
+  # - Comma separated list of products for apply changes.
+
 run:
   path: platform-automation-tasks/tasks/apply-changes.sh
 # code_snippet apply-changes end
