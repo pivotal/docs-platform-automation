@@ -257,11 +257,9 @@ which can stage a product that's been uploaded.
 
 ### configure-new-certificate-authority
 
-Create a certificate authority on Ops Manager with a provided certificate and
-private key.
-
-This task requires `certs` as an input, containing `certificate.pem` and
-`privatekey.pem` for the new CA.
+Create a new certificate authority on Ops Manager. This can either create a
+new CA using Credhub or create a new CA using a provided certificate and
+private key in PEM format via the `certs/` input.
 
 === "Task"
     ---excerpt--- "tasks/configure-new-certificate-authority"
