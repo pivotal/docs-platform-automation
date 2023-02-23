@@ -127,11 +127,9 @@ resources:
 - name: pivnet-rc
   type: pivnet
   source:
-    access_key_id: ((pivnet_aws_access_key))
     api_token: ((pivnet_token))
     product_slug: platform-automation
     product_version: \d+\.\d+\.\d+
-    secret_access_key: ((pivnet_aws_secret_key))
 - name: srp-helper
   type: registry-image
   source:
