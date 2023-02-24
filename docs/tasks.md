@@ -605,6 +605,8 @@ This task outputs `certificate`, containing `certificate.pem` and
     ---excerpt--- "tasks/generate-certificate"
 === "Implementation"
     ---excerpt--- "tasks/generate-certificate-script"
+<!-- === "Usage"
+    ---excerpt--- "reference/generate-certificate-usage" -->
 
 ### import-installation
 Imports a previously exported installation to Ops Manager.
