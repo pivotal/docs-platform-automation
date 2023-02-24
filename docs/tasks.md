@@ -17,8 +17,8 @@ Ensures that the newest certificate authority on Ops Manager is active.
     ---excerpt--- "tasks/activate-certificate-authority"
 === "Implementation"
     ---excerpt--- "tasks/activate-certificate-authority-script"
-<!-- === "Usage"
-    ---excerpt--- "reference/activate-certificate-authority-usage" -->
+=== "Usage"
+    ---excerpt--- "reference/activate-certificate-authority-usage"
 
 ### apply-changes
 
@@ -265,8 +265,8 @@ private key in PEM format via the `certs/` input.
     ---excerpt--- "tasks/configure-new-certificate-authority"
 === "Implementation"
     ---excerpt--- "tasks/configure-new-certificate-authority-script"
-<!-- === "Usage"
-    ---excerpt--- "reference/configure-new-certificate-authority-usage" -->
+=== "Usage"
+    ---excerpt--- "reference/configure-new-certificate-authority-usage"
 
 ### configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
@@ -379,8 +379,8 @@ Delete all inactive certificate authorities from the Ops Manager.
     ---excerpt--- "tasks/delete-certificate-authority"
 === "Implementation"
     ---excerpt--- "tasks/delete-certificate-authority-script"
-<!-- === "Usage"
-    ---excerpt--- "reference/delete-certificate-authority-usage" -->
+=== "Usage"
+    ---excerpt--- "reference/delete-certificate-authority-usage"
 
 ### delete-installation
 Delete the Ops Manager Installation
@@ -605,8 +605,6 @@ This task outputs `certificate`, containing `certificate.pem` and
     ---excerpt--- "tasks/generate-certificate"
 === "Implementation"
     ---excerpt--- "tasks/generate-certificate-script"
-<!-- === "Usage"
-    ---excerpt--- "reference/generate-certificate-usage" -->
 
 ### import-installation
 Imports a previously exported installation to Ops Manager.
@@ -727,8 +725,8 @@ the active certificate authority.
     ---excerpt--- "tasks/regenerate-certificates"
 === "Implementation"
     ---excerpt--- "tasks/regenerate-certificates-script"
-<!-- === "Usage"
-    ---excerpt--- "reference/regenerate-certificates-usage" -->
+=== "Usage"
+    ---excerpt--- "reference/regenerate-certificates-usage"
 
 ### replicate-product
 Will replicate the product for use in isolation segments.
