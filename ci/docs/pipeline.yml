@@ -200,7 +200,6 @@ jobs:
           - '--docs-prefix'
           - 'docs-platform-automation'
           - '--site-prefix'
-          - 'platform-automation'
           - '--domains'
           - 'docs.pivotal.io docs-test.pivotal.io'
           - '--ignore-directories'
