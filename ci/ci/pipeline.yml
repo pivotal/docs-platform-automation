@@ -631,6 +631,7 @@ jobs:
   plan:
   - in_parallel:
     - get: osl
+    - get: odp
     - get: docs-platform-automation
     - get: rc-image-s3
       passed:
