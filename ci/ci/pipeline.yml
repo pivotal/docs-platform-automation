@@ -675,7 +675,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
   - task: generate-platform-automation-metadata
-    file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.0.yml
+    file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.1.yml
   - task: generate-dpkg-list-for-osl
     file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: rc-image-s3
