@@ -9,6 +9,9 @@ versions:
   - branch: v5.0
     tag_filter: v5.0*
     supported: true
+  - branch: v5.1
+    tag_filter: v5.1*
+    supported: true
   - branch: v1.0
     tag_filter: v1.0*
     exclude_from_dropdown: true
