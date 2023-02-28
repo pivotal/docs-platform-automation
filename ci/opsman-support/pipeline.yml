@@ -1,6 +1,6 @@
 ---
 #@ opsman_versions = [ "2.9", "2.10"]
-#@ pat_versions = ["4.4", "5.0"]
+#@ pat_versions = ["4.4", "5.0", "5.1"]
 resource_types:
 - name: pivnet
   type: registry-image
