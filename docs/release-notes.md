@@ -27,8 +27,11 @@ February 27, 2023
 - Added new How-to Guide about [Rotating Certificate Authority][rotating-certificate-authority]. 
   This how-to-guide shows you how to write a pipeline for rotating the certificate authority on an existing Ops Manager. 
 - The following additional tasks have been added to help with rotating certificate authorities:
-  - [`activate-certificate-authority`][activate-certificate-authority]
-  - [`configure-new-certificate-authority`][configure-new-certificate-authority]
-  - [`delete-certificate-authority`][delete-certificate-authority]
-  - [`generate-certificate`][generate-certificate]
-  - [`regenerate-certificates`][regenerate-certificates]
+    * [`activate-certificate-authority`][activate-certificate-authority]
+    * [`configure-new-certificate-authority`][configure-new-certificate-authority]
+    * [`delete-certificate-authority`][delete-certificate-authority]
+    * [`generate-certificate`][generate-certificate]
+    * [`regenerate-certificates`][regenerate-certificates]
+      
+{% include ".internal_link_url.md" %}
+{% include ".external_link_url.md" %}
