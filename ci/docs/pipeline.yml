@@ -128,7 +128,6 @@ jobs:
           - '--docs-prefix'
           - 'docs-platform-automation'
           - '--site-prefix'
-          - 'platform-automation'
           - '--domains'
           - 'docs-pcf-staging.tas.vmware.com docs-pcf-staging.sc2-04-pcf1-apps.oc.vmware.com'
           - '--ignore-directories'
