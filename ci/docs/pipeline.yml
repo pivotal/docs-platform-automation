@@ -17,6 +17,17 @@ resources:
     branch: #@ branch
     uri: git@github.com:pivotal/docs-platform-automation
     private_key: ((platform_automation_docs.private_key))
+#@ if not getattr(version, "supported", False):
+- name: #@ "platform-automation-" + branch
+  type: git
+  source:
+    branch: #@ branch
+    private_key: ((platform_automation.private_key))
+    uri: git@github.com:pivotal/platform-automation
+#@ if tag_filter:
+    tag_filter: #@ tag_filter
+#@ end
+#@ end
 #@ end
 - name: docs-platform-automation
   type: git
@@ -88,6 +99,10 @@ jobs:
   - in_parallel:
     - get: mkdocs-pivotal-theme
 #@ for version in data.values.versions:
+    #@ if not getattr(version, "supported", False):
+    - get: #@ "platform-automation-" + version.branch
+      trigger: true
+    #@ end
     - get: #@ "docs-platform-automation-" + version.branch
       trigger: true
 #@ end
@@ -109,6 +124,9 @@ jobs:
       inputs:
       - name: mkdocs-pivotal-theme
 #@ for version in data.values.versions:
+      #@ if not getattr(version, "supported", False):
+      - name: #@ "platform-automation-" + version.branch
+      #@ end
       - name: #@ "docs-platform-automation-" + version.branch
 #@ end
       - name: docs-platform-automation-reference-pipeline-config
@@ -169,6 +187,9 @@ jobs:
   - in_parallel:
     - get: image
 #@ for version in data.values.versions:
+    #@ if not getattr(version, "supported", False):
+    - get: #@ "platform-automation-" + version.branch
+    #@ end
     - get: #@ "docs-platform-automation-" + version.branch
       trigger: true
 #@ end
@@ -181,6 +202,9 @@ jobs:
       inputs:
       - name: mkdocs-pivotal-theme
 #@ for version in data.values.versions:
+      #@ if not getattr(version, "supported", False):
+      - name: #@ "platform-automation-" + version.branch
+      #@ end
       - name: #@ "docs-platform-automation-" + version.branch
 #@ end
       - name: docs-platform-automation-reference-pipeline-config
