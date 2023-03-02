@@ -168,6 +168,22 @@ resources:
     regexp: vsphere-platform-automation-image-(.*).tar.gz
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
+- name: rc-image-tanzunet-dev
+  type: registry-image
+  source:
+    repository: dev.registry.pivotal.io/platform-automation/platform-automation
+    username: ((tanzunet-dev-registry.username))
+    password: ((tanzunet-dev-registry.password))
+    pre_releases: true
+    tag: develop
+- name: rc-image-tanzunet-dev-vsphere
+  type: registry-image
+  source:
+    repository: dev.registry.pivotal.io/platform-automation/platform-automation-vsphere
+    username: ((tanzunet-dev-registry.username))
+    password: ((tanzunet-dev-registry.password))
+    pre_releases: true
+    tag: develop
 - name: rc-tasks-s3
   type: s3
   source:
@@ -510,6 +526,10 @@ jobs:
     output_mapping: { image: binaries-image-oci }
   - put: binaries-image
     params: { image: binaries-image-oci/image.tar }
+  - put: rc-image-tanzunet-dev
+    params:
+      image: binaries-image-oci/image.tar
+      additional_tags: version/version
   - task: build-vsphere-image
     privileged: true
     config:
@@ -530,6 +550,10 @@ jobs:
         path: build
   - put: vsphere-only-image
     params: { image: image/image.tar }
+  - put: rc-image-tanzunet-dev-vsphere
+    params:
+      image: image/image.tar
+      additional_tags: version/version
   - in_parallel:
     - task: define-cli-versions
       image: binaries-image
