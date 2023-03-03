@@ -1,0 +1,25 @@
+---
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: harbor-repo.vmware.com/source_insight_tooling/osspi-runner
+
+inputs:
+  - name: docs-platform-automation
+  - name: repo2_bom
+  - name: docker_scan
+params:
+  IMAGE:
+  TAG: latest
+  TAR_PATH:
+  API_KEY: ((osm.production_api_key))
+  OSM_ENVIRONMENT: production
+  OSSTP_LOAD_DRY_RUN: false
+  ENDPOINT: https://osm.eng.vmware.com
+  USERNAME: ((osm.production_username))
+  PRODUCT: platform-automation
+  VERSION: 4.4.32
+  APPEND: false
+run:
+  path: docs-platform-automation/ci/tasks/run-osstp-load.sh
