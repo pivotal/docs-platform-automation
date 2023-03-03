@@ -171,7 +171,7 @@ resources:
 - name: rc-image-tanzunet-dev
   type: registry-image
   source:
-    repository: dev.registry.pivotal.io/platform-automation/platform-automation
+    repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
     username: ((tanzunet-dev-registry.username))
     password: ((tanzunet-dev-registry.password))
     pre_releases: true
@@ -179,7 +179,7 @@ resources:
 - name: rc-image-tanzunet-dev-vsphere
   type: registry-image
   source:
-    repository: dev.registry.pivotal.io/platform-automation/platform-automation-vsphere
+    repository: dev.registry.pivotal.io/platform-automation/vsphere-platform-automation-image
     username: ((tanzunet-dev-registry.username))
     password: ((tanzunet-dev-registry.password))
     pre_releases: true
@@ -621,12 +621,12 @@ jobs:
   plan:
   - in_parallel:
     - get: docs-platform-automation
+    - get: rc-image-s3
+      passed: [ build-binaries-image-combined ]
     - get: binaries-image
-      resource: rc-image-s3
+      resource: rc-image-tanzunet-dev
       passed: [ build-binaries-image-combined ]
       trigger: true
-      params:
-        unpack: true
     - get: osl-validated-image-receipt-s3
   - task: generate-stub-version
     config:
@@ -773,13 +773,13 @@ jobs:
     - get: docs-platform-automation
     - get: paving
     - get: deployments
+    - get: rc-image-s3
+      passed: [ build-binaries-image-combined ]
     - get: platform-automation-image
-      resource: rc-image-s3
+      resource: rc-image-tanzunet-dev
       passed:
       - build-binaries-image-combined
       trigger: true
-      params:
-        unpack: true
     - get: rc-image-s3-vsphere
       passed:
       - build-binaries-image-combined
@@ -1056,29 +1056,27 @@ jobs:
       tags: #@ tags
 #@ if deployment.paving_dir == "nsxt":
     - get: platform-automation-image
+      resource: rc-image-tanzunet-dev-vsphere
       passed: [ build-binaries-image-combined ]
-      resource: rc-image-s3-vsphere
       tags: #@ tags
-      params:
-        unpack: true
+      trigger: true
+    - get: rc-image-s3-vsphere
+      passed: [ build-binaries-image-combined ]
+      tags: #@ tags
     - get: rc-image-s3
       passed: [ build-binaries-image-combined ]
-      trigger: true
-      params:
-        unpack: true
       tags: #@ tags
 #@ else:
     - get: platform-automation-image
+      resource: rc-image-tanzunet-dev
       passed: [ build-binaries-image-combined ]
-      resource: rc-image-s3
       tags: #@ tags
-      params:
-        unpack: true
+      trigger: true
+    - get: rc-image-s3
+      passed: [ build-binaries-image-combined ]
+      tags: #@ tags
     - get: rc-image-s3-vsphere
       passed: [ build-binaries-image-combined ]
-      trigger: true
-      params:
-        unpack: true
       tags: #@ tags
 #@ end
     - get: opsman-image
@@ -1261,9 +1259,9 @@ jobs:
     - get: deployments
       tags: #@ tags
     - get: platform-automation-image
-      resource: rc-image-s3
-      params:
-        unpack: true
+      resource: rc-image-tanzunet-dev
+      tags: #@ tags
+    - get: rc-image-s3
       tags: #@ tags
     - get: platform-automation-tasks
       resource: rc-tasks-s3
@@ -1410,6 +1408,12 @@ jobs:
     - get: rc-image-s3-vsphere
       passed:
         - build-binaries-image-combined
+    - get: rc-image-tanzunet-dev
+      passed:
+        - build-binaries-image-combined
+    - get: rc-image-tanzunet-dev-vsphere
+      passed:
+        - build-binaries-image-combined
     - get: rc-tasks-s3
       passed:
         - build-binaries-image-combined
@@ -1427,13 +1431,18 @@ jobs:
       version:
         version: 22.0.0
     - get: docs-platform-automation-reference-pipeline-config
+    - get: platform-automation-image
+      resource: rc-image-tanzunet-dev
+      passed:
+        - create-pks-cluster-in-reference-pipeline
+      trigger: true
+    - get: rc-image-tanzunet-dev-vsphere
+      passed:
+        - create-pks-cluster-in-reference-pipeline
     - get: rc-image-s3-vsphere
       passed:
         - create-pks-cluster-in-reference-pipeline
-    - get: platform-automation-image
-      resource: rc-image-s3
-      params:
-        unpack: true
+    - get: rc-image-s3
       passed:
         - create-pks-cluster-in-reference-pipeline
       trigger: true
