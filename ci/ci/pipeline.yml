@@ -526,10 +526,6 @@ jobs:
     output_mapping: { image: binaries-image-oci }
   - put: binaries-image
     params: { image: binaries-image-oci/image.tar }
-  - put: rc-image-tanzunet-dev
-    params:
-      image: binaries-image-oci/image.tar
-      additional_tags: version/version
   - task: build-vsphere-image
     privileged: true
     config:
@@ -550,10 +546,6 @@ jobs:
         path: build
   - put: vsphere-only-image
     params: { image: image/image.tar }
-  - put: rc-image-tanzunet-dev-vsphere
-    params:
-      image: image/image.tar
-      additional_tags: version/version
   - in_parallel:
     - task: define-cli-versions
       image: binaries-image
@@ -580,6 +572,37 @@ jobs:
       file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
       params:
         PRODUCT_PATH: vsphere-platform-automation-image-*.tar.gz
+    - task: package-for-docker-registry
+      privileged: true
+      config:
+        image_resource:
+          type: registry-image
+          source:
+            repository: concourse/docker-image-resource
+        platform: linux
+        inputs:
+        - name: packaged-product
+        outputs:
+        - name: platform-automation-image-oci
+        - name: vsphere-platform-automation-image-oci
+        run:
+          path: bash
+          args:
+          - -c
+          - |
+            set -eu
+
+            # shellcheck disable=SC1091
+            source /opt/resource/common.sh
+            start_docker "5" "5" "" ""
+
+            set -eux
+
+            export image_sha="$(docker import packaged-product/platform-automation-image-*.tgz)"
+            docker save --output platform-automation-image-oci/image.tar $image_sha
+
+            export image_sha="$(docker import packaged-product/vsphere-platform-automation-image-*.tar.gz)"
+            docker save --output vsphere-platform-automation-image-oci/image.tar $image_sha
   - in_parallel:
       limit: 2
       steps:
@@ -601,6 +624,18 @@ jobs:
           file: packaged-product/vsphere-platform-automation-image-*.tar.gz
         get_params:
           skip_download: "true"
+      - put: rc-image-tanzunet-dev
+        params:
+          image: platform-automation-image-oci/image.tar
+          additional_tags: version/version
+        get_params:
+          skip_download: true
+      - put: rc-image-tanzunet-dev-vsphere
+        params:
+          image: vsphere-platform-automation-image-oci/image.tar
+          additional_tags: version/version
+        get_params:
+          skip_download: true
       - put: rc-tasks-s3
         params:
           file: packaged-product/platform-automation-tasks-*.zip
