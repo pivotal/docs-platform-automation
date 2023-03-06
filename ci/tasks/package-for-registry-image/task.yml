@@ -1,0 +1,32 @@
+---
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: concourse/docker-image-resource
+
+inputs:
+- name: packaged-product
+
+outputs:
+- name: platform-automation-image-oci
+- name: vsphere-platform-automation-image-oci
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eu
+
+    # shellcheck disable=SC1091
+    source /opt/resource/common.sh
+    start_docker "5" "5" "" ""
+
+    set -eux
+
+    export image_sha="$(docker import packaged-product/platform-automation-image-*.tgz)"
+    docker save --output platform-automation-image-oci/image.tar $image_sha
+
+    export image_sha="$(docker import packaged-product/vsphere-platform-automation-image-*.tar.gz)"
+    docker save --output vsphere-platform-automation-image-oci/image.tar $image_sha
