@@ -24,8 +24,8 @@ resources:
     source:
       repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
       tag: 5.1.0
-      username: ((harbor.username))
-      password: ((harbor.password))
+      username: ((tanzunet.username))
+      password: ((tanzunet.password))
 
 jobs:
 
