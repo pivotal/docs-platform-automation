@@ -24,4 +24,4 @@ params:
   APPEND:
   CT_TRACKER_OS: ubuntu
 run:
-  path: repo1/ci/tasks/osspi/run-osspi-docker.sh
+  path: repo1/ci/tasks/run-osspi-docker.sh
