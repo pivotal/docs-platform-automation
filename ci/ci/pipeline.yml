@@ -171,7 +171,7 @@ resources:
 - name: rc-image-tanzunet-dev
   type: registry-image
   source:
-    repository: dev.registry.pivotal.io/platform-automation/platform-automation
+    repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
     username: ((tanzunet-dev-registry.username))
     password: ((tanzunet-dev-registry.password))
     pre_releases: true
@@ -179,7 +179,7 @@ resources:
 - name: rc-image-tanzunet-dev-vsphere
   type: registry-image
   source:
-    repository: dev.registry.pivotal.io/platform-automation/platform-automation-vsphere
+    repository: dev.registry.pivotal.io/platform-automation/vsphere-platform-automation-image
     username: ((tanzunet-dev-registry.username))
     password: ((tanzunet-dev-registry.password))
     pre_releases: true
