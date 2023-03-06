@@ -17,16 +17,6 @@ if [ "${OSSPI_IGNORE_RULES+defined}" = defined ] && [ -n "$OSSPI_IGNORE_RULES" ]
   printf "Using configured OSSPI_IGNORE_RULES:\n%s\n\n" "$OSSPI_IGNORE_RULES"
 fi
 
-echo "$USERNAME" "$API_KEY" > apiKeyFile
-
-echo "Getting product by name and version to fetch current release ID."
-RELEASE_SEARCH_URL="$ENDPOINT/api/public/v1/release?product_name=$PRODUCT&version=$VERSION"
-echo "RELEASE_SEARCH_URL: '${RELEASE_SEARCH_URL}'"
-PROJECT_RELEASE_REQUEST=$(curl -L -H "Authorization: ApiKey $USERNAME:$API_KEY" "$RELEASE_SEARCH_URL")
-MATCHING_RELEASE=$(echo "$PROJECT_RELEASE_REQUEST" | jq ".results[] | .version |= ascii_downcase | select(.version==\"$(echo $VERSION  | tr '[:upper:]' '[:lower:]')\")")
-RELEASE_ID=$(echo "$MATCHING_RELEASE" | jq '.id')
-echo "RELEASE_ID: '${RELEASE_ID}'"
-
 echo "Getting ct tracker master package if exists. If not, create it and return the ID."
 MASTER_PACKAGE_URL="$ENDPOINT/api/public/v1/master_package/?name=ct-tracker-$CT_TRACKER_OS&version=none&repository=Other&resolution=APPROVED"
 echo "MASTER_PACKAGE_URL: '${MASTER_PACKAGE_URL}'"
