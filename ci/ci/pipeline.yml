@@ -526,6 +526,10 @@ jobs:
     output_mapping: { image: binaries-image-oci }
   - put: binaries-image
     params: { image: binaries-image-oci/image.tar }
+  - put: rc-image-tanzunet-dev
+    params:
+      image: binaries-image-oci/image.tar
+      additional_tags: version/version
   - task: build-vsphere-image
     privileged: true
     config:
@@ -546,6 +550,10 @@ jobs:
         path: build
   - put: vsphere-only-image
     params: { image: image/image.tar }
+  - put: rc-image-tanzunet-dev-vsphere
+    params:
+      image: image/image.tar
+      additional_tags: version/version
   - in_parallel:
     - task: define-cli-versions
       image: binaries-image
@@ -588,21 +596,9 @@ jobs:
           file: packaged-product/platform-automation-image-*.tgz
         get_params:
           skip_download: "true"
-      - put: rc-image-tanzunet-dev
-        params:
-          image: packaged-product/platform-automation-image-*.tgz
-          additional_tags: version/version
-        get_params:
-          skip_download: "true"
       - put: rc-image-s3-vsphere
         params:
           file: packaged-product/vsphere-platform-automation-image-*.tar.gz
-        get_params:
-          skip_download: "true"
-      - put: rc-image-tanzunet-dev-vsphere
-        params:
-          image: packaged-product/vsphere-platform-automation-image-*.tar.gz
-          additional_tags: version/version
         get_params:
           skip_download: "true"
       - put: rc-tasks-s3
