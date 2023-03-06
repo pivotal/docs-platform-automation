@@ -168,7 +168,7 @@ resources:
     regexp: vsphere-platform-automation-image-(.*).tar.gz
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
-- name: rc-image-tanzunet-dev
+- name: image-tanzunet-dev
   type: registry-image
   source:
     repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
@@ -176,7 +176,7 @@ resources:
     password: ((tanzunet-dev-registry.password))
     pre_releases: true
     tag: develop
-- name: rc-image-tanzunet-dev-vsphere
+- name: image-tanzunet-dev-vsphere
   type: registry-image
   source:
     repository: dev.registry.pivotal.io/platform-automation/vsphere-platform-automation-image
@@ -596,13 +596,13 @@ jobs:
           file: packaged-product/vsphere-platform-automation-image-*.tar.gz
         get_params:
           skip_download: "true"
-      - put: rc-image-tanzunet-dev
+      - put: image-tanzunet-dev
         params:
           image: platform-automation-image-oci/image.tar
           additional_tags: version/version
         get_params:
           skip_download: true
-      - put: rc-image-tanzunet-dev-vsphere
+      - put: image-tanzunet-dev-vsphere
         params:
           image: vsphere-platform-automation-image-oci/image.tar
           additional_tags: version/version
@@ -706,6 +706,23 @@ jobs:
   - task: test-docker-import
     privileged: true
     file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
+  - task: package-for-registry-image
+    privileged: true
+    file: docs-platform-automation/ci/tasks/package-for-registry-image/task.yml
+  - put: image-tanzunet-dev
+    params:
+      image: platform-automation-image-oci/image.tar
+      version: latest
+      additional_tags: version/version
+    get_params:
+      skip_download: true
+  - put: image-tanzunet-dev-vsphere
+    params:
+      image: vsphere-platform-automation-image-oci/image.tar
+      version: latest
+      additional_tags: version/version
+    get_params:
+      skip_download: true
   - task: generate-platform-automation-metadata
     file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.1.yml
   - task: generate-dpkg-list-for-osl
