@@ -19,6 +19,14 @@ resources:
       uri: git@github.com:pivotal-cf/om.git
       private_key: ((platform_automation_docs.private_key))
 
+  - name: private-image
+    type: registry-image
+    source:
+      repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
+      tag: 5.1.0
+      username: ((harbor.username))
+      password: ((harbor.password))
+
 jobs:
 
   - name: om-scan
@@ -55,3 +63,22 @@ jobs:
               version_regex: .*
             - name_regex: gomega
               version_regex: .*
+
+
+  - name: scan-platform-automation-image
+    serial: true
+    plan:
+      - in_parallel:
+          - get: docs-platform-automation
+          - get: private-image
+            params:
+              format: oci
+
+      - task: osspi-scan-docker
+        file: docs-platform-automation/ci/tasks/run-osspi-docker.yaml
+        input_mapping:
+          repo1: docs-platform-automation
+          image: private-image
+        params:
+          TAR_PATH: image/image.tar
+          APPEND: true
