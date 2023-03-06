@@ -17,33 +17,6 @@ if [ "${OSSPI_IGNORE_RULES+defined}" = defined ] && [ -n "$OSSPI_IGNORE_RULES" ]
   printf "Using configured OSSPI_IGNORE_RULES:\n%s\n\n" "$OSSPI_IGNORE_RULES"
 fi
 
-echo "Getting ct tracker master package if exists. If not, create it and return the ID."
-MASTER_PACKAGE_URL="$ENDPOINT/api/public/v1/master_package/?name=ct-tracker-$CT_TRACKER_OS&version=none&repository=Other&resolution=APPROVED"
-echo "MASTER_PACKAGE_URL: '${MASTER_PACKAGE_URL}'"
-MASTER_PACKAGE_REQUEST=$(curl -H "Authorization: ApiKey $USERNAME:$API_KEY" "$MASTER_PACKAGE_URL")
-if [ $(echo "$MASTER_PACKAGE_REQUEST" | jq .count) == 1 ]; then
-  echo "Master package found"
-  MASTER_PACKAGE_ID=$(echo "$MASTER_PACKAGE_REQUEST" | jq ".results[].id")
-else
-  echo "Master package not found. Creating package."
-  CT_TRACKER_DATA_PAYLOAD="{\"name\":\"ct-tracker-${CT_TRACKER_OS}\",\"version\":\"none\",\"repository\":\"Other\"}"
-  echo "CT_TRACKER_DATA_PAYLOAD: '${CT_TRACKER_DATA_PAYLOAD}'"
-  MASTER_PACKAGE_REQUEST=$(curl --request POST -H "Authorization: ApiKey $USERNAME:$API_KEY" --data "$CT_TRACKER_DATA_PAYLOAD" "$ENDPOINT/api/public/v1/master_package/")
-  MASTER_PACKAGE_ID=$(echo "$MASTER_PACKAGE_REQUEST" | jq ".results[].id")
-fi
-echo "MASTER_PACKAGE_ID: '${MASTER_PACKAGE_ID}'"
-
-echo "Attaching the ct-tracker-${CT_TRACKER_OS} master package to the osm release ID and returning the ct tracker ID."
-CT_TRACKER_REQUEST=$(curl --request POST -H "Authorization: ApiKey $USERNAME:$API_KEY" -H "Content-Type: application/json" --data "{\"release_id\":\"$RELEASE_ID\",\"master_package_id\":\"$MASTER_PACKAGE_ID\",\"interaction_type_id\":[\"1\"],\"modified\":\"No\"}" "$ENDPOINT/api/public/v1/package/")
-echo "CT_TRACKER_REQUEST results: '${CT_TRACKER_REQUEST}'"
-if [ $(echo "$CT_TRACKER_REQUEST" | jq -r ".err_code") == 40904  ]; then
-  ERROR_MESSAGE=$(echo "$CT_TRACKER_REQUEST" | jq -r ".err_msg")
-  CT_TRACKER_ID=$(echo ${ERROR_MESSAGE##* })
-else
-  CT_TRACKER_ID=$(echo "$CT_TRACKER_REQUEST" | jq ".id")
-fi
-echo "CT_TRACKER_ID: '${CT_TRACKER_ID}'"
-
 declare -a image_flag
 if [ "${TAR_PATH+defined}" = defined ] && [ -n "$TAR_PATH" ]; then
   echo "Using tar path: '$TAR_PATH'"
