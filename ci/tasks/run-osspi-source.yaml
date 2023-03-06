@@ -26,4 +26,4 @@ params:
   OSSPI_IGNORE_RULES:
   INTERACTION_TYPE:
 run:
-  path: repo1/ci/tasks/run-osspi-source.sh
+  path: repo1/tasks/osspi/run-osspi-source.sh
