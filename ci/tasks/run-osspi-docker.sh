@@ -77,23 +77,3 @@ if [ "$number_of_objects" -eq 0 ]; then
   echo "Scan report empty, exiting..."
   exit 0
 fi
-
-declare -a osstp_dry_run_flag
-if [ "${OSSTP_LOAD_DRY_RUN+defined}" = defined ] && [ "$OSSTP_LOAD_DRY_RUN" = 'true' ]; then
-  osstp_dry_run_flag=('-n')
-  echo "Dry run mode enabled for osstp-load"
-fi
-
-set -x
-
-osstp-load.py \
-  "${osstp_dry_run_flag[@]}" \
-  -S "$OSM_ENVIRONMENT" \
-  -F \
-  -A apiKeyFile \
-  "${baseos_append_flag[@]}" \
-  --noinput \
-  --baseos-ct-tracker "$CT_TRACKER_ID" \
-  docker_scan/osspi_docker_detect_result.manifest
-
-set +x
