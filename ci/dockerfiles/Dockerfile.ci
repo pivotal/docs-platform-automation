@@ -73,9 +73,9 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 RUN apt-get -y update && apt-get -y install --no-install-recommends google-cloud-sdk
 
 # azure
-RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" | tee /etc/apt/sources.list.d/azure-cli.list
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ focal main" | tee /etc/apt/sources.list.d/azure-cli.list
 RUN curl -L https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-RUN apt-get install apt-transport-https && apt-get update && apt-get install azure-cli
+RUN apt update && apt install apt-transport-https azure-cli
 
 
 RUN git config --global user.name "platform-automation"
