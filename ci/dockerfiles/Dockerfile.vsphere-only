@@ -17,3 +17,7 @@ RUN pip3 uninstall -y pip-autoremove pip
 # remove gcloud CLI
 RUN rm -Rf /usr/local/bin/gcloud
 RUN rm -Rf /root/google-cloud-sdk
+
+# remove python packages as a result of cve
+RUN rm -Rf /usr/local/lib/python3.6
+RUN rm -Rf /usr/lib/python
