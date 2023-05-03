@@ -524,6 +524,47 @@ After the CI has completed go to [Github](https://github.com/pivotal-cf/om/relea
 
 Most OM cli users will consume these upgrades through the Platform Automation toolkit, so every om cli bump should be accompanied by a Platform Automation release.
 
+## Platform Automation Toolkit new [minor release](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/promote-to-final)
+
+> **_NOTE:_**  Please make sure to not push any changes to docs-platform-automation repo during the release process. A 
+> new commit causes the "[promote-to-final](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/promote-to-final/builds/13)" job to fail.
+
+1. Copy osl and odp files from prior minor release and upload it to the aws s3 platform-automation-release-candidate location 
+
+Since this is a minor release, it is ok to copy over prior minor release ODP and OSL files and renaming them to the new
+minor version
+
+```
+$ aws s3 ls s3://platform-automation-release-candidate | grep ODP
+2020-09-24 08:11:55  908109832 VMware-Tanzu-platform-automation-toolkit-5.0.0-ODP.tar.gz
+2023-02-27 12:20:49  908109832 VMware-Tanzu-platform-automation-toolkit-5.1.0-ODP.tar.gz
+
+$ aws s3 ls s3://platform-automation-release-candidate | grep open_source
+2020-09-28 12:34:49   21817449 open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.0.0_GA.txt
+2023-02-27 11:23:12   21817449 open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.0_GA.txt
+```
+
+1. Add the new minor as a supported version to the ci/docs/versions.yml file
+
+ci/tasks/pivnet-release/generate-platform-automation-metadata-vX.X.yml
+ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
+docs/compatibility-and-versioning.md
+
+1. Cut a new branch with the new minor based on the commit used to cut the minor tag
+
+1. On the new branch please go ahead and delete the CI folder. CI folder should only be in develop branch to avoid confusion
+on the source of CI.
+
+1. Update docs/release-notes.md with release notes for the new minor
+
+1. Make the image receipt file access public
+image-receipt-5.1.0
+
+```
+aws s3api put-object-acl --bucket platform-automation-release-candidate --key image-receipt-5.1.0 --acl public-read
+```
+
+
 ## Slack and Support
 
 ### Bugs in [Tracker](https://www.pivotaltracker.com/n/projects/2535033)

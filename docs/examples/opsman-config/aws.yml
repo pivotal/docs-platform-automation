@@ -7,7 +7,7 @@ opsman-configuration:
     security_group_ids: [ sg-0354f804ba7c4bc41 ]
     key_pair_name: ops-manager-key  # used to ssh to VM
     iam_instance_profile_name: env_ops_manager
-
+    authentication_type: access-key # Allowed values are access-key, instance-profile or assume-role
     # At least one IP address (public or private) needs to be assigned to the
     # VM. It is also permissible to assign both.
     public_ip: 1.2.3.4      # Reserved Elastic IP
@@ -18,12 +18,12 @@ opsman-configuration:
     # boot_disk_size: 100        # default - 200 (GB)
     # instance_type: m5.large    # default - m5.large
                                  # NOTE - not all regions support m5.large
+    # Necessary only if authentication type is either assume-role or instance-profile
     # assume_role: "arn:aws:iam::..." # necessary if a role is needed to authorize
                                       # the OpsMan VM instance profile
     # tags: {key: value}              # key-value pair of tags assigned to the
     #                                 # Ops Manager VM
-    # Omit if using instance profiles
-    # And instance profile OR access_key/secret_access_key is required
+    # If authentication type is either access-key or assume-role, then access_key/secret_access_key is required
     # access_key_id: ((access-key-id))
     # secret_access_key: ((secret-access-key))
 

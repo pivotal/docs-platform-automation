@@ -42,9 +42,9 @@ terraform version
 
 terraform init
 
-terraform refresh \
-  -state terraform.tfstate \
-  -var-file terraform.tfvars
+# terraform refresh \
+#  -state terraform.tfstate \
+#  -var-file terraform.tfvars
 
 terraform plan \
   -state terraform.tfstate \
