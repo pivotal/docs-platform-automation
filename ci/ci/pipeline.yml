@@ -456,7 +456,7 @@ jobs:
       trigger: true
       params:
         globs:
-        - '*linux*'
+        - '*linux-amd*'
     - get: credhub-cli
       trigger: true
       params:
