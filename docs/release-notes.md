@@ -35,3 +35,11 @@ February 27, 2023
       
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
+## v5.0.24
+May 5, 2023
+
+### Bug Fixes
+- Update govc to v0.30.4
+- Delete all python files from vsphere-only docker image
+
+
