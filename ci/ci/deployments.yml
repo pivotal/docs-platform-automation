@@ -39,3 +39,6 @@ versions:
   - number: v5.0
     regex: 5\.0\..*
     vsphere_image: true
+  - number: v5.1
+    regex: 5\.1\..*
+    vsphere_image: true
