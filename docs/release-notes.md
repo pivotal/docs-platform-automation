@@ -28,3 +28,11 @@ May 5, 2023
 - Delete all python files from vsphere-only docker image
 
 
+## v4.4.31
+May 5, 2023
+
+### Bug Fixes
+- Update govc to v0.30.4
+- Delete all python files from vsphere-only docker image
+
+
