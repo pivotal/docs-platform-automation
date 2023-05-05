@@ -17,3 +17,9 @@ RUN pip3 uninstall -y pip-autoremove pip
 # remove gcloud CLI
 RUN rm -Rf /usr/local/bin/gcloud
 RUN rm -Rf /root/google-cloud-sdk
+
+RUN rm -Rf /usr/lib/python*
+RUN rm -Rf /usr/bin/python*
+RUN rm -Rf /usr/local/lib/python*
+RUN rm -Rf /usr/local/bin/python*
+RUN rm -Rf /etc/python*
