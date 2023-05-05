@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 # code_snippet create-vm-script start bash
+# Throw away code
+git clone https://github.com/pivotal-cf/om.git
+cd om
+GO112MODULE=on go mod download
+GO112MODULE=on go build
+chmod +x om
+mv om /usr/local/bin
+cd ..
+# Throw away code
+
+
 
 cat /var/version && echo ""
 set -eux
