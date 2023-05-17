@@ -1,4 +1,4 @@
-FROM paketobuildpacks/builder-jammy-tiny:latest
+FROM paketobuildpacks/builder-jammy-buildpackless-tiny:latest:latest
 
 # Install necessary binary
 USER root
