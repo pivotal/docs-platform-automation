@@ -3,7 +3,9 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: harbor-repo.vmware.com/source_insight_tooling/osspi-runner
+    repository: gcr.io/tas-ppe/source_insight_tooling/osspi-runner:test
+    username: _json_key
+    password: ((gcr_service_account))
 
 inputs:
   - name: docs-platform-automation
