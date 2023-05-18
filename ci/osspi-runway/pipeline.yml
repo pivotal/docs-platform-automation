@@ -1,0 +1,35 @@
+resources:
+- name: docs-platform-automation
+  type: git
+  source:
+    branch: develop
+    private_key: ((platform_automation.private_key))
+    uri: git@github.com:pivotal/docs-platform-automation
+    ignore_paths:
+      - docs
+- name: rc-image-s3
+  type: s3
+  source:
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.bucket))
+    regexp: platform-automation-image-(.*).tgz
+    region_name: ((s3.region_name))
+    secret_access_key: ((s3.secret_access_key))
+
+jobs:
+- name: send-rc-to-osspi
+  plan:
+  - get: docs-platform-automation
+  - get: image
+    resource: rc-image-s3
+  - task: send-to-osspi-dev
+    file: docs-platform-automation/ci/tasks/run-osspi-docker/task.yml
+    params:
+      TAR_PATH: image/platform-automation-image-*.tgz
+      API_KEY: ((osm.api_key))
+      OSM_ENVIRONMENT: beta
+      ENDPOINT: https://osm-beta.eng.vmware.com/
+      USERNAME: ((osm.username))
+      PRODUCT: platform-automation
+      VERSION: test-platform-automation
+      APPEND: true
