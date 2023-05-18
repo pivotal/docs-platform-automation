@@ -57,7 +57,8 @@ echo "CT_TRACKER_ID: '${CT_TRACKER_ID}'"
 declare -a image_flag
 if [ "${TAR_PATH+defined}" = defined ] && [ -n "$TAR_PATH" ]; then
   echo "Using tar path: '$TAR_PATH'"
-  image_flag=("--image-tar" "$TAR_PATH")
+  image_name="$(ls image/*.tgz)"
+  image_flag=("--image-tar" "$image_name")
 else
   echo "Using image: '$IMAGE:$TAG'"
   image_flag=("--image" "$IMAGE:$TAG")
