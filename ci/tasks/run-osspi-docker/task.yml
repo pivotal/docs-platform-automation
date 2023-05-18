@@ -3,7 +3,8 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: gcr.io/tas-ppe/source_insight_tooling/osspi-runner:test
+    repository: gcr.io/tas-ppe/source_insight_tooling/osspi-runner
+    tag: test
     username: _json_key
     password: ((gcr_service_account))
 
