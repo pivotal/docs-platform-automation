@@ -7,28 +7,30 @@ resources:
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:
       - docs
-- name: rc-image-s3
-  type: s3
+- name: image-tanzunet-dev
+  type: registry-image
   source:
-    access_key_id: ((s3.access_key_id))
-    bucket: ((s3.bucket))
-    regexp: platform-automation-image-(.*).tgz
-    region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
+    username: ((tanzunet-dev-registry.username))
+    password: ((tanzunet-dev-registry.password))
+    pre_releases: true
+    tag: develop
 
 jobs:
-- name: send-rc-to-osspi
+- name: send-rc-to-osm
   plan:
   - get: docs-platform-automation
   - get: image
-    resource: rc-image-s3
-  - task: send-to-osspi-dev
+    resource: image-tanzunet-dev
+    params:
+      format: oci
+  - task: send-to-osm-dev
     file: docs-platform-automation/ci/tasks/run-osspi-docker/task.yml
     params:
-      TAR_PATH: image/platform-automation-image-*.tgz
+      TAR_PATH: image/image.tar
       API_KEY: ((osm.api_key))
       OSM_ENVIRONMENT: beta
-      ENDPOINT: https://osm-beta.eng.vmware.com/
+      ENDPOINT: https://osm-beta.eng.vmware.com
       USERNAME: ((osm.username))
       PRODUCT: platform-automation
       VERSION: test-platform-automation
