@@ -10,8 +10,6 @@ inputs:
   - name: image
     optional: true
 params:
-  IMAGE:
-  TAG: latest
   TAR_PATH:
   API_KEY:
   OSM_ENVIRONMENT: beta
