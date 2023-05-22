@@ -8,7 +8,6 @@ image_resource:
 inputs:
   - name: docs-platform-automation
   - name: image
-    optional: true
 params:
   TAR_PATH:
   API_KEY:

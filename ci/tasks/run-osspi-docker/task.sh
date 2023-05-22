@@ -55,8 +55,8 @@ fi
 echo "CT_TRACKER_ID: '${CT_TRACKER_ID}'"
 
 declare -a image_flag
-echo "Using tar path: '$TAR_PATH'"
-image_flag=("--image-tar" "$TAR_PATH'")
+echo "Using tar path: '${TAR_PATH}'"
+image_flag=("--image-tar" "${TAR_PATH}")
 
 set -x
 osspi scan docker \
