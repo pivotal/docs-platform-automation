@@ -33,6 +33,7 @@ resources:
   type: git
   source:
     uri: https://github.com/pivotal/docs-platform-automation
+    branch: develop
 - name: docs-platform-automation-reference-pipeline-config
   type: git
   source:
@@ -59,6 +60,7 @@ resources:
   type: git
   source:
     uri: https://github.com/pivotal/mkdocs-pivotal-theme
+    branch: master
 - name: image
   type: registry-image
   source:

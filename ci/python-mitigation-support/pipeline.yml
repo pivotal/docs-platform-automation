@@ -11,6 +11,7 @@ resources:
   type: git
   source:
     uri: https://github.com/pivotal/docs-platform-automation
+    branch: develop
 #@ for version in data.values.versions:
 - name: #@ "docs-platform-automation-" + version.branch_name
   type: git
