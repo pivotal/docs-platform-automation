@@ -33,5 +33,5 @@ jobs:
       ENDPOINT: https://osm-beta.eng.vmware.com
       USERNAME: ((osm.username))
       PRODUCT: platform-automation
-      VERSION: test-platform-automation
+      VERSION: 0.0.1
       APPEND: true
