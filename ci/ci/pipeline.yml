@@ -276,6 +276,7 @@ resources:
   type: git
   source:
     uri: https://github.com/pivotal/paving
+    branch: release
 - name: govc-cli
   type: github-release
   source:

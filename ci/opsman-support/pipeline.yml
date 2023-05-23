@@ -35,11 +35,13 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal/paving
+      branch: release
 
   - name: docs-platform-automation
     type: git
     source:
       uri: https://github.com/pivotal/docs-platform-automation
+      branch: develop
 
   - name: deployments
     type: git
