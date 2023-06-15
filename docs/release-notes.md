@@ -28,6 +28,12 @@ May 5, 2023
 - Delete all python files from vsphere-only docker image
 
 
+## v4.4.32
+June 15, 2023
+
+
+
+
 ## v4.4.31
 May 5, 2023
 
