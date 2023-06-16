@@ -185,6 +185,100 @@ In the event that we _do_ release such changes
 despite our best intentions and efforts,
 we should release a subsequent patch that documents and reverts the changes.
 
+## ⭐️ New OSSPI Process to obtain the ODP & OSL files from OSM ⭐️
+When you commit your change to the Platform Automation Toolkit, propagate your committed change through the `ci` pipeline **until** you are ready to start the [bump-previous-versions-trigger job](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/latest), right before you plan to release the integrated change. This current process is unforunately very new and very manual. However, our instructions shall guide you through the process!
+
+### When to do this process❓
+If your changes have altered the packages being used in the [Platform Automation Image](dev.registry.pivotal.io/platform-automation/platform-automation-image) or in the [om-cli](), then you more than likely have to perform the OSM process. 
+*  If you see changes to any go.mod files or any updates to the image itself, you should perform OSM. 
+* 🤔 If you're unsure, it never hurts to run through our OSM process as it will report no changes if there are actually none.
+
+### BOSS Director 🎬
+To begin actually getting a product into OSM, the new product release versions must first be uploaded to [BOSS Director](https://vmware-lme.my.salesforce.com/) ([wiki](https://confluence.eng.vmware.com/display/VESVLM/BOSS+Director+Home)). Unfortunately, a manager with elevated privileges must submit these on our team's behalf. 
+
+Currently our team's contact for this is [Mark Arroyo](https://vmware.slack.com/archives/D04LUAQGFU4). To help Mark make the entries in BOSS Director, you must provide him the new version numbers of your release. You will need a version number for all 3 of our releases:
+* `5.1.x`
+* `5.0.x`
+* `4.4.x`
+ 
+If you can't determine these, look in the `get: version` task in the following jobs:
+* [update-v4.4](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v4.4/builds/latest)
+* [update-v5.0](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.0/builds/latest)
+* [update-v5.1](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.1/builds/latest)
+
+Your versions will be the next in sequence from the highest version seen in that task, usually the next in sequence from the current latest releases.
+
+Approval can take a few days, it's on the [#bossd-assist](https://vmware.slack.com/archives/C01KLN7HZ7G) team from here until they add it.
+
+### Make the new 4.4.x Release 🖥️
+
+After the new releases are confirmed by the BOSS Director, log into [OSM](https://osm.eng.vmware.com/oss/#/) and click `Add a Version / Clone Packages`. When you're in this view, we're going to enter the Platform Automation Toolkit information like so:
+
+* **OSM Release Name** -> `platform-automation`
+* **New Version / Clone to Version** -> `4.4.x`
+* **First Milestone Release** -> `GA`
+* **Release Manager** -> `arroyoma@vmware.com`
+* **Product Manager** -> `arroyoma@vmware.com`
+* **Engineering Manager** -> `arroyoma@vmware.com`
+* **CC List** -> `Anyone else you want to involve in this process`
+* **Product License Type** -> `VMW_Proprietary`
+* **Distributed with VMware Release Name** -> `Platform Automation Toolkit`
+* **Distributed with VMware Release Version** -> `4.4.x`
+* **Requested Open Source License Date** -> `Today's date + 2 weeks, at least`
+* NOTES:
+  * `4.4.x` should be the actual new 4.4.x series version. 
+  * We will clone `5.0.x` & `5.1.x` later.
+  * There is no VP or OSPO contact to add in this form.
+  * Do not check the box for  "This release is not distributed as a standalone release".
+  * "Distributed with VMware Release Version" will only show what's in the BOSS Director.
+  * "Requested Open Source License Date" needs 2 weeks of leeway, for reasons.
+
+Once the form is completed, you should be able to click the `Submit Request` button, so do it!
+
+### "Automated" OSSPI Tool Time 🛠️
+Take the actual `4.4.x` version and  commit it to the [osspi-pipeline.yml](https://github.com/pivotal/docs-platform-automation/blob/develop/ci/ci/osspi-pipeline.yml) for the following tasks: 
+
+* [osspi-scan-om](https://github.com/pivotal/docs-platform-automation/blob/develop/ci/ci/osspi-pipeline.yml#L52)
+* [osspi-scan-docker](https://github.com/pivotal/docs-platform-automation/blob/develop/ci/ci/osspi-pipeline.yml#L79)
+
+Updating the new version allows the OSM platform know that you are submitting scans for that OSM release you've just created. Once you have commited this change to the pipeline yaml, run the [OSM Job](https://runway-ci.eng.vmware.com/teams/ppe-platform-automation/pipelines/osspi/jobs/osm/builds/latest).
+
+The scans are going to run PPE's integrated versions of the `run-osspi-source` & `run-osspi-docker` jobs based on [Tony Wong's norsk-to-osspi tasks](https://gitlab.eng.vmware.com/source-insight-tooling/norsk-to-osspi/-/tree/main/tasks/osspi). We're scanning the `om-cli` & our Platform Automation Image for changes to report to OSM for compliance. The results will upload using [Ryan Hall's](https://vmware.slack.com/archives/DUWBJE4RL) API key for the OSM platform. Once the jobs are all green in the OSSPI Pipeline, validate the scans are in OSM.
+
+* Go to [OSM Releases](https://osm.eng.vmware.com/oss/#/release).
+* Filter by **Release Name** of `platform-automation`.
+* Click on the `4.4.x` release version you uploaded for.
+* You should see a link to `View all open source packages in this release`
+
+From here, it's more waiting, it's on our [#OSM Team](https://vmware.slack.com/archives/C41ELJFA5) to confirm the uploaded results. The emails added to the release when you created should get updates on the analysis progress. Resolve any issues they report to advance the process, you will likely just need to point them in the direction of any package sources they can't find.
+
+If everything is approved at this point, you should see all the release's packages in an `APPROVED` and/or `RESOLVED` state. In the OSM Release page, there will be links to get what we need, ODP & OSL. 
+
+### Download the new 4.4.x OSL
+* Go to [OSM Releases](https://osm.eng.vmware.com/oss/#/release).
+* Filter by **Release Name** of `platform-automation`.
+* Click on the `4.4.x` release version you uploaded for. 
+* Scroll down to the `License File Review` section.
+* Click the link to `View LFR Ticket`.
+* In the new view, you should see the OSL <open_source_license_*_GA.txt> file in the `Distributed OSLs` section. Download it and save it to upload it to S3.
+
+### Download the new 4.4.x ODP
+* Go to [OSM Releases](https://osm.eng.vmware.com/oss/#/release).
+* Filter by **Release Name** of `platform-automation`.
+* Click on the `4.4.x` release version you uploaded for.
+* Click on the `ODP` tab.
+* Click the button for `Generate ODP`. This will take a moment.
+* Once the ODP is ready, you should see a link in the `ODP Image` section of this view.
+* Download the ODP, and save it to upload it to S3.
+
+### Upload the ODP & OSL to S3 🪣
+
+* Get the credentials for S3 user `name` in LastPass
+
+
+
+
+
 ## ODP and OSL
 In the `ci` pipeline, the [`bump-test-image-dependency-stability`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-test-image-dependency-stability/builds/1) job
 validates that our packages have not changed.
