@@ -217,7 +217,7 @@ resources:
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
   version:
-    path: image-receipt-5.1.0-rc.139
+    path: image-receipt-5.2.0-rc.131
 - name: image-receipt-s3
   type: s3
   source:
