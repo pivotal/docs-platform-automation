@@ -20,10 +20,10 @@ fi
 echo "$USERNAME" "$API_KEY" > apiKeyFile
 
 echo "Getting product by name and version to fetch current release ID."
-RELEASE_SEARCH_URL="$ENDPOINT/api/public/v1/release?product_name=$PRODUCT&version=$VERSION"
+RELEASE_SEARCH_URL="$ENDPOINT/api/public/v1/release?product_name=$PRODUCT&version=$(<${VERSION_FILE})"
 echo "RELEASE_SEARCH_URL: '${RELEASE_SEARCH_URL}'"
 PROJECT_RELEASE_REQUEST=$(curl -L -H "Authorization: ApiKey $USERNAME:$API_KEY" "$RELEASE_SEARCH_URL")
-MATCHING_RELEASE=$(echo "$PROJECT_RELEASE_REQUEST" | jq ".results[] | .version |= ascii_downcase | select(.version==\"$(echo $VERSION  | tr '[:upper:]' '[:lower:]')\")")
+MATCHING_RELEASE=$(echo "$PROJECT_RELEASE_REQUEST" | jq ".results[] | .version |= ascii_downcase | select(.version==\"$(<${VERSION_FILE} | tr '[:upper:]' '[:lower:]')\")")
 RELEASE_ID=$(echo "$MATCHING_RELEASE" | jq '.id')
 echo "RELEASE_ID: '${RELEASE_ID}'"
 

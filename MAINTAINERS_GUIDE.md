@@ -192,6 +192,7 @@ When you commit your change to the Platform Automation Toolkit, propagate your c
 If your changes have altered the packages being used in the [Platform Automation Image](dev.registry.pivotal.io/platform-automation/platform-automation-image) or in the [om-cli](), then you more than likely have to perform the OSM process. 
 *  If you see changes to any go.mod files or any updates to the image itself, you should perform OSM. 
 * 🤔 If you're unsure, it never hurts to run through our OSM process as it will report no changes if there are actually none.
+* ⚠️ There should not regularly be changes to packages in Platform Automation! Any changes go to the Docker images go into _all_ released versions of Platform Automation Toolkit.
 
 ### BOSS Director 🎬
 To begin actually getting a product into OSM, the new product release versions must first be uploaded to [BOSS Director](https://vmware-lme.my.salesforce.com/) ([wiki](https://confluence.eng.vmware.com/display/VESVLM/BOSS+Director+Home)). Unfortunately, a manager with elevated privileges must submit these on our team's behalf. 
@@ -236,12 +237,7 @@ After the new releases are confirmed by the BOSS Director, log into [OSM](https:
 Once the form is completed, you should be able to click the `Submit Request` button, so do it!
 
 ### "Automated" OSSPI Tool Time 🛠️
-Take the actual `4.4.x` version and  commit it to the [osspi-pipeline.yml](https://github.com/pivotal/docs-platform-automation/blob/develop/ci/ci/osspi-pipeline.yml) for the following tasks: 
-
-* [osspi-scan-om](https://github.com/pivotal/docs-platform-automation/blob/develop/ci/ci/osspi-pipeline.yml#L52)
-* [osspi-scan-docker](https://github.com/pivotal/docs-platform-automation/blob/develop/ci/ci/osspi-pipeline.yml#L79)
-
-Updating the new version allows the OSM platform know that you are submitting scans for that OSM release you've just created. Once you have commited this change to the pipeline yaml, run the [OSM Job](https://runway-ci.eng.vmware.com/teams/ppe-platform-automation/pipelines/osspi/jobs/osm/builds/latest).
+Run the [OSM Job](https://runway-ci.eng.vmware.com/teams/ppe-platform-automation/pipelines/osspi/jobs/osm/builds/latest).
 
 The scans are going to run PPE's integrated versions of the `run-osspi-source` & `run-osspi-docker` jobs based on [Tony Wong's norsk-to-osspi tasks](https://gitlab.eng.vmware.com/source-insight-tooling/norsk-to-osspi/-/tree/main/tasks/osspi). We're scanning the `om-cli` & our Platform Automation Image for changes to report to OSM for compliance. The results will upload using [Ryan Hall's](https://vmware.slack.com/archives/DUWBJE4RL) API key for the OSM platform. Once the jobs are all green in the OSSPI Pipeline, validate the scans are in OSM.
 
@@ -273,7 +269,10 @@ If everything is approved at this point, you should see all the release's packag
 
 ### Upload the OSL & ODP to S3 🪣
 
-* Gather the [s3_access_key_id](https://github.com/pivotal/platform-automation-deployments/blob/main/concourse-credhub/export.yml#L964) and [s3_secret_access_key](https://github.com/pivotal/platform-automation-deployments/blob/main/concourse-credhub/export.yml#L961) and export them to utilize the `aws s3 cli` for uploading OSL & ODP. Once you have the credentials in place, you will use the cli to move the files to their respective bucket locations.
+* Pull the platform-automation-deployments repository and `cd platform-automation-deploments/concourse-credhub`.
+* Gather the S3 credentials for `s3://platform-automation-release-candidate` and export them to utilize the `aws s3 cli` for uploading OSL & ODP. Once you have the credentials in place, you will use the cli to move the files to their respective bucket locations.:
+   * `export AWS_ACCESS_KEY_ID=$(credhub get -q -n /concourse/main/s3_access_key_id)`
+   * `export AWS_SECRET_ACCESS_KEY=$(credhub get -q -n /concourse/main/s3_secret_access_key)`
 * **OSL**:
   * The [OSL Resource](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/resources/osl) is looking for a file called `open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt`, rename your OSL file to this.
   * `mv ~/path/to/downloaded/OSL.txt ~/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt`

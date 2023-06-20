@@ -165,7 +165,7 @@ pushd "$REPO"
     -F \
     -A apiKeyFile \
     -I "$interaction_type" \
-    -R "$PRODUCT"/"$VERSION" \
+    -R "$PRODUCT"/"$(<${VERSION_FILE})" \
     --noinput \
     "${close_out_package_managers_flag[@]}" \
     "${package_group_name_flag[@]}" \
