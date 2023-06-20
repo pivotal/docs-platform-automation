@@ -186,7 +186,7 @@ despite our best intentions and efforts,
 we should release a subsequent patch that documents and reverts the changes.
 
 ## ⭐️ New OSSPI Process to obtain the ODP & OSL files from OSM ⭐️
-When you commit your change to the Platform Automation Toolkit, propagate your committed change through the `ci` pipeline **until** you are ready to start the [bump-previous-versions-trigger job](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/latest), right before you plan to release the integrated change. This current process is unforunately very new and very manual. However, our instructions shall guide you through the process!
+When you commit your change to the Platform Automation Toolkit, propagate your committed change through the `ci` pipeline **until** you are ready to start the [bump-previous-versions-trigger job](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/latest), right before you plan to release the integrated change. The current process is very manual unfortunately, however, our instructions shall guide you through the process!
 
 ### When to do this process❓
 If your changes have altered the packages being used in the [Platform Automation Image](dev.registry.pivotal.io/platform-automation/platform-automation-image) or in the [om-cli](), then you more than likely have to perform the OSM process. 
@@ -210,7 +210,7 @@ Your versions will be the next in sequence from the highest version seen in that
 
 Approval can take a few days, it's on the [#bossd-assist](https://vmware.slack.com/archives/C01KLN7HZ7G) team from here until they add it.
 
-### Make the new 4.4.x Release 🖥️
+### Make the new 4.4.x Release in OSM 🖥️
 
 After the new releases are confirmed by the BOSS Director, log into [OSM](https://osm.eng.vmware.com/oss/#/) and click `Add a Version / Clone Packages`. When you're in this view, we're going to enter the Platform Automation Toolkit information like so:
 
@@ -252,7 +252,7 @@ The scans are going to run PPE's integrated versions of the `run-osspi-source` &
 
 From here, it's more waiting, it's on our [#OSM Team](https://vmware.slack.com/archives/C41ELJFA5) to confirm the uploaded results. The emails added to the release when you created should get updates on the analysis progress. Resolve any issues they report to advance the process, you will likely just need to point them in the direction of any package sources they can't find.
 
-If everything is approved at this point, you should see all the release's packages in an `APPROVED` and/or `RESOLVED` state. In the OSM Release page, there will be links to get what we need, ODP & OSL. 
+If everything is approved at this point, you should see all the release's packages in an `APPROVED` and/or `RESOLVED` state. In the OSM Release page, there will be links to get what we need, OSL & ODP. 
 
 ### Download the new 4.4.x OSL
 * Go to [OSM Releases](https://osm.eng.vmware.com/oss/#/release).
@@ -271,58 +271,54 @@ If everything is approved at this point, you should see all the release's packag
 * Once the ODP is ready, you should see a link in the `ODP Image` section of this view.
 * Download the ODP, and save it to upload it to S3.
 
-### Upload the ODP & OSL to S3 🪣
+### Upload the OSL & ODP to S3 🪣
 
-* Get the credentials for S3 user `name` in LastPass
+* Gather the [s3_access_key_id](https://github.com/pivotal/platform-automation-deployments/blob/main/concourse-credhub/export.yml#L964) and [s3_secret_access_key](https://github.com/pivotal/platform-automation-deployments/blob/main/concourse-credhub/export.yml#L961) and export them to utilize the `aws s3 cli` for uploading OSL & ODP. Once you have the credentials in place, you will use the cli to move the files to their respective bucket locations.
+* **OSL**:
+  * The [OSL Resource](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/resources/osl) is looking for a file called `open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt`, rename your OSL file to this.
+  * `mv ~/path/to/downloaded/OSL.txt ~/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt`
+  * `aws s3 cp ~/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt s3://platform-automation-release-candidate`
+* **ODP**:
+  * The [ODP Resource](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/resources/osl) is looking for a file called `VMware-Tanzu-platform-automation-toolkit-5.1.2-ODP.tar.gz`, rename your ODP file to this.
+  * `mv ~/path/to/downloaded/ODP.zip ~/VMware-Tanzu-platform-automation-toolkit-5.1.2-ODP.tar.gz`
+  * `aws s3 cp ~/VMware-Tanzu-platform-automation-toolkit-5.1.2-ODP.tar.gz s3://platform-automation-release-candidate`
+  * This file is > 1GB so the upload will take a moment.
+
+### Clone the OSM Releases for 5.0.x & 5.1.x
+Now that the compliance files are in the right buckets for our CI, we need to clone the `4.4.x` release in OSM for our other versions.
+
+Log into [OSM](https://osm.eng.vmware.com/oss/#/) and click `Add a Version / Clone Packages`. When you're in this view, we're going to clone the Platform Automation Toolkit. In the "Clone Packages / Release References" box, select the following:
+
+* **From Release Name** -> `platform-automation`
+* **From Release Version** -> `4.4.x`
+
+You will need to add the remaining information:
+
+* **OSM Release Name** -> `platform-automation`
+* **New Version / Clone to Version** -> `5.0.x`/`5.1.x`
+* **First Milestone Release** -> `GA`
+* **CC List** -> `Anyone else you want to involve in this process`
+* **Distributed with VMware Release Name** -> `Platform Automation Toolkit`
+* **Distributed with VMware Release Version** -> `5.0.x`/`5.1.x`
+* **Requested Open Source License Date** -> `Today's date + 2 weeks, at least`
+* NOTES:
+  * You will need to do this twice, once for the `5.0.x` version and once for the `5.1.x` version.
+  * `5.0.x`/`5.1.x` should be the actual new 4.4.x series version. 
+  * There is no VP or OSPO contact to add in this form.
+  * Do not check the box for  "This release is not distributed as a standalone release".
+  * "Distributed with VMware Release Version" will only show what's in the BOSS Director. If you don't see the `5.0.x`/`5.1.x` release versions then the BOSS Director has not created them yet.
+  * "Requested Open Source License Date" needs 2 weeks of leeway, for reasons.
 
 
+### Resume the Release Process
+With OSL & ODP where they need to be, you may now run the [bump-previous-versions-trigger](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/latest) job. Once the job completes, it will automatically start the following update jobs:
 
+* [update-v4.4](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v4.4/builds/latest)
+* [update-v5.0](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.0/builds/latest)
+* [update-v5.1](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.1/builds/latest)
 
+If these jobs successfully pull the OSL & ODP resources, then you have succesfully performed the OSSPI Process 🎉
 
-## ODP and OSL
-In the `ci` pipeline, the [`bump-test-image-dependency-stability`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-test-image-dependency-stability/builds/1) job
-validates that our packages have not changed.
-This is because we do not have to request a new OSL if there are no new packages.
-
-The automation in the pipelines will take files from our s3 bucket: `platform-automation-release-candidate`.
-If a new OSL/ODP is required, simply upload the new file(s) to s3 and CI will handle the rest.
-
-### OSL
-This is a fully manual process. Please reference [VMware's guides](https://osm.eng.vmware.com/doc/) for creating new OSLs.
-OSLs can be downloaded directly from the OSM tool, and subsequently uploaded to s3.
-
-### ODP
-The ODP tool is completely manual at the moment.
-Kris's instructions: https://confluence.eng.vmware.com/display/CNA/ODP+for+Pivotal+Alumni+-+A+Crash+Course
-(Requires VMware VPN).
-The super basic generic walkthrough (check Kris' instructions for better detail):
-1. download the osstpmgt.csv file that contains dep #s from the OSM tool
-1. download and create osstpclients docker image
-1. mount workspace and open docker image
-1. follow Kris's instructions to get ids from csv
-1. follow Kris's instructions to run tool
-1. create BUILD.txt and INSTALL.txt in the created directory
-1. zip the ODP directory
-1. upload ODP to s3
-
-#### GOTCHAS FROM PAST ODPs
-ERROR from the osstpclients tool:
-```
-Creating/updating the skeleton directory "./VMware-tanzu-platform-automation-toolkit-5.0.0-ODP"
-Processing 1 command line defined packages
-[otc-00009]: Warning: No sources available for the package "ct-tracker-ubuntu - none" (#750049)
-Successfully exported 0 of 1 packages
-The packages that could not be created are:
-    #2456833 Other "ct-tracker-ubuntu - none"
-```
-ANALYSIS:
- the ODP tool did not like the `ct-tracker-ubuntu` package.
-    1. We had to go down the "clone chain"(`Cloned from 2361434 / View clone chain` if in OSM) until there is no more clone chain.
-    1. Click "View" on the master package: `Master Package RESOLVED / APPROVED (View)`
-    1. Click "View list of Packages": `Use Packages View list of Use Packages (133)`
-    1. export to CSV as defined in Kris's instructions
-    1. add the other IDS from PAT to the CSV
-    1. complete Kris's instructions as normal
 
 #### BUILD.txt and INSTALL.txt
 If any dependencies require SBR,
