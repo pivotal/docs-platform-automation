@@ -9,7 +9,7 @@ resources:
   - name: docs-platform-automation
     type: git
     source:
-      branch: spike/norsk-to-osspi-migration
+      branch: develop
       uri: git@github.com:pivotal/docs-platform-automation
       private_key: ((platform_automation_docs.private_key))
 
