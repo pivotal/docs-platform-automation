@@ -27,6 +27,16 @@ resources:
       password: ((tanzunet.password))
       pre_releases: true
 
+  - name: version-v4.4
+    type: semver
+    source:
+      driver: s3
+      access_key_id: ((s3.access_key_id))
+      bucket: ((s3.bucket))
+      region_name: ((s3.region_name))
+      secret_access_key: ((s3.secret_access_key))
+      key: version-v4.4
+
 jobs:
   - name: osm
     serial: true
@@ -38,6 +48,9 @@ jobs:
           - get: rc-image-tanzunet-dev
             params:
               format: oci
+          - get: version
+            resource: version-v4.4
+            params: {bump: patch}
       - task: osspi-scan-om
         file: docs-platform-automation/ci/tasks/run-osspi-source.yaml
         input_mapping:
@@ -49,7 +62,7 @@ jobs:
           USERNAME: ((osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
           PRODUCT: platform-automation
-          VERSION: 4.4.32
+          VERSION_FILE: version/version
           GITHUB_KEY: ((platform_automation_docs.private_key))
           REPO: repo2
           OSSTP_LOAD_DRY_RUN: false
@@ -76,7 +89,7 @@ jobs:
           USERNAME: ((osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
           PRODUCT: platform-automation
-          VERSION: 4.4.32
+          VERSION_FILE: version/version
           CT_TRACKER_OS: ubuntu
           TAR_PATH: image/image.tar
           TAG: latest
