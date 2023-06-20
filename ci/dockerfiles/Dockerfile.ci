@@ -66,15 +66,15 @@ RUN wget https://github.com/vmware/govmomi/releases/latest/download/govc_Linux_x
 # openstack
 RUN apt install -y python3-openstackclient
 
-# gcloud
+# add keys for gcloud and azure
 RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN apt-get -y update && apt-get -y install --no-install-recommends google-cloud-sdk
-
-# azure
 RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ focal main" | tee /etc/apt/sources.list.d/azure-cli.list
 RUN curl -L https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-RUN apt update && apt install apt-transport-https azure-cli
+RUN apt -y update
+
+# install gcloud and azure
+RUN apt -y install --no-install-recommends google-cloud-sdk apt-transport-https azure-cli
 
 
 RUN git config --global user.name "platform-automation"
