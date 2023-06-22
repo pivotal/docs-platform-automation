@@ -84,7 +84,7 @@ RUN git config --global user.email "platformautomation@groups.vmware.com"
 RUN go install github.com/onsi/ginkgo/ginkgo@latest
 
 # use to cleanup IAASes
-RUN wget -O /usr/bin/leftovers "https://github.com/genevieve/leftovers/releases/download/v0.59.0/leftovers-v0.59.0-linux-amd64"
+RUN wget -O /usr/bin/leftovers "https://github.com/genevieve/leftovers/releases/download/v0.70.0/leftovers-v0.70.0-linux-amd64"
 RUN chmod +x /usr/bin/leftovers
 
 ENV CGO_ENABLED=0
