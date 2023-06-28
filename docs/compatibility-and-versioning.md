@@ -39,6 +39,7 @@ Platform Automation Toolkit is designed to work with these dependencies.
     If using Concourse 4.x, continue using `credhub-interpolate`.
     If using Concourse 5.x+, it is strongly recommended to switch to `prepare-tasks-with-secrets`.
     For more information about secrets handling, reference the [Secrets Handling Page][secrets-handling].
+    
 <sup>2</sup>
     v4.4.32, v5.0.25, and v5.1.2 introduced a version of the Concourse image based on Ubuntu Jammy.
     Because of fundamental issues with the cgroup to cgroupv2 transition that happened between bionic and jammy, this requires changes to Concourse that are only available in Concourse v6.7.9+.
