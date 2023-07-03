@@ -391,7 +391,7 @@ the following steps must be executed.
    * delete the terraform infrastructure
    * use [leftovers](https://github.com/genevieve/leftovers) to cleanup all extra resources with the `reference-gcp` tag
 
-1. Make sure you are using Terraform 0.14+
+1. Make sure you are using Terraform 1.0+
 2. Recreate the terraform infrastructure using the instructions in platform-automation-deployments [`reference-gcp` README](https://github.com/pivotal/platform-automation-deployments/blob/main/reference-gcp/README.md)
 3. Commit the terraform.tfstate
 4. (Optional) `platform-automation-deployments/reference-gcp/terraform-outputs.json` is present for convenience, and was crafted by executing the following commands inside the `reference-gcp` directory:
@@ -411,10 +411,13 @@ the following steps must be executed.
    terraform output -json stable_config_pas | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
    terraform output -json stable_config_pks | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
    ```
+   **DO NOT COMMIT THESE UPDATES YET!**
 
-1. The terraform outputs contain secrets. 
+1. The terraform outputs contain secrets.
+ 
    **_REMEMBER_**: `docs-platform-automation-reference-pipeline-config` is a public repo.
-   _Do not store secrets in a public repo_
+
+   We will need to strip out any secrets before committing our updated vars files.
    
    Update the following values in [`export.yml`](https://github.com/pivotal/platform-automation-deployments/blob/main/concourse-credhub/export.yml) using values from the terraform outputs:
 
