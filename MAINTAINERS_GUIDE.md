@@ -434,6 +434,10 @@ the following steps must be executed.
 
    Remove the above secrets from `vars/director.yml`, `vars/tas.yml`, `vars/pks.yml`
 
+   We also needed to delete the `ops_manager_dns` secret from `foundations/sandbox/vars/director.yml`. 
+
+	> Secrets in om's env.yml file are a special case and need to be stored in Credhub and passed as Environment Variables in the task.yml (ops_manager_dns should already be in export.yml and doesn't need to be updated)
+
 1. To store/edit values in Credhub, export the vars from the `.envrc` in `platform-automation-deployments/concourse-credhub`.
    You can now access Credhub as normal. Run:
     ```bash
