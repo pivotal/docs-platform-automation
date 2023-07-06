@@ -411,6 +411,7 @@ the following steps must be executed.
    terraform output -json stable_config_pas | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
    terraform output -json stable_config_pks | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
    ```
+   	> YAML is a superset of JSON. This means that any JSON is a valid YAML file!  The om tooling only parses files with var files with `.yml|.yaml` extensions so that's why we're naming our JSON var files YAML!
    **DO NOT COMMIT THESE UPDATES YET!**
 
 1. The terraform outputs contain secrets.
