@@ -646,3 +646,4 @@ affecting Platform Automation Toolkit:
 USN-####-#: pkg-name vulnerability
 ```
 These should be handled using the steps detailed in the `CVEs and Patching Steps` section.
+
