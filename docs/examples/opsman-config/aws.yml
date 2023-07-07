@@ -8,6 +8,8 @@ opsman-configuration:
     key_pair_name: ops-manager-key  # used to ssh to VM
     iam_instance_profile_name: env_ops_manager
 
+    authentication_type: access-key # Allowed values are access-key, instance-profile or assume-role
+
     # At least one IP address (public or private) needs to be assigned to the
     # VM. It is also permissible to assign both.
     public_ip: 1.2.3.4      # Reserved Elastic IP
