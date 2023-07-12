@@ -507,11 +507,11 @@ GCP Load Balancers [do not support](https://issuetracker.google.com/issues/35904
 1. Target the Platform Automation Concourse Credhub instance.
   * `cd ~/workspace/platform-automation-deployments/concourse-credhub`
 1. Grab a copy of the [Releng CA Certificate](https://3.basecamp.com/4957863/buckets/20459415/documents/4860240754) and upload it to to Credhub so we can sign our new certificate with it.
-  * `credhub set -t certificate -n '/test/releng_ca' -c /tmp/releng.crt -p /tmp/releng.key`
+  * `credhub set -t certificate -n '/concourse/main/reference-pipeline/ca_certificate' -c /tmp/releng.crt -p /tmp/releng.key`
 1. Generate a 2048 bit key signed by our CA with the correct SANs for our reference foundation.
 
   ```
-  credhub generate -t certificate --ca /test/releng_ca -n /test/reference-certificate -d 720 \
+  credhub generate -t certificate --ca /concourse/main/reference-pipeline/ca_certificate -n /test/reference-certificate -d 720 \
   -k 2048 -o VMware -u PPE -i "San Francisco" -s California -y US \
   -c reference-gcp.gcp.platform-automation.cf-app.com \
   -a "*.sys.reference-gcp.gcp.platform-automation.cf-app.com" \
