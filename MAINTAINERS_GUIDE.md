@@ -406,12 +406,13 @@ the following steps must be executed.
    Vars files for the reference pipeline can be found in `docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars`.
    To update these files, from inside the platform-automation-deployments/reference-gcp directory:
 
+   **DO NOT COMMIT THESE UPDATES YET!**
+
    ```bash
    terraform output -json stable_config_opsmanager | jq -r | jq > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/director.yml
    terraform output -json stable_config_pas | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/tas.yml
    terraform output -json stable_config_pks | jq -r | jq  > ~/workspace/docs-platform-automation-reference-pipeline-config/foundations/sandbox/vars/pks.yml
    ```
-**DO NOT COMMIT THESE UPDATES YET!**
    	> FYI... YAML is a superset of JSON. This means that any JSON is a valid YAML file!  The om tooling only parses files with var files with `.yml|.yaml` extensions so that's why we're using .yml extensions on the files we're writing JSON output to.
 
 
