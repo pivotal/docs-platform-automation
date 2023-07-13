@@ -13,7 +13,7 @@ secret="$(om --env "$ENV_FILE" \
   --credential-reference '.properties.pks_uaa_management_admin_client' --format json | jq -r .secret)"
 uaac token client get admin -s "$secret"
 
-userExists="$(uaac user get platform-automation)"
+userExists="$(uaac user get platform-automation)" || true
 if [[ "$userExists" == *"CF::UAA::NotFound: CF::UAA::NotFound"* ]]; then
   echo "Creating the platform-automation user in UAA..."
   uaac user add platform-automation --emails platform-automation@example.com -p super-secret-password
