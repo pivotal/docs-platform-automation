@@ -484,7 +484,7 @@ The task will perform the following steps, documented here for the purposes of m
 1. Create a user that will be the owner of the cluster.
     ```bash
     ssh -i /tmp/key ubuntu@opsmanager.reference-gcp.gcp.platform-automation.cf-app.com
-    uaac target https://api.pks.reference-gcp.gcp.platform-automation.cf-app.com:8443 --ca-cert /var/tempest/workspaces/default/root_ca_certificate
+    uaac target https://api.pks.reference-gcp.gcp.platform-automation.cf-app.com:8443 --ca-cert /tmp/releng_ca_certificate
     uaac token client get admin -s <uaa admin management secret>
     uaac user add platform-automation --emails platform-automation@example.com -p <super-secret-password>
     uaac member add pks.clusters.admin platform-automation
