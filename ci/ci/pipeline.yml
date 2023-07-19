@@ -137,37 +137,41 @@ resources:
     username: ((srp-cli-registry-creds.username))
     password: ((srp-cli-registry-creds.password))
 - name: osl
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_(.*)_GA.txt
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: odp
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: VMware-Tanzu-platform-automation-toolkit-(.*)-ODP.tar.gz
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: rc-image-s3
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: platform-automation-image-(.*).tgz
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: rc-image-s3-vsphere
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: vsphere-platform-automation-image-(.*).tar.gz
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: image-tanzunet-dev
   type: registry-image
   source:
@@ -185,71 +189,79 @@ resources:
     pre_releases: true
     tag: develop
 - name: rc-tasks-s3
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: platform-automation-tasks-(.*).zip
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: rc-image-receipt-s3
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: image-receipt-(.*)
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: rc-vsphere-image-receipt-s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: vsphere/image-receipt-(.*)
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
-  type: s3
 - name: osl-validated-image-receipt-s3
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: image-receipt-(.*)
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
   version:
     path: image-receipt-5.2.0-rc.131
 - name: image-receipt-s3
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: image-receipt-(.*)
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: platform-automation-tasks-s3
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.pivnet_products))
     regexp: platform-automation-tasks-(.*).zip
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key)) 
 - name: platform-automation-image-s3
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.pivnet_products))
     regexp: platform-automation-image-(.*).tgz
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: version
-  type: semver
+  type: semver-with-arn
   source:
     driver: s3
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    assume_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
     key: version
     initial_version: 0.0.1-rc.1
 - name: daily
@@ -353,13 +365,14 @@ resources:
     key: #@ "version-" + version.number
 #@ end
 - name: binaries-table
-  type: s3
+  type: s3-with-arn
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_with_role.access_key_id))
+    secret_access_key: ((s3_with_role.secret_access_key))
+    aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3.buckets.release_candidate))
     regexp: bump-image-cli-versions-(.*).md
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
 - name: om
   type: git
   source:
@@ -412,6 +425,16 @@ resource_types:
   source:
     repository: ((docker.ci-repository))
     tag: buildinfo
+- name: s3-with-arn
+  type: docker-image
+  source:
+    repository: concourse/s3-resource
+    tag: 1.2.1-ubuntu
+- name: semver-with-arn
+  type: docker-image
+  source:
+    repository: concourse/semver-resource
+    tag: 1.6.0-ubuntu
 
 jobs:
 - name: build-ci-image
