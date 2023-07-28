@@ -408,25 +408,30 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
 
-``` yaml tab="AWS"
-{% include './examples/state/aws.yml' %}
-```
+=== "AWS"
+    ``` yaml
+    --8<-- 'docs/examples/state/aws.yml'
+    ```
 
-``` yaml tab="Azure"
-{% include './examples/state/azure.yml' %}
-```
+=== "Azure"
+    ``` yaml
+    --8<-- 'docs/examples/state/azure.yml'
+    ```
 
-``` yaml tab="GCP"
-{% include './examples/state/gcp.yml' %}
-```
+=== "GCP"
+    ``` yaml
+    --8<-- 'docs/examples/state/gcp.yml'
+    ```
 
-``` yaml tab="OpenStack"
-{% include './examples/state/openstack.yml' %}
-```
+=== "OpenStack"
+    ``` yaml
+    --8<-- 'docs/examples/state/openstack.yml'
+    ```
 
-``` yaml tab="vSphere"
-{% include './examples/state/vsphere.yml' %}
-```
+=== "vSphere"
+    ``` yaml
+    --8<-- 'docs/examples/state/vsphere.yml'
+    ```
 
 Find what you need for your IaaS,
 write it in your repo as `state.yml`,
