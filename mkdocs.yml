@@ -25,8 +25,14 @@ markdown_extensions:
       check_paths: true
   - pymdownx.superfences
   - pymdownx.tabbed
-  - sane_lists
   - pymdownx.details
+  - sane_lists
+  - markdown-code-excerpt:
+      sections:
+        tasks: "../platform-automation"
+        examples: "./docs/examples"
+        reference: "./external/docs-platform-automation-reference-pipeline-config"
+        paving: "./external/paving"
 extra_javascript:
 - https://cdnjs.cloudflare.com/ajax/libs/mermaid/7.1.2/mermaid.min.js
 nav:
