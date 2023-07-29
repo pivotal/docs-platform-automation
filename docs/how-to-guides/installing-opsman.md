@@ -353,11 +353,16 @@ The properties available vary by IaaS, for example:
 * ssh key
 * datacenter/availability zone/region
 
-{% code_snippet 'examples', 'aws-configuration', 'AWS' %}
-{% code_snippet 'examples', 'azure-configuration', 'Azure' %}
-{% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
-{% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
-{% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
+=== "AWS"
+    ---excerpt--- "examples/aws-configuration"
+=== "Azure"
+    ---excerpt--- "examples/azure-configuration"
+=== "GCP"
+    ---excerpt--- "examples/gcp-configuration"
+=== "Openstack"
+    ---excerpt--- "examples/openstack-configuration"
+=== "vSphere"
+    ---excerpt--- "examples/vsphere-configuration"
 
 Once you have your config file, commit and push it:
 
