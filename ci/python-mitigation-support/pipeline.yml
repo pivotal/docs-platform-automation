@@ -53,45 +53,45 @@ resources:
     access_key_id: ((s3_with_role.access_key_id))
     secret_access_key: ((s3_with_role.secret_access_key))
     aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3.buckets.release_candidate))
+    bucket: ((s3_with_role.buckets.release_candidate))
     regexp: open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_(.*)_GA.txt
-    region_name: ((s3.region_name))
+    region_name: ((s3_with_role.region_name))
 - name: odp
   type: s3-with-arn
   source:
     access_key_id: ((s3_with_role.access_key_id))
     secret_access_key: ((s3_with_role.secret_access_key))
     aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3.buckets.release_candidate))
+    bucket: ((s3_with_role.buckets.release_candidate))
     regexp: VMware-Tanzu-platform-automation-toolkit-(.*)-ODP.tar.gz
-    region_name: ((s3.region_name))
+    region_name: ((s3_with_role.region_name))
 - name: image-receipt-s3
   type: s3-with-arn
   source:
     access_key_id: ((s3_with_role.access_key_id))
     secret_access_key: ((s3_with_role.secret_access_key))
     aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3.buckets.release_candidate))
+    bucket: ((s3_with_role.buckets.release_candidate))
     regexp: image-receipt-(.*)
-    region_name: ((s3.region_name))
+    region_name: ((s3_with_role.region_name))
 - name: rc-image-s3
   type: s3-with-arn
   source:
     access_key_id: ((s3_with_role.access_key_id))
     secret_access_key: ((s3_with_role.secret_access_key))
     aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3.buckets.release_candidate))
+    bucket: ((s3_with_role.buckets.release_candidate))
     regexp: platform-automation-image-(.*).tgz
-    region_name: ((s3.region_name))
+    region_name: ((s3_with_role.region_name))
 - name: rc-tasks-s3
   type: s3-with-arn
   source:
     access_key_id: ((s3_with_role.access_key_id))
     secret_access_key: ((s3_with_role.secret_access_key))
     aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3.buckets.release_candidate))
+    bucket: ((s3_with_role.buckets.release_candidate))
     regexp: platform-automation-tasks-(.*).zip
-    region_name: ((s3.region_name))
+    region_name: ((s3_with_role.region_name))
 jobs:
 #@ for version in data.values.versions:
 - name: #@ "update-" + version.branch_name
