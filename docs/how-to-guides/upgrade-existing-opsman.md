@@ -408,25 +408,30 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
 
-``` yaml tab="AWS"
-{% include './examples/state/aws.yml' %}
-```
+=== "AWS"
+    ``` yaml
+    --8<-- 'docs/examples/state/aws.yml'
+    ```
 
-``` yaml tab="Azure"
-{% include './examples/state/azure.yml' %}
-```
+=== "Azure"
+    ``` yaml
+    --8<-- 'docs/examples/state/azure.yml'
+    ```
 
-``` yaml tab="GCP"
-{% include './examples/state/gcp.yml' %}
-```
+=== "GCP"
+    ``` yaml
+    --8<-- 'docs/examples/state/gcp.yml'
+    ```
 
-``` yaml tab="OpenStack"
-{% include './examples/state/openstack.yml' %}
-```
+=== "OpenStack"
+    ``` yaml
+    --8<-- 'docs/examples/state/openstack.yml'
+    ```
 
-``` yaml tab="vSphere"
-{% include './examples/state/vsphere.yml' %}
-```
+=== "vSphere"
+    ``` yaml
+    --8<-- 'docs/examples/state/vsphere.yml'
+    ```
 
 Find what you need for your IaaS,
 write it in your repo as `state.yml`,
@@ -452,35 +457,41 @@ in your IaaS's console
 look at your terraform outputs)
 to find the necessary values.
 
-{% code_snippet 'examples', 'aws-configuration', 'AWS' %}
-{% code_snippet 'examples', 'azure-configuration', 'Azure' %}
-{% code_snippet 'examples', 'gcp-configuration', 'GCP' %}
-{% code_snippet 'examples', 'openstack-configuration', 'Openstack' %}
-{% code_snippet 'examples', 'vsphere-configuration', 'vSphere' %}
+=== "AWS"
+    ---excerpt--- "examples/aws-configuration"
+=== "Azure"
+    ---excerpt--- "examples/azure-configuration"
+=== "GCP"
+    ---excerpt--- "examples/gcp-configuration"
+=== "Openstack"
+    ---excerpt--- "examples/openstack-configuration"
+=== "vSphere"
+    ---excerpt--- "examples/vsphere-configuration"
 
 Alternatively, you can auto-generate your opsman.yml
 using a `p-automator` command to output an opsman.yml file
-in the directory it is called from. 
+in the directory it is called from.
 
-```bash tab="AWS"
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-  p-automator export-opsman-config \
-  --state-file generated-state/state.yml \
-  --config-file opsman.yml \
-  --aws-region "$AWS_REGION" \
-  --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-  --aws-access-key-id "$AWS_ACCESS_KEY_ID"
-```
-
-```bash tab="GCP"
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-  p-automator export-opsman-config \
-  --state-file generated-state/state.yml \
-  --config-file opsman.yml \
-  --gcp-zone "$GCP_ZONE" \
-  --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
-  --gcp-project-id "$GCP_PROJECT_ID"
-```
+=== "AWS"
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+      p-automator export-opsman-config \
+      --state-file generated-state/state.yml \
+      --config-file opsman.yml \
+      --aws-region "$AWS_REGION" \
+      --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+      --aws-access-key-id "$AWS_ACCESS_KEY_ID"
+    ```
+=== "GCP"
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+      p-automator export-opsman-config \
+      --state-file generated-state/state.yml \
+      --config-file opsman.yml \
+      --gcp-zone "$GCP_ZONE" \
+      --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
+      --gcp-project-id "$GCP_PROJECT_ID"
+    ```
 
 Once you have your config file, commit and push it:
 
@@ -515,7 +526,7 @@ git push
 
 Now, we can put it all together:
 
-```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46"
+```yaml hl_lines="16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42"
 - name: upgrade-opsman
   serial: true
   plan:
@@ -576,7 +587,7 @@ Before we run the job,
 we should [`ensure`][ensure] that `state.yml` is always persisted
 regardless of whether the `upgrade-opsman` job failed or passed.
 To do this, we can add the following section to the job:
-```yaml hl_lines="49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68"
+```yaml hl_lines="43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62"
 - name: upgrade-opsman
   serial: true
   plan:
