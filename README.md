@@ -13,7 +13,7 @@ https://docs-pcf-staging.tas.vmware.com/platform-automation/
 # Usage
 
 We use [`mkdocs`](https://www.mkdocs.org/) for our documentation engine.
-To use it locally, it will require `python3` to be installed.
+To use it locally. It will require `python3` to be installed.
 
 ```
 pip3 install -U -r requirements.txt
