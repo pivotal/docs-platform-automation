@@ -1,13 +1,17 @@
-## Platform Automation Toolkit Tasks
+# Platform Automation Toolkit Tasks
+
+
 This document lists each Platform Automation Toolkit task,
 and provides information about their intentions, inputs, and outputs.
 
 The tasks are presented, in their entirety,
 as they are found in the product.
 
+## Task types
+
 The docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information.
-To learn more see the [running-commands-locally][running-commands-locally] section.
+To learn more see [Running commands locally][running-commands-locally].
 
 ### activate-certificate-authority
 
@@ -26,7 +30,7 @@ Triggers an install on the Ops Manager described by the auth file.
 
 To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
-To see an example of this config file, see the [Inputs and Outputs][errand-config] section.
+To see an example of this config file, see the [Inputs and outputs][inputs-outputs.md] section.
 
 {% include '.disable-verifiers.md' %}
 

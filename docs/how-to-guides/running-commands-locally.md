@@ -1,3 +1,5 @@
+# Running commands locally
+
 This topic describes how to execute commands locally with Docker.
 
 If you wish to use the underlying `om` and `p-automator` CLI tools from your local workstation,
@@ -9,7 +11,7 @@ With `om` it's more a matter of convenience -
 you can just as easily [download the binary][om-releases] if it's available for your system.
 
 
-## Executing Commands
+## Executing commands
 
 To execute commands in Docker:
 
@@ -33,7 +35,7 @@ To execute commands in Docker:
     Note:  that this will have access read and write files in your current working directory.
     If you need to mount other directories as well, you can add additional `-v` arguments.
 
-## Useful Commands
+## Useful commands
 
 ### Retrieving Product Staged Configuration
 

@@ -1,10 +1,12 @@
+# Recovering and upgrading Tanzu Operations Manager
+
 This topic provides an overview 
-of upgrading and recovering an Ops Manager using Platform Automation Toolkit,
+of upgrading and recovering a VMware Tanzu Operations Manager using Platform Automation Toolkit,
 including common errors.
 
 {% include "./.export_installation_note.md" %}
 
-## Upgrading Ops Manager
+## Upgrading Tanzu Operations Manager
 
 It's important to note when upgrading your Ops Manager:
 
@@ -13,7 +15,7 @@ It's important to note when upgrading your Ops Manager:
 * installation is separate from upgrade
 * an initial installation is done, which maintains state
 
-### Upgrade Flowchart
+### Upgrade flowchart
 The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Ops Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 

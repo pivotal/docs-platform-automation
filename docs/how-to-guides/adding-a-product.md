@@ -1,4 +1,4 @@
-# Extending a Pipeline to Install a Product
+# Extending a pipeline to install a product
 
 This how-to-guide will teach you how to add a product to an existing pipeline.
 This includes downloading the product from Pivnet,
@@ -15,7 +15,7 @@ check out [Installing Ops Manager][install-how-to] and
 1. The Platform Automation Toolkit Docker Image [imported and ready to run][running-commands-locally].
 1. A glob pattern uniquely matching one product file on Tanzu Network.
 
-### Assumptions About Your Existing Pipeline
+### Assumptions About your Existing Pipeline
 This guide assumes you're working
 from one of the pipelines created in previous guides,
 but you don't _have_ to have exactly that pipeline.
@@ -38,7 +38,7 @@ You should be able to use the pipeline YAML in this document with any pipeline,
 as long as you make sure the above names match up with what's in your pipeline,
 either by changing the example YAML or your pipeline.
 
-## Download Upload And Stage Product to Ops Manager
+## Download, upload, and stage product to Tanzu Operations Manager
 For this guide, we're going to add the [TAS][tas] product.
 
 ### Download

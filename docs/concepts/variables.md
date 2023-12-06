@@ -1,6 +1,6 @@
-# Variables
+# Platform Automation Toolkit variables
 
-## What are Platform Automation Toolkit variables?
+
 Variables provide a way to define parameters for a YAML document. Each variable has a value
 and can be referenced in one or more locations. Variables are used in the Platform Automation Toolkit
 [tasks][task-reference]. One example usage is in [configure director][configure-director]. 

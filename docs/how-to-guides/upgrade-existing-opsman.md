@@ -1,4 +1,4 @@
-# Writing a Pipeline to Upgrade an Existing Ops Manager
+# Writing a pipeline to upgrade an existing VMware Tanzu Operations Manager
 
 This how-to-guide shows you how to create a pipeline for upgrading an existing Ops Manager VM.
 If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-how-to].
@@ -6,7 +6,7 @@ If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-
 {% set upgradeHowTo = True %}
 {% include ".getting-started.md" %}
 
-### Exporting The Installation
+## Exporting the installation
 
 We're finally in a position to do work!
 
@@ -331,7 +331,7 @@ git commit -m "Export foundation installation in CI"
 git push
 ```
 
-### Performing The Upgrade
+## Performing the upgrade
 
 Now that we have an exported installation,
 we'll create another Concourse job to do the upgrade itself.

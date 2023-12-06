@@ -1,4 +1,5 @@
-## Using a Secrets Store to Store Credentials
+# Using a Secrets Store to Store Credentials
+
 Secrets stores, such as Credhub, can be used to store secure properties that you don't want committed into a config file.
 Within your pipeline, the config file can then reference that secrets store value for runtime evaluation.
 
@@ -8,7 +9,7 @@ Platform Automation Toolkit Tasks contains two tasks to help with retrieving the
    the [`prepare-tasks-with-secrets`](#using-prepare-tasks-with-secrets) task can be used with any Concourse supported [secrets store][concourse-secrets-handling].
 2. The [`credhub-interpolate`](#using-credhub-interpolate) task can only be used with Credhub.
 
-### Using prepare-tasks-with-secrets
+## Using prepare-tasks-with-secrets
 The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task takes a set of tasks
 and modifies them to include environment variables referencing the variables found in the provided config files.
 This allows use of the native [Concourse secrets handling][concourse-secrets-handling]
@@ -184,7 +185,7 @@ run:
   path: platform-automation-tasks/tasks/configure-director.sh
 ```
 
-#### Replacing credhub-interpolate with prepare-tasks-with-secrets
+### Replacing credhub-interpolate with prepare-tasks-with-secrets
 If you already have implemented the [`credhub-interpolate`][credhub-interpolate] task within your pipeline,
 this solution should be a _drop in replacement_ if you are not using vars files. 
 Note this is only a replacement if using Concourse 5.x or greater.
@@ -229,7 +230,7 @@ Notice in the above:
   Since the tasks are using concourse's native credential management, the lookup path is predetermined.
   For example, `/concourse/:team_name/:cred_name` or `/concourse/:team_name/:pipeline_name/:cred_name`.
 
-###  Using credhub-interpolate
+##  Using credhub-interpolate
 The [credhub-interpolate][credhub-interpolate] task can only be used with Credhub.
 
 **If using Concourse 5.x+, It is recommended to use the [prepare-tasks-with-secrets][prepare-tasks-with-secrets] task instead.**
@@ -423,6 +424,7 @@ There are three ways to include certificates in the yaml files that are used by 
     ```
 
 ## Storing values for Multi-foundation
+
 ### Concourse Supported Secrets Store
 If you have multiple foundations, store relevant keys to that foundation in a different pipeline path,
 and Concourse will read those values in appropriately.

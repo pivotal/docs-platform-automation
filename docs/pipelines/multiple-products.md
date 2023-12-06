@@ -1,6 +1,8 @@
-Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't - we recommend you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
+# Tanzu Operations Manager and multiple products
 
-These Concourse pipelines are examples on how to use the [tasks](../tasks.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
+Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't. VMware recommends that you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
+
+These Concourse pipelines are examples of how to use the [tasks](../tasks.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
 
 ## Prerequisites
 
@@ -32,7 +34,7 @@ necessary to configure an Ops Manager product using the `om` tool. This can be u
 !!! info "Retrieving products from Tanzu Network"
     Please ensure products have been procured from Tanzu Network using the [reference-resources][reference-resources].
 
-## Installing Ops Manager and multiple products
+## Installing VMware Tanzu Operations Manager and multiple products
 
 The pipeline shows how to compose the tasks
 to install Ops Manager and the Tanzu Application Service and Healthwatch products.

@@ -1,17 +1,17 @@
-# Stemcell Handling
+# Handling stemcells
 
-## What is Stemcell Handling?
+
 In Ops Manager, every product uploaded and staged needs to be given a [stemcell][bosh-stemcell] in 
 order to operate. By default, every stemcell uploaded to Ops Manager will automatically associate
 with any new or existing products. Using the automation tasks, this default can be overridden to
 not have a stemcell associate with any products, and can be manually assigned as deemed necessary
-by the user. 
+by the user.
 
-## Why do your Stemcell Handling Manually?
+## Why do your stemcell Handling manually?
 Unless there is a specific need to manually handle the stemcells in Ops Manager, it is recommended
 to use the default. A common use case for manual stemcell handling is updating the product stemcells 
 one at a time to minimize downtime during apply changes. This is particularly beneficial in environments
-with large numbers of tiles that share the same stemcell. 
+with large numbers of tiles that share the same stemcell.
 
 ## How to use the Stemcell Handling Tasks in Automation
 Platform Automation Toolkit has tasks that will assist in the manual handling of stemcells within

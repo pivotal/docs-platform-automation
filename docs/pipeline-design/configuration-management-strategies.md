@@ -1,4 +1,4 @@
-# Configuration Management Strategies
+# Configuration management strategies
 
 When building pipelines,
 there are many possible strategies
