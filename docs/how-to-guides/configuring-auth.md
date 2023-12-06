@@ -1,7 +1,10 @@
-## Generating an Auth File
+# Generating an Auth file
+
 Ops Manager's authentication system can be configured several ways.
 The format of the configuration file varies
 according to the authentication method to be used.
+
+## Examples
 
 ### [configure-authentication][configure-authentication]:
 ---excerpt--- "examples/auth-configuration"

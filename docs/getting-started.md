@@ -1,3 +1,5 @@
+# Getting started
+
 If you are using Platform Automation Toolkit for the first time,
 you have a few options.
 

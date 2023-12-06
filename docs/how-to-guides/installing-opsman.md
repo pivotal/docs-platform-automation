@@ -1,10 +1,11 @@
 # Writing a Pipeline to Install Ops Manager
+
 This how-to-guide shows you how to write a pipeline for installing a new Ops Manager.
 If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to].
 
 {% include ".getting-started.md" %}
 
-### Downloading Ops Manager
+## Downloading Ops Manager
 
 We're finally in a position to do work!
 
@@ -210,7 +211,7 @@ git commit -m 'download the Ops Manager image'
 git push
 ```
 
-### Creating Resources for Your Ops Manager
+## Creating Resources for Your Ops Manager
 
 Before Platform Automation Toolkit can create a VM for your Ops Manager installation,
 there are certain resources required by the VM creation and Ops Manager director installation processes.
@@ -340,7 +341,7 @@ Platform Automation Toolkit will do this for you.
 _NOTE_: if you need to install an earlier version of Ops Manager,
 select your desired version from the dropdown at the top of the page.
 
-### Creating the Ops Manager VM
+## Creating the Ops Manager VM
 
 Now that we have an Ops Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
@@ -400,7 +401,7 @@ The properties available vary by IaaS, for example:
 * ssh key
 * datacenter/availability zone/region
 
-#### Terraform Outputs
+### Terraform Outputs
 
 If you used the `paving` repository from the [Creating Resources for Your Ops Manager][creating-resources-for-your-ops-manager] section,
 the following steps will result in a filled out `opsman.yml`.
@@ -445,7 +446,7 @@ the following steps will result in a filled out `opsman.yml`.
         For a supported IaaS not listed above,
         reference the [Platform Automation Toolkit docs](https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config).
 
-#### Manual Configuration
+### Manual Configuration
 
 If you created your infrastructure manually
 or would like additional configuration options,
@@ -462,7 +463,7 @@ these are the acceptable keys for the `opsman.yml` file for each IaaS.
 === "vSphere"
     ---excerpt--- "examples/vsphere-configuration"
 
-#### Using the Ops Manager Config file
+### Using the Ops Manager Config file
 
 Once you have your config file, commit and push it:
 
