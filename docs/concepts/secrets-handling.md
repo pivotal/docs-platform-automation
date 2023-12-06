@@ -128,13 +128,13 @@ inputs:
 params:
   VARS_FILES:
   # - Optional
-  # - Filepath to the Ops Manager vars yaml file
+  # - Filepath to the Tanzu Operations Manager vars yaml file
   # - The path is relative to root of the task build,
   #   so `vars` and `secrets` can be used.
 
   OPS_FILES:
   # - Optional
-  # - Filepath to the Ops Manager operations yaml files
+  # - Filepath to the Tanzu Operations Manager operations yaml files
   # - The path is relative to root of the task build
 
   ENV_FILE: env.yml
@@ -238,7 +238,7 @@ An example workflow would be storing an SSH key.
 
 1. Authenticate with your credhub instance.
 2. Generate an ssh key: `credhub generate --name="/concourse/:team_name/:pipeline_name/opsman_ssh_key" --type=ssh`
-3. Create an [Ops Manager configuration][opsman-config] file that references the name of the property.
+3. Create an [Tanzu Operations Manager configuration][opsman-config] file that references the name of the property.
 
 ```yaml
 opsman-configuration:

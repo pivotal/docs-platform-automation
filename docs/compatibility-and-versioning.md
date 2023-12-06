@@ -14,7 +14,7 @@ Platform Automation Toolkit is designed to work with these dependencies.
     <tr>
         <th>Platform Automation Toolkit</th>
         <th>Concourse</th>
-        <th>Ops Manager</th>
+        <th>Tanzu Operations Manager</th>
         <th>Pivnet Resource</th>
     </tr>
 </thead>
@@ -69,7 +69,6 @@ Platform Automation Toolkit is designed to work with these dependencies.
     Because of fundamental issues with the cgroup to cgroupv2 transition that happened between bionic and jammy, this requires changes to Concourse that are only available in Concourse v6.7.9+.
     If you are using a version of Concourse prior to v6.7.9, you must use the Ubuntu Bionic based image.
 
-{% include "./.opsman_filename_change_note.md" %}
 
 ## Semantic Versioning
 This product uses [semantic versioning][semver] 2.0.0
@@ -86,7 +85,7 @@ The following are considered part of our API:
     These are all documented for each task within the task files themselves.
 
 - The minimum compatible version
-  of Concourse and Ops Manager
+  of Concourse and Tanzu Operations Manager
   are part of the API,
   and are specified [here][external-deps].
 
@@ -134,12 +133,12 @@ The following are NOT covered:
 - the dependencies on the image intended to be used with our tasks
 - non-specified parameters (for instance, any env var used by a CLI we call
   but not specified as a parameter on the task)
-- properties specific to particular product or ops manager versions in config files
+- properties specific to particular product or Tanzu Operations Manager versions in config files
   (which are governed by the product being configured, not our tooling)
-- Versions of the included binaries. 
+- Versions of the included binaries.
   The _presence_ of those binaries are guaranteed, but the _versions_ are not.
 
-In general, if we make any change 
+In general, if we make any change
 that we anticipate could not be consumed without manual changes,
 we consider it a breaking change, and increment the major version accordingly.
 

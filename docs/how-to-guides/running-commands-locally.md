@@ -54,9 +54,9 @@ To execute commands in Docker:
     om --env ${ENV_FILE} staged-director-config --include-placeholders
 ```
 
-### Ops Manager Targeting
+### Tanzu Operations Manager Targeting
 
-Use environment variables to set what Ops Manager `om` is targeting.
+Use environment variables to set what Tanzu Operations Manager `om` is targeting.
 For example: 
 
 ```bash
@@ -99,7 +99,7 @@ and `${PRODUCT_NAME}` is the metadata name of the associated product.
 
 A list of failed verifiers is available in the output from the Apply Changes attempt.
 To retrieve a list of currently failing director and product verifiers
-without applying changes (from Ops Manager 2.6 forward) run:
+without applying changes run:
 
 ```bash
   docker run -it -e "OM_PASSWORD=my-password" --rm -v $PWD:/workspace \
@@ -107,7 +107,7 @@ without applying changes (from Ops Manager 2.6 forward) run:
     om --env ${ENV_FILE} pre-deploy-check
 ```
 
-The Ops Manager Documentation [has additional details][opsman-verifiers-docs] about managing verifiers.
+The Tanzu Operations Manager Documentation [has additional details][opsman-verifiers-docs] about managing verifiers.
 
 {% with path="../" %}
     {% include ".internal_link_url.md" %}

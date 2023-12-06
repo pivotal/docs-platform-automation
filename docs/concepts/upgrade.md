@@ -6,15 +6,15 @@ including common errors.
 
 ## Upgrading Ops Manager
 
-It's important to note when upgrading your Ops Manager:
+It's important to note when upgrading your Tanzu Operations Manager:
 
 * always perform an export installation
 * persist that exported installation
 * installation is separate from upgrade
 * an initial installation is done, which maintains state
 
-### Upgrade Flowchart
-The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Ops Manager VM.
+### Upgrade flowchart
+The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Tanzu Operations Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}
@@ -22,14 +22,14 @@ This flowchart gives a high level overview of how the task makes decisions for a
 On successive invocations of the task, it will offer different behaviour of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
 
-## Recovering the Ops Manager VM
+## Recovering the Tanzu Operations Manager VM
 Using the `upgrade-opsman` task will always delete the VM.
 This is done to create a consistent and simplified experience across IAASs.
 For example, some IAASs have IP conflicts
-if there are multiple Ops Manager VMs present.
+if there are multiple Tanzu Operations Manager VMs present.
 
 If there is an issue during the upgrade process,
-you may need to recover your Ops Manager VM. 
+you may need to recover your Tanzu Operations Manager VM. 
 Recovering your VM can be done in two different ways.
 Both methods require an exported installation.
 
@@ -40,12 +40,12 @@ Both methods require an exported installation.
    set for the state file resource.
    
 1. **Manual recovery**. The VM can always be recovered manually 
-   by deploying the Ops Manager OVA, raw, or yml from Tanzu Network.
+   by deploying the Tanzu Operations Manager OVA, raw, or yml from Tanzu Network.
 
 Below is a list of common errors when running `upgrade-opsman`.
 
-- **Error: The Ops Manager API is inaccessible.**
-  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Ops Manager VM is not
+- **Error: The Tanzu Operations Manager API is inaccessible.**
+  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Tanzu Operations Manager VM is not
   created, and will run the [`create-vm`][create-vm] and
   [`import-installation`][import-installation] tasks.
 
@@ -54,15 +54,15 @@ Below is a list of common errors when running `upgrade-opsman`.
   but most errors can be fixed 
   by re-running the [`upgrade-opsman`][upgrade-opsman] task.
 
-## Restoring the Original Ops Manager VM
-There may be an instance in which you want to restore a previous Ops Manager VM
+## Restoring the Original Tanzu Operations Manager VM
+There may be an instance in which you want to restore a previous Tanzu Operations Manager VM
 before completing the upgrade process.
 
-It is recommended to restore a previous Ops Manager VM manually.
+It is recommended to restore a previous Tanzu Operations Manager VM manually.
 The [Running Commands Locally How-to Guide][running-commands-locally]
 is a helpful resource to get started with the manual process below. 
 
-1. Run `delete-vm` on the failed or non-desired Ops Manager
+1. Run `delete-vm` on the failed or non-desired Tanzu Operations Manager
    using the [`state.yml`][state] if applicable. 
    [`opsman.yml`][opsman-config] is required for this command.
    ```bash
@@ -82,7 +82,7 @@ is a helpful resource to get started with the manual process below.
     ```
    
 1. Run `import-installation`.
-   This command requires the exported installation of the original Ops Manager
+   This command requires the exported installation of the original Tanzu Operations Manager
    and the `env.yml` used by Platform Automation Toolkit
    ```bash
    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \

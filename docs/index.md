@@ -5,15 +5,15 @@ We also provide instructions on using these building blocks in various workflows
 In this introduction, we'll provide a high-level overview of Platform Automation Toolkit.
 To dive-deeper, check out the references section.
 
-See the [Getting Started][getting-started] section for instructions 
+See the [Getting Started][getting-started.md] section for instructions
 on how to start using Platform Automation Toolkit.
 
-## About
+## About Platform Automation Toolkit
 
 * Uses [om][om],
-  (and by extension, the Ops Manager API)
-  to enable command-line interaction with Ops Manager
-  ([Understanding the Ops Manager Interface][platform-understanding-opsman])
+  (and by extension, the Tanzu Operations Manager API)
+  to enable command-line interaction with Tanzu Operations Manager
+  ([Understanding the Tanzu Operations Manager Interface][platform-understanding-opsman])
 
 * Includes a documented reference pipeline
   showing one possible configuration to use tasks.
@@ -37,13 +37,13 @@ on how to start using Platform Automation Toolkit.
 
     * Not Comprehensive: Workflows that use Platform Automation Toolkit
       may also contain `om` commands, custom tasks,
-      and even interactions with the Ops Manager user interface.
+      and even interactions with the Tanzu Operations Manager user interface.
       Platform Automation Toolkit is a set of tools to use alongside other tools,
       rather than a comprehensive solution.
 
 * A documented and supported deployment of Concourse CI to use with Platform Automation Toolkit.
   The [Concourse for Platform Automation docs][concourse-for-pa] provide a step-by-step tutorial for how to get started.
-  This approach to deploying Concourse uses the BOSH Director deployed by Ops Manager to deploy and maintain Concourse, Credhub, and UAA.
+  This approach to deploying Concourse uses the BOSH Director deployed by Tanzu Operations Manager to deploy and maintain Concourse, Credhub, and UAA.
 
 The [Task Reference][task-reference] topic discusses these example tasks further.
 
@@ -55,7 +55,7 @@ The [Task Reference][task-reference] topic discusses these example tasks further
       to get a sense of the features and how they differ
       to understand the best transition method for your environment and needs.
 
-## Platform Automation Toolkit and Upgrading Ops Manager
+## Platform Automation Toolkit and Upgrading Tanzu Operations Manager
 
 Successful platform engineering teams know that a platform team
 that's always up to date is critical for their business.
@@ -65,7 +65,7 @@ which means their development teams miss out too.
 By not keeping up to date,
 platforms could encounter security risks or even application failures.
 
-VMware offers regular updates for Ops Manager and the products it installs,
+VMware offers regular updates for Tanzu Operations Manager and the products it installs,
 which ensures our customers have access to the latest security patches and new features.
 For example, VMware releases security patches every six days on average.
 
@@ -90,7 +90,7 @@ How do we do this?
 With Platform Automation Toolkit,
 platform teams have the tools to create an automated perpetual upgrade machine,
 which can continuously take the latest updates when new software is available -
-including Tanzu Application Service, VMware Tanzu PKS, Ops Manager, stemcells, products, and services.
+including Tanzu Application Service, VMware Tanzu PKS, Tanzu Operations Manager, stemcells, products, and services.
 In addition, Platform Automation Toolkit allows you to:
 
 * manage multiple foundations and reduce configuration drift
@@ -99,23 +99,23 @@ In addition, Platform Automation Toolkit allows you to:
 
 * create pipelines that handle installs and upgrades to streamline workflows.
 
-## Platform Automation Toolkit and Ops Manager
+## Platform Automation Toolkit and Tanzu Operations Manager
 
-The following table compares how Ops Manager
-and Platform Automation Toolkit might run a typical sequence of Ops Manager operations:
+The following table compares how Tanzu Operations Manager
+and Platform Automation Toolkit might run a typical sequence of Tanzu Operations Manager operations:
 
 <table border="1">
   <tr>
     <th></th>
-    <th>Ops Manager</th>
+    <th>Tanzu Operations Manager</th>
     <th>Platform Automation Toolkit</th>
   </tr><tr>
     <th>When to Use</th>
     <th>First install and minor upgrades</th>
     <th>Config changes and patch upgrades</th>
   </tr><tr>
-    <th>1. Create Ops Manager VM</th>
-    <td>Manually prepare IaaS and create Ops Manager VM</td>
+    <th>1. Create Tanzu Operations Manager VM</th>
+    <td>Manually prepare IaaS and create Tanzu Operations Manager VM</td>
     <td><code>create-vm</code></td>
   </tr><tr>
     <th>2. Configure Who Can Run Ops</th>
@@ -139,8 +139,8 @@ and Platform Automation Toolkit might run a typical sequence of Ops Manager oper
     <td><code>apply-changes</code></td>
   </tr><tr>
     <th>7. Upgrade</th>
-    <td>Manually export existing Ops Manager settings, power off the VM, then create a new, updated
-    Ops Manager VM</td>
+    <td>Manually export existing Tanzu Operations Manager settings, power off the VM, then create a new, updated
+    Tanzu Operations Manager VM</td>
     <td><code>export-installation</code> then <code>upgrade-opsman</code></td>
   </tr>
 </table>
