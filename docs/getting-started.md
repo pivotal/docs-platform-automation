@@ -8,17 +8,17 @@ and is useful to review prior to diving into more technical content.
 
 ## How-to Guides
 
-We have in-depth procedures for deploying a new Ops Manager and
-taking over management of an existing Ops Manager
+We have in-depth procedures for deploying a new Tanzu Operations Manager and
+taking over management of an existing Tanzu Operations Manager
 with Platform Automation Toolkit:
 
 - For more information about deploying Concourse with Credhub and UAA,
   see [Install Concourse for Platform Automation][concourse-for-pa].
 - For more information about deploying Platform Automation Toolkit
-  with a new Ops Manager, see [Installing Ops Manager][install-how-to].
+  with a new Tanzu Operations Manager, see [Installing Tanzu Operations Manager][install-how-to].
 - For more information about deploying Platform Automation Toolkit
-  with an existing Ops Manager, see
-  [Upgrading an Existing Ops Manager][upgrade-how-to].
+  with an existing Tanzu Operations Manager, see
+  [Upgrading an Existing Tanzu Operations Manager][upgrade-how-to].
 
 ## Reference Pipelines
 

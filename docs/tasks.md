@@ -15,7 +15,7 @@ To learn more see [Running commands locally][running-commands-locally].
 
 ### activate-certificate-authority
 
-Ensures that the newest certificate authority on Ops Manager is active.
+Ensures that the newest certificate authority on Tanzu Operations Manager is active.
 
 === "Task"
     ---excerpt--- "tasks/activate-certificate-authority"
@@ -26,7 +26,7 @@ Ensures that the newest certificate authority on Ops Manager is active.
 
 ### apply-changes
 
-Triggers an install on the Ops Manager described by the auth file.
+Triggers an install on the Tanzu Operations Manager described by the auth file.
 
 To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
@@ -81,7 +81,7 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
 ### backup-director
 
-Use BBR to backup a BOSH director deployed with Ops Manager.
+Use BBR to backup a BOSH director deployed with Tanzu Operations Manager.
 
 === "Task"
     ---excerpt--- "tasks/backup-director"
@@ -92,7 +92,7 @@ Use BBR to backup a BOSH director deployed with Ops Manager.
 
 ### backup-product
 
-Use BBR to backup a product deployed with Ops Manager.
+Use BBR to backup a product deployed with Tanzu Operations Manager.
 
 === "Task"
     ---excerpt--- "tasks/backup-product"
@@ -104,7 +104,7 @@ Use BBR to backup a product deployed with Ops Manager.
 ### backup-tkgi
 
 Use BBR to backup Tanzu Kubernetes Grid Integrated Edition(TKGI)
-deployed with Ops Manager.
+deployed with Tanzu Operations Manager.
 
 !!! info "PKS CLI may be Temporarily Unavailable"
     During the backup, the PKS CLI is disabled.
@@ -138,7 +138,7 @@ deployed with Ops Manager.
     ---excerpt--- "examples/backup-tkgi-usage"
 
 ### check-pending-changes
-Returns a table of the current state of your Ops Manager
+Returns a table of the current state of your Tanzu Operations Manager
 and lists whether each product is changed or unchanged and the errands for that product.
 By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
 This is useful to keep manual changes from being accidentally applied
@@ -173,7 +173,7 @@ may be used to send telemetry data to VMware.
     ---excerpt--- "reference/collect-telemetry-usage"
 
 ### configure-authentication
-Configures Ops Manager with an internal userstore and admin user account.
+Configures Tanzu Operations Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
@@ -203,7 +203,7 @@ which can extract a config file.
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
 
 ### configure-ldap-authentication
-Configures Ops Manager with an external LDAP user store and admin user account.
+Configures Tanzu Operations Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
 
@@ -215,22 +215,22 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
     ---excerpt--- "examples/configure-ldap-authentication-usage"
 
 For more details on using LDAP,
-please refer to the [Ops Manager documentation][config-ldap].
+please refer to the [Tanzu Operations Manager documentation][config-ldap].
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
 ### configure-opsman
 This task supports configuring settings
-on the Ops Manager Settings page in the UI.
-For example, the SSL cert for the Ops Manager VM can be configured.
+on the Tanzu Operations Manager Settings page in the UI.
+For example, the SSL cert for the Tanzu Operations Manager VM can be configured.
 
 Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
 An example of all configurable properties can be found in the "Additional Settings" tab.
 
 The [`upgrade-opsman`][upgrade-opsman] task will automatically call `configure-opsman`,
 so there is no need to use this task then.
-It is recommended to use this task in the initial setup of the Ops Manager VM.
+It is recommended to use this task in the initial setup of the Tanzu Operations Manager VM.
 
 === "Task"
     ---excerpt--- "tasks/configure-opsman"
@@ -242,7 +242,7 @@ It is recommended to use this task in the initial setup of the Ops Manager VM.
 ### configure-product
 Configures an individual, staged product with settings from a config file.
 
-Not to be confused with Ops Manager's
+Not to be confused with Tanzu Operations Manager's
 built-in [import][bbr-import],
 which reads all deployed products and configurations from a single opaque file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
@@ -261,7 +261,7 @@ which can stage a product that's been uploaded.
 
 ### configure-new-certificate-authority
 
-Create a new certificate authority on Ops Manager. This can either create a
+Create a new certificate authority on Tanzu Operations Manager. This can either create a
 new CA using Credhub or create a new CA using a provided certificate and
 private key in PEM format via the `certs/` input.
 
@@ -273,7 +273,7 @@ private key in PEM format via the `certs/` input.
     ---excerpt--- "reference/configure-new-certificate-authority-usage"
 
 ### configure-saml-authentication
-Configures Ops Manager with an external SAML user store and admin user account.
+Configures Tanzu Operations Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
@@ -296,13 +296,13 @@ The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the [Ops Manager documentation][config-saml]
+please refer to the [Tanzu Operations Manager documentation][config-saml]
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
 ### create-vm
-Creates an unconfigured Ops Manager VM.
+Creates an unconfigured Tanzu Operations Manager VM.
 
 === "Task"
     ---excerpt--- "tasks/create-vm"
@@ -314,7 +314,7 @@ Creates an unconfigured Ops Manager VM.
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration][opsman-config] page for more specific examples.
 
-The task does specific CLI commands for the creation of the Ops Manager VM on each IAAS. See below for more information:
+The task does specific CLI commands for the creation of the Tanzu Operations Manager VM on each IAAS. See below for more information:
 
 **AWS**
 
@@ -329,14 +329,14 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account
-1. Creates the Ops Manager image
+1. Creates the Tanzu Operations Manager image
 1. Creates a VM from the image. This will use unmanaged disk (if specified), and assign a public and/or private IP. This only attaches existing infrastructure to a newly createdVM. This does not create any new resources.
 
 **GCP**
 
 1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
-1. Creates a compute image based on the region specific Ops Manager source URI in the specified Ops Manager account
+1. Creates a compute image based on the region specific Tanzu Operations Manager source URI in the specified Tanzu Operations Manager account
 1. Creates a VM from the image. This will assign a public and/or private IP address, VM sizing, and tags. This does not create any new resources.
 
 **Openstack**
@@ -377,7 +377,7 @@ set this up, see [Secrets Handling][secrets-handling]
 
 ### delete-certificate-authority
 
-Delete all inactive certificate authorities from the Ops Manager.
+Delete all inactive certificate authorities from the Tanzu Operations Manager.
 
 === "Task"
     ---excerpt--- "tasks/delete-certificate-authority"
@@ -387,7 +387,7 @@ Delete all inactive certificate authorities from the Ops Manager.
     ---excerpt--- "reference/delete-certificate-authority-usage"
 
 ### delete-installation
-Delete the Ops Manager Installation
+Delete the Tanzu Operations Manager Installation
 
 === "Task"
     ---excerpt--- "tasks/delete-installation"
@@ -397,7 +397,7 @@ Delete the Ops Manager Installation
     ---excerpt--- "reference/delete-installation-usage"
 
 ### delete-vm
-Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
+Deletes the Tanzu Operations Manager VM instantiated by [create-vm](#create-vm).
 
 === "Task"
     ---excerpt--- "tasks/delete-vm"
@@ -408,7 +408,7 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
-The task does specific CLI commands for the deletion of the Ops Manager VM and resources on each IAAS. See below for more information:
+The task does specific CLI commands for the deletion of the Tanzu Operations Manager VM and resources on each IAAS. See below for more information:
 
 **AWS**
 
@@ -437,7 +437,7 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 
 ### download-and-upload-product
 This is an _advanced task_.
-If a product (and its associated stemcell) has already been uploaded to Ops Manager
+If a product (and its associated stemcell) has already been uploaded to Tanzu Operations Manager
 then it will not re-download and upload.
 This is helpful when looking for a fast-feedback loop for building pipelines.
 
@@ -457,8 +457,6 @@ because the products (and stemcell) don't need to be shared downstream.
     ---excerpt--- "examples/download-and-upload-product-usage"
 
 ### download-product
-
-{% include "./.opsman_filename_change_note.md" %}
 
 Downloads a product specified in a config file from Tanzu Network(`pivnet`), S3(`s3`), GCS(`gcs`), or Azure(`azure`).
 Optionally, also downloads the latest stemcell for that product.
@@ -555,8 +553,8 @@ This avoids breaking current pipelines.
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
-These certificates can be Ops Manager or Credhub certificates.
-Root CAs cannot be included in this list until Ops Manager 2.7.
+These certificates can be Tanzu Operations Manager or Credhub certificates.
+Root CAs cannot be included in this list until Tanzu Operations Manager 2.7.
 This is purely an informational task.
 
 === "Task"
@@ -567,11 +565,11 @@ This is purely an informational task.
     ---excerpt--- "reference/expiring-certificates-usage"
 
 ### export-installation
-Exports an existing Ops Manager to a file.
+Exports an existing Tanzu Operations Manager to a file.
 
 This is the first part of the backup/restore and upgrade lifecycle processes.
-This task is used on a fully installed and healthy Ops Manager to export
-settings to an upgraded version of Ops Manager.
+This task is used on a fully installed and healthy Tanzu Operations Manager to export
+settings to an upgraded version of Tanzu Operations Manager.
 
 To use with non-versioned blobstore, you can override `INSTALLATION_FILE` param
 to include `$timestamp`, then the generated installation file will include a sortable
@@ -599,7 +597,7 @@ params:
 
 ### generate-certificate
 
-Generate a certificate, signed by the active Ops Manager certificate authority,
+Generate a certificate, signed by the active Tanzu Operations Manager certificate authority,
 for the domains specified in the `DOMAINS` environment variable.
 
 This task outputs `certificate`, containing `certificate.pem` and
@@ -613,11 +611,11 @@ This task outputs `certificate`, containing `certificate.pem` and
     ---excerpt--- "reference/generate-certificate-usage" -->
 
 ### import-installation
-Imports a previously exported installation to Ops Manager.
+Imports a previously exported installation to Tanzu Operations Manager.
 
 This is a part of the backup/restore and upgrade lifecycle processes.
-This task is used after an installation has been exported and a new Ops Manager
-has been deployed, but before the new Ops Manager is configured.
+This task is used after an installation has been exported and a new Tanzu Operations Manager
+has been deployed, but before the new Tanzu Operations Manager is configured.
 
 === "Task"
     ---excerpt--- "tasks/import-installation"
@@ -656,8 +654,8 @@ Also useful for persisting the configuration output from:
     ---excerpt--- "examples/make-git-commit-usage"
 
 ### pre-deploy-check
-Checks if the Ops Manager director is configured properly and validates the configuration.
-This feature is only available in Ops Manager 2.6+.
+Checks if the Tanzu Operations Manager director is configured properly and validates the configuration.
+This feature is only available in Tanzu Operations Manager 2.6+.
 Additionally, checks each of the staged products
 and validates they are configured correctly.
 This task can be run at any time
@@ -671,7 +669,7 @@ The checks that this task executes are:
 - is the stemcell assigned
 - what stemcell type/version is required
 - are there any unset/invalid properties
-- did any ops manager verifiers fail
+- did any Tanzu Operations Manager verifiers fail
 
 If any of the above checks fail
 the task will fail.
@@ -689,7 +687,7 @@ before an `apply-changes` could start.
 This task modifies the container image with runtime dependencies.
 `CA_CERTS` can be added,
 which can help secure HTTP connections with a proxy server
-and allows the use of a custom CA on the Ops Manager.
+and allows the use of a custom CA on the Tanzu Operations Manager.
 
 !!! warn "Concourse 5+ Only"
     This task uses a Concourse feature
@@ -724,7 +722,7 @@ Learn more about [secrets handling][secrets-handling].
 
 ### regenerate-certificates
 
-Regenerates all non-configurable leaf certificates managed by Ops Manager using
+Regenerates all non-configurable leaf certificates managed by Tanzu Operations Manager using
 the active certificate authority.
 
 === "Task"
@@ -753,11 +751,11 @@ The output is a replicated tile with a new name in the metadata and filename.
     ---excerpt--- "examples/replicate-product-usage"
 
 ### revert-staged-changes
-Reverts all changes that are currently staged on the Ops Manager.
-This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
+Reverts all changes that are currently staged on the Tanzu Operations Manager.
+This is only available _for_ Tanzu Operations Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
 !!! warning "Using revert-staged-changes"
-    Since this reverts all changes on an Ops Manager,
+    Since this reverts all changes on an Tanzu Operations Manager,
     it can conflict with tasks that perform stage or configure operations.
     Use passed constraints to ensure things run in the order you mean them to.
 
@@ -770,17 +768,17 @@ This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
 ### run-bosh-errand
 Runs a specified BOSH errand directly on the BOSH Director
-by tunneling through Ops Manager.
+by tunneling through Tanzu Operations Manager.
 
 !!! warning "Interacting with the BOSH Director"
-    Ops Manager is the main interface for interacting with BOSH,
+    Tanzu Operations Manager is the main interface for interacting with BOSH,
     and it has no way of knowing what is happening to the BOSH Director
-    outside of the Ops Manager UI context.
+    outside of the Tanzu Operations Manager UI context.
     By using this task, you are accepting the risk
-    that what you are doing cannot be tracked by your Ops Manager.
+    that what you are doing cannot be tracked by your Tanzu Operations Manager.
 
 !!! warning "Retrying Errands"
-    Ops Manager, by design, will re-run failed errands for you.
+    Tanzu Operations Manager, by design, will re-run failed errands for you.
     As this task interacts with BOSH directly,
     your errand will not be re-run if it fails.
     To replicate this retry behavior in your pipeline,
@@ -812,7 +810,7 @@ to VMware.
 
 ### stage-configure-apply
 This is an _advanced task_.
-Stage a product to Ops Manager, configure that product, and apply changes
+Stage a product to Tanzu Operations Manager, configure that product, and apply changes
 only to that product without applying changes to the rest of the foundation.
 
 {% include '.disable-verifiers.md' %}
@@ -825,7 +823,7 @@ only to that product without applying changes to the rest of the foundation.
     ---excerpt--- "reference/stage-configure-apply-usage"
 
 ### stage-product
-Staged a product to the Ops Manager specified in the config file.
+Staged a product to the Tanzu Operations Manager specified in the config file.
 
 === "Task"
     ---excerpt--- "tasks/stage-product"
@@ -835,9 +833,9 @@ Staged a product to the Ops Manager specified in the config file.
     ---excerpt--- "reference/stage-product-usage"
 
 ### staged-config
-Downloads the configuration for a product from Ops Manager.
+Downloads the configuration for a product from Tanzu Operations Manager.
 
-Not to be confused with Ops Manager's
+Not to be confused with Tanzu Operations Manager's
 built-in [export][bbr-export],
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
@@ -851,9 +849,7 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
 
 ### staged-director-config
 
-{% include "./.opsman_filename_change_note.md" %}
-
-Downloads configuration for the BOSH director from Ops Manager.
+Downloads configuration for the BOSH director from Tanzu Operations Manager.
 
 === "Task"
     ---excerpt--- "tasks/staged-director-config"
@@ -863,7 +859,7 @@ Downloads configuration for the BOSH director from Ops Manager.
     ---excerpt--- "examples/staged-director-config-usage"
 
 The configuration is exported to the `generated-config` output.
-It does not extract credentials from Ops Manager
+It does not extract credentials from Tanzu Operations Manager
 and replaced them all with YAML interpolation `(())` placeholders.
 This is to ensure that credentials are never written to disk.
 The credentials need to be provided from an external configuration when invoking [configure-director](#configure-director).
@@ -893,11 +889,11 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
 
 ### update-runtime-config
 This is an _advanced task_.
-Updates a runtime config on the Ops Manager deployed BOSH director.
-The task will interact with the BOSH director (sometimes via SSH tunnel through the Ops Manager),
+Updates a runtime config on the Tanzu Operations Manager deployed BOSH director.
+The task will interact with the BOSH director (sometimes via SSH tunnel through the Tanzu Operations Manager),
 upload BOSH releases,
 and set a named runtime config.
-This is useful when installing agents on BOSH deployed VMs that don't have a Ops Manager tile.
+This is useful when installing agents on BOSH deployed VMs that don't have a Tanzu Operations Manager tile.
 
 === "Task"
     ---excerpt--- "tasks/update-runtime-config"
@@ -907,12 +903,12 @@ This is useful when installing agents on BOSH deployed VMs that don't have a Ops
     ---excerpt--- "examples/update-runtime-config-usage"
 
 !!! warn
-    When using runtime configs, Ops Manager _owns_ the default runtime config.
+    When using runtime configs, Tanzu Operations Manager _owns_ the default runtime config.
     If you use this task to edit "default" it will be replaced on every Apply Changes.
     Please use `NAME` param to provide a non-conflicting runtime config.
 
 ### upgrade-opsman
-Upgrades an existing Ops Manager to a new given Ops Manager version
+Upgrades an existing Tanzu Operations Manager to a new given Tanzu Operations Manager version
 
 === "Task"
     ---excerpt--- "tasks/upgrade-opsman"
@@ -924,7 +920,7 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
 For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
 
 ### upload-and-stage-product
-Uploads and stages product to the Ops Manager specified in the config file.
+Uploads and stages product to the Tanzu Operations Manager specified in the config file.
 
 === "Task"
     ---excerpt--- "tasks/upload-and-stage-product"
@@ -934,7 +930,7 @@ Uploads and stages product to the Ops Manager specified in the config file.
     ---excerpt--- "reference/upload-and-stage-product-usage"
 
 ### upload-product
-Uploads a product to the Ops Manager specified in the config file.
+Uploads a product to the Tanzu Operations Manager specified in the config file.
 
 If a shasum is provided in the config.yml,
 the integrity product will be verified
@@ -948,10 +944,10 @@ with that shasum before uploading.
     ---excerpt--- "reference/upload-product-usage"
 
 ### upload-stemcell
-Uploads a stemcell to Ops Manager.
+Uploads a stemcell to Tanzu Operations Manager.
 
 Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
-Ops Manager parses this filename to determine the version and OS of the stemcell.
+Tanzu Operations Manager parses this filename to determine the version and OS of the stemcell.
 
 === "Task"
     ---excerpt--- "tasks/upload-stemcell"
