@@ -114,7 +114,7 @@ for a Platform Automation Toolkit configuration repo:
         <td>env</td>
         <td>
             Holds <code>env.yml</code>,
-            the environment file used by tasks that interact with Ops Manager.
+            the environment file used by tasks that interact with Tanzu Operations Manager.
         </td>
     </tr>
     <tr>
@@ -129,7 +129,7 @@ for a Platform Automation Toolkit configuration repo:
         <td>state</td>
         <td>
             Holds <code>state.yml</code>,
-            which contains the VM ID for the Ops Manager VM.
+            which contains the VM ID for the Tanzu Operations Manager VM.
         </td>
     </tr>
 </table>

@@ -74,7 +74,7 @@ February 27, 2023
 
 ### What's New
 - Added new How-to Guide about [Rotating Certificate Authority][rotating-certificate-authority]. 
-  This how-to-guide shows you how to write a pipeline for rotating the certificate authority on an existing Ops Manager. 
+  This how-to-guide shows you how to write a pipeline for rotating the certificate authority on an existing Tanzu Operations Manager.
 - The following additional tasks have been added to help with rotating certificate authorities:
     * [`activate-certificate-authority`][activate-certificate-authority]
     * [`configure-new-certificate-authority`][configure-new-certificate-authority]

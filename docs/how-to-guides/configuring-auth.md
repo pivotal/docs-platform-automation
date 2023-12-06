@@ -1,6 +1,6 @@
 # Generating an Auth file
 
-Ops Manager's authentication system can be configured several ways.
+VMware Tanzu Operations Manager's authentication system can be configured several ways.
 The format of the configuration file varies
 according to the authentication method to be used.
 

@@ -1,7 +1,7 @@
 # Generating an Env file
 
 Almost all [`om`][om] commands require an env file
-to describe how to communicate (and authenticate) with a given Ops Manager.
+to describe how to communicate (and authenticate) with a given VMware Tanzu Operations Manager.
 
 There are two ways to provide auth information.
 If your configuration choices allow you to use `username` and `password` directly,

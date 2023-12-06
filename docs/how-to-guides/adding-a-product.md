@@ -4,14 +4,14 @@ This how-to-guide will teach you how to add a product to an existing pipeline.
 This includes downloading the product from Pivnet,
 extracting configuration,
 and installing the configured product.
-If you don't already have an Ops Manager and deployed Director,
-check out [Installing Ops Manager][install-how-to] and
+If you don't already have an Tanzu Operations Manager and deployed Director,
+check out [Installing Tanzu Operations Manager][install-how-to] and
 [Deploying the Director][director-configuration] respectively.
 
 ## Prerequisites
-1. A pipeline, such as one created in [Installing Ops Manager][install-how-to] 
-   or [Upgrading an Existing Ops Manager][upgrade-how-to].
-1. A fully configured Ops Manager and Director.
+1. A pipeline, such as one created in [Installing Tanzu Operations Manager][install-how-to] 
+   or [Upgrading an Existing Tanzu Operations Manager][upgrade-how-to].
+1. A fully configured Tanzu Operations Manager and Director.
 1. The Platform Automation Toolkit Docker Image [imported and ready to run][running-commands-locally].
 1. A glob pattern uniquely matching one product file on Tanzu Network.
 
@@ -131,7 +131,7 @@ If the pipeline sets without errors, run a `git push` of the config.
 
 ### Upload and Stage
 We have a product downloaded and (potentially) cached on a Concourse worker.
-The next step is to upload and stage that product to Ops Manager.
+The next step is to upload and stage that product to Tanzu Operations Manager.
 
 ```yaml hl_lines="32-45"
 jobs:
@@ -200,7 +200,7 @@ git push
 ## Product Configuration
 Before automating the configuration and install of the product,
 we need a config file.
-The simplest way is to choose your config options in the Ops Manager UI,
+The simplest way is to choose your config options in the Tanzu Operations Manager UI,
 then pull its resulting configuration.
 
 !!! Info "Advanced Tile Config Option"
@@ -209,16 +209,16 @@ then pull its resulting configuration.
     see the [Config Template][config-template] section.
 
 
-#### Pulling Configuration from Ops Manager
+#### Pulling Configuration from Tanzu Operations Manager
 Configure the product _manually_ according to the product's install instructions.
 This guide installs [tas][tas-install-vsphere].
 Other install instructions may be found in [VMware Tanzu Docs][tanzu-docs].
 
-Once the product is fully configured, apply changes in the Ops Manager UI, 
+Once the product is fully configured, apply changes in the Tanzu Operations Manager UI, 
 and then continue this guide.
 
 !!! warning "If You Do Not Apply Changes"
-    Ops Manager cannot generate credentials for you
+    Tanzu Operations Manager cannot generate credentials for you
     until you have applied changes (at least once).
     You can still go through this process without an initial applying changes,
     but you will be unable to use `om staged-config` with `--include-credentials`, 
@@ -226,7 +226,7 @@ and then continue this guide.
 
 [`om`][om] has a command called [staged-config][staged-config], 
 which is used to extract staged product
-configuration from the Ops Manager UI. 
+configuration from the Tanzu Operations Manager UI. 
 `om` requires a `env.yml`, which we already used in the `upload-and-stage` task.
 
 Most products will contain the following top-level keys:
@@ -243,7 +243,7 @@ see the corresponding [How-to Guide][running-commands-locally].
 
 
 After the image has been downloaded from [Tanzu Network][tanzu-network-platform-automation]
-we're going to need the product name recognized by Ops Manager.
+we're going to need the product name recognized by Tanzu Operations Manager.
 This can be found using `om`, but first we should import the image
 
 ```bash
@@ -251,7 +251,7 @@ export ENV_FILE=env.yml
 docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
 ```
 
-Then, we can run `om staged-products` to find the name of the product in Ops Manager.
+Then, we can run `om staged-products` to find the name of the product in Tanzu Operations Manager.
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 om --env ${ENV_FILE} staged-products
@@ -268,11 +268,11 @@ The result should be a table that looks like the following
 ```
 
 `p-bosh` is the name of the director.
-As `cf` is the only other product on our Ops Manager,
+As `cf` is the only other product on our Tanzu Operations Manager,
 we can safely assume that this is the product name for [TAS][tas].
 
 Using the product name `cf`,
-let's extract the current configuration from Ops Manager.
+let's extract the current configuration from Tanzu Operations Manager.
 
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
@@ -515,7 +515,7 @@ This new job will configure the TAS product
 with the config file we previously created.
 
 Next, we need to add an apply-changes job
-so that these changes will be applied by the Ops Manager.
+so that these changes will be applied by the Tanzu Operations Manager.
 
 ```yaml hl_lines="31-56"
 - name: configure-tas
@@ -583,7 +583,7 @@ so that these changes will be applied by the Ops Manager.
 !!! info "Adding Multiple Products"
     When adding multiple products, you can add the configure jobs as passed constraints
     to the apply-changes job so that they all are applied at once.
-    Ops Manager will handle any inter-product dependency ordering.
+    Tanzu Operations Manager will handle any inter-product dependency ordering.
     This will speed up your apply changes
     when compared with running an apply changes for each product separately.
     
@@ -683,13 +683,13 @@ here are some approaches you can use:
 
 - Look in the template where the variable appears for some additional context of its value.
 - Look at the tile's online documentation
-- Upload the tile to an Ops Manager 
-  and visit the tile in the Ops Manager UI to see if that provides any hints.
+- Upload the tile to an Tanzu Operations Manager 
+  and visit the tile in the Tanzu Operations Manager UI to see if that provides any hints.
   
-    If you are still struggling, inspecting the html of the Ops Manager webpage
+    If you are still struggling, inspecting the html of the Tanzu Operations Manager webpage
     can more accurately map the value names to the associated UI element.
 
-!!! info "When Using The Ops Manager Docs and UI"
+!!! info "When Using The Tanzu Operations Manager Docs and UI"
     Be aware that the field names in the UI do not necessarily map directly to property names.
 
 #### Optional Features
