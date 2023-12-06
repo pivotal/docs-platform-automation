@@ -1,21 +1,21 @@
 # Stemcell Handling
 
-## What is Stemcell Handling?
-In Ops Manager, every product uploaded and staged needs to be given a [stemcell][bosh-stemcell] in 
-order to operate. By default, every stemcell uploaded to Ops Manager will automatically associate
+
+In Tanzu Operations Manager, every product uploaded and staged needs to be given a [stemcell][bosh-stemcell] in 
+order to operate. By default, every stemcell uploaded to Tanzu Operations Manager will automatically associate
 with any new or existing products. Using the automation tasks, this default can be overridden to
 not have a stemcell associate with any products, and can be manually assigned as deemed necessary
 by the user. 
 
-## Why do your Stemcell Handling Manually?
-Unless there is a specific need to manually handle the stemcells in Ops Manager, it is recommended
+## Why do your stemcell Handling manually?
+Unless there is a specific need to manually handle the stemcells in Tanzu Operations Manager, it is recommended
 to use the default. A common use case for manual stemcell handling is updating the product stemcells 
 one at a time to minimize downtime during apply changes. This is particularly beneficial in environments
 with large numbers of tiles that share the same stemcell. 
 
 ## How to use the Stemcell Handling Tasks in Automation
 Platform Automation Toolkit has tasks that will assist in the manual handling of stemcells within
-Ops Manager. These tasks, in order, are:
+Tanzu Operations Manager. These tasks, in order, are:
 
 - [download-product][download-product]
 - [upload-product][upload-product]
@@ -33,11 +33,11 @@ Ops Manager. These tasks, in order, are:
     used with that product.
 
 2. Run the [upload-product][upload-product] and [stage-product][stage-product] tasks to get the
-   resources into Ops Manager.
+   resources into Tanzu Operations Manager.
 
 3. Run the [upload-stemcell][upload-stemcell] task.
 
-    To upload the stemcell to Ops Manager without associating it with any product, the
+    To upload the stemcell to Tanzu Operations Manager without associating it with any product, the
     [`upload-stemcell`][upload-stemcell] task will need to be executed with the `FLOATING_STEMCELL: false` 
     flag set.
     

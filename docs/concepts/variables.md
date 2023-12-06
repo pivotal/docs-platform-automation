@@ -61,9 +61,9 @@ foundations. More common shared settings could be included in the `vars_file.yml
 
 {% include "./variables-interpolate-flowchart-independent.mmd" %}
 
-Alternatively, you can keep all of your vars in the same file for a foundation and mix parametrized and 
+Alternatively, you can keep all of your vars in the same file for a foundation and mix parametrized and
 unparametrized values. The interpolated vars file can be used directly in any task that allows for them.
-The trade-off for this method is the mixed vars file would be tied to a single foundation, rather than 
+The trade-off for this method is the mixed vars file would be tied to a single foundation, rather than
 have a single `base_vars_template.yml` shared across foundations.
 
 {% include "./variables-interpolate-flowchart-mixed.mmd" %}
@@ -75,7 +75,7 @@ Some Platform Automation Toolkit tasks have an optional vars input.
 Using the flow described above, these files can be plugged in to the tasks.
 
 We provide a [Test Task](../tasks.md#test-interpolate)
-to allow pipeline testing before installing Ops Manager.
+to allow pipeline testing before installing Tanzu Operations Manager.
 An example pipeline for this is below:
 
 ```yaml

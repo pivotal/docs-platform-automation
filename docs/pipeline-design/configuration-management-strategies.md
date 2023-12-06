@@ -21,8 +21,8 @@ duplicating foundations is simply a matter of cloning a repository,
 and configuration files are not difficult to understand.
 
 This is the strategy used throughout the
-[Install Ops Man How to Guide][install-how-to] and the
-[Upgrading an Existing Ops Manager How to Guide][upgrade-how-to].
+[Install Tanzu Operations Manager How-to Guide][install-how-to] and the
+[Upgrading an existing Tanzu Operations Manager How-to Guide][upgrade-how-to].
 
 Let's examine an example configuration repository
 that uses the "Single Repository for each Foundation" pattern:
@@ -182,7 +182,7 @@ For each foundation, we have two folders:
     - Downloading products from a blobstore; specified with the prefix `download-`
     - Configuring a product; specified by `<product-name>.yml`
     - Configuring the BOSH director; specified with `director.yml`
-    - Configuring the Ops Manager VM; specified with `opsman.yml`
+    - Configuring the Tanzu Operations Manager VM; specified with `opsman.yml`
 - `vars` contains any foundation-specific variables used by Platform Automation tasks.
   These variables will fill in any variables `((parameterized))` in config files
   that are not stored in Concourse's credential manager.
@@ -220,7 +220,7 @@ and make it available on S3.
     between what we currently have deployed
     and the new tile.
 
-1. Login to the Ops Manager UI. If the tile has unconfigured properties:
+1. Login to the Tanzu Operations Manager UI. If the tile has unconfigured properties:
 
     1. Manually configure the tile and deploy
 
@@ -256,7 +256,7 @@ and make it available on S3.
 
 !!! info "A Quicker `development` Deploy Process"
     Since all of the legwork was done manually in the `sandbox` environment
-    there is no need to login to the `development` Ops Manager environment.
+    there is no need to login to the `development` Tanzu Operations Manager environment.
 
     If there are no configuration changes, the only file that needs to be promoted is `versions.yml`
 

@@ -1,15 +1,16 @@
-# Writing a Pipeline to Install Ops Manager
-This how-to-guide shows you how to write a pipeline for installing a new Ops Manager.
-If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to].
+# Writing a pipeline to Install Tanzu Operations Manager
+
+This how-to-guide shows you how to write a pipeline for installing a new VMware Tanzu Operations Manager.
+If you already have an Tanzu Operations Manager VM, check out [Upgrading an existing Tanzu Operations Manager][upgrade-how-to].
 
 {% include ".getting-started.md" %}
 
-### Downloading Ops Manager
+## Downloading Tanzu Operations Manager
 
 We're finally in a position to do work!
 
 Let's switch out the test job
-for one that downloads and installs Ops Manager.
+for one that downloads and installs Tanzu Operations Manager.
 We can do this by changing:
 
 - the `name` of the job
@@ -89,7 +90,7 @@ later when we declare the corresponding resource.
 ```
 
 `download-ops-manager.yml` holds creds for communicating with Tanzu Network,
-and uniquely identifies an Ops Manager image to download.
+and uniquely identifies an Tanzu Operations Manager image to download.
 
 An example `download-ops-manager.yml` is shown below.
 
@@ -210,12 +211,12 @@ git commit -m 'download the Ops Manager image'
 git push
 ```
 
-### Creating Resources for Your Ops Manager
+## Creating resources for your Tanzu Operations Manager
 
-Before Platform Automation Toolkit can create a VM for your Ops Manager installation,
-there are certain resources required by the VM creation and Ops Manager director installation processes.
+Before Platform Automation Toolkit can create a VM for your Tanzu Operations Manager installation,
+there are certain resources required by the VM creation and Tanzu Operations Manager director installation processes.
 These resources are created directly on the IaaS of your choice,
-and read in as configuration for your Ops Manager.
+and read in as configuration for your Tanzu Operations Manager.
 
 There are two main ways of creating these resources,
 and you should use whichever method is right for you and your setup.
@@ -325,10 +326,10 @@ VMware has extensive documentation to manually create the resources needed
 if you are unable or do not wish to use Terraform.
 As with the Terraform solution, however,
 there are different docs depending on the IaaS
-you are installing Ops Manager onto.
+you are installing Tanzu Operations Manager onto.
 
 When going through the documentation required for your IaaS,
-be sure to stop before deploying the Ops Manager image.
+be sure to stop before deploying the Tanzu Operations Manager image.
 Platform Automation Toolkit will do this for you.
 
 - [aws][manual-aws]
@@ -337,12 +338,12 @@ Platform Automation Toolkit will do this for you.
 - [openstack][manual-openstack]
 - [vsphere][manual-vsphere]
 
-_NOTE_: if you need to install an earlier version of Ops Manager,
+_NOTE_: if you need to install an earlier version of Tanzu Operations Manager,
 select your desired version from the dropdown at the top of the page.
 
-### Creating the Ops Manager VM
+## Creating the Tanzu Operations Manager VM
 
-Now that we have an Ops Manager image and the resources required to deploy a VM,
+Now that we have an Tanzu Operations Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
 
 ```yaml hl_lines="29-31"
@@ -391,7 +392,7 @@ Looking over the list of inputs for `create-vm` we still need two required input
 The optional inputs are vars used with the config, so we'll get to those when we do `config`.
 
 Let's start with the config file.
-We'll write an Ops Manager VM Configuration file to `opsman.yml`.
+We'll write an Tanzu Operations Manager VM Configuration file to `opsman.yml`.
 
 The properties available vary by IaaS, for example:
 
@@ -402,10 +403,10 @@ The properties available vary by IaaS, for example:
 
 #### Terraform Outputs
 
-If you used the `paving` repository from the [Creating Resources for Your Ops Manager][creating-resources-for-your-ops-manager] section,
+If you used the `paving` repository from the [Creating Resources for your Tanzu Operations Manager][creating-resources-for-your-ops-manager] section,
 the following steps will result in a filled out `opsman.yml`.
 
-1. Ops Manager needs to be deployed with IaaS specific configuration.
+1. Tanzu Operations Manager needs to be deployed with IaaS specific configuration.
    Platform Automation Toolkit provides a configuration file format that looks like this:
 
     Copy and paste the YAML below for your IaaS
@@ -462,7 +463,7 @@ these are the acceptable keys for the `opsman.yml` file for each IaaS.
 === "vSphere"
     ---excerpt--- "examples/vsphere-configuration"
 
-#### Using the Ops Manager Config file
+### Using the Tanzu Operations Manager Config file
 
 Once you have your config file, commit and push it:
 
@@ -493,7 +494,7 @@ in the `opsman.yml` file.
 
 The `create-vm` task in the `install-opsman` will need to be updated to
 use the `download-product` image,
-Ops Manager configuration file,
+Tanzu Operations Manager configuration file,
 variables file,
 and the placeholder state file.
 

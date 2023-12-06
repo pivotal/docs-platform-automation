@@ -1,7 +1,7 @@
 # Writing a Pipeline to Upgrade an Existing Ops Manager
 
-This how-to-guide shows you how to create a pipeline for upgrading an existing Ops Manager VM.
-If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-how-to].
+This how-to-guide shows you how to create a pipeline for upgrading an existing Vmware Tanzu Operations Manager VM.
+If you don't have an Tanzu Operations Manager VM, check out [Installing Tanzu Operations Manager][install-how-to].
 
 {% set upgradeHowTo = True %}
 {% include ".getting-started.md" %}
@@ -10,22 +10,22 @@ If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-
 
 We're finally in a position to do work!
 
-While ultimately we want to upgrade Ops Manager,
+While ultimately we want to upgrade Tanzu Operations Manager,
 to do that safely we first need to download and persist
 an export of the current installation.
 
 !!! warning "Export your installation routinely"
     We _**strongly recommend**_ automatically exporting
-    the Ops Manager installation
+    the Tanzu Operations Manager installation
     and _**persisting it to your blobstore**_ on a regular basis.
     This ensures that if you need to upgrade (or restore!)
-    your Ops Manager for any reason,
+    your Tanzu Operations Manager for any reason,
     you'll have the latest installation info available.
     Later in this tutorial, we'll be adding a time trigger
     for exactly this reason.
 
 Let's switch out the test job
-for one that exports our existing Ops Manager's installation state.
+for one that exports our existing Tanzu Operations Manager's installation state.
 We can switch the task out by changing:
 
 - the `name` of the job
@@ -34,7 +34,7 @@ We can switch the task out by changing:
 
 [`export-installation`][export-installation]
 has an additional required input.
-We need the `env` file used to talk to Ops Manager.
+We need the `env` file used to talk to Tanzu Operations Manager.
 
 We'll write that file and make it available as a resource in a moment,
 for now, we'll just `get` it as if it's there.
@@ -100,10 +100,10 @@ when we declare the corresponding resource.
 pipeline-repo: git@github.com:username/your-repo-name
 ```
 
-Now lets write an `env.yml` for your Ops Manager.
+Now lets write an `env.yml` for your Tanzu Operations Manager.
 
 `env.yml` holds authentication and target information
-for a particular Ops Manager.
+for a particular Tanzu Operations Manager.
 
 An example `env.yml` for username/password authentication
 is shown below with the required properties.
@@ -405,7 +405,7 @@ so we'll get to those when we do `config`.
 
 Let's start with the [state file][state].
 We need to record the `iaas` we're on
-and the ID of the _currently deployed_ Ops Manager VM.
+and the ID of the _currently deployed_ Tanzu Operations Manager VM.
 Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
@@ -450,12 +450,12 @@ We can map the `env` resource to [`upgrade-opsman`][upgrade-opsman]'s
 
 But first, we've got two more inputs to arrange for.
 
-We'll write an [Ops Manager VM Configuration file][opsman-config]
+We'll write an [Tanzu Operations Manager VM Configuration file][opsman-config]
 to `opsman.yml`.
 The properties available vary by IaaS;
-regardless, you can often inspect your existing Ops Manager
+regardless, you can often inspect your existing Tanzu Operations Manager
 in your IaaS's console
-(or, if your Ops Manager was created with Terraform,
+(or, if your Tanzu Operations Manager was created with Terraform,
 look at your terraform outputs)
 to find the necessary values.
 
@@ -528,10 +528,10 @@ git commit -m "Add opsman config"
 git push
 ```
 
-Finally, we need the image for the new Ops Manager version.
+Finally, we need the image for the new Tanzu Operations Manager version.
 
 We'll use the [`download-product`][download-product] task.
-It requires a config file to specify which Ops Manager to get,
+It requires a config file to specify which Tanzu Operations Manager to get,
 and to provide Tanzu Network credentials.
 Name this file `download-opsman.yml`:
 
