@@ -6,7 +6,7 @@
 * [Getting started](./getting-started.md)
 * [**Reference pipelines**](./pipelines/resources.md)
   * [Retrieving external dependencies](./pipelines/resources.md)
-  * [Operations Manager & multiple products](./pipelines/mulltiple-products.md)
+  * [Operations Manager & multiple products](./pipelines/multiple-products.md)
 * [**How-to guides**](./how-to-guides/installing-opsman.md)
   * [Installing Operations Manager](./how-to-guides/installing-opsman.md)
   * [Upgrading an existing Operations Manager](./how-to-guides/upgrade-existing-opsman.md)
