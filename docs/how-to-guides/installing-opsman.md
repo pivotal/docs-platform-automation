@@ -69,10 +69,10 @@ to make this (and later, other) configuration available to the pipelines.
 Github has good [instructions][git-add-existing]
 you can follow to create a new repository on Github.
 You can skip over the part
-about using `git init` to setup your repo,
+about using `git init` to set up your repo,
 since we [already did that](#but-first-git-init).
 
-Go ahead and setup your remote
+Now set up your remote
 and use `git push` to make what we have available.
 We will use this repository to hold our single foundation specific configuration.
 We are using the ["Single Repository for Each Foundation"][single-foundation-pattern]

@@ -5,12 +5,6 @@ This topic describes Platform Automation Toolkit dependencies and semantic versi
 ## External dependencies
 Platform Automation Toolkit is designed to work with these dependencies.
 
-<style>
-    sup {
-        background-color: white;
-    }
-</style>
-
 <table>
 <thead>
     <tr>
@@ -37,10 +31,10 @@ Platform Automation Toolkit is designed to work with these dependencies.
 </table>
 
 <sup>1</sup> 
-    [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] replaces [`credhub-interpolate`][credhub-interpolate] in Concourse 5.x+ _only_. 
+    [`prepare-tasks-with-secrets`](./tasks.md#prepare-tasks-with-secrets) replaces [`credhub-interpolate`](./tasks.md#credhub-interpolate) in Concourse 5.x+ _only_. 
     If using Concourse 4.x, continue using `credhub-interpolate`.
     If using Concourse 5.x+, it is strongly recommended to switch to `prepare-tasks-with-secrets`.
-    For more information about secrets handling, reference the [Secrets Handling Page][secrets-handling].
+    For more information about secrets handling, reference the [Secrets Handling Page](./concepts/secrets-handling.md).
     
 <sup>2</sup>
     v4.4.32, v5.0.25, and v5.1.2 introduced a version of the Concourse image based on Ubuntu Jammy.
@@ -48,13 +42,13 @@ Platform Automation Toolkit is designed to work with these dependencies.
     If you are using a version of Concourse prior to v6.7.9, you must use the Ubuntu Bionic based image.
 
 
-## Semantic Versioning
+## Semantic versioning
 This product uses [semantic versioning][semver] 2.0.0
 to describe the impact of changes to our concourse tasks. In order to take advantage of semantic versioning, we must declare an API.
 
 The following are considered part of our API:
 
-- Our concourse tasks':
+- Our concourse tasks:
 
     - inputs and outputs (including the format/required information in config files)
     - specified parameters
@@ -65,22 +59,22 @@ The following are considered part of our API:
 - The minimum compatible version
   of Concourse and Tanzu Operations Manager
   are part of the API,
-  and are specified [here][external-deps].
+  and are specified in [External dependencies][external-deps].
 
 - The presence of the following binaries on the _combined image_:
 
-    - bash 
-    - build-essential 
-    - curl 
-    - gettext 
-    - git 
-    - netcat-openbsd 
-    - python3-pip 
-    - python3-setuptools 
-    - rsync 
-    - ssh 
-    - unzip 
-    - zip 
+    - bash
+    - build-essential
+    - curl
+    - gettext
+    - git
+    - netcat-openbsd
+    - python3-pip
+    - python3-setuptools
+    - rsync
+    - ssh
+    - unzip
+    - zip
     - gcloud
     - python-openstackclient
     - awscli
@@ -142,9 +136,8 @@ Automatic consumption of major versions should be limited
 to test/staging environments
 intended to endure and detect such breakage.
 
-
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
+[//]: # ({% include ".internal_link_url.md" %})
+[//]: # ({% include ".external_link_url.md" %})
 
 [semver]: https://semver.org
 [external-deps]: #external-dependencies
