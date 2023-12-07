@@ -83,10 +83,10 @@ to make this (and later, other) configuration available to the pipelines.
 Github has good [instructions][git-add-existing]
 you can follow to create a new repository on Github.
 You can skip over the part
-about using `git init` to setup your repo,
-since we [already did that](#but-first-git-init).
+about using `git init` to set up your repo,
+since you [already did that](#but-first-git-init).
 
-Go ahead and setup your remote
+Now set up your remote
 and use `git push` to make what we have available.
 We will use this repository to hold our single foundation specific configuration.
 We are using the ["Single Repository for Each Foundation"][single-foundation-pattern]
@@ -369,29 +369,31 @@ Still, we can make a commit here:
 
 ```bash
 git add pipeline.yml
-git commit -m "Setup initial gets for upgrade job"
+git commit -m "Set up initial gets for upgrade job"
 git push
 ```
 
-!!! tip "Is this really a commit point though?"
-    <p>We like frequent, small commits that can be `fly` set and,
-    ideally, go green.
-    <p>This one doesn't actually do anything though, right?
-    Fair, but: setting and running the job
-    gives you feedback on your syntax and variable usage.
-    It can catch typos, resources you forgot to add or misnamed, etc.
-    Committing when you get to a working point helps keeps the diffs small,
-    and the history tractable.
-    Also, down the line, if you've got more than one pair working on a foundation,
-    the small commits help you keep off one another's toes.
-    <p>We don't demonstrate this workflow here,
-    but it can even be useful to make a commit,
-    use `fly` to see if it works,
-    and then push it if and only if it works.
-    If it doesn't, you can use `git commit --amend`
-    once you've figured out why and fixed it.
-    This workflow makes it easy to keep what is set on Concourse
-    and what is pushed to your source control remote in sync.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Is this really a commit point?</b>
+<p>We like frequent, small commits that can be `fly` set and,
+ideally, go green.
+<p>This one doesn't actually do anything though, right?
+Fair, but: setting and running the job
+gives you feedback on your syntax and variable usage.
+It can catch typos, resources you forgot to add or misnamed, etc.
+Committing when you get to a working point helps keeps the diffs small,
+and the history tractable.
+Also, down the line, if you've got more than one pair working on a foundation,
+the small commits help you keep off one another's toes.
+<p>We don't demonstrate this workflow here,
+but it can even be useful to make a commit,
+use `fly` to see if it works,
+and then push it if and only if it works.
+If it doesn't, you can use `git commit --amend`
+once you've figured out why and fixed it.
+This workflow makes it easy to keep what is set on Concourse
+and what is pushed to your source control remote in sync.</p>
 
 Looking over the list of inputs for [`upgrade-opsman`][upgrade-opsman]
 we still need three required inputs:

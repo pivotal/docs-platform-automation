@@ -97,7 +97,7 @@ The design considerations for this strategy as implemented are as follows:
   built-in to Platform Automation and Concourse.
 - No significant differences between the required setup of foundations.
   
-    This doesn't mean that this strategy cannot be used 
+    This doesn't mean that this strategy cannot be used
     with more complicated differences.
     If the pipelines need to be different for one reason or another,
     you might want the `pipelines` directory to be at the foundation level

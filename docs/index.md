@@ -7,15 +7,15 @@ We also provide instructions on using these building blocks in various workflows
 In this introduction, we'll provide a high-level overview of Platform Automation Toolkit.
 To dive-deeper, check out the references section.
 
-See the [Getting Started][getting-started.md] section for instructions
+See the [Getting Started](./getting-started.md) section for instructions
 on how to start using Platform Automation Toolkit.
 
 ## About Platform Automation Toolkit
 
-* Uses [om][om],
+* Uses the [GitHub om repo](https://github.com/pivotal-cf/om),
   (and by extension, the Tanzu Operations Manager API)
   to enable command-line interaction with Tanzu Operations Manager
-  ([Understanding the Tanzu Operations Manager Interface][platform-understanding-opsman])
+  ([Understanding the Tanzu Operations Manager Interface](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html))
 
 * Includes a documented reference pipeline
   showing one possible configuration to use tasks.
@@ -23,7 +23,7 @@ on how to start using Platform Automation Toolkit.
   there are some manual steps you'll need to take to optimize for automation.
   We will call these steps out so that these are clear to you.
 
-* Comes bundled with Concourse [tasks][concourse-task-definition]
+* Comes bundled with Concourse [tasks](https://concourse-ci.org/tasks.html)
   that demonstrate how to use these tasks
   in a containerized Continuous Integration (CI) system.
   Platform Automation Toolkit tasks are:
@@ -44,18 +44,19 @@ on how to start using Platform Automation Toolkit.
       rather than a comprehensive solution.
 
 * A documented and supported deployment of Concourse CI to use with Platform Automation Toolkit.
-  The [Concourse for Platform Automation docs][concourse-for-pa] provide a step-by-step tutorial for how to get started.
+  The [Concourse for Platform Automation docs](https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-platform-automation.html) provide a step-by-step tutorial for how to get started.
   This approach to deploying Concourse uses the BOSH Director deployed by Tanzu Operations Manager to deploy and maintain Concourse, Credhub, and UAA.
 
-The [Task Reference][task-reference] topic discusses these example tasks further.
+The [Task Reference](./tasks.md) topic discusses these example tasks further.
 
-!!! info "Transitioning from PCF Pipelines"
-      Platform Automation Toolkit takes a different approach than PCF Pipelines.
-      For instance, Platform Automation Toolkit allows you
-      to perform installs and upgrades in the same pipeline.
-      We recommend trying out Platform Automation Toolkit
-      to get a sense of the features and how they differ
-      to understand the best transition method for your environment and needs.
+<p class="note">
+<span class="note__title">Note</span>
+Platform Automation Toolkit takes a different approach than PCF Pipelines.
+For instance, Platform Automation Toolkit allows you
+to perform installs and upgrades in the same pipeline.
+We recommend trying out Platform Automation Toolkit
+to get a sense of the features and how they differ
+to understand the best transition method for your environment and needs.</p>
 
 ## Platform Automation Toolkit and Upgrading Tanzu Operations Manager
 
@@ -73,7 +74,7 @@ For example, VMware releases security patches every six days on average.
 
 So how can a platform engineering team simplify the platform upgrade process?
 
-#### <a id=""></a> Small and Continuous Upgrades
+### <a id=""></a> Small and Continuous Upgrades
 
 Adopting the practice of small and constant platform updates
 is one of the best ways to simplify the platform upgrade process.
@@ -87,7 +88,7 @@ A good place to start is to consume every patch.
 
 How do we do this?
 
-#### <a id=""></a> Small and Continuous Upgrades With Platform Automation Toolkit
+### <a id=""></a> Small and Continuous Upgrades With Platform Automation Toolkit
 
 With Platform Automation Toolkit,
 platform teams have the tools to create an automated perpetual upgrade machine,
@@ -106,12 +107,13 @@ In addition, Platform Automation Toolkit allows you to:
 The following table compares how Tanzu Operations Manager
 and Platform Automation Toolkit might run a typical sequence of Tanzu Operations Manager operations:
 
-<table border="1">
-  <tr>
+<table>
+  <thead><tr>
     <th></th>
     <th>Tanzu Operations Manager</th>
     <th>Platform Automation Toolkit</th>
-  </tr><tr>
+  </tr></thead>
+  <tbody><tr>
     <th>When to Use</th>
     <th>First install and minor upgrades</th>
     <th>Config changes and patch upgrades</th>
@@ -144,8 +146,8 @@ and Platform Automation Toolkit might run a typical sequence of Tanzu Operations
     <td>Manually export existing Tanzu Operations Manager settings, power off the VM, then create a new, updated
     Tanzu Operations Manager VM</td>
     <td><code>export-installation</code> then <code>upgrade-opsman</code></td>
-  </tr>
+  </tr></tbody>
 </table>
 
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
+[//]: # ({% include ".internal_link_url.md" %})
+[//]: # ({% include ".external_link_url.md" %})
