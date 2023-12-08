@@ -111,7 +111,7 @@ without applying changes run:
 
 The Tanzu Operations Manager Documentation [has additional details][opsman-verifiers-docs] about managing verifiers.
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

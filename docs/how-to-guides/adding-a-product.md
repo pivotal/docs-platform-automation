@@ -1,35 +1,33 @@
 # Extending a pipeline to install a product
 
 This how-to-guide will teach you how to add a product to an existing pipeline.
-This includes downloading the product from Pivnet,
+This includes downloading the product from Tanzu Network,
 extracting configuration,
 and installing the configured product.
-If you don't already have an Tanzu Operations Manager and deployed Director,
-check out [Installing Tanzu Operations Manager][install-how-to] and
-[Deploying the Director][director-configuration] respectively.
 
 ## Prerequisites
-1. A pipeline, such as one created in [Installing Tanzu Operations Manager][install-how-to] 
-   or [Upgrading an Existing Tanzu Operations Manager][upgrade-how-to].
-1. A fully configured Tanzu Operations Manager and Director.
-1. The Platform Automation Toolkit Docker Image [imported and ready to run][running-commands-locally].
-1. A glob pattern uniquely matching one product file on Tanzu Network.
 
-### Assumptions About your Existing Pipeline
+1. A pipeline, such as one created in [Installing Tanzu Operations Manager](./installing-opsman.md)
+   or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md).
+2. A fully configured Tanzu Operations Manager and Director. See [Deploying the Director](./creating-a-director-config-file.md).
+3. The Platform Automation Toolkit Docker Image [imported and ready to run](./running-commands-locally.md).
+4. A glob pattern uniquely matching one product file on Tanzu Network.
+
+### Assumptions about your existing pipeline
+
 This guide assumes you're working
 from one of the pipelines created in previous guides,
-but you don't _have_ to have exactly that pipeline.
+but you don't have to have exactly that pipeline.
 If your pipeline is different, though,
 you may run into trouble with some of our assumptions.
 
 We assume:
 
-- Resource declarations for
-  `config` and `platform-automation`.
+- Resource declarations for `config` and `platform-automation`.
 - A pivnet token stored in Credhub as a credential named `pivnet_token`.
 - A previous job responsible for deploying the director
   called `apply-director-changes`.
-- You have created an `env.yml` from the [Configuring Env][generating-env-file]
+- You have created an `env.yml` from the [Configuring Env](./configuring-env.md)
   how-to guide. This file exists in the `configuration` resource.
 - You have a `fly` target named `control-plane` with an existing pipeline called `foundation`.
 - You have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
@@ -39,12 +37,13 @@ as long as you make sure the above names match up with what's in your pipeline,
 either by changing the example YAML or your pipeline.
 
 ## Download, upload, and stage product to Tanzu Operations Manager
-For this guide, we're going to add the [TAS][tas] product.
+
+For this guide, we're going to add the [VMware Tanzu Application Service for VMs](https://network.pivotal.io/products/elastic-runtime) product.
 
 ### Download
-Before setting the pipeline, we will have to 
-create a config file for [`download-product`][download-product]
-in order to download TAS from Tanzu Network.
+
+Before setting the pipeline, create a config file for [`download-product`](../tasks.md#download-product)
+to download Tanzu Application Service from Tanzu Network.
 
 Create a `download-tas.yml`.
 
@@ -102,7 +101,7 @@ Now that we have a runnable job, let's make a commit
 
 ```bash
 git add pipeline.yml
-git commit -m 'download tas and its stemcell'
+git commit -m 'download TAS and its stemcell'
 ```
 
 Then we can set the pipeline
@@ -197,36 +196,42 @@ git commit -m 'upload tas and stemcell to Ops Manager'
 git push
 ```
 
-## Product Configuration
+## Product configuration
+
 Before automating the configuration and install of the product,
 we need a config file.
 The simplest way is to choose your config options in the Tanzu Operations Manager UI,
 then pull its resulting configuration.
 
-!!! Info "Advanced Tile Config Option"
-    For an alternative that generates the configuration
-    from the product file, using ops files to select options, 
-    see the [Config Template][config-template] section.
+<p class="note">
+<span class="note__title">Note</span>
+Advanced Tile Config Option:
+For an alternative that generates the configuration
+from the product file, using ops files to select options,
+see <a href="./adding-a-product.md#config-template">Config template</a>
+</p>
 
+### Pulling Configuration from Tanzu Operations Manager
 
-#### Pulling Configuration from Tanzu Operations Manager
 Configure the product _manually_ according to the product's install instructions.
-This guide installs [tas][tas-install-vsphere].
-Other install instructions may be found in [VMware Tanzu Docs][tanzu-docs].
+This guide installs [Tanzu Application Service](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/vsphere-nsx-t.html).
+You can find installation instructions in [VMware Tanzu Docs](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/toc-installing-index.html).
 
-Once the product is fully configured, apply changes in the Tanzu Operations Manager UI, 
+Once the product is fully configured, apply changes in the Tanzu Operations Manager UI,
 and then continue this guide.
 
-!!! warning "If You Do Not Apply Changes"
-    Tanzu Operations Manager cannot generate credentials for you
-    until you have applied changes (at least once).
-    You can still go through this process without an initial applying changes,
-    but you will be unable to use `om staged-config` with `--include-credentials`, 
-    and may have an incomplete configuration at the end of this process.
+<p class="note important">
+<span class="note__title">Important</span>
+If you do not <b>Apply Changes</b>:
+Tanzu Operations Manager cannot generate credentials for you
+until you have applied changes (at least once).
+You can still go through this process without an initial applying changes,
+but you will be unable to use <code>om staged-config</code> with <code>--include-credentials</code>,
+and may have an incomplete configuration at the end of this process.</p>
 
-[`om`][om] has a command called [staged-config][staged-config], 
+[`om`](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.md#staged-config),
 which is used to extract staged product
-configuration from the Tanzu Operations Manager UI. 
+configuration from the Tanzu Operations Manager UI.
 `om` requires a `env.yml`, which we already used in the `upload-and-stage` task.
 
 Most products will contain the following top-level keys:
@@ -236,15 +241,13 @@ Most products will contain the following top-level keys:
 - resource-config
 
 The command can be run directly using Docker.
-We'll need to download the image to our local workstation, import it into Docker, 
-and then run `staged-config` for the [Tanzu Application Service][tas] product.
-For more information on Running Commands Locally,
-see the corresponding [How-to Guide][running-commands-locally].
+We'll need to download the image to our local workstation, import it into Docker,
+and then run `staged-config` for the [Tanzu Application Service](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/vsphere-nsx-t.html) product.
+For more information, see [Running commands locally](./running-commands-locally.md).
 
-
-After the image has been downloaded from [Tanzu Network][tanzu-network-platform-automation]
-we're going to need the product name recognized by Tanzu Operations Manager.
-This can be found using `om`, but first we should import the image
+After you download the image from [Tanzu Network](https://network.pivotal.io/products/platform-automation/)
+you need the product name recognized by Tanzu Operations Manager.
+This can be found using `om`, but first, import the image.
 
 ```bash
 export ENV_FILE=env.yml
@@ -269,7 +272,7 @@ The result should be a table that looks like the following
 
 `p-bosh` is the name of the director.
 As `cf` is the only other product on our Tanzu Operations Manager,
-we can safely assume that this is the product name for [TAS][tas].
+we can safely assume that this is the product name for [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime).
 
 Using the product name `cf`,
 let's extract the current configuration from Tanzu Operations Manager.
@@ -282,12 +285,13 @@ om --env ${ENV_FILE} staged-config --include-credentials --product-name cf > tas
 We have a configuration file for our tile ready to back up! Almost.
 There are a few more steps required before we're ready to commit.
 
-#### Parameterizing the Config 
+#### Parameterizing the config
+
 Look through your `tas-config.yml` for any sensitive values.
 These values should be `((parameterized))`
-and saved off in a secrets store (in this example, we'll use Credhub).
+and saved off in a secrets store (in this example, we use CredHub).
 
-You should still be logged into Credhub.
+You should still be logged into CredHub.
 If not, login. Be sure to note the space at the beginning of the line.
 This will ensure your valuable secrets are not saved in terminal history.
 
@@ -608,17 +612,18 @@ git push
 
 You have now successfully added a product to your automation pipeline.
 
-## Advanced Concepts
-### Config Template
+## Advanced concepts
+### Config template
+
 An alternative to the staged-config workflow
 outlined in the how-to guide is `config-template`.
 
 `config-template` is an `om` command that creates a base config file with optional ops files
 from a given tile or pivnet slug.
 
-This section will assume [TAS][tas], like the how-to guide above.
+This section will assume [TAS](https://network.pivotal.io/products/elastic-runtime), as in the how-to guide above.
 
-#### Generate the Config Template Directory
+#### Generate the config template directory
 
 ```bash
 # note the leading space
@@ -672,7 +677,7 @@ This can be useful if there are vars that need to be interpolated when you apply
 rather than when you create the final template.
 You might consider creating a separate vars file for each of the following cases:
 
-- credentials (these vars can then be [persisted separately/securely][secrets-handling])
+- credentials (These vars can then be persisted separately/securely. See [Using a secrets store to store credentials](../concepts/secrets-handling.md))
 - foundation-specific variables when using the same template for multiple foundations
 
 You can use the `--skip-missing` flag when creating your final template
@@ -689,8 +694,10 @@ here are some approaches you can use:
     If you are still struggling, inspecting the html of the Tanzu Operations Manager webpage
     can more accurately map the value names to the associated UI element.
 
-!!! info "When Using The Tanzu Operations Manager Docs and UI"
-    Be aware that the field names in the UI do not necessarily map directly to property names.
+<p class="note">
+<span class="note__title">Note</span>
+When using the Tanzu Operations Manager docs and UI,
+be aware that the field names in the UI do not necessarily map directly to property names.</p>
 
 #### Optional Features
 The above process will get you a default installation,
@@ -721,7 +728,7 @@ you'll need to use some of the ops files in one of the following four directorie
     </tr>
 </table>
 
-For more information on BOSH VM Extensions, refer to the [Creating a Director Config File How-to Guide][vm-extensions].
+For more information on BOSH VM Extensions, refer to the [Creating a director config file](./creating-a-director-config-file.md#vm-extensions).
 
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
@@ -769,17 +776,17 @@ om interpolate \
 
 You can check-in the resulting configuration to a git repo.
 For vars that do not include credentials, you can check those vars files in, as well.
-Handle vars that are secret [more carefully][secrets-handling].
+Handle vars that are secret more carefully. See [Using a secrets store to store credentials](../concepts/secrets-handling.md).
 
 You can then dispose of the config template directory.
 
-## Using Ops Files for Multi-Foundation
+## Using ops files for multi-foundation
 
 There are two recommended ways to support multiple foundation workflows:
-using [secrets management][multi-foundation-secrets-handling] or ops files.
+using [secrets management](../concepts/secrets-handling.md#multi-foundation-secrets-handling) or ops files.
 This section will explain how to support multiple foundations using ops files.
 
-Starting with an **incomplete** [Tanzu Application Service][tas] config from **vSphere** as an example:
+Starting with an incomplete [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime) config from **vSphere** as an example:
 
 {% include ".cf-partial-config.md" %}
 
@@ -789,7 +796,7 @@ foundations, this value will be different per deployed foundation. Other values,
 such as `.cloud_controller.encrypt_key` have a secret that
 already have a placeholder from `om`. If different foundations have different
 load requirements, even the values in `resource-config` can be edited using
-[ops files][ops-files].
+[ops files](https://bosh.io/docs/cli-ops-files/).
 
 Using the example above, let's try filling in the existing placeholder for
 `cloud_controller.apps_domain` in our first foundation.
@@ -823,7 +830,7 @@ Replicating configuration settings from one product to the same product on a dif
 * Because properties and property names can change between patch versions of a product,
   you can only safely apply configuration settings across products if their versions exactly match.
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

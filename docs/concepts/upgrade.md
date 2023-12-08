@@ -100,7 +100,7 @@ p-automator upgrade-opsman --state-file state.yml \
 --installation installation.zip --env-file env.yml
 ```
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

@@ -581,7 +581,7 @@ Any value with a leading `/` slash will never use the `PREFIX`
 to look up values in Credhub. 
 Therefore, you can have multiple key lookups in a single interpolate task. 
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

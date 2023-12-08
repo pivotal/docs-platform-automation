@@ -1,6 +1,6 @@
 # Generating an Env file
 
-Almost all [`om`][om] commands require an env file
+Almost all [`om`](https://github.com/pivotal-cf/om) commands require an env file
 to describe how to communicate (and authenticate) with a given VMware Tanzu Operations Manager.
 
 There are two ways to provide auth information.
@@ -19,7 +19,7 @@ While `decryption-passphrase` is nominally optional,
 if you intend to use a single `env.yml` for an entire pipeline,
 it will be necessary to include for use with the `import-installation` step.
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})
