@@ -17,7 +17,7 @@
   * [Why use Git and GitHub?](./how-to-guides/git-repo-layout.md)
   * [Running commands locally](./how-to-guides/running-commands-locally.md)
   * [Setting up S3 for file storage](./how-to-guides/setting-up-s3.md)
-  * [Rotating certificate authority (CA)](./how-to-guides/rotating-certificate-authority.md)
+  * [Writing a pipeline to rotate the foundation CA](./how-to-guides/rotating-certificate-authority.md)
 * [**Concepts**](./concepts/secrets-handling.md)
   * [Using a secrets store to store credentials](./concepts/secrets-handling.md)
   * [Handling stemcells](./concepts/stemcell-handling.md)
