@@ -12,7 +12,7 @@ We have in-depth procedures for deploying a new Tanzu Operations Manager and
 taking over management of an existing Tanzu Operations Manager
 with Platform Automation Toolkit:
 
-- For more information about deploying Concourse with Credhub and UAA,
+- For more information about deploying Concourse with CredHub and User Account and Authentication (UAA),
   see [Install Concourse for Platform Automation](https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/index.html).
 - For more information about deploying Platform Automation Toolkit
   with a new Tanzu Operations Manager, see [Installing Tanzu Operations Manager](./how-to-guides/installing-opsman.md).

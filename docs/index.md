@@ -45,7 +45,7 @@ on how to start using Platform Automation Toolkit.
 
 * A documented and supported deployment of Concourse CI to use with Platform Automation Toolkit.
   The [Concourse for Platform Automation docs](https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-platform-automation.html) provide a step-by-step tutorial for how to get started.
-  This approach to deploying Concourse uses the BOSH Director deployed by Tanzu Operations Manager to deploy and maintain Concourse, Credhub, and UAA.
+  This approach to deploying Concourse uses the BOSH Director deployed by Tanzu Operations Manager to deploy and maintain Concourse, CredHub, and UAA.
 
 The [Task Reference](./tasks.md) topic discusses these example tasks further.
 

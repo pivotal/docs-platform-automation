@@ -60,11 +60,11 @@ it will again complain about resources that don't exist
 so the next step is to make them.
 
 The first new resource we need is the config file.
-We'll push our git repo to a remote on Github
+We'll push our git repo to a remote on GitHub
 to make this (and later, other) configuration available to the pipelines.
 
-Github has good [instructions](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
-you can follow to create a new repository on Github.
+GitHub has good [instructions](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
+you can follow to create a new repository on GitHub.
 You can skip over the part
 about using `git init` to set up your repo,
 since we did that earlier.
@@ -76,7 +76,7 @@ We are using the ["Single repository for each Foundation"](../pipeline-design/co
 pattern to structure our configurations.
 
 You will also need to add the repository URL
-to Credhub so we can reference it
+to CredHub so we can reference it
 later when we declare the corresponding resource.
 
 ```bash
@@ -111,7 +111,7 @@ we'll need to create a deploy key Concourse can use to access it.
 Follow the [GitHub instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys)
 for creating a deploy key.
 
-Then, put the private key in Credhub so we can use it in our pipeline:
+Then, put the private key in CredHub so we can use it in our pipeline:
 
 ```bash
 # note the space at the beginning of the next line
@@ -133,7 +133,7 @@ Then, add this to the resources section of your pipeline file:
     branch: main
 ```
 
-We'll need to put the Tanzu Network token in Credhub:
+We'll need to put the Tanzu Network token in CredHub:
 
 ```bash
 # note the starting space throughout
@@ -197,7 +197,7 @@ An alternative to `input_mappings` is discussed in
 Now, the `prepare-tasks-with-secrets` task
 will find required credentials in the config files,
 and modify the tasks,
-so they will pull values from Concourse's integration of Credhub.
+so they will pull values from Concourse's integration of CredHub.
 
 The job will download the product now.
 This is a good commit point.

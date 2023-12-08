@@ -32,7 +32,7 @@ params:
   CREDHUB_CA_CERT:
   # - Optional
   # - This is only necessary if your Concourse worker
-  #   is not already configured to trust the CA used for Credhub.
+  #   is not already configured to trust the CA used for CredHub.
   # - If more than one CA cert is required (ie the UAA),
   #   the CA certs can be concatenated together and separated by a newline.
   #   For example,

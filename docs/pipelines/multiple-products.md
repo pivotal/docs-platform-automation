@@ -22,7 +22,7 @@ the VM is created. The choices for this file are simple or saml authentication.
 
 <p class="note">
 <span class="note__title">Note</span>
-There will be some crossover between the auth file and the env file due to how <code>om</code> is set up and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.</p>
+There will be some crossover between the auth file and the env file due to how <code>om</code> is set up and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you in order to maintain consistency across files.</p>
 
 * An [opsman-configuration](../inputs-outputs.md) file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Tanzu Operations Manager VM
