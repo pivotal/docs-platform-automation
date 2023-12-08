@@ -1,30 +1,29 @@
 # Writing a pipeline to upgrade an existing VMware Tanzu Operations Manager
 
 This how-to-guide shows you how to create a pipeline for upgrading an existing Vmware Tanzu Operations Manager VM.
-If you don't have an Tanzu Operations Manager VM, check out [Installing Tanzu Operations Manager][install-how-to].
+If you don't have an Tanzu Operations Manager VM, check out [Installing Tanzu Operations Manager](./installing-opsman.md).
 
 {% set upgradeHowTo = True %}
 {% include ".getting-started.md" %}
 
 ## Exporting the installation
 
-We're finally in a position to do work!
-
 While ultimately we want to upgrade Tanzu Operations Manager,
 to do that safely we first need to download and persist
 an export of the current installation.
 
-!!! warning "Export your installation routinely"
-    We _**strongly recommend**_ automatically exporting
-    the Tanzu Operations Manager installation
-    and _**persisting it to your blobstore**_ on a regular basis.
-    This ensures that if you need to upgrade (or restore!)
-    your Tanzu Operations Manager for any reason,
-    you'll have the latest installation info available.
-    Later in this tutorial, we'll be adding a time trigger
-    for exactly this reason.
+<p class="note caution">
+<span class="note__title">Caution</span>
+VMware <b><em>strongly recommends</em></b> automatically exporting
+the Tanzu Operations Manager installation
+and <b><em>persisting it to your blobstore</em></b> on a regular basis.
+This ensures that if you need to upgrade (or restore)
+your Tanzu Operations Manager for any reason,
+you'll have the latest installation info available.
+A time trigger is added later in this tutorial
+for exactly this reason.</p>
 
-Let's switch out the test job
+Now switch out the test job
 for one that exports our existing Tanzu Operations Manager's installation state.
 We can switch the task out by changing:
 
@@ -32,7 +31,7 @@ We can switch the task out by changing:
 - the `name` of the task
 - the `file` of the task
 
-[`export-installation`][export-installation]
+[`export-installation`](../tasks.md#export-installation)
 has an additional required input.
 We need the `env` file used to talk to Tanzu Operations Manager.
 
@@ -72,24 +71,22 @@ jobs:
 ```
 
 If we try to `fly` this up to Concourse,
-it will again complain about resources that don't exist.
-
-So, let's make them.
+it will again complain about resources that don't exist, so it's time to make them.
 
 The first new resource we need is the env file.
 We'll push our git repo to a remote on Github
 to make this (and later, other) configuration available to the pipelines.
 
-Github has good [instructions][git-add-existing]
-you can follow to create a new repository on Github.
-You can skip over the part
+Use these GitHub [instructions](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
+to create a new repository on Github.
+You can skip the part
 about using `git init` to set up your repo,
-since you [already did that](#but-first-git-init).
+since this was completed earlier in the procedure.
 
 Now set up your remote
 and use `git push` to make what we have available.
 We will use this repository to hold our single foundation specific configuration.
-We are using the ["Single Repository for Each Foundation"][single-foundation-pattern]
+We are using the [Single repository for each foundation](../pipeline-design/configuration-management-strategies.md#single-foundation-pattern)
 pattern to structure our configurations.
 
 You will also need to add the repository URL
@@ -107,7 +104,7 @@ for a particular Tanzu Operations Manager.
 
 An example `env.yml` for username/password authentication
 is shown below with the required properties.
-Please reference [Configuring Env][generating-env-file] for the entire list of properties
+Please reference [Configuring Env](./configuring-env.md) for the entire list of properties
 that can be used with `env.yml`
 as well as an example of an `env.yml`
 that can be used with UAA (SAML, LDAP, etc.) authentication.
@@ -116,7 +113,7 @@ The property `decryption-passphrase` is required for `import-installation`,
 and therefore required for `upgrade-opsman`.
 
 If your foundation uses authentication other than basic auth,
-please reference [Inputs and Outputs][env]
+please reference [Inputs and Outputs](../inputs-outputs.md)
 for more detail on UAA-based authentication.
 
 
@@ -140,7 +137,7 @@ we need to add a resource to tell Concourse how to get it as `env`.
 
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
-Follow [Github's instructions][git-deploy-keys]
+Follow [Github's instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys)
 for creating a deploy key.
 
 Then, put the private key in Credhub so we can use it in our pipeline:
@@ -182,9 +179,9 @@ We'll put the credentials we need in Credhub:
 
 {% include './.paths-and-pipeline-names.md' %}
 
-In order to perform interpolation in one of our input files,
-we'll need the [`credhub-interpolate` task][credhub-interpolate]
-Earlier, we relied on Concourse's native integration with Credhub for interpolation.
+To perform interpolation in one of our input files,
+we'll need the [`credhub-interpolate` task](../tasks.md#credhub-interpolate)
+Earlier, we relied on Concourse's native integration with CredHub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
 
@@ -230,22 +227,23 @@ jobs:
         file: installation/installation-*.zip
 ```
 
-!!! info A bit on "output_mapping"
-    <p>The `credhub-interpolate` task for this job
-    maps the output from the task (`interpolated-files`)
-    to `interpolated-env`.
-    <p>This can be used by the next task in the job
-    to more explicitly define the inputs/outputs of each task.
-    It is also okay to leave the output as `interpolated-files`
-    if it is appropriately referenced in the next task
+<p class="note">
+<span class="note__title">Note</span>
+The <code>credhub-interpolate<code> task for this job
+maps the output from the task (`interpolated-files`)
+to <code>interpolated-env</code>.
+This can be used by the next task in the job
+to more explicitly define the inputs/outputs of each task.
+It is also okay to leave the output as <code>interpolated-files</code>
+if it is appropriately referenced in the next task.</p>
 
-Notice the [input mappings][concourse-input-mapping]
+Notice the [input mappings](https://concourse-ci.org/jobs.html#schema.step.task-step.input_mapping)
 of the `credhub-interpolate` and `export-installation` tasks.
 This allows us to use the output of one task
 as in input of another.
 
 An alternative to `input_mappings` is discussed in
-[Configuration Management Strategies][advanced-pipeline-design].
+[Configuration Management Strategies](../pipeline-design/configuration-management-strategies.md#advanced-pipeline-design).
 
 We now need to put our `credhub_client` and `credhub_secret` into Credhub,
 so Concourse's native integration can retrieve them
@@ -268,7 +266,7 @@ and pass it to `export-installation` as `config`.
 The other new resource we need is a blobstore,
 so we can persist the exported installation.
 
-We'll add an [S3 resource][s3-resource]
+We'll add an [S3 resource](https://github.com/concourse/s3-resource)
 to the `resources` section:
 
 ```yaml
@@ -281,7 +279,7 @@ to the `resources` section:
     regexp: installation-(.*).zip
 ```
 
-Again, we'll need to save the credentials in Credhub:
+Again, we'll need to save the credentials in CredHub:
 
 ```bash
 # note the starting space throughout
@@ -339,7 +337,7 @@ We want the export and the upgrade in separate jobs
 so they can be triggered (and re-run) independently.
 
 We know this new job is going to center
-on the [`upgrade-opsman`][upgrade-opsman] task.
+on the [`upgrade-opsman`](..//tasks.md#upgrade-opsman) task.
 Click through to the task description,
 and write a new job that has `get` steps
 for our platform-automation resources
@@ -395,7 +393,7 @@ once you've figured out why and fixed it.
 This workflow makes it easy to keep what is set on Concourse
 and what is pushed to your source control remote in sync.</p>
 
-Looking over the list of inputs for [`upgrade-opsman`][upgrade-opsman]
+Looking over the list of inputs for [`upgrade-opsman`](..//tasks.md#upgrade-opsman)
 we still need three required inputs:
 
 1. `state`
@@ -405,7 +403,7 @@ we still need three required inputs:
 The optional inputs are vars used with the config,
 so we'll get to those when we do `config`.
 
-Let's start with the [state file][state].
+Start with the [state file](../inputs-outputs.md#state).
 We need to record the `iaas` we're on
 and the ID of the _currently deployed_ Tanzu Operations Manager VM.
 Different IaaS uniquely identify VMs differently;
@@ -447,12 +445,12 @@ git commit -m "Add state file for foundation Ops Manager"
 git push
 ```
 
-We can map the `env` resource to [`upgrade-opsman`][upgrade-opsman]'s
+We can map the `env` resource to the [`upgrade-opsman`](..//tasks.md#upgrade-opsman)
 `state` input once we add the task.
 
 But first, we've got two more inputs to arrange for.
 
-We'll write an [Tanzu Operations Manager VM Configuration file][opsman-config]
+We'll write an [Tanzu Operations Manager VM Configuration file](../inputs-outputs.md#opsman-config)
 to `opsman.yml`.
 The properties available vary by IaaS;
 regardless, you can often inspect your existing Tanzu Operations Manager
@@ -532,20 +530,18 @@ git push
 
 Finally, we need the image for the new Tanzu Operations Manager version.
 
-We'll use the [`download-product`][download-product] task.
+We'll use the [`download-product`](../tasks.md#download-product) task.
 It requires a config file to specify which Tanzu Operations Manager to get,
 and to provide Tanzu Network credentials.
 Name this file `download-opsman.yml`:
 
 ```yaml
 ---
-pivnet-api-token: ((pivnet-refresh-token)) # interpolated from Credhub
+pivnet-api-token: ((pivnet-refresh-token)) # interpolated from CredHub
 pivnet-file-glob: "ops-manager*.ova"
 pivnet-product-slug: ops-manager
 product-version-regex: ^2\.5\.0.*$
 ```
-
-You know the drill.
 
 ```bash
 git add download-opsman.yml
@@ -553,7 +549,7 @@ git commit -m "Add download opsman config"
 git push
 ```
 
-Now, we can put it all together:
+Now, put it all together:
 
 ```yaml hl_lines="16-46"
 - name: upgrade-opsman
@@ -600,20 +596,22 @@ Now, we can put it all together:
       state: env
 ```
 
-!!! note "Defaults for tasks"
-    We do not explicitly set the default parameters
-    for `upgrade-opsman` in this example.
-    Because `opsman.yml` is the default input to `OPSMAN_CONFIG_FILE`,
-    `env.yml` is the default input to `ENV_FILE`,
-    and `state.yml` is the default input to `STATE_FILE`,
-    it is redundant to set this param in the pipeline. 
-    Refer to the [task definitions][task-reference] for a full range of the 
-    available and default parameters.
+<p class="note">
+<span class="note__title">Note</span>
+We do not explicitly set the default parameters
+for <code>upgrade-opsman</code> in this example.
+Because <code>opsman.yml</code> is the default input to <code>OPSMAN_CONFIG_FILE</code>,
+<code>env.yml</code> is the default input to `ENV_FILE`,
+and <code>state.yml</code> is the default input to <code>STATE_FILE</code>,
+it is redundant to set this param in the pipeline.
+See the <a href="../tasks.md">task definitions</a>
+for a full range of the
+available and default parameters.</p>
 
 Set the pipeline.
 
 Before we run the job,
-we should [`ensure`][ensure] that `state.yml` is always persisted
+we should [`ensure`](https://concourse-ci.org/jobs.html#schema.step.ensure) that `state.yml` is always persisted
 regardless of whether the `upgrade-opsman` job failed or passed.
 To do this, we can add the following section to the job:
 
@@ -694,7 +692,7 @@ git push
 Your upgrade pipeline is now complete.
 You are now free to move on to the next steps of your automation journey.
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

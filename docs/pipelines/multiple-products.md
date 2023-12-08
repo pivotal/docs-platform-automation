@@ -45,7 +45,7 @@ to install Tanzu Operations Manager and the Tanzu Application Service and Health
 Its dependencies are coming from a trusted git repository,
 which can be retrieved as shown in [Retrieving external dependencies](../pipelines/resources.md).
 
-### Full Pipeline and Reference Configurations
+### Full pipeline and reference configurations
 
 The [docs-platform-automation-reference-pipeline-config git repository](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config)
 contains the [full pipeline file](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/pipelines/pipeline.yml),

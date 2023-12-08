@@ -56,9 +56,8 @@ with the `--skip-deploy-products`/`-sdp` flag.
 
 ### assign-multi-stemcell
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
-This feature is only available in OpsMan 2.6+.
-For more information on how to utilize this workflow,
-check out the [Stemcell Handling][stemcell-handling] topic.
+For more information about how to utilize this workflow,
+see [Stemcell Handling](./concepts/stemcell-handling.md).
 
 === "Task"
     ---excerpt--- "tasks/assign-multi-stemcell"
@@ -69,8 +68,8 @@ check out the [Stemcell Handling][stemcell-handling] topic.
 
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product.
-For more information on how to utilize
-this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
+For more information about how to use
+this workflow, see [Stemcell Handling](./concepts/stemcell-handling.md).
 
 === "Task"
     ---excerpt--- "tasks/assign-stemcell"
@@ -321,7 +320,7 @@ The task does specific CLI commands for the creation of the Tanzu Operations Man
 1. Requires the image YAML file from Tanzu Network
 2. Validates the existence of the VM if defined in the statefile, if so do nothing
 3. Chooses the correct ami to use based on the provided image YAML file from Tanzu Network
-4. Creates the VM configured via opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
+4. Creates the VM configured using the opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
 5. The public IP address, if provided, is assigned after successful creation
 
 **Azure**
@@ -956,5 +955,5 @@ Tanzu Operations Manager parses this filename to determine the version and OS of
 === "Usage"
     ---excerpt--- "reference/upload-stemcell-usage"
 
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
+[//]: # ({% include ".internal_link_url.md" %})
+[//]: # ({% include ".external_link_url.md" %})

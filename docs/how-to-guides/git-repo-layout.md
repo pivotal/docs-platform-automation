@@ -9,14 +9,16 @@ Git is a commonly used version control tool.
 It can be used to track code changes made to files within a repository (or "repo").
 Changes can then be "pushed" to or "pulled" from remote copies of that repository.
 
-!!! Info "GitHub alternatives"
-    There are many alternatives to GitHub including
-    Gitlabs, Google Cloud Source Repositories, etc.
-    Any remote Git client will work with Platform Automation Toolkit and Concourse.
-    Refer to the [Concourse Git resource][concourse-git-resource] documentation for details.
+<p class="note">
+<span class="note__title">Note</span>
+There are many alternatives to GitHub including
+Gitlabs, Google Cloud Source Repositories, etc.
+Any remote Git client will work with Platform Automation Toolkit and Concourse.
+See the <a fref="https://github.com/concourse/git-resource">Concourse Git resource</a>
+documentation for details.</p>
 
 To learn more about Git and Github,
-you can [read this short git handbook][github-git-handbook].
+you can [read this short git handbook](https://docs.github.com/en/get-started/using-git/about-git).
 
 ## Creating a Git Repository
 
@@ -78,16 +80,18 @@ git push --set-upstream origin main
 You should now see your GitHub repo populated
 with the directories and empty files.
 
-!!! tip "Using GitHub with SSH"
-    A GitHub repository may be referenced
-    as a remote repo by HTTPS or by SSH.
-    In general, SSH keys are more secure.
-    The [Concourse Git resource][concourse-git-resource]
-    supports using SSH keys to pull from a repository.
-    For more information on using SSH keys with GitHub,
-    refer to this [SSH documentation.][github-ssh]
+<p class="note important">
+<span class="note__title">Important</span>
+A GitHub repository may be referenced
+as a remote repo by HTTPS or by SSH.
+In general, SSH keys are more secure.
+The <a href="https://docs.github.com/en/get-started/using-git/about-git">Concourse Git resource</a>
+supports using SSH keys to pull from a repository.
+For more information on using SSH keys with GitHub,
+see this 
+[SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)</p>
 
-## Recommended File Structure
+## Recommended file structure
 
 You now have both a local Git repo and a remote on GitHub.
 The above commands give you the recommended structure
@@ -135,15 +139,18 @@ for a Platform Automation Toolkit configuration repo:
 </table>
 
 For further details regarding the contents of these files,
-please refer to the [Inputs and Outputs][inputs-outputs] documentation.
+see [Inputs and outputs](../inputs-outputs.md).
 
-!!! warning "Never commit secrets to Git"
-    It is a best practice to **_not_** commit secrets,
-    including passwords, keys, and sensitive information,
-    to Git or GitHub. Instead, use `((parameters))`.
-    For more information on a recommended way to do this,
-    using Credhub or vars files,
-    review the [handling secrets documentation.][secrets-handling]
+
+<p class="note caution">
+<span class="note__title">Caution</span>
+Never commit secrets to Git.
+It is a best practice **_not_** to commit secrets,
+including passwords, keys, and sensitive information,
+to Git or GitHub. Instead, use <code>((parameters))</code>.
+For more information about a recommended way to do this
+using CredHub or vars files
+see <a href="../concepts/secrets-handling.md">Using a secrets store to store credentials.</a></p>
 
 ## Multi-foundation
 
@@ -154,14 +161,14 @@ for multi-foundation templating.
 
 There are many possibilities for structuring Git repos in these complex situations.
 For guidance on how to best set up your git's file structure,
-refer to the [Inputs and Outputs][inputs-outputs] documentation
+refer to the [Inputs and outputs](../inputs-outputs.md) documentation
 and take note of the `inputs` and `outputs` of the
-various [Platform Automation Toolkit tasks][task-reference].
+various [Platform Automation Toolkit tasks](../tasks.md).
 As long as the various input / output mappings correctly correlate
 to the expected ins and outs of the Platform Automation Toolkit tasks,
 any file structure could theoretically work.
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

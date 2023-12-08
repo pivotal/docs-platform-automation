@@ -11,7 +11,7 @@ Platform Automation Toolkit is designed to work with these dependencies.
         <th>Platform Automation Toolkit</th>
         <th>Concourse</th>
         <th>Tanzu Operations Manager</th>
-        <th>Pivnet Resource</th>
+        <th>Tanzu Network Resource</th>
     </tr>
 </thead>
 <tbody>
@@ -59,7 +59,7 @@ The following are considered part of our API:
 - The minimum compatible version
   of Concourse and Tanzu Operations Manager
   are part of the API,
-  and are specified in [External dependencies][external-deps].
+  and are specified in [External dependencies](./compatibility-and-versioning.md).
 
 - The presence of the following binaries on the _combined image_:
 

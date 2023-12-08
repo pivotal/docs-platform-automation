@@ -340,7 +340,7 @@ task. A more in-depth explanation of this can be found on the [secrets-handling]
         CONFIG_FILE: download-ops-manager.yml
 ```
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

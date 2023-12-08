@@ -229,7 +229,7 @@ Once the function of the foundation is validated with new certificates, the old 
     file: platform-automation-tasks/tasks/apply-changes.yml
 ```
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

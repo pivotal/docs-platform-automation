@@ -88,7 +88,7 @@ product as normal.
 Platform Automation Toolkit can be used to download a specific stemcell. In order to do so, create a `config.yml` for this
 task using the [example provided][download-stemcell-product-config].
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

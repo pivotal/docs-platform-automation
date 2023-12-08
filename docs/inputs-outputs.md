@@ -432,5 +432,5 @@ The configuration of the `telemetry.yml` looks like this:
 
 ---excerpt--- "examples/telemetry"
 
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
+[//]: # ({% include ".internal_link_url.md" %})
+[//]: # ({% include ".external_link_url.md" %})
