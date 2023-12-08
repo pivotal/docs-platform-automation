@@ -1,7 +1,6 @@
 # Setting up S3 for file Storage
 
-In this guide,
-you will learn
+In this guide, you will learn
 how to set up an S3 bucket,
 how bucket permissions work,
 what we can store in a bucket,
@@ -25,73 +24,66 @@ S3 and Concourse's native S3 integration
 makes it possible to store large file artifacts
 and retrieve the latest product versions in offline environments.
 
-With S3, we can place product files
-and new versions of OpsMan
+With S3, we can place product files and new versions of OpsMan
 into a network allow-listed S3 bucket
 to be used by Platform Automation Toolkit tasks.
-We can even create a [Resources Pipeline][reference-resources]
+We can even create a [Resources pipeline](../pipelines/resources.md)
 that gets the latest version of products
 from Tanzu Network and places them into our S3 bucket automatically.
 
-Alternatively, because a foundation's backup
-may be quite large,
+Alternatively, because a foundation's backup may be quite large,
 it is advantageous to persist it in a blobstore
 automatically through Concourse.
 Exported installations can then later be accessed
 through the blobstore.
-Because most object stores
-implement secure, durable solutions,
+Because most object stores implement secure, durable solutions,
 exported installations in buckets
-are easily restorable
-and persistent.
+are easily restorable and persistent.
 
 ## Prerequisites
 
-1. An [Amazon Web Services account][amazon-s3] (commonly referred to as AWS) with access to S3
+1. An [Amazon Web Services account(AWS)](https://aws.amazon.com/s3/) with access to S3
 
-!!! info "S3 blobstore compatibility"
-    Many cloud storage options exist
-    including [Amazon S3][amazon-s3],
-    [Google Storage][gcp-storage],
-    [Minio][minio],
-    and [Azure Blob Storage][azure-blob-storage].
-    However, not all object stores
-    are "S3 compatible".
-    Because Amazon defines the
-    S3 API for accessing blobstores,
-    and because the Amazon S3 product has emerged as the dominant blob storage solution,
-    not all "S3 compatible" object stores act exactly the same.
-    In general, if a storage solution claims to be "S3 compatible",
-    it should work with the [Concourse's S3 resource integration][concourse-s3-resource].
-    But note that it may behave differently if interacting directly with the S3 API.
-    Defer to the documentation of your preferred blobstore solution
-    when setting up storage.
+<p class="note">
+<span class="note__title">Note</span>
+S3 blobstore compatibility: Many cloud storage options exist
+including <a href="https://aws.amazon.com/s3/">Amazon S3</a>,
+<a href="https://cloud.google.com/storage/">Google Storage</a>,
+<a href="https://min.io/">Minio</a>,
+and <a href="https://azure.microsoft.com/en-us/products/storage/blobs/">Azure Blob Storage</a>.
+However, not all object stores are "S3 compatible".
+Because Amazon defines the S3 API for accessing blobstores,
+and because the Amazon S3 product has emerged as the dominant blob storage solution,
+not all "S3 compatible" object stores act exactly the same.
+In general, if a storage solution claims to be "S3 compatible",
+it should work with the <a href="https://github.com/concourse/s3-resource">Concourse S3 resource integration</a>.
+But note that it may behave differently if interacting directly with the S3 API.
+Defer to the documentation of your preferred blobstore solution
+when setting up storage.</p>
 
-2. Set up S3. With your AWS account,
-navigate to [the S3 console][amazon-s3-console]
-and sign up for S3.
-Follow the on screen prompts.
+1. Set up S3. With your AWS account, navigate to [the S3 console](https://aws.amazon.com/console/)
+and sign up for S3. Follow the on-screen prompts.
 Now you are ready for buckets!
 
-!!! tip "AWS Root User"
-    When you sign up for the S3 service on Amazon,
-    the account with the email and password you use
-    is the AWS account root user.
-    As a best practice,
-    you should not use the root user
-    to access and manipulate services.
-    Instead, use [AWS Identity and Access Management][amazon-iam]
-    (commonly refered to as IAM)
-    to create and manage users.
-    For more info on how this works,
-    check out this [guide from Amazon][amazon-iam-guide].
+<p class="note important">
+<span class="note__title">Important</span>
+AWS Root User:
+When you sign up for the S3 service on Amazon,
+the account with the email and password you use
+is the AWS account root user.
+As a best practice, you should not use the root user
+to access and manipulate services.
+Instead, use <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>
+to create and manage users.
+For more information about how this works,
+see the <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-set-up.html#create-an-admin">Amazon IAM guide</a>.
+<br>
+For simplicity, in the rest of this guide,
+we will use the AWS root user
+to show how a bucket may be set up and used with Platform Automation Toolkit.</p>
 
-    For simplicity, in the rest of this guide,
-    we will use the AWS root user
-    to show how a bucket may be set up and used with Platform Automation Toolkit.
 
-
-## Your First Bucket
+## Your first bucket
 
 S3 stores data as objects within buckets.
 An object is any file that can be stored on a file system.
@@ -99,24 +91,24 @@ Buckets are the containers for objects.
 Buckets can have permissions for who can
 create, write, delete, and see objects within that bucket.
 
-1. Navigate to [the S3 console][amazon-s3-console]
-1. Click the "Create bucket" button
-1. Enter a DNS-compliant name for your new bucket
+1. Navigate to [the S3 console](https://aws.amazon.com/console/)
+2. Click the "Create bucket" button
+3. Enter a DNS-compliant name for your new bucket
     - This name must be unique across all of AWS S3 buckets
     and adhere to general URL guidelines.
     Make it something meaningful and memorable!
-1. Enter the "Region" you want the bucket to reside in
-1. Choose "Create"
+4. Enter the "Region" you want the bucket to reside in
+5. Choose "Create"
 
 This creates a bucket with the default S3 settings.
 Bucket permissions and settings
 can be set during bucket creation or changed afterwards.
 Bucket settings can even be copied from other buckets you have.
 For a detailed look at creating buckets
-and managing initial settings,
-check out [this documentation on creating buckets.][amazon-s3-create-bucket]
+and managing initial settings, see
+[Creating a bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html).
 
-## Bucket Permissions
+## Bucket permissions
 
 By default, only the AWS account owner
 can access S3 resources, including buckets and objects.
@@ -139,9 +131,9 @@ But anyone with appropriate permissions can grant public access to objects.
 
 In order to change who can access buckets or objects in buckets:
 
-1. Navigate to [the S3 console][amazon-s3-console].
-1. Choose the name of the bucket you created in the previous step
-1. In the top row, choose "Permissions"
+1. Navigate to [the S3 console](https://aws.amazon.com/console/).
+2. Choose the name of the bucket you created in the previous step
+3. In the top row, choose "Permissions"
 
 In this tab,
 you can set the various permissions
@@ -149,31 +141,28 @@ for an individual bucket.
 For simplicity, in this guide, we will use public permissions
 for Concourse to access the files.
 
-1. Under the permissions tab for a bucket, choose "Public access settings"
-1. Choose "Edit" to change the public access settings
+1. Under the permissions tab for a bucket, choose **Public access settings**.
+1. Select **Edit** to change the public access settings
 1. Uncheck all boxes to allow public access.
 
 In general, the credentials being used
 to access an S3 compatible blobstore through Concourse
 must have `Read` and `Write` permissions.
 It is possible to use different user roles
-with different credentials
-to seperate which user can `Read`
-objects from the bucket
-and which user can `Write` objects to the bucket.
+with different credentials to separate which user can `Read`
+objects from the bucket and which user can `Write` objects to the bucket.
 
-!!! Info "Permissions"
-    Amazon S3 provides many [permission settings for buckets][amazon-s3-permissions].
-    Specific [IAM users can have access][amazon-s3-permissions-iam].
-    Objects can have [their own permissions][amazon-s3-permissions-objects].
-    And buckets can even have their own [custom Bucket Policies][amazon-s3-permissions-policies].
-    Refer to your organization's security policy
-    to best set up your S3 bucket.
+<p class="note">
+<span class="note__title">Note</span>
+Amazon S3 provides many [permission settings for buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html).
+Specific IAM users can have access and objects can have their own permissions. In addition, buckets can have their own custom policies.
+See [Configuring ACLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/managing-acls.html).
+Refer to your organization's security policy
+to best set up your S3 bucket.</p>
 
-## Object Versions
+## Object versions
 
-By default,
-an S3 bucket will be _unversioned_.
+By default, an S3 bucket will be unversioned.
 An unversioned bucket will not allow different versions of the same object.
 In order to take advantage of using an S3 bucket with Platform Automation Toolkit,
 we will want to enable versioning. Enabling versioning is not required,
@@ -181,11 +170,11 @@ but versioning does make the process easier,
 and will require less potential manual steps around naming updates to the new file
 whenever they are changed.
 
-1. Navigate to [the S3 console][amazon-s3-console]
-1. Choose the name of the bucket you created in the previous step
-1. Select the "Properties" tab
-1. Click the "Versioning" tile
-1. Check the "Enable Versioning"
+1. Navigate to [the S3 console](https://aws.amazon.com/console/).
+2. Choose the name of the bucket you created in the previous step.
+3. Select the **Properties** tab.
+4. Click the **Versioning** tile.
+5. Select **Enable Versioning**"
 
 Now that versioning is enabled,
 we can store multiple versions of a file.
@@ -199,7 +188,7 @@ my-exported-installation.zip (version 111111)
 my-exported-installation.zip (version 121212)
 ```
 
-## Storing Files in S3
+## Storing files in S3
 
 Any file that can be stored on a computer
 can be stored on S3. S3 is especially good at storing large files as it is designed to scale with large amounts of data while still being durable and fast.
@@ -213,14 +202,13 @@ Platform Automation Toolkit users may want to store the following files in S3:
 
 Platform Automation Toolkit users will likely **_NOT_** want to store the following in S3:
 
-- `.yaml` configuration files - Better suited for [git][git]
+- `.yaml` configuration files - Git is better suited for this
 - `secrets.yaml` environment and secret files - There are a number of ways
-to handle these types of files,
-but they should not be stored in S3.
-Check out the [Secrets Handling page][secrets-handling]
-for how to work with these types of files.  
+to handle these types of files, but they should not be stored in S3.
+See [Using a secrets store to store credentials](../concepts/secrets-handling.md)
+for information about working with these types of files.  
 
-## Structuring your Bucket
+## Structuring your bucket
 
 Like any computer, buckets can have folders
 and any number of sub-folders.
@@ -260,37 +248,37 @@ simply include the folder structure before the object name:
 foundation1/products/healthwatch/my-healthwatch-product.pivotal
 ```
 
-## Using a Bucket
+## Using a bucket
 
-When using the [Concourse S3 Resource][concourse-s3-resource],
+When using the [Concourse S3 Resource](https://github.com/concourse/s3-resource),
 several configuration properties are available
 for retrieving objects. The bucket name is required.
 
-!!! Info "On networking and accessing a bucket"
-    In order for your Concourse
-    to have access to your S3 bucket,
-    ensure that you have the appropriate firewall and networking settings
-    for your Concourse instance to
-    make requests to your bucket.
-    Concourse uses various "outside" resources
-    to perform certain jobs.
-    Ensure that Concourse can "talk" to your S3 bucket.
+<p class="note">
+<span class="note__title">Note</span>
+For your Concourse to have access to your S3 bucket,
+ensure that you have the appropriate firewall and networking settings
+for your Concourse instance to
+make requests to your bucket.
+Concourse uses various "outside" resources
+to perform certain jobs.
+Ensure that Concourse can "talk" to your S3 bucket.</p>
 
 
-## Reference Resources Pipeline
+## Reference resources pipeline
 
-The [resources pipeline][reference-resources]
+The [resources pipeline](../pipelines/resources.md)
 may be used to download dependencies from Tanzu Network
 and place them into a trusted S3 bucket.
-The various `resources_types` use the [Concourse S3 Resource type][concourse-s3-resource]
+The various `resources_types` use the [Concourse S3 Resource type](https://github.com/concourse/s3-resource)
 and several Platform Automation Toolkit tasks to accomplish this.
 The following is an S3-specific breakdown of these components
 and where to find more information.
 
 #### The download-product task
 
-The [`download-product`][download-product] task lets you download products from Tanzu Network.
-If S3 properties are set in the [download config][download-product-config],
+The [`download-product`](../tasks.md#download-product) task lets you download products from Tanzu Network.
+If S3 properties are set in the [download config](../inputs-outputs.md#download-product-config),
 these files can be placed into an S3 bucket.
 
 If S3 configurations are set,
@@ -313,30 +301,28 @@ to the filename before it is placed into the S3 bucket:
 [example-product,2.2.1-build99]product-2.2-build99.pivotal
 ```
 
-For complete information on this task
-and how it works, refer to the [download-product task reference.][download-product]
+<p class="note important">
+<span class="note__title">Important</span>
+Do not change the meta information prepended by <code>download-product</code>.
+This information is required
+if using a <code>download-product</code> with a blobstore (i.e. AWS, GCS)
+in order to properly parse product versions.
+<br>
+If placing a product file into an blobstore bucket manually,
+ensure that it has the proper file name format;
+opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
+There should be no spaces between the two brackets.
+For example, for a product with slug of <code>product-slug</code> and version of <code>1.1.1<code>:
+<br>
+<code>
+[product-slug,1.1.1]original-filename.pivotal
+</code>
+</p>
 
-!!! warning "Changing S3 file names"
-    Do not change the meta information
-    prepended by `download-product`.
-    This information is required
-    if using a `download-product` with a blobstore (i.e. aws, gcs)
-    in order to properly parse product versions.
-
-    If placing a product file into an blobstore bucket manually,
-    ensure that it has the proper file name format;
-    opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
-    There should be no spaces between the two brackets.
-    For example, for a product with slug of `product-slug` and version of `1.1.1`:
-    ```
-    [product-slug,1.1.1]original-filename.pivotal
-    ```
-
-#### The download-product task
-The [`download-product`][download-product]
+The [`download-product`](../tasks.md#download-product)
 task lets you download products from an blobstore bucket if you define the `SOURCE` param.
 The prefixed metadata added by `download-product` with `SOURCE: pivnet` is used to find the appropriate file.
-This task uses the same [download-product config file][download-product-config]
+This task uses the same [download-product config file](../inputs-outputs.md#download-product-config)
 as `download-product` to ensure consistency
 across what is `put` in the blobstore
 and what is being accessed later.
@@ -345,7 +331,7 @@ to be used together.
 The download product config should be different between the two tasks.
 
 For complete information on this task
-and how it works, refer to the [download-product task reference.][download-product]
+and how it works, see the [task reference](../tasks.md#download-product).
 
 [//]: # ({% with path="../" %})
 [//]: # (    {% include ".internal_link_url.md" %})

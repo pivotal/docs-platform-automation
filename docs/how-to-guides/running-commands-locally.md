@@ -8,7 +8,7 @@ we recommend using docker to execute commands.
 With `p-automator` in particular, using Docker is necessary,
 as the IaaS CLIs upon which we depend can be tricky to install.
 With `om` it's more a matter of convenience -
-you can just as easily [download the binary][om-releases] if it's available for your system.
+you can just as easily [download the binary](https://github.com/pivotal-cf/om/releases) if it's available for your system.
 
 
 ## Executing commands
@@ -37,7 +37,7 @@ To execute commands in Docker:
 
 ## Useful commands
 
-### Retrieving Product Staged Configuration
+### Retrieving product staged configuration
 
 ```bash
   docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
@@ -45,21 +45,21 @@ To execute commands in Docker:
     --product-name ${PRODUCT_SLUG} --include-placeholders
 ```
 
-  `${ENV_FILE}` is the [environment file][env] required for all tasks.
-  `${PRODUCT_SLUG}` is the name of the product downloaded from [Tanzu Network][tanzu-network].
+  `${ENV_FILE}` is the [environment file](../inputs-outputs.md) required for all tasks.
+  `${PRODUCT_SLUG}` is the name of the product downloaded from [Tanzu Network](https://network.pivotal.io/).
   The resulting file can then be parameterized, saved, and committed to a config repo.
 
-### Retrieving Director Configuration
+### Retrieving director configuration
 
 ```bash
   docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
     om --env ${ENV_FILE} staged-director-config --include-placeholders
 ```
 
-### Tanzu Operations Manager Targeting
+### Tanzu Operations Manager targeting
 
 Use environment variables to set what Tanzu Operations Manager `om` is targeting.
-For example: 
+For example:
 
 ```bash
  docker run -it -e "OM_PASSWORD=my-password" --rm -v $PWD:/workspace \
@@ -70,7 +70,7 @@ For example:
 Note the additional space before the `docker` command.
 This ensures the command is not kept in bash history. 
 The environment variable OM_PASSWORD will overwrite the password value in the `ENV_FILE`.
-See the [`om` GitHub page][om] for a full list of supported environment variables. 
+See the [`om` GitHub page](https://github.com/pivotal-cf/om) for a full list of supported environment variables.
 
 ### Disable Verifiers
 
@@ -109,7 +109,7 @@ without applying changes run:
     om --env ${ENV_FILE} pre-deploy-check
 ```
 
-The Tanzu Operations Manager Documentation [has additional details][opsman-verifiers-docs] about managing verifiers.
+See the [Tanzu Operations Manager Documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-granular-verifier-control.html) for information about managing verifiers.
 
 [//]: # ({% with path="../" %})
 [//]: # (    {% include ".internal_link_url.md" %})
