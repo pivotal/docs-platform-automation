@@ -11,7 +11,7 @@ Many of these links require VMware VPN access or other credentials;
 these instructions are public as an implementation detail,
 and are not intended to be useful to the public.
 
-## Platform Automation Github Repositories
+## Platform Automation GitHub Repositories
 
 * https://github.com/pivotal/docs-platform-automation
 * https://github.com/pivotal/docs-platform-automation-reference-pipeline-config
@@ -285,7 +285,7 @@ The reference pipeline is the `sandbox` directory in that repo.
 
 `auth.yml` and `env.yml` are shared between foundations.
 Values for these files are set on a per-foundation/per-pipeline basis,
-and the values are stored in Credhub.
+and the values are stored in CredHub.
 
 Terraform files for the reference pipeline can be found in the [deployments](https://github.com/pivotal/platform-automation-deployments) repo.
 The deployments repo also contains all relevant terraform/vars for all of our ci test pipelines.
@@ -342,8 +342,8 @@ the following steps must be executed.
 
    Remove the above secrets from `vars/director.yml`, `vars/tas.yml`, `vars/pks.yml`
 
-1. To store/edit values in Credhub, export the vars from the `.envrc` in `platform-automation-deployments/concourse-credhub`.
-   You can now access Credhub as normal. Run:
+1. To store/edit values in CredHub, export the vars from the `.envrc` in `platform-automation-deployments/concourse-credhub`.
+   You can now access CredHub as normal. Run:
     ```bash
     credhub import -f export.yml
     ```
@@ -520,14 +520,14 @@ Generated HTML contains undefined links!
 ## OM [Releases]( https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci?group=om ) 
 
 [Depending what kind of release you need to do](https://semver.org/), trigger a new build.
-After the CI has completed go to [Github](https://github.com/pivotal-cf/om/releases) and update the release notes.
+After the CI has completed go to [GitHub](https://github.com/pivotal-cf/om/releases) and update the release notes.
 
 Most OM cli users will consume these upgrades through the Platform Automation toolkit, so every om cli bump should be accompanied by a Platform Automation release.
 
 ## Slack and Support
 
 ### Bugs in [Tracker](https://www.pivotaltracker.com/n/projects/2535033)
-#### Github issues
+#### GitHub issues
 When an issue is opened on the `om` or `docs-platform-automation`
 a bug is auto-created in the Pivotal Tracker icebox.
 Bugs generally have the format `git-org/project` with the name of the issue.

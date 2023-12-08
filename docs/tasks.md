@@ -261,7 +261,7 @@ which can stage a product that's been uploaded.
 ### configure-new-certificate-authority
 
 Create a new certificate authority on Tanzu Operations Manager. This can either create a
-new CA using Credhub or create a new CA using a provided certificate and
+new CA using CredHub or create a new CA using a provided certificate and
 private key in PEM format via the `certs/` input.
 
 === "Task"
@@ -552,7 +552,7 @@ This avoids breaking current pipelines.
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
-These certificates can be Tanzu Operations Manager or Credhub certificates.
+These certificates can be Tanzu Operations Manager or CredHub certificates.
 Root CAs cannot be included in this list until Tanzu Operations Manager 2.7.
 This is purely an informational task.
 

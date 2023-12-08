@@ -74,11 +74,11 @@ If we try to `fly` this up to Concourse,
 it will again complain about resources that don't exist, so it's time to make them.
 
 The first new resource we need is the env file.
-We'll push our git repo to a remote on Github
+We'll push our git repo to a remote on GitHub
 to make this (and later, other) configuration available to the pipelines.
 
 Use these GitHub [instructions](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
-to create a new repository on Github.
+to create a new repository on GitHub.
 You can skip the part
 about using `git init` to set up your repo,
 since this was completed earlier in the procedure.
@@ -137,10 +137,10 @@ we need to add a resource to tell Concourse how to get it as `env`.
 
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
-Follow [Github's instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys)
+Follow the [GitHub instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys)
 for creating a deploy key.
 
-Then, put the private key in Credhub so we can use it in our pipeline:
+Then, put the private key in CredHub so we can use it in our pipeline:
 
 ```bash
 # note the starting space
@@ -162,7 +162,7 @@ Then, add this to the resources section of your pipeline file:
     branch: main
 ```
 
-We'll put the credentials we need in Credhub:
+We'll put the credentials we need in CredHub:
 
 ```bash
 # note the starting space throughout
@@ -245,7 +245,7 @@ as in input of another.
 An alternative to `input_mappings` is discussed in
 [Configuration Management Strategies](../pipeline-design/configuration-management-strategies.md#advanced-pipeline-design).
 
-We now need to put our `credhub_client` and `credhub_secret` into Credhub,
+We now need to put our `credhub_client` and `credhub_secret` into CredHub,
 so Concourse's native integration can retrieve them
 and pass them as configuration to the `credhub-interpolate` task.
 

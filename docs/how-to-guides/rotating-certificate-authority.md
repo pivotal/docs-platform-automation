@@ -145,7 +145,7 @@ job.
 
 ## Activate the new Certificate Authority
 
-We need to set our new certificate authority as the active certificate authority. After this, any certificates created by the Credhub will be signed by the new CA.
+We need to set our new certificate authority as the active certificate authority. After this, any certificates created by the CredHub will be signed by the new CA.
 Append a new job to the end of the jobs list.
 
 ```yaml
@@ -196,7 +196,7 @@ Now that a new certificate authority is active, any internal, non-configurable c
     image: platform-automation-image
     file: platform-automation-tasks/tasks/regenerate-certificates.yml
 ```
-This will delete the existing certificates from Credhub, which causes Credhub to generate new certificates on the next run of Apply Changes.
+This will delete the existing certificates from CredHub, which causes CredHub to generate new certificates on the next run of Apply Changes.
 
 ### Configurable certificates
 

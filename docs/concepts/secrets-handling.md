@@ -1,13 +1,13 @@
 # Using a Secrets Store to Store Credentials
 
-Secrets stores, such as Credhub, can be used to store secure properties that you don't want committed into a config file.
+Secrets stores, such as CredHub, can be used to store secure properties that you don't want committed into a config file.
 Within your pipeline, the config file can then reference that secrets store value for runtime evaluation.
 
 Platform Automation Toolkit Tasks contains two tasks to help with retrieving these credentials in the tasks that use them:
 
 1. If you're using Concourse version 5 or newer
    the [`prepare-tasks-with-secrets`](#using-prepare-tasks-with-secrets) task can be used with any Concourse supported [secrets store][concourse-secrets-handling].
-2. The [`credhub-interpolate`](#using-credhub-interpolate) task can only be used with Credhub.
+2. The [`credhub-interpolate`](#using-credhub-interpolate) task can only be used with CredHub.
 
 ## Using prepare-tasks-with-secrets
 The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task takes a set of tasks
@@ -19,8 +19,8 @@ The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
 replaces the [credhub-interpolate][credhub-interpolate] task on Concourse versions 5.x+
 and provides the following benefits:
 
-* Support for all native Concourse secrets stores including Credhub and Vault.
-* Credhub credentials are no longer required by the task so they can be completely handled by concourse.
+* Support for all native Concourse secrets stores including CredHub and Vault.
+* CredHub credentials are no longer required by the task so they can be completely handled by concourse.
 * Secrets are no longer written to disk which alleviates some security concerns.
 
 The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task can be used two ways:
@@ -196,8 +196,8 @@ For example, if the existing `credhub-interpolate` task looks like this:
 
 ---excerpt--- "examples/credhub-interpolate-usage"
 
-In the task definition (above), you've had to define the prefix and Credhub authorization credentials.
-The new `prepare-tasks-with-secrets` task uses concourse's native integration with Credhub (and other credential managers).
+In the task definition (above), you've had to define the prefix and CredHub authorization credentials.
+The new `prepare-tasks-with-secrets` task uses concourse's native integration with CredHub (and other credential managers).
 The above definition can be replaced with the following:
 
 ```yaml
@@ -231,7 +231,7 @@ Notice in the above:
   For example, `/concourse/:team_name/:cred_name` or `/concourse/:team_name/:pipeline_name/:cred_name`.
 
 ##  Using credhub-interpolate
-The [credhub-interpolate][credhub-interpolate] task can only be used with Credhub.
+The [credhub-interpolate][credhub-interpolate] task can only be used with CredHub.
 
 **If using Concourse 5.x+, It is recommended to use the [prepare-tasks-with-secrets][prepare-tasks-with-secrets] task instead.**
 
@@ -303,9 +303,9 @@ opsman-configuration:
     Depending on how you deployed credhub and/or the worker,
     this may not be possible.
     Using credhub-interpolate inverts control;
-    now workers need to access Credhub.
+    now workers need to access CredHub.
     With `prepare-tasks-with-secrets` and other uses of Concourse's native integration,
-    the ATC retrieves secrets from Credhub and passes them to the worker.
+    the ATC retrieves secrets from CredHub and passes them to the worker.
 
 ## Defining Multiline Certificates and Keys in Config Files
 There are three ways to include certificates in the yaml files that are used by Platform Automation Toolkit tasks.
@@ -362,9 +362,9 @@ There are three ways to include certificates in the yaml files that are used by 
               private_key_pem: ((networking_poe_ssl_certs.private_key))
     ```
 
-    This example assumes the use of Credhub.
+    This example assumes the use of CredHub.
 
-    Credhub supports a `--type=certificate` credential type
+    CredHub supports a `--type=certificate` credential type
     which allows you to store a certificate and private key pair under a single name.
     The cert and key can be stored temporarily in local files
     or can be passed directly on the command line.
@@ -479,11 +479,11 @@ jobs:
 If deploying more than one foundation, a unique `vars.yml` should be used for each foundation.
 
 ### prepare-tasks-with-secrets and Vars Files
-Both Credhub and vars files may be used together to interpolate variables into `base.yml`.
+Both CredHub and vars files may be used together to interpolate variables into `base.yml`.
 This use case is described in the [Using prepare-tasks-with-secrets](#using-prepare-tasks-with-secrets) section.
 
 ### credub-interpolate and Vars Files
-Both Credhub and vars files may be used together to interpolate variables into `base.yml`.
+Both CredHub and vars files may be used together to interpolate variables into `base.yml`.
 Using the same example from above: 
 
 {% include ".cf-partial-config.md" %}
@@ -494,7 +494,7 @@ is fine in a vars file. In order to support a `base.yml` with credentials from m
 credhub and vars files), you will need to `SKIP_MISSING: true` in the [`credhub-interpolate`][credhub-interpolate] task.
 This is enabled by default by the `credhub-interpolate` task.
 
-The workflow would be the same as [Credhub](#concourse-supported-secrets-store), but when passing the interpolated `base.yml` as a config into the
+The workflow would be the same as [CredHub](#concourse-supported-secrets-store), but when passing the interpolated `base.yml` as a config into the
 next task, you would add in a [Vars File](#vars-files) to fill in the missing variables.
 
 An example of how this might look in a pipeline (resources not listed), assuming:
@@ -517,7 +517,7 @@ jobs:
       files: config
     params:
       # depending on credhub configuration
-      # ether Credhub CA cert or Credhub secret are required
+      # ether CredHub CA cert or CredHub secret are required
       CREDHUB_CA_CERT: ((credhub_ca_cert))
       CREDHUB_SECRET: ((credhub_secret))
 
@@ -539,11 +539,11 @@ jobs:
 ```
 
 ### credhub-interpolate and Multiple Key Lookups
-When using the `credhub-interpolate` task with a Credhub in a single foundation or multi-foundation manner, 
+When using the `credhub-interpolate` task with a CredHub in a single foundation or multi-foundation manner, 
 we want to avoid duplicating identical credentials
 (duplication makes credential rotation harder). 
 
-In order to have Credhub read in credentials from multiple paths
+In order to have CredHub read in credentials from multiple paths
 (not relative to your `PREFIX`), 
 you must provide the absolute path to any credentials 
 not in your relative path.
@@ -568,17 +568,17 @@ product-properties:
 Let's say in our `job`, we define the prefix as "foundation1".
 The parameterized values in the example above will be interpolated as follows:
 
-`((cloud_controller_apps_domain))` uses a relative path for Credhub.
+`((cloud_controller_apps_domain))` uses a relative path for CredHub.
 When running `credhub-interpolate`, the task will prepend the `PREFIX`.
-This value is stored in Credhub as `/foundation1/cloud_controller_apps_domain`. 
+This value is stored in CredHub as `/foundation1/cloud_controller_apps_domain`. 
 
 `((/alternate_prefix/cloud_controller_encrypt_key.secret))` (note the leading slash)
-uses an absolute path for Credhub. 
+uses an absolute path for CredHub. 
 When running `credhub-interpolate`, the task will not prepend the prefix.
-This value is stored in Credhub at it's absolute path `/alternate_prefix/cloud_controller_encrypt_key.secret`.
+This value is stored in CredHub at it's absolute path `/alternate_prefix/cloud_controller_encrypt_key.secret`.
 
 Any value with a leading `/` slash will never use the `PREFIX`
-to look up values in Credhub. 
+to look up values in CredHub. 
 Therefore, you can have multiple key lookups in a single interpolate task. 
 
 [//]: # ({% with path="../" %})

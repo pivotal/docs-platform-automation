@@ -17,7 +17,7 @@ Any remote Git client will work with Platform Automation Toolkit and Concourse.
 See the <a fref="https://github.com/concourse/git-resource">Concourse Git resource</a>
 documentation for details.</p>
 
-To learn more about Git and Github,
+To learn more about Git and GitHub,
 you can [read this short git handbook](https://docs.github.com/en/get-started/using-git/about-git).
 
 ## Creating a Git Repository
@@ -110,7 +110,7 @@ for a Platform Automation Toolkit configuration repo:
         <td>config</td>
         <td>
             Holds config files for the products installed on your foundation.
-            If using Credhub and/or vars files,
+            If using CredHub and/or vars files,
             these config files should have your <code>((parametrized))</code> values present in them
         </td>
     </tr>

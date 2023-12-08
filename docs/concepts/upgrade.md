@@ -41,8 +41,8 @@ Both methods require an exported installation.
    depending on if there is an [ensure][concourse-ensure] 
    set for the state file resource.
    
-1. **Manual recovery**. The VM can always be recovered manually 
-   by deploying the Tanzu Operations Manager OVA, raw, or yml from Tanzu Network.
+1. **Manual recovery**. The VM can always be recovered manually
+   by deploying the Tanzu Operations Manager OVA, raw, or YAML from Tanzu Network.
 
 Below is a list of common errors when running `upgrade-opsman`.
 

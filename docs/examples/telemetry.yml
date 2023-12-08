@@ -10,6 +10,6 @@ usage-service-client-secret:
 usage-service-insecure-skip-tls-verify:
 
 # CredHub (Optional)
-# with-credhub-info:  # include Credhub certificate expiry information
+# with-credhub-info:  # include CredHub certificate expiry information
 
 # code_snippet telemetry end

@@ -104,7 +104,7 @@ For more details, see the [Inputs and outputs](../inputs-outputs.md) section.
 
 ### Secrets handling
 
-This helps load secrets stored in an external credential manager such as Credhub.
+This helps load secrets stored in an external credential manager such as CredHub.
 Concourse supports several [credential managers](https://concourse-ci.org/creds.html) natively.
  
 The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.md#prepare-tasks-with-secrets) task

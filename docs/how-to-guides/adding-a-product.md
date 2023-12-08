@@ -24,7 +24,7 @@ you may run into trouble with some of our assumptions.
 We assume:
 
 - Resource declarations for `config` and `platform-automation`.
-- A pivnet token stored in Credhub as a credential named `pivnet_token`.
+- A pivnet token stored in CredHub as a credential named `pivnet_token`.
 - A previous job responsible for deploying the director
   called `apply-director-changes`.
 - You have created an `env.yml` from the [Configuring Env](./configuring-env.md)
@@ -320,7 +320,7 @@ product-properties:
 
 We'll start with the Cloud Controller encrypt key.
 As this is a value that you might wish to rotate at some point,
-we're going to store it off as a `password` type into Credhub.
+we're going to store it off as a `password` type into CredHub.
 
 ```bash
 # note the starting space
@@ -348,7 +348,7 @@ version_created_at: "<timestamp>"
 ```
 
 We are then going to store off the Networking POE certs
-as a `certificate` type in Credhub. 
+as a `certificate` type in CredHub. 
 But first, we're going to save off the certificate and private key 
 as plain text files to simplify this process.
 We named these files `poe-cert.txt` and `poe-private-key.txt`.
@@ -389,7 +389,7 @@ version_created_at: "<timestamp>"
 ```
 
 !!! warning "Remove Credentials from Disk" 
-    Once we've validated that the certs are set correctly in Credhub, 
+    Once we've validated that the certs are set correctly in CredHub, 
     remember to delete `poe-cert.txt` and `poe-private-key.txt` from your working directory.
     This will prevent a potential security leak, 
     or an accidental commit of those credentials.
@@ -398,7 +398,7 @@ Repeat this process for all sensitive values found in your `tas-config.yml`.
 
 Once completed, we can remove those secrets from `tas-config.yml`
 and replace them with `((parameterized-values))`.
-The parameterized value name should match the name in Credhub.
+The parameterized value name should match the name in CredHub.
 For our example, we parameterized the config like:
 
 ```yaml
