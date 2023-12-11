@@ -29,7 +29,7 @@ There will be some crossover between the auth file and the env file due to how <
 * A [director-configuration](../how-to-guides/creating-a-director-config-file.md) file: Each Tanzu Operations Manager needs its own configuration, but it is retrieved differently from
 a product configuration. This config is used to deploy a new Tanzu Operations Manager director, or update an existing one.
 * A set of valid [product-configuration](../how-to-guides/adding-a-product.md) files: Each product configuration is a yaml file that contains the properties
-necessary to configure an Tanzu Operations Manager product using the `om` tool. This can be used during install or update.
+necessary to configure a Tanzu Operations Manager product using the `om` tool. This can be used during install or update.
 * (Optional) A working [CredHub](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/credhub-index.html) setup with its own UAA client and secret.
 
 <p class="note">

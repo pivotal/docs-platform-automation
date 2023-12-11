@@ -1,7 +1,7 @@
 # Writing a pipeline to upgrade an existing VMware Tanzu Operations Manager
 
 This how-to-guide shows you how to create a pipeline for upgrading an existing Vmware Tanzu Operations Manager VM.
-If you don't have an Tanzu Operations Manager VM, check out [Installing Tanzu Operations Manager](./installing-opsman.md).
+If you don't have a Tanzu Operations Manager VM, see [Installing Tanzu Operations Manager](./installing-opsman.md).
 
 {% set upgradeHowTo = True %}
 {% include ".getting-started.md" %}

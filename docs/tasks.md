@@ -114,7 +114,7 @@ Due to the nature of the backup, some commands may not work as expected.</p>
 <p class="note caution">
 <span class="note__title">Caution</span>
 Known issue:
-When using the task <a href="../tasks.md#backup-tkgi">backup-tkgi</a> behind a proxy
+When using the task <a href="#backup-tkgi">backup-tkgi</a> behind a proxy
 the values for <code>no_proxy</code> can affect the ssh (though jumpbox) tunneling.
 When the task invokes the <code>bbr</code> CLI, an environment variable (<code>BOSH_ALL_PROXY</code>) has been set,
 this environment variable tries to honor the <code>no_proxy</code> settings.
@@ -305,7 +305,7 @@ By default, this task creates a BOSH admin client.
 This is helpful for some advanced workflows
 that involve communicating directly with the BOSH Director.
 It is possible to disable this behavior; see the
-<a href="../how-to-guides/configuring-auth.md#generating-an-auth-file">config file documentation</a>
+<a href="../how-to-guides/configuring-auth.md">config file documentation</a>
 for details.</p>
 
 Configuring SAML has two different auth flows for the UI and the task.

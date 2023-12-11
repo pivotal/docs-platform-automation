@@ -17,7 +17,7 @@ It's important to note when upgrading your Tanzu Operations Manager:
 
 ### Upgrade flowchart
 
-The [`upgrade-opsman`](../tasks.md#upgrade-opsman) task follows the flow based on state of an Tanzu Operations Manager VM.
+The [`upgrade-opsman`](../tasks.md#upgrade-opsman) task follows the flow based on state of a Tanzu Operations Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}

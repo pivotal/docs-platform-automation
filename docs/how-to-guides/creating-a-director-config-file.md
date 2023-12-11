@@ -9,7 +9,7 @@ Extracting a director configuration file, an externalized config that lives outs
 
 ## Prerequisites
 
-To extract the configuration for a director, you will first need an Tanzu Operations Manager vm.
+To extract the configuration for a director, you will first need a Tanzu Operations Manager vm.
 For detailed instructions, follow the [Installing Tanzu Operations Manager](./installing-opsman.md) how-to guide.
 
 ## Extracting configuration
