@@ -305,7 +305,7 @@ By default, this task creates a BOSH admin client.
 This is helpful for some advanced workflows
 that involve communicating directly with the BOSH Director.
 It is possible to disable this behavior; see the
-<a href="../how-to-guides/configuring-auth.md">config file documentation</a>
+<a href="./how-to-guides/configuring-auth.md">config file documentation</a>
 for details.</p>
 
 Configuring SAML has two different auth flows for the UI and the task.
