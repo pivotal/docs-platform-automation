@@ -1,6 +1,7 @@
 # Task inputs and outputs
 
 ##  Inputs
+
 These are the inputs that can be provided to the tasks.
 Each task can only take a specific set, indicated under the `inputs` property of the YAML.
 
@@ -13,7 +14,7 @@ The configuration of the `director.yml` is IAAS specific for some properties -- 
 
 There are two ways to build a director config.
 
-1. Using an already deployed Tanzu Operations Manager, you can extract the config using [staged-director-config].
+1. Using an already deployed Tanzu Operations Manager, you can extract the config using [staged-director-config](./tasks.md#staged-director-config).
 2. Deploying a brand new Tanzu Operations Manager requires more effort for a `director.yml`.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
@@ -22,23 +23,22 @@ There are two ways to build a director config.
 
 The IAAS specific configuration can be found in the Tanzu Operations Manager API documentation.
 
-Included below is a list of properties that can be set in the `director.yml`
+What follows is a list of properties that can be set in the `director.yml`
 and a link to the API documentation explaining any IAAS specific properties.
 
-* `az-configuration` - a list of availability zones [Tanzu Operations Manager API][opsman-api-azs]
-* `network-assignment` - the network the bosh director is deployed to [Tanzu Operations Manager API][opsman-api-network-az-assignment]
-* `networks-configuration` - a list of named networks [Tanzu Operations Manager API][opsman-api-networks]
-* `properties-configuration`
-    * `iaas_configuration` - configuration for the bosh IAAS CPI [Tanzu Operations Manager API][opsman-api-director-properties]
-    * `director_configuration` - properties for the bosh director [Tanzu Operations Manager API][opsman-api-director-properties]
-    * `security_configuration` - security properties for the bosh director [Tanzu Operations Manager API][opsman-api-director-properties]
-    * `syslog_configuration` - configure the syslog sinks for the bosh director [Tanzu Operations Manager API][opsman-api-director-properties]
-* `resource-configuration` - IAAS VM flavor for the bosh director [Tanzu Operations Manager API][opsman-api-config-resources]
-* `vmextensions-configuration` - create/update/delete VM extensions [Tanzu Operations Manager API][opsman-api-vm-extension]
+* `az-configuration` - a list of [availability zones](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Availability-Zones/paths/~1api~1v0~1staged~1director~1availability_zones/get)
+* `network-assignment` - the [network](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1director~1network_and_az/put) the BOSH Director is deployed to
+* `networks-configuration` - a list of [named networks](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Networks/paths/~1api~1v0~1staged~1director~1networks/put)
+* `properties-configuration` - [BOSH Director configuration and properties](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Properties/paths/~1api~1v0~1staged~1director~1properties/get)
+    * `director_configuration` - BOSH Director properties
+    * `security_configuration` - BOSH Director security properties
+    * `syslog_configuration` - configure the syslog sinks for the BOSH Director
+* `resource-configuration` - [IAAS VM flavor](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Job-Resource-Configuration/paths/~1api~1v0~1staged~1products~1{product_guid}~1resources/get) for the BOSH Director
+* `vmextensions-configuration` - create/update/delete [VM extensions](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/VM-Extensions)
 
 #### GCP Shared VPC
 
-Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet][gcp-create-network],
+Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet]https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/gcp-prepare-env-manual.html#create_network,
 which includes the host project id, region of the subnet, and the subnet name.
 
 For example:
@@ -104,12 +104,12 @@ signup redirect url (url):
 
 ### errand config
 
-The `ERRAND_CONFIG_FILE` input for the [`apply-changes`][apply-changes] task.
+The `ERRAND_CONFIG_FILE` input for the [`apply-changes`](./tasks.md#apply-changes) task.
 This file contains properties for enabling and disabling errands
 for a particular run of `apply-changes`.
 
 To retrieve the default configuration of your product's errands,
-[`staged-config`][staged-config] can be used.
+[`staged-config`](./tasks.md#staged-config) can be used.
 
 The expected format for this errand config is as follows:
 
@@ -131,11 +131,12 @@ The expected format for this errand config is as follows:
 The file contains the information to restore an Tanzu Operations Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
 
-This file can be exported from an Tanzu Operations Manager VM using the [export-installation][export-installation].
-This file can be imported to an Tanzu Operations Manager VM using the [import-installation][import-installation].
+This file can be exported from an Tanzu Operations Manager VM using the [export-installation](./tasks.md#export-installation).
+This file can be imported to an Tanzu Operations Manager VM using the [import-installation](./tasks.md#import-installation).
 
-!!! warning
-    This file cannot be manually created. It is a file that must be generated via the export function of Tanzu Operations Manager.
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. It is a file that must be generated via the export function of Tanzu Operations Manager.</p>
 
 ### Tanzu Operations Manager config
 The config for an Tanzu Operations Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
@@ -157,40 +158,48 @@ The configuration of the `opsman.yml` is IAAS specific.
     ---excerpt--- "examples/opsman-settings"
 
 Specific advice and features for the different IaaSs are documented below
+
 #### AWS
+
 These required properties are adapted from the instructions outlined in
-[Launching an Tanzu Operations Manager Director Instance on AWS][manual-aws]
+[Requirements and prerequisites for Tanzu Operations Manager on AWS](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html).
 
 {% include '.ip-addresses.md' %}
 
-!!! info "Using instance_profile to Avoid Secrets"
-    For authentication you must either set `use_instance_profile: true`
-    or provide a `secret_key_id` and `secret_access_key`.
-    You must remove key information if you're using an instance profile.
-    Using an instance profile allows you to avoid interpolation,
-    as this file then contains no secrets.
-
+<p class="note important">
+<span class="note__title">Important</span>
+Using <code>instance_profile</code> to avoid secrets:
+For authentication you must either set <code>use_instance_profile: true</code>
+or provide a <code>secret_key_id</code> and <code>secret_access_key</code>.
+You must remove key information if you're using an instance profile.
+Using an instance profile allows you to avoid interpolation,
+as this file then contains no secrets.</p>
 
 #### Azure
+
 The required properties are adapted from the instructions outlined in
-[Launching an Tanzu Operations Manager Director Instance on Azure][manual-azure]
+[Requirements and prerequisites for Tanzu Operations Manager on Azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html).
 
 {% include '.ip-addresses.md' %}
 
 #### GCP
+
 The required properties are adapted from the instructions outlined in
-[Launching an Tanzu Operations Manager Director Instance on GCP][manual-gcp]
+[Requirements and prerequisites for Tanzu Operations Manager on GCP](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html.)
 
 {% include '.ip-addresses.md' %}
 
-!!! info "Using a Service Account Name to Avoid Secrets"
-    For authentication either `gcp_service_account` or `gcp_service_account_name` is required.
-    You must remove the one you are not using
-    note that using `gcp_service_account_name` allows you to avoid interpolation,
-    as this file then contains no secrets.
+<p class="note important">
+<span class="note__title">Important</span>
+Using a service account name to Avoid Secrets:
+For authentication either <code>gcp_service_account</code> or <code>gcp_service_account_name</code> is required.
+You must remove the one you are not using
+note that using <code>gcp_service_account_name</code> allows you to avoid interpolation,
+as this file then contains no secrets.</p>
 
-Support for Shared VPC is done via
-[configuring the `vpc_subnet` path][gcp-shared-vpc]
+Support for Shared VPC is done using 
+
+[configuring the `vpc_subnet` path](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#creating_an_instance_in_a_shared_subnet)
 to include the host project id, region of the subnet, and the subnet name.
 
 For example:
@@ -200,14 +209,14 @@ For example:
 #### Openstack
 
 The required properties are adapted from the instructions outlined in
-[Launching an Tanzu Operations Manager Director Instance on Openstack][manual-openstack]
+[Installing and configuring Tanzu Operations Manager on OpenStack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/openstack-index.html)
 
 {% include '.ip-addresses.md' %}
 
 #### vSphere
 
 The required properties are adapted from the instructions outlined in
-[Deploying BOSH and Tanzu Operations Manager to vSphere][manual-vsphere]
+[Installing and configuring Tanzu Operations Manager on vSphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/vsphere-index.html)
 
 ### opsman image
 
@@ -218,21 +227,21 @@ For AWS, GCP, and Azure, it's a YAML file listing the location
 of images that are already available on the IaaS.
 
 These are examples to download the image artifact for each IaaS
-using the [download-product][download-product] task.
+using the [download-product](./tasks.md#download-product) task.
 
 #### opsman.yml
 
 {% include "how-to-guides/.opsman-config-tabs.md" %}
 
 The `p-automator` CLI includes the ability to extract the Tanzu Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
-This works for Tanzu Operations Managers that are already running and useful when [migrating to automation][upgrade-how-to].
+This works for Tanzu Operations Managers that are already running and useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.md).
 
 Usage:
 
 1. Get the Platform Automation Toolkit image from Tanzu Network.
-1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
-1. Create a [state file][state] that represents your current VM and IAAS.
-1. Invoke the `p-automator` CLI to get the configuration.
+2. Import that image into `docker` to run the `p-automation` [locally](./how-to-guides/running-commands-locally).
+3. Create a [state file](./inputs-outputs.md#state]) that represents your current VM and IAAS.
+4. Invoke the `p-automator` CLI to get the configuration.
 
 For example, on AWS with an access key and secret key:
 
@@ -262,7 +271,7 @@ The outputted `opsman.yml` contains the information needed for Platform Automati
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Tanzu Network.
 
 Here's an example of how to pull the Tanzu Application Service tile
-using the [download-product][download-product] task.
+using the [download-product](./tasks.md#download-product) task.
 
 #### product.yml
 
@@ -284,25 +293,26 @@ product-version-regex: ^2\.6\..*$
     CONFIG_FILE: product.yml
 ```
 
-!!! warning
-    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. This file must retrieved from Tanzu Network.</p>
     
 ### product config
 
 There are two ways to build a product config.
 
-1. Using an already deployed product (tile), you can extract the config using [staged-config].
+1. Using an already deployed product (tile), you can extract the config using [staged-config](./tasks.md#staged-config).
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
 
 ---excerpt--- "examples/product-configuration"
 
-Included below is a list of properties that can be set in the `product.yml`
+The following is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
 
-* `product-properties` - properties for the tile [Tanzu Operations Manager API][opsman-api-config-products]
-* `network-properties` - a list of named networks to deploy the VMs to [Tanzu Operations Manager API][opsman-api-config-networks]
-* `resource-config` - for the jobs of the tile [Tanzu Operations Manager API][opsman-api-config-resources]
+* `product-properties` - Tanzu Operations Manager [tile properties](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Properties/paths/~1api~1v0~1staged~1products~1{product_guid}~1properties/get)
+* `network-properties` - a list Tanzu Operations Manager [named networks](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1:product_guid~1networks_and_azs/put)
+* `resource-config` - for the jobs of the Tanzu Operations Manager [tile](https://docs.pivotal.io/platform/3-0/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1:product_guid~1networks_and_azs/put)
 
 ### state
 
@@ -348,11 +358,12 @@ This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from 
 It must be in the original filename as that is used by Tanzu Operations Manager to parse metadata.
 The filename could look like `bosh-stemcell-621.76-vsphere-esxi-ubuntu-xenial-go_agent.tgz`.
 
-!!! warning
-    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. This file must retrieved from Tanzu Network.</p>
 
 Here's an example of how to pull the vSphere stemcell
-using the [download-product][download-product] task.
+using the [download-product](./tasks.md#download-product) task.
 
 #### stemcell.yml
 
@@ -413,7 +424,8 @@ using the [download-product][download-product] task.
 ```
 
 #### assign-stemcell-task
-This artifact is an output of [`download-product`][download-product]
+
+This artifact is an output of [`download-product`](./tasks.md#download-product)
 located in the `assign-stemcell-config` output directory.
 
 This file should resemble the following:
@@ -424,9 +436,9 @@ stemcell: "97.190"
 
 ### telemetry
 
-The `config` input for the [collect-telemetry][collect-telemetry] task 
+The `config` input for the [collect-telemetry](./tasks.md#collect-telemetry) task
 can be used with a `telemetry.yml` file to collect data for VMware
-so they can learn and measure results 
+so they can learn and measure results
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 

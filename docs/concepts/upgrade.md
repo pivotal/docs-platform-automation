@@ -1,6 +1,6 @@
 # Recovering and upgrading Tanzu Operations Manager
 
-This topic provides an overview 
+This topic provides an overview
 of upgrading and recovering a VMware Tanzu Operations Manager using Platform Automation Toolkit,
 including common errors.
 
@@ -16,15 +16,17 @@ It's important to note when upgrading your Tanzu Operations Manager:
 * an initial installation is done, which maintains state
 
 ### Upgrade flowchart
-The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Tanzu Operations Manager VM.
+
+The [`upgrade-opsman`](../tasks.md#upgrade-opsman) task follows the flow based on state of an Tanzu Operations Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}
 
-On successive invocations of the task, it will offer different behaviour of the previous run.
+On successive invocations of the task, it will offer different behavior of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
 
 ## Recovering the Tanzu Operations Manager VM
+
 Using the `upgrade-opsman` task will always delete the VM.
 This is done to create a consistent and simplified experience across IAASs.
 For example, some IAASs have IP conflicts
@@ -35,55 +37,55 @@ you may need to recover your Tanzu Operations Manager VM.
 Recovering your VM can be done in two different ways.
 Both methods require an exported installation.
 
-1. **Recovery using the upgrade-opsman task**. Depending on the error, 
-   the VM could be recovered by re-running [`upgrade-opsman`][upgrade-opsman].
-   This may or may not require a change to the [state file][state],
-   depending on if there is an [ensure][concourse-ensure] 
+1. **Recovery using the upgrade-opsman task**. Depending on the error,
+   the VM could be recovered by re-running [`upgrade-opsman`](../tasks.md#upgrade-opsman).
+   This may or may not require a change to the [state file](../inputs-outputs.md#state),
+   depending on if there is an [ensure](https://concourse-ci.org/jobs.html#schema.step.ensure)
    set for the state file resource.
    
-1. **Manual recovery**. The VM can always be recovered manually
+2. **Manual recovery**. The VM can always be recovered manually
    by deploying the Tanzu Operations Manager OVA, raw, or YAML from Tanzu Network.
 
 Below is a list of common errors when running `upgrade-opsman`.
 
 - **Error: The Tanzu Operations Manager API is inaccessible.**
-  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Tanzu Operations Manager VM is not
-  created, and will run the [`create-vm`][create-vm] and
-  [`import-installation`][import-installation] tasks.
+  Rerun the [`upgrade-opsman`](../tasks.md#upgrade-opsman)task. The task will assume that the Tanzu Operations Manager VM is not
+  created, and will run the [`create-vm`](../tasks.md#create-vm) and
+  [`import-installation`](../tasks.md#import-installation) tasks.
 
-- **Error: The CLI for a supported IAAS fails.** (i.e., bad network, outage, etc)
-  The specific error will be returned as output, 
-  but most errors can be fixed 
-  by re-running the [`upgrade-opsman`][upgrade-opsman] task.
+- **Error: The CLI for a supported IAAS fails.** (that is, bad network, outage, and so on.)
+  The specific error will be returned as output,
+  but most errors can be fixed
+  by re-running the [`upgrade-opsman`](../tasks.md#upgrade-opsman) task.
 
-## Restoring the Original Tanzu Operations Manager VM
+## Restoring the original Tanzu Operations Manager VM
 There may be an instance in which you want to restore a previous Tanzu Operations Manager VM
 before completing the upgrade process.
 
 It is recommended to restore a previous Tanzu Operations Manager VM manually.
-The [Running Commands Locally How-to Guide][running-commands-locally]
-is a helpful resource to get started with the manual process below. 
+See [Running commands locally](../how-to-guides/running-commands-locally.md)
+for information to help get started with the following manual process .
 
 1. Run `delete-vm` on the failed or non-desired Tanzu Operations Manager
-   using the [`state.yml`][state] if applicable. 
-   [`opsman.yml`][opsman-config] is required for this command.
+   using the [`state.yml`](../inputs-outputs.md#state) if applicable.
+   [`opsman.yml`](../inputs-outputs.md#tanzu-operations-manager-config) is required for this command.
    ```bash
    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
    p-automator delete-vm --state-file state.yml --config opsman.yml
    ```
    
-1. Run `create-vm` using either an empty [`state.yml`][state]
+2. Run `create-vm` using either an empty [`state.yml`](../inputs-outputs.md#state)
    or the state output by the previous step. 
    This command requires the image file from Tanzu Network
-   of the original version that was deployed (yml, ova, raw).
-   [`opsman.yml`][opsman-config] is required for this command.
+   of the original version that was deployed (yaml, ova, raw).
+   [`opsman.yml`](../inputs-outputs.md#tanzu-operations-manager-config) is required for this command.
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
     p-automator create-vm --config opsman.yml --image-file original-opsman-image.yml \
     --state state.yml
     ```
    
-1. Run `import-installation`.
+3. Run `import-installation`.
    This command requires the exported installation of the original Tanzu Operations Manager
    and the `env.yml` used by Platform Automation Toolkit
    ```bash
