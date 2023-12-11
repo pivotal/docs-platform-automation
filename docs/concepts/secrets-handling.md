@@ -294,7 +294,7 @@ This allows the config file to have values scoped, for example, per foundation.
 You can set the param <code>SKIP_MISSING:false</code> to enforce strict checking of
 your vars files during interpolation. This is true by default to support
 credential management from multiple sources. For more information, see
-<a href="Multiple sources">#credub-interpolate-and-vars-files</a>.</p>
+<a href="#credub-interpolate-and-vars-files">Multiple sources</a>.</p>
 
 This task will reach out to the deployed CredHub and fill in your entry references and return an output
 named `interpolated-files` that can then be read as an input to any following tasks.

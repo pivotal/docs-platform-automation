@@ -17,7 +17,7 @@ For detailed instructions, follow the [Installing Tanzu Operations Manager](./in
 [om](https://github.com/pivotal-cf/om) has a command called [staged-director-config](../tasks.md#staged-director-config), which is used to extract
 the Tanzu Operations Manager and the BOSH director configuration from the targeted foundation.
 
-{% include ".missing_fields_opsman_director.md" %}
+<%= partial ".missing_fields_opsman_director.md" %>
 
 Sample usage:  
 `om --env env.yml staged-director-config > director.yml`  
