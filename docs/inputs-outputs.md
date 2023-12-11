@@ -239,7 +239,7 @@ This works for Tanzu Operations Managers that are already running and useful whe
 Usage:
 
 1. Get the Platform Automation Toolkit image from Tanzu Network.
-2. Import that image into `docker` to run the `p-automation` [locally](./how-to-guides/running-commands-locally).
+2. Import that image into `docker` to run the `p-automation` [locally](./how-to-guides/running-commands-locally.md).
 3. Create a [state file](./inputs-outputs.md#state]) that represents your current VM and IAAS.
 4. Invoke the `p-automator` CLI to get the configuration.
 
