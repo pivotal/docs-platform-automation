@@ -112,23 +112,30 @@ fly -t control-plane set-pipeline -p foundation -c pipeline.yml
 
 If the pipeline sets without errors, run a `git push` of the config.
 
-!!! info "If fly set-pipeline returns an error"
-    Fix any and all errors until the pipeline can be set.
-    When the pipeline can be set properly, run
+<p class="note">
+<span class="note__title">Note</span>
+If fly set-pipeline returns an error:
+Fix any and all errors until the pipeline can be set.
+When the pipeline can be set properly, run:
     
-    ```bash
+<pre>
+  <code>
     git add pipeline.yml
     git commit --amend --no-edit
     git push
-    ```
+  </code>
+</pre>
+</p>
 
-!!! note "Testing Your Pipeline"
-    We generally want to try things out right away to see if they're working right.
-    However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
-    you might want to hold off until we've got the job doing more,
-    so that if it works, you don't have to wait for the download again.
+<p class="note">
+<span class="note__title">Note</span>
+Testing your pipeline:
+We generally want to try things out right away to see if they're working right.
+However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
+you might want to hold off until we've got the job doing more,
+so that if it works, you don't have to wait for the download again.</p>
 
-### Upload and Stage
+### Upload and stage
 We have a product downloaded and (potentially) cached on a Concourse worker.
 The next step is to upload and stage that product to Tanzu Operations Manager.
 
@@ -388,12 +395,14 @@ value:
 version_created_at: "<timestamp>"
 ```
 
-!!! warning "Remove Credentials from Disk" 
-    Once we've validated that the certs are set correctly in CredHub, 
-    remember to delete `poe-cert.txt` and `poe-private-key.txt` from your working directory.
-    This will prevent a potential security leak, 
-    or an accidental commit of those credentials.
-    
+<p class="note important">
+<span class="note__title">Important</span>
+Remove Credentials from Disk:
+Once you have validated that the certificatess are set correctly in CredHub,
+remember to delete <code>poe-cert.txt</code> and <code>poe-private-key.txt</code> from your working directory.
+This will prevent a potential security leak
+or an accidental commit of those credentials.</p>
+
 Repeat this process for all sensitive values found in your `tas-config.yml`.
 
 Once completed, we can remove those secrets from `tas-config.yml`
@@ -584,15 +593,18 @@ so that these changes will be applied by the Tanzu Operations Manager.
         env: config
 ```
 
-!!! info "Adding Multiple Products"
-    When adding multiple products, you can add the configure jobs as passed constraints
-    to the apply-changes job so that they all are applied at once.
-    Tanzu Operations Manager will handle any inter-product dependency ordering.
-    This will speed up your apply changes
-    when compared with running an apply changes for each product separately.
-    
-    Example:
-    `passed: [configure-tas, configure-tas-windows, configure-healthwatch]`
+<p class="note">
+<span class="note__title">Note</span>
+Adding multiple products:
+When adding multiple products, you can add the configure jobs as passed constraints
+to the apply-changes job so that they all are applied at once.
+Tanzu Operations Manager will handle any inter-product dependency ordering.
+This will speed up your apply changes
+when compared with running apply changes for each product separately.
+<br>
+Example:
+<code>passed: [configure-tas, configure-tas-windows, configure-healthwatch]</code>
+</p>
 
 
 Set the pipeline one final time,

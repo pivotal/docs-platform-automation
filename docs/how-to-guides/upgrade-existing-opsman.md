@@ -305,21 +305,22 @@ we'll need to load vars from `vars.yml`.
 
 Now you can manually trigger a build, and see it pass.
 
-!!! tip "Bash command history"
-    <p>You'll be using this,
-    the ultimate form of the `fly` command to set your pipeline,
-    for the rest of the tutorial.
-    <p>You can save yourself some typing by using your bash history
-    (if you did not prepend your command with a space).
-    You can cycle through previous commands with the up and down arrows.
-    Alternatively,
-    Ctrl-r will search your bash history.
-    Just hit Ctrl-r, type `fly`,
-    and it'll show you the last fly command you ran.
-    Run it with enter.
-    Instead of running it,
-    you can hit Ctrl-r again
-    to see the matching command before that.
+<p class="note important">
+<span class="note__title">Important</span>:
+<p>You'll be using this,
+the ultimate form of the `fly` command to set your pipeline,
+for the rest of the tutorial.
+<p>You can save yourself some typing by using your bash history
+(if you did not prepend your command with a space).
+You can cycle through previous commands with the up and down arrows.
+Alternatively,
+Ctrl-r will search your bash history.
+Holding Ctrl-r, type `fly`,
+and you will see the last fly command you ran.
+Run it with enter, or
+instead of running it,
+use Ctrl-r again
+to see the matching command before that.</p>
 
 This is also a good commit point:
 
