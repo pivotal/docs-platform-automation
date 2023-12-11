@@ -5,7 +5,7 @@ to create repeatable and reusable automated pipeline(s)
 for upgrading and installing foundations.
 We also provide instructions on using these building blocks in various workflows.
 In this introduction, we'll provide a high-level overview of Platform Automation Toolkit.
-To dive-deeper, check out the references section.
+To dive-deeper, see the references section.
 
 See the [Getting Started](./getting-started.md) section for instructions
 on how to start using Platform Automation Toolkit.

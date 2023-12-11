@@ -1,7 +1,7 @@
 # Writing a pipeline to install Tanzu Operations Manager
 
 This how-to-guide shows you how to write a pipeline for installing a new VMware Tanzu Operations Manager.
-If you already have an Tanzu Operations Manager VM, check out [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md).
+If you already have a Tanzu Operations Manager VM, see [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md).
 
 {% include ".getting-started.md" %}
 
@@ -87,7 +87,7 @@ later when we declare the corresponding resource.
 ```
 
 `download-ops-manager.yml` holds creds for communicating with Tanzu Network,
-and uniquely identifies an Tanzu Operations Manager image to download.
+and uniquely identifies a Tanzu Operations Manager image to download.
 
 An example `download-ops-manager.yml` is shown below.
 
@@ -340,7 +340,7 @@ select your desired version from the dropdown at the top of the page.
 
 ## Creating the Tanzu Operations Manager VM
 
-Now that we have an Tanzu Operations Manager image and the resources required to deploy a VM,
+Now that we have a Tanzu Operations Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
 
 ```yaml hl_lines="29-31"
@@ -389,7 +389,7 @@ Looking over the list of inputs for `create-vm` we still need two required input
 The optional inputs are vars used with the config, so we'll get to those when we do `config`.
 
 Let's start with the config file.
-We'll write an Tanzu Operations Manager VM Configuration file to `opsman.yml`.
+We'll write a Tanzu Operations Manager VM Configuration file to `opsman.yml`.
 
 The properties available vary by IaaS, for example:
 

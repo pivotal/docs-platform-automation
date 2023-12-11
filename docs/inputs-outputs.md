@@ -128,18 +128,18 @@ The expected format for this errand config is as follows:
 
 ### installation
 
-The file contains the information to restore an Tanzu Operations Manager VM.
+The file contains the information to restore a Tanzu Operations Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
 
-This file can be exported from an Tanzu Operations Manager VM using the [export-installation](./tasks.md#export-installation).
-This file can be imported to an Tanzu Operations Manager VM using the [import-installation](./tasks.md#import-installation).
+This file can be exported from a Tanzu Operations Manager VM using the [export-installation](./tasks.md#export-installation).
+This file can be imported to a Tanzu Operations Manager VM using the [import-installation](./tasks.md#import-installation).
 
 <p class="note important">
 <span class="note__title">Important</span>
 This file cannot be manually created. It is a file that must be generated via the export function of Tanzu Operations Manager.</p>
 
 ### Tanzu Operations Manager config
-The config for an Tanzu Operations Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
+The config for a Tanzu Operations Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
 
 The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.

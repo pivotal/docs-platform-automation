@@ -688,7 +688,7 @@ here are some approaches you can use:
 
 - Look in the template where the variable appears for some additional context of its value.
 - Look at the tile's online documentation
-- Upload the tile to an Tanzu Operations Manager 
+- Upload the tile to a Tanzu Operations Manager
   and visit the tile in the Tanzu Operations Manager UI to see if that provides any hints.
   
     If you are still struggling, inspecting the html of the Tanzu Operations Manager webpage
