@@ -32,7 +32,7 @@ params:
   # - Optional
   # - May be required to communicate with the Ops Manager BOSH director
   #   if your Concourse worker doesn't otherwise have a route
-  #   to your bosh director.
+  #   to your BOSH Director.
   # - This is the private key for the Ops Manager VM
   #   (used during VM creation)
 
