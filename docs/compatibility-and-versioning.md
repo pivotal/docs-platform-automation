@@ -3,6 +3,7 @@
 This topic describes Platform Automation Toolkit dependencies and semantic versioning.
 
 ## External dependencies
+
 Platform Automation Toolkit is designed to work with these dependencies.
 
 <table>
@@ -59,7 +60,7 @@ The following are considered part of our API:
 - The minimum compatible version
   of Concourse and Tanzu Operations Manager
   are part of the API,
-  and are specified in [External dependencies](./compatibility-and-versioning.md).
+  and are specified in the table above.
 
 - The presence of the following binaries on the _combined image_:
 

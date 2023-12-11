@@ -1,44 +1,46 @@
 # Handling stemcells
 
 
-In Tanzu Operations Manager, every product uploaded and staged needs to be given a [stemcell][bosh-stemcell] in 
+In Tanzu Operations Manager, every product uploaded and staged needs to be given a [stemcell](https://bosh.io/docs/stemcell/) in
 order to operate. By default, every stemcell uploaded to Tanzu Operations Manager will automatically associate
 with any new or existing products. Using the automation tasks, this default can be overridden to
 not have a stemcell associate with any products, and can be manually assigned as deemed necessary
 by the user.
 
 ## Why do your stemcell Handling manually?
+
 Unless there is a specific need to manually handle the stemcells in Tanzu Operations Manager, it is recommended
-to use the default. A common use case for manual stemcell handling is updating the product stemcells 
+to use the default. A common use case for manual stemcell handling is updating the product stemcells
 one at a time to minimize downtime during apply changes. This is particularly beneficial in environments
 with large numbers of tiles that share the same stemcell.
 
 ## How to use the Stemcell Handling Tasks in Automation
+
 Platform Automation Toolkit has tasks that will assist in the manual handling of stemcells within
 Tanzu Operations Manager. These tasks, in order, are:
 
-- [download-product][download-product]
-- [upload-product][upload-product]
-- [stage-product][stage-product]
-- [upload-stemcell][upload-stemcell]
-- [assign-stemcell][assign-stemcell]
+- [download-product](../tasks.md#download-product)
+- [upload-product](../tasks.md#upload-product)
+- [stage-product](../tasks.md#stage-product)
+- [upload-stemcell](../tasks.md#upload-stemcell)
+- [assign-stemcell](../tasks.md#assign-stemcell)
 
 1. `download-product`:
 
-    Create a `config.yml` for this task using the [example provided][download-product-config].
+    Create a `config.yml` for this task using the [example provided](../inputs-outputs.md#download-product-config).
 
     After running the task, a file named `assign-stemcell.yml` is outputted.
     The task will put a config file with two values, `product` and `stemcell` into the `assign-stemcell-config`
-    output directory. This can be used with [assign-stemcell][assign-stemcell] to ensure the _latest_ stemcell is
+    output directory. This can be used with [assign-stemcell](../tasks.md#assign-stemcell) to ensure the _latest_ stemcell is
     used with that product.
 
-2. Run the [upload-product][upload-product] and [stage-product][stage-product] tasks to get the
+2. Run the [upload-product](../tasks.md#upload-product) and [stage-product](../tasks.md#stage-product) tasks to get the
    resources into Tanzu Operations Manager.
 
-3. Run the [upload-stemcell][upload-stemcell] task.
+3. Run the [upload-stemcell](../tasks.md#upload-stemcell) task.
 
     To upload the stemcell to Tanzu Operations Manager without associating it with any product, the
-    [`upload-stemcell`][upload-stemcell] task will need to be executed with the `FLOATING_STEMCELL: false` 
+    `upload-stemcell` task will need to be executed with the `FLOATING_STEMCELL: false`
     flag set.
     
     An example of this, in a pipeline:
@@ -55,12 +57,13 @@ Tanzu Operations Manager. These tasks, in order, are:
     FLOATING_STEMCELL: false
 ```
 
-!!! warning
-    `upload-stemcell` should not be run until after the `stage-product` task has completed. When the two tasks are run in the
-    opposite order, the stemcell will still auto-associate with the product.
+<p class="note caution">
+<span class="note__title">Caution</span>
+Do not run <code>upload-stemcell</code> until after the <code>stage-product</code> task has completed. When the two tasks are run in the
+opposite order, the stemcell will still auto-associate with the product.</p>
 
 
-4. Run the [assign-stemcell][assign-stemcell] task to associate the stemcell with the staged product.
+1. Run the [assign-stemcell](../tasks.md#assign-stemcell) task to associate the stemcell with the staged product.
    If using the `download-product` task before doing this within the same job, you must assign the config
    using the `input_mapping` key to assign the outputted config to the config that `assign-stemcell` is
    expecting. Upon successful completion, the stemcell specified in the config will be associated with the product
@@ -78,15 +81,14 @@ Tanzu Operations Manager. These tasks, in order, are:
   params:
     ENV_FILE: ((foundation))/env/env.yml
 ```
-   
 
-5. [Configure Product][configure-product] and [Apply Changes][apply-changes] can then be run on the
+1. [Configure product](../tasks.md#configure-product) and [apply changes](../tasks.md#apply-changes) can then be run on the
 product as normal.
 
-## How to Download a Specific Stemcell
+## How to download a specific stemcell
 
 Platform Automation Toolkit can be used to download a specific stemcell. In order to do so, create a `config.yml` for this
-task using the [example provided][download-stemcell-product-config].
+task using the [example provided](../inputs-outputs.md#download-stemcell-product-config).
 
 [//]: # ({% with path="../" %})
 [//]: # (    {% include ".internal_link_url.md" %})

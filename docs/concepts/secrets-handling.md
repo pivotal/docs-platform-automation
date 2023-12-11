@@ -6,40 +6,43 @@ Within your pipeline, the config file can then reference that secrets store valu
 Platform Automation Toolkit Tasks contains two tasks to help with retrieving these credentials in the tasks that use them:
 
 1. If you're using Concourse version 5 or newer
-   the [`prepare-tasks-with-secrets`](#using-prepare-tasks-with-secrets) task can be used with any Concourse supported [secrets store][concourse-secrets-handling].
+   the [`prepare-tasks-with-secrets`](#using-prepare-tasks-with-secrets) task can be used with any Concourse supported [secrets store](https://concourse-ci.org/creds.html).
 2. The [`credhub-interpolate`](#using-credhub-interpolate) task can only be used with CredHub.
 
 ## Using prepare-tasks-with-secrets
-The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task takes a set of tasks
+
+The [`prepare-tasks-with-secrets`](../tasks.md#prepare-tasks-with-secrets) task takes a set of tasks
 and modifies them to include environment variables referencing the variables found in the provided config files.
-This allows use of the native [Concourse secrets handling][concourse-secrets-handling]
+This allows use of the native [Concourse secrets handling](https://concourse-ci.org/creds.html)
 and provides support for any secret store Concourse supports.
 
-The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
-replaces the [credhub-interpolate][credhub-interpolate] task on Concourse versions 5.x+
+The [`prepare-tasks-with-secrets`](../tasks.md#prepare-tasks-with-secrets) task
+replaces the [credhub-interpolate](../tasks.md#credhub-interpolate) task on Concourse versions 5.x+
 and provides the following benefits:
 
 * Support for all native Concourse secrets stores including CredHub and Vault.
 * CredHub credentials are no longer required by the task so they can be completely handled by concourse.
 * Secrets are no longer written to disk which alleviates some security concerns.
 
-The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task can be used two ways:
+The `prepare-tasks-with-secrets` task can be used two ways:
 
 * Adding to a pipeline without an already implemented credhub-interpolate task
 * [Replacing an already implemented credhub-interpolate task](#replacing-credhub-interpolate-with-prepare-tasks-with-secrets)
 
-!!! info "All Variables Must Exist"
-    If using `prepare-tasks-with-secrets`, _all secrets_ must exist in either a secrets store
-    or a vars file found under `VARS_PATHS`.
-    If a vars from a config file can't be found in credhub,
-    it must be available in a yaml file found under `VARS_PATHS` in `prepare-tasks-with-secrets`.
-    This will prevent those credentials from being added as environment variables to the task
-    resulting in Concourse being unable to find them in the secrets store.
+<p class="note">
+<span class="note__title">Note</span>
+All variables must exist:
+If using <code>prepare-tasks-with-secrets</code>, _all secrets_ must exist in either a secrets store
+or a vars file found under `VARS_PATHS`.
+If a vars from a config file can't be found in CredHub,
+it must be available in a yaml file found under <code>VARS_PATHS</code> in <code>prepare-tasks-with-secrets</code>.
+This will prevent those credentials from being added as environment variables to the task
+resulting in Concourse being unable to find them in the secrets store.</p>
 
 To understand how `prepare-tasks-with-secrets` modifies the Platform Automation Toolkit tasks,
 below is an example of how a task will be changed:
 
-1. Authenticate with your credhub instance.
+1. Authenticate with your CredHub instance.
 2. Generate a username and password:
         ```bash
         credhub generate --name="/concourse/:team_name/:pipeline_name/vcenter_login" --type=user --username=some-user
@@ -71,7 +74,7 @@ below is an example of how a task will be changed:
        vcenter_host: vcenter.example.com
        ```
 
-5. Configure your pipeline to use the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task.
+5. Configure your pipeline to use the [`prepare-tasks-with-secrets`](../tasks.md#prepare-tasks-with-secrets) task.
 
     * The `config` input is required and is a directory that contains your configuration file from (3).
     * The `tasks` input is required and is the set of tasks that will be modified.
@@ -96,10 +99,12 @@ below is an example of how a task will be changed:
            VARS_PATHS: ((foundation))/vars # required only if using vars
        ```
 
-    !!! info
-        Unlike with [`credhub-interpolate`][credhub-interpolate], there is no concept of `SKIP_MISSING`.
-        As such, if there are credentials that will be filled in future jobs by vars files,
-        those vars files must be provided in the `vars` input and the `VARS_PATHS` param.
+    <p class="note">
+    <span class="note__title">Note</span>
+    Unlike with <a href="../tasks.md#credhub-interpolate">credhub-interpolate</a>,
+    there is no concept of <code>SKIP_MISSING</code>.
+    As such, if there are credentials that will be filled in future jobs by vars files,
+    those vars files must be provided in the <code>vars</code> input and the <code>VARS_PATHS</code> param.</p>
 
      This task will replace all of the tasks provided in the `tasks` input with the modified tasks.
      The modified tasks include an extended `params` section with the secret references detected from the config files.
@@ -186,8 +191,9 @@ run:
 ```
 
 ### Replacing credhub-interpolate with prepare-tasks-with-secrets
-If you already have implemented the [`credhub-interpolate`][credhub-interpolate] task within your pipeline,
-this solution should be a _drop in replacement_ if you are not using vars files. 
+
+If you already have implemented the [`credhub-interpolate`](../tasks.md#credhub-interpolate) task within your pipeline,
+this solution should be a _drop in replacement_ if you are not using vars files.
 Note this is only a replacement if using Concourse 5.x or greater.
 
 If you are using vars files, the `vars` input and the `VARS_PATHS` param will also need to be set on the `prepare-tasks-with-secrets` task.
@@ -214,9 +220,10 @@ The above definition can be replaced with the following:
     VARS_PATHS: ((foundation))/vars # required only if using vars
 ```
 
-!!! info "If Using Vars Files"
-    If using vars files in subsequent tasks, the `vars` input and the `VARS_PATHS` param must be used to prevent
-    interpolation errors in those subsequent tasks.
+<p class="note">
+<span class="note__title">Note</span>
+If using vars files in subsequent tasks, the <code>vars</code> input and the <code>VARS_PATHS</code> param must be used to prevent
+interpolation errors in those subsequent tasks.</p>
 
 Notice in the above:
 
@@ -231,15 +238,16 @@ Notice in the above:
   For example, `/concourse/:team_name/:cred_name` or `/concourse/:team_name/:pipeline_name/:cred_name`.
 
 ##  Using credhub-interpolate
-The [credhub-interpolate][credhub-interpolate] task can only be used with CredHub.
 
-**If using Concourse 5.x+, It is recommended to use the [prepare-tasks-with-secrets][prepare-tasks-with-secrets] task instead.**
+The [credhub-interpolate](../tasks.md#credhub-interpolate) task can only be used with CredHub.
+
+**If using Concourse 5.x+, It is recommended to use the [prepare-tasks-with-secrets](../tasks.md#prepare-tasks-with-secrets) task instead.**
 
 An example workflow would be storing an SSH key.
 
-1. Authenticate with your credhub instance.
+1. Authenticate with your CredHub instance.
 2. Generate an ssh key: `credhub generate --name="/concourse/:team_name/:pipeline_name/opsman_ssh_key" --type=ssh`
-3. Create an [Tanzu Operations Manager configuration][opsman-config] file that references the name of the property.
+3. Create an [Tanzu Operations Manager configuration](../inputs-outputs.md#opsman-config) file that references the name of the property.
 
 ```yaml
 opsman-configuration:
@@ -247,8 +255,8 @@ opsman-configuration:
     ssh_public_key: ((opsman_ssh_key.public_key))
 ```
 
-4. Configure your pipeline to use the [credhub-interpolate][credhub-interpolate] task.
-   It takes an input called `files`, which should contain your configuration file from (3).
+4. Configure your pipeline to use the [credhub-interpolate](../tasks.md#credhub-interpolate) task.
+   It takes an input called `files`, which should contain your configuration file from the earlier step.
 
    The declaration within a pipeline might look like:
 
@@ -265,7 +273,7 @@ jobs:
     input_mapping:
       files: config
     params:
-      # depending on credhub configuration
+      # depending on CredHub configuration
       # ether CA cert or secret are required
       CREDHUB_CA_CERT: ((credhub_ca_cert))
       CREDHUB_SECRET: ((credhub_secret))
@@ -279,15 +287,16 @@ jobs:
 
 Notice the `PREFIX` has been set to `/concourse/:team_name/:pipeline_name`, the path prefix defined for your cred in (2).
 This allows the config file to have values scoped, for example, per foundation.
-`params` should be filled in by the credhub created with your Concourse instance.
+`params` should be filled in by the CredHub created with your Concourse instance.
 
-!!! info
-    You can set the param `SKIP_MISSING:false` to enforce strict checking of 
-    your vars files during intrpolation. This is true by default to support 
-    credential management from multiple sources. For more information, see the 
-    [Multiple Sources](#credub-interpolate-and-vars-files) section.
+<p class="note">
+<span class="note__title">Note</span>
+You can set the param <code>SKIP_MISSING:false</code> to enforce strict checking of
+your vars files during interpolation. This is true by default to support
+credential management from multiple sources. For more information, see
+<a href="Multiple sources">#credub-interpolate-and-vars-files</a>.</p>
 
-This task will reach out to the deployed credhub and fill in your entry references and return an output
+This task will reach out to the deployed CredHub and fill in your entry references and return an output
 named `interpolated-files` that can then be read as an input to any following tasks.
 
 Our configuration will now look like
@@ -298,16 +307,17 @@ opsman-configuration:
    ssh_public_key: ssh-rsa AAAAB3Nz...
 ```
 
-!!! info 
-    If using this you need to ensure the concourse worker can talk to credhub.
-    Depending on how you deployed credhub and/or the worker,
-    this may not be possible.
-    Using credhub-interpolate inverts control;
-    now workers need to access CredHub.
-    With `prepare-tasks-with-secrets` and other uses of Concourse's native integration,
-    the ATC retrieves secrets from CredHub and passes them to the worker.
+<p class="note">
+<span class="note__title">Note</span>
+If using this you need to ensure the concourse worker can talk to CredHub.
+Depending on how you deployed CredHub and/or the worker,
+this may not be possible.
+Using CredHub-interpolate inverts control;
+now workers need to access CredHub.
+With `prepare-tasks-with-secrets` and other uses of Concourse's native integration,
+the ATC retrieves secrets from CredHub and passes them to the worker.</p>
 
-## Defining Multiline Certificates and Keys in Config Files
+## Defining multiline certificates and keys in config files
 There are three ways to include certificates in the yaml files that are used by Platform Automation Toolkit tasks.
 
 1. Direct inclusion in yaml file
@@ -423,29 +433,31 @@ There are three ways to include certificates in the yaml files that are used by 
               private_key_pem: ((networking_poe_ssl_certs_private_key))
     ```
 
-## Storing values for Multi-foundation
+## Storing values for multi-foundation
 
-### Concourse Supported Secrets Store
+### Concourse supported secrets store
+
 If you have multiple foundations, store relevant keys to that foundation in a different pipeline path,
 and Concourse will read those values in appropriately.
 If sharing the same `base.yml` across foundations, it is recommended to have a different pipeline per foundation.
 
-### Vars Files
-Vars files can be used for your secrets handling. 
+### Vars files
+Vars files can be used for your secrets handling.
 They are **not** recommended, but are sometimes required based on your foundation setup.
 
 Take the example below (which only uses vars files and does not use a secrets store):
 
 {% include ".cf-partial-config.md" %}
 
-In our first foundation, we have the following `vars.yml`, optional for the [`configure-product`][configure-product] task.
+In our first foundation, we have the following `vars.yml`, optional for the [`configure-product`](../tasks.md#configure-product) task.
+
 ```yaml
 # vars.yml
 cloud_controller_encrypt_key.secret: super-secret-encryption-key
 cloud_controller_apps_domain: cfapps.domain.com
 ```
 
-The `vars.yml` can then be passed to [`configure-product`][configure-product] with `base.yml` as the config file.
+The `vars.yml` can then be passed to [`configure-product`](../tasks.md#configure-product) with `base.yml` as the config file.
 The `configure-product` task will then sub the `((cloud_controller_encrypt_key.secret))` and `((cloud_controller_apps_domain))` 
 specified in `vars.yml` and configure the product as normal.
 
@@ -478,30 +490,32 @@ jobs:
 
 If deploying more than one foundation, a unique `vars.yml` should be used for each foundation.
 
-### prepare-tasks-with-secrets and Vars Files
+### prepare-tasks-with-secrets and vars files
+
 Both CredHub and vars files may be used together to interpolate variables into `base.yml`.
 This use case is described in the [Using prepare-tasks-with-secrets](#using-prepare-tasks-with-secrets) section.
 
-### credub-interpolate and Vars Files
+### credub-interpolate and vars files
+
 Both CredHub and vars files may be used together to interpolate variables into `base.yml`.
-Using the same example from above: 
+Using the same example from above:
 
 {% include ".cf-partial-config.md" %}
 
 We have one parametrized variable that is secret and might not want to have stored in 
-a plain text vars file, `((cloud_controller_encrypt_key.secret))`, but `((cloud_controller_apps_domain))` 
-is fine in a vars file. In order to support a `base.yml` with credentials from multiple sources (i.e. 
-credhub and vars files), you will need to `SKIP_MISSING: true` in the [`credhub-interpolate`][credhub-interpolate] task.
+a plain text vars file, `((cloud_controller_encrypt_key.secret))`, but `((cloud_controller_apps_domain))`
+is fine in a vars file. In order to support a `base.yml` with credentials from multiple sources (that is,
+CredHub and vars files), you will need to `SKIP_MISSING: true` in the [`credhub-interpolate`](../tasks.md#credhub-interpolate) task.
 This is enabled by default by the `credhub-interpolate` task.
 
 The workflow would be the same as [CredHub](#concourse-supported-secrets-store), but when passing the interpolated `base.yml` as a config into the
-next task, you would add in a [Vars File](#vars-files) to fill in the missing variables.
+next task, you add in a [vars file](#vars-files) to fill in the missing variables.
 
 An example of how this might look in a pipeline (resources not listed), assuming:
 
 - The `((base.yml))` above 
-- `((cloud_controller_encrypt_key.secret))` is stored in credhub
-- `((cloud_controller_apps_domain))` is stored in `director-vars.yml` 
+- `((cloud_controller_encrypt_key.secret))` is stored in CredHub
+- `((cloud_controller_apps_domain))` is stored in `director-vars.yml`
 
 ```yaml
 jobs:
@@ -516,7 +530,7 @@ jobs:
     input_mapping:
       files: config
     params:
-      # depending on credhub configuration
+      # depending on CredHub configuration
       # ether CredHub CA cert or CredHub secret are required
       CREDHUB_CA_CERT: ((credhub_ca_cert))
       CREDHUB_SECRET: ((credhub_secret))
@@ -538,14 +552,14 @@ jobs:
       DIRECTOR_CONFIG_FILE: config/director.yml
 ```
 
-### credhub-interpolate and Multiple Key Lookups
+### credhub-interpolate and multiple key lookups
 When using the `credhub-interpolate` task with a CredHub in a single foundation or multi-foundation manner, 
 we want to avoid duplicating identical credentials
-(duplication makes credential rotation harder). 
+(duplication makes credential rotation harder).
 
 In order to have CredHub read in credentials from multiple paths
 (not relative to your `PREFIX`), 
-you must provide the absolute path to any credentials 
+you must provide the absolute path to any credentials
 not in your relative path.
 
 For example, using an alternative `base.yml`:

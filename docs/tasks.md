@@ -11,7 +11,7 @@ as they are found in the product.
 
 The docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information.
-To learn more see [Running commands locally][running-commands-locally].
+To learn more see [Running commands locally](./how-to-guides/running-commands-locally.md).
 
 ### activate-certificate-authority
 
@@ -30,7 +30,7 @@ Triggers an install on the Tanzu Operations Manager described by the auth file.
 
 To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
-To see an example of this config file, see the [Inputs and outputs][inputs-outputs.md] section.
+To see an example of this config file, see [Inputs and outputs](./inputs-outputs.md).
 
 {% include '.disable-verifiers.md' %}
 
@@ -105,29 +105,35 @@ Use BBR to backup a product deployed with Tanzu Operations Manager.
 Use BBR to backup Tanzu Kubernetes Grid Integrated Edition(TKGI)
 deployed with Tanzu Operations Manager.
 
-!!! info "PKS CLI may be Temporarily Unavailable"
-    During the backup, the PKS CLI is disabled.
-    Due to the nature of the backup, some commands may not work as expected.
+<p class="note">
+<span class="note__title">Note</span>
+PKS CLI may be temporarily unavailable:
+During the backup, the PKS CLI is disabled.
+Due to the nature of the backup, some commands may not work as expected.</p>
     
-??? warning "Known Issue"
+<p class="note caution">
+<span class="note__title">Caution</span>
+Known issue:
+When using the task <a href="../tasks#backup-tkgi">backup-tkgi</a> behind a proxy
+the values for <code>no_proxy</code> can affect the ssh (though jumpbox) tunneling.
+When the task invokes the <code>bbr</code> CLI, an environment variable (<code>BOSH_ALL_PROXY</code>) has been set,
+this environment variable tries to honor the <code>no_proxy</code> settings.
+The task's usage of the ssh tunnel requires the <code>no_proxy</code> to not be set.
+<br>
+If you experience an error, such as an SSH connection refused or connection timeout,
+try setting the <code>no_proxy: ""<code> as <code>params<code> on the task.
+<br>
+For example,
 
-    When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
-    the values for `no_proxy` can affect the ssh (though jumpbox) tunneling.
-    When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
-    this environment variable tries to honor the `no_proxy` settings.
-    The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
-  
-    If you experience an error, such as an SSH connection refused or connection timeout,
-    try setting the `no_proxy: ""` as `params` on the task.
-    
-    For example,
-    
-    ```yaml
-    - task: backup-tkgi
-      file: platform-automation-tasks/tasks/backup-tkgi.yml
-      params:
-        no_proxy: ""
-    ```
+<pre>
+    <code>
+        - task: backup-tkgi
+            file: platform-automation-tasks/tasks/backup-tkgi.yml
+            params:
+            no_proxy: ""
+    </code>
+</pre>
+</p>
 
 === "Task"
     ---excerpt--- "tasks/backup-tkgi"
@@ -137,11 +143,12 @@ deployed with Tanzu Operations Manager.
     ---excerpt--- "examples/backup-tkgi-usage"
 
 ### check-pending-changes
+
 Returns a table of the current state of your Tanzu Operations Manager
 and lists whether each product is changed or unchanged and the errands for that product.
 By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
 This is useful to keep manual changes from being accidentally applied
-when automating the [configure-product][configure-product]/[apply-changes][apply-changes] of other products.
+when automating the [configure-product](./tasks.md#configure-product)/[apply-changes](./tasks.md#apply-changes) of other products.
 
 === "Task"
     ---excerpt--- "tasks/check-pending-changes"
@@ -151,17 +158,18 @@ when automating the [configure-product][configure-product]/[apply-changes][apply
     ---excerpt--- "reference/check-pending-changes-usage"
 
 ### collect-telemetry
+
 Collects foundation information
-using the [Telemetry Collector][telemetry-docs] tool.
+using the [Tanzu Telemetry for Tanzu Operations Manager](https://docs.vmware.com/en/Tanzu-Telemetry-for-Ops-Manager/index.html) tool.
 
 This task requires the `telemetry-collector-binary` as an input.
-The binary is available on [Tanzu Network][telemetry];
-you will need to define a `resource` to supply the binary.
+The binary is available on [Tanzu Network](https://network.pivotal.io/products/pivotal-telemetry-om/);
+you must define a `resource` to supply the binary.
 
-This task requires a [config file][telemetry-config].
+This task requires a [config file](./inputs-outputs.md#telemetry).
 
 After using this task,
-the [send-telemetry][send-telemetry]
+the [send-telemetry](#send-telemetry) task
 may be used to send telemetry data to VMware.
 
 === "Task"
@@ -172,6 +180,7 @@ may be used to send telemetry data to VMware.
     ---excerpt--- "reference/collect-telemetry-usage"
 
 ### configure-authentication
+
 Configures Tanzu Operations Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
@@ -184,9 +193,10 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
     ---excerpt--- "reference/configure-authentication-usage"
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File][generating-an-auth-file].
+see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
 ### configure-director
+
 Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
@@ -198,10 +208,13 @@ which can extract a config file.
 === "Usage"
     ---excerpt--- "reference/configure-director-usage"
 
-!!! warning "GCP with service account"
-    For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
+<p class="note caution">
+<span class="note__title">Caution</span>
+GCP with service account:
+For GCP, if service account is used, the property associated_service_account has to be set explicitly in the <code>iaas_configuration</code> section.</p>
 
 ### configure-ldap-authentication
+
 Configures Tanzu Operations Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
@@ -214,20 +227,21 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
     ---excerpt--- "examples/configure-ldap-authentication-usage"
 
 For more details on using LDAP,
-please refer to the [Tanzu Operations Manager documentation][config-ldap].
+see [Tanzu Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#ldap).
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File][generating-an-auth-file].
+please see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
 ### configure-opsman
+
 This task supports configuring settings
 on the Tanzu Operations Manager Settings page in the UI.
 For example, the SSL cert for the Tanzu Operations Manager VM can be configured.
 
-Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+Configuration can be added directly to [`opsman.yml`](./inputs-outputs.md#tanzu-operations-manager-config).
 An example of all configurable properties can be found in the "Additional Settings" tab.
 
-The [`upgrade-opsman`][upgrade-opsman] task will automatically call `configure-opsman`,
+The [`upgrade-opsman`](#upgrade-opsman) task will automatically call `configure-opsman`,
 so there is no need to use this task then.
 It is recommended to use this task in the initial setup of the Tanzu Operations Manager VM.
 
@@ -239,10 +253,11 @@ It is recommended to use this task in the initial setup of the Tanzu Operations 
     ---excerpt--- "reference/configure-opsman-usage"
 
 ### configure-product
+
 Configures an individual, staged product with settings from a config file.
 
 Not to be confused with Tanzu Operations Manager's
-built-in [import][bbr-import],
+built-in [import](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-restore-pcf-bbr.html#deploy-import),
 which reads all deployed products and configurations from a single opaque file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
@@ -283,24 +298,28 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 === "Usage"
     ---excerpt--- "examples/configure-saml-authentication-usage"
 
-!!! info "Bosh Admin Client"
-    By default, this task creates a bosh admin client.
-    This is helpful for some advanced workflows
-    that involve communicating directly with the BOSH Director.
-    It is possible to disable this behavior;
-    see our [config file documentation][generating-an-auth-file] for details.
+<p class="note">
+<span class="note__title">Note</span>
+Bosh Admin Client:
+By default, this task creates a BOSH admin client.
+This is helpful for some advanced workflows
+that involve communicating directly with the BOSH Director.
+It is possible to disable this behavior; see the
+<a href="../how-to-guides/configuring-auth.html#generating-an-auth-file">config file documentation</a>
+for details.</p>
 
 Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the [Tanzu Operations Manager documentation][config-saml]
+see [Tanzu Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/opsguide-config-rbac.html#enable-saml).
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File][generating-an-auth-file].
+please see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
 ### create-vm
+
 Creates an unconfigured Tanzu Operations Manager VM.
 
 === "Task"
@@ -311,7 +330,7 @@ Creates an unconfigured Tanzu Operations Manager VM.
     ---excerpt--- "reference/create-vm-usage"
 
 This task requires a config file specific to the IaaS being deployed to.
-Please see the [configuration][opsman-config] page for more specific examples.
+Please see the [configuration](./inputs-outputs.md#tanzu-operations-manager-config) page for more specific examples.
 
 The task does specific CLI commands for the creation of the Tanzu Operations Manager VM on each IAAS. See below for more information:
 
@@ -357,12 +376,15 @@ The task does specific CLI commands for the creation of the Tanzu Operations Man
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
 
-!!! warning "Deprecation Notice"
-    This task will be deprecated in future _major_ versions of Platform Automation Toolkit.
+<p class="note caution">
+<span class="note__title">Caution</span>
+Deprecation Notice:
+The <code>credhub-interpolate</code> task will be deprecated in future <em>major</em> versions of Platform Automation Toolkit.</p>
 
-!!! info "prepare-tasks-with-secrets"
-      The [prepare-tasks-with-secrets] task replaces the credhub-interpolate task on Concourse versions 5.x+
-      and provides additional benefits.
+<p class="note">
+<span class="note__title">Note</span>
+The <code>prepare-tasks-with-secrets</code> task replaces the <code>credhub-interpolate</code> task on Concourse versions 5.x+
+and provides additional benefits.</p>
 
 === "Task"
     ---excerpt--- "tasks/credhub-interpolate"
@@ -372,7 +394,7 @@ Interpolate credhub entries into configuration files
     ---excerpt--- "examples/credhub-interpolate-usage"
 
 This task requires a valid credhub with UAA client and secret. For information on how to
-set this up, see [Secrets Handling][secrets-handling]
+set this up, see [Using a secrets store to store credentials](./concepts/secrets-handling.md).
 
 ### delete-certificate-authority
 
@@ -405,9 +427,9 @@ Deletes the Tanzu Operations Manager VM instantiated by [create-vm](#create-vm).
 === "Usage"
     ---excerpt--- "reference/delete-vm-usage"
 
-This task requires the [state file][state] generated [create-vm](#create-vm).
+This task requires the [state file](./inputs-outputs.md#state) generated [create-vm](#create-vm).
 
-The task does specific CLI commands for the deletion of the Tanzu Operations Manager VM and resources on each IAAS. See below for more information:
+The task does specific CLI commands for the deletion of the Tanzu Operations Manager VM and resources on each IAAS. See the following for more information:
 
 **AWS**
 
@@ -435,18 +457,20 @@ The task does specific CLI commands for the deletion of the Tanzu Operations Man
 1. Deletes the VM
 
 ### download-and-upload-product
+
 This is an _advanced task_.
 If a product (and its associated stemcell) has already been uploaded to Tanzu Operations Manager
 then it will not re-download and upload.
 This is helpful when looking for a fast-feedback loop for building pipelines.
 
-This task is similar to [`download-product`][download-product],
+This task is similar to [`download-product`](#download-product),
 as it takes the same product config.
 There are no `outputs` for this task
 because the products (and stemcell) don't need to be shared downstream.
 
-!!! warning
-    This currently only works with product source being Tanzu Network (Pivotal Network).
+<p class="note caution">
+<span class="note__title">Caution</span>
+This currently only works with product source being Tanzu Network.</p>
 
 === "Task"
     ---excerpt--- "tasks/download-and-upload-product"
@@ -475,9 +499,9 @@ for later use with download-product using the `SOURCE` parameter,
 or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
-This task requires a [download-product config file][download-product-config].
+This task requires a [download-product config file](./inputs-outputs.md#download-product-config).
 
-If stemcell-iaas is specified in the [download-product config file][download-product-config],
+If stemcell-iaas is specified in the download-product config file,
 and the specified product is a `.pivotal` file,
 `download-product` will attempt to download the stemcell for the product.
 It will retrieve the latest compatible stemcell for the specified IaaS.
@@ -489,7 +513,7 @@ The valid IaaSs are:
 - `openstack`
 - `vsphere`
 
-If a configuration for S3, GCS, or Azure is present in the [download-product config file][download-product-config],
+If a configuration for S3, GCS, or Azure is present in the [download-product config file](./inputs-outputs.md#download-product-config),
 the slug and version of the downloaded product file will be prepended in brackets to the filename.  
 For example:
 
@@ -512,30 +536,37 @@ Note that the filename will be unchanged
 if supported blobstore keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
-!!! warning "When using the s3 resource in concourse"
-    If you are using a `regexp` in your s3 resource definition
-    that explicitly requires the Tanzu Network filename
-    to be the _start_ of the regex, (i.e., the pattern starts with `^`)
-    this won't work when using S3 config.
-    The new file format preserves the original filename,
-    so it is still possible to match on that -
-    but if you need to match from the beginning of the filename,
-    that will have been replaced by the prefix described above.
+<p class="note caution">
+<span class="note__title">Caution</span>
+When using the s3 resource in Concourse:
+If you are using a <code>regexp</code> in your s3 resource definition
+that explicitly requires the Tanzu Network filename
+to be the start of the regex, (that is, the pattern starts with <code>^</code>)
+this won't work when using S3 config.
+The new file format preserves the original filename,
+so it is still possible to match on that,
+but if you need to match from the beginning of the filename,
+that will have been replaced by the prefix described earlier.</p>
 
-!!! info "When specifying Tanzu Application Service-Windows"
-    This task will automatically download and inject the winfs for pas-windows.
+<p class="note">
+<span class="note__title">Note</span>
+When specifying Tanzu Application Service [Windows]:
+This task will automatically download and inject the winfs for pas-windows.</p>
 
-!!! warning "When specifying Tanzu Application Service-Windows on Vsphere"
-    This task cannot download the stemcell for pas-windows on vSphere.
-    To build this stemcell manually, please reference the
-    [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
-    in VMware Documentation.
+<p class="note caution">
+<span class="note__title">Caution</span>
+When specifying Tanzu Application Service [Windows] on vSphere:
+This task cannot download the stemcell for pas-windows on vSphere.
+To build this stemcell manually, see
+<a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows stemcell using stembuild</a>
+in the VMware Tanzu Application Service documentation.</p>
 
-!!! info "When only downloading from Tanzu Network"
-    When the download product config only has Tanzu Network credentials,
-    it will not add the prefix to the downloaded product.
-    For example, `example-product.pivotal` from Tanzu Network will be outputed
-    as `example-product.pivotal`.
+<p class="note">
+<span class="note__title">Note</span>
+When the download product config only has Tanzu Network credentials,
+it will not add the prefix to the downloaded product.
+For example, <code>example-product.pivotal</code> from Tanzu Network will be displayed in the output
+as <code>example-product.pivotal</code>.</p>
 
 === "Task"
     ---excerpt--- "tasks/download-product"
@@ -551,10 +582,10 @@ This avoids breaking current pipelines.
     ---excerpt--- "examples/download-product-usage-azure"
 
 ### expiring-certificates
+
 Returns a list of certificates that are expiring within a time frame.
 These certificates can be Tanzu Operations Manager or CredHub certificates.
-Root CAs cannot be included in this list until Tanzu Operations Manager 2.7.
-This is purely an informational task.
+This is a purely informational task.
 
 === "Task"
     ---excerpt--- "tasks/expiring-certificates"
@@ -564,6 +595,7 @@ This is purely an informational task.
     ---excerpt--- "reference/expiring-certificates-usage"
 
 ### export-installation
+
 Exports an existing Tanzu Operations Manager to a file.
 
 This is the first part of the backup/restore and upgrade lifecycle processes.
@@ -580,10 +612,11 @@ params:
   INSTALLATION_FILE: installation-$timestamp.zip
 ```
 
-!!! info
-    The timestamp is generated using the time on concourse worker.
-    If the time is different on different workers, the generated timestamp may fail to sort correctly.
-    Changing the time or timezone on workers might interfere with ordering.
+<p class="note">
+<span class="note__title">Note</span>
+The timestamp is generated using the time on Concourse worker.
+If the time is different on different workers, the generated timestamp may fail to sort correctly.
+Changing the time or timezone on workers might interfere with ordering.</p>
 
 === "Task"
     ---excerpt--- "tasks/export-installation"
@@ -636,14 +669,16 @@ Also useful for persisting the configuration output from:
 - [staged-config](#staged-config)
 - [staged-director-config](#staged-director-config)
 
-!!! info
-    This commits **all changes** present
-    in the repo used for the `repository` input,
-    in addition to copying in a single file.
+<p class="note">
+<span class="note__title">Note</span>
+This commits <b>all changes</b> present
+in the repo used for the <code>repository</code> input,
+in addition to copying in a single file.</p>
 
-!!! info
-    This does not perform a `git push`!
-    You will need to `put` the output of this task to a git resource to persist it.
+<p class="note important">
+<span class="note__title">Important</span>
+This does not perform a <code>git push</code>
+You must <code>put</code> the output of this task to a git resource to persist it.</p>
 
 === "Task"
     ---excerpt--- "tasks/make-git-commit"
@@ -653,12 +688,13 @@ Also useful for persisting the configuration output from:
     ---excerpt--- "examples/make-git-commit-usage"
 
 ### pre-deploy-check
+
 Checks if the Tanzu Operations Manager director is configured properly and validates the configuration.
 This feature is only available in Tanzu Operations Manager 2.6+.
 Additionally, checks each of the staged products
 and validates they are configured correctly.
 This task can be run at any time
-and can be used a a pre-check for [`apply-changes`][apply-changes].
+and can be used a a pre-check for [`apply-changes`](#apply-changes).
 
 The checks that this task executes are:
 
@@ -673,7 +709,7 @@ The checks that this task executes are:
 If any of the above checks fail
 the task will fail.
 The failed task will provide a list of errors that need to be fixed
-before an `apply-changes` could start.
+before an `apply-changes` operation can start.
 
 === "Task"
     ---excerpt--- "tasks/pre-deploy-check"
@@ -683,16 +719,19 @@ before an `apply-changes` could start.
     ---excerpt--- "reference/pre-deploy-check-usage"
 
 ### prepare-image
+
 This task modifies the container image with runtime dependencies.
 `CA_CERTS` can be added,
 which can help secure HTTP connections with a proxy server
 and allows the use of a custom CA on the Tanzu Operations Manager.
 
-!!! warn "Concourse 5+ Only"
-    This task uses a Concourse feature
-    that allows inputs and outputs to have the same name.
-    This feature is only available in Concourse 5+.
-    `prepare-image` does not work with Concourse 4.
+<p class="note caution">
+<span class="note__title">Caution</span>
+Concourse 5+ only:
+This task uses a Concourse feature
+that allows inputs and outputs to have the same name.
+This feature is only available in Concourse v5+.
+<code>prepare-image</code> does not work with Concourse v4.</p>
 
 === "Task"
     ---excerpt--- "tasks/prepare-image"
@@ -702,15 +741,18 @@ and allows the use of a custom CA on the Tanzu Operations Manager.
     ---excerpt--- "reference/prepare-image-usage"
 
 ### prepare-tasks-with-secrets
+
 Modifies task files to include variables needed for config files as environment variables
 for run-time interpolation from a secret store.
-Learn more about [secrets handling][secrets-handling].
+See [Using a secrets store to store credentials](./concepts/secrets-handling.md).
 
-!!! warn "Concourse 5+ Only"
-    This task uses a Concourse feature
-    that allows inputs and outputs to have the same name.
-    This feature is only available in Concourse 5+.
-    `prepare-tasks-with-secrets` does not work with Concourse 4.
+<p class="note caution">
+<span class="note__title">Caution</span>
+Concourse 5+ only:
+This task uses a Concourse feature
+that allows inputs and outputs to have the same name.
+This feature is only available in Concourse v5+.
+<code>prepare-tasks-with-secrets</code> does not work with Concourse v4.</p>
 
 === "Task"
     ---excerpt--- "tasks/prepare-tasks-with-secrets"
@@ -732,15 +774,17 @@ the active certificate authority.
     ---excerpt--- "reference/regenerate-certificates-usage"
 
 ### replicate-product
+
 Will replicate the product for use in isolation segments.
 The task requires a downloaded product prior to replication.
 The output is a replicated tile with a new name in the metadata and filename.
 
-!!! info "Using replicate-product"
-    This command does not support storing the replicated product
-    in a non-versioned blobstore, because it cannot generate a unique name.
-    It is recommended to use the replicated tile immediately in the next task
-    rather than storing it and using it in a different job.
+<p class="note">
+<span class="note__title">Note</span>
+<code>replicate-product</code> does not support storing the replicated product
+in a non-versioned blobstore, because it cannot generate a unique name.
+It is recommended to use the replicated tile immediately in the next task
+rather than storing it and using it in a different job.</p>
 
 === "Task"
     ---excerpt--- "tasks/replicate-product"
@@ -750,13 +794,14 @@ The output is a replicated tile with a new name in the metadata and filename.
     ---excerpt--- "examples/replicate-product-usage"
 
 ### revert-staged-changes
-Reverts all changes that are currently staged on the Tanzu Operations Manager.
-This is only available _for_ Tanzu Operations Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
-!!! warning "Using revert-staged-changes"
-    Since this reverts all changes on an Tanzu Operations Manager,
-    it can conflict with tasks that perform stage or configure operations.
-    Use passed constraints to ensure things run in the order you mean them to.
+Reverts all changes that are currently staged on the Tanzu Operations Manager.
+
+<p class="note caution">
+<span class="note__title">Caution</span>
+Since <code>revert-staged-changes</code> reverts all changes on a Tanzu Operations Manager,
+it can conflict with tasks that perform stage or configure operations.
+Use passed constraints to ensure things run in the order you mean them to.</p>
 
 === "Task"
     ---excerpt--- "tasks/revert-staged-changes"
@@ -766,23 +811,26 @@ This is only available _for_ Tanzu Operations Manager 2.5.21+, 2.6.13+, or 2.7.2
     ---excerpt--- "reference/revert-staged-changes-usage"
 
 ### run-bosh-errand
+
 Runs a specified BOSH errand directly on the BOSH Director
 by tunneling through Tanzu Operations Manager.
 
-!!! warning "Interacting with the BOSH Director"
-    Tanzu Operations Manager is the main interface for interacting with BOSH,
-    and it has no way of knowing what is happening to the BOSH Director
-    outside of the Tanzu Operations Manager UI context.
-    By using this task, you are accepting the risk
-    that what you are doing cannot be tracked by your Tanzu Operations Manager.
+<p class="note caution">
+<span class="note__title">Caution</span>
+Tanzu Operations Manager is the main interface for interacting with BOSH,
+and it has no way of knowing what is happening to the BOSH Director
+outside of the Tanzu Operations Manager UI context.
+By using this task, you are accepting the risk
+that what you are doing cannot be tracked by your Tanzu Operations Manager.</p>
 
-!!! warning "Retrying Errands"
-    Tanzu Operations Manager, by design, will re-run failed errands for you.
-    As this task interacts with BOSH directly,
-    your errand will not be re-run if it fails.
-    To replicate this retry behavior in your pipeline,
-    you can take advantage of the [`attempts`][concourse-attempts] feature
-    of Concourse to run the task more than once.
+<p class="note caution">
+<span class="note__title">Caution</span>
+Tanzu Operations Manager, by design, will re-run failed errands for you.
+As this task interacts with BOSH directly,
+your errand will not be re-run if it fails.
+To replicate this retry behavior in your pipeline, use
+the <a href="https://concourse-ci.org/jobs.html#schema.step.attempts">attempts</a>
+Concourse feature to run the task more than once.</p>
 
 === "Task"
     ---excerpt--- "tasks/run-bosh-errand"
@@ -792,13 +840,15 @@ by tunneling through Tanzu Operations Manager.
     ---excerpt--- "reference/run-bosh-errand-usage"
 
 ### send-telemetry
-Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
+
+Sends the `.tar` output from [`collect-telemetry`](#collect-telemetry)
 to VMware.
 
-!!! info Telemetry Key
-    In order to use this task,
-    you will need to acquire a license key.
-    Contact your VMware Representative.
+<p class="note">
+<span class="note__title">Note</span>
+To use the <code>send-telemetry</code>,
+you must acquire a license key.
+Contact your VMware Representative.</p>
 
 === "Task"
     ---excerpt--- "tasks/send-telemetry"
@@ -808,6 +858,7 @@ to VMware.
     ---excerpt--- "reference/send-telemetry-usage"
 
 ### stage-configure-apply
+
 This is an _advanced task_.
 Stage a product to Tanzu Operations Manager, configure that product, and apply changes
 only to that product without applying changes to the rest of the foundation.
@@ -834,8 +885,8 @@ Staged a product to the Tanzu Operations Manager specified in the config file.
 ### staged-config
 Downloads the configuration for a product from Tanzu Operations Manager.
 
-Not to be confused with Tanzu Operations Manager's
-built-in [export][bbr-export],
+This is not to be confused with Tanzu Operations Manager's
+built-in [export](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-backup-pcf-bbr.html#export),
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
@@ -887,6 +938,7 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
     ---excerpt--- "reference/test-interpolate-usage"
 
 ### update-runtime-config
+
 This is an _advanced task_.
 Updates a runtime config on the Tanzu Operations Manager deployed BOSH director.
 The task will interact with the BOSH director (sometimes via SSH tunnel through the Tanzu Operations Manager),
@@ -901,12 +953,14 @@ This is useful when installing agents on BOSH deployed VMs that don't have a Tan
 === "Usage"
     ---excerpt--- "examples/update-runtime-config-usage"
 
-!!! warn
-    When using runtime configs, Tanzu Operations Manager _owns_ the default runtime config.
-    If you use this task to edit "default" it will be replaced on every Apply Changes.
-    Please use `NAME` param to provide a non-conflicting runtime config.
+<p class="note caution">
+<span class="note__title">Caution</span>
+When using runtime configs, Tanzu Operations Manager owns the default runtime config.
+If you use this task to edit "default" it will be replaced on every <b>Apply Changes</b>.
+Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>
 
 ### upgrade-opsman
+
 Upgrades an existing Tanzu Operations Manager to a new given Tanzu Operations Manager version
 
 === "Task"
@@ -919,6 +973,7 @@ Upgrades an existing Tanzu Operations Manager to a new given Tanzu Operations Ma
 For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
 
 ### upload-and-stage-product
+
 Uploads and stages product to the Tanzu Operations Manager specified in the config file.
 
 === "Task"

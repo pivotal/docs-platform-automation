@@ -3,9 +3,10 @@
 
 Variables provide a way to define parameters for a YAML document. Each variable has a value
 and can be referenced in one or more locations. Variables are used in the Platform Automation Toolkit
-[tasks][task-reference]. One example usage is in [configure director][configure-director]. 
+[tasks](../tasks.md). One example usage is in [configure director](../tasks.md#configure-director).
 
 ## Why use variables?
+
 It's typically necessary to separate passwords, certificates, S3 bucket names etc. from YAML
 documents for security or multi-foundation purposes. Even though the structure
 of a YAML document (manifest) does not change, these values are typically different. Variables
@@ -13,6 +14,7 @@ require special syntax in the configuration files which need them. The resulting
 parametrized template for use.
 
 ## Using variables
+
 In the Platform Automation Toolkit task, you can choose to parametrize the specific entries in the configuration
 file, by using the `((parametrized-value))` syntax, and then defining the `parametrized-value` in a
 separate variable file.
@@ -44,18 +46,20 @@ Otherwise you will receive an error message indicating missing variables:
 could not execute "interpolate": Expected to find variables: ((missing-value))
 ```
 
-!!! info
-    If you are using an additional secrets manager, such as credhub, you can add the flag
-    `--skip-missing` to your `om interpolate` call to allow parametrized variables to 
-    still be present in your config after interpolation, to be later filled in by 
-    interpolating with your secrets manager. See the [Secrets Handling][secrets-handling] page for a more
-    detailed explanation.
+<p class="note">
+<span class="note__title">Note</span>
+If you are using an additional secrets manager, such as CredHub, you can add the flag
+`=<code>--skip-missing</code> to your <code>om interpolate</code> call to allow parametrized variables to
+still be present in your config after interpolation, to be later filled in by
+interpolating with your secrets manager. See <a href="./secrets-handling.md">Using a secrets store to store credentials</a>
+for a more detailed explanation.</p>
 
 ## Why use variables if you're already using a secrets manager?
-[Secrets Handling][secrets-handling] is a secure way to store sensitive information about your foundation, such as
-access keys, passwords, ssh keys, etc. The following flowchart gives an example workflow on how you might use 
-a mix of a secrets manager and vars files across multiple foundations with a single shared `base_vars_template`, 
-that can be used to generate the `interpolated_vars` unique to a particular foundation, and passed into the relevant 
+
+[Using a secrets store to store credentials](./secrets-handling.md) is a secure way to store sensitive information about your foundation, such as
+access keys, passwords, ssh keys, etc. The following flowchart gives an example workflow on how you might use
+a mix of a secrets manager and vars files across multiple foundations with a single shared `base_vars_template`,
+that can be used to generate the `interpolated_vars` unique to a particular foundation, and passed into the relevant
 tasks. A separate `var_template.yml` could be used for every foundation to give unique credentials to those
 foundations. More common shared settings could be included in the `vars_file.yml`.
 
