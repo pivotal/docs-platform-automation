@@ -47,7 +47,7 @@ to download Tanzu Application Service from Tanzu Network.
 
 Create a `download-tas.yml`.
 
-{% include ".download-tas-tabs.md" %}
+<% partial ".download-tas-tabs" %>
 
 Add and commit this file to the same directory as the previous guides.
 This file should be accessible from the `configuration` resource.
@@ -302,7 +302,7 @@ You should still be logged into CredHub.
 If not, login. Be sure to note the space at the beginning of the line.
 This will ensure your valuable secrets are not saved in terminal history.
 
-{% include ".logging-into-credhub.md" %}
+<% partial "logging-into-credhub" %>
 
 The example list of some sensitive values from our `tas-config.yml` are as follows,
 note that this is intentionally incomplete.
@@ -800,7 +800,7 @@ This section will explain how to support multiple foundations using ops files.
 
 Starting with an incomplete [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime) config from **vSphere** as an example:
 
-{% include ".cf-partial-config.md" %}
+<%= partial "cf-partial-config" %>
 
 For a single foundation deploy, leaving values such as
 `".cloud_controller.apps_domain"` as-is would work fine. For multiple
@@ -812,6 +812,7 @@ load requirements, even the values in `resource-config` can be edited using
 
 Using the example above, let's try filling in the existing placeholder for
 `cloud_controller.apps_domain` in our first foundation.
+
 ```yaml
 # replace-domain-ops-file.yml
 - type: replace
@@ -820,13 +821,14 @@ Using the example above, let's try filling in the existing placeholder for
 ```
 
 To test that the ops file will work in your `base.yml`, this can be done locally using `bosh int`:
+
 ```bash
  bosh int base.yml -o replace-domain.yml
 ```
 
 This will output `base.yml` with the replaced(interpolated) values:
 
-{% include ".cf-partial-config-domain-interpolated.md" %}
+<%= partial "cf-partial-config-domain-interpolated" %>
 
 Anything that needs to be different per deployment can be replaced via ops files as long as the `path:` is correct.
 

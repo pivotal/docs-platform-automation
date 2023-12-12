@@ -207,7 +207,8 @@ Please check the docs on how to [rotate CAs and leaf certificates](https://docs.
 
 ### Apply Changes
 
-Now we need to apply changes in order to create and use the new certificates.
+Now apply changes to create and use the new certificates.
+
 ```yaml
 - name: apply-certificate-changes
   plan:
@@ -220,8 +221,10 @@ Now we need to apply changes in order to create and use the new certificates.
     file: platform-automation-tasks/tasks/apply-changes.yml
 ```
 
-## Cleaning Up
+## Cleaning up
+
 Once the function of the foundation is validated with new certificates, the old certificate authority can be deleted by adding a job that will cleanup the certificate authority and applying the changes.
+
 ```yaml
 - name: cleanup-certificate-authorities
   plan:

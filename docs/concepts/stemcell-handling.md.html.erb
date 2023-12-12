@@ -71,16 +71,16 @@ opposite order, the stemcell will still auto-associate with the product.</p>
    
     An example of this, in a pipeline:
 
-```yaml
-- task: assign-stemcell
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/assign-stemcell.yml
-  input_mapping:
-    env: configuration
-    config: assign-stemcell-config
-  params:
-    ENV_FILE: ((foundation))/env/env.yml
-```
+    ```yaml
+    - task: assign-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/assign-stemcell.yml
+      input_mapping:
+        env: configuration
+        config: assign-stemcell-config
+      params:
+        ENV_FILE: ((foundation))/env/env.yml
+    ```
 
 1. [Configure product](../tasks.md#configure-product) and [apply changes](../tasks.md#apply-changes) can then be run on the
 product as normal.

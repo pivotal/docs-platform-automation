@@ -4,7 +4,7 @@ This how-to-guide shows you how to create a pipeline for upgrading an existing V
 If you don't have a Tanzu Operations Manager VM, see [Installing Tanzu Operations Manager](./installing-opsman.md).
 
 {% set upgradeHowTo = True %}
-{% include ".getting-started.md" %}
+<%= partial "getting-started" %>
 
 ## Exporting the installation
 
@@ -177,7 +177,7 @@ We'll put the credentials we need in CredHub:
    -t value -v your-opsman-decryption-passphrase
 ```
 
-{% include './.paths-and-pipeline-names.md' %}
+<%= partial "./paths-and-pipeline-names" %>
 
 To perform interpolation in one of our input files,
 we'll need the [`credhub-interpolate` task](../tasks.md#credhub-interpolate)
