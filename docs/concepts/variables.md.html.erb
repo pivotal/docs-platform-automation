@@ -63,18 +63,38 @@ that can be used to generate the `interpolated_vars` unique to a particular foun
 tasks. A separate `var_template.yml` could be used for every foundation to give unique credentials to those
 foundations. More common shared settings could be included in the `vars_file.yml`.
 
-[//]: # (<%= partial "./variables-interpolate-flowchart-independent.mmd" %>)
-[//]: # (!include ./variables-interpolate-flowchart-independent.mmd)
-<%= include "./variables-interpolate-flowchart-independent.mmd" %>
+[//]: # (Include variables-interpolate-flowchart-independent.mmd flowchart)
+
+<div class="mermaid">
+graph TD;
+vars_1[#vars_file.yml<br/>var_a: content];
+  secret_tmpl["#var_template.yml<br/>var_b: ((credhub_var))"];
+credhub[#Stored Creds in Credhub<br/>credhub_var: secret-var];
+  vars_2["#credhub_vars.yml<br/>var_b: secret-var"]
+base["#base_vars_template.yml<br/>a: ((var_a))<br/>b: ((var_b))"];
+generated["#interpolated_vars.yml<br/>a:content<br/>b:secret-var"];
+credhub -- Credhub Interpolate --> secret_tmpl;
+secret_tmpl -- Generates --> vars_2;
+vars_2 -- om Interpolate --> base;
+vars_1 -- om Interpolate --> base;
+base -- Generates --> generated;
+</div>
 
 Alternatively, you can keep all of your vars in the same file for a foundation and mix parametrized and
 unparametrized values. The interpolated vars file can be used directly in any task that allows for them.
 The trade-off for this method is the mixed vars file would be tied to a single foundation, rather than
 have a single `base_vars_template.yml` shared across foundations.
 
-[//]: # (<%= partial "./variables-interpolate-flowchart-mixed.mmd" %>)
-[//]: # (!include ./variables-interpolate-flowchart-mixed.mmd)
-<%= include "./variables-interpolate-flowchart-mixed.mmd" %>
+[//]: # (Include variables-interpolate-flowchart-mixed.mmd flowchart)
+
+<div class="mermaid">
+graph TD;
+  secret_tmpl["#var_template.yml<br/>var_a: non-secret-var<br/>var_b: ((credhub_var))"];
+credhub[#Stored Creds in Credhub<br/>credhub_var: something];
+  vars_2["#interpolated_vars.yml<br/>var_a: non-secret-var<br/>var_b: secret-var"]
+credhub -- Credhub Interpolate --> secret_tmpl;
+secret_tmpl -- Generates --> vars_2;
+</div>
 
 ## Using variables in the Platform Automation Toolkit Tasks
 
