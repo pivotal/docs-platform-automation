@@ -64,7 +64,8 @@ tasks. A separate `var_template.yml` could be used for every foundation to give 
 foundations. More common shared settings could be included in the `vars_file.yml`.
 
 [//]: # (<%= partial "./variables-interpolate-flowchart-independent.mmd" %>)
-!include ./variables-interpolate-flowchart-independent.mmd
+[//]: # (!include ./variables-interpolate-flowchart-independent.mmd)
+<%= include "./variables-interpolate-flowchart-independent.mmd" %>
 
 Alternatively, you can keep all of your vars in the same file for a foundation and mix parametrized and
 unparametrized values. The interpolated vars file can be used directly in any task that allows for them.
@@ -72,8 +73,8 @@ The trade-off for this method is the mixed vars file would be tied to a single f
 have a single `base_vars_template.yml` shared across foundations.
 
 [//]: # (<%= partial "./variables-interpolate-flowchart-mixed.mmd" %>)
-!include ./variables-interpolate-flowchart-mixed.mmd
-
+[//]: # (!include ./variables-interpolate-flowchart-mixed.mmd)
+<%= include "./variables-interpolate-flowchart-mixed.mmd" %>
 
 ## Using variables in the Platform Automation Toolkit Tasks
 

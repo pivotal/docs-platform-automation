@@ -21,7 +21,8 @@ The [`upgrade-opsman`](../tasks.md#upgrade-opsman) task follows the flow based o
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 [//]: # (<%= partial "./upgrade-flowchart.mmd" %>)
-!include ./upgrade-flowchart.mmd
+[//]: # (!include ./upgrade-flowchart.mmd)
+<%= include "./upgrade-flowchart.mmd" %>
 
 On successive invocations of the task, it will offer different behavior of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
