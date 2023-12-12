@@ -413,37 +413,36 @@ the following steps will result in a filled out `opsman.yml`.
 
     **AWS**
 
-        ```yaml
+      ```yaml
         --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
-        ```
+      ```
 
    **Azure**
 
-        ```yaml
+      ```yaml
         --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
-        ```
+      ```
 
     **GCP**
 
-        ```yaml
+      ```yaml
         --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
-        ```
+      ```
 
-  **vSphere+NSXT**
+    **vSphere+NSXT**
 
-        ```yaml
+      ```yaml
         --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
-        ```
+      ```
 
      Where:
-     {: .tightSpacing }
 
      * The `((parameters))` in these examples map to outputs from the `terraform-outputs.yml`,
        which can be provided via vars file for YAML interpolation in a subsequent step.
 
 <p class="note">
 <span class="note__title">Note</span>
-About <code>opsman.yml</code> for an unlisted IaaS:
+<b>About <code>opsman.yml</code> for an unlisted IaaS:</b>
 For a supported IaaS not listed above,
 see the <a href="https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config">Operations Manager config</a>.
 </p>

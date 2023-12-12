@@ -309,7 +309,7 @@ Great. Now we can safely make changes.
 
 <p class="note important">
 <span class="note__title">Important</span>
-<p><code>git</code> commits are the basic unit of code history.
+<code>git</code> commits are the basic unit of code history.
 <br>
 Making frequent, small, commits with good commit messages
 makes it much easier to figure out why things are the way they are,
@@ -390,16 +390,14 @@ jobs:
 There is a smaller vSphere container image available.
 To use it instead of the general purpose image,
 you can use this glob to get the image:
-
-    <pre>
-        <code>
-          - get: platform-automation-image
-            resource: platform-automation
-            params:
-              globs: ["vsphere-platform-automation-image*.tar.gz"]
-              unpack: true
-        </code>
-    </pre>
+<br><br>
+  <code>
+    - get: platform-automation-image
+      resource: platform-automation
+      params:
+        globs: ["vsphere-platform-automation-image*.tar.gz"]
+        unpack: true
+  </code>
 </p>
 
 If we try to `fly set` this,
