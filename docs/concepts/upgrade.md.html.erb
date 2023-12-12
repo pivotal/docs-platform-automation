@@ -22,7 +22,7 @@ This flowchart gives a high level overview of how the task makes decisions for a
 
 [//]: # (Include upgrade-flowchart.mmd flowchart)
 
-<div class="mermaid">
+```mermaid
 graph TD;
   versionChk[Is the existing Ops Manager version less than the Ops Manager image?];
   versionError[Version Check Error];
@@ -37,7 +37,7 @@ graph TD;
   delete -- Failure --> iaasErr;
   create -- Success --> import ;
   create -- Failure --> iaasErr2;
-</div>
+```
 
 On successive invocations of the task, it will offer different behavior of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
