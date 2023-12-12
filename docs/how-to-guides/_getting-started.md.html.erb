@@ -2,8 +2,8 @@
 
 Over the course of this guide,
 we're going to use Platform Automation Toolkit
-to create a [pipeline][concourse-pipeline]
-using [Concourse][concourse].
+to create a [pipeline](https://concourse-ci.org/pipelines.html)
+using [Concourse](https://concourse-ci.org/).
 
 Before we get started, you'll need a few things ready to go:
 
@@ -11,16 +11,16 @@ Before we get started, you'll need a few things ready to go:
 1. A running Tanzu Operations Manager VM that you would like to upgrade
 {% endif %}
 1. Credentials for an IaaS that Tanzu Operations Manager is compatible with
-    - It doesn't actually matter what IaaS you use for Tanzu Operations Manager,
+    - It doesn't matter what IaaS you use for Tanzu Operations Manager,
     as long as your Concourse can connect to it.
     Pipelines built with Platform Automation Toolkit can be platform-agnostic.
-1. A Concourse instance
+2. A Concourse instance
    with access to a CredHub instance
    and to the Internet
-1. GitHub account
-1. Read/write credentials and bucket name for an S3 bucket
-1. An account on [VMware Tanzu Network][tanzu-network]
-1. A MacOS workstation
+3. GitHub account
+4. Read/write credentials and bucket name for an S3 bucket
+5. An account on [VMware Tanzu Network](https://network.pivotal.io/)
+6. A MacOS workstation
     - with Docker installed
     - a text editor you like
     - a terminal emulator you like
@@ -29,36 +29,34 @@ Before we get started, you'll need a few things ready to go:
     - and `git`
 
 It will be very helpful to have a basic familiarity with the following. If you don't have basic familiarity with all these things,
-that's okay.
-We'll explain some basics,
-and link to resources to learn more:
+we'll explain some basics, and link to resources to learn more:
 
 - the bash terminal
-- [git][git]
-- [YAML][yaml]
-- [Concourse][concourse]
-
+- [git](https://git-scm.com/)
+- [YAML](https://learnxinyminutes.com/docs/yaml/)
+- [Concourse](https://concourse-ci.org/)
 
 <p class="note">
 <span class="note__title">Note</span>
-<p>While this guide uses GitHub to provide a git remote,
+While this guide uses GitHub to provide a git remote,
 and an S3 bucket as a blobstore,
 Platform Automation Toolkit supports arbitrary git providers
 and S3-compatible blobstores.
-<p>If you need to use an alternate one,
-that's okay.
-<p>We picked specific examples
+If you need to use an alternate one, that's okay.
+<br>
+We picked specific examples
 so we could describe some steps in detail.
 Some details may be different
 if you follow along with different providers.
 If you're comfortable navigating those differences on your own,
 go for it!
-<p>See <a href="../how-to-guides/setting-up-s3.md">Setting up S3 for file storage</a>.
-<p>Similarly, in this guide, we assume the MacOS operating system.
+See <a href="../how-to-guides/setting-up-s3.md">Setting up S3 for file storage</a>.
+<br>
+Similarly, in this guide, we assume the MacOS operating system.
 This should all work fine on Linux, too,
 but there might be differences in the paths you'll need to figure out.</p>
 
-## Creating a Concourse Pipeline
+## Creating a Concourse pipeline
 
 Platform Automation Toolkit's tasks and image are meant to be used in a Concourse pipeline.
 So, let's make one.
@@ -97,7 +95,7 @@ opsman-url: https://pcf.foundation.example.com
 ```
 
 <p class="note">
-<span class="note__title">Note</span>S"
+<span class="note__title">Note</span>
 This example assumes that you're using DNS and hostnames.
 You can use IP addresses for all these resources instead,
 but you still need to provide the information as a URL,
@@ -114,16 +112,14 @@ However, you may create multiple pipelines over time.
 If there's a more sensible name for the pipeline you're working on,
 feel free to use that instead.</p>
 
-Write this at the top, and save the file. This is [YAML][yaml] for "the start of the document". It's optional, but traditional:
+Write this at the top, and save the file. This is [YAML](https://learnxinyminutes.com/docs/yaml/) for "the start of the document." It's optional, but traditional:
 
 ```yaml
 
 ---
 ```
 
-Now you have a pipeline file! Nominally!
-Well, look.
-It's valid YAML, at least.
+Now you have a valid YAML pipeline file.
 
 ### <a></a> Getting `fly`
 
@@ -137,7 +133,7 @@ fly -v
 ```
 
 If it gives you back a version number, great!
-Skip ahead to [Setting The Pipeline](#setting-the-pipeline)
+Skip ahead to [Setting the pipeline](#setting-the-pipeline)
 
 If it says something like `-bash: fly: command not found`,
 we have a little work to do: we've got to get `fly`.
@@ -146,7 +142,7 @@ Navigate to the address for your Concourse instance in a web browser.
 At this point, you don't even need to be signed in!
 If there are no public pipelines, you should see something like this:
 
-![Get Fly][fly-download-image]
+![alt-text="Get Fly"](../img/concourse-fly-download.png)
 
 If there _are_ public pipelines,
 or if you're signed in and there are pipelines you can see,
@@ -224,9 +220,10 @@ to complete login from your browser.
 
 <p class="note important">
 <span class="note__title">Important</span>
-<p>The <code>-t</code> flag sets the name when used with <code>login</code> and <code>-c</code>.
+The <code>-t</code> flag sets the name when used with <code>login</code> and <code>-c</code>.
 In the future, you can leave out the <code>-c</code> argument.
-<p>If you ever want to know what a short flag stands for,
+<br>
+If you ever want to know what a short flag stands for,
 you can run the command with <code>-h</code> (<code>--help</code>) at the end.</p>
 
 Time to set the pipeline.
@@ -238,7 +235,7 @@ fly -t control-plane set-pipeline -p foundation -c pipeline.yml
 ```
 
 It should say `no changes to apply`,
-which is fair, since we gave it an empty YAML doc.
+which is expected, since we gave it an empty YAML doc.
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -268,13 +265,14 @@ This is one of many reasons we want to keep our pipeline under version control.
 
 So let's make this directory a git repo!
 
-#### <a></a> But First, `git init`
+#### <a></a> But first, `git init`
 	
 <p class="note important">
 <span class="note__title">Important</span>
 <b>Git Repository Layout:</b>
-<p>The following describes a step-by-step approach for how to get set up with git.
-<p>For an example of the repository file structure
+The following describes a step-by-step approach for how to get set up with git.
+<br>
+For an example of the repository file structure
 for single and multiple foundation systems,
 see [Why use Git and GitHub?](./git-repo-layout.md).</p>
 
@@ -312,7 +310,8 @@ Great. Now we can safely make changes.
 <p class="note important">
 <span class="note__title">Important</span>
 <p><code>git</code> commits are the basic unit of code history.
-<p>Making frequent, small, commits with good commit messages
+<br>
+Making frequent, small, commits with good commit messages
 makes it much easier to figure out why things are the way they are,
 and to return to the way things were in simpler, better times.
 Writing short commit messages that capture the intent of the change
@@ -392,15 +391,15 @@ There is a smaller vSphere container image available.
 To use it instead of the general purpose image,
 you can use this glob to get the image:
 
-<pre>
-    <code>
-      - get: platform-automation-image
-        resource: platform-automation
-        params:
-          globs: ["vsphere-platform-automation-image*.tar.gz"]
-          unpack: true
-    </code>
-</pre>
+    <pre>
+        <code>
+          - get: platform-automation-image
+            resource: platform-automation
+            params:
+              globs: ["vsphere-platform-automation-image*.tar.gz"]
+              unpack: true
+        </code>
+    </pre>
 </p>
 
 If we try to `fly set` this,
@@ -409,7 +408,7 @@ If we try to `fly set` this,
 To actually make the `image` and `file` we want to use available,
 we'll need some Resources.
 
-#### <a></a> Adding Resources
+#### <a></a> Adding resources
 
 Resources are Concourse's main approach to managing artifacts.
 We need an image, and the tasks directory -
@@ -442,11 +441,6 @@ The API token is a credential,
 which we'll pass via the command-line when setting the pipeline,
 so we don't accidentally check it in.
 
-Grab a refresh token from your Tanzu Network profile
-(when logged in, click your username, then `Edit Profile`)
-and clicking "Request New Refresh Token."
-Then use that token in the following command:
-
 <p class="note important">
 <span class="note__title">Important</span>
 <b>Keep it secret, keep it safe:</b>
@@ -457,6 +451,11 @@ where you want to pass a secret,
 but you don't want it saved.
 Commands in this guide that contain a secret
 start with a space, which can be easy to miss.</p>
+
+Grab a refresh token from your Tanzu Network profile
+(when logged in, click your user name, then **Edit Profile**)
+and clicking **Request New Refresh Token**.
+Then use that token in the following command:
 
 ```bash
 # note the space before the command
@@ -491,8 +490,6 @@ with secret storage services.
 
 Let's put our API token in CredHub so Concourse can get it.
 
-First we'll need to login:
-
 <p class="note">
 <span class="note__title">Note</span>
 <b>Backslashes in bash examples:</b>
@@ -502,12 +499,13 @@ The backslash is used in here to keep the examples readable.
 When you're typing these out,
 you can skip the backslashes and put it all on one line.</p>
 
-Again, note the space at the start
+First we'll need to login:
+Again, note the space at the start.
 
 <%= partial "logging-into-credhub" %>
 
 Then, we can set the credential name
-to the path [where Concourse will look for it][concourse-credhub-lookup-rules]:
+to the path [where Concourse will look for it](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):
 
 ```bash
 # note the starting space
@@ -533,7 +531,7 @@ with `((pivnet-refresh-token))`.
 Visit the UI again and re-run the test job;
 this should also succeed.
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+[//]: # ({% with path="../" %})
+[//]: # (    {% include ".internal_link_url.md" %})
+[//]: # ({% endwith %})
+[//]: # ({% include ".external_link_url.md" %})

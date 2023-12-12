@@ -335,8 +335,10 @@ Platform Automation Toolkit will do this for you.
 - [openstack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html)
 - [vsphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-vsphere.html)
 
-_NOTE_: if you need to install an earlier version of Tanzu Operations Manager,
-select your desired version from the dropdown at the top of the page.
+<p class="note">
+<span class="note__title">Note</span>
+If you need to install an earlier version of Tanzu Operations Manager,
+select your desired version from the dropdown at the top of the page.</p>
 
 ## Creating the Tanzu Operations Manager VM
 
@@ -409,25 +411,25 @@ the following steps will result in a filled out `opsman.yml`.
     Copy and paste the YAML below for your IaaS
     and save as `opsman.yml`.
 
-    === "AWS"
+    **AWS**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
         ```
 
-    === "Azure"
+   **Azure**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
         ```
 
-    === "GCP"
+    **GCP**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
         ```
 
-    === "vSphere+NSXT"
+  **vSphere+NSXT**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
@@ -441,7 +443,7 @@ the following steps will result in a filled out `opsman.yml`.
 
 <p class="note">
 <span class="note__title">Note</span>
-Re: <code>opsman.yml</code> for an unlisted IaaS:
+About <code>opsman.yml</code> for an unlisted IaaS:
 For a supported IaaS not listed above,
 see the <a href="https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config">Operations Manager config</a>.
 </p>
