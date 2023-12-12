@@ -164,7 +164,7 @@ Specific advice and features for the different IaaSs are documented below
 These required properties are adapted from the instructions outlined in
 [Requirements and prerequisites for Tanzu Operations Manager on AWS](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html).
 
-<% partial "ip-addresses" %>
+<%= partial "ip-addresses" %>
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -180,14 +180,14 @@ as this file then contains no secrets.</p>
 The required properties are adapted from the instructions outlined in
 [Requirements and prerequisites for Tanzu Operations Manager on Azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html).
 
-<% partial "ip-addresses" %>
+<%= partial "ip-addresses" %>
 
 #### GCP
 
 The required properties are adapted from the instructions outlined in
 [Requirements and prerequisites for Tanzu Operations Manager on GCP](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html.)
 
-<% partial "ip-addresses" %>
+<%= partial "ip-addresses" %>
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -211,7 +211,7 @@ For example:
 The required properties are adapted from the instructions outlined in
 [Installing and configuring Tanzu Operations Manager on OpenStack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/openstack-index.html)
 
-<% partial "ip-addresses" %>
+<%= partial "ip-addresses" %>
 
 #### vSphere
 
@@ -231,7 +231,7 @@ using the [download-product](./tasks.md#download-product) task.
 
 #### opsman.yml
 
-<% partial "how-to-guides/opsman-config-tabs" %>
+<%= partial "how-to-guides/opsman-config-tabs" %>
 
 The `p-automator` CLI includes the ability to extract the Tanzu Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
 This works for Tanzu Operations Managers that are already running and useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.md).
