@@ -32,7 +32,7 @@ To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
 To see an example of this config file, see [Inputs and outputs](./inputs-outputs.md).
 
-{% include '.disable-verifiers.md' %}
+<%= partial "disable-verifiers" %>
 
 === "Task"
     ---excerpt--- "tasks/apply-changes"
@@ -45,7 +45,7 @@ To see an example of this config file, see [Inputs and outputs](./inputs-outputs
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
 
-{% include '.disable-verifiers.md' %}
+<%= partial "disable-verifiers" %>
 
 === "Task"
     ---excerpt--- "tasks/apply-director-changes"
@@ -625,7 +625,7 @@ Changing the time or timezone on workers might interfere with ordering.</p>
 === "Usage"
     ---excerpt--- "reference/export-installation-usage"
 
-{% include "./.export_installation_note.md" %}
+<%= partial "./export_installation_note" %>
 
 ### generate-certificate
 
@@ -863,7 +863,7 @@ This is an _advanced task_.
 Stage a product to Tanzu Operations Manager, configure that product, and apply changes
 only to that product without applying changes to the rest of the foundation.
 
-{% include '.disable-verifiers.md' %}
+<%= partial "disable-verifiers" %>
 
 === "Task"
     ---excerpt--- "tasks/stage-configure-apply"
@@ -914,7 +914,7 @@ and replaced them all with YAML interpolation `(())` placeholders.
 This is to ensure that credentials are never written to disk.
 The credentials need to be provided from an external configuration when invoking [configure-director](#configure-director).
 
-{% include ".missing_fields_opsman_director.md" %}
+<% partial "missing_fields_opsman_director" %>
 
 ### test
 An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
