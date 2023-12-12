@@ -107,13 +107,13 @@ deployed with Tanzu Operations Manager.
 
 <p class="note">
 <span class="note__title">Note</span>
-PKS CLI may be temporarily unavailable:
+<b>PKS CLI may be temporarily unavailable:</b>
 During the backup, the PKS CLI is disabled.
 Due to the nature of the backup, some commands may not work as expected.</p>
     
 <p class="note caution">
 <span class="note__title">Caution</span>
-Known issue:
+<b>Known issue:</b>
 When using the task <a href="#backup-tkgi">backup-tkgi</a> behind a proxy
 the values for <code>no_proxy</code> can affect the ssh (though jumpbox) tunneling.
 When the task invokes the <code>bbr</code> CLI, an environment variable (<code>BOSH_ALL_PROXY</code>) has been set,
@@ -210,7 +210,7 @@ which can extract a config file.
 
 <p class="note caution">
 <span class="note__title">Caution</span>
-GCP with service account:
+<b>GCP with service account:</b>
 For GCP, if service account is used, the property associated_service_account has to be set explicitly in the <code>iaas_configuration</code> section.</p>
 
 ### configure-ldap-authentication
@@ -300,7 +300,7 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 
 <p class="note">
 <span class="note__title">Note</span>
-Bosh Admin Client:
+<b>BOSH Admin Client:</b>
 By default, this task creates a BOSH admin client.
 This is helpful for some advanced workflows
 that involve communicating directly with the BOSH Director.
@@ -378,7 +378,7 @@ Interpolate credhub entries into configuration files
 
 <p class="note caution">
 <span class="note__title">Caution</span>
-Deprecation Notice:
+<b>Deprecation Notice:</b>
 The <code>credhub-interpolate</code> task will be deprecated in future <em>major</em> versions of Platform Automation Toolkit.</p>
 
 <p class="note">
@@ -538,7 +538,7 @@ This avoids breaking current pipelines.
 
 <p class="note caution">
 <span class="note__title">Caution</span>
-When using the s3 resource in Concourse:
+<b>When using the s3 resource in Concourse:</b>
 If you are using a <code>regexp</code> in your s3 resource definition
 that explicitly requires the Tanzu Network filename
 to be the start of the regex, (that is, the pattern starts with <code>^</code>)
@@ -550,12 +550,12 @@ that will have been replaced by the prefix described earlier.</p>
 
 <p class="note">
 <span class="note__title">Note</span>
-When specifying Tanzu Application Service [Windows]:
+<b>When specifying Tanzu Application Service [Windows]:</b>
 This task will automatically download and inject the winfs for pas-windows.</p>
 
 <p class="note caution">
 <span class="note__title">Caution</span>
-When specifying Tanzu Application Service [Windows] on vSphere:
+<b>When specifying Tanzu Application Service [Windows] on vSphere:</b>
 This task cannot download the stemcell for pas-windows on vSphere.
 To build this stemcell manually, see
 <a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows stemcell using stembuild</a>
@@ -727,7 +727,7 @@ and allows the use of a custom CA on the Tanzu Operations Manager.
 
 <p class="note caution">
 <span class="note__title">Caution</span>
-Concourse 5+ only:
+<b>Concourse 5+ only:</b>
 This task uses a Concourse feature
 that allows inputs and outputs to have the same name.
 This feature is only available in Concourse v5+.
@@ -748,7 +748,7 @@ See [Using a secrets store to store credentials](./concepts/secrets-handling.md)
 
 <p class="note caution">
 <span class="note__title">Caution</span>
-Concourse 5+ only:
+<b>Concourse 5+ only:</b>
 This task uses a Concourse feature
 that allows inputs and outputs to have the same name.
 This feature is only available in Concourse v5+.

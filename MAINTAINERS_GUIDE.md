@@ -493,7 +493,7 @@ Running a check for undefined code blocks (```)...
 Generated HTML contains undefined code blocks!
 ```
 
-To fix this problem, if requires you to go into the `.md` of the effected file
+To fix this problem, this requires you to go into the `.md` of the effected file
 and do a syntax check of the affected area.
 
 #### "unidentified reference-style links"
@@ -504,7 +504,7 @@ When we use the links elsewhere in the docs, instead of using the `[link-name](l
 we use [link-name][link-reference].
 
 The link linter checks to make sure these custom references all go somewhere.
-If they do no, you will get an error like the following:
+If they do not, you will get an error like the following:
 ```
 Running a check for undefined reference-style links...
 ./platform-automation/develop/release-notes.html:6961 <li>[<code>pending-changes</code>][pending-changes] would always fail if installation incomplete, product unconfigured, or stemcell missing

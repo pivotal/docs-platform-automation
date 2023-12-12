@@ -114,7 +114,7 @@ If the pipeline sets without errors, run a `git push` of the config.
 
 <p class="note">
 <span class="note__title">Note</span>
-If fly set-pipeline returns an error:
+<b>If fly set-pipeline returns an error:</b>
 Fix any and all errors until the pipeline can be set.
 When the pipeline can be set properly, run:
     
@@ -129,7 +129,7 @@ When the pipeline can be set properly, run:
 
 <p class="note">
 <span class="note__title">Note</span>
-Testing your pipeline:
+<b>Testing your pipeline:</b>
 We generally want to try things out right away to see if they're working right.
 However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
 you might want to hold off until we've got the job doing more,
@@ -212,7 +212,7 @@ then pull its resulting configuration.
 
 <p class="note">
 <span class="note__title">Note</span>
-Advanced Tile Config Option:
+<b>Advanced Tile Config Option:</b>
 For an alternative that generates the configuration
 from the product file, using ops files to select options,
 see <a href="./adding-a-product.md#config-template">Config template</a>
@@ -229,7 +229,7 @@ and then continue this guide.
 
 <p class="note important">
 <span class="note__title">Important</span>
-If you do not <b>Apply Changes</b>:
+<b>If you do not Apply Changes:</b>
 Tanzu Operations Manager cannot generate credentials for you
 until you have applied changes (at least once).
 You can still go through this process without an initial applying changes,
@@ -397,7 +397,7 @@ version_created_at: "<timestamp>"
 
 <p class="note important">
 <span class="note__title">Important</span>
-Remove Credentials from Disk:
+<b>Remove credentials from disk:</b>
 Once you have validated that the certificatess are set correctly in CredHub,
 remember to delete <code>poe-cert.txt</code> and <code>poe-private-key.txt</code> from your working directory.
 This will prevent a potential security leak
@@ -595,7 +595,7 @@ so that these changes will be applied by the Tanzu Operations Manager.
 
 <p class="note">
 <span class="note__title">Note</span>
-Adding multiple products:
+<b>Adding multiple products:</b>
 When adding multiple products, you can add the configure jobs as passed constraints
 to the apply-changes job so that they all are applied at once.
 Tanzu Operations Manager will handle any inter-product dependency ordering.
@@ -711,7 +711,8 @@ here are some approaches you can use:
 When using the Tanzu Operations Manager docs and UI,
 be aware that the field names in the UI do not necessarily map directly to property names.</p>
 
-#### Optional Features
+#### Optional features
+
 The above process will get you a default installation,
 with no optional features or variables,
 that is entirely deployed in a single Availability Zone (AZ).
