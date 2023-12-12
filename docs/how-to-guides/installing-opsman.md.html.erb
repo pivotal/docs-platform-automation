@@ -3,7 +3,7 @@
 This how-to-guide shows you how to write a pipeline for installing a new VMware Tanzu Operations Manager.
 If you already have a Tanzu Operations Manager VM, see [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md).
 
-<%= partial "getting-started.md" %>
+<%= partial "getting-started" %>
 
 ## Downloading Tanzu Operations Manager
 
@@ -441,9 +441,9 @@ the following steps will result in a filled out `opsman.yml`.
 
 <p class="note">
 <span class="note__title">Note</span>
-Re: ,<ode>opsman.yml</code> for an unlisted IaaS:
+Re: <code>opsman.yml</code> for an unlisted IaaS:
 For a supported IaaS not listed above,
-see the <a href="https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config"></a>.
+see the <a href="https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config">Operations Manager config</a>.
 </p>
 
 ### Manual configuration
@@ -540,7 +540,7 @@ jobs:
 
 <p class="note">
 <span class="note__title">Note</span>
-Defaults for tasks:
+<b>Defaults for tasks:</b>
 We do not explicitly set the default parameters
 for <code>create-vm</code> in this example.
 Because <code>opsman.yml</code> is the default input to

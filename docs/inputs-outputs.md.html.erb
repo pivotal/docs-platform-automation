@@ -168,7 +168,7 @@ These required properties are adapted from the instructions outlined in
 
 <p class="note important">
 <span class="note__title">Important</span>
-Using <code>instance_profile</code> to avoid secrets:
+<b>Using <code>instance_profile</code> to avoid secrets:</b>
 For authentication you must either set <code>use_instance_profile: true</code>
 or provide a <code>secret_key_id</code> and <code>secret_access_key</code>.
 You must remove key information if you're using an instance profile.
@@ -191,7 +191,7 @@ The required properties are adapted from the instructions outlined in
 
 <p class="note important">
 <span class="note__title">Important</span>
-Using a service account name to Avoid Secrets:
+<b>Using a service account name to Avoid Secrets:</b>
 For authentication either <code>gcp_service_account</code> or <code>gcp_service_account_name</code> is required.
 You must remove the one you are not using
 note that using <code>gcp_service_account_name</code> allows you to avoid interpolation,
@@ -296,7 +296,7 @@ product-version-regex: ^2\.6\..*$
 <p class="note important">
 <span class="note__title">Important</span>
 This file cannot be manually created. This file must retrieved from Tanzu Network.</p>
-    
+
 ### product config
 
 There are two ways to build a product config.

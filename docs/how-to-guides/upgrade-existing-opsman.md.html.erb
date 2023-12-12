@@ -230,7 +230,7 @@ jobs:
 <p class="note">
 <span class="note__title">Note</span>
 The <code>credhub-interpolate<code> task for this job
-maps the output from the task (`interpolated-files`)
+maps the output from the task (<code>interpolated-files</code>)
 to <code>interpolated-env</code>.
 This can be used by the next task in the job
 to more explicitly define the inputs/outputs of each task.
@@ -308,14 +308,14 @@ Now you can manually trigger a build, and see it pass.
 <p class="note important">
 <span class="note__title">Important</span>:
 <p>You'll be using this,
-the ultimate form of the `fly` command to set your pipeline,
+the ultimate form of the <code>fly</code> command to set your pipeline,
 for the rest of the tutorial.
 <p>You can save yourself some typing by using your bash history
 (if you did not prepend your command with a space).
 You can cycle through previous commands with the up and down arrows.
 Alternatively,
 Ctrl-r will search your bash history.
-Holding Ctrl-r, type `fly`,
+Holding Ctrl-r, type <code>fly</code>,
 and you will see the last fly command you ran.
 Run it with enter, or
 instead of running it,
@@ -375,7 +375,7 @@ git push
 <p class="note important">
 <span class="note__title">Important</span>
 <b>Is this really a commit point?</b>
-<p>We like frequent, small commits that can be `fly` set and,
+<p>We like frequent, small commits that can be <code>fly</code> set and,
 ideally, go green.
 <p>This one doesn't actually do anything though, right?
 Fair, but: setting and running the job
@@ -389,7 +389,7 @@ the small commits help you keep off one another's toes.
 but it can even be useful to make a commit,
 use `fly` to see if it works,
 and then push it if and only if it works.
-If it doesn't, you can use `git commit --amend`
+If it doesn't, you can use <code>git commit --amend</code>
 once you've figured out why and fixed it.
 This workflow makes it easy to keep what is set on Concourse
 and what is pushed to your source control remote in sync.</p>
