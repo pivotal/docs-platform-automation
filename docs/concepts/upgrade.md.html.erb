@@ -22,22 +22,7 @@ This flowchart gives a high level overview of how the task makes decisions for a
 
 [//]: # (Include upgrade-flowchart.mmd flowchart)
 
-```mermaid
-graph TD;
-  versionChk[Is the existing Ops Manager version less than the Ops Manager image?];
-  versionError[Version Check Error];
-  delete[Delete the existing Ops Manager VM];
-  create[Create a new Ops Manager VM];
-  iaasErr[IAAS CLI error];
-  import[Import the provided Installation];
-  iaasErr2[IAAS CLI error];
-  versionChk -- No --> versionError;
-  versionChk -- Yes --> delete;
-  delete -- Success --> create;
-  delete -- Failure --> iaasErr;
-  create -- Success --> import ;
-  create -- Failure --> iaasErr2;
-```
+![alt-text=""](../img/upgrade-flowchart.png)
 
 On successive invocations of the task, it will offer different behavior of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
@@ -50,7 +35,7 @@ For example, some IAASs have IP conflicts
 if there are multiple Tanzu Operations Manager VMs present.
 
 If there is an issue during the upgrade process,
-you may need to recover your Tanzu Operations Manager VM. 
+you may need to recover your Tanzu Operations Manager VM.
 Recovering your VM can be done in two different ways.
 Both methods require an exported installation.
 
