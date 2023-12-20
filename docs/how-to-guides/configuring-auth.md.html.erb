@@ -1,19 +1,19 @@
 # Generating an Auth file
 
-VMware Tanzu Operations Manager's authentication system can be configured several ways.
+The VMware Tanzu Operations Manager authentication system can be configured several ways.
 The format of the configuration file varies
 according to the authentication method to be used.
 
 ## Examples
 
-### [configure-authentication](../tasks.md#configure-authentication)
----excerpt--- "examples/auth-configuration"
+[**configure-authentication**](../tasks.md#configure-authentication)
+<%= partial "../examples/auth" %>
 
-### [configure-ldap-authentication](../tasks.md#configure-ldap-authentication):
----excerpt--- "examples/ldap-auth-configuration"
+[**configure-ldap-authentication**](../tasks.md#configure-ldap-authentication)
+<%= partial "../examples/auth-ldap" %>
 
-### [configure-saml-authentication](../tasks.md#configure-saml-authentication)
----excerpt--- "examples/saml-auth-configuration"
+[**configure-saml-authentication**](../tasks.md#configure-saml-authentication)
+<%= partial "../examples/auth-saml" %>
 
 ## Managing configuration, auth, and state Files
 To use all these files with the Concourse tasks that require them,
@@ -22,7 +22,7 @@ They’re all text files.
 There are many resource types that can work for this.
 In our examples, we use a git repository.
 As with the tasks and image,
-you’ll need to declare a resource in your pipeline for each repo you need.
+you need to declare a resource in your pipeline for each repo you need.
 
 [//]: # ({% with path="../" %})
 [//]: # (    {% include ".internal_link_url.md" %})
