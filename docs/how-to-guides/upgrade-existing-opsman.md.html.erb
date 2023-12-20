@@ -307,10 +307,11 @@ Now you can manually trigger a build, and see it pass.
 
 <p class="note important">
 <span class="note__title">Important</span>:
-<p>You'll be using this,
+You'll be using this,
 the ultimate form of the <code>fly</code> command to set your pipeline,
 for the rest of the tutorial.
-<p>You can save yourself some typing by using your bash history
+<br>
+You can save yourself some typing by using your bash history
 (if you did not prepend your command with a space).
 You can cycle through previous commands with the up and down arrows.
 Alternatively,
@@ -375,19 +376,22 @@ git push
 <p class="note important">
 <span class="note__title">Important</span>
 <b>Is this really a commit point?</b>
-<p>We like frequent, small commits that can be <code>fly</code> set and,
+<br>
+We like frequent, small commits that can be <code>fly</code> set and,
 ideally, go green.
-<p>This one doesn't actually do anything though, right?
+<br>
+This one doesn't actually do anything though, right?
 Fair, but: setting and running the job
 gives you feedback on your syntax and variable usage.
-It can catch typos, resources you forgot to add or misnamed, etc.
+It can catch typos, resources you forgot to add or misnamed, and so on.
 Committing when you get to a working point helps keeps the diffs small,
 and the history tractable.
 Also, down the line, if you've got more than one pair working on a foundation,
 the small commits help you keep off one another's toes.
-<p>We don't demonstrate this workflow here,
+<br>
+We don't demonstrate this workflow here,
 but it can even be useful to make a commit,
-use `fly` to see if it works,
+use <code>fly</code> to see if it works,
 and then push it if and only if it works.
 If it doesn't, you can use <code>git commit --amend</code>
 once you've figured out why and fixed it.
@@ -411,30 +415,25 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
 
-=== "AWS"
-    ``` yaml
-    --8<-- 'docs/examples/state/aws.yml'
-    ```
+**AWS**
 
-=== "Azure"
-    ``` yaml
-    --8<-- 'docs/examples/state/azure.yml'
-    ```
+<%= partial "../examples/state/aws" %>
 
-=== "GCP"
-    ``` yaml
-    --8<-- 'docs/examples/state/gcp.yml'
-    ```
+**Azure**
 
-=== "OpenStack"
-    ``` yaml
-    --8<-- 'docs/examples/state/openstack.yml'
-    ```
+<%= partial "../examples/state/azure" %>
 
-=== "vSphere"
-    ``` yaml
-    --8<-- 'docs/examples/state/vsphere.yml'
-    ```
+**GCP**
+
+<%= partial "../examples/state/gcp" %>
+
+**OpenStack**
+
+<%= partial "../examples/state/openstack" %>
+
+**vSphere**
+
+<%= partial "../examples/state/vsphere" %>
 
 Find what you need for your IaaS,
 write it in your repo as `state.yml`,
@@ -460,23 +459,33 @@ in your IaaS's console
 look at your terraform outputs)
 to find the necessary values.
 
-=== "AWS"
-    ---excerpt--- "examples/aws-configuration"
-=== "Azure"
-    ---excerpt--- "examples/azure-configuration"
-=== "GCP"
-    ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
-    ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
-    ---excerpt--- "examples/vsphere-configuration"
+**AWS**
+
+<%= partial "../examples/opsman-config/aws" %>
+
+**Azure**
+
+<%= partial "../examples/opsman-config/azure" %>
+
+**GCP**
+
+<%= partial "../examples/opsman-config/gcp" %>
+
+**Openstack**
+
+<%= partial "../examples/opsman-config/openstack" %>
+
+**vSphere**
+
+<%= partial "../examples/opsman-config/vsphere" %>
 
 Alternatively, you can auto-generate your opsman.yml
 using a `p-automator` command to output an opsman.yml file
-in the directory it is called from. 
+in the directory it is called from.
 
-=== "AWS"
-    ```bash
+**AWS**
+
+  ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
       --state-file generated-state/state.yml \
@@ -484,10 +493,11 @@ in the directory it is called from.
       --aws-region "$AWS_REGION" \
       --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
       --aws-access-key-id "$AWS_ACCESS_KEY_ID"
-    ```
+  ```
 
-=== "Azure"
-    ```bash
+**Azure**
+
+  ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
       --state-file generated-state/state.yml \
@@ -497,10 +507,11 @@ in the directory it is called from.
       --azure-client-id "$AZURE_CLIENT_ID" \
       --azure-client-secret "$AZURE_CLIENT_SECRET" \
       --azure-resource-group "$AZURE_RESOURCE_GROUP"
-    ```
+   ```
 
-=== "GCP"
-    ```bash
+**GCP**
+
+  ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
       --state-file generated-state/state.yml \
@@ -508,10 +519,11 @@ in the directory it is called from.
       --gcp-zone "$GCP_ZONE" \
       --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
       --gcp-project-id "$GCP_PROJECT_ID"
-    ```
+  ```
 
-=== "vSphere"
-    ```bash
+**vSphere**
+
+  ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
       --state-file generated-state/state.yml \
@@ -519,7 +531,7 @@ in the directory it is called from.
       --vsphere-url "$VCENTER_URL" \
       --vsphere-username "$VCENTER_USERNAME" \
       --vsphere-password "$VCENTER_PASSWORD"
-    ```
+  ```
 
 Once you have your config file, commit and push it:
 
@@ -691,7 +703,6 @@ git push
 ```
 
 Your upgrade pipeline is now complete.
-You are now free to move on to the next steps of your automation journey.
 
 [//]: # ({% with path="../" %})
 [//]: # (    {% include ".internal_link_url.md" %})

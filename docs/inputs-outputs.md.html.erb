@@ -328,30 +328,25 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IAAS:
 
-=== "AWS"
-    ``` yaml
-    --8<-- 'docs/examples/state/aws.yml'
-    ```
+**AWS**
 
-=== "Azure"
-    ``` yaml
-    --8<-- 'docs/examples/state/azure.yml'
-    ```
+<%= partial "../examples/state/aws" %>
 
-=== "GCP"
-    ``` yaml
-    --8<-- 'docs/examples/state/gcp.yml'
-    ```
+**Azure**
 
-=== "OpenStack"
-    ``` yaml
-    --8<-- 'docs/examples/state/openstack.yml'
-    ```
+<%= partial "../examples/state/azure" %>
 
-=== "vSphere"
-    ``` yaml
-    --8<-- 'docs/examples/state/vsphere.yml'
-    ```
+**GCP**
+
+<%= partial "../examples/state/gcp" %>
+
+**OpenStack**
+
+<%= partial "../examples/state/openstack" %>
+
+**vSphere**
+
+<%= partial "../examples/state/vsphere" %>
 
 ### stemcell
 This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Tanzu Network.
