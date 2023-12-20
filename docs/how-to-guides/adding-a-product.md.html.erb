@@ -112,7 +112,7 @@ fly -t control-plane set-pipeline -p foundation -c pipeline.yml
 
 If the pipeline sets without errors, run a `git push` of the config.
 
-<p class="note">
+<div class="note">
 <span class="note__title">Note</span>
 <b>If fly set-pipeline returns an error:</b>
 Fix any and all errors until the pipeline can be set.
@@ -125,7 +125,7 @@ When the pipeline can be set properly, run:
     git push
   </code>
 </pre>
-</p>
+</div>
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -345,7 +345,8 @@ we should run.
 credhub get --name /concourse/your-team-name/cloud_controller_encrypt_key
 ```
 
-and expect an output like
+Expect an output like this:
+
 ```text
 id: <guid>
 name: /concourse/your-team-name/cloud_controller_encrypt_key
@@ -763,7 +764,7 @@ om interpolate \
   -l errand-vars.yml
 ```
 
-#### Finalize Your Configuration
+#### Finalize your configuration
 
 Once you've selected your ops files and created your vars files,
 decide which vars you want in the template
