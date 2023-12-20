@@ -5,7 +5,7 @@ we're going to use Platform Automation Toolkit
 to create a [pipeline](https://concourse-ci.org/pipelines.html)
 using [Concourse](https://concourse-ci.org/).
 
-Before we get started, you'll need a few things ready to go:
+You need:
 
 {% if upgradeHowTo %}
 1. A running Tanzu Operations Manager VM that you would like to upgrade
@@ -183,7 +183,7 @@ and you won't have to do it again,
 because `fly` has the ability to update itself,
 (which will be described more later).
 
-### <a></a> Setting The Pipeline
+### <a></a> Setting the pipeline
 
 Okay _now_ let's try to set our pipeline with `fly`, the Concourse CLI.
 
@@ -249,7 +249,7 @@ with the version that matches the Concourse you're targeting.</p>
 First, add this to your `pipeline.yml`, starting on the line after the `---`:
 
 ```yaml
-wait: no nevermind let's get version control first
+wait: no never mind let's get version control first
 ```
 
 Good point. Don't actually add that to your pipeline config yet.
@@ -274,7 +274,7 @@ The following describes a step-by-step approach for how to get set up with git.
 <br>
 For an example of the repository file structure
 for single and multiple foundation systems,
-see [Why use Git and GitHub?](./git-repo-layout.md).</p>
+see <a href="./git-repo-layout.md">Why use Git and GitHub?</a></p>
 
 `git` should come back with information about the commit you just created:
 
@@ -321,7 +321,7 @@ and to current-and-future teammates and collaborators.</p>
 
 #### <a></a> The test task
 
-Platform Automation Toolkit comes with a [`test`][test] task
+Platform Automation Toolkit comes with a [`test`](../tasks.md#test) task
 meant to validate that it's been installed correctly.
 Use it to get set up.
 
