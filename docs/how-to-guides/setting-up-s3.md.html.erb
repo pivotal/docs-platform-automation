@@ -157,7 +157,7 @@ objects from the bucket and which user can `Write` objects to the bucket.
 Amazon S3 provides many
 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html">permission settings for buckets</a>.
 Specific IAM users can have access and objects can have their own permissions. In addition, buckets can have their own custom policies.
-See <a href="">https://docs.aws.amazon.com/AmazonS3/latest/userguide/managing-acls.html>Configuring ACLs</a>.
+See <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/managing-acls.html">Configuring ACLs</a>.
 Refer to your organization's security policy
 to best set up your S3 bucket.</p>
 
@@ -306,14 +306,14 @@ to the filename before it is placed into the S3 bucket:
 <span class="note__title">Important</span>
 Do not change the meta information prepended by <code>download-product</code>.
 This information is required
-if using a <code>download-product</code> with a blobstore (i.e. AWS, GCS)
-in order to properly parse product versions.
+if using a <code>download-product</code> with a blobstore (that is, AWS, GCS)
+to properly parse product versions.
 <br>
 If placing a product file into an blobstore bucket manually,
 ensure that it has the proper file name format;
 opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
 There should be no spaces between the two brackets.
-For example, for a product with slug of <code>product-slug</code> and version of <code>1.1.1<code>:
+For example, for a product with slug of <code>product-slug</code> and version of <code>1.1.1</code>:
 <br>
 <code>
 [product-slug,1.1.1]original-filename.pivotal

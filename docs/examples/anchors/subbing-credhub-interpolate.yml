@@ -1,2 +1,0 @@
-- task: credhub-interpolate
-  <<: *credhub-interpolate

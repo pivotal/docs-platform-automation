@@ -3,11 +3,11 @@
 This topic describes how to execute commands locally with Docker.
 
 If you wish to use the underlying `om` and `p-automator` CLI tools from your local workstation,
-we recommend using docker to execute commands.
+VMware recommends using Docker to execute commands.
 
 With `p-automator` in particular, using Docker is necessary,
 as the IaaS CLIs upon which we depend can be tricky to install.
-With `om` it's more a matter of convenience -
+With `om` it's more a matter of convenience:
 you can just as easily [download the binary](https://github.com/pivotal-cf/om/releases) if it's available for your system.
 
 
@@ -72,7 +72,7 @@ This ensures the command is not kept in bash history.
 The environment variable OM_PASSWORD will overwrite the password value in the `ENV_FILE`.
 See the [`om` GitHub page](https://github.com/pivotal-cf/om) for a full list of supported environment variables.
 
-### Disable Verifiers
+### Disable verifiers
 
 In cases where verifiers are incorrectly failing for known reasons,
 those specific verifiers should be disabled in order to apply changes.
