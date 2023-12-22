@@ -8,7 +8,7 @@ No single method can cover all situations.
 After reading this document,
 we hope you feel equipped to select an approach.
 
-## Single Repository for Each Foundation
+## Single repository for each foundation
 
 This is the simplest thing that could possibly work.
 It's the default assumed in all our examples,
@@ -52,7 +52,16 @@ step:
 
 ---excerpt--- "examples/configure-director-usage"
 
-We map the config files 
+```yaml
+- task: configure-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-director.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+```
+
+We map the config files
 to the expected input named `env` of the `configure-director` task.
 Because the `configure-director` task's default `ENV` parameter is `env.yml`,
 it automatically uses the `env.yml` file in our configuration repo.
@@ -64,18 +73,26 @@ Another option for mapping resources to inputs is discussed in
 
 For reference, here is the `configure-director` task:
 
----excerpt--- "tasks/configure-director"
+<p class="note">
+<span class="note__title">Note</span>
+The inputs, outputs, params, filename, and filepath
+of this task file are part of its semantically versioned API.
+See our documentation for a detailed discussion of our semver API.
+See <a href="https://semver.org/">www.semver.org</a> for an explanation of semantic versioning.
+</p>
 
-## Multiple Foundations with one Repository
+<%= partial "../tasks/configure-director" %>
+
+## Multiple foundations with one repository
 
 Multiple foundations may use a single Git configuration source
-but have different variables loaded 
-from a foundation specific vars file, CredHub, etc.
+but have different variables loaded
+from a foundation specific vars file, CredHub, and so on.
 
-This strategy can reduce foundation drift 
+This strategy can reduce foundation drift
 and streamline the configuration promotion process between foundations.
 
-**This is the strategy used in the [reference pipeline](../pipelines/multiple-products.md)**.
+This is the strategy used in the [reference pipeline](../pipelines/multiple-products.md).
 
 ### Overview
 
@@ -265,7 +282,7 @@ If there are no configuration changes, the only file that needs to be promoted i
 
 ## Advanced pipeline design
 
-### Matching Resource names and input names
+### Matching resource names and input names
 
 As an alternative to `input_mapping`,
 we can create resources that match the input names on our tasks.
@@ -273,11 +290,13 @@ Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
 
 ---excerpt--- "examples/input-matched-resources-usage"
+<%= partial "../examples/auth" %>
 
 As long as those resources have an associated `get: <resource-name>`
 in the job, they will automatically be mapped to the inputs of the tasks in that job:
 
 ---excerpt--- "examples/configure-director-matched-resources-usage"
+<%= partial "../examples/auth" %>
 
 <p class="note caution">
 <span class="note__title">Caution</span>

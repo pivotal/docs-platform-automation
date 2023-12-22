@@ -201,12 +201,30 @@ Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
 
-=== "Task"
-    ---excerpt--- "tasks/configure-director"
+**Task**
+
+<p class="note">
+<span class="note__title">Note</span>
+The inputs, outputs, params, filename, and filepath
+of this task file are part of its semantically versioned API.
+See our documentation for a detailed discussion of our semver API.
+See <a href="www.semver.org">www.semver.org</a> for an explanation of semantic versioning.
+</p>
+
+<%= partial "../tasks/configure-director" %>
+
 === "Implementation"
     ---excerpt--- "tasks/configure-director-script"
 === "Usage"
     ---excerpt--- "reference/configure-director-usage"
+```yaml
+- task: configure-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-director.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+```
 
 <p class="note caution">
 <span class="note__title">Caution</span>
