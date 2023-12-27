@@ -17,12 +17,46 @@ To learn more see [Running commands locally](./how-to-guides/running-commands-lo
 
 Ensures that the newest certificate authority on Tanzu Operations Manager is active.
 
-=== "Task"
-    ---excerpt--- "tasks/activate-certificate-authority"
-=== "Implementation"
-    ---excerpt--- "tasks/activate-certificate-authority-script"
-=== "Usage"
-    ---excerpt--- "reference/activate-certificate-authority-usage"
+**Task**
+
+```yaml
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+run:
+  path: platform-automation-tasks/tasks/activate-certificate-authority.sh
+```
+
+**Implementation**
+
+```
+cat /var/version && echo ""
+set -eux
+
+om --env env/"${ENV_FILE}" activate-certificate-authority
+```
+
+**Usage**
+
+```
+- task: activate-new-ca
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/activate-certificate-authority.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### apply-changes
 
@@ -34,12 +68,26 @@ To see an example of this config file, see [Inputs and outputs](./inputs-outputs
 
 <%= partial "disable-verifiers" %>
 
-=== "Task"
-    ---excerpt--- "tasks/apply-changes"
-=== "Implementation"
-    ---excerpt--- "tasks/apply-changes-script"
-=== "Usage"
-    ---excerpt--- "reference/apply-changes-usage"
+**Task**
+
+<%= partial "tasks/apply-changes" %>
+
+**Implementation**
+
+<%= partial "tasks/apply-changes-script" %>
+
+**Usage**
+
+```
+- task: apply-product-changes
+  attempts: 3
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/apply-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
@@ -208,7 +256,7 @@ which can extract a config file.
 The inputs, outputs, params, filename, and filepath
 of this task file are part of its semantically versioned API.
 See our documentation for a detailed discussion of our semver API.
-See <a href="www.semver.org">www.semver.org</a> for an explanation of semantic versioning.
+See <a href="https://semver.org/">www.semver.org</a> for an explanation of semantic versioning.
 </p>
 
 <%= partial "../tasks/configure-director" %>
