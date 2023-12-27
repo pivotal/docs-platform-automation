@@ -47,10 +47,8 @@ that uses the "Single Repository for each Foundation" pattern:
 Notice that there is only one subdirectory
 and that all other files are at the repositories base directory.
 _This minimizes parameter mapping in the platform-automation tasks_.
-For example, in the [`configure-director`](../tasks.md#configure-director
+For example, in the [`configure-director`](../tasks.md#configure-director)
 step:
-
----excerpt--- "examples/configure-director-usage"
 
 ```yaml
 - task: configure-director
@@ -289,14 +287,44 @@ we can create resources that match the input names on our tasks.
 Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
 
----excerpt--- "examples/input-matched-resources-usage"
-<%= partial "../examples/auth" %>
+```yaml
+- name: config
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
 
-As long as those resources have an associated `get: <resource-name>`
+- name: env
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
+```
+
+As long as tho3se resources have an associated `get: <resource-name>`
 in the job, they will automatically be mapped to the inputs of the tasks in that job:
 
----excerpt--- "examples/configure-director-matched-resources-usage"
-<%= partial "../examples/auth" %>
+```
+- name: configure-director
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: config
+        passed: [previous-job]
+      - get: env
+        passed: [previous-job]
+    - task: configure-director
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-director.yml
+```
 
 <p class="note caution">
 <span class="note__title">Caution</span>
