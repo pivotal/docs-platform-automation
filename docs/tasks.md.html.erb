@@ -167,14 +167,25 @@ this workflow, see [Stemcell Handling](./concepts/stemcell-handling.md).
 
 ### backup-director
 
-Use BBR to backup a BOSH director deployed with Tanzu Operations Manager.
+Use BBR to backup a BOSH Director deployed with Tanzu Operations Manager.
 
-=== "Task"
-    ---excerpt--- "tasks/backup-director"
-=== "Implementation"
-    ---excerpt--- "tasks/backup-director-script"
-=== "Usage"
-    ---excerpt--- "examples/backup-director-usage"
+**Task**
+
+<%= partial "tasks/backup-director" %>
+
+**Implementation**
+
+<%= partial "tasks/backup-director-script" %>
+
+**Usage**
+
+```yaml
+- task: backup-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-director.yml
+  params:
+    OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
+```
 
 ### backup-product
 
