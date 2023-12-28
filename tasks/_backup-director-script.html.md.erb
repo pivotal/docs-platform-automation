@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet backup-director-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eu
 
@@ -27,4 +26,5 @@ pushd backup
 
   tar -zcvf director_"$( date +"%Y-%m-%d-%H-%M-%S" )".tgz --remove-files -- */*
 popd
-# code_snippet backup-director-script end
+</code>
+</pre>
