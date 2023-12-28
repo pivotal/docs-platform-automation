@@ -2,11 +2,11 @@
 <span class="note__title">Note</span>
 Tanzu Operations Manager Verifier failures when applying changes will prevent deployment.
 In cases where these verifiers are incorrectly failing for known reasons,
-they should be disabled [using om](./how-to-guides/running-commands-locally.md#disable-verifiers).
+they should be disabled <a href="./how-to-guides/running-commands-locally.md#disable-verifiers">using om</a>.
 The <code>IGNORE_WARNINGS</code> parameter for the
 <code>apply-changes</code>, <code>stage-configure-apply</code>, and <code>apply-director-changes</code> tasks
 allows users to ignore all warnings from ignorable verifiers.
-In an automation context, disabling _only the particular verifiers_
+In an automation context, disabling <i>only the particular verifiers</i>
 where failure is well-understood allows other verifiers
 to continue to provide important feedback.
 Some verifiers continue to return warnings even when disabled,
