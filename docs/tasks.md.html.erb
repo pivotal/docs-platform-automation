@@ -118,16 +118,28 @@ with the `--skip-deploy-products`/`-sdp` flag.
 ```
 
 ### assign-multi-stemcell
+
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
 For more information about how to utilize this workflow,
 see [Stemcell Handling](./concepts/stemcell-handling.md).
 
-=== "Task"
-    ---excerpt--- "tasks/assign-multi-stemcell"
-=== "Implementation"
-    ---excerpt--- "tasks/assign-multi-stemcell-script"
-=== "Usage"
-    ---excerpt--- "examples/assign-multi-stemcell-usage"
+**Task**
+
+<%= partial "tasks/assign-multi-stemcell" %>
+
+**Implementation**
+
+<%= partial "tasks/assign-multi-stemcell-script" %>
+
+**Usage**
+
+```
+- task: assign-multi-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-multi-stemcell.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+```
 
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product.
