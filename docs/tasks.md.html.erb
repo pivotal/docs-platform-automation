@@ -142,16 +142,28 @@ see [Stemcell Handling](./concepts/stemcell-handling.md).
 ```
 
 ### assign-stemcell
+
 `assign-stemcell` assigns a stemcell to a provided product.
 For more information about how to use
 this workflow, see [Stemcell Handling](./concepts/stemcell-handling.md).
 
-=== "Task"
-    ---excerpt--- "tasks/assign-stemcell"
-=== "Implementation"
-    ---excerpt--- "tasks/assign-stemcell-script"
-=== "Usage"
-    ---excerpt--- "examples/assign-stemcell-usage"
+**Task**
+
+<%= partial "tasks/assign-stemcell" %>
+
+**Implementation**
+
+<%= partial "tasks/assign-stemcell-script" %>
+
+**Usage**
+
+```yaml
+- task: assign-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-stemcell.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+```
 
 ### backup-director
 
@@ -186,7 +198,7 @@ deployed with Tanzu Operations Manager.
 During the backup, the PKS CLI is disabled.
 Due to the nature of the backup, some commands may not work as expected.</p>
     
-<p class="note caution">
+<div class="note caution">
 <span class="note__title">Caution</span>
 <b>Known issue:</b>
 When using the task <a href="#backup-tkgi">backup-tkgi</a> behind a proxy
@@ -208,7 +220,7 @@ For example,
             no_proxy: ""
     </code>
 </pre>
-</p>
+</div>
 
 === "Task"
     ---excerpt--- "tasks/backup-tkgi"
