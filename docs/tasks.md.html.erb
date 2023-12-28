@@ -48,7 +48,7 @@ om --env env/"${ENV_FILE}" activate-certificate-authority
 
 **Usage**
 
-```
+```yaml
 - task: activate-new-ca
   image: platform-automation-image
   file: platform-automation-tasks/tasks/activate-certificate-authority.yml
@@ -78,7 +78,7 @@ To see an example of this config file, see [Inputs and outputs](./inputs-outputs
 
 **Usage**
 
-```
+```yaml
 - task: apply-product-changes
   attempts: 3
   image: platform-automation-image
@@ -106,7 +106,7 @@ with the `--skip-deploy-products`/`-sdp` flag.
 
 **Usage**
 
-```
+```yaml
 - task: apply-product-changes
   attempts: 3
   image: platform-automation-image
@@ -133,7 +133,7 @@ see [Stemcell Handling](./concepts/stemcell-handling.md).
 
 **Usage**
 
-```
+```yaml
 - task: assign-multi-stemcell
   image: platform-automation-image
   file: platform-automation-tasks/tasks/assign-multi-stemcell.yml
@@ -191,12 +191,25 @@ Use BBR to backup a BOSH Director deployed with Tanzu Operations Manager.
 
 Use BBR to backup a product deployed with Tanzu Operations Manager.
 
-=== "Task"
-    ---excerpt--- "tasks/backup-product"
-=== "Implementation"
-    ---excerpt--- "tasks/backup-product-script"
-=== "Usage"
-    ---excerpt--- "examples/backup-product-usage"
+**Task**
+
+<%= partial "tasks/backup-product" %>
+
+**Implementation**
+
+<%= partial "tasks/backup-product-script" %>
+
+**Usage**
+
+```yaml
+- task: backup-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-product.yml
+  params:
+    PRODUCT_NAME: cf
+    ENV_FILE: env.yml
+    OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
+```
 
 ### backup-tkgi
 
@@ -212,33 +225,45 @@ Due to the nature of the backup, some commands may not work as expected.</p>
 <div class="note caution">
 <span class="note__title">Caution</span>
 <b>Known issue:</b>
-When using the task <a href="#backup-tkgi">backup-tkgi</a> behind a proxy
+When using the task <a href="#backup-tkgi">backup-tkgi</a> behind a proxy,
 the values for <code>no_proxy</code> can affect the ssh (though jumpbox) tunneling.
 When the task invokes the <code>bbr</code> CLI, an environment variable (<code>BOSH_ALL_PROXY</code>) has been set,
 this environment variable tries to honor the <code>no_proxy</code> settings.
 The task's usage of the ssh tunnel requires the <code>no_proxy</code> to not be set.
 <br>
 If you experience an error, such as an SSH connection refused or connection timeout,
-try setting the <code>no_proxy: ""<code> as <code>params<code> on the task.
+try setting the <code>no_proxy: ""</code> as <code>params</code> on the task.
 <br>
 For example,
 
 <pre>
-    <code>
-        - task: backup-tkgi
-            file: platform-automation-tasks/tasks/backup-tkgi.yml
-            params:
-            no_proxy: ""
-    </code>
+<code>
+- task: backup-tkgi
+    file: platform-automation-tasks/tasks/backup-tkgi.yml
+    params:
+    no_proxy: ""
+</code>
 </pre>
 </div>
 
-=== "Task"
-    ---excerpt--- "tasks/backup-tkgi"
-=== "Implementation"
-    ---excerpt--- "tasks/backup-tkgi-script"
-=== "Usage"
-    ---excerpt--- "examples/backup-tkgi-usage"
+**Task**
+
+<%= partial "tasks/backup-tkgi" %>
+
+**Implementation**
+
+<%= partial "tasks/backup-tkgi-script" %>
+
+**Usage**
+
+```yaml
+- task: backup-tkgi
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-tkgi.yml
+  params:
+    ENV_FILE: env.yml
+    OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
+```
 
 ### check-pending-changes
 
