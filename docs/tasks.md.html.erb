@@ -90,17 +90,32 @@ To see an example of this config file, see [Inputs and outputs](./inputs-outputs
 ```
 
 ### apply-director-changes
+
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
 
 <%= partial "disable-verifiers" %>
 
-=== "Task"
-    ---excerpt--- "tasks/apply-director-changes"
-=== "Implementation"
-    ---excerpt--- "tasks/apply-director-changes-script"
-=== "Usage"
-    ---excerpt--- "reference/apply-director-changes-usage"
+**Task**
+
+<%= partial "tasks/apply-director-changes" %>
+
+**Implementation**
+
+<%= partial "tasks/apply-director-changes-script" %>
+
+**Usage**
+
+```
+- task: apply-product-changes
+  attempts: 3
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/apply-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### assign-multi-stemcell
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
