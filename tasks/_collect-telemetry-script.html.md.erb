@@ -1,5 +1,5 @@
-#!/bin/bash
-# code_snippet collect-telemetry-script start bash
+<pre>
+<code>
 set -eux
 
 cat config/"${CONFIG_FILE}" env/"${ENV_FILE}" >combined-config.yml
@@ -24,4 +24,5 @@ om --env env/"${ENV_FILE}" curl --path /api/v0/info >/dev/null 2>&1
 ./telemetry-collector-binary/telemetry-collector-linux-amd64 collect \
   --output-dir ./collected-telemetry-data \
   --config /tmp/pipe.yml
-# code_snippet collect-telemetry-script end bash
+</code>
+</pre>
