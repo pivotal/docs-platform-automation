@@ -273,12 +273,26 @@ By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
 This is useful to keep manual changes from being accidentally applied
 when automating the [configure-product](./tasks.md#configure-product)/[apply-changes](./tasks.md#apply-changes) of other products.
 
-=== "Task"
-    ---excerpt--- "tasks/check-pending-changes"
-=== "Implementation"
-    ---excerpt--- "tasks/check-pending-changes-script"
-=== "Usage"
-    ---excerpt--- "reference/check-pending-changes-usage"
+**Task**
+
+<%= partial "tasks/check-pending-changes" %>
+
+**Implementation**
+
+<%= partial "tasks/check-pending-changes-script" %>
+
+**Usage**
+
+```yaml
+- task: check-pending-changes
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/check-pending-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    ALLOW_PENDING_CHANGES: true
+```
 
 ### collect-telemetry
 
@@ -295,12 +309,27 @@ After using this task,
 the [send-telemetry](#send-telemetry) task
 may be used to send telemetry data to VMware.
 
-=== "Task"
-    ---excerpt--- "tasks/collect-telemetry"
-=== "Implementation"
-    ---excerpt--- "tasks/collect-telemetry-script"
-=== "Usage"
-    ---excerpt--- "reference/collect-telemetry-usage"
+**Task**
+
+<%= partial "tasks/collect-telemetry" %>
+
+**Implementation**
+
+<%= partial "tasks/collect-telemetry-script" %>
+
+**Usage**
+
+```yaml
+- task: collect-telemetry-data
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/collect-telemetry.yml
+  input_mapping:
+    env: configuration
+    config: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/telemetry.yml
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### configure-authentication
 
