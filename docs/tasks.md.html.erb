@@ -338,11 +338,27 @@ See [configure-saml-authentication](#configure-saml-authentication) to configure
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
 === "Task"
-    ---excerpt--- "tasks/configure-authentication"
+
+<%= partial "../tasks/configure-authentication" %>
+
 === "Implementation"
-    ---excerpt--- "tasks/configure-authentication-script"
+
+<%= partial "../tasks/configure-authentication-script" %>
+
 === "Usage"
-    ---excerpt--- "reference/configure-authentication-usage"
+
+```yaml
+- task: configure-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-authentication.yml
+  attempts: 10
+  input_mapping:
+    env: configuration
+    config: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    AUTH_CONFIG_FILE: foundations/config/auth.yml
+```
 
 For details on the config file expected in the `config` input,
 see [Generating an Auth file](./how-to-guides/configuring-auth.md).
@@ -365,10 +381,12 @@ See <a href="https://semver.org/">www.semver.org</a> for an explanation of seman
 
 <%= partial "../tasks/configure-director" %>
 
-=== "Implementation"
-    ---excerpt--- "tasks/configure-director-script"
-=== "Usage"
-    ---excerpt--- "reference/configure-director-usage"
+**Implementation**
+
+<%= partial "../tasks/configure-director-script" %>
+
+**Usage**
+
 ```yaml
 - task: configure-director
   image: platform-automation-image
