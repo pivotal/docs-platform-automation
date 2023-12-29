@@ -407,17 +407,29 @@ Configures Tanzu Operations Manager with an external LDAP user store and admin u
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
 
-=== "Task"
-    ---excerpt--- "tasks/configure-ldap-authentication"
-=== "Implementation"
-    ---excerpt--- "tasks/configure-ldap-authentication-script"
-=== "Usage"
-    ---excerpt--- "examples/configure-ldap-authentication-usage"
+**Task**
 
-For more details on using LDAP,
+<%= partial "../tasks/configure-ldap-authentication" %>
+
+**Implementation**
+
+<%= partial "../tasks/configure-ldap-authentication-script" %>
+
+**Usage**
+
+```yaml
+- task: configure-ldap-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-ldap-authentication.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
+```
+
+For more details about using LDAP,
 see [Tanzu Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#ldap).
 
-For details on the config file expected in the `config` input,
+For details about the config file expected in the `config` input,
 please see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
 ### configure-opsman
@@ -433,12 +445,24 @@ The [`upgrade-opsman`](#upgrade-opsman) task will automatically call `configure-
 so there is no need to use this task then.
 It is recommended to use this task in the initial setup of the Tanzu Operations Manager VM.
 
-=== "Task"
-    ---excerpt--- "tasks/configure-opsman"
-=== "Implementation"
-    ---excerpt--- "tasks/configure-opsman-script"
-=== "Usage"
-    ---excerpt--- "reference/configure-opsman-usage"
+**Task**
+
+<%= partial "../tasks/configure-opsman" %>
+
+**Implementation**
+
+<%= partial "../tasks/configure-opsman-script" %>
+
+**Usage**
+
+```yaml
+- task: configure-ldap-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-ldap-authentication.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
+```
 
 ### configure-product
 
