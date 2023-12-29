@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet configure-product-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -21,4 +20,5 @@ om --env env/"${ENV_FILE}" configure-product \
   --config "config/${CONFIG_FILE}" \
   ${vars_files_args[@]} \
   ${ops_files_args[@]}
-# code_snippet configure-product-script end
+</code>
+</pre>
