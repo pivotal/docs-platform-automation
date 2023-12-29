@@ -1,9 +1,5 @@
-# The inputs, outputs, params, filename, and filepath
-# of this task file are part of its semantically versioned API.
-# See our documentation for a detailed discussion of our semver API.
-# See www.semver.org for an explanation of semantic versioning.
-
-# code_snippet configure-opsman start yaml
+<pre>
+<code>
 ---
 platform: linux
 
@@ -35,9 +31,10 @@ params:
   # - filepath of the Ops Manager Application Settings
   #   config file. (such as banner, pivnet token, etc)
   # - relative to root of the `config` input
-  # - It is recommended to use one config file to
+  # - VMware recommends using one config file to
   #   configure-opsman, upgrade-opsman, create-vm, delete-vm
 
 run:
   path: platform-automation-tasks/tasks/configure-opsman.sh
-# code_snippet configure-opsman end
+</code>
+</pre>
