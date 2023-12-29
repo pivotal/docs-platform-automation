@@ -478,12 +478,31 @@ which can extract a config file,
 and [upload-and-stage-product](#upload-and-stage-product),
 which can stage a product that's been uploaded.
 
-=== "Task"
-    ---excerpt--- "tasks/configure-product"
-=== "Implementation"
-    ---excerpt--- "tasks/configure-product-script"
-=== "Usage"
-    ---excerpt--- "reference/configure-product-usage"
+**Task**
+
+<%= partial "../tasks/configure-product" %>
+
+**Implementation**
+
+<%= partial "../tasks/configure-product-script" %>
+
+**Usage**
+
+```yaml
+- task: configure-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-product.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+    vars: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/pks.yml
+    ENV_FILE: foundations/config/env.yml
+    VARS_FILES: |
+      vars/foundations/((foundation))/vars/director.yml
+      vars/foundations/((foundation))/vars/pks.yml
+```
 
 ### configure-new-certificate-authority
 
@@ -491,28 +510,53 @@ Create a new certificate authority on Tanzu Operations Manager. This can either 
 new CA using CredHub or create a new CA using a provided certificate and
 private key in PEM format via the `certs/` input.
 
-=== "Task"
-    ---excerpt--- "tasks/configure-new-certificate-authority"
-=== "Implementation"
-    ---excerpt--- "tasks/configure-new-certificate-authority-script"
-=== "Usage"
-    ---excerpt--- "reference/configure-new-certificate-authority-usage"
+**Task**
+
+<%= partial "../tasks/configure-new-certificate-authority" %>
+
+**Implementation**
+
+<%= partial "../tasks/configure-new-certificate-authority-script" %>
+
+**Usage**
+
+```yaml
+- task: create-root-ca
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### configure-saml-authentication
 Configures Tanzu Operations Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
-=== "Task"
-    ---excerpt--- "tasks/configure-saml-authentication"
-=== "Implementation"
-    ---excerpt--- "tasks/configure-saml-authentication-script"
-=== "Usage"
-    ---excerpt--- "examples/configure-saml-authentication-usage"
+**Task**
+
+<%= partial "../tasks/configure-saml-authentication" %>
+
+**Implementation**
+
+<%= partial "../tasks/configure-saml-authentication-script" %>
+
+**Usage**
+
+```yaml
+- task: configure-saml-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-saml-authentication.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
+```
 
 <p class="note">
 <span class="note__title">Note</span>
-<b>BOSH Admin Client:</b>
+<b>BOSH admin client:</b>
 By default, this task creates a BOSH admin client.
 This is helpful for some advanced workflows
 that involve communicating directly with the BOSH Director.

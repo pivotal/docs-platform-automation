@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet configure-saml-authentication-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -14,4 +13,5 @@ done
 om --env env/"${ENV_FILE}" --skip-ssl-validation configure-saml-authentication \
   --config config/"${AUTH_CONFIG_FILE}" \
   ${vars_files_args[@]}
-# code_snippet configure-saml-authentication-script end
+</code>
+</pre>

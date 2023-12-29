@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet configure-new-certificate-authority-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -12,4 +11,5 @@ if [[ -f "certs/certificate.pem" && -f "certs/privatekey.pem" ]]; then
 else
   om --env env/"${ENV_FILE}" generate-certificate-authority
 fi
-# code_snippet configure-new-certificate-authority-script end
+</code>
+</pre>
