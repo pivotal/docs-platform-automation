@@ -529,6 +529,7 @@ private key in PEM format via the `certs/` input.
   params:
     ENV_FILE: foundations/config/env.yml
 ```
+<p></p>
 
 ### configure-saml-authentication
 Configures Tanzu Operations Manager with an external SAML user store and admin user account.
@@ -545,16 +546,14 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 
 **Usage**
 
-<pre>
-<code>
+```yaml
 - task: configure-saml-authentication
   image: platform-automation-image
   file: platform-automation-tasks/tasks/configure-saml-authentication.yml
   params:
     ENV_FILE: ((foundation))/env/env.yml
     AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
-</code>
-</pre>
+```
 
 <p class="note">
 <span class="note__title">Note</span>
