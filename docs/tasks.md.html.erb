@@ -545,14 +545,16 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 
 **Usage**
 
-```yaml
+<pre>
+<code>
 - task: configure-saml-authentication
   image: platform-automation-image
   file: platform-automation-tasks/tasks/configure-saml-authentication.yml
   params:
     ENV_FILE: ((foundation))/env/env.yml
     AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
-```
+</code>
+</pre>
 
 <p class="note">
 <span class="note__title">Note</span>
