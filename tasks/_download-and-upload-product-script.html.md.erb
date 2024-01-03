@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet download-and-upload-product-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -48,4 +47,5 @@ if [ "${downloaded_stemcell}" != "" ]; then
   om --env env/"${ENV_FILE}" upload-stemcell \
     --stemcell "${downloaded_stemcell}" "${floatingArg}"
 fi
-# code_snippet download-and-upload-product-script end
+</code>
+</pre>

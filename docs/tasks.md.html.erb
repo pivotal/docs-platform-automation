@@ -798,12 +798,27 @@ because the products (and stemcell) don't need to be shared downstream.
 <span class="note__title">Caution</span>
 This currently only works with product source being Tanzu Network.</p>
 
-=== "Task"
-    ---excerpt--- "tasks/download-and-upload-product"
-=== "Implementation"
-    ---excerpt--- "tasks/download-and-upload-product-script"
-=== "Usage"
-    ---excerpt--- "examples/download-and-upload-product-usage"
+**Task**
+
+<%= partial "../tasks/download-and-upload-product" %>
+
+**Implementation**
+
+<%= partial "../tasks/download-and-upload-product-script" %>
+
+**Usage**
+
+```yaml
+- task: download-and-upload-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-and-upload-product.yml
+  input_mapping:
+    env: configuration
+    config: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    CONFIG_FILE: download-product-pivnet/download-tas.yml
+```
 
 ### download-product
 
@@ -894,18 +909,97 @@ it will not add the prefix to the downloaded product.
 For example, <code>example-product.pivotal</code> from Tanzu Network will be displayed in the output
 as <code>example-product.pivotal</code>.</p>
 
-=== "Task"
-    ---excerpt--- "tasks/download-product"
-=== "Implementation"
-    ---excerpt--- "tasks/download-product-script"
-=== "Tanzu Network Usage"
-    ---excerpt--- "reference/download-product-usage"
-=== "S3 Usage"
-    ---excerpt--- "reference/download-product-usage-s3"
-=== "GCS Usage"
-    ---excerpt--- "examples/download-product-usage-gcs"
-=== "Azure Usage"
-    ---excerpt--- "examples/download-product-usage-azure"
+**Task**
+
+<%= partial "../tasks/download-product" %>
+
+**Implementation**
+
+<%= partial "../tasks/download-product-script" %>
+
+**Tanzu Network Usage**
+
+```yaml
+- name: fetch-pks
+  plan:
+  - in_parallel:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: download-pks-product-and-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-pivnet/download-pks.yml
+    input_mapping:
+      config: configuration
+    output_mapping: {downloaded-stemcell: pks-stemcell}
+  - in_parallel:
+      - put: pks-product
+        params:
+          file: downloaded-product/*.pivotal
+      - put: pks-stemcell
+        params:
+          file: pks-stemcell/*.tgz
+```
+
+**S3 Usage**
+
+```yaml
+- task: download-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  input_mapping:
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/download-pks.yml
+    VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+    SOURCE: s3
+  output_mapping:
+    downloaded-product: pks-product
+    downloaded-stemcell: pks-stemcell
+```
+
+**GCS Usage**
+
+```yaml
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: gcs
+  input_mapping:
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+```
+
+**Azure Usage**
+
+```yaml
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: azure
+  input_mapping:
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+```
 
 ### expiring-certificates
 
@@ -913,12 +1007,26 @@ Returns a list of certificates that are expiring within a time frame.
 These certificates can be Tanzu Operations Manager or CredHub certificates.
 This is a purely informational task.
 
-=== "Task"
-    ---excerpt--- "tasks/expiring-certificates"
-=== "Implementation"
-    ---excerpt--- "tasks/expiring-certificates-script"
-=== "Usage"
-    ---excerpt--- "reference/expiring-certificates-usage"
+**Task**
+
+<%= partial "../tasks/expiring-certificates" %>
+
+**Implementation**
+
+<%= partial "../tasks/expiring-certificates-script" %>
+
+**Usage**
+
+```yaml
+- task: expiring-certificates
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/expiring-certificates.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    EXPIRES_WITHIN: 2m
+```
 
 ### export-installation
 
@@ -944,12 +1052,26 @@ The timestamp is generated using the time on Concourse worker.
 If the time is different on different workers, the generated timestamp may fail to sort correctly.
 Changing the time or timezone on workers might interfere with ordering.</p>
 
-=== "Task"
-    ---excerpt--- "tasks/export-installation"
-=== "Implementation"
-    ---excerpt--- "tasks/export-installation-script"
-=== "Usage"
-    ---excerpt--- "reference/export-installation-usage"
+**Task**
+
+<%= partial "../tasks/export-installation" %>
+
+**Implementation**
+
+<%= partial "../tasks/export-installation-script" %>
+
+**Usage**
+
+```yaml
+- task: export-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/export-installation.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    INSTALLATION_FILE: ((foundation))-installation-$timestamp.zip
+```
 
 <%= partial "./export_installation_note" %>
 
@@ -961,36 +1083,55 @@ for the domains specified in the `DOMAINS` environment variable.
 This task outputs `certificate`, containing `certificate.pem` and
 `privatekey.pem` for the new certificate.
 
-=== "Task"
-    ---excerpt--- "tasks/generate-certificate"
-=== "Implementation"
-    ---excerpt--- "tasks/generate-certificate-script"
-<!-- === "Usage"
+**Task**
+
+<%= partial "../tasks/generate-certificate" %>
+
+**Implementation**
+
+<%= partial "../tasks/generate-certificate-script" %>
+
+<!-- **Usage**
     ---excerpt--- "reference/generate-certificate-usage" -->
 
 ### import-installation
+
 Imports a previously exported installation to Tanzu Operations Manager.
 
 This is a part of the backup/restore and upgrade lifecycle processes.
 This task is used after an installation has been exported and a new Tanzu Operations Manager
 has been deployed, but before the new Tanzu Operations Manager is configured.
 
-=== "Task"
-    ---excerpt--- "tasks/import-installation"
-=== "Implementation"
-    ---excerpt--- "tasks/import-installation-script"
-=== "Usage"
-    ---excerpt--- "examples/import-installation-usage"
+**Task**
+
+<%= partial "../tasks/import-installation" %>
+
+**Implementation**
+
+<%= partial "../tasks/import-installation-script" %>
+
+**Usage**
+
+```yaml
+- task: import-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/import-installation.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    INSTALLATION_FILE: installation-*.zip
+```
 
 ### make-git-commit
 Copies a single file into a repo and makes a commit.
-Useful for persisting the state output of tasks that manage the VM, such as:
+This is useful for persisting the state output of tasks that manage the VM, such as:
 
 - [create-vm](#create-vm)
 - [upgrade-opsman](#upgrade-opsman)
 - [delete-vm](#delete-vm)
 
-Also useful for persisting the configuration output from:
+It is also useful for persisting the configuration output from:
 
 - [staged-config](#staged-config)
 - [staged-director-config](#staged-director-config)
@@ -1003,15 +1144,35 @@ in addition to copying in a single file.</p>
 
 <p class="note important">
 <span class="note__title">Important</span>
-This does not perform a <code>git push</code>
+This does not perform a <code>git push</code>.
 You must <code>put</code> the output of this task to a git resource to persist it.</p>
 
-=== "Task"
-    ---excerpt--- "tasks/make-git-commit"
-=== "Implementation"
-    ---excerpt--- "tasks/make-git-commit-script"
-=== "Usage"
-    ---excerpt--- "examples/make-git-commit-usage"
+**Task**
+
+<%= partial "../tasks/make-git-commit" %>
+
+**Implementation**
+
+<%= partial "../tasks/make-git-commit-script" %>
+
+**Usage**
+
+```yaml
+- task: make-commit
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/make-git-commit.yml
+  input_mapping:
+    repository: configuration
+    file-source: generated-state
+  output_mapping:
+    repository-commit: configuration-commit
+  params:
+    FILE_SOURCE_PATH: state.yml
+    FILE_DESTINATION_PATH: state/state.yml
+    GIT_AUTHOR_EMAIL: "pcf-pipeline-bot@example.com"
+    GIT_AUTHOR_NAME: "Platform Automation Bot"
+    COMMIT_MESSAGE: 'Update state file'
+```
 
 ### pre-deploy-check
 
@@ -1037,11 +1198,11 @@ the task will fail.
 The failed task will provide a list of errors that need to be fixed
 before an `apply-changes` operation can start.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/pre-deploy-check"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/pre-deploy-check-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/pre-deploy-check-usage"
 
 ### prepare-image
@@ -1059,11 +1220,11 @@ that allows inputs and outputs to have the same name.
 This feature is only available in Concourse v5+.
 <code>prepare-image</code> does not work with Concourse v4.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/prepare-image"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/prepare-image-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/prepare-image-usage"
 
 ### prepare-tasks-with-secrets
@@ -1080,11 +1241,11 @@ that allows inputs and outputs to have the same name.
 This feature is only available in Concourse v5+.
 <code>prepare-tasks-with-secrets</code> does not work with Concourse v4.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/prepare-tasks-with-secrets"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/prepare-tasks-with-secrets-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
 
 ### regenerate-certificates
@@ -1092,11 +1253,11 @@ This feature is only available in Concourse v5+.
 Regenerates all non-configurable leaf certificates managed by Tanzu Operations Manager using
 the active certificate authority.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/regenerate-certificates"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/regenerate-certificates-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/regenerate-certificates-usage"
 
 ### replicate-product
@@ -1112,11 +1273,11 @@ in a non-versioned blobstore, because it cannot generate a unique name.
 It is recommended to use the replicated tile immediately in the next task
 rather than storing it and using it in a different job.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/replicate-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/replicate-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/replicate-product-usage"
 
 ### revert-staged-changes
@@ -1129,11 +1290,11 @@ Since <code>revert-staged-changes</code> reverts all changes on a Tanzu Operatio
 it can conflict with tasks that perform stage or configure operations.
 Use passed constraints to ensure things run in the order you mean them to.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/revert-staged-changes"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/revert-staged-changes-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/revert-staged-changes-usage"
 
 ### run-bosh-errand
@@ -1158,11 +1319,11 @@ To replicate this retry behavior in your pipeline, use
 the <a href="https://concourse-ci.org/jobs.html#schema.step.attempts">attempts</a>
 Concourse feature to run the task more than once.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/run-bosh-errand"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/run-bosh-errand-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/run-bosh-errand-usage"
 
 ### send-telemetry
@@ -1176,11 +1337,11 @@ To use the <code>send-telemetry</code>,
 you must acquire a license key.
 Contact your VMware Representative.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/send-telemetry"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/send-telemetry-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/send-telemetry-usage"
 
 ### stage-configure-apply
@@ -1191,21 +1352,21 @@ only to that product without applying changes to the rest of the foundation.
 
 <%= partial "disable-verifiers" %>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/stage-configure-apply"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/stage-configure-apply-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/stage-configure-apply-usage"
 
 ### stage-product
 Staged a product to the Tanzu Operations Manager specified in the config file.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/stage-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/stage-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/stage-product-usage"
 
 ### staged-config
@@ -1216,22 +1377,22 @@ built-in [export](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/staged-config"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/staged-config-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/staged-config-usage"
 
 ### staged-director-config
 
 Downloads configuration for the BOSH director from Tanzu Operations Manager.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/staged-director-config"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/staged-director-config-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/staged-director-config-usage"
 
 The configuration is exported to the `generated-config` output.
@@ -1245,22 +1406,22 @@ The credentials need to be provided from an external configuration when invoking
 ### test
 An example task to ensure the assets and Docker image are setup correctly in your concourse pipeline.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/test"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/test-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/test-usage"
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
 For more instruction on this topic, see the [variables](concepts/variables.md) section
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/test-interpolate"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/test-interpolate-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/test-interpolate-usage"
 
 ### update-runtime-config
@@ -1272,11 +1433,11 @@ upload BOSH releases,
 and set a named runtime config.
 This is useful when installing agents on BOSH deployed VMs that don't have a Tanzu Operations Manager tile.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/update-runtime-config"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/update-runtime-config-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/update-runtime-config-usage"
 
 <p class="note caution">
@@ -1289,11 +1450,11 @@ Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>
 
 Upgrades an existing Tanzu Operations Manager to a new given Tanzu Operations Manager version
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upgrade-opsman"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upgrade-opsman-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upgrade-opsman-usage"
 
 For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
@@ -1302,11 +1463,11 @@ For more information about this task and how it works, see the [upgrade](concept
 
 Uploads and stages product to the Tanzu Operations Manager specified in the config file.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upload-and-stage-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upload-and-stage-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upload-and-stage-product-usage"
 
 ### upload-product
@@ -1316,11 +1477,11 @@ If a shasum is provided in the config.yml,
 the integrity product will be verified
 with that shasum before uploading.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upload-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upload-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upload-product-usage"
 
 ### upload-stemcell
@@ -1329,11 +1490,11 @@ Uploads a stemcell to Tanzu Operations Manager.
 Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
 Tanzu Operations Manager parses this filename to determine the version and OS of the stemcell.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upload-stemcell"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upload-stemcell-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upload-stemcell-usage"
 
 [//]: # ({% include ".internal_link_url.md" %})
