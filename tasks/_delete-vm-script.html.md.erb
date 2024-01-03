@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet delete-vm-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -31,5 +30,5 @@ om vm-lifecycle delete-vm \
 # input_state_file need to be globbed (SC2086)
 # shellcheck disable=SC2086
 cp state/${input_state_file} "generated-state/${generated_state_file_name}"
-
-# code_snippet delete-vm-script end
+</code>
+</pre>
