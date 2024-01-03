@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet make-git-commit-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eu
 
@@ -23,4 +22,5 @@ if [[ -n $(git status --porcelain) ]]; then
   git add -A
   git commit -m "${COMMIT_MESSAGE}" --allow-empty
 fi
-# code_snippet make-git-commit-script end
+</code>
+</pre>

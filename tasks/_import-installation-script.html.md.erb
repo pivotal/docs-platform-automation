@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet import-installation-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -8,4 +7,5 @@ set -eux
 # shellcheck disable=SC2086
 om --env env/"${ENV_FILE}" --skip-ssl-validation import-installation \
   --installation installation/${INSTALLATION_FILE}
-# code_snippet import-installation-script end
+</code>
+</pre>

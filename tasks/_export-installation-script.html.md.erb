@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet export-installation-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -14,4 +13,5 @@ output_file_name="$(echo "${INSTALLATION_FILE}" | envsubst '$timestamp')"
 
 om --env env/"${ENV_FILE}" export-installation \
   --output-file installation/"${output_file_name}"
-# code_snippet export-installation-script end
+</code>
+</pre>
