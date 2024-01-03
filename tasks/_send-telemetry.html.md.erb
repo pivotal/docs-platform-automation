@@ -1,0 +1,22 @@
+<pre>
+<code>
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: telemetry-collector-binary
+- name: collected-telemetry-data
+
+params:
+  API_KEY:
+  # required
+  # The API key provided by Pivotal after accepting the EULA
+
+  DATA_FILE_PATH:
+  # required
+
+run:
+  path: platform-automation-tasks/tasks/send-telemetry.sh
+</code>
+</pre>

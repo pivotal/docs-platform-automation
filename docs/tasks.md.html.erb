@@ -1361,11 +1361,24 @@ it can conflict with tasks that perform stage or configure operations.
 Use passed constraints to ensure things run in the order you mean them to.</p>
 
 **Task**
-    ---excerpt--- "tasks/revert-staged-changes"
+
+<%= partial "../tasks/revert-staged-changes" %>
+
 **Implementation**
-    ---excerpt--- "tasks/revert-staged-changes-script"
+
+<%= partial "../tasks/revert-staged-changes-script" %>
+
 **Usage**
-    ---excerpt--- "reference/revert-staged-changes-usage"
+
+```yaml
+- task: revert-staged-changes
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/revert-staged-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### run-bosh-errand
 
@@ -1390,11 +1403,27 @@ the <a href="https://concourse-ci.org/jobs.html#schema.step.attempts">attempts</
 Concourse feature to run the task more than once.</p>
 
 **Task**
-    ---excerpt--- "tasks/run-bosh-errand"
+
+<%= partial "../tasks/run-bosh-errand" %>
+
 **Implementation**
-    ---excerpt--- "tasks/run-bosh-errand-script"
+
+<%= partial "../tasks/run-bosh-errand-script" %>
+
 **Usage**
-    ---excerpt--- "reference/run-bosh-errand-usage"
+
+```yaml
+- task: run-bosh-errand
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/run-bosh-errand.yml
+  input_mapping:
+    env: configuration
+  params:
+    PRODUCT_NAME: cf
+    ERRAND_NAME: smoke_tests
+    ENV_FILE: foundations/config/env.yml
+    OPSMAN_SSH_PRIVATE_KEY: ((ops_manager_ssh_private_key))
+```
 
 ### send-telemetry
 
@@ -1405,14 +1434,27 @@ to VMware.
 <span class="note__title">Note</span>
 To use the <code>send-telemetry</code>,
 you must acquire a license key.
-Contact your VMware Representative.</p>
+Contact your VMware representative.</p>
 
 **Task**
-    ---excerpt--- "tasks/send-telemetry"
+
+<%= partial "../tasks/send-telemetry" %>
+
 **Implementation**
-    ---excerpt--- "tasks/send-telemetry-script"
+
+<%= partial "../tasks/send-telemetry-script" %>
+
 **Usage**
-    ---excerpt--- "reference/send-telemetry-usage"
+
+```yaml
+- task: send-telemetry-data
+  attempts: 3
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/send-telemetry.yml
+  params:
+    API_KEY: no-op-test-key
+    DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
+```
 
 ### stage-configure-apply
 
@@ -1423,21 +1465,55 @@ only to that product without applying changes to the rest of the foundation.
 <%= partial "disable-verifiers" %>
 
 **Task**
-    ---excerpt--- "tasks/stage-configure-apply"
+
+<%= partial "../tasks/stage-configure-apply" %>
+
 **Implementation**
-    ---excerpt--- "tasks/stage-configure-apply-script"
+
+<%= partial "../tasks/stage-configure-apply-script" %>
+
 **Usage**
-    ---excerpt--- "reference/stage-configure-apply-usage"
+
+```yaml
+- task: stage-configure-apply
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/stage-configure-apply.yml
+  attempts: 3
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/p-telemetry.yml
+    STAGE_PRODUCT_CONFIG_FILE: foundations/((foundation))/config/p-telemetry.yml
+    ENV_FILE: foundations/config/env.yml
+    VARS_FILES: |
+      vars/foundations/((foundation))/vars/director.yml
+  input_mapping:
+    env: configuration
+    config: configuration
+    vars: configuration
+```
 
 ### stage-product
 Staged a product to the Tanzu Operations Manager specified in the config file.
 
 **Task**
-    ---excerpt--- "tasks/stage-product"
+
+<%= partial "../tasks/stage-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/stage-product-script"
+
+<%= partial "../tasks/stage-product-script" %>
+
 **Usage**
-    ---excerpt--- "reference/stage-product-usage"
+
+```yaml
+- task: upload-and-stage-tas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/stage-product.yml
+  input_mapping:
+    product: tas-product
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### staged-config
 Downloads the configuration for a product from Tanzu Operations Manager.
