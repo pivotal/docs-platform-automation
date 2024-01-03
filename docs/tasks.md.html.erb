@@ -520,23 +520,23 @@ private key in PEM format via the `certs/` input.
 
 **Usage**
 
-```yaml
-- task: create-root-ca
-  image: platform-automation-image
-  file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
-  input_mapping:
-    env: configuration
-  params:
-    ENV_FILE: foundations/config/env.yml
-```
-
-<p></p>
+<pre>
+<code>
+  - task: create-root-ca
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+</code>
+</pre>
 
 ### configure-saml-authentication
 
-<p>Configures Tanzu Operations Manager with an external SAML user store and admin user account.
+Configures Tanzu Operations Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
-and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.</p>
+and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
 **Task**
 
