@@ -705,7 +705,7 @@ Delete the Tanzu Operations Manager installation.
 
 **Task**
 
-<%= partial "../tasks/delete-installation-script" %>
+<%= partial "../tasks/delete-installation" %>
 
 **Implementation**
 
@@ -1199,11 +1199,24 @@ The failed task will provide a list of errors that need to be fixed
 before an `apply-changes` operation can start.
 
 **Task**
-    ---excerpt--- "tasks/pre-deploy-check"
+
+<%= partial "../tasks/pre-deploy-check" %>
+
 **Implementation**
-    ---excerpt--- "tasks/pre-deploy-check-script"
+
+<%= partial "../tasks/pre-deploy-check-script" %>
+
 **Usage**
-    ---excerpt--- "reference/pre-deploy-check-usage"
+
+```yaml
+- task: pre-deploy-check
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/pre-deploy-check.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### prepare-image
 
@@ -1221,11 +1234,22 @@ This feature is only available in Concourse v5+.
 <code>prepare-image</code> does not work with Concourse v4.</p>
 
 **Task**
-    ---excerpt--- "tasks/prepare-image"
+
+<%= partial "../tasks/prepare-image" %>
+
 **Implementation**
-    ---excerpt--- "tasks/prepare-image-script"
+
+<%= partial "../tasks/prepare-image-script" %>
+
 **Usage**
-    ---excerpt--- "reference/prepare-image-usage"
+
+```yaml
+prepare-image: &prepare-image
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/prepare-image.yml
+  params:
+    CA_CERTS: ((opsman-ssl.ca))
+```
 
 ### prepare-tasks-with-secrets
 
@@ -1242,11 +1266,31 @@ This feature is only available in Concourse v5+.
 <code>prepare-tasks-with-secrets</code> does not work with Concourse v4.</p>
 
 **Task**
-    ---excerpt--- "tasks/prepare-tasks-with-secrets"
+
+<%= partial "../tasks/prepare-tasks-with-secrets" %>
+
 **Implementation**
-    ---excerpt--- "tasks/prepare-tasks-with-secrets-script"
+
+<%= partial "../tasks/prepare-tasks-with-secrets-script" %>
+
 **Usage**
-    ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
+
+```yaml
+# This task is used in multiple jobs
+# The yaml anchor "*prepare-tasks-with-secrets" is used in its place
+prepare-tasks-with-secrets: &prepare-tasks-with-secrets
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+  input_mapping:
+    tasks: platform-automation-tasks
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_PATHS: config/foundations/config config/foundations/((foundation))/config
+    VARS_PATHS: vars/foundations/((foundation))/vars
+  output_mapping:
+    tasks: platform-automation-tasks
+```
 
 ### regenerate-certificates
 
@@ -1254,11 +1298,24 @@ Regenerates all non-configurable leaf certificates managed by Tanzu Operations M
 the active certificate authority.
 
 **Task**
-    ---excerpt--- "tasks/regenerate-certificates"
+
+<%= partial "../tasks/regenerate-certificates" %>
+
 **Implementation**
-    ---excerpt--- "tasks/regenerate-certificates-script"
+
+<%= partial "../tasks/regenerate-certificates-script" %>
+
 **Usage**
-    ---excerpt--- "reference/regenerate-certificates-usage"
+
+```yaml
+- task: regenerate-certificates
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/regenerate-certificates.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### replicate-product
 
@@ -1274,11 +1331,24 @@ It is recommended to use the replicated tile immediately in the next task
 rather than storing it and using it in a different job.</p>
 
 **Task**
-    ---excerpt--- "tasks/replicate-product"
+
+<%= partial "../tasks/replicate-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/replicate-product-script"
+
+<%= partial "../tasks/replicate-product-script" %>
+
 **Usage**
-    ---excerpt--- "examples/replicate-product-usage"
+
+```yaml
+- task: replicate-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/replicate-product.yml
+  input_mapping:
+    product: pas-windows
+  params:
+    REPLICATED_NAME: iso-1
+```
 
 ### revert-staged-changes
 
