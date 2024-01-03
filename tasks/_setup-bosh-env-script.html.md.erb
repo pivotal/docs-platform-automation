@@ -1,3 +1,5 @@
+<pre>
+<code>
 set +x
 if [ -n "${OPSMAN_SSH_PRIVATE_KEY}" ]; then
   eval "$(om --env env/"${ENV_FILE}" bosh-env)"
@@ -26,3 +28,5 @@ if [ -n "${OPSMAN_SSH_PRIVATE_KEY}" ]; then
 else
   eval "$(om --env env/"${ENV_FILE}" bosh-env)"
 fi
+</code>
+</pre>
