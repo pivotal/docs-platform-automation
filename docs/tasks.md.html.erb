@@ -506,9 +506,9 @@ which can stage a product that's been uploaded.
 
 ### configure-new-certificate-authority
 
-Create a new certificate authority on Tanzu Operations Manager. This can either create a
+<p>Create a new certificate authority on Tanzu Operations Manager. This can either create a
 new CA using CredHub or create a new CA using a provided certificate and
-private key in PEM format via the `certs/` input.
+private key in PEM format via the <code>certs/</code> input.</p>
 
 **Task**
 
@@ -520,17 +520,15 @@ private key in PEM format via the `certs/` input.
 
 **Usage**
 
-<pre>
-<code>
-  - task: create-root-ca
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
-    input_mapping:
-      env: configuration
-    params:
-      ENV_FILE: foundations/config/env.yml
-</code>
-</pre>
+```yaml
+- task: create-root-ca
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### configure-saml-authentication
 
@@ -557,7 +555,7 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
     AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
 ```
 
-<p class="note">
+<div class="note">
 <span class="note__title">Note</span>
 <b>BOSH admin client:</b>
 By default, this task creates a BOSH admin client.
@@ -565,7 +563,8 @@ This is helpful for some advanced workflows
 that involve communicating directly with the BOSH Director.
 It is possible to disable this behavior; see the
 <a href="./how-to-guides/configuring-auth.md">config file documentation</a>
-for details.</p>
+for details.
+</div>
 
 Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
@@ -581,17 +580,39 @@ please see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
 Creates an unconfigured Tanzu Operations Manager VM.
 
-=== "Task"
-    ---excerpt--- "tasks/create-vm"
-=== "Implementation"
-    ---excerpt--- "tasks/create-vm-script"
-=== "Usage"
-    ---excerpt--- "reference/create-vm-usage"
+**Task**
+
+<%= partial "../tasks/create-vm" %>
+
+**Implementation**
+
+<%= partial "../tasks/create-vm-script" %>
+
+**Usage**
+
+```yaml
+- task: create-vm
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/create-vm.yml
+  input_mapping:
+    image: opsman-image
+    config: configuration
+    vars: configuration
+  params:
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    STATE_FILE: state-((foundation)).yml
+    VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+  ensure: &put-state
+    do:
+    - put: state
+      params:
+        file: generated-state/state-((foundation)).yml
+```
 
 This task requires a config file specific to the IaaS being deployed to.
-Please see the [configuration](./inputs-outputs.md#tanzu-operations-manager-config) page for more specific examples.
+See the [configuration](./inputs-outputs.md#tanzu-operations-manager-config) page for more specific examples.
 
-The task does specific CLI commands for the creation of the Tanzu Operations Manager VM on each IAAS. See below for more information:
+The task does specific CLI commands for the creation of the Tanzu Operations Manager VM on each IAAS. See the following for more information:
 
 **AWS**
 
@@ -624,16 +645,16 @@ The task does specific CLI commands for the creation of the Tanzu Operations Man
 1. Creates a VM from the image. This does not create any new resources
 1. The public IP address, if provided, is assigned after successful creation
 
-**Vsphere**
+**vSphere**
 
 1. Requires the OVA image from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is stored on the generated path. If folder is not provided, the VM will be placed in the datacenter.
 1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources
 
-
 ### credhub-interpolate
-Interpolate credhub entries into configuration files
+
+Interpolate credhub entries into configuration files.
 
 <p class="note caution">
 <span class="note__title">Caution</span>
@@ -645,26 +666,63 @@ The <code>credhub-interpolate</code> task will be deprecated in future <em>major
 The <code>prepare-tasks-with-secrets</code> task replaces the <code>credhub-interpolate</code> task on Concourse versions 5.x+
 and provides additional benefits.</p>
 
-=== "Task"
-    ---excerpt--- "tasks/credhub-interpolate"
-=== "Implementation"
-    ---excerpt--- "tasks/credhub-interpolate-script"
-=== "Usage"
-    ---excerpt--- "examples/credhub-interpolate-usage"
+**Task**
 
-This task requires a valid credhub with UAA client and secret. For information on how to
+    ---excerpt--- "tasks/credhub-interpolate"
+<%= partial "../tasks/credhub-interpolate" %>
+
+**Implementation**
+
+    ---excerpt--- "tasks/credhub-interpolate-script"
+<%= partial "../tasks/credhub-interpolate-script" %>
+
+**Usage**
+
+```yaml
+- task: interpolate-env-creds
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  params:
+    CREDHUB_CLIENT: ((credhub-client))
+    CREDHUB_SECRET: ((credhub-secret))
+    CREDHUB_SERVER: ((credhub-server))
+    PREFIX: '/pipeline/vsphere'
+    INTERPOLATION_PATHS: ((foundation))/config
+    SKIP_MISSING: true
+  input_mapping:
+    files: configuration
+  output_mapping:
+    interpolated-files: interpolated-configs
+```
+
+This task requires a valid credhub with UAA client and secret. For information about how to
 set this up, see [Using a secrets store to store credentials](./concepts/secrets-handling.md).
 
 ### delete-certificate-authority
 
 Delete all inactive certificate authorities from the Tanzu Operations Manager.
 
-=== "Task"
+**Task**
+
     ---excerpt--- "tasks/delete-certificate-authority"
-=== "Implementation"
+<%= partial "../tasks/delete-certificate-authority" %>
+
+**Implementation**
+
     ---excerpt--- "tasks/delete-certificate-authority-script"
-=== "Usage"
-    ---excerpt--- "reference/delete-certificate-authority-usage"
+<%= partial "../tasks/delete-certificate-authority-script" %>
+
+**Usage**
+
+```yaml
+- task: delete-certificate-authority
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/delete-certificate-authority.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### delete-installation
 Delete the Tanzu Operations Manager Installation

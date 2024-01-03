@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet create-vm-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -42,5 +41,5 @@ om vm-lifecycle create-vm \
 # input_state_file need to be globbed (SC2086)
 # shellcheck disable=SC2086
 cp state/${input_state_file} "generated-state/${generated_state_file_name}"
-
-# code_snippet create-vm-script end
+</code>
+</pre>

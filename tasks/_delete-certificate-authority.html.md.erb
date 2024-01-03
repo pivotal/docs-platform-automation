@@ -1,0 +1,18 @@
+<pre>
+<code>
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+
+run:
+  path: platform-automation-tasks/tasks/delete-certificate-authority.sh
+</code>
+</pre>
