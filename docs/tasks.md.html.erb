@@ -13,38 +13,25 @@ The Docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information.
 To learn more see [Running commands locally](./how-to-guides/running-commands-locally.md).
 
+<p class="note">
+<span class="note__title">Note</span>
+The inputs, outputs, params, filename, and filepath
+of this task file are part of its semantically versioned API.
+See our documentation for a detailed discussion of our semver API.
+See <a href="https://semver.org/">www.semver.org</a> for an explanation of semantic versioning.
+</p>
+
 ### activate-certificate-authority
 
 Ensures that the newest certificate authority on Tanzu Operations Manager is active.
 
 **Task**
 
-```yaml
----
-platform: linux
-
-inputs:
-- name: platform-automation-tasks
-- name: env # contains the env file with target OpsMan Information
-
-params:
-  ENV_FILE: env.yml
-  # - Required
-  # - Filepath of the env config YAML
-  # - The path is relative to root of the `env` input
-
-run:
-  path: platform-automation-tasks/tasks/activate-certificate-authority.sh
-```
+<%= partial "tasks/activate-certificate-authority" %>
 
 **Implementation**
 
-```
-cat /var/version && echo ""
-set -eux
-
-om --env env/"${ENV_FILE}" activate-certificate-authority
-```
+<%= partial "tasks/activate-certificate-authority-script" %>
 
 **Usage**
 
@@ -371,14 +358,6 @@ which can extract a config file.
 
 **Task**
 
-<p class="note">
-<span class="note__title">Note</span>
-The inputs, outputs, params, filename, and filepath
-of this task file are part of its semantically versioned API.
-See our documentation for a detailed discussion of our semver API.
-See <a href="https://semver.org/">www.semver.org</a> for an explanation of semantic versioning.
-</p>
-
 <%= partial "../tasks/configure-director" %>
 
 **Implementation**
@@ -668,12 +647,10 @@ and provides additional benefits.</p>
 
 **Task**
 
-    ---excerpt--- "tasks/credhub-interpolate"
 <%= partial "../tasks/credhub-interpolate" %>
 
 **Implementation**
 
-    ---excerpt--- "tasks/credhub-interpolate-script"
 <%= partial "../tasks/credhub-interpolate-script" %>
 
 **Usage**
@@ -704,12 +681,10 @@ Delete all inactive certificate authorities from the Tanzu Operations Manager.
 
 **Task**
 
-    ---excerpt--- "tasks/delete-certificate-authority"
 <%= partial "../tasks/delete-certificate-authority" %>
 
 **Implementation**
 
-    ---excerpt--- "tasks/delete-certificate-authority-script"
 <%= partial "../tasks/delete-certificate-authority-script" %>
 
 **Usage**
@@ -725,24 +700,58 @@ Delete all inactive certificate authorities from the Tanzu Operations Manager.
 ```
 
 ### delete-installation
-Delete the Tanzu Operations Manager Installation
 
-=== "Task"
-    ---excerpt--- "tasks/delete-installation"
-=== "Implementation"
-    ---excerpt--- "tasks/delete-installation-script"
-=== "Usage"
-    ---excerpt--- "reference/delete-installation-usage"
+Delete the Tanzu Operations Manager installation.
+
+**Task**
+
+<%= partial "../tasks/delete-installation-script" %>
+
+**Implementation**
+
+<%= partial "../tasks/delete-installation-script" %>
+
+**Usage**
+
+```yaml
+- task: delete-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/delete-installation.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### delete-vm
+
 Deletes the Tanzu Operations Manager VM instantiated by [create-vm](#create-vm).
 
-=== "Task"
-    ---excerpt--- "tasks/delete-vm"
-=== "Implementation"
-    ---excerpt--- "tasks/delete-vm-script"
-=== "Usage"
-    ---excerpt--- "reference/delete-vm-usage"
+**Task**
+
+<%= partial "../tasks/delete-vm" %>
+
+**Implementation**
+
+<%= partial "../tasks/delete-vm-script" %>
+
+**Usage**
+
+```yaml
+- task: delete-vm
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/delete-vm.yml
+  input_mapping:
+    config: configuration
+  params:
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    STATE_FILE: state-((foundation)).yml
+  ensure:
+    do:
+    - put: state
+      params:
+        file: generated-state/state-((foundation)).yml
+```
 
 This task requires the [state file](./inputs-outputs.md#state) generated [create-vm](#create-vm).
 
