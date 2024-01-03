@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet replicate-product-script start bash
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -11,4 +11,5 @@ fi
 iso-replicator -name "${REPLICATED_NAME}" \
   -output "replicated-product/${REPLICATED_NAME}.pivotal" \
   -path product/*.pivotal
-# code_snippet replicate-product-script end bash
+</code>
+</pre>
