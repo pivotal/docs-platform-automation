@@ -485,7 +485,7 @@ which can stage a product that's been uploaded.
 
 ### configure-new-certificate-authority
 
-<p>Create a new certificate authority on Tanzu Operations Manager. This can either create a
+<p>Creates a new certificate authority on Tanzu Operations Manager. This can either create a
 new CA using CredHub or create a new CA using a provided certificate and
 private key in PEM format via the <code>certs/</code> input.</p>
 
@@ -493,9 +493,13 @@ private key in PEM format via the <code>certs/</code> input.</p>
 
 <%= partial "../tasks/configure-new-certificate-authority" %>
 
+Test1
+
 **Implementation**
 
 <%= partial "../tasks/configure-new-certificate-authority-script" %>
+
+Test2
 
 **Usage**
 
@@ -508,6 +512,8 @@ private key in PEM format via the <code>certs/</code> input.</p>
   params:
     ENV_FILE: foundations/config/env.yml
 ```
+
+Test3
 
 ### configure-saml-authentication
 
@@ -677,7 +683,7 @@ set this up, see [Using a secrets store to store credentials](./concepts/secrets
 
 ### delete-certificate-authority
 
-Delete all inactive certificate authorities from the Tanzu Operations Manager.
+Deletes all inactive certificate authorities from the Tanzu Operations Manager.
 
 **Task**
 
@@ -701,7 +707,7 @@ Delete all inactive certificate authorities from the Tanzu Operations Manager.
 
 ### delete-installation
 
-Delete the Tanzu Operations Manager installation.
+Deletes the Tanzu Operations Manager installation.
 
 **Task**
 
@@ -1319,7 +1325,7 @@ the active certificate authority.
 
 ### replicate-product
 
-Will replicate the product for use in isolation segments.
+This replicates the product for use in isolation segments.
 The task requires a downloaded product prior to replication.
 The output is a replicated tile with a new name in the metadata and filename.
 
@@ -1708,13 +1714,28 @@ For more information about this task and how it works, see [Recovering and upgra
 Uploads and stages product to the Tanzu Operations Manager specified in the config file.
 
 **Task**
-    ---excerpt--- "tasks/upload-and-stage-product"
+
+<%= partial "../tasks/upload-and-stage-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/upload-and-stage-product-script"
+
+<%= partial "../tasks/upload-and-stage-product-script" %>
+
 **Usage**
-    ---excerpt--- "reference/upload-and-stage-product-usage"
+
+```yaml
+- task: upload-and-stage-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/upload-and-stage-product.yml
+  input_mapping:
+    product: pks-product
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### upload-product
+
 Uploads a product to the Tanzu Operations Manager specified in the config file.
 
 If a shasum is provided in the config.yml,
@@ -1722,24 +1743,53 @@ the integrity product will be verified
 with that shasum before uploading.
 
 **Task**
-    ---excerpt--- "tasks/upload-product"
+
+<%= partial "../tasks/upload-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/upload-product-script"
+
+<%= partial "../tasks/upload-product-script" %>
+
 **Usage**
-    ---excerpt--- "reference/upload-product-usage"
+
+```yaml
+- task: upload-tas-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/upload-product.yml
+  input_mapping:
+    product: tas-product
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### upload-stemcell
+
 Uploads a stemcell to Tanzu Operations Manager.
 
 Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
 Tanzu Operations Manager parses this filename to determine the version and OS of the stemcell.
 
 **Task**
-    ---excerpt--- "tasks/upload-stemcell"
+
+<%= partial "../tasks/upload-stemcell-script" %>
+
 **Implementation**
-    ---excerpt--- "tasks/upload-stemcell-script"
+
+<%= partial "../tasks/upload-stemcell-script" %>
+
 **Usage**
-    ---excerpt--- "reference/upload-stemcell-usage"
+
+```yaml
+- task: upload-pks-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/upload-stemcell.yml
+  input_mapping:
+    env: configuration
+    stemcell: pks-stemcell
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 [//]: # ({% include ".internal_link_url.md" %})
 [//]: # ({% include ".external_link_url.md" %})
