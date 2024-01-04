@@ -11,5 +11,6 @@ if [[ -f "certs/certificate.pem" && -f "certs/privatekey.pem" ]]; then
 else
   om --env env/"${ENV_FILE}" generate-certificate-authority
 fi
+
 </code>
 </pre>

@@ -493,6 +493,20 @@ private key in PEM format via the <code>certs/</code> input.</p>
 
 <%= partial "../tasks/configure-new-certificate-authority" %>
 
+```bash
+cat /var/version && echo ""
+set -eux
+
+if [[ -f "certs/certificate.pem" && -f "certs/privatekey.pem" ]]; then
+  om --env env/"${ENV_FILE}" create-certificate-authority \
+   --format json \
+   --certificate-pem "$(<certs/certificate.pem)" \
+   --private-key-pem "$(<certs/privatekey.pem)"
+else
+  om --env env/"${ENV_FILE}" generate-certificate-authority
+fi
+```
+
 Test1
 
 **Implementation**
