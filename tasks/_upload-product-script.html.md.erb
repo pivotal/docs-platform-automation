@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet upload-product-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eux
 
@@ -12,4 +11,6 @@ fi
 om --env env/"${ENV_FILE}" upload-product \
   --product product/*.pivotal \
   ${OPTIONAL_CONFIG_FLAG}
-# code_snippet upload-product-script end
+
+</code>
+</pre>
