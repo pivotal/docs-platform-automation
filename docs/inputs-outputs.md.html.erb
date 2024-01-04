@@ -500,50 +500,55 @@ using the [download-product](./tasks.md#download-product) task.
 
 #### stemcell.yml
 
-=== "AWS"
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+**AWS**
 
-=== "Azure"
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
-=== "GCP"
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+**Azure**
 
-=== "OpenStack"
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
-=== "vSphere"
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+**GCP**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+**OpenStack**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+**vSphere**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
 
 #### download-product task
@@ -562,6 +567,7 @@ This artifact is an output of [`download-product`](./tasks.md#download-product)
 located in the `assign-stemcell-config` output directory.
 
 This file should resemble the following:
+
 ```yaml
 product: cf
 stemcell: "97.190"
@@ -575,7 +581,7 @@ so they can learn and measure results
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 
-<%= partial "../examples/telemetry">
+<%= partial "../examples/telemetry" %>
 
 [//]: # ({% include ".internal_link_url.md" %})
 [//]: # ({% include ".external_link_url.md" %})
