@@ -1516,6 +1516,7 @@ Staged a product to the Tanzu Operations Manager specified in the config file.
 ```
 
 ### staged-config
+
 Downloads the configuration for a product from Tanzu Operations Manager.
 
 This is not to be confused with Tanzu Operations Manager's
@@ -1524,22 +1525,56 @@ which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
 **Task**
-    ---excerpt--- "tasks/staged-config"
+
+<%= partial "../tasks/staged-config" %>
+
 **Implementation**
-    ---excerpt--- "tasks/staged-config-script"
+
+<%= partial "../tasks/staged-config-script" %>
+
 **Usage**
-    ---excerpt--- "examples/staged-config-usage"
+
+```yaml
+- task: staged-config
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/staged-config.yml
+  input_mapping:
+    env: configuration
+  params:
+    PRODUCT_NAME: cf
+  ensure:
+    do:
+      - put: state
+        params:
+          file: generated-state/state.yml
+```
 
 ### staged-director-config
 
 Downloads configuration for the BOSH director from Tanzu Operations Manager.
 
 **Task**
-    ---excerpt--- "tasks/staged-director-config"
+
+<%= partial "../tasks/staged-director-config" %>
+
 **Implementation**
-    ---excerpt--- "tasks/staged-director-config-script"
+
+<%= partial "../tasks/staged-director-config-script" %>
+
 **Usage**
-    ---excerpt--- "examples/staged-director-config-usage"
+
+```yaml
+- task: staged-director-config
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/staged-director-config.yml
+  input_mapping:
+    env: configuration
+  ensure:
+    do:
+      - put: state
+        params:
+          file: generated-state/state.yml
+```
 
 The configuration is exported to the `generated-config` output.
 It does not extract credentials from Tanzu Operations Manager
@@ -1550,25 +1585,50 @@ The credentials need to be provided from an external configuration when invoking
 <%= partial "missing_fields_opsman_director" %>
 
 ### test
+
 An example task to ensure the assets and Docker image are setup correctly in your concourse pipeline.
 
 **Task**
-    ---excerpt--- "tasks/test"
+
+<%= partial "../tasks/test" %>
+
 **Implementation**
-    ---excerpt--- "tasks/test-script"
+
+<%= partial "../tasks/test-script" %>
+
 **Usage**
-    ---excerpt--- "reference/test-usage"
+
+```yaml
+- task: test
+  file: platform-automation-tasks/tasks/test.yml
+  image: platform-automation-image
+```
 
 ### test-interpolate
+
 An example task to ensure that all required vars are present when interpolating into a base file.
-For more instruction on this topic, see the [variables](concepts/variables.md) section
+For more instruction on this topic, see the [variables](concepts/variables.md) section.
 
 **Task**
-    ---excerpt--- "tasks/test-interpolate"
+
+<%= partial "../tasks/test-interpolate" %>
+
 **Implementation**
-    ---excerpt--- "tasks/test-interpolate-script"
+
+<%= partial "../tasks/test-interpolate-script" %>
+
 **Usage**
-    ---excerpt--- "reference/test-interpolate-usage"
+
+```yaml
+- task: test-interpolate
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/test-interpolate.yml
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/download-tas.yml
+    SKIP_MISSING: true
+  input_mapping:
+    config: configuration
+```  
 
 ### update-runtime-config
 
@@ -1580,11 +1640,28 @@ and set a named runtime config.
 This is useful when installing agents on BOSH deployed VMs that don't have a Tanzu Operations Manager tile.
 
 **Task**
-    ---excerpt--- "tasks/update-runtime-config"
+
+<%= partial "../tasks/update-runtime-config" %>
+
 **Implementation**
-    ---excerpt--- "tasks/update-runtime-config-script"
+
+<%= partial "../tasks/update-runtime-config-script" %>
+
 **Usage**
-    ---excerpt--- "examples/update-runtime-config-usage"
+
+```yaml
+- task: update-runtime-config
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/update-runtime-config.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+    releases: bosh-releases
+  params:
+    CONFIG_FILE: runtime-config.yml
+    NAME: my-runtime-config
+    OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
+```
 
 <p class="note caution">
 <span class="note__title">Caution</span>
@@ -1597,13 +1674,34 @@ Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>
 Upgrades an existing Tanzu Operations Manager to a new given Tanzu Operations Manager version
 
 **Task**
-    ---excerpt--- "tasks/upgrade-opsman"
-**Implementation**
-    ---excerpt--- "tasks/upgrade-opsman-script"
-**Usage**
-    ---excerpt--- "reference/upgrade-opsman-usage"
 
-For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
+<%= partial "../tasks/upgrade-opsman" %>
+
+**Implementation**
+
+<%= partial "../tasks/upgrade-opsman-script" %>
+
+**Usage**
+
+```yaml
+- task: upgrade-opsman
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/upgrade-opsman.yml
+  input_mapping:
+    image: opsman-image
+    config: configuration
+    env: configuration
+    vars: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    STATE_FILE: state-((foundation)).yml
+    INSTALLATION_FILE: ((foundation))-installation*.zip
+    VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+  ensure: *put-state
+```
+
+For more information about this task and how it works, see [Recovering and upgrading Tanzu Operations Manager](concepts/upgrade.md).
 
 ### upload-and-stage-product
 
