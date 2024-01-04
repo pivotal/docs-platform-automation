@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet update-runtime-config-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 set -eu
 
@@ -37,4 +36,5 @@ bosh -n update-config \
   config/"${CONFIG_FILE}" \
   ${vars_files_args[@]}
 
-# code_snippet update-runtime-config-script end
+</code>
+</pre>

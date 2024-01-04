@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-# code_snippet upgrade-opsman-script start bash
-
+<pre>
+<code>
 cat /var/version && echo ""
 om -v
 set -eux
@@ -52,4 +51,5 @@ om --env env/"${ENV_FILE}" configure-opsman \
   --config "config/${OPSMAN_CONFIG_FILE}" \
   ${vars_files_args[@]}
 
-# code_snippet upgrade-opsman-script end
+</code>
+</pre>
