@@ -19,7 +19,51 @@ There are two ways to build a director config.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
 
----excerpt--- "examples/director-configuration"
+```yaml
+---
+az-configuration:
+- clusters:
+  - cluster: cluster-name
+    resource_pool: resource-pool-name
+  name: AZ01
+
+properties-configuration:
+  iaas_configuration:
+    vcenter_host: vcenter.example.com
+    vcenter_username: admin
+    vcenter_password: password
+    ......
+  director_configuration:
+    blobstore_type: local
+    bosh_recreate_on_next_deploy: false
+    custom_ssh_banner: null
+    ......
+  security_configuration:
+    generate_vm_passwords: true
+    trusted_certificates:
+  syslog_configuration:
+    enabled: false
+
+network-assignment:
+  network:
+    name: INFRASTRUCTURE
+  other_availability_zones: []
+  singleton_availability_zone:
+    name: AZ01
+
+networks-configuration:
+  icmp_checks_enabled: false
+  networks:
+  - name: NETWORK-NAME
+  ......
+
+resource-configuration:
+  compilation:
+    instance_type:
+      id: automatic
+    instances: automatic
+  ......
+```
 
 The IAAS specific configuration can be found in the Tanzu Operations Manager API documentation.
 
@@ -51,32 +95,115 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
-=== "Tanzu Network"
-    ---excerpt--- "examples/download-product-config-pivnet"
-=== "S3"
-    ---excerpt--- "examples/download-product-config-s3"
-=== "GCS"
-    ---excerpt--- "examples/download-product-config-gcs"
-=== "Azure"
-    ---excerpt--- "examples/download-product-config-azure"
+**Tanzu Network**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+
+# Either product-version OR product-version-regex is required
+# product-version-regex: ^1\.2\..*$ # must not be quoted
+product-version: 1.2.3
+
+# Optional
+# pivnet-disable-ssl: true  # default - false
+# stemcell-iaas: aws        # aws|azure|google|openstack|vsphere
+                            # will attempt to download the latest stemcell
+                            # associated with a product by default
+# stemcell-version: 90.90   # specific stemcell version to download
+# stemcell-heavy: true      # will force download of heavy stemcell
+                            # not available on all IaaSes
+# blobstore-bucket: bucket  # if set, product files will have their slug and
+                            # version prepended. Set if the product will
+                            # ever be stored in a blobstore
+```
+
+**S3**
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+s3-region-name: us-west-1           # if NOT using AWS s3, value is 'region'
+
+## Required unless `s3-auth-type: iam`
+s3-access-key-id: aws-or-minio-key-id
+s3-secret-access-key: aws-or-minio-secret-key
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+# s3-disable-ssl: true                        # default - false
+# s3-enable-v2-signing: true                  # available for compatibility
+# s3-auth-type: iam                           # default - accesskey
+# s3-endpoint: s3.endpoint.com                # required if NOT using AWS S3
+```
+
+**GCS**
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+gcs-project-id: project-id
+gcs-service-account-json: |
+  {
+    "type": "service_account",
+    "project_id": "project-id",
+    "private_key_id": "fake-key-id",
+    "private_key": "-----BEGIN PRIVATE KEY-----\fake-key-----END PRIVATE KEY-----\n",
+    "client_email": "email@project-id.iam.gserviceaccount.com",
+    "client_id": "123456789876543212345",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/project%40project-id.iam.gserviceaccount.com"
+  }
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+```
+
+**Azure**
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: container-name
+azure-storage-account: 1234567890abcdefghij
+azure-storage-key: storage-access-key-from-azure-portal
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+```
 
 ### download-stemcell-product-config
 
-The `config` input for a download product task 
+The `config` input for a download product task
 can be used with a `download-config.yml` file to download a stemcell.
 The configuration of the `download-config.yml` looks like this:
 
----excerpt--- "examples/download-stemcell-product-config"
+<%= partial "examples/download-stemcell-product" %>
 
 ### env
 
 The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Tanzu Operations Manager API.
 
-=== "basic auth"
-    ---excerpt--- "examples/env"
-=== "uaa auth"
-    ---excerpt--- "examples/env-uaa"
+**basic auth**
+
+<%= partial "../examples/env" %>
+
+**uaa auth**
+
+<%= partial "../examples/env-uaa" %>
 
 #### Getting the `client-id` and `client-secret`
 
@@ -144,20 +271,31 @@ The config for a Tanzu Operations Manager described IAAS specific information fo
 The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.
 
-=== "AWS"
-    ---excerpt--- "examples/aws-configuration"
-=== "Azure"
-    ---excerpt--- "examples/azure-configuration"
-=== "GCP"
-    ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
-    ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
-    ---excerpt--- "examples/vsphere-configuration"
-=== "Additional Settings"
-    ---excerpt--- "examples/opsman-settings"
+**AWS**
 
-Specific advice and features for the different IaaSs are documented below
+<%= partial "../examples/opsman-config/aws %>
+
+**Azure**
+
+<%= partial "../examples/opsman-config/azure %>
+
+**GCP**
+
+<%= partial "../examples/opsman-config/gcp %>
+
+**Openstack**
+
+<%= partial "../examples/opsman-config/openstack %>
+
+**vSphere**
+
+<%= partial "../examples/opsman-config/vsphere %>
+
+**Additional settings**
+
+<%= partial "../examples/opsman-config/settings %>
+
+Specific advice and features for the different IaaSs are documented below.
 
 #### AWS
 
@@ -305,7 +443,7 @@ There are two ways to build a product config.
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
 
----excerpt--- "examples/product-configuration"
+<%= partial "../examples/product" %>
 
 The following is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
@@ -437,7 +575,7 @@ so they can learn and measure results
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 
----excerpt--- "examples/telemetry"
+<%= partial "../examples/telemetry">
 
 [//]: # ({% include ".internal_link_url.md" %})
 [//]: # ({% include ".external_link_url.md" %})

@@ -493,15 +493,11 @@ private key in PEM format via the <code>certs/</code> input.</p>
 
 <%= partial "../tasks/configure-new-certificate-authority" %>
 
-Test 1
-
 **Implementation**
 
 <!--
     <%= partial "../tasks/configure-new-certificate-authority-script" %>
 -->
-
-Test2
 
 ```bash
 cat /var/version && echo ""
@@ -517,8 +513,6 @@ else
 fi
 ```
 
-Test3
-
 **Usage**
 
 ```yaml
@@ -530,8 +524,6 @@ Test3
   params:
     ENV_FILE: foundations/config/env.yml
 ```
-
-Test3
 
 ### configure-saml-authentication
 
