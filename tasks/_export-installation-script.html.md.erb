@@ -13,5 +13,6 @@ output_file_name="$(echo "${INSTALLATION_FILE}" | envsubst '$timestamp')"
 
 om --env env/"${ENV_FILE}" export-installation \
   --output-file installation/"${output_file_name}"
+
 </code>
 </pre>
