@@ -501,7 +501,7 @@ Test 1
 
 Test2
 
-```bash
+<pre>
 cat /var/version && echo ""
 set -eux
 
@@ -513,7 +513,7 @@ if [[ -f "certs/certificate.pem" && -f "certs/privatekey.pem" ]]; then
 else
   om --env env/"${ENV_FILE}" generate-certificate-authority
 fi
-```
+</pre>
 
 Test3
 
