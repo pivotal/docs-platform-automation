@@ -44,43 +44,43 @@ are easily restorable and persistent.
 
 1. An [Amazon Web Services account(AWS)](https://aws.amazon.com/s3/) with access to S3
 
-<p class="note">
-<span class="note__title">Note</span>
-S3 blobstore compatibility: Many cloud storage options exist
-including <a href="https://aws.amazon.com/s3/">Amazon S3</a>,
-<a href="https://cloud.google.com/storage/">Google Storage</a>,
-<a href="https://min.io/">Minio</a>,
-and <a href="https://azure.microsoft.com/en-us/products/storage/blobs/">Azure Blob Storage</a>.
-However, not all object stores are "S3 compatible".
-Because Amazon defines the S3 API for accessing blobstores,
-and because the Amazon S3 product has emerged as the dominant blob storage solution,
-not all "S3 compatible" object stores act exactly the same.
-In general, if a storage solution claims to be "S3 compatible",
-it should work with the <a href="https://github.com/concourse/s3-resource">Concourse S3 resource integration</a>.
-But note that it may behave differently if interacting directly with the S3 API.
-Defer to the documentation of your preferred blobstore solution
-when setting up storage.</p>
+    <p class="note">
+    <span class="note__title">Note</span>
+    S3 blobstore compatibility: Many cloud storage options exist
+    including <a href="https://aws.amazon.com/s3/">Amazon S3</a>,
+    <a href="https://cloud.google.com/storage/">Google Storage</a>,
+    <a href="https://min.io/">Minio</a>,
+    and <a href="https://azure.microsoft.com/en-us/products/storage/blobs/">Azure Blob Storage</a>.
+    However, not all object stores are "S3 compatible".
+    Because Amazon defines the S3 API for accessing blobstores,
+    and because the Amazon S3 product has emerged as the dominant blob storage solution,
+    not all "S3 compatible" object stores act exactly the same.
+    In general, if a storage solution claims to be "S3 compatible",
+    it should work with the <a href="https://github.com/concourse/s3-resource">Concourse S3 resource integration</a>.
+    But note that it may behave differently if interacting directly with the S3 API.
+    Defer to the documentation of your preferred blobstore solution
+    when setting up storage.</p>
 
 1. Set up S3. With your AWS account, navigate to [the S3 console](https://aws.amazon.com/console/)
 and sign up for S3. Follow the on-screen prompts.
 Now you are ready for buckets!
 
-    <p class="note important">
-    <span class="note__title">Important</span>
-    <b>AWS root user:</b>
-    When you sign up for the S3 service on Amazon,
-    the account with the email and password you use
-    is the AWS account root user.
-    As a best practice, you should not use the root user
-    to access and manipulate services.
-    Instead, use <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>
-    to create and manage users.
-    For more information about how this works,
-    see the <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-set-up.html#create-an-admin">Amazon IAM guide</a>.
-    <br>
-    For simplicity, in the rest of this guide,
-    we will use the AWS root user
-    to show how a bucket may be set up and used with Platform Automation Toolkit.</p>
+<p class="note important">
+<span class="note__title">Important</span>
+<b>AWS root user:</b>
+When you sign up for the S3 service on Amazon,
+the account with the email and password you use
+is the AWS account root user.
+As a best practice, you should not use the root user
+to access and manipulate services.
+Instead, use <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>
+to create and manage users.
+For more information about how this works,
+see the <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-set-up.html#create-an-admin">Amazon IAM guide</a>.
+<br>
+For simplicity, in the rest of this guide,
+we will use the AWS root user
+to show how a bucket may be set up and used with Platform Automation Toolkit.</p>
 
 
 ## Your first bucket
