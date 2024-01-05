@@ -3,7 +3,6 @@
 This how-to-guide shows you how to create a pipeline for upgrading an existing Vmware Tanzu Operations Manager VM.
 If you don't have a Tanzu Operations Manager VM, see [Installing Tanzu Operations Manager](./installing-opsman.md).
 
-{% set upgradeHowTo = True %}
 <%= partial "getting-started" %>
 
 ## Exporting the installation
@@ -306,7 +305,7 @@ we'll need to load vars from `vars.yml`.
 Now you can manually trigger a build, and see it pass.
 
 <p class="note important">
-<span class="note__title">Important</span>:
+<span class="note__title">Important</span>
 You'll be using this,
 the ultimate form of the <code>fly</code> command to set your pipeline,
 for the rest of the tutorial.
@@ -614,7 +613,7 @@ Now, put it all together:
 We do not explicitly set the default parameters
 for <code>upgrade-opsman</code> in this example.
 Because <code>opsman.yml</code> is the default input to <code>OPSMAN_CONFIG_FILE</code>,
-<code>env.yml</code> is the default input to `ENV_FILE`,
+<code>env.yml</code> is the default input to <code>ENV_FILE</code>,
 and <code>state.yml</code> is the default input to <code>STATE_FILE</code>,
 it is redundant to set this param in the pipeline.
 See the <a href="../tasks.md">task definitions</a>

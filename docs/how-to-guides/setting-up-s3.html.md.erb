@@ -65,22 +65,22 @@ when setting up storage.</p>
 and sign up for S3. Follow the on-screen prompts.
 Now you are ready for buckets!
 
-<p class="note important">
-<span class="note__title">Important</span>
-<b>AWS root user:</b>
-When you sign up for the S3 service on Amazon,
-the account with the email and password you use
-is the AWS account root user.
-As a best practice, you should not use the root user
-to access and manipulate services.
-Instead, use <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>
-to create and manage users.
-For more information about how this works,
-see the <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-set-up.html#create-an-admin">Amazon IAM guide</a>.
-<br>
-For simplicity, in the rest of this guide,
-we will use the AWS root user
-to show how a bucket may be set up and used with Platform Automation Toolkit.</p>
+    <p class="note important">
+    <span class="note__title">Important</span>
+    <b>AWS root user:</b>
+    When you sign up for the S3 service on Amazon,
+    the account with the email and password you use
+    is the AWS account root user.
+    As a best practice, you should not use the root user
+    to access and manipulate services.
+    Instead, use <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>
+    to create and manage users.
+    For more information about how this works,
+    see the <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-set-up.html#create-an-admin">Amazon IAM guide</a>.
+    <br>
+    For simplicity, in the rest of this guide,
+    we will use the AWS root user
+    to show how a bucket may be set up and used with Platform Automation Toolkit.</p>
 
 
 ## Your first bucket
@@ -122,14 +122,14 @@ look at the "Access" column.
 
 Amazon S3 has the following Access permissions:
 
-- *Public* - Everyone has access to one or more of the following:
+- **Public** - Everyone has access to one or more of the following:
 List objects, Write objects, Read and write permissions
-- *Objects can be public* - The bucket is not public.
-But anyone with appropriate permissions can grant public access to objects.
-- *Buckets and objects not public* - The bucket and objects do not have any public access.
-- *Only authorized users of this account* - Access is isolated to IAM users and roles.
+- **Objects can be public** - The bucket is not public,
+but anyone with appropriate permissions can grant public access to objects.
+- **Buckets and objects not public** - The bucket and objects do not have any public access.
+- **Only authorized users of this account** - Access is isolated to IAM users and roles.
 
-In order to change who can access buckets or objects in buckets:
+To change who can access buckets or objects in buckets:
 
 1. Navigate to [the S3 console](https://aws.amazon.com/console/).
 2. Choose the name of the bucket you created in the previous step
