@@ -7,20 +7,18 @@ using [Concourse](https://concourse-ci.org/).
 
 You need:
 
-{% if upgradeHowTo %}
-1. A running Tanzu Operations Manager VM that you would like to upgrade
-{% endif %}
-1. Credentials for an IaaS that Tanzu Operations Manager is compatible with
+1. For upgrade only: A running Tanzu Operations Manager VM that you would like to upgrade
+2. Credentials for an IaaS that Tanzu Operations Manager is compatible with
     - It doesn't matter what IaaS you use for Tanzu Operations Manager,
     as long as your Concourse can connect to it.
     Pipelines built with Platform Automation Toolkit can be platform-agnostic.
-2. A Concourse instance
+3. A Concourse instance
    with access to a CredHub instance
    and to the Internet
-3. GitHub account
-4. Read/write credentials and bucket name for an S3 bucket
-5. An account on [VMware Tanzu Network](https://network.pivotal.io/)
-6. A MacOS workstation
+4. GitHub account
+5. Read/write credentials and bucket name for an S3 bucket
+6. An account on [VMware Tanzu Network](https://network.pivotal.io/)
+7. A MacOS workstation
     - with Docker installed
     - a text editor you like
     - a terminal emulator you like
@@ -79,7 +77,8 @@ Pronounced "bang, dollar-sign,"
 it means "use the last argument from the most recent command."
 In this case, that's the directory we just created.</p>
 
-{% if upgradeHowTo %}
+### Gather variables to use in pipeline (for upgrade only)
+If you are upgrading, continue with the following. If not, skip to **Creating a pipeline**.
 
 Before getting started with the pipeline itself,
 gather some variables in a file
@@ -101,7 +100,7 @@ You can use IP addresses for all these resources instead,
 but you still need to provide the information as a URL,
 for example: <code>https://120.121.123.124</code>.</p>
 
-{% endif %}
+### Creating a pipeline
 
 Now, create a file called `pipeline.yml`.
 

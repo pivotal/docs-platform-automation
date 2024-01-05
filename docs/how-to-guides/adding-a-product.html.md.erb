@@ -433,7 +433,8 @@ git commit -m "Add tas-config file for foundation"
 git push
 ```
 
-## Configure and Apply
+## Configure and apply
+
 With the hard part out of the way,
 we can now configure the product and apply changes.
 
@@ -718,7 +719,7 @@ The above process will get you a default installation,
 with no optional features or variables,
 that is entirely deployed in a single Availability Zone (AZ).
 
-In order to provide non-required variables,
+To provide non-required variables,
 use multiple AZs,
 or make non-default selections for some options,
 you'll need to use some of the ops files in one of the following four directories:
@@ -726,19 +727,19 @@ you'll need to use some of the ops files in one of the following four directorie
 <table>
     <tr>
         <td>features</td>
-        <td>allow the enabling of selectors for a product. For example, enabling/disabling of an s3 bucket</td>
+        <td>Allow the enabling of selectors for a product; for example, enabling/disabling of an s3 bucket</td>
     </tr>
     <tr>
         <td>network</td>
-        <td>contains options for enabling 2-3 availability zones for network configuration</td>
+        <td>Contains options for enabling 2-3 availability zones for network configuration</td>
     </tr>
     <tr>
         <td>optional</td>
-        <td>contains optional properties without defaults. For optional values that can be provided more than once, there's an ops file for each param count </td>
+        <td>Contains optional properties without defaults. For optional values that can be provided more than once, there's an ops file for each param count.</td>
     </tr>
     <tr>
         <td>resource</td>
-        <td>contains configuration that can be applied to resource configuration. For example, BOSH VM extensions</td>
+        <td>Contains configuration that can be applied to resource configuration; for example, BOSH VM extensions</td>
     </tr>
 </table>
 
