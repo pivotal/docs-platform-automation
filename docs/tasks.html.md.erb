@@ -11,7 +11,7 @@ To learn more see the [running-commands-locally][running-commands-locally] secti
 
 ### apply-changes
 
-Triggers an install on the Ops Manager described by the auth file.
+Triggers an install on the Operations Manager described by the auth file.
 
 To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
@@ -66,7 +66,7 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 
 ### backup-director
 
-Use BBR to backup a BOSH director deployed with Ops Manager.
+Use BBR to backup a BOSH director deployed with Operations Manager.
 
 === "Task"
     ---excerpt--- "tasks/backup-director"
@@ -77,7 +77,7 @@ Use BBR to backup a BOSH director deployed with Ops Manager.
 
 ### backup-product
 
-Use BBR to backup a product deployed with Ops Manager.
+Use BBR to backup a product deployed with Operations Manager.
 
 === "Task"
     ---excerpt--- "tasks/backup-product"
@@ -89,11 +89,13 @@ Use BBR to backup a product deployed with Ops Manager.
 ### backup-tkgi
 
 Use BBR to backup Tanzu Kubernetes Grid Integrated Edition(TKGI)
-deployed with Ops Manager.
+deployed with Operations Manager.
 
-!!! info "PKS CLI may be Temporarily Unavailable"
-    During the backup, the PKS CLI is disabled.
-    Due to the nature of the backup, some commands may not work as expected.
+<p class="note important">
+<span class="note__title">Important</span>
+The PKS CLI may be temporarily unavailable.
+During the backup, the PKS CLI is disabled.
+Due to the nature of the backup, some commands may not work as expected.</p>
 
 === "Task"
     ---excerpt--- "tasks/backup-tkgi"
@@ -103,11 +105,11 @@ deployed with Ops Manager.
     ---excerpt--- "examples/backup-tkgi-usage"
 
 ### check-pending-changes
-Returns a table of the current state of your Ops Manager
+Returns a table of the current state of your Operations Manager
 and lists whether each product is changed or unchanged and the errands for that product.
 By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
 This is useful to keep manual changes from being accidentally applied
-when automating the [configure-product][configure-product]/[apply-changes][apply-changes] of other products.
+when automating the [configure-product](#configure-product)/[apply-changes](#apply-changes) of other products.
 
 === "Task"
     ---excerpt--- "tasks/check-pending-changes"
@@ -138,7 +140,7 @@ may be used to send telemetry data to VMware.
     ---excerpt--- "reference/collect-telemetry-usage"
 
 ### configure-authentication
-Configures Ops Manager with an internal userstore and admin user account.
+Configures Operations Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
@@ -164,11 +166,13 @@ which can extract a config file.
 === "Usage"
     ---excerpt--- "reference/configure-director-usage"
 
-!!! warning "GCP with service account"
-    For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
+<p class="note important">
+<span class="note__title">Important</span>
+For GCP, if service account is used, the property associated_service_account
+must be set explicitly in the <code>iaas_configuration</code> section.</p>
 
 ### configure-ldap-authentication
-Configures Ops Manager with an external LDAP user store and admin user account.
+Configures Operations Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
 
@@ -180,22 +184,22 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
     ---excerpt--- "examples/configure-ldap-authentication-usage"
 
 For more details on using LDAP,
-please refer to the [Ops Manager documentation][config-ldap].
+see the [Operations Manager documentation][config-ldap].
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
 ### configure-opsman
 This task supports configuring settings
-on the Ops Manager Settings page in the UI.
-For example, the SSL cert for the Ops Manager VM can be configured.
+on the Operations Manager Settings page in the UI.
+For example, the SSL cert for the Operations Manager VM can be configured.
 
 Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
 An example of all configurable properties can be found in the "Additional Settings" tab.
 
 The [`upgrade-opsman`][upgrade-opsman] task will automatically call `configure-opsman`,
 so there is no need to use this task then.
-It is recommended to use this task in the initial setup of the Ops Manager VM.
+It is recommended to use this task in the initial setup of the Operations Manager VM.
 
 === "Task"
     ---excerpt--- "tasks/configure-opsman"
@@ -207,7 +211,7 @@ It is recommended to use this task in the initial setup of the Ops Manager VM.
 ### configure-product
 Configures an individual, staged product with settings from a config file.
 
-Not to be confused with Ops Manager's
+Not to be confused with Operations Manager's
 built-in [import][bbr-import],
 which reads all deployed products and configurations from a single opaque file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
@@ -225,7 +229,7 @@ which can stage a product that's been uploaded.
     ---excerpt--- "reference/configure-product-usage"
 
 ### configure-saml-authentication
-Configures Ops Manager with an external SAML user store and admin user account.
+Configures Operations Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
@@ -236,25 +240,26 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 === "Usage"
     ---excerpt--- "examples/configure-saml-authentication-usage"
 
-!!! info "Bosh Admin Client"
-    By default, this task creates a bosh admin client.
-    This is helpful for some advanced workflows
-    that involve communicating directly with the BOSH Director.
-    It is possible to disable this behavior;
-    see our [config file documentation][generating-an-auth-file] for details.
+<p class="note">
+<span class="note__title">Note</span>
+By default, this task creates a BOSH admin client.
+This is helpful for some advanced workflows
+that involve communicating directly with the BOSH Director.
+It is possible to disable this behavior;
+see the <a href="../how-to-guides/configuring-auth.md#generating-an-auth-file">config file documentation</a> for details.</p>
 
 Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the [Ops Manager documentation][config-saml]
+please refer to the [Operations Manager documentation][config-saml]
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
 ### create-vm
-Creates an unconfigured Ops Manager VM.
+Creates an unconfigured Operations Manager VM.
 
 === "Task"
     ---excerpt--- "tasks/create-vm"
@@ -266,7 +271,7 @@ Creates an unconfigured Ops Manager VM.
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration][opsman-config] page for more specific examples.
 
-The task does specific CLI commands for the creation of the Ops Manager VM on each IAAS. See below for more information:
+The task does specific CLI commands for the creation of the Operations Manager VM on each IAAS. See below for more information:
 
 **AWS**
 
@@ -281,14 +286,14 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account
-1. Creates the Ops Manager image
+1. Creates the Operations Manager image
 1. Creates a VM from the image. This will use unmanaged disk (if specified), and assign a public and/or private IP. This only attaches existing infrastructure to a newly createdVM. This does not create any new resources.
 
 **GCP**
 
 1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
-1. Creates a compute image based on the region specific Ops Manager source URI in the specified Ops Manager account
+1. Creates a compute image based on the region specific Operations Manager source URI in the specified Operations Manager account
 1. Creates a VM from the image. This will assign a public and/or private IP address, VM sizing, and tags. This does not create any new resources.
 
 **Openstack**
@@ -310,12 +315,16 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 ### credhub-interpolate
 Interpolate credhub entries into configuration files
 
-!!! warning "Deprecation Notice"
-    This task will be deprecated in future _major_ versions of Platform Automation Toolkit.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Deprecation Notice</b>:
+This task will be deprecated in future major versions of Platform Automation Toolkit.</p>
 
-!!! info "prepare-tasks-with-secrets"
-      The [prepare-tasks-with-secrets] task replaces the credhub-interpolate task on Concourse versions 5.x+
-      and provides additional benefits.
+<p class="note">
+<span class="note__title">Note</span>
+The <a href="#prepare-tasks-with-secrets">prepare-tasks-with-secrets</a> task replaces
+the <code>credhub-interpolate</code> task on Concourse versions 5.x+
+and provides additional benefits.</p>
 
 === "Task"
     ---excerpt--- "tasks/credhub-interpolate"
@@ -325,10 +334,10 @@ Interpolate credhub entries into configuration files
     ---excerpt--- "examples/credhub-interpolate-usage"
 
 This task requires a valid credhub with UAA client and secret. For information on how to
-set this up, see [Secrets Handling][secrets-handling]
+set this up, see [Secrets Handling](./concepts/secrets-handling.html).
 
 ### delete-installation
-Delete the Ops Manager Installation
+Delete the Operations Manager Installation
 
 === "Task"
     ---excerpt--- "tasks/delete-installation"
@@ -338,7 +347,7 @@ Delete the Ops Manager Installation
     ---excerpt--- "reference/delete-installation-usage"
 
 ### delete-vm
-Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
+Deletes the Operations Manager VM instantiated by [create-vm](#create-vm).
 
 === "Task"
     ---excerpt--- "tasks/delete-vm"
@@ -349,7 +358,7 @@ Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 This task requires the [state file][state] generated [create-vm](#create-vm).
 
-The task does specific CLI commands for the deletion of the Ops Manager VM and resources on each IAAS. See below for more information:
+The task does specific CLI commands for the deletion of the Operations Manager VM and resources on each IAAS. See below for more information:
 
 **AWS**
 
@@ -378,7 +387,7 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 
 ### download-and-upload-product
 This is an _advanced task_.
-If a product (and its associated stemcell) has already been uploaded to Ops Manager
+If a product (and its associated stemcell) has already been uploaded to Operations Manager
 then it will not re-download and upload.
 This is helpful when looking for a fast-feedback loop for building pipelines.
 
@@ -387,8 +396,10 @@ as it takes the same product config.
 There are no `outputs` for this task
 because the products (and stemcell) don't need to be shared downstream.
 
-!!! warning
-    This currently only works with product source being Tanzu Network (Pivotal Network).
+	
+<p class="note important">
+<span class="note__title">Important</span>
+This currently only works with product source being Tanzu Network.</p>
 
 === "Task"
     ---excerpt--- "tasks/download-and-upload-product"
@@ -454,30 +465,37 @@ Note that the filename will be unchanged
 if supported blobstore keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
-!!! warning "When using the s3 resource in concourse"
-    If you are using a `regexp` in your s3 resource definition
-    that explicitly requires the Tanzu Network filename
-    to be the _start_ of the regex, (i.e., the pattern starts with `^`)
-    this won't work when using S3 config.
-    The new file format preserves the original filename,
-    so it is still possible to match on that -
-    but if you need to match from the beginning of the filename,
-    that will have been replaced by the prefix described above.
+	
+<p class="note important">
+<span class="note__title">Important</span>
+When using the s3 resource in Concourse,
+if you are using a <code>regexp</code> in your S3 resource definition
+that explicitly requires the Tanzu Network filename
+to be the start of the regex, (that is, the pattern starts with <code>^</code>)
+this won't work when using S3 config.
+The new file format preserves the original filename,
+so it is still possible to match on that,
+but if you need to match from the beginning of the filename,
+that will have been replaced by the prefix described above.</p>
 
-!!! info "When specifying Tanzu Application Service-Windows"
-    This task will automatically download and inject the winfs for pas-windows.
+<p class="note important">
+<span class="note__title">Important</span>
+When specifying Tanzu Application Service [Windows],
+this task will automatically download and inject the winfs for pas-windows.</p>
 
-!!! warning "When specifying Tanzu Application Service-Windows on Vsphere"
-    This task cannot download the stemcell for pas-windows on vSphere.
-    To build this stemcell manually, please reference the
-    [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
-    in VMware Documentation.
+<p class="note important">
+<span class="note__title">Important</span>
+When specifying Tanzu Application Service-Windows on vSphere,
+this task cannot download the stemcell for pas-windows on vSphere.
+To build this stemcell manually, see
+<a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/4.0/tas-for-vms/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows Stemcell</a>.</p>
 
-!!! info "When only downloading from Tanzu Network"
-    When the download product config only has Tanzu Network credentials,
-    it will not add the prefix to the downloaded product.
-    For example, `example-product.pivotal` from Tanzu Network will be outputed
-    as `example-product.pivotal`.
+<p class="note important">
+<span class="note__title">Important</span>
+When the download product config only has Tanzu Network credentials,
+it will not add the prefix to the downloaded product.
+For example, <code>example-product.pivotal</code> from Tanzu Network will be output
+as <code>example-product.pivotal</code>.</p>
 
 === "Task"
     ---excerpt--- "tasks/download-product"
@@ -494,8 +512,8 @@ This avoids breaking current pipelines.
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
-These certificates can be Ops Manager or Credhub certificates.
-Root CAs cannot be included in this list until Ops Manager 2.7.
+These certificates can be Operations Manager or Credhub certificates.
+Root CAs cannot be included in this list until Operations Manager 2.7.
 This is purely an informational task.
 
 === "Task"
@@ -506,11 +524,11 @@ This is purely an informational task.
     ---excerpt--- "reference/expiring-certificates-usage"
 
 ### export-installation
-Exports an existing Ops Manager to a file.
+Exports an existing Operations Manager to a file.
 
 This is the first part of the backup/restore and upgrade lifecycle processes.
-This task is used on a fully installed and healthy Ops Manager to export
-settings to an upgraded version of Ops Manager.
+This task is used on a fully installed and healthy Operations Manager to export
+settings to an upgraded version of Operations Manager.
 
 To use with non-versioned blobstore, you can override `INSTALLATION_FILE` param
 to include `$timestamp`, then the generated installation file will include a sortable
@@ -522,10 +540,11 @@ params:
   INSTALLATION_FILE: installation-$timestamp.zip
 ```
 
-!!! info
-    The timestamp is generated using the time on concourse worker.
-    If the time is different on different workers, the generated timestamp may fail to sort correctly.
-    Changing the time or timezone on workers might interfere with ordering.
+!<p class="note">
+<span class="note__title">Note</span>
+The timestamp is generated using the time on Concourse worker.
+If the time is different on different workers, the generated timestamp may not sort correctly.
+Changing the time or timezone on workers might interfere with ordering.</p>
 
 === "Task"
     ---excerpt--- "tasks/export-installation"
@@ -537,11 +556,11 @@ params:
 {% include "./.export_installation_note.md" %}
 
 ### import-installation
-Imports a previously exported installation to Ops Manager.
+Imports a previously exported installation to Operations Manager.
 
 This is a part of the backup/restore and upgrade lifecycle processes.
-This task is used after an installation has been exported and a new Ops Manager
-has been deployed, but before the new Ops Manager is configured.
+This task is used after an installation has been exported and a new Operations Manager
+has been deployed, but before the new Operations Manager is configured.
 
 === "Task"
     ---excerpt--- "tasks/import-installation"
@@ -563,14 +582,16 @@ Also useful for persisting the configuration output from:
 - [staged-config](#staged-config)
 - [staged-director-config](#staged-director-config)
 
-!!! info
-    This commits **all changes** present
-    in the repo used for the `repository` input,
-    in addition to copying in a single file.
+<p class="note important">
+<span class="note__title">Important</span>
+This commits <b>all changes</b> present
+in the repo used for the <code>repository</code> input,
+in addition to copying in a single file.</p>
 
-!!! info
-    This does not perform a `git push`!
-    You will need to `put` the output of this task to a git resource to persist it.
+<p class="note important">
+<span class="note__title">Important</span>
+This does not perform a <code>git push</code>.
+You will need to <code>put</code> the output of this task to a git resource to persist it.</p>
 
 === "Task"
     ---excerpt--- "tasks/make-git-commit"
@@ -580,12 +601,12 @@ Also useful for persisting the configuration output from:
     ---excerpt--- "examples/make-git-commit-usage"
 
 ### pre-deploy-check
-Checks if the Ops Manager director is configured properly and validates the configuration.
-This feature is only available in Ops Manager 2.6+.
+Checks if the Operations Manager director is configured properly and validates the configuration.
+This feature is only available in Operations Manager 2.6+.
 Additionally, checks each of the staged products
 and validates they are configured correctly.
 This task can be run at any time
-and can be used a a pre-check for [`apply-changes`][apply-changes].
+and can be used a a pre-check for [apply-changes](./tasks.html#apply-changes).
 
 The checks that this task executes are:
 
@@ -595,7 +616,7 @@ The checks that this task executes are:
 - is the stemcell assigned
 - what stemcell type/version is required
 - are there any unset/invalid properties
-- did any ops manager verifiers fail
+- did any Operations Manager verifiers fail
 
 If any of the above checks fail
 the task will fail.
@@ -613,7 +634,7 @@ before an `apply-changes` could start.
 This task modifies the container image with runtime dependencies.
 `CA_CERTS` can be added,
 which can help secure HTTP connections with a proxy server
-and allows the use of a custom CA on the Ops Manager.
+and allows the use of a custom CA on the Operations Manager.
 
 <p class="note caution">
 <span class="note__title">Caution</span>
@@ -655,11 +676,12 @@ Will replicate the product for use in isolation segments.
 The task requires a downloaded product prior to replication.
 The output is a replicated tile with a new name in the metadata and filename.
 
-!!! info "Using replicate-product"
-    This command does not support storing the replicated product
-    in a non-versioned blobstore, because it cannot generate a unique name.
-    It is recommended to use the replicated tile immediately in the next task
-    rather than storing it and using it in a different job.
+<p class="note">
+<span class="note__title">Note</span>
+<code>replicate-product</code> does not support storing the replicated product
+in a non-versioned blobstore because it cannot generate a unique name.
+VMware recommends using the replicated tile immediately in the next task
+rather than storing it and using it in a different job.</p>
 
 === "Task"
     ---excerpt--- "tasks/replicate-product"
@@ -669,13 +691,14 @@ The output is a replicated tile with a new name in the metadata and filename.
     ---excerpt--- "examples/replicate-product-usage"
 
 ### revert-staged-changes
-Reverts all changes that are currently staged on the Ops Manager.
-This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
+Reverts all changes that are currently staged on the Operations Manager.
+This is only available _for_ Operations Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
-!!! warning "Using revert-staged-changes"
-    Since this reverts all changes on an Ops Manager,
-    it can conflict with tasks that perform stage or configure operations.
-    Use passed constraints to ensure things run in the order you mean them to.
+<p class="note caution">
+<span class="note__title">Caution</span>
+Since this task reverts all changes on an Operations Manager,
+it can conflict with tasks that perform stage or configure operations.
+Use passed constraints to ensure things run in the order you mean them to.</p>
 
 === "Task"
     ---excerpt--- "tasks/revert-staged-changes"
@@ -686,22 +709,25 @@ This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
 ### run-bosh-errand
 Runs a specified BOSH errand directly on the BOSH Director
-by tunneling through Ops Manager.
+by tunneling through Operations Manager.
 
-!!! warning "Interacting with the BOSH Director"
-    Ops Manager is the main interface for interacting with BOSH,
-    and it has no way of knowing what is happening to the BOSH Director
-    outside of the Ops Manager UI context.
-    By using this task, you are accepting the risk
-    that what you are doing cannot be tracked by your Ops Manager.
+<p class="note important">
+<span class="note__title">Important</span>
+Operations Manager is the main interface for interacting with BOSH,
+and it has no way of knowing what is happening to the BOSH Director
+outside of the Operations Manager UI context.
+By using this task, you are accepting the risk
+that what you are doing cannot be tracked by your Operations Manager.</p>
 
-!!! warning "Retrying Errands"
-    Ops Manager, by design, will re-run failed errands for you.
-    As this task interacts with BOSH directly,
-    your errand will not be re-run if it fails.
-    To replicate this retry behavior in your pipeline,
-    you can take advantage of the [`attempts`][concourse-attempts] feature
-    of Concourse to run the task more than once.
+	
+<p class="note important">
+<span class="note__title">Important</span>
+Operations Manager, by design, will re-run failed errands for you.
+As this task interacts with BOSH directly,
+your errand will not be re-run if it fails.
+To replicate this retry behavior in your pipeline,
+you can use the <a href="https://concourse-ci.org/jobs.html#schema.step.attempts">Concourse attempts</a> feature
+to run the task more than once.</p>
 
 === "Task"
     ---excerpt--- "tasks/run-bosh-errand"
@@ -714,10 +740,11 @@ by tunneling through Ops Manager.
 Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
 to VMware.
 
-!!! info Telemetry Key
-    In order to use this task,
-    you will need to acquire a license key.
-    Contact your VMware Representative.
+<p class="note important">
+<span class="note__title">Important</span>
+To use this task,
+you must acquire a Telemetry license key.
+Contact your VMware representative.</p>
 
 === "Task"
     ---excerpt--- "tasks/send-telemetry"
@@ -728,7 +755,7 @@ to VMware.
 
 ### stage-configure-apply
 This is an _advanced task_.
-Stage a product to Ops Manager, configure that product, and apply changes
+Stage a product to Operations Manager, configure that product, and apply changes
 only to that product without applying changes to the rest of the foundation.
 
 {% include '.disable-verifiers.md' %}
@@ -741,7 +768,7 @@ only to that product without applying changes to the rest of the foundation.
     ---excerpt--- "examples/stage-configure-apply-usage"
 
 ### stage-product
-Staged a product to the Ops Manager specified in the config file.
+Staged a product to the Operations Manager specified in the config file.
 
 === "Task"
     ---excerpt--- "tasks/stage-product"
@@ -751,9 +778,9 @@ Staged a product to the Ops Manager specified in the config file.
     ---excerpt--- "reference/stage-product-usage"
 
 ### staged-config
-Downloads the configuration for a product from Ops Manager.
+Downloads the configuration for a product from Operations Manager.
 
-Not to be confused with Ops Manager's
+Not to be confused with Operations Manager's
 built-in [export][bbr-export],
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
@@ -767,7 +794,7 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
 
 ### staged-director-config
 
-Downloads configuration for the BOSH director from Ops Manager.
+Downloads configuration for the BOSH director from Operations Manager.
 
 === "Task"
     ---excerpt--- "tasks/staged-director-config"
@@ -777,7 +804,7 @@ Downloads configuration for the BOSH director from Ops Manager.
     ---excerpt--- "examples/staged-director-config-usage"
 
 The configuration is exported to the `generated-config` output.
-It does not extract credentials from Ops Manager
+It does not extract credentials from Operations Manager
 and replaced them all with YAML interpolation `(())` placeholders.
 This is to ensure that credentials are never written to disk.
 The credentials need to be provided from an external configuration when invoking [configure-director](#configure-director).
@@ -807,11 +834,11 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
 
 ### update-runtime-config
 This is an _advanced task_.
-Updates a runtime config on the Ops Manager deployed BOSH director.
-The task will interact with the BOSH director (sometimes via SSH tunnel through the Ops Manager),
+Updates a runtime config on the Operations Manager deployed BOSH director.
+The task will interact with the BOSH director (sometimes via SSH tunnel through the Operations Manager),
 upload BOSH releases,
 and set a named runtime config.
-This is useful when installing agents on BOSH deployed VMs that don't have a Ops Manager tile.
+This is useful when installing agents on BOSH deployed VMs that don't have a Operations Manager tile.
 
 === "Task"
     ---excerpt--- "tasks/update-runtime-config"
@@ -820,13 +847,14 @@ This is useful when installing agents on BOSH deployed VMs that don't have a Ops
 === "Usage"
     ---excerpt--- "examples/update-runtime-config-usage"
 
-!!! warn
-    When using runtime configs, Ops Manager _owns_ the default runtime config.
-    If you use this task to edit "default" it will be replaced on every Apply Changes.
-    Please use `NAME` param to provide a non-conflicting runtime config.
+<p class="note important">
+<span class="note__title">Important</span>
+When using runtime configs, Operations Manager owns the default runtime config.
+If you use this task to edit "default" it will be replaced on every Apply Changes.
+Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>
 
 ### upgrade-opsman
-Upgrades an existing Ops Manager to a new given Ops Manager version
+Upgrades an existing Operations Manager to a new given Operations Manager version
 
 === "Task"
     ---excerpt--- "tasks/upgrade-opsman"
@@ -838,7 +866,7 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
 For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
 
 ### upload-and-stage-product
-Uploads and stages product to the Ops Manager specified in the config file.
+Uploads and stages product to the Operations Manager specified in the config file.
 
 === "Task"
     ---excerpt--- "tasks/upload-and-stage-product"
@@ -848,7 +876,7 @@ Uploads and stages product to the Ops Manager specified in the config file.
     ---excerpt--- "reference/upload-and-stage-product-usage"
 
 ### upload-product
-Uploads a product to the Ops Manager specified in the config file.
+Uploads a product to the Operations Manager specified in the config file.
 
 If a shasum is provided in the config.yml,
 the integrity product will be verified
@@ -862,10 +890,10 @@ with that shasum before uploading.
     ---excerpt--- "reference/upload-product-usage"
 
 ### upload-stemcell
-Uploads a stemcell to Ops Manager.
+Uploads a stemcell to Operations Manager.
 
 Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
-Ops Manager parses this filename to determine the version and OS of the stemcell.
+Operations Manager parses this filename to determine the version and OS of the stemcell.
 
 === "Task"
     ---excerpt--- "tasks/upload-stemcell"
