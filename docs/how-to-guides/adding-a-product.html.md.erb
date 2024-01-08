@@ -115,21 +115,28 @@ fly -t control-plane set-pipeline -p foundation -c pipeline.yml
 
 If the pipeline sets without errors, run a `git push` of the config.
 
-!!! info "If fly set-pipeline returns an error"
-    Fix any and all errors until the pipeline can be set.
-    When the pipeline can be set properly, run
-    
-    ```bash
-    git add pipeline.yml
-    git commit --amend --no-edit
-    git push
-    ```
+<div class="note">
+<span class="note__title">Note</span>
+<b>If fly set-pipeline returns an error</b>:
+  Fix any and all errors until the pipeline can be set.
+  When the pipeline can be set properly, run
+<br>
+  <pre>
+  <code>
+  git add pipeline.yml
+  git commit --amend --no-edit
+  git push
+  </code>
+  </pre>
+</div>
 
-!!! note "Testing Your Pipeline"
-    We generally want to try things out right away to see if they're working right.
-    However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
-    you might want to hold off until we've got the job doing more,
-    so that if it works, you don't have to wait for the download again.
+<p class="note">
+<span class="note__title">Note</span>
+<b>Testing your pipeline</b>:
+We generally want to try things out right away to see if they're working right.
+However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
+you might want to hold off until we've got the job doing more,
+so that if it works, you don't have to wait for the download again.</p>
 
 ### Upload and Stage
 We have a product downloaded and (potentially) cached on a Concourse worker.
@@ -205,10 +212,12 @@ we need a config file.
 The simplest way is to choose your config options in the Ops Manager UI,
 then pull its resulting configuration.
 
-!!! Info "Advanced Tile Config Option"
-    For an alternative that generates the configuration
-    from the product file, using ops files to select options, 
-    see the [Config Template][config-template] section.
+<p class="note">
+<span class="note__title">Note</span>
+<b>Advanced Tile Config Option</b>:
+For an alternative that generates the configuration
+from the product file, using ops files to select options,
+see <a href="#config-template">Config Template</a>.</p>
 
 
 #### Pulling Configuration from Ops Manager
@@ -219,14 +228,16 @@ Other install instructions may be found in [VMware Tanzu Docs][tanzu-docs].
 Once the product is fully configured, apply changes in the Ops Manager UI, 
 and then continue this guide.
 
-!!! warning "If You Do Not Apply Changes"
-    Ops Manager cannot generate credentials for you
-    until you have applied changes (at least once).
-    You can still go through this process without an initial applying changes,
-    but you will be unable to use `om staged-config` with `--include-credentials`, 
-    and may have an incomplete configuration at the end of this process.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>If you do not Apply Changes</b>:
+Operations Manager cannot generate credentials for you
+until you have applied changes (at least once).
+You can still go through this process without an initial applying changes,
+but you will be unable to use <code>om staged-config</code> with <code>--include-credentials</code>,
+and may have an incomplete configuration at the end of this process.</p>
 
-[`om`][om] has a command called [staged-config][staged-config], 
+[om](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.html#staged-config),
 which is used to extract staged product
 configuration from the Ops Manager UI. 
 `om` requires a `env.yml`, which we already used in the `upload-and-stage` task.
@@ -386,12 +397,14 @@ value:
 version_created_at: "<timestamp>"
 ```
 
-!!! warning "Remove Credentials from Disk" 
-    Once we've validated that the certs are set correctly in Credhub, 
-    remember to delete `poe-cert.txt` and `poe-private-key.txt` from your working directory.
-    This will prevent a potential security leak, 
-    or an accidental commit of those credentials.
-    
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Remove credentials from disk</b>:
+After you validate that the certs are set correctly in CredHub,
+you must delete <code>poe-cert.txt</code> and <code>poe-private-key.txt</code> from your working directory.
+This will prevent a potential security leak
+or an accidental commit of those credentials.</p>
+
 Repeat this process for all sensitive values found in your `tas-config.yml`.
 
 Once completed, we can remove those secrets from `tas-config.yml`
@@ -582,16 +595,21 @@ so that these changes will be applied by the Ops Manager.
         env: config
 ```
 
-!!! info "Adding Multiple Products"
-    When adding multiple products, you can add the configure jobs as passed constraints
-    to the apply-changes job so that they all are applied at once.
-    Ops Manager will handle any inter-product dependency ordering.
-    This will speed up your apply changes
-    when compared with running an apply changes for each product separately.
-    
-    Example:
-    `passed: [configure-tas, configure-tas-windows, configure-healthwatch]`
-
+<div class="note">
+<span class="note__title">Note</span>
+When adding multiple products, you can add the configure jobs as passed constraints
+to the <code>apply-changes</code> job so that they all are applied at once.
+Ops Manager will handle any inter-product dependency ordering.
+This will speed up your apply changes
+when compared with running an apply changes for each product separately.
+<br>
+Example:
+<pre>
+<code>
+passed: [configure-tas, configure-tas-windows, configure-healthwatch]
+</code>
+</pre>
+</div>
 
 Set the pipeline one final time,
 run the job, and see it pass.
@@ -691,8 +709,10 @@ here are some approaches you can use:
     If you are still struggling, inspecting the html of the Ops Manager webpage
     can more accurately map the value names to the associated UI element.
 
-!!! info "When Using The Ops Manager Docs and UI"
-    Be aware that the field names in the UI do not necessarily map directly to property names.
+<p class="note">
+<span class="note__title">Note</span>
+When using the Operations Manager docs and UI,
+be aware that the field names in the UI do not necessarily map directly to property names.</p>
 
 #### Optional Features
 The above process will get you a default installation,
