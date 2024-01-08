@@ -123,10 +123,10 @@ vmtypes-configuration:
 <span class="note__title">Note</span>
 <b>Precedence</b>:
 <ol>
-  <li>If `custom_only` is `true`,
+  <li>If <code>custom_only</code> is <code>true</code>,
     the VM types specified in your configuration will replace the entire list of available VM types in the Ops Manager.</li>
   <li>If the property is set to false or is omitted,
-    `configure_director` will append the listed VM types to the list of default VM types for your IaaS.</li>
+    <code>configure_director</code> will append the listed VM types to the list of default VM types for your IaaS.</li>
   <li>If a specified VM type is named the same as a predefined VM type, it will overwrite the predefined type.</li>
   <li>If multiple specified VM types have the same name, the one specified last will be created.</li>
   <li>Existing custom VM types do not persist across configure-director calls,
