@@ -254,18 +254,20 @@ and make it available on S3.
 
 1. Commit these changes and run the `development` pipeline all the way through.
 
-!!! info "A Quicker `development` Deploy Process"
-    Since all of the legwork was done manually in the `sandbox` environment
-    there is no need to login to the `development` Ops Manager environment.
-
-    If there are no configuration changes, the only file that needs to be promoted is `versions.yml`
+<p class="note">
+<span class="note__title">Note</span>
+<b>A quicker development deploy process</b>:
+Since all of the legwork was done manually in the <code>sandbox</code> environment
+there is no need to log in to the <code>development</code> Operations Manager environment.
+<br>
+If there are no configuration changes, the only file that needs to be promoted is <code>versions.yml</code>.</p>
 
 
 ## Advanced Pipeline Design
 
 ### Matching Resource Names and Input Names
 
-As an alternative to `input_mapping`, 
+As an alternative to `input_mapping`,
 we can create resources that match the input names on our tasks.
 Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
@@ -277,23 +279,30 @@ in the job, they will automatically be mapped to the inputs of the tasks in that
 
 ---excerpt--- "examples/configure-director-matched-resources-usage"
 
-!!! warning "Passed Constraints"
-     If you have two resources defined with the same git repository, such as env and config,
-     and have a passed constraint on only one of them,
-     there is a possibility that they will not be at the same SHA for any given job in your pipeline.
-     
-     Example:
-     ```yaml
-     - get: config
-     - get: env
-       passed: [previous-job]
-     ```
+<div class="note caution">
+<span class="note__title">Caution</span>
+<b>Passed constraints</b>:
+If you have two resources defined with the same git repository, such as env and config,
+and have a passed constraint on only one of them,
+there is a possibility that they will not be at the same SHA for any given job in your pipeline.
+<br>
+Example:
+<pre>
+  <code>
+  - get: config
+  - get: env
+    passed: [previous-job]
+  </code>
+</pre>
+</div>
 
 ### Modifying Resources in-place
 
-!!! info "Concourse 5+ Only"
-      This section uses a Concourse feature that allows inputs and outputs to have the same name.
-      This feature is only available in Concourse 5+. The following does not work with Concourse 4.
+<p class="note caution">
+<span class="note__title">Caution</span>
+<b>Concourse 5+ only</b>:
+This section uses a Concourse feature that allows inputs and outputs to have the same name.
+This feature is only available in Concourse 5+. The following does not work with Concourse 4.</b>
 
 In certain circumstances, resources can be modified by one task in a job
 for use later in that same job. A few tasks that offer this ability include:
