@@ -35,10 +35,10 @@ Platform Automation Toolkit is designed to work with these dependencies.
 </table>
 
 <sup>1</sup> 
-    [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] replaces [`credhub-interpolate`][credhub-interpolate] in Concourse 5.x+ _only_. 
+    [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets) replaces [`credhub-interpolate`](./tasks.html#credhub-interpolate) in Concourse 5.x+ _only_.
     If using Concourse 4.x, continue using `credhub-interpolate`.
     If using Concourse 5.x+, it is strongly recommended to switch to `prepare-tasks-with-secrets`.
-    For more information about secrets handling, reference the [Secrets Handling Page][secrets-handling].
+    For more information about secrets handling, reference the [Secrets Handling Page](./concepts/secrets-handling.html).
     
 <sup>2</sup>
     v4.4.32, v5.0.25, and v5.1.2 introduced a version of the Concourse image based on Ubuntu Jammy.
@@ -46,7 +46,7 @@ Platform Automation Toolkit is designed to work with these dependencies.
     If you are using a version of Concourse prior to v6.7.9, you must use the Ubuntu Bionic based image.
 
 ## Semantic Versioning
-This product uses [semantic versioning][semver] 2.0.0
+This product uses [semantic versioning](https://semver.org/) 2.0.0
 to describe the impact of changes to our concourse tasks. In order to take advantage of semantic versioning, we must declare an API.
 
 The following are considered part of our API:
@@ -62,7 +62,7 @@ The following are considered part of our API:
 - The minimum compatible version
   of Concourse and Ops Manager
   are part of the API,
-  and are specified [here][external-deps].
+  and are specified in [External Dependencies](#external-dependencies).
 
 - The presence of the following binaries on the _combined image_:
 
