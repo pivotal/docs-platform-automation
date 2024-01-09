@@ -1,7 +1,7 @@
 # Writing a Pipeline to Install Operations Manager
 
 This how-to-guide shows you how to write a pipeline for installing a new Operations Manager.
-If you already have an Operations Manager VM, check out [Upgrading an Existing Operations Manager][upgrade-how-to].
+If you already have an Operations Manager VM, check out [Upgrading an Existing Operations Manager](./upgrade-existing-opsman.html).
 
 {% include ".getting-started.md" %}
 
@@ -66,7 +66,7 @@ The first new resource we need is the config file.
 We'll push our git repo to a remote on GitHub
 to make this (and later, other) configuration available to the pipelines.
 
-GitHub has good [instructions][git-add-existing]
+GitHub has good [instructions](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
 you can follow to create a new repository on GitHub.
 You can skip over the part
 about using `git init` to setup your repo,
@@ -75,7 +75,7 @@ since we [already did that](#but-first-git-init).
 Go ahead and setup your remote
 and use `git push` to make what we have available.
 We will use this repository to hold our single foundation specific configuration.
-We are using the ["Single Repository for Each Foundation"][single-foundation-pattern]
+We are using the ["Single Repository for Each Foundation"](../pipeline-design/configuration-management-strategies.html#single-foundation-for-each-foundation)
 pattern to structure our configurations.
 
 You will also need to add the repository URL
@@ -111,7 +111,7 @@ we need to add a resource to tell Concourse how to get it as `config`.
 
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
-Follow [GitHub's instructions][git-deploy-keys]
+Follow the [GitHub instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys)
 for creating a deploy key.
 
 Then, put the private key in CredHub so we can use it in our pipeline:
@@ -148,7 +148,7 @@ We'll need to put the Tanzu Network token in CredHub:
 {% include './.paths-and-pipeline-names.md' %}
 
 In order to perform interpolation in one of our input files,
-we'll need the [`prepare-tasks-with-secrets` task][prepare-tasks-with-secrets]
+we'll need the [`prepare-tasks-with-secrets` task](../tasks.html#prepare-tasks-with-secrets)
 Earlier, we relied on Concourse's native integration with CredHub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
@@ -189,13 +189,13 @@ jobs:
         CONFIG_FILE: download-ops-manager.yml
 ```
 
-Notice the [input mappings][concourse-input-mapping]
+Notice the [input mappings](https://concourse-ci.org/task-step.html#input_mapping)
 of the `prepare-tasks-with-secrets` task.
 This allows us to use the output of one task
 as in input of another.
 
 An alternative to `input_mappings` is discussed in
-[Configuration Management Strategies][advanced-pipeline-design].
+[Configuration Management Strategies](../pipeline-design/configuration-management-strategies.html#advanced-pipeline-design.
 
 Now, the `prepare-tasks-with-secrets` task
 will find required credentials in the config files,
@@ -225,19 +225,19 @@ and you should use whichever method is right for you and your setup.
 
 These are open source terraforming files
 we recommend for use, as they are maintained by VMware.
-These files are found in the open source [`paving`][paving] repo on GitHub.
+These files are found in the open source [`paving`](https://github.com/pivotal/paving) repo on GitHub.
 
 This is the recommended way to get these resources set up
 as the output can directly be used in subsequent steps as property configuration.
 
 The `paving` repo provides instructions for use in the `README`.
 Any manual variables that you need to fill out
-will be in a [terraform.tfvars][terraform-vars] file
+will be in a [terraform.tfvars](https://developer.hashicorp.com/terraform/language/values/variables) file
 in the folder for the IaaS you are using
 (for more specific instruction, please consult the `README` for that IaaS).
 
 If there are specific aspects of the `paving` repo that does not work for you,
-you can override _some_ properties using an [override.tf][terraform-override] file.
+you can override _some_ properties using an [override.tf](https://developer.hashicorp.com/terraform/language/files/override) file.
 
 Follow these steps to use the `paving` repository:
 
@@ -248,7 +248,7 @@ Follow these steps to use the `paving` repository:
     git clone https://github.com/pivotal/paving.git
     ```
 
-1. In the checked out repository there are directories for each IaaS.
+2. In the checked out repository there are directories for each IaaS.
    Copy the terraform templates for the infrastructure of your choice
    to a new directory outside of the paving repo, so you can modify it:
 
@@ -263,25 +263,25 @@ Follow these steps to use the `paving` repository:
     at the top level of the `paving` repo - for example,
     `aws`, `azure`, `gcp`, or `nsxt`.
 
-1. Within the new directory, the `terraform.tfvars.example` file
+3. Within the new directory, the `terraform.tfvars.example` file
    shows what values are required for that IaaS.
    Remove the `.example` from the filename,
    and replace the examples with real values.
 
-1. Initialize Terraform which will download the required IaaS providers.
+4. Initialize Terraform which will download the required IaaS providers.
 
     ```bash
     terraform init
     ```
 
-1. Run `terraform refresh` to update the state with what currently exists on the IaaS.
+5. Run `terraform refresh` to update the state with what currently exists on the IaaS.
 
     ```bash
     terraform refresh \
       -var-file=terraform.tfvars
     ```
 
-1. Next, you can run `terraform plan`
+6. Next, you can run `terraform plan`
    to see what changes will be made to the infrastructure on the IaaS.
 
     ```bash
@@ -290,7 +290,7 @@ Follow these steps to use the `paving` repository:
       -var-file=terraform.tfvars
     ```
 
-1. Finally, you can run `terraform apply`
+7. Finally, you can run `terraform apply`
    to create the required infrastructure on the IaaS.
 
     ```bash
@@ -299,20 +299,20 @@ Follow these steps to use the `paving` repository:
       terraform.tfplan 
     ```
 
-1. Save off the output from `terraform output stable_config`
+8. Save off the output from `terraform output stable_config`
    into a `vars.yml` file in `your-repo-name` for future use:
 
     ```bash
     terraform output stable_config > ../your-repo-name/vars.yml
     ```
 
-1. Return to your working directory for the post-terraform steps:
+9. Return to your working directory for the post-terraform steps:
 
     ```bash
     cd ../your-repo-name
     ```
 
-1. Commit and push the updated `vars.yml` file:
+10. Commit and push the updated `vars.yml` file:
 
     ```bash
     git add vars.yml
@@ -332,14 +332,16 @@ When going through the documentation required for your IaaS,
 be sure to stop before deploying the Operations Manager image.
 Platform Automation Toolkit will do this for you.
 
-- [aws][manual-aws]
-- [azure][manual-azure]
-- [gcp][manual-gcp]
-- [openstack][manual-openstack]
-- [vsphere][manual-vsphere]
+- [aws](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html)
+- [azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html)
+- [gcp](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html)
+- [openstack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html)
+- [vsphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-vsphere.html)
 
-_NOTE_: if you need to install an earlier version ofOperations Manager,
-select your desired version from the dropdown at the top of the page.
+<p class="note">
+<span class="note__title">Note</span>
+If you need to install an earlier version of Operations Manager,
+select your desired version from the drop-down version selector at the top of the page.</p>
 
 ### Creating the Operations Manager VM
 
@@ -403,10 +405,10 @@ The properties available vary by IaaS, for example:
 
 #### Terraform Outputs
 
-If you used the `paving` repository from the [Creating Resources for Your Operations Manager][creating-resources-for-your-ops-manager] section,
+If you used the `paving` repository from the [Creating Resources for your Operations Manager](./installing-opsman.html#creating-resources-for-your-ops-manager) section,
 the following steps will result in a filled out `opsman.yml`.
 
-1.Operations Manager needs to be deployed with IaaS specific configuration.
+1. Operations Manager needs to be deployed with IaaS specific configuration.
    Platform Automation Toolkit provides a configuration file format that looks like this:
 
     Copy and paste the YAML below for your IaaS
@@ -478,7 +480,7 @@ git push
 The `state` input is a placeholder
 which will be filled in by the `create-vm` task output.
 This will be used later to keep track of the VM so it can be upgraded,
-which you can learn about in the [upgrade-how-to][upgrade-how-to].
+which you can learn about in the [upgrade-how-to](./upgrade-existing-opsman.html).
 
 Add the following to your `resources` section of your `pipeline.yml`
 ```yaml
@@ -554,7 +556,7 @@ available and default parameters.</p>
 Set the pipeline.
 
 Before we run the job,
-we should [`ensure`][ensure] that `state.yml` is always persisted
+we should [`ensure`](https://concourse-ci.org/jobs.html#schema.step.ensure) that `state.yml` is always persisted
 regardless of whether the `install-opsman` job failed or passed.
 To do this, we can add the following section to the job:
 
