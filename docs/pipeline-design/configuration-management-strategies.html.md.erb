@@ -21,8 +21,8 @@ duplicating foundations is simply a matter of cloning a repository,
 and configuration files are not difficult to understand.
 
 This is the strategy used throughout the
-[Install Ops Man How to Guide][install-how-to] and the
-[Upgrading an Existing Operations Manager How to Guide][upgrade-how-to].
+[Install Ops Man How to Guide](../how-to-guides/installing-opsman.html) and the
+[Upgrading an Existing Operations Manager How to Guide](../how-to-guides/upgrade-existing-opsman.html).
 
 Let's examine an example configuration repository
 that uses the "Single Repository for each Foundation" pattern:
@@ -47,7 +47,7 @@ that uses the "Single Repository for each Foundation" pattern:
 Notice that there is only one subdirectory
 and that all other files are at the repositories base directory.
 _This minimizes parameter mapping in the platform-automation tasks_.
-For example, in the [`configure-director`][configure-director]
+For example, in the [`configure-director`](../tasks.html#configure-director)
 step:
 
 ---excerpt--- "examples/configure-director-usage"
@@ -55,12 +55,12 @@ step:
 We map the config files 
 to the expected input named `env` of the `configure-director` task.
 Because the `configure-director` task's default `ENV` parameter is `env.yml`,
-it automatically uses the `env.yml` file in our configuration repo. 
+it automatically uses the `env.yml` file in our configuration repo.
 We do not need to explicitly name the `ENV` parameter for the task.
 This also works for `director.yml`.
 
 Another option for mapping resources to inputs
-is discussed in the [Matching Resource Names and Input Names][matching-resource-names-and-input-names] section.
+is discussed in the [Matching Resource Names and Input Names](../pipeline-design/configuration-management-strategies.html#matching-resource-names-and-input-names).
 
 For reference, here is the `configure-director` task:
 
@@ -75,11 +75,11 @@ from a foundation specific vars file, CredHub, etc.
 This strategy can reduce foundation drift 
 and streamline the configuration promotion process between foundations.
 
-**This is the strategy used in our [Reference Pipeline][reference-pipeline]**
+**This is the strategy used in our [Reference Pipeline](../pipelines/multiple-products.html)**
 
 ### Overview
 
-The [Reference Pipeline][reference-pipeline] uses a public [config repo][ref-config-repo]
+The [Reference Pipeline](../pipelines/multiple-products.html) uses a public [config repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config)
 with all secrets stored in our Concourse's CredHub.
 
 The design considerations for this strategy as implemented are as follows:
@@ -104,11 +104,11 @@ The design considerations for this strategy as implemented are as follows:
     and for the `pipeline.yml` to be foundation-specific.
     
     The Reference Pipeline handles the different environments via a `fly` variable.
-    The pipeline set script is found in the [`scripts`][ref-config-update-script] directory.
+    The pipeline set script is found in the [`scripts`](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/scripts/update-reference-pipeline.sh) directory.
 
 ### Structure
 
-A simplified view of the [config-repo][ref-config-repo] is represented below:
+A simplified view of the [config-repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) is represented below:
 
 ```
 ├── download-product-pivnet
@@ -193,7 +193,7 @@ In this example, we will be updating PKS from 1.3.8 to 1.4.3.
 We will start with updating this tile in our `sandbox` foundation
 and then promote the configuration to the `development` foundation.
 We assume that you are viewing this example 
-from the root of the [Reference Pipeline Config Repo][ref-config-repo].
+from the root of the [Reference Pipeline Config Repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config).
 
 1. Update `download-product-pivnet/download-pks.yml`:
 
@@ -202,7 +202,7 @@ from the root of the [Reference Pipeline Config Repo][ref-config-repo].
     + product-version-regex: ^1\.4\..*$
     ```
 
-1. Commit this change and run the [resource pipeline][ref-config-resource-pipeline]
+2. Commit this change and run the [resource pipeline](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/pipelines/download-products.yml)
 which will download the 1.4.3 PKS tile
 and make it available on S3.
 
@@ -213,46 +213,46 @@ and make it available on S3.
     + pks-version: 1.4.3
     ```
 
-1. Run the `upload-and-stage-pks` job, but do not run the `configure-pks` or `apply-product-changes` jobs.
+2. Run the `upload-and-stage-pks` job, but do not run the `configure-pks` or `apply-product-changes` jobs.
 
     This makes it so that the `apply-changes` step won't automatically fail
     if there are configuration changes
     between what we currently have deployed
     and the new tile.
 
-1. Login to the Operations Manager UI. If the tile has unconfigured properties:
+3. Login to the Operations Manager UI. If the tile has unconfigured properties:
 
     1. Manually configure the tile and deploy
 
-    1. Re-export the staged-config:
+    2. Re-export the staged-config:
 
         ```
         om -e env.yml staged-config --include-credentials -p pivotal-container-service
         ```
 
-    1. Merge the resulting config with the existing `foundations/sandbox/config/pks.yml`.
+    3. Merge the resulting config with the existing `foundations/sandbox/config/pks.yml`.
 
         Diffing the previous `pks.yml`
         and the new one makes this process much easier.
 
-    1. Pull out new parameterizable variables
+    4. Pull out new parameterizable variables
        and store them in `foundations/vars/pks.yml` or `foundations/sandbox/vars/pks.yml`,
        or directly into CredHub.
        Note, there may be nothing new to parameterize.
        This is okay, and makes the process go faster.
 
-    1. Commit any changes.
+    5. Commit any changes.
 
-1. Run the `configure-pks` and `apply-product-changes` jobs on the `sandbox` pipeline.
+4. Run the `configure-pks` and `apply-product-changes` jobs on the `sandbox` pipeline.
 
-1. Assuming the `sandbox` pipeline is all green,
+5. Assuming the `sandbox` pipeline is all green,
    copy the `foundations/sandbox/config` folder into `foundations/development/config`.
 
-1. Modify the `foundations/development/vars/versions.yml` and `foundations/development/vars/pks.yml` files
+6. Modify the `foundations/development/vars/versions.yml` and `foundations/development/vars/pks.yml` files
    to have all of the property references that exist in their sandbox counterparts
    as well as the foundation-specific values.
 
-1. Commit these changes and run the `development` pipeline all the way through.
+7. Commit these changes and run the `development` pipeline all the way through.
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -316,7 +316,7 @@ an input with a modified input for use with tasks later in that job.
 
 In the following example, `prepare-tasks-with-secrets` takes in the
 `platform-automation-tasks` input and modifies it for the `download-product`
-task. A more in-depth explanation of this can be found on the [secrets-handling][secrets-handling] page.
+task. For an in-depth explanation [Secrets Handling](../concepts/secrets-handling.html).
 
 ```yaml
 - name: configure-director
