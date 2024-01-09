@@ -1,7 +1,7 @@
-# Writing a Pipeline to Upgrade an Existing Ops Manager
+# Writing a Pipeline to Upgrade an ExistingOperations Manager
 
-This how-to-guide shows you how to create a pipeline for upgrading an existing Ops Manager VM.
-If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-how-to].
+This how-to-guide shows you how to create a pipeline for upgrading an existingOperations Manager VM.
+If you don't have anOperations Manager VM, check out [InstallingOperations Manager][install-how-to].
 
 {% set upgradeHowTo = True %}
 {% include ".getting-started.md" %}
@@ -10,7 +10,7 @@ If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-
 
 We're finally in a position to do work!
 
-While ultimately we want to upgrade Ops Manager,
+While ultimately we want to upgradeOperations Manager,
 to do that safely we first need to download and persist
 an export of the current installation.
 
@@ -18,16 +18,16 @@ an export of the current installation.
 <span class="note__title">Important</span>
 <b>Export your installation routinely</b>:
 VMware <b><i>strongly recommends</i></b> automatically exporting
-the Ops Manager installation
+theOperations Manager installation
 and <i>persisting it to your blobstore</i> on a regular basis.
 This ensures that if you need to upgrade (or restore)
-your Ops Manager for any reason,
+yourOperations Manager for any reason,
 you'll have the latest installation info available.
 Later in this tutorial, we'll be adding a time trigger
 for exactly this reason.</p>
 
 Let's switch out the test job
-for one that exports our existing Ops Manager's installation state.
+for one that exports our existingOperations Manager's installation state.
 We can switch the task out by changing:
 
 - the `name` of the job
@@ -36,7 +36,7 @@ We can switch the task out by changing:
 
 [`export-installation`][export-installation]
 has an additional required input.
-We need the `env` file used to talk to Ops Manager.
+We need the `env` file used to talk toOperations Manager.
 
 We'll write that file and make it available as a resource in a moment,
 for now, we'll just `get` it as if it's there.
@@ -102,10 +102,10 @@ when we declare the corresponding resource.
 pipeline-repo: git@github.com:username/your-repo-name
 ```
 
-Now lets write an `env.yml` for your Ops Manager.
+Now lets write an `env.yml` for yourOperations Manager.
 
 `env.yml` holds authentication and target information
-for a particular Ops Manager.
+for a particularOperations Manager.
 
 An example `env.yml` for username/password authentication
 is shown below with the required properties.
@@ -416,7 +416,7 @@ so we'll get to those when we do `config`.
 
 Let's start with the [state file][state].
 We need to record the `iaas` we're on
-and the ID of the _currently deployed_ Ops Manager VM.
+and the ID of the _currently deployed_Operations Manager VM.
 Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
@@ -452,7 +452,7 @@ commit it, and push it:
 
 ```bash
 git add state.yml
-git commit -m "Add state file for foundation Ops Manager"
+git commit -m "Add state file for foundationOperations Manager"
 git push
 ```
 
@@ -461,12 +461,12 @@ We can map the `env` resource to [`upgrade-opsman`][upgrade-opsman]'s
 
 But first, we've got two more inputs to arrange for.
 
-We'll write an [Ops Manager VM Configuration file][opsman-config]
+We'll write an[Operations Manager VM Configuration file][opsman-config]
 to `opsman.yml`.
 The properties available vary by IaaS;
-regardless, you can often inspect your existing Ops Manager
+regardless, you can often inspect your existingOperations Manager
 in your IaaS's console
-(or, if your Ops Manager was created with Terraform,
+(or, if yourOperations Manager was created with Terraform,
 look at your terraform outputs)
 to find the necessary values.
 
@@ -539,10 +539,10 @@ git commit -m "Add opsman config"
 git push
 ```
 
-Finally, we need the image for the new Ops Manager version.
+Finally, we need the image for the newOperations Manager version.
 
 We'll use the [`download-product`][download-product] task.
-It requires a config file to specify which Ops Manager to get,
+It requires a config file to specify whichOperations Manager to get,
 and to provide Tanzu Network credentials.
 Name this file `download-opsman.yml`:
 
@@ -698,7 +698,7 @@ run the job, and see it pass.
 
 ```bash
 git add pipeline.yml
-git commit -m "Upgrade Ops Manager in CI"
+git commit -m "UpgradeOperations Manager in CI"
 git push
 ```
 

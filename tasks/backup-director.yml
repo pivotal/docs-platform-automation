@@ -28,13 +28,13 @@ params:
 
   OPSMAN_SSH_PRIVATE_KEY:
   # - Optional
-  # - May be required to communicate with the Ops Manager BOSH director
-  # - This is the private key for the Ops Manager VM (used during VM creation)
+  # - May be required to communicate with theOperations Manager BOSH director
+  # - This is the private key for theOperations Manager VM (used during VM creation)
 
   OPSMAN_SSH_USERNAME: ubuntu
   # - Optional
-  # - May be required to communicate with the Ops Manager BOSH director
-  # - This is the username used when tunneling through the Ops Manager VM
+  # - May be required to communicate with theOperations Manager BOSH director
+  # - This is the username used when tunneling through theOperations Manager VM
 
 run:
   path: platform-automation-tasks/tasks/backup-director.sh

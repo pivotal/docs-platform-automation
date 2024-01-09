@@ -6,7 +6,7 @@ set -eux
 
 if [ -z "${ENV_FILE}" ]; then
   echo "No env file was provided."
-  echo "Please provide and env file to talk to the Ops Manager."
+  echo "Please provide and env file to talk to theOperations Manager."
   exit 1
 fi
 
