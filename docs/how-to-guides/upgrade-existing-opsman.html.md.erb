@@ -145,7 +145,7 @@ we'll need to create a deploy key Concourse can use to access it.
 Follow [GitHub's instructions][git-deploy-keys]
 for creating a deploy key.
 
-Then, put the private key in Credhub so we can use it in our pipeline:
+Then, put the private key in CredHub so we can use it in our pipeline:
 
 ```bash
 # note the starting space
@@ -167,7 +167,7 @@ Then, add this to the resources section of your pipeline file:
     branch: main
 ```
 
-We'll put the credentials we need in Credhub:
+We'll put the credentials we need in CredHub:
 
 ```bash
 # note the starting space throughout
@@ -186,7 +186,7 @@ We'll put the credentials we need in Credhub:
 
 In order to perform interpolation in one of our input files,
 we'll need the [`credhub-interpolate` task][credhub-interpolate]
-Earlier, we relied on Concourse's native integration with Credhub for interpolation.
+Earlier, we relied on Concourse's native integration with CredHub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
 
@@ -252,7 +252,7 @@ as in input of another.
 An alternative to `input_mappings` is discussed in
 [Configuration Management Strategies](../pipeline-design/configuration-management-strategies.html#advanced-pipeline-design).
 
-We now need to put our `credhub_client` and `credhub_secret` into Credhub,
+We now need to put our `credhub_client` and `credhub_secret` into CredHub,
 so Concourse's native integration can retrieve them
 and pass them as configuration to the `credhub-interpolate` task.
 
@@ -286,7 +286,7 @@ to the `resources` section:
     regexp: installation-(.*).zip
 ```
 
-Again, we'll need to save the credentials in Credhub:
+Again, we'll need to save the credentials in CredHub:
 
 ```bash
 # note the starting space throughout
