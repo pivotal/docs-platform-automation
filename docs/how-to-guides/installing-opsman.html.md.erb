@@ -1,15 +1,16 @@
-# Writing a Pipeline to InstallOperations Manager
-This how-to-guide shows you how to write a pipeline for installing a newOperations Manager.
-If you already have anOperations Manager VM, check out [Upgrading an ExistingOperations Manager][upgrade-how-to].
+# Writing a Pipeline to Install Operations Manager
+
+This how-to-guide shows you how to write a pipeline for installing a new Operations Manager.
+If you already have anOperations Manager VM, check out [Upgrading an Existing Operations Manager][upgrade-how-to].
 
 {% include ".getting-started.md" %}
 
-### DownloadingOperations Manager
+### Downloading Operations Manager
 
 We're finally in a position to do work!
 
 Let's switch out the test job
-for one that downloads and installsOperations Manager.
+for one that downloads and installs Operations Manager.
 We can do this by changing:
 
 - the `name` of the job
@@ -206,7 +207,7 @@ This is a good commit point.
 
 ```bash
 git add pipeline.yml
-git commit -m 'download theOperations Manager image'
+git commit -m 'download the Operations Manager image'
 git push
 ```
 
@@ -325,10 +326,10 @@ VMware has extensive documentation to manually create the resources needed
 if you are unable or do not wish to use Terraform.
 As with the Terraform solution, however,
 there are different docs depending on the IaaS
-you are installingOperations Manager onto.
+you are installing Operations Manager onto.
 
 When going through the documentation required for your IaaS,
-be sure to stop before deploying theOperations Manager image.
+be sure to stop before deploying the Operations Manager image.
 Platform Automation Toolkit will do this for you.
 
 - [aws][manual-aws]
@@ -340,7 +341,7 @@ Platform Automation Toolkit will do this for you.
 _NOTE_: if you need to install an earlier version ofOperations Manager,
 select your desired version from the dropdown at the top of the page.
 
-### Creating theOperations Manager VM
+### Creating the Operations Manager VM
 
 Now that we have anOperations Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
@@ -464,7 +465,7 @@ these are the acceptable keys for the `opsman.yml` file for each IaaS.
 === "vSphere"
     ---excerpt--- "examples/vsphere-configuration"
 
-#### Using theOperations Manager Config file
+#### Using the Operations Manager Config file
 
 Once you have your config file, commit and push it:
 
@@ -629,7 +630,7 @@ Commit the final changes to your repository.
 
 ```bash
 git add pipeline.yml
-git commit -m "InstallOperations Manager in CI"
+git commit -m "Install Operations Manager in CI"
 git push
 ```
 
