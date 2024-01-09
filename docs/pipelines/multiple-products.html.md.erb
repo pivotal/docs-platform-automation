@@ -24,13 +24,13 @@ the VM is created. The choices for this file are simple or SAML authentication.
     <span class="note__title">Note</span>
     There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you to maintain consistency across files.</p>
 
-* An [opsman-configuration][opsman-config] file: This file is required to connect to an IAAS, and control the lifecycle management
+* An [opsman-configuration](../inputs-outputs.hrml#ops-manager-config) file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Operations Manager VM
-* A [director-configuration][director-configuration] file: EachOperations Manager needs its own configuration, but it is retrieved differently from
+* A [director-configuration](../how-to-guides/creating-a-director-config-file.html) file: EachOperations Manager needs its own configuration, but it is retrieved differently from
 a product configuration. This config is used to deploy a newOperations Manager director, or update an existing one.
-* A set of valid [product-configuration][product-configuration] files: Each product configuration is a yaml file that contains the properties
+* A set of valid [product-configuration](../how-to-guides/adding-a-product.html) files: Each product configuration is a yaml file that contains the properties
 necessary to configure an Operations Manager product using the `om` tool. This can be used during install or update.
-* (Optional) A working [credhub][credhub] setup with its own UAA client and secret.
+* (Optional) A working [credhub](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/4.0/tas-for-vms/credhub-index.html) setup with its own UAA client and secret.
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -47,8 +47,8 @@ which can be retrieved using [this pipeline](./resources.html).
 
 ### Full Pipeline and Reference Configurations
 
-There is a [git repository][ref-config-repo]
-containing containing the [full pipeline file][ref-config-pipeline],
+There is a [git repository](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config)
+containing containing the [full pipeline file](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/pipelines/pipeline.yml),
 along with other pipeline and configuration examples.
 
 This can be useful when you want to take
@@ -103,7 +103,7 @@ In a job, specify the following task:
 
 These contain values for
 opsman VM creation, director, product, foundation-specific vars, auth, and env files.
-For more details, see the [Inputs and Outputs][inputs-outputs] section.
+For more details, see the [Inputs and Outputs](../inputs-outputs.html) section.
 Platform Automation Toolkit will not create these resources for you.
 
 ---excerpt--- "reference/resources-configurations"
@@ -115,9 +115,9 @@ Platform Automation Toolkit will not create these resources for you.
 ### Secrets Handling
 
 This helps load secrets stored in an external credential manager -- such as CredHub.
-Concourse support several [credential managers][concourse-secrets-handling] natively.
- 
-The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
+Concourse support several [credential managers](https://concourse-ci.org/creds.html) natively.
+
+The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
 to load secrets from your external configuration files.
 
 ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
