@@ -1,3 +1,5 @@
+# Compatibility and versioning
+
 This topic describes Platform Automation Toolkit dependencies and semantic versioning.
 
 ## External Dependencies
