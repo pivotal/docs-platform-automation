@@ -1,7 +1,7 @@
-# Writing a Pipeline to Upgrade an ExistingOperations Manager
+# Writing a Pipeline to Upgrade an Existing Operations Manager
 
-This how-to-guide shows you how to create a pipeline for upgrading an existingOperations Manager VM.
-If you don't have anOperations Manager VM, check out [InstallingOperations Manager][install-how-to].
+This how-to-guide shows you how to create a pipeline for upgrading an existing Operations Manager VM.
+If you don't have anOperations Manager VM, check out [Installing Operations Manager][install-how-to].
 
 {% set upgradeHowTo = True %}
 {% include ".getting-started.md" %}
@@ -10,7 +10,7 @@ If you don't have anOperations Manager VM, check out [InstallingOperations Manag
 
 We're finally in a position to do work!
 
-While ultimately we want to upgradeOperations Manager,
+While ultimately we want to upgrade Operations Manager,
 to do that safely we first need to download and persist
 an export of the current installation.
 
@@ -18,7 +18,7 @@ an export of the current installation.
 <span class="note__title">Important</span>
 <b>Export your installation routinely</b>:
 VMware <b><i>strongly recommends</i></b> automatically exporting
-theOperations Manager installation
+the Operations Manager installation
 and <i>persisting it to your blobstore</i> on a regular basis.
 This ensures that if you need to upgrade (or restore)
 yourOperations Manager for any reason,
@@ -27,7 +27,7 @@ Later in this tutorial, we'll be adding a time trigger
 for exactly this reason.</p>
 
 Let's switch out the test job
-for one that exports our existingOperations Manager's installation state.
+for one that exports our existing Operations Manager's installation state.
 We can switch the task out by changing:
 
 - the `name` of the job
@@ -464,7 +464,7 @@ But first, we've got two more inputs to arrange for.
 We'll write an[Operations Manager VM Configuration file][opsman-config]
 to `opsman.yml`.
 The properties available vary by IaaS;
-regardless, you can often inspect your existingOperations Manager
+regardless, you can often inspect your existing Operations Manager
 in your IaaS's console
 (or, if yourOperations Manager was created with Terraform,
 look at your terraform outputs)
@@ -698,7 +698,7 @@ run the job, and see it pass.
 
 ```bash
 git add pipeline.yml
-git commit -m "UpgradeOperations Manager in CI"
+git commit -m "Upgrade Operations Manager in CI"
 git push
 ```
 

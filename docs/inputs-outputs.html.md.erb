@@ -18,7 +18,7 @@ There are two ways to build a director config.
 
 ---excerpt--- "examples/director-configuration"
 
-The IAAS specific configuration can be found in theOperations Manager API documentation.
+The IAAS specific configuration can be found in the Operations Manager API documentation.
 
 Included below is a list of properties that can be set in the `director.yml`
 and a link to the API documentation explaining any IAAS specific properties.
@@ -69,7 +69,7 @@ The configuration of the `download-config.yml` looks like this:
 ### env
 
 The `env` input for a task expects to have a `env.yml` file.
-This file contains properties for targeting and logging into theOperations Manager API.
+This file contains properties for targeting and logging into the Operations Manager API.
 
 === "basic auth"
     ---excerpt--- "examples/env"
@@ -231,7 +231,7 @@ using the [download-product](./tasks.html#download-product) task.
 
 {% include "how-to-guides/.opsman-config-tabs.md" %}
 
-The `p-automator` CLI includes the ability to extract theOperations Manager VM configuration (GCP, AWS, Azure, and VSphere).
+The `p-automator` CLI includes the ability to extract the Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
 This works forOperations Managers that are already running and useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.html).
 
 Usage:
@@ -252,7 +252,7 @@ p-automator export-opsman-config \
 --aws-access-key-id some-access-key
 ```
 
-The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage theOperations Manager VM.
+The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Operations Manager VM.
 
 #### download-product task
 
@@ -314,7 +314,7 @@ and a link to the API documentation explaining the properties.
 
 ### state
 
-This file contains that meta-information needed to manage theOperations Manager VM.
+This file contains that meta-information needed to manage the Operations Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
 
 The `state.yml` file contains two properties:

@@ -5,7 +5,7 @@ This includes downloading the product from Pivnet,
 extracting configuration,
 and installing the configured product.
 If you don't already have anOperations Manager and deployed Director,
-check out [InstallingOperations Manager][install-how-to] and
+check out [Installing Operations Manager][install-how-to] and
 [Deploying the Director][director-configuration] respectively.
 
 ## Prerequisites
@@ -209,7 +209,7 @@ git push
 ## Product Configuration
 Before automating the configuration and install of the product,
 we need a config file.
-The simplest way is to choose your config options in theOperations Manager UI,
+The simplest way is to choose your config options in the Operations Manager UI,
 then pull its resulting configuration.
 
 <p class="note">
@@ -225,7 +225,7 @@ Configure the product _manually_ according to the product's install instructions
 This guide installs [tas][tas-install-vsphere].
 Other install instructions may be found in [VMware Tanzu Docs][tanzu-docs].
 
-Once the product is fully configured, apply changes in theOperations Manager UI, 
+Once the product is fully configured, apply changes in the Operations Manager UI, 
 and then continue this guide.
 
 <p class="note important">
@@ -239,7 +239,7 @@ and may have an incomplete configuration at the end of this process.</p>
 
 [om](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.html#staged-config),
 which is used to extract staged product
-configuration from theOperations Manager UI. 
+configuration from the Operations Manager UI. 
 `om` requires a `env.yml`, which we already used in the `upload-and-stage` task.
 
 Most products will contain the following top-level keys:
@@ -530,7 +530,7 @@ This new job will configure the TAS product
 with the config file we previously created.
 
 Next, we need to add an apply-changes job
-so that these changes will be applied by theOperations Manager.
+so that these changes will be applied by the Operations Manager.
 
 ```yaml hl_lines="31-56"
 - name: configure-tas
@@ -704,9 +704,9 @@ here are some approaches you can use:
 - Look in the template where the variable appears for some additional context of its value.
 - Look at the tile's online documentation
 - Upload the tile to anOperations Manager 
-  and visit the tile in theOperations Manager UI to see if that provides any hints.
+  and visit the tile in the Operations Manager UI to see if that provides any hints.
   
-    If you are still struggling, inspecting the html of theOperations Manager webpage
+    If you are still struggling, inspecting the html of the Operations Manager webpage
     can more accurately map the value names to the associated UI element.
 
 <p class="note">

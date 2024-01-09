@@ -24,7 +24,7 @@ outputs:
 params:
   VARS_FILES:
   # - Optional
-  # - Filepath to theOperations Manager vars yaml file
+  # - Filepath to the Operations Manager vars yaml file
   # - The path is relative to root of the task build,
   #   so `vars` and `secrets` can be used.
 

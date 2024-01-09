@@ -4,7 +4,7 @@ including common errors.
 
 {% include "./.export_installation_note.md" %}
 
-## UpgradingOperations Manager
+## Upgrading Operations Manager
 
 It's important to note when upgrading yourOperations Manager:
 
@@ -22,11 +22,11 @@ This flowchart gives a high level overview of how the task makes decisions for a
 On successive invocations of the task, it will offer different behaviour of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
 
-## Recovering theOperations Manager VM
+## Recovering the Operations Manager VM
 Using the `upgrade-opsman` task will always delete the VM.
 This is done to create a consistent and simplified experience across IAASs.
 For example, some IAASs have IP conflicts
-if there are multipleOperations Manager VMs present.
+if there are multiple Operations Manager VMs present.
 
 If there is an issue during the upgrade process,
 you may need to recover yourOperations Manager VM. 
@@ -40,12 +40,12 @@ Both methods require an exported installation.
    set for the state file resource.
    
 1. **Manual recovery**. The VM can always be recovered manually 
-   by deploying theOperations Manager OVA, raw, or yml from Tanzu Network.
+   by deploying the Operations Manager OVA, raw, or yml from Tanzu Network.
 
 Below is a list of common errors when running `upgrade-opsman`.
 
-- **Error: TheOperations Manager API is inaccessible.**
-  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that theOperations Manager VM is not
+- **Error: The Operations Manager API is inaccessible.**
+  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Operations Manager VM is not
   created, and will run the [`create-vm`][create-vm] and
   [`import-installation`][import-installation] tasks.
 
@@ -54,7 +54,7 @@ Below is a list of common errors when running `upgrade-opsman`.
   but most errors can be fixed 
   by re-running the [`upgrade-opsman`][upgrade-opsman] task.
 
-## Restoring the OriginalOperations Manager VM
+## Restoring the Original Operations Manager VM
 There may be an instance in which you want to restore a previousOperations Manager VM
 before completing the upgrade process.
 
@@ -82,7 +82,7 @@ is a helpful resource to get started with the manual process below.
     ```
    
 1. Run `import-installation`.
-   This command requires the exported installation of the originalOperations Manager
+   This command requires the exported installation of the original Operations Manager
    and the `env.yml` used by Platform Automation Toolkit
    ```bash
    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
