@@ -5,15 +5,15 @@ We also provide instructions on using these building blocks in various workflows
 In this introduction, we'll provide a high-level overview of Platform Automation Toolkit.
 To dive-deeper, check out the references section.
 
-See the [Getting Started][getting-started] section for instructions 
-on how to start using Platform Automation Toolkit.
+See the [Getting Started](./getting-started.html) section for instructions
+about how to start using Platform Automation Toolkit.
 
 ## About
 
 * Uses [om](https://github.com/pivotal-cf/om),
-  (and by extension, the Ops Manager API)
+  (and by extension, the Operations Manager API)
   to enable command-line interaction with Ops Manager
-  ([Understanding the Ops Manager Interface][platform-understanding-opsman])
+  ([Understanding the Ops Manager Interface](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html))
 
 * Includes a documented reference pipeline
   showing one possible configuration to use tasks.
@@ -21,7 +21,7 @@ on how to start using Platform Automation Toolkit.
   there are some manual steps you'll need to take to optimize for automation.
   We will call these steps out so that these are clear to you.
 
-* Comes bundled with Concourse [tasks][concourse-task-definition]
+* Comes bundled with Concourse [tasks](./tasks.html)
   that demonstrate how to use these tasks
   in a containerized Continuous Integration (CI) system.
   Platform Automation Toolkit tasks are:
@@ -42,7 +42,7 @@ on how to start using Platform Automation Toolkit.
       rather than a comprehensive solution.
 
 * A documented and supported deployment of Concourse CI to use with Platform Automation Toolkit.
-  The [Concourse for Platform Automation docs][concourse-for-pa] provide a step-by-step tutorial for how to get started.
+  The [Concourse for Platform Automation docs](https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-index.html) provide a step-by-step tutorial for how to get started.
   This approach to deploying Concourse uses the BOSH Director deployed by Ops Manager to deploy and maintain Concourse, Credhub, and UAA.
 
 The [Task Reference](./tasks.html) topic discusses these example tasks further.
