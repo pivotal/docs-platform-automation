@@ -70,7 +70,7 @@ For reference, here is the `configure-director` task:
 
 Multiple foundations may use a single Git configuration source
 but have different variables loaded 
-from a foundation specific vars file, Credhub, etc.
+from a foundation specific vars file, CredHub, etc.
 
 This strategy can reduce foundation drift 
 and streamline the configuration promotion process between foundations.
@@ -80,7 +80,7 @@ and streamline the configuration promotion process between foundations.
 ### Overview
 
 The [Reference Pipeline][reference-pipeline] uses a public [config repo][ref-config-repo]
-with all secrets stored in our Concourse's Credhub.
+with all secrets stored in our Concourse's CredHub.
 
 The design considerations for this strategy as implemented are as follows:
 
@@ -237,7 +237,7 @@ and make it available on S3.
 
     1. Pull out new parameterizable variables
        and store them in `foundations/vars/pks.yml` or `foundations/sandbox/vars/pks.yml`,
-       or directly into Credhub.
+       or directly into CredHub.
        Note, there may be nothing new to parameterize.
        This is okay, and makes the process go faster.
 

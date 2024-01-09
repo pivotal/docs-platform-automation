@@ -79,7 +79,7 @@ We are using the ["Single Repository for Each Foundation"][single-foundation-pat
 pattern to structure our configurations.
 
 You will also need to add the repository URL
-to Credhub so we can reference it
+to CredHub so we can reference it
 later when we declare the corresponding resource.
 
 ```bash
@@ -114,7 +114,7 @@ we'll need to create a deploy key Concourse can use to access it.
 Follow [GitHub's instructions][git-deploy-keys]
 for creating a deploy key.
 
-Then, put the private key in Credhub so we can use it in our pipeline:
+Then, put the private key in CredHub so we can use it in our pipeline:
 
 ```bash
 # note the space at the beginning of the next line
@@ -136,7 +136,7 @@ Then, add this to the resources section of your pipeline file:
     branch: main
 ```
 
-We'll need to put the Tanzu Network token in Credhub:
+We'll need to put the Tanzu Network token in CredHub:
 
 ```bash
 # note the starting space throughout
@@ -149,7 +149,7 @@ We'll need to put the Tanzu Network token in Credhub:
 
 In order to perform interpolation in one of our input files,
 we'll need the [`prepare-tasks-with-secrets` task][prepare-tasks-with-secrets]
-Earlier, we relied on Concourse's native integration with Credhub for interpolation.
+Earlier, we relied on Concourse's native integration with CredHub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
 
