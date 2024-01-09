@@ -40,7 +40,7 @@ params:
   # - Required
   # - filepath of the opsman config YAML
   # - relative to root of the `config` input
-  # - to configure Ops Manager Application Settings
+  # - to configureOperations Manager Application Settings
   #   (such as banner, pivnet token, etc)
   #   add this configuration to your opsman.yml
 

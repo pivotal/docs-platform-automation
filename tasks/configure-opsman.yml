@@ -32,7 +32,7 @@ params:
 
   OPSMAN_CONFIG_FILE: opsman.yml
   # - Required
-  # - filepath of the Ops Manager Application Settings
+  # - filepath of theOperations Manager Application Settings
   #   config file. (such as banner, pivnet token, etc)
   # - relative to root of the `config` input
   # - It is recommended to use one config file to

@@ -2,25 +2,23 @@
 
 Over the course of this guide,
 we're going to use Platform Automation Toolkit
-to create a [pipeline][concourse-pipeline]
-using [Concourse][concourse].
+to create a [pipeline](https://concourse-ci.org/pipelines.html)
+using [Concourse](https://concourse-ci.org/)
 
 Before we get started, you'll need a few things ready to go:
 
-{% if upgradeHowTo %}
-1. A running Ops Manager VM that you would like to upgrade
-{% endif %}
-1. Credentials for an IaaS that Ops Manager is compatible with
-    - It doesn't actually matter what IaaS you use for Ops Manager,
+1. If you are upgrading: A runningOperations Manager VM that you would like to upgrade
+2. Credentials for an IaaS thatOperations Manager is compatible with
+    - It doesn't actually matter what IaaS you use forOperations Manager,
     as long as your Concourse can connect to it.
     Pipelines built with Platform Automation Toolkit can be platform-agnostic.
-1. A Concourse instance
+3. A Concourse instance
    with access to a Credhub instance
    and to the Internet
-1. GitHub account
-1. Read/write credentials and bucket name for an S3 bucket
-1. An account on [VMware Tanzu Network](https://network.pivotal.io/)
-1. A MacOS workstation
+4. GitHub account
+5. Read/write credentials and bucket name for an S3 bucket
+6. An account on [VMware Tanzu Network](https://network.pivotal.io/)
+7. A MacOS workstation
     - with Docker installed
     - a text editor you like
     - a terminal emulator you like
@@ -134,7 +132,7 @@ It's valid YAML, at least.
 
 ### <a></a> Getting `fly`
 
-Let's try to set it as a pipeline with [`fly`][concourse-fly],
+Let's try to set it as a pipeline with [`fly`](https://concourse-ci.org/fly.html),
 the Concourse command-line Interface (CLI).
 
 First, check if we've got `fly` installed at all:
@@ -153,7 +151,7 @@ Navigate to the address for your Concourse instance in a web browser.
 At this point, you don't even need to be signed in!
 If there are no public pipelines, you should see something like this:
 
-![Get Fly][fly-download-image]
+![alt-text="First, download the CLI tools, then use fly set-pipeline to set up your new pipeline."](../img/concourse-fly-download.png)
 
 If there _are_ public pipelines,
 or if you're signed in and there are pipelines you can see,
@@ -296,9 +294,7 @@ git commit --allow-empty -m "Empty initial commit"
 
 If it gives you a config error instead,
 you might need to configure `git` a bit.
-Here's a [good guide][git-first-time-setup]
-to initial setup.
-Get that done, and try again.
+Follow the instructions in [Getting Started -- First-Time Git Setup](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup) and try again.
 
 Now we can add our `pipeline.yml`,
 so in the future it's easy to get back to that soothing `---` state.
@@ -333,7 +329,7 @@ and to current-and-future teammates and collaborators.</p>
 
 #### <a></a> The Test Task
 
-Platform Automation Toolkit comes with a [`test`][test] task
+Platform Automation Toolkit comes with a [`test`](../tasks.html#test) task
 meant to validate that it's been installed correctly.
 Let's use it to get setup.
 
@@ -505,7 +501,7 @@ with secret storage services.
 
 Let's put our API token in Credhub so Concourse can get it.
 
-First we'll need to login:
+First we'll need to log in:
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -521,7 +517,7 @@ Again, note the space at the start
 {% include ".logging-into-credhub.md" %}
 
 Then, we can set the credential name
-to the path [where Concourse will look for it][concourse-credhub-lookup-rules]:
+to the path where Concourse will look for it. See [Credential Lookup Rules](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):
 
 ```bash
 # note the starting space

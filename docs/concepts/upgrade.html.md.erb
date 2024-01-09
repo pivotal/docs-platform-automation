@@ -1,12 +1,12 @@
 This topic provides an overview 
-of upgrading and recovering an Ops Manager using Platform Automation Toolkit,
+of upgrading and recovering anOperations Manager using Platform Automation Toolkit,
 including common errors.
 
 {% include "./.export_installation_note.md" %}
 
-## Upgrading Ops Manager
+## UpgradingOperations Manager
 
-It's important to note when upgrading your Ops Manager:
+It's important to note when upgrading yourOperations Manager:
 
 * always perform an export installation
 * persist that exported installation
@@ -14,7 +14,7 @@ It's important to note when upgrading your Ops Manager:
 * an initial installation is done, which maintains state
 
 ### Upgrade Flowchart
-The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Ops Manager VM.
+The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of anOperations Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}
@@ -22,14 +22,14 @@ This flowchart gives a high level overview of how the task makes decisions for a
 On successive invocations of the task, it will offer different behaviour of the previous run.
 This aids in recovering from failures (ie: from an IAAS) that occur.
 
-## Recovering the Ops Manager VM
+## Recovering theOperations Manager VM
 Using the `upgrade-opsman` task will always delete the VM.
 This is done to create a consistent and simplified experience across IAASs.
 For example, some IAASs have IP conflicts
-if there are multiple Ops Manager VMs present.
+if there are multipleOperations Manager VMs present.
 
 If there is an issue during the upgrade process,
-you may need to recover your Ops Manager VM. 
+you may need to recover yourOperations Manager VM. 
 Recovering your VM can be done in two different ways.
 Both methods require an exported installation.
 
@@ -40,12 +40,12 @@ Both methods require an exported installation.
    set for the state file resource.
    
 1. **Manual recovery**. The VM can always be recovered manually 
-   by deploying the Ops Manager OVA, raw, or yml from Tanzu Network.
+   by deploying theOperations Manager OVA, raw, or yml from Tanzu Network.
 
 Below is a list of common errors when running `upgrade-opsman`.
 
-- **Error: The Ops Manager API is inaccessible.**
-  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that the Ops Manager VM is not
+- **Error: TheOperations Manager API is inaccessible.**
+  Rerun the [`upgrade-opsman`][upgrade-opsman] task. The task will assume that theOperations Manager VM is not
   created, and will run the [`create-vm`][create-vm] and
   [`import-installation`][import-installation] tasks.
 
@@ -54,15 +54,15 @@ Below is a list of common errors when running `upgrade-opsman`.
   but most errors can be fixed 
   by re-running the [`upgrade-opsman`][upgrade-opsman] task.
 
-## Restoring the Original Ops Manager VM
-There may be an instance in which you want to restore a previous Ops Manager VM
+## Restoring the OriginalOperations Manager VM
+There may be an instance in which you want to restore a previousOperations Manager VM
 before completing the upgrade process.
 
-It is recommended to restore a previous Ops Manager VM manually.
+It is recommended to restore a previousOperations Manager VM manually.
 The [Running Commands Locally How-to Guide][running-commands-locally]
 is a helpful resource to get started with the manual process below. 
 
-1. Run `delete-vm` on the failed or non-desired Ops Manager
+1. Run `delete-vm` on the failed or non-desiredOperations Manager
    using the [`state.yml`][state] if applicable. 
    [`opsman.yml`][opsman-config] is required for this command.
    ```bash
@@ -82,7 +82,7 @@ is a helpful resource to get started with the manual process below.
     ```
    
 1. Run `import-installation`.
-   This command requires the exported installation of the original Ops Manager
+   This command requires the exported installation of the originalOperations Manager
    and the `env.yml` used by Platform Automation Toolkit
    ```bash
    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
