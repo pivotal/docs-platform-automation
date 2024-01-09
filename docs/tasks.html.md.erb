@@ -7,7 +7,7 @@ as they are found in the product.
 
 The docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information.
-To learn more see the [running-commands-locally][running-commands-locally] section.
+To learn more see the [running-commands-locally](./how-to-guides/running-commands-locally.html) section.
 
 ### apply-changes
 
@@ -15,7 +15,7 @@ Triggers an install on the Operations Manager described by the auth file.
 
 To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
-To see an example of this config file, see the [Inputs and Outputs][errand-config] section.
+To see an example of this config file, see [Inputs and Outputs](./inputs-outputs.html).
 
 {% include '.disable-verifiers.md' %}
 
@@ -43,7 +43,7 @@ with the `--skip-deploy-products`/`-sdp` flag.
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
 This feature is only available in OpsMan 2.6+.
 For more information on how to utilize this workflow,
-check out the [Stemcell Handling][stemcell-handling] topic.
+see [Stemcell Handling](./concepts/stemcell-handling.html).
 
 === "Task"
     ---excerpt--- "tasks/assign-multi-stemcell"
@@ -55,7 +55,7 @@ check out the [Stemcell Handling][stemcell-handling] topic.
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product.
 For more information on how to utilize
-this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
+this workflow, see [Stemcell Handling](./concepts/stemcell-handling.html).
 
 === "Task"
     ---excerpt--- "tasks/assign-stemcell"
@@ -120,16 +120,16 @@ when automating the [configure-product](#configure-product)/[apply-changes](#app
 
 ### collect-telemetry
 Collects foundation information
-using the [Telemetry Collector][telemetry-docs] tool.
+using the [Telemetry Collector](https://docs.vmware.com/en/Tanzu-Telemetry-for-Ops-Manager/index.html) tool.
 
 This task requires the `telemetry-collector-binary` as an input.
-The binary is available on [Tanzu Network][telemetry];
+The binary is available on [Tanzu Network](https://network.pivotal.io/products/pivotal-telemetry-collector);
 you will need to define a `resource` to supply the binary.
 
-This task requires a [config file][telemetry-config].
+This task requires a [config file](./inputs-outputs.html).
 
 After using this task,
-the [send-telemetry][send-telemetry]
+the [send-telemetry](#send-telemetry)
 may be used to send telemetry data to VMware.
 
 === "Task"
@@ -152,7 +152,7 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
     ---excerpt--- "reference/configure-authentication-usage"
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File][generating-an-auth-file].
+see [Generating an Auth File](./how-to-guides/configuring-auth.html).
 
 ### configure-director
 Configures the BOSH Director with settings from a config file.
@@ -184,20 +184,20 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
     ---excerpt--- "examples/configure-ldap-authentication-usage"
 
 For more details on using LDAP,
-see the [Operations Manager documentation][config-ldap].
+see the [Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#ldap).
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File][generating-an-auth-file].
+see [Generating an Auth File](./how-to-guides/configuring-auth.html).
 
 ### configure-opsman
 This task supports configuring settings
 on the Operations Manager Settings page in the UI.
 For example, the SSL cert for the Operations Manager VM can be configured.
 
-Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+Configuration can be added directly to [`opsman.yml`](./inputs-outputs.html#ops-manager-config).
 An example of all configurable properties can be found in the "Additional Settings" tab.
 
-The [`upgrade-opsman`][upgrade-opsman] task will automatically call `configure-opsman`,
+The [`upgrade-opsman`](#upgrade-opsman) task will automatically call `configure-opsman`,
 so there is no need to use this task then.
 It is recommended to use this task in the initial setup of the Operations Manager VM.
 
@@ -212,7 +212,7 @@ It is recommended to use this task in the initial setup of the Operations Manage
 Configures an individual, staged product with settings from a config file.
 
 Not to be confused with Operations Manager's
-built-in [import][bbr-import],
+built-in [import](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-restore-pcf-bbr.html#deploy-import),
 which reads all deployed products and configurations from a single opaque file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
@@ -253,13 +253,13 @@ The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the [Operations Manager documentation][config-saml]
+see the [Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#saml-settings).
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File][generating-an-auth-file].
+please see [Generating an Auth File](./how-to-guides/configuring-auth.html).
 
 ### create-vm
-Creates an unconfigured Operations Manager VM.
+Creates an un-configured Operations Manager VM.
 
 === "Task"
     ---excerpt--- "tasks/create-vm"
@@ -269,7 +269,7 @@ Creates an unconfigured Operations Manager VM.
     ---excerpt--- "reference/create-vm-usage"
 
 This task requires a config file specific to the IaaS being deployed to.
-Please see the [configuration][opsman-config] page for more specific examples.
+See [Operations Manager configuration](./inputs-outputs.md#ops-manager-config) for more specific examples.
 
 The task does specific CLI commands for the creation of the Operations Manager VM on each IAAS. See below for more information:
 
@@ -356,7 +356,7 @@ Deletes the Operations Manager VM instantiated by [create-vm](#create-vm).
 === "Usage"
     ---excerpt--- "reference/delete-vm-usage"
 
-This task requires the [state file][state] generated [create-vm](#create-vm).
+This task requires the [state file](./inputs-outputs.html#state) generated [create-vm](#create-vm).
 
 The task does specific CLI commands for the deletion of the Operations Manager VM and resources on each IAAS. See below for more information:
 
@@ -391,7 +391,7 @@ If a product (and its associated stemcell) has already been uploaded to Operatio
 then it will not re-download and upload.
 This is helpful when looking for a fast-feedback loop for building pipelines.
 
-This task is similar to [`download-product`][download-product],
+This task is similar to [`download-product`](#download-product),
 as it takes the same product config.
 There are no `outputs` for this task
 because the products (and stemcell) don't need to be shared downstream.
@@ -428,9 +428,9 @@ for later use with download-product using the `SOURCE` parameter,
 or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
-This task requires a [download-product config file][download-product-config].
+This task requires a [download-product config file](./inputs-outputs.html#download-product-config).
 
-If stemcell-iaas is specified in the [download-product config file][download-product-config],
+If stemcell-iaas is specified in the [download-product config file](./inputs-outputs.html#download-product-config),
 and the specified product is a `.pivotal` file,
 `download-product` will attempt to download the stemcell for the product.
 It will retrieve the latest compatible stemcell for the specified IaaS.
@@ -442,7 +442,7 @@ The valid IaaSs are:
 - `openstack`
 - `vsphere`
 
-If a configuration for S3, GCS, or Azure is present in the [download-product config file][download-product-config],
+If a configuration for S3, GCS, or Azure is present in the [download-product config file](./inputs-outputs.html#download-product-config),
 the slug and version of the downloaded product file will be prepended in brackets to the filename.  
 For example:
 
@@ -606,7 +606,7 @@ This feature is only available in Operations Manager 2.6+.
 Additionally, checks each of the staged products
 and validates they are configured correctly.
 This task can be run at any time
-and can be used a a pre-check for [apply-changes](./tasks.html#apply-changes).
+and can be used a a pre-check for [apply-changes](#apply-changes).
 
 The checks that this task executes are:
 
@@ -654,7 +654,7 @@ This feature is only available in Concourse 5+.
 ### prepare-tasks-with-secrets
 Modifies task files to include variables needed for config files as environment variables
 for run-time interpolation from a secret store.
-Learn more about [secrets handling][secrets-handling].
+Learn more about [secrets handling](./concepts/secrets-handling.html).
 
 <p class="note caution">
 <span class="note__title">Caution</span>
@@ -737,7 +737,7 @@ to run the task more than once.</p>
     ---excerpt--- "reference/run-bosh-errand-usage"
 
 ### send-telemetry
-Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
+Sends the `.tar` output from [`collect-telemetry`](#collect-telemetry)
 to VMware.
 
 <p class="note important">
@@ -781,7 +781,7 @@ Staged a product to the Operations Manager specified in the config file.
 Downloads the configuration for a product from Operations Manager.
 
 Not to be confused with Operations Manager's
-built-in [export][bbr-export],
+built-in [export](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-backup-pcf-bbr.html#export),
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
