@@ -4,14 +4,14 @@ Each task can only take a specific set, indicated under the `inputs` property of
 
 ### director config
 
-The config director will set the bosh tile (director) onOperations Manager.
+The config director will set the bosh tile (director) on Operations Manager.
 
 The `config` input for a director task expects to have a `director.yml` file.
 The configuration of the `director.yml` is IAAS specific for some properties -- i.e. networking.
 
 There are two ways to build a director config.
 
-1. Using an already deployedOperations Manager, you can extract the config using [staged-director-config].
+1. Using an already deployed Operations Manager, you can extract the config using [staged-director-config].
 2. Deploying a brand newOperations Manager requires more effort for a `director.yml`.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
@@ -126,11 +126,11 @@ The expected format for this errand config is as follows:
 
 ### installation
 
-The file contains the information to restore anOperations Manager VM.
+The file contains the information to restore an Operations Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
 
-This file can be exported from anOperations Manager VM using the [export-installation](./tasks.html#export-installation).
-This file can be imported to anOperations Manager VM using the [import-installation](./tasks.html#import-installation).
+This file can be exported from an Operations Manager VM using the [export-installation](./tasks.html#export-installation).
+This file can be imported to an Operations Manager VM using the [import-installation](./tasks.html#import-installation).
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -161,7 +161,7 @@ Specific advice and features for the different IaaSs are documented below.
 #### AWS
 
 These required properties are adapted from the instructions outlined in
-[Launching anOperations Manager Director Instance on AWS](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html).
+[Launching an Operations Manager Director Instance on AWS](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html).
 
 {% include '.ip-addresses.md' %}
 
@@ -177,14 +177,14 @@ as this file then contains no secrets.</p>
 #### Azure
 
 The required properties are adapted from the instructions outlined in
-[Launching anOperations Manager Director Instance on Azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html).
+[Launching an Operations Manager Director Instance on Azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html).
 
 {% include '.ip-addresses.md' %}
 
 #### GCP
 
 The required properties are adapted from the instructions outlined in
-[Launching anOperations Manager Director Instance on GCP](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html).
+[Launching an Operations Manager Director Instance on GCP](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html).
 
 {% include '.ip-addresses.md' %}
 
@@ -207,14 +207,14 @@ For example:
 #### Openstack
 
 The required properties are adapted from the instructions outlined in
-[Launching anOperations Manager Director Instance on Openstack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
+[Launching an Operations Manager Director Instance on Openstack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
 
 {% include '.ip-addresses.md' %}
 
 #### vSphere
 
 The required properties are adapted from the instructions outlined in
-[Deploying BOSH andOperations Manager to vSphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-vsphere.html).
+[Deploying BOSH and Operations Manager to vSphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-vsphere.html).
 
 ### opsman image
 
@@ -232,7 +232,7 @@ using the [download-product](./tasks.html#download-product) task.
 {% include "how-to-guides/.opsman-config-tabs.md" %}
 
 The `p-automator` CLI includes the ability to extract the Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
-This works forOperations Managers that are already running and useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.html).
+This works for Operations Managers that are already running and useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.html).
 
 Usage:
 
