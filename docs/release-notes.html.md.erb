@@ -273,7 +273,7 @@ June 17, 2021
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.0.16" target="_blank">Download</a>
 
 ### Features
-- When creating anOperations Manager VM on Vsphere, the disk size can be set via the configuration file to sizes larger than the default of 160 (GB).
+- When creating an Operations Manager VM on Vsphere, the disk size can be set via the configuration file to sizes larger than the default of 160 (GB).
 
     ```yaml
     ---
@@ -303,7 +303,7 @@ June 17, 2021
             resource_pool: /example-dc/host/example-cluster/Resources/example-pool
     ```
 
-- When creating or updating anOperations Manager VM on Azure, you can set an optional tags argument for creating tags on the Operations Manager VM.
+- When creating or updating an Operations Manager VM on Azure, you can set an optional tags argument for creating tags on the Operations Manager VM.
 
     ```yaml
     ---
@@ -404,7 +404,7 @@ January 15, 2021
 ### Bug Fixes
 - Use [`pip` documented](https://pip.pypa.io/en/stable/installing/) method for installing it on the container image
 - With new GCP practices, defining a [`hostname`](https://cloud.google.com/compute/docs/instances/custom-hostname-vm) on the VM can be required.
-  When creating anOperations Manager VM on GCP, the attribute can be set via the configuration file.
+  When creating an Operations Manager VM on GCP, the attribute can be set via the configuration file.
   
     ```yaml
     ---
@@ -666,7 +666,7 @@ October 9, 2020
   will now accept `latest` as the `product-version`
   if you are providing a `CONFIG_FILE`/`STAGE_PRODUCT_CONFIG_FILE`.
   This fixes an issue that required users to update their config file
-  every time a new version was available onOperations Manager.
+  every time a new version was available on Operations Manager.
 - [`stage-configure-apply`][stage-configure-apply] will now treat the `product` input
   as truly optional if `CONFIG_FILE` is provided. 
 
@@ -964,7 +964,7 @@ Released September 2, 2020
 
 ### What's New
 - The [`download-and-upload-product`][download-and-upload-product] task has been added.
-  This advanced task optimizes the steps of downloading and uploading a product file to anOperations Manager.
+  This advanced task optimizes the steps of downloading and uploading a product file to an Operations Manager.
   Before downloading,Operations Manager is checked to see if the product/stemcell has been uploaded already.
   If it has, the download and upload steps are skipped.
   There are no outputs on this task.

@@ -1,6 +1,6 @@
 # code_snippet opsman-settings start yaml
 # These are OPTIONAL settings that can exist in your opsman.yml
-# When upgrading anOperations Manager, these are configurations
+# When upgrading an Operations Manager, these are configurations
 # that can be updated on the Settings page in the Operations Manager UI.
 # These settings can be updated with the upgrade-opsman command
 # even if the Operations Manager VM is not recreated.

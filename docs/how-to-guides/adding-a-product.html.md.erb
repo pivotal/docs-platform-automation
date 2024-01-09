@@ -4,7 +4,7 @@ This how-to-guide will teach you how to add a product to an existing pipeline.
 This includes downloading the product from Pivnet,
 extracting configuration,
 and installing the configured product.
-If you don't already have anOperations Manager and deployed Director,
+If you don't already have an Operations Manager and deployed Director,
 check out [Installing Operations Manager][install-how-to] and
 [Deploying the Director][director-configuration] respectively.
 
@@ -264,7 +264,7 @@ export ENV_FILE=env.yml
 docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
 ```
 
-Then, we can run `om staged-products` to find the name of the product inOperations Manager.
+Then, we can run `om staged-products` to find the name of the product in Operations Manager.
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 om --env ${ENV_FILE} staged-products
@@ -281,7 +281,7 @@ The result should be a table that looks like the following
 ```
 
 `p-bosh` is the name of the director.
-As `cf` is the only other product on ourOperations Manager,
+As `cf` is the only other product on our Operations Manager,
 we can safely assume that this is the product name for [TAS][tas].
 
 Using the product name `cf`,
@@ -703,7 +703,7 @@ here are some approaches you can use:
 
 - Look in the template where the variable appears for some additional context of its value.
 - Look at the tile's online documentation
-- Upload the tile to anOperations Manager 
+- Upload the tile to an Operations Manager 
   and visit the tile in the Operations Manager UI to see if that provides any hints.
   
     If you are still struggling, inspecting the html of the Operations Manager webpage

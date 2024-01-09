@@ -1,7 +1,7 @@
 # Writing a Pipeline to Install Operations Manager
 
 This how-to-guide shows you how to write a pipeline for installing a new Operations Manager.
-If you already have anOperations Manager VM, check out [Upgrading an Existing Operations Manager][upgrade-how-to].
+If you already have an Operations Manager VM, check out [Upgrading an Existing Operations Manager][upgrade-how-to].
 
 {% include ".getting-started.md" %}
 
@@ -17,7 +17,7 @@ We can do this by changing:
 - the `name` of the task
 - the `file` of the task
 
-Our first task within the job should be [`download-product`][download-product].
+Our first task within the job should be [`download-product`](../tasks.html#download-product).
 It has an additional required input;
 we need the `config` file `download-product` uses to talk to Tanzu Network.
 
@@ -90,7 +90,7 @@ later when we declare the corresponding resource.
 ```
 
 `download-ops-manager.yml` holds creds for communicating with Tanzu Network,
-and uniquely identifies anOperations Manager image to download.
+and uniquely identifies an Operations Manager image to download.
 
 An example `download-ops-manager.yml` is shown below.
 
@@ -200,7 +200,7 @@ An alternative to `input_mappings` is discussed in
 Now, the `prepare-tasks-with-secrets` task
 will find required credentials in the config files,
 and modify the tasks,
-so they will pull values from Concourse's integration of Credhub.
+so they will pull values from Concourse's integration of CredHub.
 
 The job will download the product now.
 This is a good commit point.
@@ -211,12 +211,12 @@ git commit -m 'download the Operations Manager image'
 git push
 ```
 
-### Creating Resources for YourOperations Manager
+### Creating Resources for Your Operations Manager
 
-Before Platform Automation Toolkit can create a VM for yourOperations Manager installation,
-there are certain resources required by the VM creation andOperations Manager director installation processes.
+Before Platform Automation Toolkit can create a VM for your Operations Manager installation,
+there are certain resources required by the VM creation and Operations Manager director installation processes.
 These resources are created directly on the IaaS of your choice,
-and read in as configuration for yourOperations Manager.
+and read in as configuration for your Operations Manager.
 
 There are two main ways of creating these resources,
 and you should use whichever method is right for you and your setup.
@@ -343,7 +343,7 @@ select your desired version from the dropdown at the top of the page.
 
 ### Creating the Operations Manager VM
 
-Now that we have anOperations Manager image and the resources required to deploy a VM,
+Now that we have an Operations Manager image and the resources required to deploy a VM,
 let's add the new task to the `install-opsman` job.
 
 ```yaml hl_lines="29-31"
@@ -392,7 +392,7 @@ Looking over the list of inputs for `create-vm` we still need two required input
 The optional inputs are vars used with the config, so we'll get to those when we do `config`.
 
 Let's start with the config file.
-We'll write anOperations Manager VM Configuration file to `opsman.yml`.
+We'll write an Operations Manager VM Configuration file to `opsman.yml`.
 
 The properties available vary by IaaS, for example:
 
@@ -403,7 +403,7 @@ The properties available vary by IaaS, for example:
 
 #### Terraform Outputs
 
-If you used the `paving` repository from the [Creating Resources for YourOperations Manager][creating-resources-for-your-ops-manager] section,
+If you used the `paving` repository from the [Creating Resources for Your Operations Manager][creating-resources-for-your-ops-manager] section,
 the following steps will result in a filled out `opsman.yml`.
 
 1.Operations Manager needs to be deployed with IaaS specific configuration.

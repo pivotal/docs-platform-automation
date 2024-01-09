@@ -1,12 +1,12 @@
 This topic provides an overview 
-of upgrading and recovering anOperations Manager using Platform Automation Toolkit,
+of upgrading and recovering an Operations Manager using Platform Automation Toolkit,
 including common errors.
 
 {% include "./.export_installation_note.md" %}
 
 ## Upgrading Operations Manager
 
-It's important to note when upgrading yourOperations Manager:
+It's important to note when upgrading your Operations Manager:
 
 * always perform an export installation
 * persist that exported installation
@@ -14,7 +14,7 @@ It's important to note when upgrading yourOperations Manager:
 * an initial installation is done, which maintains state
 
 ### Upgrade Flowchart
-The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of anOperations Manager VM.
+The [`upgrade-opsman`][upgrade-opsman] task follows the flow based on state of an Operations Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 {% include "./upgrade-flowchart.mmd" %}
@@ -29,7 +29,7 @@ For example, some IAASs have IP conflicts
 if there are multiple Operations Manager VMs present.
 
 If there is an issue during the upgrade process,
-you may need to recover yourOperations Manager VM. 
+you may need to recover your Operations Manager VM. 
 Recovering your VM can be done in two different ways.
 Both methods require an exported installation.
 
@@ -62,7 +62,7 @@ It is recommended to restore a previousOperations Manager VM manually.
 The [Running Commands Locally How-to Guide][running-commands-locally]
 is a helpful resource to get started with the manual process below. 
 
-1. Run `delete-vm` on the failed or non-desiredOperations Manager
+1. Run `delete-vm` on the failed or non-desired Operations Manager
    using the [`state.yml`][state] if applicable. 
    [`opsman.yml`][opsman-config] is required for this command.
    ```bash
