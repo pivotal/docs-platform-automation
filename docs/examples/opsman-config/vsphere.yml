@@ -26,7 +26,7 @@ opsman-configuration:
     network: example-virtual-network
     ntp: ntp.ubuntu.com
     private_ip: 10.0.0.10
-    ssh_public_key: ssh-rsa ......   # REQUIREDOperations Manager >= 2.6
+    ssh_public_key: ssh-rsa ......   # REQUIRED Operations Manager >= 2.6
 
     # Optional
     # cpu: 1                         # default - 1
