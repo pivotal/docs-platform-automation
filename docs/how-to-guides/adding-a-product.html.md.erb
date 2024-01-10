@@ -50,7 +50,6 @@ to download Tanzu Application Service from Tanzu Network.
 
 Create a `download-tas.yml`.
 
-{% include ".download-tas-tabs.md" %}
 <%= partial "download-tas-tabs" %>
 
 Add and commit this file to the same directory as the previous guides.
@@ -305,7 +304,6 @@ You should still be logged into CredHub.
 If not, login. Be sure to note the space at the beginning of the line.
 This will ensure your valuable secrets are not saved in terminal history.
 
-{% include ".logging-into-credhub.md" %}
 <%= partial "logging-into-credhub" %>
 
 The example list of some sensitive values from our `tas-config.yml` are as follows,
@@ -805,7 +803,6 @@ This section will explain how to support multiple foundations using ops files.
 
 Starting with an **incomplete** Tanzu Application Service(https://network.pivotal.io/products/elastic-runtime) config from vSphere as an example:
 
-{% include ".cf-partial-config.md" %}
 <%= partial "cf-partial-config" %>
 
 For a single foundation deploy, leaving values such as
@@ -832,7 +829,6 @@ To test that the ops file will work in your `base.yml`, this can be done locally
 
 This will output `base.yml` with the replaced(interpolated) values:
 
-{% include ".cf-partial-config-domain-interpolated.md" %}
 <%= partial "cf-partial-config-domain-interpolated" %>
 
 Anything that needs to be different per deployment can be replaced via ops files as long as the `path:` is correct.
@@ -848,8 +844,3 @@ Replicating configuration settings from one product to the same product on a dif
 
 * Because properties and property names can change between patch versions of a product,
   you can only safely apply configuration settings across products if their versions exactly match.
-
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
