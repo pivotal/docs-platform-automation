@@ -167,7 +167,7 @@ Specific advice and features for the different IaaSs are documented below.
 These required properties are adapted from the instructions outlined in
 [Launching an Operations Manager Director Instance on AWS](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html).
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -183,14 +183,14 @@ as this file then contains no secrets.</p>
 The required properties are adapted from the instructions outlined in
 [Launching an Operations Manager Director Instance on Azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html).
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 #### GCP
 
 The required properties are adapted from the instructions outlined in
 [Launching an Operations Manager Director Instance on GCP](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html).
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -213,7 +213,7 @@ For example:
 The required properties are adapted from the instructions outlined in
 [Launching an Operations Manager Director Instance on OpenStack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 #### vSphere
 
@@ -233,7 +233,7 @@ using the [download-product](./tasks.html#download-product) task.
 
 #### opsman.yml
 
-{% include "how-to-guides/.opsman-config-tabs.md" %}
+<%= partial "how-to-guides/opsman-config-tabs" %>
 
 The `p-automator` CLI includes the ability to extract the Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
 This works for Operations Managers that are already running and useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.html).
