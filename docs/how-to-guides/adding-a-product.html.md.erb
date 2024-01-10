@@ -220,7 +220,7 @@ from the product file, using ops files to select options,
 see <a href="#config-template">Config Template</a>.</p>
 
 
-#### Pulling Configuration fromOperations Manager
+#### Pulling Configuration from Operations Manager
 Configure the product _manually_ according to the product's install instructions.
 This guide installs Tanzu Application Service(https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/vsphere-nsx-t.html).
 Other install instructions may be found in [VMware Tanzu Docs](https://docs.vmware.com/).
@@ -284,7 +284,7 @@ As `cf` is the only other product on our Operations Manager,
 we can safely assume that this is the product name for Tanzu Application Service(https://network.pivotal.io/products/elastic-runtime).
 
 Using the product name `cf`,
-let's extract the current configuration fromOperations Manager.
+let's extract the current configuration from Operations Manager.
 
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
