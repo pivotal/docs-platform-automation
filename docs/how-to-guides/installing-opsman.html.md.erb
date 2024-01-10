@@ -414,25 +414,25 @@ the following steps will result in a filled out `opsman.yml`.
     Copy and paste the YAML below for your IaaS
     and save as `opsman.yml`.
 
-    === "AWS"
+    **AWS**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
         ```
 
-    === "Azure"
+    **Azure**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
         ```
 
-    === "GCP"
+    **GCP**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
         ```
 
-    === "vSphere+NSXT"
+    **vSphere+NSXT**
 
         ```yaml
         --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
@@ -456,15 +456,19 @@ If you created your infrastructure manually
 or would like additional configuration options,
 these are the acceptable keys for the `opsman.yml` file for each IaaS.
 
-=== "AWS"
+**AWS**
+
     ---excerpt--- "examples/aws-configuration"
-=== "Azure"
+**Azure**
+
     ---excerpt--- "examples/azure-configuration"
-=== "GCP"
+**GCP**
+
     ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
+**OpenStack**
+
     ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
+**vSphere**
     ---excerpt--- "examples/vsphere-configuration"
 
 #### Using the Operations Manager Config file

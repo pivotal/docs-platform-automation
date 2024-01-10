@@ -49,13 +49,17 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
-=== "Tanzu Network"
+**Tanzu Network**
+
     ---excerpt--- "examples/download-product-config-pivnet"
-=== "S3"
+**S3**
+
     ---excerpt--- "examples/download-product-config-s3"
-=== "GCS"
+**GCS**
+
     ---excerpt--- "examples/download-product-config-gcs"
-=== "Azure"
+**Azure**
+
     ---excerpt--- "examples/download-product-config-azure"
 
 ### download-stemcell-product-config
@@ -71,9 +75,9 @@ The configuration of the `download-config.yml` looks like this:
 The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Operations Manager API.
 
-=== "basic auth"
+**basic auth**
     ---excerpt--- "examples/env"
-=== "uaa auth"
+**uaa auth**
     ---excerpt--- "examples/env-uaa"
 
 #### Getting the `client-id` and `client-secret`
@@ -143,17 +147,17 @@ The config for an Operations Manager described IAAS specific information for cre
 The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.
 
-=== "AWS"
+**AWS**
     ---excerpt--- "examples/aws-configuration"
-=== "Azure"
+**Azure**
     ---excerpt--- "examples/azure-configuration"
-=== "GCP"
+**GCP**
     ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
+**OpenStack**
     ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
+**vSphere**
     ---excerpt--- "examples/vsphere-configuration"
-=== "Additional Settings"
+**Additional Settings**
     ---excerpt--- "examples/opsman-settings"
 
 Specific advice and features for the different IaaSs are documented below.
@@ -204,10 +208,10 @@ For example:
 
 `projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]`
 
-#### Openstack
+#### OpenStack
 
 The required properties are adapted from the instructions outlined in
-[Launching an Operations Manager Director Instance on Openstack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
+[Launching an Operations Manager Director Instance on OpenStack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
 
 {% include '.ip-addresses.md' %}
 
@@ -326,27 +330,27 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IAAS:
 
-=== "AWS"
+**AWS**
     ``` yaml
     --8<-- 'docs/examples/state/aws.yml'
     ```
 
-=== "Azure"
+**Azure**
     ``` yaml
     --8<-- 'docs/examples/state/azure.yml'
     ```
 
-=== "GCP"
+**GCP**
     ``` yaml
     --8<-- 'docs/examples/state/gcp.yml'
     ```
 
-=== "OpenStack"
+**OpenStack**
     ``` yaml
     --8<-- 'docs/examples/state/openstack.yml'
     ```
 
-=== "vSphere"
+**vSphere**
     ``` yaml
     --8<-- 'docs/examples/state/vsphere.yml'
     ```
@@ -365,7 +369,7 @@ using the [download-product](./tasks.html#download-product) task.
 
 #### stemcell.yml
 
-=== "AWS"
+**AWS**
     ```yaml
     ---
     pivnet-api-token: token
@@ -374,7 +378,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "Azure"
+**Azure**
     ```yaml
     ---
     pivnet-api-token: token
@@ -383,7 +387,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "GCP"
+**GCP**
     ```yaml
     ---
     pivnet-api-token: token
@@ -392,7 +396,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "OpenStack"
+**OpenStack**
     ```yaml
     ---
     pivnet-api-token: token
@@ -401,7 +405,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "vSphere"
+**vSphere**
     ```yaml
     ---
     pivnet-api-token: token
