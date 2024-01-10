@@ -2,7 +2,7 @@
 
 ## What is Stemcell Handling?
 In Operations Manager, every product uploaded and staged needs to be given a [stemcell](https://bosh.io/docs/stemcell/) in
-order to operate. By default, every stemcell uploaded toOperations Manager will automatically associate
+order to operate. By default, every stemcell uploaded to Operations Manager will automatically associate
 with any new or existing products. Using the automation tasks, this default can be overridden to
 not have a stemcell associate with any products, and can be manually assigned as deemed necessary
 by the user.
@@ -33,11 +33,11 @@ Ops Manager. These tasks, in order, are:
     used with that product.
 
 2. Run the [upload-product](../tasks.html#upload-product) and [stage-product](../tasks.html#stage-product) tasks to get the
-   resources intoOperations Manager.
+   resources into Operations Manager.
 
 3. Run the [upload-stemcell](../tasks.html#upload-stemcell) task.
 
-    To upload the stemcell toOperations Manager without associating it with any product, the
+    To upload the stemcell to Operations Manager without associating it with any product, the
     [`upload-stemcell`](../tasks.html#upload-stemcell) task will need to be executed with the `FLOATING_STEMCELL: false`
     flag set.
     
