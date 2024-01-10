@@ -19,11 +19,11 @@ To see an example of this config file, see [Inputs and Outputs](./inputs-outputs
 
 {% include '.disable-verifiers.md' %}
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/apply-changes"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/apply-changes-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/apply-changes-usage"
 
 ### apply-director-changes
@@ -32,11 +32,11 @@ with the `--skip-deploy-products`/`-sdp` flag.
 
 {% include '.disable-verifiers.md' %}
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/apply-director-changes"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/apply-director-changes-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/apply-director-changes-usage"
 
 ### assign-multi-stemcell
@@ -45,11 +45,11 @@ This feature is only available in OpsMan 2.6+.
 For more information on how to utilize this workflow,
 see [Stemcell Handling](./concepts/stemcell-handling.html).
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/assign-multi-stemcell"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/assign-multi-stemcell-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/assign-multi-stemcell-usage"
 
 ### assign-stemcell
@@ -57,33 +57,33 @@ see [Stemcell Handling](./concepts/stemcell-handling.html).
 For more information on how to utilize
 this workflow, see [Stemcell Handling](./concepts/stemcell-handling.html).
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/assign-stemcell"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/assign-stemcell-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/assign-stemcell-usage"
 
 ### backup-director
 
 Use BBR to backup a BOSH director deployed with Operations Manager.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/backup-director"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/backup-director-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/backup-director-usage"
 
 ### backup-product
 
 Use BBR to backup a product deployed with Operations Manager.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/backup-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/backup-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/backup-product-usage"
 
 ### backup-tkgi
@@ -97,11 +97,11 @@ The PKS CLI may be temporarily unavailable.
 During the backup, the PKS CLI is disabled.
 Due to the nature of the backup, some commands may not work as expected.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/backup-tkgi"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/backup-tkgi-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/backup-tkgi-usage"
 
 ### check-pending-changes
@@ -111,11 +111,11 @@ By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
 This is useful to keep manual changes from being accidentally applied
 when automating the [configure-product](#configure-product)/[apply-changes](#apply-changes) of other products.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/check-pending-changes"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/check-pending-changes-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/check-pending-changes-usage"
 
 ### collect-telemetry
@@ -132,11 +132,11 @@ After using this task,
 the [send-telemetry](#send-telemetry)
 may be used to send telemetry data to VMware.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/collect-telemetry"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/collect-telemetry-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/collect-telemetry-usage"
 
 ### configure-authentication
@@ -144,11 +144,11 @@ Configures Operations Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/configure-authentication"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/configure-authentication-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/configure-authentication-usage"
 
 For details on the config file expected in the `config` input,
@@ -159,11 +159,11 @@ Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/configure-director"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/configure-director-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/configure-director-usage"
 
 <p class="note important">
@@ -176,11 +176,11 @@ Configures Operations Manager with an external LDAP user store and admin user ac
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/configure-ldap-authentication"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/configure-ldap-authentication-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/configure-ldap-authentication-usage"
 
 For more details on using LDAP,
@@ -201,11 +201,11 @@ The [`upgrade-opsman`](#upgrade-opsman) task will automatically call `configure-
 so there is no need to use this task then.
 It is recommended to use this task in the initial setup of the Operations Manager VM.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/configure-opsman"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/configure-opsman-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/configure-opsman-usage"
 
 ### configure-product
@@ -221,11 +221,11 @@ which can extract a config file,
 and [upload-and-stage-product](#upload-and-stage-product),
 which can stage a product that's been uploaded.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/configure-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/configure-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/configure-product-usage"
 
 ### configure-saml-authentication
@@ -233,11 +233,11 @@ Configures Operations Manager with an external SAML user store and admin user ac
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/configure-saml-authentication"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/configure-saml-authentication-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/configure-saml-authentication-usage"
 
 <p class="note">
@@ -261,11 +261,11 @@ please see [Generating an Auth File](./how-to-guides/configuring-auth.html).
 ### create-vm
 Creates an un-configured Operations Manager VM.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/create-vm"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/create-vm-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/create-vm-usage"
 
 This task requires a config file specific to the IaaS being deployed to.
@@ -296,7 +296,7 @@ The task does specific CLI commands for the creation of the Operations Manager V
 1. Creates a compute image based on the region specific Operations Manager source URI in the specified Operations Manager account
 1. Creates a VM from the image. This will assign a public and/or private IP address, VM sizing, and tags. This does not create any new resources.
 
-**Openstack**
+**OpenStack**
 
 1. Requires the image YAML file from Tanzu Network
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
@@ -326,11 +326,11 @@ The <a href="#prepare-tasks-with-secrets">prepare-tasks-with-secrets</a> task re
 the <code>credhub-interpolate</code> task on Concourse versions 5.x+
 and provides additional benefits.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/credhub-interpolate"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/credhub-interpolate-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/credhub-interpolate-usage"
 
 This task requires a valid credhub with UAA client and secret. For information on how to
@@ -339,21 +339,21 @@ set this up, see [Secrets Handling](./concepts/secrets-handling.html).
 ### delete-installation
 Delete the Operations Manager Installation
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/delete-installation"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/delete-installation-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/delete-installation-usage"
 
 ### delete-vm
 Deletes the Operations Manager VM instantiated by [create-vm](#create-vm).
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/delete-vm"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/delete-vm-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/delete-vm-usage"
 
 This task requires the [state file](./inputs-outputs.html#state) generated [create-vm](#create-vm).
@@ -376,7 +376,7 @@ The task does specific CLI commands for the deletion of the Operations Manager V
 1. Deletes the VM
 1. Attempts to delete the associated image
 
-**Openstack**
+**OpenStack**
 
 1. Deletes the VM
 1. Attempts to delete the associated image
@@ -401,11 +401,11 @@ because the products (and stemcell) don't need to be shared downstream.
 <span class="note__title">Important</span>
 This currently only works with product source being Tanzu Network.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/download-and-upload-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/download-and-upload-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/download-and-upload-product-usage"
 
 ### download-product
@@ -497,18 +497,31 @@ it will not add the prefix to the downloaded product.
 For example, <code>example-product.pivotal</code> from Tanzu Network will be output
 as <code>example-product.pivotal</code>.</p>
 
-=== "Task"
+**Task**
+
     ---excerpt--- "tasks/download-product"
-=== "Implementation"
+
+**Implementation**
+
     ---excerpt--- "tasks/download-product-script"
-=== "Tanzu Network Usage"
+
+
+**Tanzu Network Usage**
+
     ---excerpt--- "reference/download-product-usage"
-=== "S3 Usage"
+
+**S3 Usage**
+
     ---excerpt--- "reference/download-product-usage-s3"
-=== "GCS Usage"
+
+**GCS Usage**
+
     ---excerpt--- "examples/download-product-usage-gcs"
-=== "Azure Usage"
+
+**Azure Usage**
+
     ---excerpt--- "examples/download-product-usage-azure"
+
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
@@ -516,11 +529,11 @@ These certificates can be Operations Manager or CredHub certificates.
 Root CAs cannot be included in this list until Operations Manager 2.7.
 This is purely an informational task.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/expiring-certificates"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/expiring-certificates-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/expiring-certificates-usage"
 
 ### export-installation
@@ -546,11 +559,11 @@ The timestamp is generated using the time on Concourse worker.
 If the time is different on different workers, the generated timestamp may not sort correctly.
 Changing the time or timezone on workers might interfere with ordering.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/export-installation"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/export-installation-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/export-installation-usage"
 
 {% include "./.export_installation_note.md" %}
@@ -562,11 +575,11 @@ This is a part of the backup/restore and upgrade lifecycle processes.
 This task is used after an installation has been exported and a new Operations Manager
 has been deployed, but before the new Operations Manager is configured.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/import-installation"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/import-installation-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/import-installation-usage"
 
 ### make-git-commit
@@ -593,11 +606,11 @@ in addition to copying in a single file.</p>
 This does not perform a <code>git push</code>.
 You will need to <code>put</code> the output of this task to a git resource to persist it.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/make-git-commit"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/make-git-commit-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/make-git-commit-usage"
 
 ### pre-deploy-check
@@ -623,11 +636,11 @@ the task will fail.
 The failed task will provide a list of errors that need to be fixed
 before an `apply-changes` could start.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/pre-deploy-check"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/pre-deploy-check-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/pre-deploy-check-usage"
 
 ### prepare-image
@@ -644,11 +657,11 @@ that allows inputs and outputs to have the same name.
 This feature is only available in Concourse 5+.
 <code>prepare-image</code> does not work with Concourse 4.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/prepare-image"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/prepare-image-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/prepare-image-usage"
 
 ### prepare-tasks-with-secrets
@@ -664,11 +677,11 @@ that allows inputs and outputs to have the same name.
 This feature is only available in Concourse 5+.
 <code>prepare-image</code> does not work with Concourse 4.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/prepare-tasks-with-secrets"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/prepare-tasks-with-secrets-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
 
 ### replicate-product
@@ -683,11 +696,11 @@ in a non-versioned blobstore because it cannot generate a unique name.
 VMware recommends using the replicated tile immediately in the next task
 rather than storing it and using it in a different job.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/replicate-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/replicate-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/replicate-product-usage"
 
 ### revert-staged-changes
@@ -700,11 +713,11 @@ Since this task reverts all changes on an Operations Manager,
 it can conflict with tasks that perform stage or configure operations.
 Use passed constraints to ensure things run in the order you mean them to.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/revert-staged-changes"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/revert-staged-changes-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/revert-staged-changes-usage"
 
 ### run-bosh-errand
@@ -729,11 +742,11 @@ To replicate this retry behavior in your pipeline,
 you can use the <a href="https://concourse-ci.org/jobs.html#schema.step.attempts">Concourse attempts</a> feature
 to run the task more than once.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/run-bosh-errand"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/run-bosh-errand-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/run-bosh-errand-usage"
 
 ### send-telemetry
@@ -746,11 +759,11 @@ To use this task,
 you must acquire a Telemetry license key.
 Contact your VMware representative.</p>
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/send-telemetry"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/send-telemetry-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/send-telemetry-usage"
 
 ### stage-configure-apply
@@ -760,21 +773,21 @@ only to that product without applying changes to the rest of the foundation.
 
 {% include '.disable-verifiers.md' %}
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/stage-configure-apply"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/stage-configure-apply-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/stage-configure-apply-usage"
 
 ### stage-product
 Staged a product to the Operations Manager specified in the config file.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/stage-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/stage-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/stage-product-usage"
 
 ### staged-config
@@ -785,22 +798,22 @@ built-in [export](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/staged-config"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/staged-config-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/staged-config-usage"
 
 ### staged-director-config
 
 Downloads configuration for the BOSH director from Operations Manager.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/staged-director-config"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/staged-director-config-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/staged-director-config-usage"
 
 The configuration is exported to the `generated-config` output.
@@ -814,22 +827,22 @@ The credentials need to be provided from an external configuration when invoking
 ### test
 An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/test"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/test-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/test-usage"
 
 ### test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
 For more instruction on this topic, see the [variables](./concepts/variables.html) section
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/test-interpolate"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/test-interpolate-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/test-interpolate-usage"
 
 ### update-runtime-config
@@ -840,11 +853,11 @@ upload BOSH releases,
 and set a named runtime config.
 This is useful when installing agents on BOSH deployed VMs that don't have a Operations Manager tile.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/update-runtime-config"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/update-runtime-config-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "examples/update-runtime-config-usage"
 
 <p class="note important">
@@ -856,11 +869,11 @@ Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>
 ### upgrade-opsman
 Upgrades an existing Operations Manager to a new given Operations Manager version
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upgrade-opsman"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upgrade-opsman-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upgrade-opsman-usage"
 
 For more information about this task and how it works, see the [upgrade](./concepts/upgrade.html) page.
@@ -868,11 +881,11 @@ For more information about this task and how it works, see the [upgrade](./conce
 ### upload-and-stage-product
 Uploads and stages product to the Operations Manager specified in the config file.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upload-and-stage-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upload-and-stage-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upload-and-stage-product-usage"
 
 ### upload-product
@@ -882,11 +895,11 @@ If a shasum is provided in the config.yml,
 the integrity product will be verified
 with that shasum before uploading.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upload-product"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upload-product-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upload-product-usage"
 
 ### upload-stemcell
@@ -895,11 +908,11 @@ Uploads a stemcell to Operations Manager.
 Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
 Operations Manager parses this filename to determine the version and OS of the stemcell.
 
-=== "Task"
+**Task**
     ---excerpt--- "tasks/upload-stemcell"
-=== "Implementation"
+**Implementation**
     ---excerpt--- "tasks/upload-stemcell-script"
-=== "Usage"
+**Usage**
     ---excerpt--- "reference/upload-stemcell-usage"
 
 {% include ".internal_link_url.md" %}

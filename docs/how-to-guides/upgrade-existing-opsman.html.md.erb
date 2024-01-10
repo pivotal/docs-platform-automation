@@ -420,27 +420,32 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
 
-=== "AWS"
+**AWS**
+
     ``` yaml
     --8<-- 'docs/examples/state/aws.yml'
     ```
 
-=== "Azure"
+**Azure**
+
     ``` yaml
     --8<-- 'docs/examples/state/azure.yml'
     ```
 
-=== "GCP"
+**GCP**
+
     ``` yaml
     --8<-- 'docs/examples/state/gcp.yml'
     ```
 
-=== "OpenStack"
+**OpenStack**
+
     ``` yaml
     --8<-- 'docs/examples/state/openstack.yml'
     ```
 
-=== "vSphere"
+**vSphere**
+
     ``` yaml
     --8<-- 'docs/examples/state/vsphere.yml'
     ```
@@ -469,22 +474,28 @@ in your IaaS's console
 look at your terraform outputs)
 to find the necessary values.
 
-=== "AWS"
+**AWS**
+
     ---excerpt--- "examples/aws-configuration"
-=== "Azure"
+**Azure**
+
     ---excerpt--- "examples/azure-configuration"
-=== "GCP"
+**GCP**
+
     ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
+**OpenStack**
+
     ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
+**vSphere**
+
     ---excerpt--- "examples/vsphere-configuration"
 
 Alternatively, you can auto-generate your opsman.yml
 using a `p-automator` command to output an opsman.yml file
-in the directory it is called from. 
+in the directory it is called from.
 
-=== "AWS"
+**AWS**
+
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
@@ -495,7 +506,8 @@ in the directory it is called from.
       --aws-access-key-id "$AWS_ACCESS_KEY_ID"
     ```
 
-=== "Azure"
+**Azure**
+
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
@@ -508,7 +520,8 @@ in the directory it is called from.
       --azure-resource-group "$AZURE_RESOURCE_GROUP"
     ```
 
-=== "GCP"
+**GCP**
+
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
@@ -519,7 +532,8 @@ in the directory it is called from.
       --gcp-project-id "$GCP_PROJECT_ID"
     ```
 
-=== "vSphere"
+**vSphere**
+
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
       p-automator export-opsman-config \
