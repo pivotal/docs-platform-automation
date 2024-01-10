@@ -331,29 +331,34 @@ here are examples for what this file should look like,
 depending on your IAAS:
 
 **AWS**
-    ``` yaml
-    --8<-- 'docs/examples/state/aws.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/aws.yml'
+```
 
 **Azure**
-    ``` yaml
-    --8<-- 'docs/examples/state/azure.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/azure.yml'
+```
 
 **GCP**
-    ``` yaml
-    --8<-- 'docs/examples/state/gcp.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/gcp.yml'
+```
 
 **OpenStack**
-    ``` yaml
-    --8<-- 'docs/examples/state/openstack.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/openstack.yml'
+```
 
 **vSphere**
-    ``` yaml
-    --8<-- 'docs/examples/state/vsphere.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/vsphere.yml'
+```
 
 ### stemcell
 This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Tanzu Network.
@@ -370,50 +375,54 @@ using the [download-product](./tasks.html#download-product) task.
 #### stemcell.yml
 
 **AWS**
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
 **Azure**
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
 **GCP**
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
 **OpenStack**
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
 **vSphere**
-    ```yaml
-    ---
-    pivnet-api-token: token
-    pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
-    pivnet-product-slug: stemcells-ubuntu-xenial
-    product-version-regex: ^170\..*$
-    ```
 
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
 
 #### download-product task
 
