@@ -512,9 +512,9 @@ We'll be doing this a lot to keep the examples readable.
 When you're typing these out,
 you can skip that and just put it all on one line.</p>
 
-Again, note the space at the start
+Again, note the space at the start.
 
-{% include ".logging-into-credhub.md" %}
+<%= partial "logging-into-credhub" %>
 
 Then, we can set the credential name
 to the path where Concourse will look for it. See [Credential Lookup Rules](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):

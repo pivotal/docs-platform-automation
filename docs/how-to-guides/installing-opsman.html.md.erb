@@ -3,7 +3,7 @@
 This how-to-guide shows you how to write a pipeline for installing a new Operations Manager.
 If you already have an Operations Manager VM, check out [Upgrading an Existing Operations Manager](./upgrade-existing-opsman.html).
 
-{% include ".getting-started.md" %}
+<%= partial "getting-started" %>
 
 ### Downloading Operations Manager
 
@@ -96,7 +96,7 @@ An example `download-ops-manager.yml` is shown below.
 
 Create a `download-ops-manager.yml` for the IaaS you are using.
 
-{% include ".opsman-config-tabs.md" %}
+<%= partial "opsman-config-tabs" %>
 
 Add and commit the new file:
 
@@ -145,7 +145,7 @@ We'll need to put the Tanzu Network token in CredHub:
     -t value -v your-pivnet-token
 ```
 
-{% include './.paths-and-pipeline-names.md' %}
+<%= partial "paths-and-pipeline-names" %>
 
 In order to perform interpolation in one of our input files,
 we'll need the [`prepare-tasks-with-secrets` task](../tasks.html#prepare-tasks-with-secrets)
