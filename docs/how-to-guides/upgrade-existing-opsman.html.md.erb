@@ -3,8 +3,7 @@
 This how-to-guide shows you how to create a pipeline for upgrading an existing Operations Manager VM.
 If you don't have an Operations Manager VM, check out [Installing Operations Manager](./installing-opsman.html).
 
-{% set upgradeHowTo = True %}
-{% include ".getting-started.md" %}
+<%= partial "getting-started" %>
 
 ### Exporting the Installation
 
@@ -181,7 +180,7 @@ We'll put the credentials we need in CredHub:
    -t value -v your-opsman-decryption-passphrase
 ```
 
-{% include './.paths-and-pipeline-names.md' %}
+<% partial "./paths-and-pipeline-names.md" %>
 
 In order to perform interpolation in one of our input files,
 we'll need the [`credhub-interpolate`](../tasks.html#credhub-interpolate) task.
