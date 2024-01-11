@@ -20,6 +20,7 @@ There are two ways to build a director config.
    For brevity, this `director.yml` is a basic example for vsphere.
 
 ---excerpt--- "examples/director-configuration"
+<%= partial "examples/director" %>
 
 The IAAS specific configuration can be found in the Operations Manager API documentation.
 
@@ -54,16 +55,100 @@ The configuration of the `download-config.yml` looks like this:
 
 **Tanzu Network**
 
-    ---excerpt--- "examples/download-product-config-pivnet"
+---excerpt--- "examples/download-product-config-pivnet"
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+
+# Either product-version OR product-version-regex is required
+# product-version-regex: ^1\.2\..*$ # must not be quoted
+product-version: 1.2.3
+
+# Optional
+# pivnet-disable-ssl: true  # default - false
+# stemcell-iaas: aws        # aws|azure|google|openstack|vsphere
+                            # will attempt to download the latest stemcell
+                            # associated with a product by default
+# stemcell-version: 90.90   # specific stemcell version to download
+# stemcell-heavy: true      # will force download of heavy stemcell
+                            # not available on all IaaSes
+# blobstore-bucket: bucket  # if set, product files will have their slug and
+                            # version prepended. Set if the product will
+                            # ever be stored in a blobstore
+```
+
 **S3**
 
     ---excerpt--- "examples/download-product-config-s3"
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+s3-region-name: us-west-1           # if NOT using AWS s3, value is 'region'
+
+## Required unless `s3-auth-type: iam`
+s3-access-key-id: aws-or-minio-key-id
+s3-secret-access-key: aws-or-minio-secret-key
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+# s3-disable-ssl: true                        # default - false
+# s3-enable-v2-signing: true                  # available for compatibility
+# s3-auth-type: iam                           # default - accesskey
+# s3-endpoint: s3.endpoint.com                # required if NOT using AWS S3
+```
+
 **GCS**
 
     ---excerpt--- "examples/download-product-config-gcs"
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+gcs-project-id: project-id
+gcs-service-account-json: |
+  {
+    "type": "service_account",
+    "project_id": "project-id",
+    "private_key_id": "fake-key-id",
+    "private_key": "-----BEGIN PRIVATE KEY-----\fake-key-----END PRIVATE KEY-----\n",
+    "client_email": "email@project-id.iam.gserviceaccount.com",
+    "client_id": "123456789876543212345",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/project%40project-id.iam.gserviceaccount.com"
+  }
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+```
+
 **Azure**
 
     ---excerpt--- "examples/download-product-config-azure"
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: container-name
+azure-storage-account: 1234567890abcdefghij
+azure-storage-key: storage-access-key-from-azure-portal
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+```
 
 ### download-stemcell-product-config
 
@@ -72,6 +157,22 @@ can be used with a `download-config.yml` file to download a stemcell.
 The configuration of the `download-config.yml` looks like this:
 
 ---excerpt--- "examples/download-stemcell-product-config"
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "*vsphere*"       # must be quoted if starting with a *
+pivnet-product-slug: stemcells-ubuntu-xenial
+
+# Either product-version OR product-version-regex is required
+# product-version-regex: ^250\..*$  # must not be quoted
+product-version: "250.82"
+
+# Optional
+# pivnet-disable-ssl: true  # default - false
+# blobstore-bucket: bucket  # if set, product files will have their slug and
+                            # version prepended. Set if the product will
+                            # ever be stored in a blobstore
+```
 
 ### env
 
@@ -154,17 +255,28 @@ The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.
 
 **AWS**
-    ---excerpt--- "examples/aws-configuration"
+    ---excerpt--- ""
+<%= partial "examples/opsman-config/aws" %>
+
 **Azure**
     ---excerpt--- "examples/azure-configuration"
+<%= partial "examples/opsman-config/azure" %>
+
 **GCP**
     ---excerpt--- "examples/gcp-configuration"
+<%= partial "examples/opsman-config/gcp" %>
+
 **OpenStack**
     ---excerpt--- "examples/openstack-configuration"
+<%= partial "examples/opsman-config/openstack" %>
+
 **vSphere**
     ---excerpt--- "examples/vsphere-configuration"
+<%= partial "examples/opsman-config/vsphere" %>
+
 **Additional Settings**
     ---excerpt--- "examples/opsman-settings"
+<%= partial "examples/opsman-config/settings" %>
 
 Specific advice and features for the different IaaSs are documented below.
 
@@ -314,6 +426,7 @@ There are two ways to build a product config.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
 
 ---excerpt--- "examples/product-configuration"
+<%= partial "examples/product" %>
 
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
@@ -459,3 +572,4 @@ in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 
 ---excerpt--- "examples/telemetry"
+<%= partial "examples/telemetry" %>
