@@ -50,7 +50,14 @@ _This minimizes parameter mapping in the platform-automation tasks_.
 For example, in the [`configure-director`](../tasks.html#configure-director)
 step:
 
----excerpt--- "examples/configure-director-usage"
+```yaml
+- task: configure-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-director.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+```
 
 We map the config files 
 to the expected input named `env` of the `configure-director` task.
@@ -64,7 +71,8 @@ is discussed in the [Matching Resource Names and Input Names](../pipeline-design
 
 For reference, here is the `configure-director` task:
 
----excerpt--- "tasks/configure-director"
+<%= partial "tasks/configure-director" %>
+
 
 ## Multiple Foundations with one Repository
 
@@ -272,12 +280,44 @@ we can create resources that match the input names on our tasks.
 Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
 
----excerpt--- "examples/input-matched-resources-usage"
+```yaml
+- name: config
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
+
+- name: env
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
+```
 
 As long as those resources have an associated `get: <resource-name>`
 in the job, they will automatically be mapped to the inputs of the tasks in that job:
 
----excerpt--- "examples/configure-director-matched-resources-usage"
+```yaml
+- name: configure-director
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: config
+        passed: [previous-job]
+      - get: env
+        passed: [previous-job]
+    - task: configure-director
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-director.yml
+```
 
 <div class="note caution">
 <span class="note__title">Caution</span>
