@@ -61,7 +61,36 @@ the rest of this document covers the sections of the full pipeline in more detai
 
 These can either be uploaded manually or from the [reference resources pipeline](./resources.html).
 
----excerpt--- "reference/reference-resources-s3"
+```yaml
+
+resources:
+- name: platform-automation-tasks
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_pivnet_products_bucket))
+    regexp: .*tasks-(.*).zip
+
+- name: platform-automation-image
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_pivnet_products_bucket))
+    regexp: .*image-(.*).tgz
+
+- name: telemetry-collector-binary
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_pivnet_products_bucket))
+    regexp: .*telemetry-(.*).tgz
+```
   
 <p class="note">
 <span class="note__title">Note</span>
@@ -97,7 +126,17 @@ In a job, specify the following task:
 
 <%= partial "export_installation_note" %>
 
----excerpt--- "reference/export-installation-resource-usage"
+```yaml
+
+- name: installation
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_installation_bucket))
+    regexp: ((foundation))-installation-(.*).zip
+```
 
 ### Configured Resources
 
@@ -106,11 +145,44 @@ opsman VM creation, director, product, foundation-specific vars, auth, and env f
 For more details, see the [Inputs and Outputs](../inputs-outputs.html) section.
 Platform Automation Toolkit will not create these resources for you.
 
----excerpt--- "reference/resources-configurations"
+```yaml
+
+# VM state and foundation configuration
+- name: state
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_foundation_state_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    versioned_file: state-((foundation)).yml
+    initial_content_text: '{}'
+    initial_version: 'empty-start'
+
+# configurations
+- name: configuration
+  type: git
+  source:
+    private_key: ((docs-ref-pipeline-repo-key.private_key))
+    uri: ((docs-ref-pipeline-repo-uri))
+    branch: develop
+```
 
 ### Trigger Resources
 
----excerpt--- "reference/resources-triggers"
+```yaml
+
+# triggers used to have jobs do something in a timely manner
+- name: one-time-trigger
+  type: time
+  source:
+    interval: 999999h
+
+- name: daily-trigger
+  type: time
+  source:
+    interval: 24h
+```
 
 ### Secrets Handling
 
@@ -120,7 +192,22 @@ Concourse support several [credential managers](https://concourse-ci.org/creds.h
 The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
 to load secrets from your external configuration files.
 
----excerpt--- "reference/prepare-tasks-with-secrets-usage"
+```yaml
+# This task is used in multiple jobs
+# The yaml anchor "*prepare-tasks-with-secrets" is used in its place
+prepare-tasks-with-secrets: &prepare-tasks-with-secrets
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+  input_mapping:
+    tasks: platform-automation-tasks
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_PATHS: config/foundations/config config/foundations/((foundation))/config
+    VARS_PATHS: vars/foundations/((foundation))/vars
+  output_mapping:
+    tasks: platform-automation-tasks
+```
 
 ### Jobs
 
@@ -128,4 +215,4 @@ Each job corresponds to a "box"
 on the visual representation of your Concourse pipeline.
 These jobs consume resources defined above.
 
----excerpt--- "reference/reference-jobs"
+<%= partial "../reference/reference-jobs">
