@@ -330,10 +330,28 @@ and provides additional benefits.</p>
 
 **Task**
     ---excerpt--- "tasks/credhub-interpolate"
+
 **Implementation**
     ---excerpt--- "tasks/credhub-interpolate-script"
+    
 **Usage**
-    ---excerpt--- "examples/credhub-interpolate-usage"
+
+```yaml
+- task: interpolate-env-creds
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/credhub-interpolate.yml
+  params:
+    CREDHUB_CLIENT: ((credhub-client))
+    CREDHUB_SECRET: ((credhub-secret))
+    CREDHUB_SERVER: ((credhub-server))
+    PREFIX: '/pipeline/vsphere'
+    INTERPOLATION_PATHS: ((foundation))/config
+    SKIP_MISSING: true
+  input_mapping:
+    files: configuration
+  output_mapping:
+    interpolated-files: interpolated-configs
+```
 
 This task requires a valid credhub with UAA client and secret. For information on how to
 set this up, see [Secrets Handling](./concepts/secrets-handling.html).
