@@ -19,7 +19,6 @@ There are two ways to build a director config.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
 
----excerpt--- "examples/director-configuration"
 <%= partial "examples/director" %>
 
 The IAAS specific configuration can be found in the Operations Manager API documentation.
@@ -55,8 +54,6 @@ The configuration of the `download-config.yml` looks like this:
 
 **Tanzu Network**
 
----excerpt--- "examples/download-product-config-pivnet"
-
 ```yaml
 ---
 pivnet-api-token: token
@@ -82,8 +79,6 @@ product-version: 1.2.3
 
 **S3**
 
-    ---excerpt--- "examples/download-product-config-s3"
-
 ```yaml
 ---
 pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
@@ -105,8 +100,6 @@ s3-secret-access-key: aws-or-minio-secret-key
 ```
 
 **GCS**
-
-    ---excerpt--- "examples/download-product-config-gcs"
 
 ```yaml
 ---
@@ -135,8 +128,6 @@ gcs-service-account-json: |
 
 **Azure**
 
-    ---excerpt--- "examples/download-product-config-azure"
-
 ```yaml
 ---
 pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
@@ -156,7 +147,6 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a stemcell.
 The configuration of the `download-config.yml` looks like this:
 
----excerpt--- "examples/download-stemcell-product-config"
 ```yaml
 ---
 pivnet-api-token: token
@@ -255,27 +245,27 @@ The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.
 
 **AWS**
-    ---excerpt--- ""
+
 <%= partial "examples/opsman-config/aws" %>
 
 **Azure**
-    ---excerpt--- "examples/azure-configuration"
+
 <%= partial "examples/opsman-config/azure" %>
 
 **GCP**
-    ---excerpt--- "examples/gcp-configuration"
+
 <%= partial "examples/opsman-config/gcp" %>
 
 **OpenStack**
-    ---excerpt--- "examples/openstack-configuration"
+
 <%= partial "examples/opsman-config/openstack" %>
 
 **vSphere**
-    ---excerpt--- "examples/vsphere-configuration"
+
 <%= partial "examples/opsman-config/vsphere" %>
 
 **Additional Settings**
-    ---excerpt--- "examples/opsman-settings"
+
 <%= partial "examples/opsman-config/settings" %>
 
 Specific advice and features for the different IaaSs are documented below.
@@ -425,7 +415,6 @@ There are two ways to build a product config.
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
 
----excerpt--- "examples/product-configuration"
 <%= partial "examples/product" %>
 
 Included below is a list of properties that can be set in the `product.yml`
@@ -571,5 +560,4 @@ so they can learn and measure results
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 
----excerpt--- "examples/telemetry"
 <%= partial "examples/telemetry" %>
