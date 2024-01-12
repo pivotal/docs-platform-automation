@@ -1,5 +1,7 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet run-bosh-errand-script start bash
+
 cat /var/version && echo ""
 set -eux
 
@@ -24,4 +26,5 @@ if [ -z "${INSTANCE}" ]; then
 else
   bosh -d "${installation}" run-errand "${ERRAND_NAME}" --instance "${INSTANCE}"
 fi
-# code_snippet run-bosh-errand-script end
+</code>
+</pre>
