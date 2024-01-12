@@ -1,5 +1,6 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet prepare-image-script start bash
 
 cat /var/version && echo ""
 set -eu
@@ -28,4 +29,5 @@ rsync -al /etc/ssl/certs/ "${PWD}"/platform-automation-image/rootfs/etc/ssl/cert
 rsync -al /usr/local/share/ca-certificates/ "${PWD}"/platform-automation-image/rootfs/usr/local/share/ca-certificates
 rsync -al /usr/share/ca-certificates/ "${PWD}"/platform-automation-image/rootfs/usr/share/ca-certificates
 
-# code_snippet prepare-image-script end
+</code>
+</pre>
