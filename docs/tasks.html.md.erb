@@ -57,7 +57,7 @@ with the `--skip-deploy-products`/`-sdp` flag.
 <%= partial "tasks/apply-director-changes-script" %>
 
 **Usage**
-    ---excerpt--- "reference/apply-director-changes-usage"
+
 ```yaml
 - task: apply-director-changes
   image: platform-automation-image
@@ -99,33 +99,68 @@ For more information on how to utilize
 this workflow, see [Stemcell Handling](./concepts/stemcell-handling.html).
 
 **Task**
-    ---excerpt--- "tasks/assign-stemcell"
+
+<%= partial "tasks/assign-stemcell" %>
+
 **Implementation**
-    ---excerpt--- "tasks/assign-stemcell-script"
+
+<%= partial "tasks/assign-stemcell-script" %>
+
 **Usage**
-    ---excerpt--- "examples/assign-stemcell-usage"
+
+```yaml
+- task: assign-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-stemcell.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+```
 
 ### backup-director
 
 Use BBR to backup a BOSH director deployed with Operations Manager.
 
 **Task**
-    ---excerpt--- "tasks/backup-director"
+
+<%= partial "tasks/backup-director" %>
+
 **Implementation**
-    ---excerpt--- "tasks/backup-director-script"
+
+<%= partial "tasks/backup-director-script" %>
+
 **Usage**
-    ---excerpt--- "examples/backup-director-usage"
+
+```yaml
+- task: backup-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-director.yml
+  params:
+    OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
+```
 
 ### backup-product
 
 Use BBR to backup a product deployed with Operations Manager.
 
 **Task**
-    ---excerpt--- "tasks/backup-product"
+
+<%= partial "tasks/backup-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/backup-product-script"
+
+<%= partial "tasks/backup-product-script" %>
+
 **Usage**
-    ---excerpt--- "examples/backup-product-usage"
+
+```yaml
+- task: backup-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-product.yml
+  params:
+    PRODUCT_NAME: cf
+    ENV_FILE: env.yml
+    OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
+```
 
 ### backup-tkgi
 
@@ -139,11 +174,23 @@ During the backup, the PKS CLI is disabled.
 Due to the nature of the backup, some commands may not work as expected.</p>
 
 **Task**
-    ---excerpt--- "tasks/backup-tkgi"
+
+<%= partial "tasks/backup-tkgi" %>
+
 **Implementation**
-    ---excerpt--- "tasks/backup-tkgi-script"
+
+<%= partial "tasks/backup-tkgi-script" %>
+
 **Usage**
-    ---excerpt--- "examples/backup-tkgi-usage"
+
+```yaml
+- task: backup-tkgi
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/backup-tkgi.yml
+  params:
+    ENV_FILE: env.yml
+    OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
+```
 
 ### check-pending-changes
 Returns a table of the current state of your Operations Manager
@@ -153,11 +200,25 @@ This is useful to keep manual changes from being accidentally applied
 when automating the [configure-product](#configure-product)/[apply-changes](#apply-changes) of other products.
 
 **Task**
-    ---excerpt--- "tasks/check-pending-changes"
+
+<%= partial "tasks/check-pending-changes" %>
+
 **Implementation**
-    ---excerpt--- "tasks/check-pending-changes-script"
+
+<%= partial "tasks/check-pending-changes-script" %>
+
 **Usage**
-    ---excerpt--- "reference/check-pending-changes-usage"
+
+```yaml
+- task: check-pending-changes
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/check-pending-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    ALLOW_PENDING_CHANGES: true
+```
 
 ### collect-telemetry
 Collects foundation information
@@ -174,11 +235,26 @@ the [send-telemetry](#send-telemetry)
 may be used to send telemetry data to VMware.
 
 **Task**
-    ---excerpt--- "tasks/collect-telemetry"
+
+<%= partial "tasks/collect-telemetry" %>
+
 **Implementation**
-    ---excerpt--- "tasks/collect-telemetry-script"
+
+<%= partial "tasks/collect-telemetry-script" %>
+
 **Usage**
-    ---excerpt--- "reference/collect-telemetry-usage"
+
+```yaml
+- task: collect-telemetry-data
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/collect-telemetry.yml
+  input_mapping:
+    env: configuration
+    config: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/telemetry.yml
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### configure-authentication
 Configures Operations Manager with an internal userstore and admin user account.

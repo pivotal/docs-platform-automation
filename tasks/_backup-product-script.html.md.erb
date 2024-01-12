@@ -1,5 +1,6 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet backup-product-script start bash
 
 cat /var/version && echo ""
 set -eu
@@ -29,4 +30,6 @@ pushd backup
 
   tar -zcvf product_"${PRODUCT_NAME}"_"$( date +"%Y-%m-%d-%H-%M-%S" )".tgz --remove-files -- */*
 popd
-# code_snippet backup-product-script end
+
+</code>
+</pre>
