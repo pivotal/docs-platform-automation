@@ -927,7 +927,7 @@ params:
   INSTALLATION_FILE: installation-$timestamp.zip
 ```
 
-!<p class="note">
+<p class="note">
 <span class="note__title">Note</span>
 The timestamp is generated using the time on Concourse worker.
 If the time is different on different workers, the generated timestamp may not sort correctly.
@@ -1163,11 +1163,24 @@ VMware recommends using the replicated tile immediately in the next task
 rather than storing it and using it in a different job.</p>
 
 **Task**
-    ---excerpt--- "tasks/replicate-product"
+
+<%= partial "tasks/replicate-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/replicate-product-script"
+
+<%= partial "tasks/replicate-product-script" %>
+
 **Usage**
-    ---excerpt--- "examples/replicate-product-usage"
+
+```yaml
+- task: replicate-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/replicate-product.yml
+  input_mapping:
+    product: pas-windows
+  params:
+    REPLICATED_NAME: iso-1
+```
 
 ### revert-staged-changes
 Reverts all changes that are currently staged on the Operations Manager.
@@ -1180,11 +1193,24 @@ it can conflict with tasks that perform stage or configure operations.
 Use passed constraints to ensure things run in the order you mean them to.</p>
 
 **Task**
-    ---excerpt--- "tasks/revert-staged-changes"
+
+<%= partial "tasks/revert-staged-changes" %>
+
 **Implementation**
-    ---excerpt--- "tasks/revert-staged-changes-script"
+
+<%= partial "tasks/revert-staged-changes-script" %>
+
 **Usage**
-    ---excerpt--- "reference/revert-staged-changes-usage"
+
+```yaml
+- task: revert-staged-changes
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/revert-staged-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### run-bosh-errand
 Runs a specified BOSH errand directly on the BOSH Director
@@ -1198,7 +1224,6 @@ outside of the Operations Manager UI context.
 By using this task, you are accepting the risk
 that what you are doing cannot be tracked by your Operations Manager.</p>
 
-	
 <p class="note important">
 <span class="note__title">Important</span>
 Operations Manager, by design, will re-run failed errands for you.
@@ -1209,11 +1234,27 @@ you can use the <a href="https://concourse-ci.org/jobs.html#schema.step.attempts
 to run the task more than once.</p>
 
 **Task**
-    ---excerpt--- "tasks/run-bosh-errand"
+
+<%= partial "tasks/run-bosh-errand" %>
+
 **Implementation**
-    ---excerpt--- "tasks/run-bosh-errand-script"
+
+<%= partial "tasks/run-bosh-errand-script" %>
+
 **Usage**
-    ---excerpt--- "reference/run-bosh-errand-usage"
+
+```yaml
+- task: run-bosh-errand
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/run-bosh-errand.yml
+  input_mapping:
+    env: configuration
+  params:
+    PRODUCT_NAME: cf
+    ERRAND_NAME: smoke_tests
+    ENV_FILE: foundations/config/env.yml
+    OPSMAN_SSH_PRIVATE_KEY: ((ops_manager_ssh_private_key))
+```
 
 ### send-telemetry
 Sends the `.tar` output from [`collect-telemetry`](#collect-telemetry)
@@ -1226,11 +1267,24 @@ you must acquire a Telemetry license key.
 Contact your VMware representative.</p>
 
 **Task**
-    ---excerpt--- "tasks/send-telemetry"
+
+<%= partial "tasks/send-telemetry" %>
+
 **Implementation**
-    ---excerpt--- "tasks/send-telemetry-script"
+
+<%= partial "tasks/send-telemetry-script" %>
+
 **Usage**
-    ---excerpt--- "reference/send-telemetry-usage"
+
+```yaml
+- task: send-telemetry-data
+  attempts: 3
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/send-telemetry.yml
+  params:
+    API_KEY: no-op-test-key
+    DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
+```
 
 ### stage-configure-apply
 This is an _advanced task_.
@@ -1240,21 +1294,50 @@ only to that product without applying changes to the rest of the foundation.
 <%= partial "disable-verifiers" %>
 
 **Task**
-    ---excerpt--- "tasks/stage-configure-apply"
+
+<%= partial "tasks/stage-configure-apply" %>
+
 **Implementation**
-    ---excerpt--- "tasks/stage-configure-apply-script"
+
+<%= partial "tasks/stage-configure-apply-script" %>
+
 **Usage**
-    ---excerpt--- "examples/stage-configure-apply-usage"
+
+```yaml
+- task: stage-configure-apply-healthwatch
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/stage-configure-apply.yml
+  params:
+    CONFIG_FILE: healthwatch.yml
+  input_mapping:
+    product: healthwatch-product
+    env: configuration
+    config: configuration
+```
 
 ### stage-product
 Staged a product to the Operations Manager specified in the config file.
 
 **Task**
-    ---excerpt--- "tasks/stage-product"
+
+<%= partial "tasks/stage-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/stage-product-script"
+
+<%= partial "tasks/stage-product-script" %>
+
 **Usage**
-    ---excerpt--- "reference/stage-product-usage"
+
+```yaml
+- task: upload-and-stage-tas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/stage-product.yml
+  input_mapping:
+    product: tas-product
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### staged-config
 Downloads the configuration for a product from Operations Manager.
@@ -1265,11 +1348,29 @@ which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
 **Task**
-    ---excerpt--- "tasks/staged-config"
+
+<%= partial "tasks/staged-config" %>
+
 **Implementation**
-    ---excerpt--- "tasks/staged-config-script"
+
+<%= partial "tasks/staged-config-script" %>
+
 **Usage**
-    ---excerpt--- "examples/staged-config-usage"
+
+```yaml
+- task: staged-config
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/staged-config.yml
+  input_mapping:
+    env: configuration
+  params:
+    PRODUCT_NAME: cf
+  ensure:
+    do:
+      - put: state
+        params:
+          file: generated-state/state.yml
+```
 
 ### staged-director-config
 
@@ -1277,10 +1378,26 @@ Downloads configuration for the BOSH director from Operations Manager.
 
 **Task**
     ---excerpt--- "tasks/staged-director-config"
+<%= partial "tasks/staged-director-config" %>
+
 **Implementation**
     ---excerpt--- "tasks/staged-director-config-script"
+<%= partial "tasks/staged-director-config-script" %>
+
 **Usage**
     ---excerpt--- "examples/staged-director-config-usage"
+```yaml
+- task: staged-director-config
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/staged-director-config.yml
+  input_mapping:
+    env: configuration
+  ensure:
+    do:
+      - put: state
+        params:
+          file: generated-state/state.yml
+```
 
 The configuration is exported to the `generated-config` output.
 It does not extract credentials from Operations Manager
