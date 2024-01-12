@@ -22,11 +22,25 @@ To see an example of this config file, see [Inputs and Outputs](./inputs-outputs
 <%= partial "disable-verifiers" %>
 
 **Task**
-    ---excerpt--- "tasks/apply-changes"
+
+<%= partial "tasks/apply-changes" %>
+
 **Implementation**
-    ---excerpt--- "tasks/apply-changes-script"
+
+<%= partial "tasks/apply-changes-script" %>
+
 **Usage**
-    ---excerpt--- "reference/apply-changes-usage"
+
+```yaml
+- task: apply-product-changes
+  attempts: 3
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/apply-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
@@ -35,11 +49,25 @@ with the `--skip-deploy-products`/`-sdp` flag.
 <%= partial "disable-verifiers" %>
 
 **Task**
-    ---excerpt--- "tasks/apply-director-changes"
+
+<%= partial "tasks/apply-director-changes" %>
+
 **Implementation**
-    ---excerpt--- "tasks/apply-director-changes-script"
+
+<%= partial "tasks/apply-director-changes-script" %>
+
 **Usage**
     ---excerpt--- "reference/apply-director-changes-usage"
+```yaml
+- task: apply-director-changes
+  image: platform-automation-image
+  attempts: 3
+  file: platform-automation-tasks/tasks/apply-director-changes.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### assign-multi-stemcell
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
@@ -48,11 +76,22 @@ For more information on how to utilize this workflow,
 see [Stemcell Handling](./concepts/stemcell-handling.html).
 
 **Task**
-    ---excerpt--- "tasks/assign-multi-stemcell"
+
+<%= partial "tasks/assign-multi-stemcell" %>
+
 **Implementation**
-    ---excerpt--- "tasks/assign-multi-stemcell-script"
+
+<%= partial "tasks/assign-multi-stemcell-script" %>
+
 **Usage**
-    ---excerpt--- "examples/assign-multi-stemcell-usage"
+
+```yaml
+- task: assign-multi-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-multi-stemcell.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+```
 
 ### assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product.

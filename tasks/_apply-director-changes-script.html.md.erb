@@ -1,5 +1,6 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet apply-director-changes-script start bash
 
 cat /var/version && echo ""
 set -eux
@@ -14,4 +15,6 @@ fi
 # shellcheck disable=SC2068
 om --env env/"${ENV_FILE}" apply-changes \
   ${flags[@]}
-# code_snippet apply-director-changes-script end
+
+</code>
+</pre>
