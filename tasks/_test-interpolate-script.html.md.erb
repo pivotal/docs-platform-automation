@@ -1,5 +1,6 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet test-interpolate-script start bash
 
 cat /var/version && echo ""
 set -eux
@@ -17,4 +18,6 @@ fi
 # ${vars_files_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
 om interpolate --config "config/${CONFIG_FILE}" ${flags[@]}
-# code_snippet test-interpolate-script end
+
+</code>
+</pre>

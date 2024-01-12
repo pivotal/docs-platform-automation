@@ -1,5 +1,6 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet upload-and-stage-product-script start bash
 
 cat /var/version && echo ""
 set -eux
@@ -22,4 +23,6 @@ product_version="$(om product-metadata \
 om --env env/"${ENV_FILE}" stage-product \
   --product-name "${product_name}" \
   --product-version "${product_version}"
-# code_snippet upload-and-stage-product-script end
+
+</code>
+</pre>
