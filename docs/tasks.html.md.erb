@@ -467,11 +467,33 @@ please see [Generating an Auth File](./how-to-guides/configuring-auth.html).
 Creates an un-configured Operations Manager VM.
 
 **Task**
-    ---excerpt--- "tasks/create-vm"
+
+<%= partial "tasks/create-vm" %>
+
 **Implementation**
-    ---excerpt--- "tasks/create-vm-script"
+
+<%= partial "tasks/create-vm-script" %>
+
 **Usage**
-    ---excerpt--- "reference/create-vm-usage"
+
+```yaml
+- task: create-vm
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/create-vm.yml
+  input_mapping:
+    image: opsman-image
+    config: configuration
+    vars: configuration
+  params:
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    STATE_FILE: state-((foundation)).yml
+    VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+  ensure: &put-state
+    do:
+    - put: state
+      params:
+        file: generated-state/state-((foundation)).yml
+```
 
 This task requires a config file specific to the IaaS being deployed to.
 See [Operations Manager configuration](./inputs-outputs.html#ops-manager-config) for more specific examples.
@@ -532,10 +554,12 @@ the <code>credhub-interpolate</code> task on Concourse versions 5.x+
 and provides additional benefits.</p>
 
 **Task**
-    ---excerpt--- "tasks/credhub-interpolate"
+
+<%= partial "tasks/credhub-interpolate" %>
 
 **Implementation**
-    ---excerpt--- "tasks/credhub-interpolate-script"
+
+<%= partial "tasks/credhub-interpolate-script" %>
 
 **Usage**
 
@@ -563,21 +587,53 @@ set this up, see [Secrets Handling](./concepts/secrets-handling.html).
 Delete the Operations Manager Installation
 
 **Task**
-    ---excerpt--- "tasks/delete-installation"
+
+<%= partial "tasks/delete-installation" %>
+
 **Implementation**
-    ---excerpt--- "tasks/delete-installation-script"
+
+<%= partial "tasks/delete-installation-script" %>
+
 **Usage**
-    ---excerpt--- "reference/delete-installation-usage"
+
+```yaml
+- task: delete-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/delete-installation.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### delete-vm
 Deletes the Operations Manager VM instantiated by [create-vm](#create-vm).
 
 **Task**
-    ---excerpt--- "tasks/delete-vm"
+
+<%= partial "tasks/delete-vm" %>
+
 **Implementation**
-    ---excerpt--- "tasks/delete-vm-script"
+
+<%= partial "tasks/delete-vm-script" %>
+
 **Usage**
-    ---excerpt--- "reference/delete-vm-usage"
+
+```yaml
+- task: delete-vm
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/delete-vm.yml
+  input_mapping:
+    config: configuration
+  params:
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    STATE_FILE: state-((foundation)).yml
+  ensure:
+    do:
+    - put: state
+      params:
+        file: generated-state/state-((foundation)).yml
+```
 
 This task requires the [state file](./inputs-outputs.html#state) generated [create-vm](#create-vm).
 
@@ -625,11 +681,26 @@ because the products (and stemcell) don't need to be shared downstream.
 This currently only works with product source being Tanzu Network.</p>
 
 **Task**
-    ---excerpt--- "tasks/download-and-upload-product"
+
+<%= partial "tasks/download-and-upload-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/download-and-upload-product-script"
+
+<%= partial "tasks/download-and-upload-product-script" %>
+
 **Usage**
-    ---excerpt--- "examples/download-and-upload-product-usage"
+
+```yaml
+- task: download-and-upload-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-and-upload-product.yml
+  input_mapping:
+    env: configuration
+    config: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    CONFIG_FILE: download-product-pivnet/download-tas.yml
+```
 
 ### download-product
 
@@ -722,28 +793,95 @@ as <code>example-product.pivotal</code>.</p>
 
 **Task**
 
-    ---excerpt--- "tasks/download-product"
+<%= partial "tasks/download-product" %>
 
 **Implementation**
 
-    ---excerpt--- "tasks/download-product-script"
-
+<%= partial "tasks/download-product-script" %>
 
 **Tanzu Network Usage**
 
-    ---excerpt--- "reference/download-product-usage"
+```yaml
+- name: fetch-pks
+  plan:
+  - in_parallel:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: download-pks-product-and-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-pivnet/download-pks.yml
+    input_mapping:
+      config: configuration
+    output_mapping: {downloaded-stemcell: pks-stemcell}
+  - in_parallel:
+      - put: pks-product
+        params:
+          file: downloaded-product/*.pivotal
+      - put: pks-stemcell
+        params:
+          file: pks-stemcell/*.tgz
+```
 
 **S3 Usage**
 
-    ---excerpt--- "reference/download-product-usage-s3"
+```yaml
+- task: download-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  input_mapping:
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/download-pks.yml
+    VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+    SOURCE: s3
+  output_mapping:
+    downloaded-product: pks-product
+    downloaded-stemcell: pks-stemcell
+```
 
 **GCS Usage**
 
-    ---excerpt--- "examples/download-product-usage-gcs"
+```yaml
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: gcs
+  input_mapping:
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+```
 
 **Azure Usage**
 
-    ---excerpt--- "examples/download-product-usage-azure"
+```yaml
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: azure
+  input_mapping:
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+```
 
 
 ### expiring-certificates
@@ -756,6 +894,7 @@ This is purely an informational task.
     ---excerpt--- "tasks/expiring-certificates"
 **Implementation**
     ---excerpt--- "tasks/expiring-certificates-script"
+<%= partial "tasks/download-product-script" %>
 **Usage**
     ---excerpt--- "reference/expiring-certificates-usage"
 
