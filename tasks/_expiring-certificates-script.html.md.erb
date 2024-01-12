@@ -1,5 +1,6 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet expiring-certificates-script start bash
 
 cat /var/version && echo ""
 set -eux
@@ -11,4 +12,6 @@ fi
 
 om --env env/"${ENV_FILE}" expiring-certificates \
   --expires-within "${EXPIRES_WITHIN}"
-# code_snippet expiring-certificates-script end
+
+</code>
+</pre>
