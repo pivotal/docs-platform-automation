@@ -1,9 +1,10 @@
+<pre>
+<code>
 # The inputs, outputs, params, filename, and filepath
 # of this task file are part of its semantically versioned API.
 # See our documentation for a detailed discussion of our semver API.
 # See www.semver.org for an explanation of semantic versioning.
 
-# code_snippet create-vm start yaml
 ---
 platform: linux
 
@@ -11,7 +12,6 @@ inputs:
 - name: platform-automation-tasks
 - name: state # contains the state for the vm
 - name: config # contains the product configuration file
-- name: image # contains the image file to be installed
 - name: vars # variable files to be made available
   optional: true
 - name: secrets
@@ -21,7 +21,6 @@ inputs:
 
 outputs:
 - name: generated-state #contains the updated state file
-
 
 params:
   VARS_FILES:
@@ -49,5 +48,7 @@ params:
   #     (such as state-*.yml)
 
 run:
-  path: platform-automation-tasks/tasks/create-vm.sh
-# code_snippet create-vm end
+  path: platform-automation-tasks/tasks/delete-vm.sh
+
+</code>
+</pre>
