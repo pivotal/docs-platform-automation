@@ -1,7 +1,9 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet configure-authentication-script start bash
 
 cat /var/version && echo ""
+om vm-lifecycle -v
 set -eux
 
 vars_files_args=("")
@@ -11,7 +13,9 @@ done
 
 # ${vars_files_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
-om --env env/"${ENV_FILE}" --skip-ssl-validation configure-authentication \
-  --config config/"${AUTH_CONFIG_FILE}" \
+om --env env/"${ENV_FILE}" configure-opsman \
+  --config "config/${OPSMAN_CONFIG_FILE}" \
   ${vars_files_args[@]}
-# code_snippet configure-authentication-script end
+
+</code>
+</pre>
