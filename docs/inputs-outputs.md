@@ -1,6 +1,9 @@
-##  Inputs
+# Task inputs
+
 These are the inputs that can be provided to the tasks.
 Each task can only take a specific set, indicated under the `inputs` property of the YAML.
+
+## Inputs
 
 ### director config
 

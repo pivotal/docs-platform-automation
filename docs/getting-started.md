@@ -1,8 +1,10 @@
-If you are using Platform Automation Toolkit for the first time,
-you have a few options.
+# Getting Started
 
-Our [Overview][overview] of Platform Automation Toolkit describes it conceptually,
-and is useful to review prior to diving into more technical content.
+If you are using Platform Automation Toolkit for the first time,
+you have a few options, which are described in this topic.
+
+See [Overview][overview] of Platform Automation Toolkit for a conceptual description.
+Review the Overview before diving into the more technical content in this topic.
 
 ## How-to Guides
 

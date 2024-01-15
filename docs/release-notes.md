@@ -1,8 +1,4 @@
-<style>
-    .md-typeset h2 {
-        font-weight: bold;
-    }
-</style>
+# Release Notes
 
 ## v4.4.32
 June 15, 2023

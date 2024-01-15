@@ -1,4 +1,5 @@
-## Generating an Env File
+# Generating an Env File
+
 Almost all [`om`][om] commands require an env file
 to describe how to communicate (and authenticate) with a given Ops Manager.
 
