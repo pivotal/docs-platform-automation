@@ -1,6 +1,9 @@
-## Platform Automation Toolkit Tasks
-This document lists each Platform Automation Toolkit task,
+# Task Reference
+
+This topic lists each Platform Automation Toolkit task,
 and provides information about their intentions, inputs, and outputs.
+
+## Platform Automation Toolkit Tasks
 
 The tasks are presented, in their entirety,
 as they are found in the product.

@@ -1,3 +1,5 @@
+# Recovering and upgrading Operations Manager
+
 This topic provides an overview 
 of upgrading and recovering an Ops Manager using Platform Automation Toolkit,
 including common errors.
