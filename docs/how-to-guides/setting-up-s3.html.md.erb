@@ -102,14 +102,14 @@ Buckets are the containers for objects.
 Buckets can have permissions for who can
 create, write, delete, and see objects within that bucket.
 
-1. Navigate to [the S3 console](https://console.aws.amazon.com/s3/)
-1. Click the "Create bucket" button
-1. Enter a DNS-compliant name for your new bucket
-    - This name must be unique across all of AWS S3 buckets
-    and adhere to general URL guidelines.
-    Make it something meaningful and memorable!
-1. Enter the "Region" you want the bucket to reside in
-1. Choose "Create"
+1. Go to [the S3 console](https://console.aws.amazon.com/s3/)
+1. Click the **Create bucket**.
+1. Enter a DNS-compliant name for your new bucket. This name must be:
+    - Unique across all AWS S3 buckets
+    - Adhere to general URL guidelines
+    - Meaningful and memorable
+2. In **Region**, enter the region you want the bucket to reside in.
+3. Choose **Create**.
 
 This creates a bucket with the default S3 settings.
 Bucket permissions and settings
@@ -143,8 +143,8 @@ But anyone with appropriate permissions can grant public access to objects.
 In order to change who can access buckets or objects in buckets:
 
 1. Navigate to [the S3 console](https://console.aws.amazon.com/s3/).
-1. Choose the name of the bucket you created in the previous step
-1. In the top row, choose "Permissions"
+1. Choose the name of the bucket you created in the previous step.
+1. In the top row, click **Permissions**.
 
 In this tab,
 you can set the various permissions
@@ -152,22 +152,22 @@ for an individual bucket.
 For simplicity, in this guide, we will use public permissions
 for Concourse to access the files.
 
-1. Under the permissions tab for a bucket, choose "Public access settings"
-1. Choose "Edit" to change the public access settings
-1. Uncheck all boxes to allow public access.
+1. Under the permissions tab for a bucket, click **Public access settings**.
+1. Choose **Edit** to change the public access settings.
+1. Deselect all check boxes to allow public access.
 
 In general, the credentials being used
 to access an S3 compatible blobstore through Concourse
 must have `Read` and `Write` permissions.
 It is possible to use different user roles
 with different credentials
-to seperate which user can `Read`
+to separate which user can `Read`
 objects from the bucket
 and which user can `Write` objects to the bucket.
 
 <p class="note">
 <span class="note__title">Note</span>
-<b>Permissions</b>":
+<b>Permissions</b>:
 Amazon S3 provides many
 <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/set-permissions.html">permission settings for buckets</a>.
 Specific <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/set-bucket-permissions.html">IAM users can have access</a>.
@@ -254,10 +254,10 @@ The following is one way to set up your bucket's file structure:
 ```
 
 When viewing a bucket in the AWS S3 console,
-simple select "Create Folder".
+click **Create Folder**.
 To create a sub-folder,
 when viewing a specific folder,
-select "Create Folder" again.  
+click **Create Folder** again.  
 
 When attempting to access a specific object in a folder,
 simply include the folder structure before the object name:
