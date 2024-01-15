@@ -1,11 +1,12 @@
-# code_snippet env start yaml
+<pre>
+<code>
 ---
 target: https://pcf.example.com
-connect-timeout: 30            # default 5
-request-timeout: 1800          # default 1800
-skip-ssl-validation: false     # default false
-username: username
-password: password
+connect-timeout: 30          # default 5
+request-timeout: 1800        # default 1800
+skip-ssl-validation: false   # default false
+client-id: client_id
+client-secret: client_secret
 # decryption-passphrase is optional,
 # except for use with `import-installation`.
 # OpsMan depends on the passphrase
@@ -14,4 +15,5 @@ password: password
 # decryption of the OpsMan VM after reboot,
 # which would otherwise need to be done manually.
 decryption-passphrase: passphrase
-# code_snippet env end
+</code>
+</pre>
