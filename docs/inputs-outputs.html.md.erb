@@ -137,7 +137,7 @@ Specific advice and features for the different IaaSs are documented below
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on AWS][manual-aws]
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 !!! info "Using instance_profile to Avoid Secrets"
     For authentication you must either set `use_instance_profile: true`
@@ -151,13 +151,13 @@ These required properties are adapted from the instructions outlined in
 The required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][manual-azure]
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 #### GCP
 The required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP][manual-gcp]
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 !!! info "Using a Service Account Name to Avoid Secrets"
     For authentication either `gcp_service_account` or `gcp_service_account_name` is required.
@@ -178,7 +178,7 @@ For example:
 The required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack][manual-openstack]
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 #### vSphere
 
@@ -198,7 +198,7 @@ using the [download-product][download-product] task.
 
 #### opsman.yml
 
-{% include "how-to-guides/.opsman-config-tabs.md" %}
+<%= partial "how-to-guides/opsman-config-tabs" %>
 
 The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP, AWS, Azure, and VSphere).
 This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
@@ -206,9 +206,9 @@ This works for Ops Managers that are already running and useful when [migrating 
 Usage:
 
 1. Get the Platform Automation Toolkit image from Tanzu Network.
-1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
-1. Create a [state file][state] that represents your current VM and IAAS.
-1. Invoke the `p-automator` CLI to get the configuration.
+2. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
+3. Create a [state file][state] that represents your current VM and IAAS.
+4. Invoke the `p-automator` CLI to get the configuration.
 
 For example, on AWS with an access key and secret key:
 
