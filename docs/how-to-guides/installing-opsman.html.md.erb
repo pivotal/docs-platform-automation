@@ -437,14 +437,15 @@ the following steps will result in a filled out `opsman.yml`.
         ```
 
      Where:
-     {: .tightSpacing }
-
      * The `((parameters))` in these examples map to outputs from the `terraform-outputs.yml`,
        which can be provided via vars file for YAML interpolation in a subsequent step.
 
-    !!! info "`opsman.yml` for an unlisted IaaS"
-        For a supported IaaS not listed above,
-        reference the [Platform Automation Toolkit docs](https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config).
+    
+<p class="note">
+<span class="note__title">Note</span>
+<b>opsman.yml for an unlisted IaaS</b>:
+For a supported IaaS not listed above,
+see <a href="../inputs-outputs.html#ops-manager-config">Task Inputs</a>.</p>
 
 ### Manual Configuration
 
@@ -452,16 +453,25 @@ If you created your infrastructure manually
 or would like additional configuration options,
 these are the acceptable keys for the `opsman.yml` file for each IaaS.
 
-=== "AWS"
-    ---excerpt--- "examples/aws-configuration"
-=== "Azure"
-    ---excerpt--- "examples/azure-configuration"
-=== "GCP"
-    ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
-    ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
-    ---excerpt--- "examples/vsphere-configuration"
+**AWS**
+
+<%= partial> "examples/opsman-config/aws" %>
+
+**Azure**
+
+<%= partial> "examples/opsman-config/azure" %>
+
+**GCP**
+
+<%= partial> "examples/opsman-config/gcp" %>
+
+**OpenStack**
+
+<%= partial> "examples/opsman-config/openstack" %>
+
+**vSphere**
+
+<%= partial> "examples/opsman-config/vsphere" %>
 
 ### Using the Ops Manager Config file
 
@@ -538,14 +548,17 @@ jobs:
         image: downloaded-product
 ```
 
-!!! note "Defaults for tasks"
-    We do not explicitly set the default parameters
-    for `create-vm` in this example.
-    Because `opsman.yml` is the default input to
-    `OPSMAN_CONFIG_FILE`, it is redundant 
-    to set this param in the pipeline. 
-    Refer to the [task definitions][task-reference] for a full range of the 
-    available and default parameters.
+<p class="note">
+<span class="note__title">Note</span>
+<b>Defaults for tasks</b>:
+We do not explicitly set the default parameters
+for <code>create-vm</code> in this example.
+Because <code>opsman.yml</code> is the default input to
+<code>OPSMAN_CONFIG_FILE</code>, it is redundant
+to set this param in the pipeline.
+See the <a href="../tasks.html">Task Reference</a>
+for a full range of the
+available and default parameters.</p>
 
 Set the pipeline.
 
