@@ -13,15 +13,17 @@ While ultimately we want to upgrade Ops Manager,
 to do that safely we first need to download and persist
 an export of the current installation.
 
-!!! warning "Export your installation routinely"
-    We _**strongly recommend**_ automatically exporting
-    the Ops Manager installation
-    and _**persisting it to your blobstore**_ on a regular basis.
-    This ensures that if you need to upgrade (or restore!)
-    your Ops Manager for any reason,
-    you'll have the latest installation info available.
-    Later in this tutorial, we'll be adding a time trigger
-    for exactly this reason.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Export your installation routinely</b>:
+VMware <b>strongly recommends</b> automatically exporting
+the Operations Manager installation
+and <b>persisting it to your blobstore</b> on a regular basis.
+This ensures that if you need to upgrade (or restore)
+your Operations Manager for any reason,
+you'll have the latest installation info available.
+Later in this tutorial, we'll be adding a time trigger
+for exactly this reason.</p>
 
 Let's switch out the test job
 for one that exports our existing Ops Manager's installation state.
@@ -229,14 +231,17 @@ jobs:
         file: installation/installation-*.zip
 ```
 
-!!! info A bit on "output_mapping"
-    <p>The `credhub-interpolate` task for this job
-    maps the output from the task (`interpolated-files`)
-    to `interpolated-env`.
-    <p>This can be used by the next task in the job
-    to more explicitly define the inputs/outputs of each task.
-    It is also okay to leave the output as `interpolated-files`
-    if it is appropriately referenced in the next task
+<p class="note">
+<span class="note__title">Note</span>
+<b>A bit on output_mapping</b>:
+The <code>credhub-interpolate</code> task for this job
+maps the output from the task (<code>interpolated-files</code>)
+to <code>interpolated-env</code>.
+<br><br>
+This can be used by the next task in the job
+to more explicitly define the inputs/outputs of each task.
+It is also okay to leave the output as <code>interpolated-files</code>
+if it is appropriately referenced in the next task.</p>
 
 Notice the [input mappings][concourse-input-mapping]
 of the `credhub-interpolate` and `export-installation` tasks.
@@ -306,21 +311,24 @@ we'll need to load vars from `vars.yml`.
 
 Now you can manually trigger a build, and see it pass.
 
-!!! tip "Bash command history"
-    <p>You'll be using this,
-    the ultimate form of the `fly` command to set your pipeline,
-    for the rest of the tutorial.
-    <p>You can save yourself some typing by using your bash history
-    (if you did not prepend your command with a space).
-    You can cycle through previous commands with the up and down arrows.
-    Alternatively,
-    Ctrl-r will search your bash history.
-    Just hit Ctrl-r, type `fly`,
-    and it'll show you the last fly command you ran.
-    Run it with enter.
-    Instead of running it,
-    you can hit Ctrl-r again
-    to see the matching command before that.
+<p class="note">
+<span class="note__title">Note</span>
+<b>Bash command history</b>:
+<br>You'll be using this,
+the ultimate form of the <code>fly</code> command to set your pipeline,
+for the rest of the tutorial.
+<br><br>
+You can save yourself some typing by using your bash history
+(if you did not prepend your command with a space).
+You can cycle through previous commands with the up and down arrows.
+Alternatively,
+Ctrl-r will search your bash history.
+Just hit Ctrl-r, type <code>fly</code>,
+and it'll show you the last fly command you ran.
+Run it with enter.
+Instead of running it,
+you can hit Ctrl-r again
+to see the matching command before that.</p>
 
 This is also a good commit point:
 
@@ -372,25 +380,29 @@ git commit -m "Setup initial gets for upgrade job"
 git push
 ```
 
-!!! tip "Is this really a commit point though?"
-    <p>We like frequent, small commits that can be `fly` set and,
-    ideally, go green.
-    <p>This one doesn't actually do anything though, right?
-    Fair, but: setting and running the job
-    gives you feedback on your syntax and variable usage.
-    It can catch typos, resources you forgot to add or misnamed, etc.
-    Committing when you get to a working point helps keeps the diffs small,
-    and the history tractable.
-    Also, down the line, if you've got more than one pair working on a foundation,
-    the small commits help you keep off one another's toes.
-    <p>We don't demonstrate this workflow here,
-    but it can even be useful to make a commit,
-    use `fly` to see if it works,
-    and then push it if and only if it works.
-    If it doesn't, you can use `git commit --amend`
-    once you've figured out why and fixed it.
-    This workflow makes it easy to keep what is set on Concourse
-    and what is pushed to your source control remote in sync.
+<p class="note">
+<span class="note__title">Note</span>
+<b>Is this really a commit point?</b>:
+<br>We like frequent, small commits that can be <code>fly</code> set and,
+ideally, go green.
+<br><br>
+This one doesn't actually do anything though, right?
+Fair, but: setting and running the job
+gives you feedback on your syntax and variable usage.
+It can catch typos, resources you forgot to add or misnamed, and so on.
+Committing when you get to a working point helps keeps the diffs small,
+and the history tractable.
+Also, down the line, if you've got more than one pair working on a foundation,
+the small commits help you keep off one another's toes.
+<br><br>
+We don't demonstrate this workflow here,
+but it can even be useful to make a commit,
+use <code>fly</code> to see if it works,
+and then push it if and only if it works.
+If it doesn't, you can use <code>git commit --amend</code>
+once you've figured out why and fixed it.
+This workflow makes it easy to keep what is set on Concourse
+and what is pushed to your source control remote in sync.</p>
 
 Looking over the list of inputs for [`upgrade-opsman`][upgrade-opsman]
 we still need three required inputs:
@@ -409,30 +421,35 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IaaS:
 
-=== "AWS"
-    ```yaml
-    --8<-- './docs/examples/state/aws.yml'
-    ```
+**AWS**
 
-=== "Azure"
-    ```yaml
-    --8<-- './docs/examples/state/azure.yml'
-    ```
+```yaml
+--8<-- './docs/examples/state/aws.yml'
+```
 
-=== "GCP"
-    ```yaml
-    --8<-- './docs/examples/state/gcp.yml'
-    ```
+**Azure**
 
-=== "OpenStack"
-    ```yaml
-    --8<-- './docs/examples/state/openstack.yml'
-    ```
+```yaml
+--8<-- './docs/examples/state/azure.yml'
+```
 
-=== "vSphere"
-    ```yaml
-    --8<-- './docs/examples/state/vsphere.yml'
-    ```
+**GCP**
+
+```yaml
+--8<-- './docs/examples/state/gcp.yml'
+```
+
+**OpenStack**
+
+```yaml
+--8<-- './docs/examples/state/openstack.yml'
+```
+
+**vSphere**
+
+```yaml
+--8<-- './docs/examples/state/vsphere.yml'
+```
 
 Find what you need for your IaaS,
 write it in your repo as `state.yml`,
@@ -458,66 +475,79 @@ in your IaaS's console
 look at your terraform outputs)
 to find the necessary values.
 
-=== "AWS"
-    ---excerpt--- "examples/aws-configuration"
-=== "Azure"
-    ---excerpt--- "examples/azure-configuration"
-=== "GCP"
-    ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
-    ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
-    ---excerpt--- "examples/vsphere-configuration"
+**AWS**
+
+<%= partial "../examples/opsman-config/aws" %>
+
+**Azure**
+
+<%= partial "../examples/opsman-config/azure" %>
+
+**GCP**
+
+<%= partial "../examples/opsman-config/gcp" %>
+
+**OpenStack**
+
+<%= partial "../examples/opsman-config/openstack" %>
+
+**vSphere***
+
+<%= partial "../examples/opsman-config/vsphere" %>
 
 Alternatively, you can auto-generate your opsman.yml
 using a `p-automator` command to output an opsman.yml file
 in the directory it is called from. 
 
-=== "AWS"
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --aws-region "$AWS_REGION" \
-      --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-      --aws-access-key-id "$AWS_ACCESS_KEY_ID"
-    ```
+**AWS**
 
-=== "Azure"
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --azure-subscription-id "$AZURE_SUBSCRIPTION_ID" \
-      --azure-tenant-id "$AZURE_TENANT_ID" \
-      --azure-client-id "$AZURE_CLIENT_ID" \
-      --azure-client-secret "$AZURE_CLIENT_SECRET" \
-      --azure-resource-group "$AZURE_RESOURCE_GROUP"
-    ```
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --aws-region "$AWS_REGION" \
+  --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+  --aws-access-key-id "$AWS_ACCESS_KEY_ID"
+```
 
-=== "GCP"
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --gcp-zone "$GCP_ZONE" \
-      --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
-      --gcp-project-id "$GCP_PROJECT_ID"
-    ```
+**Azure**
 
-=== "vSphere"
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --vsphere-url "$VCENTER_URL" \
-      --vsphere-username "$VCENTER_USERNAME" \
-      --vsphere-password "$VCENTER_PASSWORD"
-    ```
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --azure-subscription-id "$AZURE_SUBSCRIPTION_ID" \
+  --azure-tenant-id "$AZURE_TENANT_ID" \
+  --azure-client-id "$AZURE_CLIENT_ID" \
+  --azure-client-secret "$AZURE_CLIENT_SECRET" \
+  --azure-resource-group "$AZURE_RESOURCE_GROUP"
+```
+
+**GCP**
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --gcp-zone "$GCP_ZONE" \
+  --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
+  --gcp-project-id "$GCP_PROJECT_ID"
+```
+
+**vSphere**
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --vsphere-url "$VCENTER_URL" \
+  --vsphere-username "$VCENTER_USERNAME" \
+  --vsphere-password "$VCENTER_PASSWORD"
+```
 
 Once you have your config file, commit and push it:
 
@@ -597,15 +627,18 @@ Now, we can put it all together:
       state: env
 ```
 
-!!! note "Defaults for tasks"
-    We do not explicitly set the default parameters
-    for `upgrade-opsman` in this example.
-    Because `opsman.yml` is the default input to `OPSMAN_CONFIG_FILE`,
-    `env.yml` is the default input to `ENV_FILE`,
-    and `state.yml` is the default input to `STATE_FILE`,
-    it is redundant to set this param in the pipeline. 
-    Refer to the [task definitions][task-reference] for a full range of the 
-    available and default parameters.
+<p class="note">
+<span class="note__title">Note</span>
+<b>Defaults for tasks</b>:
+We do not explicitly set the default parameters
+for <code>upgrade-opsman</code> in this example.
+Because <code>opsman.yml</code> is the default input to <code>OPSMAN_CONFIG_FILE</code>,
+<code>env.yml</code> is the default input to <code>ENV_FILE</code>,
+and <code>state.yml</code> is the default input to <code>STATE_FILE</code>,
+it is redundant to set this param in the pipeline.
+See <a href="../tasks.html">Task Reference</a>
+for a full range of the
+available and default parameters.</p>
 
 Set the pipeline.
 
