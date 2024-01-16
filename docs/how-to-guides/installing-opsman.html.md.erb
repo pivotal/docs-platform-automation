@@ -406,41 +406,40 @@ The properties available vary by IaaS, for example:
 If you used the `paving` repository from the [Creating Resources for Your Ops Manager][creating-resources-for-your-ops-manager] section,
 the following steps will result in a filled out `opsman.yml`.
 
-1. Ops Manager needs to be deployed with IaaS specific configuration.
-   Platform Automation Toolkit provides a configuration file format that looks like this:
+Operations Manager needs to be deployed with IaaS specific configuration.
+Platform Automation Toolkit provides a configuration file format that looks like this:
 
-    Copy and paste the YAML below for your IaaS
-    and save as `opsman.yml`.
+Copy and paste the YAML below for your IaaS
+and save as `opsman.yml`.
 
-    === "AWS"
+**AWS**
 
-        ```yaml
-        --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
-        ```
+```yaml
+--8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
+```
 
-    === "Azure"
+**Azure**
 
-        ```yaml
-        --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
-        ```
+```yaml
+--8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
+```
 
-    === "GCP"
+**GCP**
 
-        ```yaml
-        --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
-        ```
+```yaml
+--8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
+```
 
-    === "vSphere+NSXT"
+***vSphere+NSXT**
 
-        ```yaml
-        --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
-        ```
+```yaml
+--8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
+```
 
      Where:
      * The `((parameters))` in these examples map to outputs from the `terraform-outputs.yml`,
        which can be provided via vars file for YAML interpolation in a subsequent step.
 
-    
 <p class="note">
 <span class="note__title">Note</span>
 <b>opsman.yml for an unlisted IaaS</b>:

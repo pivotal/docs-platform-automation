@@ -55,9 +55,11 @@ Ops Manager. These tasks, in order, are:
     FLOATING_STEMCELL: false
 ```
 
-!!! warning
-    `upload-stemcell` should not be run until after the `stage-product` task has completed. When the two tasks are run in the
-    opposite order, the stemcell will still auto-associate with the product.
+<p class="note important">
+<span class="note__title">Important</span>
+Do not run <code>upload-stemcell</code> until after the <code>stage-product</code> task has completed.S
+When the two tasks are run in the
+opposite order, the stemcell will still auto-associate with the product.</p>
 
 
 4. Run the [assign-stemcell][assign-stemcell] task to associate the stemcell with the staged product.

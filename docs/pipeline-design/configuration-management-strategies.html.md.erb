@@ -112,23 +112,33 @@ in the job, they will automatically be mapped to the inputs of the tasks in that
 
 ---excerpt--- "examples/configure-director-matched-resources-usage"
 
-!!! warning "Passed Constraints"
-     If you have two resources defined with the same git repository, such as env and config,
-     and have a passed constraint on only one of them,
-     there is a possibility that they will not be at the same SHA for any given job in your pipeline.
-     
-     Example:
-     ```yaml
-     - get: config
-     - get: env
-       passed: [previous-job]
-     ```
+<div class="note caution">
+<span class="note__title">Caution</span>
+<b>Passed Constraints</b>:
+<br>
+If you have two resources defined with the same git repository, such as env and config,
+and have a passed constraint on only one of them,
+there is a possibility that they will not be at the same SHA for any given job in your pipeline.
+<br><br>
+Esample:
+<pre>
+  <code>
+  - get: config
+  - get: env
+    passed: [previous-job]
+  </code>
+</pre>
+</div>
 
 ### Modifying Resources in-place
 
-!!! info "Concourse 5+ Only"
-      This section uses a Concourse feature that allows inputs and outputs to have the same name.
-      This feature is only available in Concourse 5+. The following does not work with Concourse 4.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Concourse 5+ only</b>:
+This task uses a Concourse feature
+that allows inputs and outputs to have the same name.
+This feature is only available in Concourse 5+.
+<code>prepare-image</code> does not work with Concourse 4.</p>
 
 In certain circumstances, resources can be modified by one task in a job
 for use later in that same job. A few tasks that offer this ability include:
