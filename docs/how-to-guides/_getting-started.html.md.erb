@@ -36,24 +36,25 @@ and link to resources to learn more:
 - [YAML][yaml]
 - [Concourse][concourse]
 
-
-!!! info "A note on the prerequisites"
-    <p>While this guide uses Github to provide a git remote,
-    and an S3 bucket as a blobstore,
-    Platform Automation Toolkit supports arbitrary git providers
-    and S3-compatible blobstores.
-    <p>If you need to use an alternate one,
-    that's okay.
-    <p>We picked specific examples
-    so we could describe some steps in detail.
-    Some details may be different
-    if you follow along with different providers.
-    If you're comfortable navigating those differences on your own,
-    go for it!
-    <p>Check out our reference for [using an S3-specific blobstore][setup-s3-and-resources]
-    <p>Similarly, in this guide, we assume the MacOS operating system.
-    This should all work fine on Linux, too,
-    but there might be differences in the paths you'll need to figure out.
+<p class="note">
+<span class="note__title">Note</span>
+<b>Prerequisites</b>:
+<br>While this guide uses GitHub to provide a git remote,
+and an S3 bucket as a blobstore,
+Platform Automation Toolkit supports arbitrary git providers
+and S3-compatible blobstores.
+<br>If you need to use an alternate one,
+that's okay.
+<br><br>We picked specific examples
+so we could describe some steps in detail.
+Some details may be different
+if you follow along with different providers.
+If you're comfortable navigating those differences on your own,
+go for it!
+<br>For more information, see <a href="./setting-up-s3.html">Setting up S3 for file storage</a>.
+<br>In this guide, we assume the MacOS operating system.
+This should all work fine on Linux, too,
+but there might be differences in the paths you'll need to figure out.</p>
 
 ## Creating a Concourse Pipeline
 
@@ -71,14 +72,15 @@ cd !$
 This repo name should relate to your situation
 and be specific enough to be navigable from your local workstation.
 
-!!! tip ""`!$`""
-    `!$` is a bash shortcut.
-    Pronounced "bang, dollar-sign,"
-    it means "use the last argument from the most recent command."
-    In this case, that's the directory we just created!
-    This is not a Platform Automation Toolkit thing,
-    this is just a bash tip dearly beloved
-    of at least one Platform Automator.
+<p class="note">
+<span class="note__title">Note</span>
+<code>!$</code> is a bash shortcut.
+Pronounced "bang, dollar-sign,"
+it means "use the last argument from the most recent command."
+In this case, that's the directory we just created.
+This is not a Platform Automation Toolkit thing,
+this is just a bash tip dearly beloved
+of at least one Platform Automator.</p>
 
 {% if upgradeHowTo %}
 
