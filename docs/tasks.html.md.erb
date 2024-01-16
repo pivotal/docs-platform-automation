@@ -631,11 +631,13 @@ This task modifies the container image with runtime dependencies.
 which can help secure HTTP connections with a proxy server
 and allows the use of a custom CA on the Ops Manager.
 
-!!! warn "Concourse 5+ Only"
-    This task uses a Concourse feature
-    that allows inputs and outputs to have the same name.
-    This feature is only available in Concourse 5+.
-    `prepare-image` does not work with Concourse 4.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Concourse 5+ only</b>:
+This task uses a Concourse feature
+that allows inputs and outputs to have the same name.
+This feature is only available in Concourse 5+.
+<code>prepare-image</code> does not work with Concourse 4.</p>
 
 === "Task"
     ---excerpt--- "tasks/prepare-image"
@@ -649,11 +651,13 @@ Modifies task files to include variables needed for config files as environment 
 for run-time interpolation from a secret store.
 Learn more about [secrets handling][secrets-handling].
 
-!!! warn "Concourse 5+ Only"
-    This task uses a Concourse feature
-    that allows inputs and outputs to have the same name.
-    This feature is only available in Concourse 5+.
-    `prepare-tasks-with-secets` does not work with Concourse 4.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Concourse 5+ only</b>:
+This task uses a Concourse feature
+that allows inputs and outputs to have the same name.
+This feature is only available in Concourse 5+.
+<code>prepare-image</code> does not work with Concourse 4.</p>
 
 === "Task"
     ---excerpt--- "tasks/prepare-tasks-with-secrets"
@@ -806,10 +810,11 @@ This is useful when installing agents on BOSH deployed VMs that don't have a Ops
 === "Usage"
     ---excerpt--- "examples/update-runtime-config-usage"
 
-!!! warn
-    When using runtime configs, Ops Manager _owns_ the default runtime config.
-    If you use this task to edit "default" it will be replaced on every Apply Changes.
-    Please use `NAME` param to provide a non-conflicting runtime config.
+<p class="note important">
+<span class="note__title">Important</span>
+When using runtime configs, Operations Manager owns the default runtime config.
+If you use this task to edit "default," it will be replaced on every Apply Changes.
+Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>
 
 ### upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
