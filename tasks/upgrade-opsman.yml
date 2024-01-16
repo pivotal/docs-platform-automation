@@ -26,7 +26,7 @@ outputs:
 params:
   VARS_FILES:
   # - Optional
-  # - space-seperated array of filepaths to YAML vars files
+  # - space-separated array of filepaths to YAML vars files
   #   to be loaded with the OPSMAN_CONFIG_FILE
   # - relative to root of the task build,
   #   so both `vars` and `secrets` can be used.
