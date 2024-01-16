@@ -20,7 +20,7 @@ It is used by every task within Platform Automation Toolkit
 the VM is created. The choices for this file are simple or saml authentication.
 
 !!! info
-    There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
+    There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you in order to maintain consistency across files.
 
 * An [opsman-configuration][opsman-config] file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Ops Manager VM
@@ -108,7 +108,7 @@ Platform Automation Toolkit will not create these resources for you.
 
 ### Secrets Handling
 
-This helps load secrets stored in an external credential manager -- such as Credhub.
+This helps load secrets stored in an external credential manager -- such as CredHub.
 Concourse support several [credential managers][concourse-secrets-handling] natively.
  
 The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
