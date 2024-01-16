@@ -430,7 +430,7 @@ January 5, 2021
 | winfs-injector | [0.19.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.19.0) |
 
 ### Features
-- [`configure-opsman`][configure-opsman] task can now configure the UAA token expirations and timeouts.
+- [`configure-opsman`](./tasks.html#configure-opsman) task can now configure the UAA token expirations and timeouts.
 
    ```yaml
    tokens-expiration:
@@ -440,7 +440,7 @@ January 5, 2021
    ```
 
 ### Bug Fixes
-- [`update-runtime-config`][update-runtime-config] task has the `releases` input as optional.
+- [`update-runtime-config`](./tasks.html#update-runtime-config) task has the `releases` input as optional.
   When looking for `releases`, if the input wasn't there then the task would fail.
   A check has been added to ensure the input is there.
 - With long-running tasks (using `om` commands),
@@ -492,7 +492,7 @@ November 19, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.15" target="_blank">Download</a>
 
 ### Bug Fixes
-- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] could not be used with other tasks.
+- [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets) could not be used with other tasks.
   For example, if you had written custom tasks.
   The `TASK_PATH` was added, so custom paths of tasks could be prepared, too.
 
@@ -573,17 +573,17 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   were causing unexpected issues in some tiles.
   The collection work has been reverted
   to its original functionality.
-- [`pending-changes`][check-pending-changes] and [`stage-configure-apply`][stage-configure-apply]
+- [`pending-changes`](./tasks.html#check-pending-changes) and [`stage-configure-apply`](./tasks.html#stage-configure-apply)
   would always fail if a product is unconfigured, new, or missing a stemcell,
   regardless of whether `ALLOW_PENDING_CHANGES` was set.
   This has been fixed. `pending-changes` will only fail if `ALLOW_PENDING_CHANGES: false`.
-- [`stage-product`][stage-product] and [`stage-configure-apply`][stage-configure-apply] 
+- [`stage-product`](./tasks.html#stage-product) and [`stage-configure-apply`](./tasks.html#stage-configure-apply)
   will now accept `latest` as the `product-version`
   if you are providing a `CONFIG_FILE`/`STAGE_PRODUCT_CONFIG_FILE`.
   This fixes an issue that required users to update their config file
   every time a new version was available on Ops Manager.
-- [`stage-configure-apply`][stage-configure-apply] will now treat the `product` input
-  as truly optional if `CONFIG_FILE` is provided. 
+- [`stage-configure-apply`](./tasks.html#stage-configure-apply) will now treat the `product` input
+  as truly optional if `CONFIG_FILE` is provided.
 
 ## v4.4.10
 October 2, 2020
@@ -666,7 +666,7 @@ Released September 4, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.7" target="_blank">Download</a>
 
 ### Bug Fixes
-- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+- tl;dr: If you have experienced the following error with the [`create-vm`](./tasks.html#create-vm) task, this problem is now fixed.
   
     ```bash
     creating the new opsman vm
@@ -701,10 +701,10 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
     This patch ignores this value, where previously it would've not been able to parse it.
     
 - The container image has been fixed to support the `registry-image` Concourse resource
-- With [`credhub-interpolate`][credhub-interpolate] task,
+- With [`credhub-interpolate`](./tasks.html#credhub-interpolate) task,
   users were using secrets as a way to interpolate the same CredHub value to multiple vars values.
   This allowed not having ot repeat the same value in CredHub for each var value.
-  Support has been added to the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] workflow to support secrets evaluation.
+  Support has been added to the [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets) workflow to support secrets evaluation.
   
     For example, given a `config.yml`,
   
@@ -769,7 +769,7 @@ Released July 30, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.5" target="_blank">Download</a>
 
 ### Bug Fixes
-- [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] will now inject a params block
+- [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets) will now inject a params block
   into the passed in task if it is missing.
 - CVE update to container image. Resolves [USN-4416-1](https://usn.ubuntu.com/4416-1/).
   The CVEs are related to vulnerabilities with `libc6` and related libraries.
@@ -791,7 +791,7 @@ Released July 10, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.4" target="_blank">Download</a>
 
 ### Bug Fixes
-- When using [`update-runtime-config`][update-runtime-config] task,
+- When using [`update-runtime-config`](./tasks.html#update-runtime-config task,
   we've added the `param` for `RELEASES_GLOB` to help limit the releases being uploaded.
   This is especially useful when using the bosh-io-release concourse resource,
   which has other files besides the `release.tgz` when it peforms a `get`.
@@ -813,8 +813,8 @@ Released June 16, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.3" target="_blank">Download</a>
 
 ### Bug Fixes
-- When using [`create-vm`][create-vm], AWS did not support tagging the VM.
-  This has been added to the [AWS opsman config][opsman-config]
+- When using [`create-vm`](./tasks.html#create-vm, AWS did not support tagging the VM.
+  This has been added to the [AWS opsman config](./inputs-outputs.html#opsman-config)
 
     Tags can be added to the config file in two formats:
 
@@ -866,29 +866,29 @@ Released June 4, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.4.1" target="_blank">Download</a>
 
 ### What's New
-- The [`stage-product`][stage-product] and [`stage-configure-apply`][stage-configure-apply] tasks
+- The [`stage-product`](./tasks.html#stage-product) and [`stage-configure-apply`](./tasks.html#stage-configure-apply) tasks
   have been updated to no longer require a `product` input.
 
     This change allows tiles to be staged without requiring the product file to be passed to these tasks.
     If the `product` input is not provided,
     the `CONFIG_FILE` and `STAGE_PRODUCT_CONFIG_FILE` params **are required** in their appropriate tasks.
 
-- [`upgrade-opsman`][upgrade-opsman] now supports configuring settings
+- [`upgrade-opsman`](./tasks.html#upgrade-opsman) now supports configuring settings
   on the Ops Manager Settings page in the UI.
   This utilizes the `configure-opsman` command from `om`,
   and runs after the upgrade command.
-  Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+  Configuration can be added directly to [`opsman.yml`](./inputs-outputs.html#ops-manager-config).
   An example of all configurable properties can be found in the "Additional Settings" tab.
 
-- [`configure-opsman`][configure-opsman] task has been added.
+- [`configure-opsman`](./tasks.html#configure-opsman) task has been added.
 
     This task supports configuring settings
     on the Ops Manager Settings page in the UI.
 
-    Configuration can be added directly to [`opsman.yml`][inputs-outputs-configure-opsman].
+    Configuration can be added directly to [`opsman.yml`](./inputs-outputs.html#ops-manager-config).
     An example of all configurable properties can be found in the "Additional Settings" tab.
 
-- [`download-product`][download-product] now supports
+- [`download-product`](./tasks.html#download-product) now supports
   specifying a version in the config file for the stemcell
   if the latest stemcell for the product is not desired.
 
@@ -905,7 +905,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
     stemcell-version: 90.90
     ```
 
--  The [`prepare-image`][prepare-image] task has been added.
+-  The [`prepare-image`](./tasks.html#prepare-image) task has been added.
 
      This task allows you to temporarily inject a CA onto the Platform Automation image
      for use in subsequent tasks within the same job.
@@ -916,16 +916,16 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
      The task allows proper ssl validation when using `om` commands.
      To fully take advantage of this feature, remove `skip-ssl-validation: true` from your `env.yml`.
 
-     For an example of how this fits into a `pipeline.yml`, check out the [Ops Manager + Multiple Products pipeline][reference-pipeline]
+     For an example of how this fits into a `pipeline.yml`, check out the [Operations Manager + Multiple Products pipeline](./pipelines/multiple-products.html).
 
--  The [`replicate-product`][replicate-product] task has been added.
+-  The [`replicate-product`](./tasks.html##replicate-product) task has been added.
    This task requires a downloaded product,
    and will output the replicated product for isolation segments.
 
      Supported products: `p-isolation-segment`, `p-windows-runtime`, `pas-windows`
 
-- The [`update-runtime-config`][update-runtime-config] task has been added.
-  *Please note this is an advanced feature, and should be used at your own discretion.*
+- The [`update-runtime-config`](./tasks.html#update-runtime-config) task has been added.
+  *Please note this is an advanced feature, and should be used with caution.*
 
 
 {% include ".internal_link_url.md" %}
