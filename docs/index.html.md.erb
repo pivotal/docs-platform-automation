@@ -7,15 +7,15 @@ We also provide instructions on using these building blocks in various workflows
 In this introduction, we'll provide a high-level overview of Platform Automation Toolkit.
 To dive-deeper, check out the references section.
 
-See the [Getting Started][getting-started] section for instructions 
+See the [Getting Started](./getting-started.html) section for instructions
 on how to start using Platform Automation Toolkit.
 
 ## About
 
-* Uses [om][om],
-  (and by extension, the Ops Manager API)
-  to enable command-line interaction with Ops Manager
-  ([Understanding the Ops Manager Interface][platform-understanding-opsman])
+* Uses [om](https://github.com/pivotal-cf/om),
+  (and by extension, the Operations Manager API)
+  to enable command-line interaction with Operations Manager
+  ([Understanding the Operations Manager Interface](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html))
 
 * Includes a documented reference pipeline
   showing one possible configuration to use tasks.
@@ -23,7 +23,7 @@ on how to start using Platform Automation Toolkit.
   there are some manual steps you'll need to take to optimize for automation.
   We will call these steps out so that these are clear to you.
 
-* Comes bundled with Concourse [tasks][concourse-task-definition]
+* Comes bundled with Concourse [tasks](https://concourse-ci.org/tasks.html)
   that demonstrate how to use these tasks
   in a containerized Continuous Integration (CI) system.
   Platform Automation Toolkit tasks are:
@@ -39,15 +39,15 @@ on how to start using Platform Automation Toolkit.
 
     * Not Comprehensive: Workflows that use Platform Automation Toolkit
       may also contain `om` commands, custom tasks,
-      and even interactions with the Ops Manager user interface.
+      and even interactions with the Operations Manager user interface.
       Platform Automation Toolkit is a set of tools to use alongside other tools,
       rather than a comprehensive solution.
 
 * A documented and supported deployment of Concourse CI to use with Platform Automation Toolkit.
-  The [Concourse for Platform Automation docs][concourse-for-pa] provide a step-by-step tutorial for how to get started.
-  This approach to deploying Concourse uses the BOSH Director deployed by Ops Manager to deploy and maintain Concourse, CredHub, and UAA.
+  The [Concourse for Platform Automation docs](https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-platform-automation.html) provide a step-by-step tutorial for how to get started.
+  This approach to deploying Concourse uses the BOSH Director deployed by Operations Manager to deploy and maintain Concourse, CredHub, and UAA.
 
-The [Task Reference][task-reference] topic discusses these example tasks further.
+The [Task Reference](./tasks.html) topic discusses these example tasks further.
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -94,7 +94,7 @@ How do we do this?
 With Platform Automation Toolkit,
 platform teams have the tools to create an automated perpetual upgrade machine,
 which can continuously take the latest updates when new software is available -
-including Tanzu Application Service, VMware Tanzu PKS, Ops Manager, stemcells, products, and services.
+including Tanzu Application Service, VMware Tanzu PKS, Operations Manager, stemcells, products, and services.
 In addition, Platform Automation Toolkit allows you to:
 
 * manage multiple foundations and reduce configuration drift
@@ -103,23 +103,23 @@ In addition, Platform Automation Toolkit allows you to:
 
 * create pipelines that handle installs and upgrades to streamline workflows.
 
-## Platform Automation Toolkit and Ops Manager
+## Platform Automation Toolkit and Operations Manager
 
-The following table compares how Ops Manager
-and Platform Automation Toolkit might run a typical sequence of Ops Manager operations:
+The following table compares how Operations Manager
+and Platform Automation Toolkit might run a typical sequence of Operations Manager operations:
 
 <table border="1">
   <tr>
     <th></th>
-    <th>Ops Manager</th>
+    <th>Operations Manager</th>
     <th>Platform Automation Toolkit</th>
   </tr><tr>
     <th>When to Use</th>
     <th>First install and minor upgrades</th>
     <th>Config changes and patch upgrades</th>
   </tr><tr>
-    <th>1. Create Ops Manager VM</th>
-    <td>Manually prepare IaaS and create Ops Manager VM</td>
+    <th>1. Create Operations Manager VM</th>
+    <td>Manually prepare IaaS and create Operations Manager VM</td>
     <td><code>create-vm</code></td>
   </tr><tr>
     <th>2. Configure Who Can Run Ops</th>
@@ -143,11 +143,8 @@ and Platform Automation Toolkit might run a typical sequence of Ops Manager oper
     <td><code>apply-changes</code></td>
   </tr><tr>
     <th>7. Upgrade</th>
-    <td>Manually export existing Ops Manager settings, power off the VM, then create a new, updated
-    Ops Manager VM</td>
+    <td>Manually export existing Operations Manager settings, power off the VM, then create a new, updated
+    Operations Manager VM</td>
     <td><code>export-installation</code> then <code>upgrade-opsman</code></td>
   </tr>
 </table>
-
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
