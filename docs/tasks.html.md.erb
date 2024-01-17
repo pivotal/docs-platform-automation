@@ -118,11 +118,23 @@ See [staged-director-config](#staged-director-config),
 which can extract a config file.
 
 **Task**
-    ---excerpt--- "tasks/configure-director"
+
+<%= partial "tasks/configure-director" %>
+
 **Implementation**
-    ---excerpt--- "tasks/configure-director-script"
+
+<%= partial "tasks/configure-director-script" %>
+
 **Usage**
-    ---excerpt--- "reference/configure-director-usage"
+
+```yaml
+- task: configure-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-director.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+```
 
 <p class="note important">
 <span class="note__title">Important</span>

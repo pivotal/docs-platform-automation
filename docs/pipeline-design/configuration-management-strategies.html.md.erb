@@ -21,8 +21,8 @@ duplicating foundations is simply a matter of cloning a repository,
 and configuration files are not difficult to understand.
 
 This is the strategy used throughout the
-[Install Ops Man How to Guide][install-how-to] and the
-[Upgrading an Existing Ops Manager How to Guide][upgrade-how-to].
+[Installing Operations Manager](../how-to-guides/installing-opsman.html) and the
+[Upgrading an Existing Operations Manager](../how-to-guides/upgrade-existing-opsman.html).
 
 Let's examine an example configuration repository
 that uses the "Single Repository for each Foundation" pattern:
@@ -47,10 +47,17 @@ that uses the "Single Repository for each Foundation" pattern:
 Notice that there is only one subdirectory
 and that all other files are at the repositories base directory.
 _This minimizes parameter mapping in the platform-automation tasks_.
-For example, in the [`configure-director`][configure-director]
+For example, in the [`configure-director`](../tasks.html#configure-director)
 step:
 
----excerpt--- "examples/configure-director-usage"
+```yaml
+- task: configure-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-director.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+```
 
 We map the config files
 to the expected input named `env` of the `configure-director` task.
@@ -60,11 +67,11 @@ We do not need to explicitly name the `ENV` parameter for the task.
 This also works for `director.yml`.
 
 Another option for mapping resources to inputs
-is discussed in the [Matching Resource Names and Input Names][matching-resource-names-and-input-names] section.
+is discussed in the [Matching Resource Names and Input Names](#matching-resource-names-and-input-names) section.
 
 For reference, here is the `configure-director` task:
 
----excerpt--- "tasks/configure-director"
+<%= partial "tasks/configure-director" %>
 
 ## Multiple Foundations with one Repository
 
@@ -88,13 +95,11 @@ However,
 configuration management and secrets handling
 can quickly become more challenging.
 
-**This is the strategy used in our [Reference Pipeline][reference-pipeline]**
+**This is the strategy used in our [Reference Pipeline](../pipelines/multiple-products.html)**.
 
 For an example repo structure using this strategy,
-see the [config repo][ref-config-repo]
-used by the [Reference Pipeline][reference-pipeline] and the [Resources Pipeline][reference-resources]
-
-
+see the [config repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/tree/c02c2fb)
+used by the [Reference Pipeline](../pipelines/multiple-products.html) and the [Resources Pipeline](../pipelines/resources.html).
 
 ## Advanced Pipeline Design
 
@@ -105,12 +110,44 @@ on our tasks and bypass the need for using `input_mapping`.
 Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
 
----excerpt--- "examples/input-matched-resources-usage"
+```yaml
+- name: config
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
+
+- name: env
+  type: git
+  source:
+    private_key: ((repo-key.private_key))
+    uri: ((repo-uri))
+    branch: develop
+```
 
 As long as those resources have an associated `get: <resource-name>`
 in the job, they will automatically be mapped to the inputs of the tasks in that job:
 
----excerpt--- "examples/configure-director-matched-resources-usage"
+```yaml
+- name: configure-director
+  serial: true
+  plan:
+    - aggregate:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: config
+        passed: [previous-job]
+      - get: env
+        passed: [previous-job]
+    - task: configure-director
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-director.yml
+```
 
 <div class="note caution">
 <span class="note__title">Caution</span>
@@ -143,16 +180,16 @@ This feature is only available in Concourse 5+.
 In certain circumstances, resources can be modified by one task in a job
 for use later in that same job. A few tasks that offer this ability include:
 
-- [credhub-interpolate]
-- [prepare-tasks-with-secrets]
-- [prepare-image]
+- [credhub-interpolate](../tasks.html#credhub-interpolate)
+- [prepare-tasks-with-secrets](../tasks.html#prepare-tasks-with-secrets)
+- [prepare-image](../tasks.html#prepare-image)
 
 For each of these tasks, `output_mapping` can be used to "overwrite"
 an input with a modified input for use with tasks later in that job.
 
 In the following example, `prepare-tasks-with-secrets` takes in the
 `platform-automation-tasks` input and modifies it for the `download-product`
-task. A more in-depth explanation of this can be found on the [secrets-handling][secrets-handling] page.
+task. A more in-depth explanation of this can be found on the [secrets-handling](../concepts/secrets-handling.html) page.
 
 ```yaml
 - name: configure-director

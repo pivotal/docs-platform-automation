@@ -1,5 +1,6 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet configure-director-script start bash
 
 cat /var/version && echo ""
 set -eux
@@ -23,4 +24,6 @@ om --env env/"${ENV_FILE}" configure-director \
    --config "config/${DIRECTOR_CONFIG_FILE}" \
    ${vars_files_args[@]} \
    ${ops_files_args[@]}
-# code_snippet configure-director-script end
+
+</code>
+</pre>
