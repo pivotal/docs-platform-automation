@@ -16,8 +16,8 @@ If you are new to Concourse, see
 <a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Installing Concourse with Bosh</a> in the Concourse for VMware Tanzu documentation.</p>
 
 * Persisted datastore that can be accessed by Concourse resource (for example, s3, gcs, minio)
-* A set of valid [download-product-config][download-product-config] files: Each product has a configuration YAML of what version to download from Tanzu Network.
-* Tanzu Network access to [Platform Automation Toolkit][tanzu-network-platform-automation]
+* A set of valid [download-product-config](../inputs-outputs.html#download-product-config) files: Each product has a configuration YAML of what version to download from Tanzu Network.
+* Tanzu Network access to [Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation)
 
 ## Retrieval from Tanzu Network
 
@@ -114,8 +114,8 @@ s3-stemcell-path: tas-stemcell
 
 ### Full Pipeline and Reference Configurations
 
-There is a [git repository][ref-config-repo]
-containing containing the [full pipeline file][ref-config-resource-pipeline],
+There is a [git repository](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/tree/c02c2fb)
+containing the [full pipeline file](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/c02c2fb/pipelines/download-products.yml),
 along with other pipeline and configuration examples.
 
 This can be useful when you want to take
@@ -126,19 +126,117 @@ the rest of this document covers the sections of the full pipeline in more detai
 
 ### Resource Types
 
-This custom resource type uses the [pivnet-resource][pivnet-resource]
+This custom resource type uses the [pivnet-resource](https://github.com/pivotal-cf/pivnet-resource)
 to pull down and separate both pieces of the Platform Automation Toolkit product (tasks and image)
 so they can be stored separately in S3.
 
----excerpt--- "reference/resources-pipeline-resource-types"
+```yaml
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+```
 
 ### Product Resources
 
-S3 resources where Platform Automation Toolkit [`download-product`][download-product] outputs will be stored.
+S3 resources where Platform Automation Toolkit [`download-product`](../tasks.html#download-product) outputs will be stored.
 Each product/stemcell needs a separate resource defined.
 Platform Automation Toolkit will not create these resources for you.
 
----excerpt--- "reference/resources-pipeline-products"
+```yaml
+resources:
+- name: opsman-product
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: \[ops-manager,(.*)\]ops-manager-gcp.*.yml
+
+- name: pks-product
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: \[pivotal-container-service,(.*)\]pivotal-container-service-.*.pivotal
+
+- name: pks-stemcell
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: pks-stemcell/\[stemcells-ubuntu-xenial,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
+
+- name: tas-product
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: \[elastic-runtime,(.*)\]srt-.*.pivotal
+
+- name: tas-stemcell
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: tas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
+
+- name: healthwatch-product
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: \[p-healthwatch,(.*)\]healthwatch-\d.*.pivotal
+
+- name: healthwatch-pas-exporter
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: \[p-healthwatch,(.*)\]healthwatch-pas-exporter.*.pivotal
+
+- name: healthwatch-pks-exporter
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: \[p-healthwatch,(.*)\]healthwatch-pks-exporter.*.pivotal
+
+- name: healthwatch-stemcell
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: healthwatch-stemcell/\[stemcells-ubuntu-xenial,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
+
+- name: telemetry-product
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: \[pivotal-telemetry-collector,(.*)\]telemetry-collector-.*.tgz
+```
 
 ### Platform Automation Toolkit Resources
 
@@ -149,39 +247,295 @@ and will be used to download all other products from Tanzu Network.
 that will be stored for internet-restricted, or faster, access.
 Platform Automation Toolkit will not create this resource for you.
 
----excerpt--- "reference/resources-pipeline-platform-automation"
+```yaml
+- name: platform-automation-pivnet
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: platform-automation
+    product_version: 2\.(.*)
+    sort_by: semver
+
+- name: platform-automation-tasks
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: platform-automation-tasks-(.*).zip
+
+- name: platform-automation-image
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_pivnet_products_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    regexp: platform-automation-image-(.*).tgz
+```
 
 ### Configured Resources
 
-You will need to add your [`download-product` configuration][download-product-config] configuration files
+You will need to add your [`download-product` configuration](../inputs-outputs.html#download-product-config) configuration files
 to your configurations repo.
 Platform Automation Toolkit will not create these resources for you.
-For more details, see the [Inputs and Outputs][inputs-outputs] section.
+For more details, see the [Inputs and Outputs](../inputs-outputs.html) section.
 
----excerpt--- "reference/resources-pipeline-configurations"
+```yaml
+- name: configuration
+  type: git
+  source:
+    private_key: ((docs-ref-pipeline-repo-key.private_key))
+    uri: ((docs-ref-pipeline-repo-uri))
+    branch: develop
+    submodules: all
+    depth: 1
+```
 
 ### Trigger Resources
 
----excerpt--- "reference/resources-pipeline-triggers"
+```yaml
+- name: daily
+  type: time
+  source:
+    interval: 24h
+```
 
 ### Secrets Handling
 
 This helps load secrets stored in an external credential manager -- such as CredHub.
-Concourse supports several [credential managers][concourse-secrets-handling] natively.
- 
-The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
+Concourse supports several [credential managers](https://concourse-ci.org/creds.html) natively.
+
+The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
 to load secrets from your external configuration files.
 
----excerpt--- "reference/resources-pipeline-prepare-tasks-with-secrets"
+```yaml
+# This task is used in multiple jobs
+# The yaml anchor "*prepare-tasks-with-secrets" is used in its place
+prepare-tasks-with-secrets: &prepare-tasks-with-secrets
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+  params:
+    CONFIG_PATHS: config/download-product-pivnet
+  input_mapping:
+    tasks: platform-automation-tasks
+    config: configuration
+  output_mapping:
+    tasks: platform-automation-tasks
+```
 
 ### Jobs
 
 Each job corresponds to a "box" on the visual representation of your Concourse pipeline.
 These jobs consume resources defined above.
 
----excerpt--- "reference/resources-pipeline-jobs"
+```yaml
+jobs:
+- name: fetch-opsman
+  plan:
+  - in_parallel:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: download-opsman-image
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-pivnet/download-opsman.yml
+    input_mapping:
+      config: configuration
+  - in_parallel:
+    - put: opsman-product
+      params:
+        file: downloaded-product/*
+- name: fetch-pks
+  plan:
+  - in_parallel:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: download-pks-product-and-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-pivnet/download-pks.yml
+    input_mapping:
+      config: configuration
+    output_mapping: {downloaded-stemcell: pks-stemcell}
+  - in_parallel:
+      - put: pks-product
+        params:
+          file: downloaded-product/*.pivotal
+      - put: pks-stemcell
+        params:
+          file: pks-stemcell/*.tgz
 
-{% with path="../" %}
-    {% include ".internal_link_url.md" %}
-{% endwith %}
-{% include ".external_link_url.md" %}
+- name: fetch-tas
+  plan:
+    - in_parallel:
+      - get: daily
+        trigger: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-tas-product-and-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product-pivnet/download-tas.yml
+      input_mapping:
+        config: configuration
+      output_mapping: {downloaded-stemcell: tas-stemcell}
+    - in_parallel:
+        - put: tas-product
+          params:
+            file: downloaded-product/*.pivotal
+        - put: tas-stemcell
+          params:
+            file: tas-stemcell/*.tgz
+
+- name: fetch-healthwatch
+  plan:
+    - in_parallel:
+      - get: daily
+        trigger: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-healthwatch-product-and-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product-pivnet/download-healthwatch.yml
+      input_mapping:
+        config: configuration
+      output_mapping: {downloaded-stemcell: healthwatch-stemcell}
+    - in_parallel:
+        - put: healthwatch-product
+          params:
+            file: downloaded-product/*healthwatch-2*.pivotal
+        - put: healthwatch-stemcell
+          params:
+            file: healthwatch-stemcell/*.tgz
+
+- name: fetch-healthwatch-pas-exporter
+  plan:
+    - in_parallel:
+      - get: daily
+        trigger: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-healthwatch-pas-exporter-and-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product-pivnet/download-healthwatch-pas-exporter.yml
+      input_mapping:
+        config: configuration
+    - in_parallel:
+        - put: healthwatch-pas-exporter
+          params:
+            file: downloaded-product/*healthwatch-pas-exporter*.pivotal
+
+- name: fetch-healthwatch-pks-exporter
+  plan:
+    - in_parallel:
+      - get: daily
+        trigger: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-healthwatch-pks-exporter-and-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product-pivnet/download-healthwatch-pks-exporter.yml
+      input_mapping:
+        config: configuration
+    - in_parallel:
+        - put: healthwatch-pks-exporter
+          params:
+            file: downloaded-product/*healthwatch-pks-exporter*.pivotal
+
+- name: fetch-telemetry-collector
+  plan:
+    - in_parallel:
+        - get: daily
+          trigger: true
+        - get: platform-automation-image
+          params:
+            unpack: true
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-telemetry-product
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      params:
+        CONFIG_FILE: download-product-pivnet/download-telemetry.yml
+      input_mapping:
+        config: configuration
+    - in_parallel:
+        - put: telemetry-product
+          params:
+            file: downloaded-product/*
+
+- name: fetch-platform-automation
+  # We use the pivnet resource to bootstrap the pipeline,
+  # and because this product is part of the pipeline, not the foundation
+  plan:
+  - get: platform-automation-pivnet
+    trigger: true
+  - in_parallel:
+    - put: platform-automation-tasks
+      params:
+        file: platform-automation-pivnet/*tasks*.zip
+    - put: platform-automation-image
+      params:
+        file: platform-automation-pivnet/*image*.tgz
+```
