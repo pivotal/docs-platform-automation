@@ -1,7 +1,7 @@
 # Writing a Pipeline to Install Operations Manager
 
-This how-to-guide shows you how to write a pipeline for installing a new Ops Manager.
-If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager][upgrade-how-to].
+This how-to-guide shows you how to write a pipeline for installing a new Tanzu Operations Manager.
+If you already have an Ops Manager VM, check out [Upgrading an Existing Ops Manager](./upgrade-existing-opsman.html).
 
 <%= partial "getting-started" %>
 
@@ -17,7 +17,7 @@ We can do this by changing:
 - the `name` of the task
 - the `file` of the task
 
-Our first task within the job should be [`download-product`][download-product].
+Our first task within the job should be [`download-product`](../tasks.html#download-product).
 It has an additional required input;
 we need the `config` file `download-product` uses to talk to Tanzu Network.
 
@@ -148,7 +148,7 @@ We'll need to put the Tanzu Network token in CredHub:
 <%= partial "paths-and-pipeline-names" %>
 
 In order to perform interpolation in one of our input files,
-we'll need the [`prepare-tasks-with-secrets` task][prepare-tasks-with-secrets]
+we'll need the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task.
 Earlier, we relied on Concourse's native integration with CredHub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
@@ -195,7 +195,7 @@ This allows us to use the output of one task
 as in input of another.
 
 An alternative to `input_mappings` is discussed in
-[Configuration Management Strategies][advanced-pipeline-design].
+[Configuration Management Strategies](../pipeline-design/configuration-management-strategies.html).
 
 Now, the `prepare-tasks-with-secrets` task
 will find required credentials in the config files,
@@ -485,7 +485,7 @@ git push
 The `state` input is a placeholder
 which will be filled in by the `create-vm` task output.
 This will be used later to keep track of the VM so it can be upgraded,
-which you can learn about in the [upgrade-how-to][upgrade-how-to].
+which you can learn about in the [upgrade-how-to](./upgrade-existing-opsman.html).
 
 Add the following to your `resources` section of your `pipeline.yml`:
 
