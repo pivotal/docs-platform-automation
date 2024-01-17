@@ -2,8 +2,8 @@
 
 Over the course of this guide,
 we're going to use Platform Automation Toolkit
-to create a [pipeline][concourse-pipeline]
-using [Concourse][concourse].
+to create a [pipeline](https://concourse-ci.org/pipelines.html)
+using [Concourse](https://concourse-ci.org/).
 
 Before we get started, you'll need a few things ready to go:
 
@@ -17,7 +17,7 @@ Before we get started, you'll need a few things ready to go:
    and to the Internet
 4. GitHub account
 5. Read/write credentials and bucket name for an S3 bucket
-6. An account on [VMware Tanzu Network][tanzu-network]
+6. An account on [VMware Tanzu Network](https://network.pivotal.io)
 7. A MacOS workstation
     - with Docker installed
     - a text editor you like
@@ -32,9 +32,9 @@ We'll explain some basics,
 and link to resources to learn more:
 
 - the bash terminal
-- [git][git]
-- [YAML][yaml]
-- [Concourse][concourse]
+- [git](https://git-scm.com/)
+- [YAML](https://learnxinyminutes.com/docs/yaml/)
+- [Concourse](https://concourse-ci.org/)
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -117,7 +117,7 @@ However, you may create multiple pipelines over time.
 If there's a more sensible name for the pipeline you're working on,
 feel free to use that instead.</p>
 
-Write this at the top, and save the file. This is [YAML][yaml] for "the start of the document." It's optional, but traditional:
+Write this at the top, and save the file. This is [YAML](https://learnxinyminutes.com/docs/yaml/) for "the start of the document." It's optional, but traditional:
 
 ```yaml
 
@@ -130,7 +130,7 @@ It's valid YAML, at least.
 
 ### <a></a> Getting `fly`
 
-Let's try to set it as a pipeline with [`fly`][concourse-fly],
+Let's try to set it as a pipeline with [`fly`](https://concourse-ci.org/fly.html),
 the Concourse command-line Interface (CLI).
 
 First, check if we've got `fly` installed at all:
@@ -297,7 +297,7 @@ git commit --allow-empty -m "Empty initial commit"
 
 If it gives you a config error instead,
 you might need to configure `git` a bit.
-Here's a [good guide][git-first-time-setup]
+Here's a [good Git guide](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup)
 to initial setup.
 Get that done, and try again.
 
@@ -502,7 +502,7 @@ Again, note the space at the start
 <%= partial "logging-into-credhub" %>
 
 Then, we can set the credential name
-to the path [where Concourse will look for it][concourse-credhub-lookup-rules]:
+to the path [where Concourse will look for it](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):
 
 ```bash
 # note the starting space
