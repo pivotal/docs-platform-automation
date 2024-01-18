@@ -468,11 +468,11 @@ The <code>prepare-tasks-with-secrets</code> task replaces the <code>credhub-inte
 and provides additional benefits.</p>
 
 **Task**
-    ---excerpt--- "tasks/credhub-interpolate"
+
 <%= partial "tasks/credhub-interpolate" %>
 
 **Implementation**
-    ---excerpt--- "tasks/credhub-interpolate-script"
+
 <%= partial "tasks/credhub-interpolate-script" %>
 
 **Usage**
@@ -501,21 +501,53 @@ set this up, see [Secrets Handling](./concepts/secrets-handling.html).
 Delete the Ops Manager Installation
 
 **Task**
-    ---excerpt--- "tasks/delete-installation"
+
+<%= partial "tasks/delete-installation" %>
+
 **Implementation**
-    ---excerpt--- "tasks/delete-installation-script"
+
+<%= partial "tasks/delete-installation-script" %>
+
 **Usage**
-    ---excerpt--- "reference/delete-installation-usage"
+
+```yaml
+- task: delete-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/delete-installation.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### delete-vm
-Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
+Deletes the Operations Manager VM instantiated by [create-vm](#create-vm).
 
 **Task**
-    ---excerpt--- "tasks/delete-vm"
+
+<%= partial "tasks/delete-vm" %>
+
 **Implementation**
-    ---excerpt--- "tasks/delete-vm-script"
+
+<%= partial "tasks/delete-vm-script" %>
+
 **Usage**
-    ---excerpt--- "reference/delete-vm-usage"
+
+```yaml
+- task: delete-vm
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/delete-vm.yml
+  input_mapping:
+    config: configuration
+  params:
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    STATE_FILE: state-((foundation)).yml
+  ensure:
+    do:
+    - put: state
+      params:
+        file: generated-state/state-((foundation)).yml
+```
 
 This task requires the [state file](./inputs-outputs.html#state) generated [create-vm](#create-vm).
 
@@ -636,17 +668,96 @@ For example, <code>example-product.pivotal</code> from Tanzu Network will be out
 as <code>example-product.pivotal</code>.</p>
 
 **Task**
-    ---excerpt--- "tasks/download-product"
+
+<%= partial "tasks/download-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/download-product-script"
+
+<%= partial "tasks/download-product-script" %>
+
 **Tanzu Network Usage**
-    ---excerpt--- "reference/download-product-usage"
+
+```yaml
+- name: fetch-pks
+  plan:
+  - in_parallel:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: download-pks-product-and-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-pivnet/download-pks.yml
+    input_mapping:
+      config: configuration
+    output_mapping: {downloaded-stemcell: pks-stemcell}
+  - in_parallel:
+      - put: pks-product
+        params:
+          file: downloaded-product/*.pivotal
+      - put: pks-stemcell
+        params:
+          file: pks-stemcell/*.tgz
+```
+
 **S3 Usage**
-    ---excerpt--- "examples/download-product-s3-usage"
+
+```yaml
+- task: download-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  input_mapping:
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/download-pks.yml
+    VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+    SOURCE: s3
+  output_mapping:
+    downloaded-product: pks-product
+    downloaded-stemcell: pks-stemcell
+```
+
 **GCS Usage**
-    ---excerpt--- "examples/download-product-usage-gcs"
+
+```yaml
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: gcs
+  input_mapping:
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+```
+
 **Azure Usage**
-    ---excerpt--- "examples/download-product-usage-azure"
+
+```yaml
+- task: download-pas
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: download-product/pas.yml
+    SOURCE: azure
+  input_mapping:
+    config: configuration
+  output_mapping:
+    downloaded-product: pas-product
+    downloaded-stemcell: pas-stemcell
+```
 
 ### download-product-s3
 
@@ -712,11 +823,30 @@ instead of providing S3 credentials in the config file.
 See <a href="./inputs-outputs.html#download-product-config">download-product config file</a> for details.</p>
 
 **Task**
-    ---excerpt--- "tasks/download-product-s3"
+
+<%= partial "tasks/download-product-S3" %>
+
 **Implementation**
-    ---excerpt--- "tasks/download-product-s3-script"
+
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
-    ---excerpt--- "examples/download-product-s3-usage"
+
+```yaml
+- task: download-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  input_mapping:
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/download-pks.yml
+    VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+    SOURCE: s3
+  output_mapping:
+    downloaded-product: pks-product
+    downloaded-stemcell: pks-stemcell
+```
 
 ### expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
@@ -728,6 +858,8 @@ This is purely an informational task.
     ---excerpt--- "tasks/expiring-certificates"
 **Implementation**
     ---excerpt--- "tasks/expiring-certificates-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/expiring-certificates-usage"
 
@@ -758,6 +890,8 @@ Changing the time or timezone on workers might interfere with ordering.</p>
     ---excerpt--- "tasks/export-installation"
 **Implementation**
     ---excerpt--- "tasks/export-installation-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/export-installation-usage"
 
@@ -774,6 +908,8 @@ has been deployed, but before the new Ops Manager is configured.
     ---excerpt--- "tasks/import-installation"
 **Implementation**
     ---excerpt--- "tasks/import-installation-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "examples/import-installation-usage"
 
@@ -805,6 +941,8 @@ You will need to <code>put</code> the output of this task to a git resource to p
     ---excerpt--- "tasks/make-git-commit"
 **Implementation**
     ---excerpt--- "tasks/make-git-commit-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "examples/make-git-commit-usage"
 
@@ -835,6 +973,8 @@ before an `apply-changes` could start.
     ---excerpt--- "tasks/pre-deploy-check"
 **Implementation**
     ---excerpt--- "tasks/pre-deploy-check-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/pre-deploy-check-usage"
 
@@ -856,6 +996,8 @@ This feature is only available in Concourse 5+.
     ---excerpt--- "tasks/prepare-image"
 **Implementation**
     ---excerpt--- "tasks/prepare-image-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/prepare-image-usage"
 
@@ -876,6 +1018,8 @@ This feature is only available in Concourse 5+.
     ---excerpt--- "tasks/prepare-tasks-with-secrets"
 **Implementation**
     ---excerpt--- "tasks/prepare-tasks-with-secrets-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
 
@@ -895,6 +1039,8 @@ rather than storing it and using it in a different job.</p>
     ---excerpt--- "tasks/replicate-product"
 **Implementation**
     ---excerpt--- "tasks/replicate-product-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "examples/replicate-product-usage"
 
@@ -912,6 +1058,8 @@ Use passed constraints to ensure things run in the order you intend.</p>
     ---excerpt--- "tasks/revert-staged-changes"
 **Implementation**
     ---excerpt--- "tasks/revert-staged-changes-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/revert-staged-changes-usage"
 
@@ -930,6 +1078,8 @@ Contact your VMware representative.</p>
     ---excerpt--- "tasks/send-telemetry"
 **Implementation**
     ---excerpt--- "tasks/send-telemetry-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/send-telemetry-usage"
 
@@ -944,6 +1094,8 @@ only to that product without applying changes to the rest of the foundation.
     ---excerpt--- "tasks/stage-configure-apply"
 **Implementation**
     ---excerpt--- "tasks/stage-configure-apply-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "examples/stage-configure-apply-usage"
 
@@ -954,11 +1106,13 @@ Staged a product to the Ops Manager specified in the config file.
     ---excerpt--- "tasks/stage-product"
 **Implementation**
     ---excerpt--- "tasks/stage-product-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/stage-product-usage"
 
 ### staged-config
-Downloads the configuration for a product from Ops Manager.
+Downloads the configuration for a product from Operations Manager.
 
 Not to be confused with Ops Manager's
 built-in [export](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-backup-pcf-bbr.html#export),
@@ -969,6 +1123,8 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
     ---excerpt--- "tasks/staged-config"
 **Implementation**
     ---excerpt--- "tasks/staged-config-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "examples/staged-config-usage"
 
@@ -980,6 +1136,7 @@ Downloads configuration for the BOSH director from Ops Manager.
     ---excerpt--- "tasks/staged-director-config"
 **Implementation**
     ---excerpt--- "tasks/staged-director-config-script"
+
 **Usage**
     ---excerpt--- "examples/staged-director-config-usage"
 
@@ -998,6 +1155,8 @@ An example task to ensure the assets and docker image are setup correctly in you
     ---excerpt--- "tasks/test"
 **Implementation**
     ---excerpt--- "tasks/test-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/test-usage"
 
@@ -1009,6 +1168,8 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
     ---excerpt--- "tasks/test-interpolate"
 **Implementation**
     ---excerpt--- "tasks/test-interpolate-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/test-interpolate-usage"
 
@@ -1024,6 +1185,8 @@ This is useful when installing agents on BOSH deployed VMs that don't have a Ops
     ---excerpt--- "tasks/update-runtime-config"
 **Implementation**
     ---excerpt--- "tasks/update-runtime-config-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "examples/update-runtime-config-usage"
 
@@ -1040,6 +1203,8 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
     ---excerpt--- "tasks/upgrade-opsman"
 **Implementation**
     ---excerpt--- "tasks/upgrade-opsman-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/upgrade-opsman-usage"
 
@@ -1052,6 +1217,8 @@ Uploads and stages product to the Ops Manager specified in the config file.
     ---excerpt--- "tasks/upload-and-stage-product"
 **Implementation**
     ---excerpt--- "tasks/upload-and-stage-product-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/upload-and-stage-product-usage"
 
@@ -1066,6 +1233,8 @@ with that shasum before uploading.
     ---excerpt--- "tasks/upload-product"
 **Implementation**
     ---excerpt--- "tasks/upload-product-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/upload-product-usage"
 
@@ -1079,5 +1248,7 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
     ---excerpt--- "tasks/upload-stemcell"
 **Implementation**
     ---excerpt--- "tasks/upload-stemcell-script"
+<%= partial "tasks/download-product-S3-script" %>
+
 **Usage**
     ---excerpt--- "reference/upload-stemcell-usage"
