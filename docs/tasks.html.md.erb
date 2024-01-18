@@ -823,11 +823,11 @@ instead of providing S3 credentials in the config file.
 See <a href="./inputs-outputs.html#download-product-config">download-product config file</a> for details.</p>
 
 **Task**
-
+excerpt placeholder -- this partial doesn't work
 <%= partial "tasks/download-product-S3" %>
 
 **Implementation**
-
+excerpt placeholder -- this partial doesn't work
 <%= partial "tasks/download-product-S3-script" %>
 
 **Usage**
@@ -855,16 +855,28 @@ Root CAs cannot be included in this list until Ops Manager 2.7.
 This is purely an informational task.
 
 **Task**
-    ---excerpt--- "tasks/expiring-certificates"
+
+<%= partial "tasks/expiring-certificates" %>
+
 **Implementation**
-    ---excerpt--- "tasks/expiring-certificates-script"
-<%= partial "tasks/download-product-S3-script" %>
+
+<%= partial "tasks/expiring-certificates-script" %>
 
 **Usage**
-    ---excerpt--- "reference/expiring-certificates-usage"
+
+```yaml
+- task: expiring-certificates
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/expiring-certificates.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    EXPIRES_WITHIN: 2m
+```
 
 ### export-installation
-Exports an existing Ops Manager to a file.
+Exports an existing Operations Manager to a file.
 
 This is the first part of the backup/restore and upgrade lifecycle processes.
 This task is used on a fully installed and healthy Ops Manager to export
@@ -887,13 +899,25 @@ If the time is different on different workers, the generated timestamp may fail 
 Changing the time or timezone on workers might interfere with ordering.</p>
 
 **Task**
-    ---excerpt--- "tasks/export-installation"
+
+<%= partial "tasks/export-installation" %>
+
 **Implementation**
-    ---excerpt--- "tasks/export-installation-script"
-<%= partial "tasks/download-product-S3-script" %>
+
+<%= partial "tasks/export-installation-script" %>
 
 **Usage**
-    ---excerpt--- "reference/export-installation-usage"
+
+```yaml
+- task: export-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/export-installation.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    INSTALLATION_FILE: ((foundation))-installation-$timestamp.zip
+```
 
 <%= partial "export_installation_note" %>
 
@@ -905,13 +929,25 @@ This task is used after an installation has been exported and a new Ops Manager
 has been deployed, but before the new Ops Manager is configured.
 
 **Task**
-    ---excerpt--- "tasks/import-installation"
+
+<%= partial "tasks/import-installation" %>
+
 **Implementation**
-    ---excerpt--- "tasks/import-installation-script"
-<%= partial "tasks/download-product-S3-script" %>
+
+<%= partial "tasks/import-installation-script" %>
 
 **Usage**
-    ---excerpt--- "examples/import-installation-usage"
+
+```yaml
+- task: import-installation
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/import-installation.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    INSTALLATION_FILE: installation-*.zip
+```
 
 ### make-git-commit
 Copies a single file into a repo and makes a commit.
@@ -938,13 +974,31 @@ This does not perform a <code>git push</code>.
 You will need to <code>put</code> the output of this task to a git resource to persist it.</p>
 
 **Task**
-    ---excerpt--- "tasks/make-git-commit"
+
+<%= partial "tasks/make-git-commit" %>
+
 **Implementation**
-    ---excerpt--- "tasks/make-git-commit-script"
-<%= partial "tasks/download-product-S3-script" %>
+
+<%= partial "tasks/make-git-commit-script" %>
 
 **Usage**
-    ---excerpt--- "examples/make-git-commit-usage"
+
+```yaml
+- task: make-commit
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/make-git-commit.yml
+  input_mapping:
+    repository: configuration
+    file-source: generated-state
+  output_mapping:
+    repository-commit: configuration-commit
+  params:
+    FILE_SOURCE_PATH: state.yml
+    FILE_DESTINATION_PATH: state/state.yml
+    GIT_AUTHOR_EMAIL: "pcf-pipeline-bot@example.com"
+    GIT_AUTHOR_NAME: "Platform Automation Bot"
+    COMMIT_MESSAGE: 'Update state file'
+```
 
 ### pre-deploy-check
 Checks if the Ops Manager director is configured properly and validates the configuration.
@@ -970,13 +1024,24 @@ The failed task will provide a list of errors that need to be fixed
 before an `apply-changes` could start.
 
 **Task**
-    ---excerpt--- "tasks/pre-deploy-check"
+
+<%= partial "tasks/pre-deploy-check" %>
+
 **Implementation**
-    ---excerpt--- "tasks/pre-deploy-check-script"
-<%= partial "tasks/download-product-S3-script" %>
+
+<%= partial "tasks/pre-deploy-check-script" %>
 
 **Usage**
-    ---excerpt--- "reference/pre-deploy-check-usage"
+
+```yaml
+- task: pre-deploy-check
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/pre-deploy-check.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+```
 
 ### prepare-image
 This task modifies the container image with runtime dependencies.
@@ -993,13 +1058,22 @@ This feature is only available in Concourse 5+.
 <code>prepare-image</code> does not work with Concourse 4.</p>
 
 **Task**
-    ---excerpt--- "tasks/prepare-image"
+
+<%= partial "tasks/prepare-image" %>
+
 **Implementation**
-    ---excerpt--- "tasks/prepare-image-script"
-<%= partial "tasks/download-product-S3-script" %>
+
+<%= partial "tasks/prepare-image-script" %>
 
 **Usage**
-    ---excerpt--- "reference/prepare-image-usage"
+
+```yaml
+prepare-image: &prepare-image
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/prepare-image.yml
+  params:
+    CA_CERTS: ((opsman-ssl.ca))
+```
 
 ### prepare-tasks-with-secrets
 Modifies task files to include variables needed for config files as environment variables
@@ -1015,13 +1089,31 @@ This feature is only available in Concourse 5+.
 <code>prepare-image</code> does not work with Concourse 4.</p>
 
 **Task**
-    ---excerpt--- "tasks/prepare-tasks-with-secrets"
+
+<%= partial "tasks/prepare-tasks-with-secrets" %>
+
 **Implementation**
-    ---excerpt--- "tasks/prepare-tasks-with-secrets-script"
-<%= partial "tasks/download-product-S3-script" %>
+
+<%= partial "tasks/prepare-tasks-with-secrets-script" %>
 
 **Usage**
-    ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
+
+```yaml
+# This task is used in multiple jobs
+# The yaml anchor "*prepare-tasks-with-secrets" is used in its place
+prepare-tasks-with-secrets: &prepare-tasks-with-secrets
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+  input_mapping:
+    tasks: platform-automation-tasks
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_PATHS: config/foundations/config config/foundations/((foundation))/config
+    VARS_PATHS: vars/foundations/((foundation))/vars
+  output_mapping:
+    tasks: platform-automation-tasks
+```
 
 ### replicate-product
 Replicates the product for use in isolation segments.

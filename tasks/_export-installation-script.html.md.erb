@@ -1,3 +1,5 @@
+<pre>
+<code>
 #!/usr/bin/env bash
 # code_snippet export-installation-script start bash
 
@@ -15,3 +17,5 @@ OUTPUT_FILE_NAME="$(echo "$INSTALLATION_FILE" | envsubst '$timestamp')"
 om --env env/"${ENV_FILE}" export-installation \
    --output-file installation/"$OUTPUT_FILE_NAME"
 # code_snippet export-installation-script end
+</code>
+</pre>
