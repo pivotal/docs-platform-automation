@@ -1,5 +1,7 @@
+<pre>
+<code>
 #!/usr/bin/env bash
-# code_snippet configure-ldap-authentication-script start bash
+# code_snippet configure-authentication-script start bash
 
 cat /var/version && echo ""
 set -eux
@@ -12,7 +14,9 @@ done
 
 # ${vars_files_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
-om --env env/"${ENV_FILE}" --skip-ssl-validation configure-ldap-authentication \
+om --env env/"${ENV_FILE}" --skip-ssl-validation configure-authentication \
    --config config/"${AUTH_CONFIG_FILE}" \
    ${vars_files_args[@]}
-# code_snippet configure-ldap-authentication-script end
+# code_snippet configure-authentication-script end
+</code>
+</pre>
