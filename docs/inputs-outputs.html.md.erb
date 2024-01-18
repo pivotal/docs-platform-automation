@@ -10,7 +10,7 @@ Each task can only take a specific set, indicated under the `inputs` property of
 The config director will set the bosh tile (director) on Operations Manager.
 
 The `config` input for a director task expects to have a `director.yml` file.
-The configuration of the `director.yml` is IAAS specific for some properties -- i.e. networking.
+The configuration of the `director.yml` is IAAS specific for some properties, that is, networking.
 
 There are two ways to build a director config.
 
@@ -26,20 +26,20 @@ The IAAS specific configuration can be found in the Operations Manager API docum
 Included below is a list of properties that can be set in the `director.yml`
 and a link to the API documentation explaining any IAAS specific properties.
 
-* `az-configuration` - a list of availability zones [Operations Manager API][opsman-api-azs]
-* `network-assignment` - the network the bosh director is deployed to [Operations Manager API][opsman-api-network-az-assignment]
-* `networks-configuration` - a list of named networks [Operations Manager API][opsman-api-networks]
-* `properties-configuration`
-    * `iaas_configuration` - configuration for the bosh IAAS CPI [Operations Manager API][opsman-api-director-properties]
-    * `director_configuration` - properties for the bosh director [Operations Manager API][opsman-api-director-properties]
-    * `security_configuration` - security properties for the bosh director [Operations Manager API][opsman-api-director-properties]
-    * `syslog_configuration` - configure the syslog sinks for the bosh director [Operations Manager API][opsman-api-director-properties]
-* `resource-configuration` - IAAS VM flavor for the bosh director [Operations Manager API][opsman-api-config-resources]
-* `vmextensions-configuration` - create/update/delete VM extensions [Operations Manager API][opsman-api-vm-extension]
+* `az-configuration` - a list of availability zones [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Availability-Zones/paths/~1api~1v0~1staged~1director~1availability_zones/get)
+* `network-assignment` - the network the BOSH Director is deployed to [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1director~1network_and_az/put)
+* `networks-configuration` - a list of named networks [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Networks/paths/~1api~1v0~1staged~1director~1networks/put)
+* `properties-configuration` - [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Properties/paths/~1api~1v0~1staged~1director~1properties/get)
+    * `iaas_configuration` - configuration for the bosh IAAS CPI
+    * `director_configuration` - properties for the BOSH Director
+    * `security_configuration` - security properties for the BOSH Director
+    * `syslog_configuration` - configure the syslog sinks for the BOSH Director
+* `resource-configuration` - IAAS VM flavor for the BOSH Director [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Job-Resource-Configuration/paths/~1api~1v0~1staged~1products~1{product_guid}~1resources/get)
+* `vmextensions-configuration` - create/update/delete VM extensions [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/VM-Extensions)
 
 #### GCP Shared VPC
 
-Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet][gcp-create-network],
+Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/gcp-prepare-env-manual.html#create_network),
 which includes the host project id, region of the subnet, and the subnet name.
 
 For example:
@@ -190,8 +190,8 @@ signup redirect url (url):
 The file contains the information to restore an Operations Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
 
-This file can be exported from an Operations Manager VM using the [export-installation][export-installation].
-This file can be imported to an Operations Manager VM using the [import-installation][import-installation].
+This file can be exported from an Operations Manager VM using the [export-installation](./tasks.html#export-installation).
+This file can be imported to an Operations Manager VM using the [import-installation](./tasks/#import-installation).
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -231,7 +231,7 @@ Specific advice and features for the different IaaSs are documented below.
 
 #### AWS
 These required properties are adapted from the instructions outlined in
-[Launching an Operations Manager Director Instance on AWS][manual-aws]
+[Launching an Operations Manager Director Instance on AWS](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html).
 
 <%= partial "ip-addresses" %>
 
@@ -246,13 +246,13 @@ as this file then contains no secrets.</p>
 
 #### Azure
 The required properties are adapted from the instructions outlined in
-[Launching an Operations Manager Director Instance on Azure][manual-azure]
+[Launching an Operations Manager Director Instance on Azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html).
 
 <%= partial "ip-addresses" %>
 
 #### GCP
 The required properties are adapted from the instructions outlined in
-[Launching an Operations Manager Director Instance on GCP][manual-gcp]
+[Launching an Operations Manager Director Instance on GCP](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html).
 
 <%= partial "ip-addresses" %>
 
@@ -265,24 +265,26 @@ note that using <code>gcp_service_account_name</code> allows you to avoid interp
 as this file then contains no secrets.</p>
 
 Support for Shared VPC is done via
-[configuring the `vpc_subnet` path][gcp-shared-vpc]
+[configuring the `vpc_subnet` path](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#creating_an_instance_in_a_shared_subnet).
 to include the host project id, region of the subnet, and the subnet name.
 
 For example:
 
-`projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]`
+```
+projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]
+```
 
 #### OpenStack
 
 The required properties are adapted from the instructions outlined in
-[Launching an Operations Manager Director Instance on OpenStack][manual-openstack]
+[Launching an Operations Manager Director Instance on OpenStack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
 
 <%= partial "ip-addresses" %>
 
 #### vSphere
 
 The required properties are adapted from the instructions outlined in
-[Deploying BOSH and Operations Manager to vSphere][manual-vsphere]
+[Deploying BOSH and Operations Manager to vSphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-vsphere.html).
 
 ### opsman image
 
@@ -293,20 +295,20 @@ For AWS, GCP, and Azure, it's a YAML file listing the location
 of images that are already available on the IaaS.
 
 These are examples to download the image artifact for each IaaS
-using the [download-product][download-product] task.
+using the [download-product](./tasks.html/#download-product) task.
 
 #### opsman.yml
 
 <%= partial "how-to-guides/opsman-config-tabs" %>
 
 The `p-automator` CLI includes the ability to extract the Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
-This works for Operations Managers that are already running and useful when [migrating to automation][upgrade-how-to].
+This works for Operations Managers that are already running and useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.html).
 
 Usage:
 
 1. Get the Platform Automation Toolkit image from Tanzu Network.
-2. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
-3. Create a [state file][state] that represents your current VM and IAAS.
+2. Import that image into `docker` to run the [`p-automation` locally](./how-to-guides/running-commands-locally.html).
+3. Create a [state file](#state) that represents your current VM and IAAS.
 4. Invoke the `p-automator` CLI to get the configuration.
 
 For example, on AWS with an access key and secret key:
@@ -337,7 +339,7 @@ The outputted `opsman.yml` contains the information needed for Platform Automati
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Tanzu Network.
 
 Here's an example of how to pull the Tanzu Application Service tile
-using the [download-product][download-product] task.
+using the [download-product](./tasks.html#download-product) task.
 
 #### product.yml
 
@@ -367,7 +369,7 @@ This file cannot be manually created. This file must retrieved from Tanzu Networ
 
 There are two ways to build a product config.
 
-1. Using an already deployed product (tile), you can extract the config using [staged-config].
+1. Using an already deployed product (tile), you can extract the config using [staged-config](./tasks.html#staged-config).
 1. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
 
@@ -376,9 +378,9 @@ For brevity, this `product.yml` is a basic example for `healthwatch`.
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
 
-* `product-properties` - properties for the tile [Operations Manager API][opsman-api-config-products]
-* `network-properties` - a list of named networks to deploy the VMs to [Operations Manager API][opsman-api-config-networks]
-* `resource-config` - for the jobs of the tile [Operations Manager API][opsman-api-config-resources]
+* `product-properties` - properties for the tile [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Properties/paths/~1api~1v0~1staged~1products~1{product_guid}~1properties/get)
+* `network-properties` - a list of named networks to deploy the VMs to [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1:product_guid~1networks_and_azs/put)
+* `resource-config` - for the jobs of the tile [Operations Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Job-Resource-Configuration/paths/~1api~1v0~1staged~1products~1{product_guid}~1resources/get)
 
 ### state
 
@@ -429,7 +431,7 @@ The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-g
 This file cannot be manually created. This file must retrieved from Tanzu Network.</p>
 
 Here's an example of how to pull the vSphere stemcell
-using the [download-product][download-product] task.
+using the [download-product](./tasks.html#download-product) task.
 
 #### stemcell.yml
 
@@ -494,7 +496,7 @@ product-version-regex: ^170\..*$
 ```
 
 #### assign-stemcell-task
-This artifact is an output of [`download-product`][download-product]
+This artifact is an output of [`download-product`](./tasks.html#download-product)
 located in the `assign-stemcell-config` output directory.
 
 This file should resemble the following:
@@ -505,7 +507,7 @@ stemcell: "97.190"
 
 ### telemetry
 
-The `config` input for the [collect-telemetry][collect-telemetry] task 
+The `config` input for the [collect-telemetry](./tasks.html#collect-telemetry) task
 can be used with a `telemetry.yml` file to collect data for VMware
 so they can learn and measure results 
 in order to put customer experience at the forefront of their product decisions.
