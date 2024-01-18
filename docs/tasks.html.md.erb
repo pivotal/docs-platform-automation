@@ -182,11 +182,28 @@ See [configure-saml-authentication](#configure-saml-authentication) to configure
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
 **Task**
-    ---excerpt--- "tasks/configure-authentication"
+
+<%= partial "tasks/configure-authentication" %>
+
 **Implementation**
-    ---excerpt--- "tasks/configure-authentication-script"
+
+<%= partial "tasks/configure-authentication-script" %>
+
 **Usage**
-    ---excerpt--- "reference/configure-authentication-usage"
+
+```yaml
+
+- task: configure-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-authentication.yml
+  attempts: 10
+  input_mapping:
+    env: configuration
+    config: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    AUTH_CONFIG_FILE: foundations/config/auth.yml
+```
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File](./how-to-guides/configuring-auth.html#generating-an-auth-file).
@@ -225,21 +242,33 @@ See [configure-authentication](#configure-authentication) to configure an intern
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
 
 **Task**
-    ---excerpt--- "tasks/configure-ldap-authentication"
+
+<%= partial "tasks/configure-ldap-authentication" %>
+
 **Implementation**
-    ---excerpt--- "tasks/configure-ldap-authentication-script"
+
+<%= partial "tasks/configure-ldap-authentication-script" %>
+
 **Usage**
-    ---excerpt--- "examples/configure-ldap-authentication-usage"
+
+```yaml
+- task: configure-ldap-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-ldap-authentication.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
+```
 
 For more details on using LDAP,
-please refer to the [Ops Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#ldap).
+see the [Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#ldap).
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File](./how-to-guides/configuring-auth.html).
 
 ### configure-opsman
 This task supports configuring settings
-on the Ops Manager Settings page in the UI.
+on the Operations Manager Settings page in the UI.
 For example, the SSL cert for the Ops Manager VM can be configured.
 
 Configuration can be added directly to [`opsman.yml`](./inputs-outputs.html#ops-manager-config).
@@ -250,16 +279,33 @@ so there is no need to use this task then.
 It is recommended to use this task in the initial setup of the Ops Manager VM.
 
 **Task**
-    ---excerpt--- "tasks/configure-opsman"
+
+<%= partial "tasks/configure-opsman" %>
+
 **Implementation**
-    ---excerpt--- "tasks/configure-opsman-script"
+
+<%= partial "tasks/configure-opsman-script" %>
+
 **Usage**
-    ---excerpt--- "reference/configure-opsman-usage"
+
+```yaml
+- task: configure-opsman
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-opsman.yml
+  input_mapping:
+    env: configuration
+    config: configuration
+    vars: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+```
 
 ### configure-product
 Configures an individual, staged product with settings from a config file.
 
-Not to be confused with Ops Manager's
+Not to be confused with Operations Manager's
 built-in [import](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-restore-pcf-bbr.html#deploy-import),
 which reads all deployed products and configurations from a single opaque file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
@@ -270,11 +316,30 @@ and [upload-and-stage-product](#upload-and-stage-product),
 which can stage a product that's been uploaded.
 
 **Task**
-    ---excerpt--- "tasks/configure-product"
+
+<%= partial "tasks/configure-product" %>
+
 **Implementation**
-    ---excerpt--- "tasks/configure-product-script"
+
+<%= partial "tasks/configure-product-script" %>
+
 **Usage**
-    ---excerpt--- "reference/configure-product-usage"
+
+```yaml
+- task: configure-pks
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-product.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+    vars: configuration
+  params:
+    CONFIG_FILE: foundations/((foundation))/config/pks.yml
+    ENV_FILE: foundations/config/env.yml
+    VARS_FILES: |
+      vars/foundations/((foundation))/vars/director.yml
+      vars/foundations/((foundation))/vars/pks.yml
+```
 
 ### configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
@@ -282,11 +347,23 @@ See [configure-authentication](#configure-authentication) to configure an intern
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
 
 **Task**
-    ---excerpt--- "tasks/configure-saml-authentication"
+
+<%= partial "tasks/configure-saml-authentication" %>
+
 **Implementation**
-    ---excerpt--- "tasks/configure-saml-authentication-script"
+
+<%= partial "tasks/configure-saml-authentication-script" %>
+
 **Usage**
-    ---excerpt--- "examples/configure-saml-authentication-usage"
+
+```yaml
+- task: configure-saml-authentication
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-saml-authentication.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
+```
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -304,17 +381,39 @@ For more details on using SAML,
 see the [Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#saml)
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File](./how-to-guides/configuring-auth.html#generating-an-auth-file).
+see [Generating an Auth File](./how-to-guides/configuring-auth.html#generating-an-auth-file).
 
 ### create-vm
 Creates an unconfigured Operations Manager VM.
 
 **Task**
-    ---excerpt--- "tasks/create-vm"
+
+<%= partial "tasks/create-vm" %>
+
 **Implementation**
-    ---excerpt--- "tasks/create-vm-script"
+
+<%= partial "tasks/create-vm-script" %>
+
 **Usage**
-    ---excerpt--- "reference/create-vm-usage"
+
+```yaml
+- task: create-vm
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/create-vm.yml
+  input_mapping:
+    image: opsman-image
+    config: configuration
+    vars: configuration
+  params:
+    OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+    STATE_FILE: state-((foundation)).yml
+    VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+  ensure: &put-state
+    do:
+    - put: state
+      params:
+        file: generated-state/state-((foundation)).yml
+```
 
 This task requires a config file specific to the IaaS being deployed to.
 Please see the [configuration](./inputs-outputs.html#ops-manager-config) page for more specific examples.
@@ -370,8 +469,12 @@ and provides additional benefits.</p>
 
 **Task**
     ---excerpt--- "tasks/credhub-interpolate"
+<%= partial "tasks/credhub-interpolate" %>
+
 **Implementation**
     ---excerpt--- "tasks/credhub-interpolate-script"
+<%= partial "tasks/credhub-interpolate-script" %>
+
 **Usage**
 
 ```yaml
