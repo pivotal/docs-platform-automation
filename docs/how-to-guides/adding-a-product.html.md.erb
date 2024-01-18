@@ -4,18 +4,18 @@ This how-to-guide will teach you how to add a product to an existing pipeline.
 This includes downloading the product from Pivnet,
 extracting configuration,
 and installing the configured product.
-If you don't already have an Ops Manager and deployed Director,
-check out [Installing Ops Manager][install-how-to] and
-[Deploying the Director][director-configuration] respectively.
+If you don't already have an Operations Manager and deployed Director,
+check out [Installing Operations Manager](./installing-opsman.html) and
+[Deploying the Director](./creating-a-director-config-file.html) respectively.
 
 ## Prerequisites
-1. A pipeline, such as one created in [Installing Ops Manager][install-how-to] 
-   or [Upgrading an Existing Ops Manager][upgrade-how-to].
-1. A fully configured Ops Manager and Director.
-1. The Platform Automation Toolkit Docker Image [imported and ready to run][running-commands-locally].
+1. A pipeline, such as one created in [Installing Operations Manager](./installing-opsman.html) 
+   or [Upgrading an Existing Operations Manager](./upgrade-existing-opsman.html).
+1. A fully configured Operations Manager and Director.
+1. The Platform Automation Toolkit Docker Image [imported and ready to run](./running-commands-locally.html).
 1. A glob pattern uniquely matching one product file on Tanzu Network.
 
-### Assumptions About Your Existing Pipeline
+### Assumptions About your Existing Pipeline
 This guide assumes you're working
 from one of the pipelines created in previous guides,
 but you don't _have_ to have exactly that pipeline.
@@ -30,7 +30,7 @@ We assume:
 - A pivnet token stored in CredHub as a credential named `pivnet_token`.
 - A previous job responsible for deploying the director
   called `apply-director-changes`.
-- You have created an `env.yml` from the [Configuring Env][generating-env-file]
+- You have created an `env.yml` from the [Configuring Env](./configuring-env.html#generating-an-env-file)
   how-to guide. This file exists in the `configuration` resource.
 - You have a `fly` target named `control-plane` with an existing pipeline called `foundation`.
 - You have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
@@ -39,12 +39,12 @@ You should be able to use the pipeline YAML in this document with any pipeline,
 as long as you make sure the above names match up with what's in your pipeline,
 either by changing the example YAML or your pipeline.
 
-## Download Upload And Stage Product to Ops Manager
-For this guide, we're going to add the [TAS][tas] product.
+## Download, Upload, and Stage Product to Operations Manager
+For this guide, we're going to add the [TAS](https://network.pivotal.io/products/elastic-runtime) product.
 
 ### Download
 Before setting the pipeline, we will have to 
-create a config file for [`download-product`][download-product]
+create a config file for [`download-product`](../tasks.html#download-product)
 in order to download TAS from Tanzu Network.
 
 Create a `download-tas.yml`.
@@ -132,7 +132,7 @@ so that if it works, you don't have to wait for the download again.</p>
 
 ### Upload and Stage
 We have a product downloaded and (potentially) cached on a Concourse worker.
-The next step is to upload and stage that product to Ops Manager.
+The next step is to upload and stage that product to Operations Manager.
 
 ```yaml hl_lines="32-45"
 jobs:
@@ -192,14 +192,14 @@ and if all is well, make a commit and push
 
 ```bash
 git add pipeline.yml
-git commit -m 'upload tas and stemcell to Ops Manager'
+git commit -m 'upload tas and stemcell to Operations Manager'
 git push
 ```
 
 ## Product Configuration
 Before automating the configuration and install of the product,
 we need a config file.
-The simplest way is to choose your config options in the Ops Manager UI,
+The simplest way is to choose your config options in the Operations Manager UI,
 then pull its resulting configuration.
 
 <p class="note">
@@ -209,17 +209,17 @@ For an alternative that generates the configuration
 from the product file, using ops files to select options,
 see <a href="#config-template">Config Template</a>.</p>
 
-#### Pulling Configuration from Ops Manager
+#### Pulling Configuration from Operations Manager
 Configure the product _manually_ according to the product's install instructions.
-This guide installs [tas][tas-install-vsphere].
-Other install instructions may be found in [VMware Tanzu Docs][tanzu-docs].
+This guide installs [Tanzu Application Service](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/vsphere-nsx-t.html).
+Other install instructions may be found in [VMware Tanzu Docs](https://docs.vmware.com/en/VMware-Tanzu/index.html).
 
 Once the product is fully configured, do not apply changes, and continue this guide.
 Note: if you applied changes, it's fine, it'll just take a little longer.
 
-[`om`](https://github.com/pivotal-cf/om) has a command called [staged-config][staged-config],
+[`om`](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.html#staged-config),
 which is used to extract staged product
-configuration from the Ops Manager UI.
+configuration from the Operations Manager UI.
 `om` requires a `env.yml`, which we already used in the `upload-and-stage` task.
 
 Most products will contain the following top-level keys:
@@ -230,21 +230,20 @@ Most products will contain the following top-level keys:
 
 The command can be run directly using Docker.
 We'll need to download the image to our local workstation, import it into Docker, 
-and then run `staged-config` for the [Tanzu Application Service][tas] product.
-For more information on Running Commands Locally,
-see the corresponding [How-to Guide][running-commands-locally].
+and then run `staged-config` for the [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime) product.
+For more information about running commands locally,
+see [Running Commands Locally](./running-commands-locally.html).
 
-
-After the image has been downloaded from [Tanzu Network][tanzu-network-platform-automation]
-we're going to need the product name recognized by Ops Manager.
-This can be found using `om`, but first we should import the image
+After you have downloaded the image from [Tanzu Network](https://network.pivotal.io/products/platform-automation)
+you need to have the product name recognized by Operations Manager.
+This can be found using `om`, but first you need to should import the image.
 
 ```bash
 export ENV_FILE=env.yml
 docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
 ```
 
-Then, we can run `om staged-products` to find the name of the product in Ops Manager.
+Then, we can run `om staged-products` to find the name of the product in Operations Manager.
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
 om --env ${ENV_FILE} staged-products
@@ -261,11 +260,11 @@ The result should be a table that looks like the following
 ```
 
 `p-bosh` is the name of the director.
-As `cf` is the only other product on our Ops Manager,
-we can safely assume that this is the product name for [TAS][tas].
+As `cf` is the only other product on our Operations Manager,
+we can safely assume that this is the product name for [TAS](https://network.pivotal.io/products/elastic-runtime).
 
 Using the product name `cf`,
-let's extract the current configuration from Ops Manager.
+let's extract the current configuration from Operations Manager.
 
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
@@ -504,7 +503,7 @@ This new job will configure the TAS product
 with the config file we previously created.
 
 Next, we need to add an apply-changes job
-so that these changes will be applied by the Ops Manager.
+so that these changes will be applied by the Operations Manager.
 
 ```yaml hl_lines="31-56"
 - name: configure-tas
@@ -601,7 +600,7 @@ outlined in the how-to guide is `config-template`.
 `config-template` is an `om` command that creates a base config file with optional ops files
 from a given tile or pivnet slug.
 
-This section will assume [TAS][tas], like the how-to guide above.
+This section will assume [TAS](https://network.pivotal.io/products/elastic-runtime), like the how-to guide above.
 
 <p class="note caution">
 <span class="note__title">Caution</span>
@@ -668,7 +667,7 @@ This can be useful if there are vars that need to be interpolated when you apply
 rather than when you create the final template.
 You might consider creating a separate vars file for each of the following cases:
 
-- credentials (these vars can then be [persisted separately/securely][secrets-handling])
+- credentials (these vars can then be [persisted separately/securely](../concepts/secrets-handling.html))
 - foundation-specific variables when using the same template for multiple foundations
 
 You can use the `--skip-missing` flag when creating your final template
@@ -679,10 +678,10 @@ here are some approaches you can use:
 
 - Look in the template where the variable appears for some additional context of its value.
 - Look at the tile's online documentation
-- Upload the tile to an Ops Manager 
-  and visit the tile in the Ops Manager UI to see if that provides any hints.
+- Upload the tile to an Operations Manager 
+  and visit the tile in the Operations Manager UI to see if that provides any hints.
   
-    If you are still struggling, inspecting the html of the Ops Manager webpage
+    If you are still struggling, inspecting the html of the Operations Manager webpage
     can more accurately map the value names to the associated UI element.
 
 <p class="note important">
@@ -719,7 +718,7 @@ you'll need to use some of the ops files in one of the following four directorie
     </tr>
 </table>
 
-For more information on BOSH VM Extensions, refer to the [Creating a Director Config File How-to Guide][vm-extensions].
+For more information on BOSH VM Extensions, see [Creating a Director Config File](./creating-a-director-config-file.html).
 
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
@@ -767,17 +766,17 @@ om interpolate \
 
 You can check-in the resulting configuration to a git repo.
 For vars that do not include credentials, you can check those vars files in, as well.
-Handle vars that are secret [more carefully][secrets-handling].
+Handle vars that are [secret](../concepts/secrets-handling.html) more carefully.
 
 You can then dispose of the config template directory.
 
 ## Using Ops Files for Multi-Foundation
 
 There are two recommended ways to support multiple foundation workflows:
-using [secrets management][multi-foundation-secrets-handling] or ops files.
+using [secrets management](../concepts/secrets-handling.html#storing-values-for-multi-foundation) or ops files.
 This section will explain how to support multiple foundations using ops files.
 
-Starting with an **incomplete** [Tanzu Application Service][tas] config from **vSphere** as an example:
+Starting with an **incomplete** [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime) config from **vSphere** as an example:
 
 <%= partial "cf-partial-config" %>
 
@@ -787,7 +786,7 @@ foundations, this value will be different per deployed foundation. Other values,
 such as `.cloud_controller.encrypt_key` have a secret that
 already have a placeholder from `om`. If different foundations have different
 load requirements, even the values in `resource-config` can be edited using
-[ops files][ops-files].
+[BOSH Ops files](https://bosh.io/docs/cli-ops-files/).
 
 Using the example above, let's try filling in the existing placeholder for
 `cloud_controller.apps_domain` in our first foundation.
