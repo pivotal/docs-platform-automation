@@ -277,15 +277,17 @@ When using the [Concourse S3 Resource][concourse-s3-resource],
 several configuration properties are available
 for retrieving objects. The bucket name is required.
 
-!!! Info "On networking and accessing a bucket"
-    In order for your Concourse
-    to have access to your S3 bucket,
-    ensure that you have the appropriate firewall and networking settings
-    for your Concourse instance to
-    make requests to your bucket.
-    Concourse uses various "outside" resources
-    to perform certain jobs.
-    Ensure that Concourse can "talk" to your S3 bucket.
+
+<p class="note">
+<span class="note__title">Note</span>
+For your Concourse
+to have access to your S3 bucket,
+ensure that you have the appropriate firewall and networking settings
+for your Concourse instance to
+make requests to your bucket.
+Concourse uses various "outside" resources
+to perform certain jobs.
+Ensure that Concourse can "talk" to your S3 bucket.</p>
 
 
 ## Reference Resources Pipeline
@@ -327,21 +329,28 @@ to the filename before it is placed into the S3 bucket:
 For complete information on this task
 and how it works, refer to the [download-product task reference.][download-product]
 
-!!! warning "Changing S3 file names"
-    Do not change the meta information
-    prepended by `download-product`.
-    This information is required
-    if using a `download-product` with a blobstore (i.e. aws, gcs)
-    in order to properly parse product versions.
-
-    If placing a product file into an blobstore bucket manually,
-    ensure that it has the proper file name format;
-    opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
-    There should be no spaces between the two brackets.
-    For example, for a product with slug of `product-slug` and version of `1.1.1`:
-    ```
-    [product-slug,1.1.1]original-filename.pivotal
-    ```
+<div class="note important">
+<span class="note__title">Important</span>
+<b>Changing S3 file names</b>:
+<br>
+Do not change the meta information
+prepended by <code>download-product</code>.
+This information is required
+if using a <code>download-product</code> with a blobstore (that is, aws, gcs)
+in order to properly parse product versions.
+<br><br>
+If placing a product file into an blobstore bucket manually,
+ensure that it has the proper file name format;
+opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
+There should be no spaces between the two brackets.
+<br>
+For example, for a product with slug of <code>product-slug</code> and version of <code>1.1.1</code>:
+<pre>
+<code>
+[product-slug,1.1.1]original-filename.pivotal
+</code>
+</pre>
+</div>
 
 #### The download-product task
 The [`download-product`][download-product]
