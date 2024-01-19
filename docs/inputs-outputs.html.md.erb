@@ -111,8 +111,9 @@ The `installation` input for a opsman VM task expects to have a `installation.zi
 This file can be exported from an Ops Manager VM using the [export-installation][export-installation].
 This file can be imported to an Ops Manager VM using the [import-installation][import-installation].
 
-!!! warning
-    This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. It is a file that must be generated using the export function of Ops Manager.</p>
 
 ## Ops Manager config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
@@ -130,13 +131,14 @@ These required properties are adapted from the instructions outlined in
 
 {% include '.ip-addresses.md' %}
 
-!!! info "Using instance_profile to Avoid Secrets"
-    For authentication you must either set `use_instance_profile: true`
-    or provide a `secret_key_id` and `secret_access_key`.
-    You must remove key information if you're using an instance profile.
-    Using an instance profile allows you to avoid interpolation,
-    as this file then contains no secrets.
-
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Using instance_profile to avoid secrets</b>:
+For authentication you must either set <code>use_instance_profile: true</code>
+or provide a <code>secret_key_id</code> and <code>secret_access_key</code>.
+You must remove key information if you're using an instance profile.
+Using an instance profile allows you to avoid interpolation,
+as this file then contains no secrets.</p>
 
 ### Azure
 These required properties are adapted from the instructions outlined in
@@ -154,11 +156,13 @@ These required properties are adapted from the instructions outlined in
 
 {% include '.ip-addresses.md' %}
 
-!!! info "Using a Service Account Name to Avoid Secrets"
-    For authentication either `gcp_service_account` or `gcp_service_account_name` is required.
-    You must remove the one you are not using
-    note that using `gcp_service_account_name` allows you to avoid interpolation,
-    as this file then contains no secrets.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Using a Service Account Name to Avoid Secrets</b>:
+For authentication either <code>gcp_service_account</code> or <code>gcp_service_account_name</code> is required.
+You must remove the one you are not using
+note that using <code>gcp_service_account_name</code> allows you to avoid interpolation,
+as this file then contains no secrets.</p>
 
 Support for Shared VPC is done via
 [configuring the `vpc_subnet` path][gcp-shared-vpc]
@@ -259,8 +263,9 @@ product-version-regex: ^2\.6\..*$
     CONFIG_FILE: product.yml
 ```
 
-!!! warning
-    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. It must retrieved from Tanzu Network.</p>
 
 ## product config
 
@@ -323,8 +328,9 @@ This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from 
 It must be in the original filename as that is used by Ops Manager to parse metadata.
 The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-go_agent.tgz`.
 
-!!! warning
-    This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. It must retrieved from Tanzu Network.</p>
 
 Here's an example of how to pull the vSphere stemcell
 using the [download-product][download-product] task.
