@@ -1,4 +1,5 @@
-## Platform Automation Toolkit Tasks
+# Platform Automation Toolkit Tasks
+
 This document lists each Platform Automation Toolkit task,
 and provides information about their intentions, inputs, and outputs.
 
@@ -8,7 +9,7 @@ as they are found in the product.
 The docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information. To learn more see the [running-commands-locally][running-commands-locally] section.
 
-### apply-changes
+## apply-changes
 
 Triggers an install on the Ops Manager described by the auth file.
 
@@ -21,7 +22,7 @@ Triggers an install on the Ops Manager described by the auth file.
 === "Usage"
     ---excerpt--- "reference/apply-changes-usage"
 
-### apply-director-changes
+## apply-director-changes
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
 
@@ -34,7 +35,7 @@ with the `--skip-deploy-products`/`-sdp` flag.
 === "Usage"
     ---excerpt--- "reference/apply-director-changes-usage"
 
-### assign-multi-stemcell
+## assign-multi-stemcell
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
 This feature is only available in OpsMan 2.6+.
 For more information on how to utilize this workflow,
@@ -47,7 +48,7 @@ check out the [Stemcell Handling][stemcell-handling] topic.
 === "Usage"
     ---excerpt--- "examples/assign-multi-stemcell-usage"
 
-### assign-stemcell
+## assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product.
 For more information on how to utilize
 this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
@@ -59,7 +60,7 @@ this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
 === "Usage"
     ---excerpt--- "examples/assign-stemcell-usage"
 
-### check-pending-changes
+## check-pending-changes
 Returns a table of the current state of your Ops Manager
 and lists whether each product is changed or unchanged and the errands for that product.
 By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
@@ -73,7 +74,7 @@ when automating the [configure-product][configure-product]/[apply-changes][apply
 === "Usage"
     ---excerpt--- "reference/check-pending-changes-usage"
 
-### collect-telemetry
+## collect-telemetry
 Collects foundation information
 using the [Telemetry Collector][telemetry-docs] tool.
 
@@ -94,7 +95,7 @@ may be used to send telemetry data to VMware.
 === "Usage"
     ---excerpt--- "reference/collect-telemetry-usage"
 
-### configure-authentication
+## configure-authentication
 Configures Ops Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
@@ -109,7 +110,7 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
-### configure-director
+## configure-director
 Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
 which can extract a config file.
@@ -124,7 +125,7 @@ which can extract a config file.
 !!! warning "GCP with service account"
     For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
 
-### configure-ldap-authentication
+## configure-ldap-authentication
 Configures Ops Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-saml-authentication](#configure-saml-authentication) to configure with SAML.
@@ -142,7 +143,7 @@ please refer to the [Ops Manager documentation][config-ldap].
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
-### configure-product
+## configure-product
 Configures an individual, staged product with settings from a config file.
 
 Not to be confused with Ops Manager's
@@ -162,7 +163,7 @@ which can stage a product that's been uploaded.
 === "Usage"
     ---excerpt--- "reference/configure-product-usage"
 
-### configure-saml-authentication
+## configure-saml-authentication
 Configures Ops Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
 and [configure-ldap-authentication](#configure-ldap-authentication) to configure with LDAP.
@@ -191,7 +192,7 @@ please refer to the [Ops Manager documentation][config-saml]
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File][generating-an-auth-file].
 
-### create-vm
+## create-vm
 Creates an unconfigured Ops Manager VM.
 
 === "Task"
@@ -245,7 +246,7 @@ The task does specific CLI commands for the creation of the Ops Manager VM on ea
 1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources
 
 
-### credhub-interpolate
+## credhub-interpolate
 Interpolate credhub entries into configuration files
 
 === "Task"
@@ -258,7 +259,7 @@ Interpolate credhub entries into configuration files
 This task requires a valid credhub with UAA client and secret. For information on how to
 set this up, see [Secrets Handling][secrets-handling]
 
-### delete-installation
+## delete-installation
 Delete the Ops Manager Installation
 
 === "Task"
@@ -268,7 +269,7 @@ Delete the Ops Manager Installation
 === "Usage"
     ---excerpt--- "reference/delete-installation-usage"
 
-### delete-vm
+## delete-vm
 Deletes the Ops Manager VM instantiated by [create-vm](#create-vm).
 
 === "Task"
@@ -307,7 +308,7 @@ The task does specific CLI commands for the deletion of the Ops Manager VM and r
 
 1. Deletes the VM
 
-### download-product
+## download-product
 
 {% include "./.opsman_filename_change_note.md" %}
 
@@ -404,7 +405,7 @@ This avoids breaking current pipelines.
 === "Azure Usage"
     ---excerpt--- "examples/download-product-usage-azure"
 
-### download-product-s3
+## download-product-s3
 
 !!! warning "Deprecation Notice"
     This task is deprecated in favor of [`download-product`][download-product],
@@ -468,7 +469,7 @@ For example:
 === "Usage"
     ---excerpt--- "examples/download-product-s3-usage"
 
-### expiring-certificates
+## expiring-certificates
 Returns a list of certificates that are expiring within a time frame.
 These certificates can be Ops Manager or Credhub certificates.
 Root CAs cannot be included in this list until Ops Manager 2.7.
@@ -481,7 +482,7 @@ This is purely an informational task.
 === "Usage"
     ---excerpt--- "reference/expiring-certificates-usage"
 
-### export-installation
+## export-installation
 Exports an existing Ops Manager to a file.
 
 This is the first part of the backup/restore and upgrade lifecycle processes.
@@ -512,7 +513,7 @@ params:
 
 {% include "./.export_installation_note.md" %}
 
-### import-installation
+## import-installation
 Imports a previously exported installation to Ops Manager.
 
 This is a part of the backup/restore and upgrade lifecycle processes.
@@ -526,7 +527,7 @@ has been deployed, but before the new Ops Manager is configured.
 === "Usage"
     ---excerpt--- "examples/import-installation-usage"
 
-### make-git-commit
+## make-git-commit
 Copies a single file into a repo and makes a commit.
 Useful for persisting the state output of tasks that manage the VM, such as:
 
@@ -555,7 +556,7 @@ Also useful for persisting the configuration output from:
 === "Usage"
     ---excerpt--- "examples/make-git-commit-usage"
 
-### pre-deploy-check
+## pre-deploy-check
 Checks if the Ops Manager director is configured properly and validates the configuration.
 This feature is only available in Ops Manager 2.6+.
 Additionally, checks each of the staged products
@@ -585,7 +586,7 @@ before an `apply-changes` could start.
 === "Usage"
     ---excerpt--- "reference/pre-deploy-check-usage"
 
-### prepare-tasks-with-secrets
+## prepare-tasks-with-secrets
 Modifies task files to include variables needed for config files as environment variables
 for run-time interpolation from a secret store.
 Learn more about [secrets handling][secrets-handling].
@@ -603,7 +604,7 @@ Learn more about [secrets handling][secrets-handling].
 === "Usage"
     ---excerpt--- "reference/prepare-tasks-with-secrets-usage"
 
-### revert-staged-changes
+## revert-staged-changes
 Reverts all changes that are currently staged on the Ops Manager.
 This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
@@ -619,7 +620,7 @@ This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 === "Usage"
     ---excerpt--- "reference/revert-staged-changes-usage"
 
-### send-telemetry
+## send-telemetry
 Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
 to VMware.
 
@@ -635,7 +636,7 @@ to VMware.
 === "Usage"
     ---excerpt--- "reference/send-telemetry-usage"
 
-### stage-configure-apply
+## stage-configure-apply
 This is an _advanced task_.
 Stage a product to Ops Manager, configure that product, and apply changes
 only to that product without applying changes to the rest of the foundation.
@@ -649,7 +650,7 @@ only to that product without applying changes to the rest of the foundation.
 === "Usage"
     ---excerpt--- "examples/stage-configure-apply-usage"
 
-### stage-product
+## stage-product
 Staged a product to the Ops Manager specified in the config file.
 
 === "Task"
@@ -659,7 +660,7 @@ Staged a product to the Ops Manager specified in the config file.
 === "Usage"
     ---excerpt--- "reference/stage-product-usage"
 
-### staged-config
+## staged-config
 Downloads the configuration for a product from Ops Manager.
 
 Not to be confused with Ops Manager's
@@ -674,7 +675,7 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
 === "Usage"
     ---excerpt--- "examples/staged-config-usage"
 
-### staged-director-config
+## staged-director-config
 
 {% include "./.opsman_filename_change_note.md" %}
 
@@ -695,7 +696,7 @@ The credentials need to be provided from an external configuration when invoking
 
 {% include ".missing_fields_opsman_director.md" %}
 
-### test
+## test
 An example task to ensure the assets and docker image are setup correctly in your concourse pipeline.
 
 === "Task"
@@ -705,7 +706,7 @@ An example task to ensure the assets and docker image are setup correctly in you
 === "Usage"
     ---excerpt--- "reference/test-usage"
 
-### test-interpolate
+## test-interpolate
 An example task to ensure that all required vars are present when interpolating into a base file.
 For more instruction on this topic, see the [variables](concepts/variables.md) section
 
@@ -716,7 +717,7 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
 === "Usage"
     ---excerpt--- "reference/test-interpolate-usage"
 
-### upgrade-opsman
+## upgrade-opsman
 Upgrades an existing Ops Manager to a new given Ops Manager version
 
 === "Task"
@@ -728,7 +729,7 @@ Upgrades an existing Ops Manager to a new given Ops Manager version
 
 For more information about this task and how it works, see the [upgrade](concepts/upgrade.md) page.
 
-### upload-and-stage-product
+## upload-and-stage-product
 Uploads and stages product to the Ops Manager specified in the config file.
 
 === "Task"
@@ -738,7 +739,7 @@ Uploads and stages product to the Ops Manager specified in the config file.
 === "Usage"
     ---excerpt--- "reference/upload-and-stage-product-usage"
 
-### upload-product
+## upload-product
 Uploads a product to the Ops Manager specified in the config file.
 
 If a shasum is provided in the config.yml,
@@ -752,7 +753,7 @@ with that shasum before uploading.
 === "Usage"
     ---excerpt--- "reference/upload-product-usage"
 
-### upload-stemcell
+## upload-stemcell
 Uploads a stemcell to Ops Manager.
 
 Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
@@ -764,6 +765,3 @@ Ops Manager parses this filename to determine the version and OS of the stemcell
     ---excerpt--- "tasks/upload-stemcell-script"
 === "Usage"
     ---excerpt--- "reference/upload-stemcell-usage"
-
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
