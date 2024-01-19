@@ -1,3 +1,5 @@
+# Creating a Director Config file
+
 Extracting a director configuration file, an externalized config that lives outside of Ops Manager, can make it easier to manage multiple foundations as well as help with:
 
 - traceability
