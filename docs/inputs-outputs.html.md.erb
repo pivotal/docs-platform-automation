@@ -1,8 +1,8 @@
-##  Inputs
+# Task Inputs
 These are the inputs that can be provided to the tasks.
 Each task can only take a specific set, indicated under the `inputs` property of the YAML.
 
-### director config
+## director config
 
 The config director will set the bosh tile (director) on Ops Manager.
 
@@ -34,7 +34,7 @@ and a link to the API documentation explaining any IAAS specific properties.
 * `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API][opsman-api-config-resources]
 * `vmextensions-configuration` - create/update/delete VM extensions [Ops Manager API][opsman-api-vm-extension]
 
-#### GCP Shared VPC
+### GCP Shared VPC
 
 Support for Shared VPC is done via configuring the `iaas_identifier` path for the [infrastructure subnet][gcp-create-network],
 which includes the host project id, region of the subnet, and the subnet name.
@@ -44,7 +44,7 @@ For example:
 `[HOST_PROJECT_ID]/[NETWORK]/[SUBNET]/[REGION]`
 
 
-### download-product-config
+## download-product-config
 
 The `config` input for a download product task 
 can be used with a `download-config.yml` file to download a tile.
@@ -59,7 +59,7 @@ The configuration of the `download-config.yml` looks like this:
 === "Azure"
     ---excerpt--- "examples/download-product-config-azure"
 
-### download-stemcell-product-config
+## download-stemcell-product-config
 
 The `config` input for a download product task 
 can be used with a `download-config.yml` file to download a stemcell.
@@ -67,19 +67,19 @@ The configuration of the `download-config.yml` looks like this:
 
 ---excerpt--- "examples/download-stemcell-product-config"
 
-### env
+## env
 
 The `env` input for a task expects to have a `env.yml` file.
 This file contains properties for targeting and logging into the Ops Manager API.
 
-#### basic authentication
+### basic authentication
 ---excerpt--- "examples/env"
 
-#### uaa authentication
+### uaa authentication
 ---excerpt--- "examples/env-uaa"
 
 
-##### Getting the `client-id` and `client-secret`
+#### Getting the `client-id` and `client-secret`
 
 Ops Manager will by preference use Client ID and Client Secret if provided.
 To create a Client ID and Client Secret
@@ -103,7 +103,7 @@ autoapprove (list):
 signup redirect url (url):
 ```
 
-### installation
+## installation
 
 The file contains the information to restore an Ops Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
@@ -114,7 +114,7 @@ This file can be imported to an Ops Manager VM using the [import-installation][i
 !!! warning
     This file cannot be manually created. It is a file that must be generated via the export function of Ops Manager.
 
-### Ops Manager config
+## Ops Manager config
 The config for an Ops Manager described IAAS specific information for creating the VM -- i.e. VM flavor (size), IP addresses
 
 The `config` input for opsman task expects to have a `opsman.yml` file.
@@ -122,7 +122,7 @@ The configuration of the `opsman.yml` is IAAS specific.
 
 Specific examples for each IaaS are as follows:
 
-#### AWS
+### AWS
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on AWS][manual-aws]
 
@@ -138,7 +138,7 @@ These required properties are adapted from the instructions outlined in
     as this file then contains no secrets.
 
 
-#### Azure
+### Azure
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Azure][manual-azure]
 
@@ -146,7 +146,7 @@ These required properties are adapted from the instructions outlined in
 
 {% include '.ip-addresses.md' %}
 
-#### GCP
+### GCP
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on GCP][manual-gcp]
 
@@ -168,7 +168,7 @@ For example:
 
 `projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]`
 
-#### Openstack
+### Openstack
 
 These required properties are adapted from the instructions outlined in
 [Launching an Ops Manager Director Instance on Openstack][manual-openstack]
@@ -177,14 +177,14 @@ These required properties are adapted from the instructions outlined in
 
 {% include '.ip-addresses.md' %}
 
-#### vSphere
+### vSphere
 
 These required properties are adapted from the instructions outlined in
 [Deploying BOSH and Ops Manager to vSphere][manual-vsphere]
 
 ---excerpt--- "examples/vsphere-configuration"
 
-### opsman image
+## opsman image
 
 This file is an [artifact from Tanzu Network](https://network.pivotal.io/products/ops-manager),
 which contains the VM image for a specific IaaS.
@@ -195,7 +195,7 @@ of images that are already available on the IaaS.
 These are examples to download the image artifact for each IaaS
 using the [download-product][download-product] task.
 
-#### opsman.yml
+### opsman.yml
 
 {% include "how-to-guides/.opsman-config.md" %}
 
@@ -222,7 +222,7 @@ p-automator export-opsman-config \
 
 The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Ops Manager VM.
 
-#### download-product task
+### download-product task
 
 ```yaml
 - task: download-opsman-image
@@ -232,14 +232,14 @@ The outputted `opsman.yml` contains the information needed for Platform Automati
     CONFIG_FILE: opsman.yml
 ```
 
-### product
+## product
 
 The `product` input requires a single tile file (`.pivotal`) as downloaded from Tanzu Network.
 
 Here's an example of how to pull the Tanzu Application Service tile
 using the [download-product][download-product] task.
 
-#### product.yml
+### product.yml
 
 ```yaml
 ---
@@ -249,7 +249,7 @@ pivnet-product-slug: elastic-runtime
 product-version-regex: ^2\.6\..*$
 ```
 
-#### download-product task
+### download-product task
 
 ```yaml
 - task: download-stemcell
@@ -262,7 +262,7 @@ product-version-regex: ^2\.6\..*$
 !!! warning
     This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
 
-### product config
+## product config
 
 There are two ways to build a product config.
 
@@ -279,7 +279,7 @@ and a link to the API documentation explaining the properties.
 * `network-properties` - a list of named networks to deploy the VMs to [Ops Manager API][opsman-api-config-networks]
 * `resource-config` - for the jobs of the tile [Ops Manager API][opsman-api-config-resources]
 
-### state
+## state
 
 This file contains that meta-information needed to manage the Ops Manager VM.
 The `state` input for a opsman VM task expects to have a `state.yml` file.
@@ -318,7 +318,7 @@ depending on your IAAS:
     --8<-- 'docs/examples/state/vsphere.yml'
     ```
 
-### stemcell
+## stemcell
 This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from Tanzu Network.
 It must be in the original filename as that is used by Ops Manager to parse metadata.
 The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-go_agent.tgz`.
@@ -329,7 +329,7 @@ The filename could look like `bosh-stemcell-3541.48-vsphere-esxi-ubuntu-trusty-g
 Here's an example of how to pull the vSphere stemcell
 using the [download-product][download-product] task.
 
-#### stemcell.yml
+### stemcell.yml
 
 === "AWS"
     ```yaml
@@ -377,7 +377,7 @@ using the [download-product][download-product] task.
     ```
 
 
-#### download-product task
+### download-product task
 
 ```yaml
 - task: download-stemcell
@@ -387,7 +387,7 @@ using the [download-product][download-product] task.
     CONFIG_FILE: stemcell.yml
 ```
 
-#### assign-stemcell-task
+### assign-stemcell-task
 This artifact is an output of [`download-product`][download-product]
 located in the `assign-stemcell-config` output directory.
 
@@ -397,7 +397,7 @@ product: cf
 stemcell: "97.190"
 ```
 
-### telemetry
+## telemetry
 
 The `config` input for the [collect-telemetry][collect-telemetry] task 
 can be used with a `telemetry.yml` file to collect data for VMware
