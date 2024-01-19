@@ -2,20 +2,31 @@
 
 {% include "./.opsman_filename_change_note.md" %}
 
-!!! warning "Azure Updating to 2.5"
-     Ops Manager will be removing the necessity to provide availability zones for azure.
-     If your `director.yml`(see [`staged-director-config`][staged-director-config])
-     has a block like the following in the networks section:
-     ```yaml
-        availability_zone_names:
-        - "null"
-     ```
-     your deployment will have the following error:
-     ```json
-     {"errors":["Availability zones cannot find availability zone with name null"]}
-     ```
-     To fix this error, please remove the `availability_zone_names` section from your azure config, or re-run
-     [`staged-director-config`][staged-director-config] to update your `director.yml`.
+<div class="note important">
+<span class="note__title">Important</span>
+<b>Azure Updating to 2.5</b>:
+<br>
+Ops Manager will be removing the necessity to provide availability zones for azure.
+If your <code>director.yml</code> (see <a href="./tasks.html#staged-director-config">staged-director-config</a>)
+has a block like the following in the networks section:
+
+<pre>
+<code>
+  availability_zone_names:
+  - "null"
+</code>
+</pre>
+
+your deployment will have the following error:
+<pre>
+<code>
+{"errors":["Availability zones cannot find availability zone with name null"]}
+</code>
+</pre>
+
+To fix this error, remove the <code>availability_zone_names</code> section from your Azure config, or re-run
+<a href="./tasks.html#staged-director-config">staged-director-config</a> to update <code>director.yml</code>.
+</div>
 
 ## v4.3.21
 October 23, 2020
@@ -48,9 +59,10 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.3.20
 October 14, 2020
 
-!!! note "Updates to CLI versions"
-    We've now updated our list of CLI versions.
-    It includes the supported IAAS CLIs.
+<p class="note">
+<span class="note__title">Note</span>
+We've now updated our list of CLI versions.
+It includes the supported IAAS CLIs.</p>
 
 **CLI Versions**
 
@@ -462,12 +474,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.3.5
 Released April 24, 2020
 
-!!! bug "Known Issue"
-    This version attempted to remove some unnecessary dependencies from the image.
-    In this process, important utilities may have been removed as well.
-    In particular, we know that `ssh` is missing.
-    If you use this version and find any vital tools missing, please let us know.
-    A forthcoming patch version will restore `ssh` and any other identified tools.
+<p class="note caution">
+<span class="note__title">Caution</span>
+<b>Known Issue</b>:
+<br>
+This version attempted to remove some unnecessary dependencies from the image.
+In this process, important utilities may have been removed as well.
+In particular, we know that <code>ssh</code> is missing.
+If you use this version and find any vital tools missing, please let us know.
+A forthcoming patch version will restore <code>ssh</code> and any other identified tools.</p>
 
 **CLI Versions**
 
@@ -956,12 +971,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.2.8
 Released April 24, 2020
 
-!!! bug "Known Issue"
-    This version attempted to remove some unnecessary dependencies from the image.
-    In this process, important utilities may have been removed as well.
-    In particular, we know that `ssh` is missing.
-    If you use this version and find any vital tools missing, please let us know.
-    A forthcoming patch version will restore `ssh` and any other identified tools.
+<p class="note caution">
+<span class="note__title">Caution</span>
+<b>Known Issue</b>:
+<br>
+This version attempted to remove some unnecessary dependencies from the image.
+In this process, important utilities may have been removed as well.
+In particular, we know that <code>ssh</code> is missing.
+If you use this version and find any vital tools missing, please let us know.
+A forthcoming patch version will restore <code>ssh</code> and any other identified tools.</p>
 
 **CLI Versions**
 
@@ -1420,12 +1438,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.1.13
 Released April 20, 2020
 
-!!! bug "Known Issue"
-    This version attempted to remove some unnecessary dependencies from the image.
-    In this process, important utilities may have been removed as well.
-    In particular, we know that `ssh` is missing.
-    If you use this version and find any vital tools missing, please let us know.
-    A forthcoming patch version will restore `ssh` and any other identified tools.
+<p class="note caution">
+<span class="note__title">Caution</span>
+<b>Known Issue</b>:
+<br>
+This version attempted to remove some unnecessary dependencies from the image.
+In this process, important utilities may have been removed as well.
+In particular, we know that <code>ssh</code> is missing.
+If you use this version and find any vital tools missing, please let us know.
+A forthcoming patch version will restore <code>ssh</code> and any other identified tools.</p>
 
 **CLI Versions**
 
@@ -1751,12 +1772,15 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ## v4.0.13
 Released April 20, 2020
 
-!!! bug "Known Issue"
-    This version attempted to remove some unnecessary dependencies from the image.
-    In this process, important utilities may have been removed as well.
-    In particular, we know that `ssh` is missing.
-    If you use this version and find any vital tools missing, please let us know.
-    A forthcoming patch version will restore `ssh` and any other identified tools.
+<p class="note caution">
+<span class="note__title">Caution</span>
+<b>Known Issue</b>:
+<br>
+This version attempted to remove some unnecessary dependencies from the image.
+In this process, important utilities may have been removed as well.
+In particular, we know that <code>ssh</code> is missing.
+If you use this version and find any vital tools missing, please let us know.
+A forthcoming patch version will restore <code>ssh</code> and any other identified tools.</p>
 
 **CLI Versions**
 
