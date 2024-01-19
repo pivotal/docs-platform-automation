@@ -49,23 +49,27 @@ and persistent.
 
 1. An [Amazon Web Services account][amazon-s3] (commonly referred to as AWS) with access to S3
 
-!!! info "S3 blobstore compatibility"
+    <p class="note">
+    <span class="note__title">Note</span>
+    <b>S3 blobstore compatibility</b>:
     Many cloud storage options exist
-    including [Amazon S3][amazon-s3],
-    [Google Storage][gcp-storage],
-    [Minio][minio],
-    and [Azure Blob Storage][azure-blob-storage].
+    including <a href="https://aws.amazon.com/s3/">Amazon S3</a>,
+    <a href="https://cloud.google.com/storage/?hl=en">Google Storage</a>,
+    <a href="https://min.io/">Minio</a>, and
+    <a href="https://azure.microsoft.com/en-us/products/storage/blobs/">Azure Blob Storage</a>.
+    <br>
     However, not all object stores
-    are "S3 compatible".
+    are S3 compatible.
     Because Amazon defines the
     S3 API for accessing blobstores,
     and because the Amazon S3 product has emerged as the dominant blob storage solution,
     not all "S3 compatible" object stores act exactly the same.
     In general, if a storage solution claims to be "S3 compatible",
-    it should work with the [Concourse's S3 resource integration][concourse-s3-resource].
+    it should work with the
+    <a href="https://github.com/concourse/s3-resource">Concourse S3 resource integration</a>.
     But note that it may behave differently if interacting directly with the S3 API.
     Defer to the documentation of your preferred blobstore solution
-    when setting up storage.
+    when setting up storage.</p>
 
 2. Set up S3. With your AWS account,
 navigate to [the S3 console][amazon-s3-console]
@@ -73,22 +77,25 @@ and sign up for S3.
 Follow the on screen prompts.
 Now you are ready for buckets!
 
-!!! tip "AWS Root User"
+    <p class="note important">
+    <span class="note__title">Important</span>
+    <b>AWS Root User</b>:
+    <br>
     When you sign up for the S3 service on Amazon,
     the account with the email and password you use
     is the AWS account root user.
     As a best practice,
     you should not use the root user
     to access and manipulate services.
-    Instead, use [AWS Identity and Access Management][amazon-iam]
-    (commonly refered to as IAM)
+    Instead, use <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management</a>
+    (commonly referred to as IAM)
     to create and manage users.
-    For more info on how this works,
-    check out this [guide from Amazon][amazon-iam-guide].
-
+    For more info about how this works, see the
+    <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-set-up.html#create-an-admin">Amazon documentation</a>.
+    <br><br>
     For simplicity, in the rest of this guide,
     we will use the AWS root user
-    to show how a bucket may be set up and used with Platform Automation Toolkit.
+    to show how a bucket can be set up and used with Platform Automation Toolkit.</p>
 
 
 ## Your First Bucket
@@ -158,17 +165,21 @@ to access an S3 compatible blobstore through Concourse
 must have `Read` and `Write` permissions.
 It is possible to use different user roles
 with different credentials
-to seperate which user can `Read`
+to separate which user can `Read`
 objects from the bucket
 and which user can `Write` objects to the bucket.
 
-!!! Info "Permissions"
-    Amazon S3 provides many [permission settings for buckets][amazon-s3-permissions].
-    Specific [IAM users can have access][amazon-s3-permissions-iam].
-    Objects can have [their own permissions][amazon-s3-permissions-objects].
-    And buckets can even have their own [custom Bucket Policies][amazon-s3-permissions-policies].
-    Refer to your organization's security policy
-    to best set up your S3 bucket.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Permissions</b>:
+<br>
+Amazon S3 provides many
+<a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html">permission settings for buckets</a>.
+Specific <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/managing-acls.html">IAM users can have access</a>,
+objects can have their own permissions,
+and buckets can even have their own custom bucket policies.
+Refer to your organization's security policy
+to best set up your S3 bucket.</p>
 
 ## Object Versions
 
