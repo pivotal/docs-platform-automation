@@ -195,21 +195,25 @@ jobs:
         config: interpolated-config
 ```
 
-!!! info A bit on "output_mapping"
-    <p>The `credhub-interpolate` task for this job
-    maps the output from the task (`interpolated-files`)
-    to `interpolated-config`.
-    <p>This can be used by the next task in the job
-    to more explicitly define the inputs/outputs of each task.
-    It is also okay to leave the output as `interpolated-files`
-    if it is appropriately referenced in the next task
+<p class="note">
+<span class="note__title">Note</span>
+<b>Output_mapping</b>"
+<br>
+The <code>credhub-interpolate</code> task for this job
+maps the output from the task (<code>interpolated-files</code>)
+to <code>interpolated-config</code>.
+<br>
+This can be used by the next task in the job
+to more explicitly define the inputs/outputs of each task.
+It is also okay to leave the output as <code>interpolated-files</code>
+if it is appropriately referenced in the next task.</p>
 
 Notice the [input mappings][concourse-input-mapping]
 of the `credhub-interpolate` and `download-product` tasks.
 This allows us to use the output of one task
 as in input of another.
 
-We now need to put our `credhub_client` and `credhub_secret` into Credhub,
+We now need to put our `credhub_client` and `credhub_secret` into CreHhub,
 so Concourse's native integration can retrieve them
 and pass them as configuration to the `credhub-interpolate` task.
 
@@ -444,35 +448,39 @@ the following steps will result in a filled out `opsman.yml`.
     Copy and paste the YAML below for your IaaS
     and save as `opsman.yml`.
 
-    === "AWS"
-        ```yaml
-        --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
-        ```
+    **AWS**
 
-    === "Azure"
-        ```yaml
-        --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
-        ```
+    ```yaml
+    --8<-- "external/paving/ci/configuration/aws/ops-manager.yml"
+    ```
 
-    === "GCP"
-        ```yaml
-        --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
-        ```
-   
-    === "vSphere+NSXT"
-        ```yaml
-        --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
-        ```
+    **Azure**
+
+    ```yaml
+    --8<-- "external/paving/ci/configuration/azure/ops-manager.yml"
+    ```
+
+    **GCP**
+
+    ```yaml
+    --8<-- "external/paving/ci/configuration/gcp/ops-manager.yml"
+    ```
+
+    **vSphere+NSXT**
+
+    ```yaml
+    --8<-- "external/paving/ci/configuration/nsxt/ops-manager.yml"
+    ```
 
      Where:
-     {: .tightSpacing }
 
      * The `((parameters))` in these examples map to outputs from the `terraform-outputs.yml`,
        which can be provided via vars file for YAML interpolation in a subsequent step.
 
-    !!! info "`opsman.yml` for an unlisted IaaS"
-        For a supported IaaS not listed above,
-        reference the [Platform Automation Toolkit docs](https://docs.pivotal.io/platform-automation/v4.3/inputs-outputs.html#ops-manager-config).
+<p class="note">
+<span class="note__title">Note</span>
+For a supported IaaS not listed above,
+see <a href="../inputs-outputs.html#ops-manager-config">Task Inputs and Outputs</a>.</p>
 
 #### Manual Configuration
 
@@ -480,15 +488,19 @@ If you created your infrastructure manually
 or would like additional configuration options,
 these are the acceptable keys for the `opsman.yml` file for each IaaS.
 
-=== "AWS"
+**AWS**
     ---excerpt--- "examples/aws-configuration"
-=== "Azure"
+
+**Azure**
     ---excerpt--- "examples/azure-configuration"
-=== "GCP"
+  
+**GCP**
     ---excerpt--- "examples/gcp-configuration"
-=== "Openstack"
+
+**OpenStack**
     ---excerpt--- "examples/openstack-configuration"
-=== "vSphere"
+
+**vSphere**
     ---excerpt--- "examples/vsphere-configuration"
 
 #### Using the Ops Manager Config file
@@ -573,14 +585,16 @@ jobs:
         image: downloaded-product
 ```
 
-!!! note "Defaults for tasks"
-    We do not explicitly set the default parameters
-    for `create-vm` in this example.
-    Because `opsman.yml` is the default input to
-    `OPSMAN_CONFIG_FILE`, it is redundant 
-    to set this param in the pipeline. 
-    Refer to the [task definitions][task-reference] for a full range of the 
-    available and default parameters.
+<p class="note">
+<span class="note__title">Note</span>
+We do not explicitly set the default parameters
+for `create-vm` in this example.
+Because `opsman.yml` is the default input to
+`OPSMAN_CONFIG_FILE`, it is redundant
+to set this param in the pipeline.
+See the <a href="../tasks.html">Task Reference</a>
+for the full list of
+available and default parameters.</p>
 
 Set the pipeline.
 
