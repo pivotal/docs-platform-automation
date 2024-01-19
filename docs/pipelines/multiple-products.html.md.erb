@@ -8,19 +8,22 @@ These Concourse pipelines are examples on how to use the [tasks](../tasks.md). I
 
 * Deployed Concourse
 
-!!! info
-    Platform Automation Toolkit is based on Concourse CI.
-    We recommend that you have some familiarity with Concourse before getting started.
-    If you are new to Concourse, [Concourse CI Tutorials][concourse-tutorial] would be a good place to start.
+<p class="note">
+<span class="note__title">Note</span>
+Platform Automation Toolkit is based on Concourse CI.
+We recommend that you have some familiarity with Concourse before getting started.
+If you are new to Concourse, see
+<a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Installing Concourse with BOSH</a>.</p>
 
-* Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
+* Persisted datastore that can be accessed by Concourse resource (for example, s3, gcs, minio)
 * A valid [generating-env-file][generating-env-file]: this file will contain credentials necessary to login to Ops Manager using the `om` CLI.
 It is used by every task within Platform Automation Toolkit
 * A valid [auth-file][auth-file]: this file will contain the credentials necessary to create the Ops Manager login the first time
 the VM is created. The choices for this file are simple or saml authentication.
 
-!!! info
-    There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as Credhub) fill in these values for you in order to maintain consistency across files.
+    <p class="note">
+    <span class="note__title">Note</span>
+    There will be some crossover between the auth file and the env file due to how om is setup and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you to maintain consistency across files.</p>
 
 * An [opsman-configuration][opsman-config] file: This file is required to connect to an IAAS, and control the lifecycle management
  of the Ops Manager VM
@@ -30,9 +33,12 @@ a product configuration. This config is used to deploy a new Ops Manager directo
 necessary to configure an Ops Manager product using the `om` tool. This can be used during install or update.
 * (Optional) A working [credhub][credhub] setup with its own UAA client and secret.
 
+<p class="note">
+<span class="note__title">Note</span>
+Please ensure products have been procured from Tanzu Network.
+For more information, see
+<a href="../pipelines/resources.html">Retrieving External Dependencies</a>.</p>
 
-!!! info "Retrieving products from Tanzu Network"
-    Please ensure products have been procured from Tanzu Network using the [reference-resources][reference-resources].
 
 ## Installing Ops Manager and multiple products
 
@@ -49,13 +55,16 @@ These can either be uploaded manually or from the [reference resources pipeline]
 
 ---excerpt--- "reference/reference-resources-s3"
   
-!!! tip "Tanzu Application Service-Windows with S3"
-    If retrieving `pas-windows` and `pas-windows-stemcell` from an S3 bucket,
-    you must use the built in S3 concourse resource.
-    This is done in the example above.
-    The `download-product` task with `SOURCE: s3` does not persist meta information 
-    about necessary stemcell for `pas-windows`
-    because VMware does not distribute the Window's file system. 
+<p class="note">
+<span class="note__title">Note</span>
+<b>Tanzu Application Service [Windows] with S3</b>:
+<br>
+If retrieving <code>pas-windows</code> and <code>pas-windows-stemcell</code> from an S3 bucket,
+you must use the built in S3 concourse resource.
+This is done in the example above.
+The <code>download-product</code> task with <code>SOURCE: s3</code> does not persist meta information
+about necessary stemcell for <code>pas-windows</code>
+because VMware does not distribute the Windows file system.</p>
     
 Alternatively, products may be downloaded using the `download-product` task with
 the param `SOURCE` set to `s3|azure|gcs`.
