@@ -122,8 +122,10 @@ which can extract a config file.
 === "Usage"
     ---excerpt--- "reference/configure-director-usage"
 
-!!! warning "GCP with service account"
-    For GCP, if service account is used, the property associated_service_account has to be set explicitly in the `iaas_configuration` section.
+<p class="note important">
+<span class="note__title">Important</span>
+For GCP, if service account is used, the property <code>associated_service_account</code>
+has to be set explicitly in the <code>iaas_configuration</code> section.</p>
 
 ## configure-ldap-authentication
 Configures Ops Manager with an external LDAP user store and admin user account.
@@ -175,12 +177,14 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 === "Usage"
     ---excerpt--- "examples/configure-saml-authentication-usage"
 
-!!! info "Bosh Admin Client"
-    By default, this task creates a bosh admin client.
-    This is helpful for some advanced workflows
-    that involve communicating directly with the BOSH Director.
-    It is possible to disable this behavior;
-    see our [config file documentation][generating-an-auth-file] for details.
+<p class="note">
+<span class="note__title">Note</span>
+By default, this task creates a BOSH admin client.
+This is helpful for some advanced workflows
+that involve communicating directly with the BOSH Director.
+It is possible to disable this behavior;
+see <a href="./how-to-guides/configuring-auth.html#generating-an-auth-file">Generating an Auth file</a>
+for details.</p>
 
 Configuring SAML has two different auth flows for the UI and the task.
 The UI will have a browser based login flow.
@@ -190,7 +194,7 @@ For more details on using SAML,
 please refer to the [Ops Manager documentation][config-saml]
 
 For details on the config file expected in the `config` input,
-please see [Generating an Auth File][generating-an-auth-file].
+please see [Generating an Auth File](./how-to-guides/configuring-auth.html#generating-an-auth-file).
 
 ## create-vm
 Creates an unconfigured Ops Manager VM.
@@ -367,30 +371,36 @@ Note that the filename will be unchanged
 if supported blobstore keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
-!!! warning "When using the s3 resource in concourse"
-    If you are using a `regexp` in your s3 resource definition
-    that explicitly requires the Tanzu Network filename
-    to be the _start_ of the regex, (i.e., the pattern starts with `^`)
-    this won't work when using S3 config.
-    The new file format preserves the original filename,
-    so it is still possible to match on that -
-    but if you need to match from the beginning of the filename,
-    that will have been replaced by the prefix described above.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>When using the s3 resource in Concourse</b>:
+If you are using a <code>regexp</code> in your s3 resource definition
+that explicitly requires the Tanzu Network filename
+to be the start of the regex, (for example, the pattern starts with <code>^</code>)
+this won't work when using S3 config.
+The new file format preserves the original filename,
+so it is still possible to match on that,
+but if you need to match from the beginning of the filename,
+that will have been replaced by the prefix described above.</p>
 
-!!! info "When specifying Tanzu Application Service-Windows"
-    This task will automatically download and inject the winfs for pas-windows.
+<p class="note">
+<span class="note__title">Note</span>
+When specifying Tanzu Application Service [Windows],
+this task will automatically download and inject the winfs for pas-windows.</p>
 
-!!! warning "When specifying Tanzu Application Service-Windows on Vsphere"
-    This task cannot download the stemcell for pas-windows on vSphere.
-    To build this stemcell manually, please reference the
-    [Creating a vSphere Windows Stemcell][create-vsphere-windows-stemcell] guide
-    in VMware Documentation.
+<p class="note important">
+<span class="note__title">Important</span>
+This task cannot download the stemcell for pas-windows on vSphere.
+To build this stemcell manually, see
+<a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/2.13/tas-for-vms/create-vsphere-stemcell-automatically.html">Creating a Windows Stemcell for vSphere</a>
+in the Tanzu Application Service (TAS for VMs) documentation.</p>
 
-!!! info "When only downloading from Tanzu Network"
-    When the download product config only has Tanzu Network credentials,
-    it will not add the prefix to the downloaded product.
-    For example, `example-product.pivotal` from Tanzu Network will be outputed
-    as `example-product.pivotal`.
+<p class="note">
+<span class="note__title">Note</span>
+When the download product config only has Tanzu Network credentials,
+it will not add the prefix to the downloaded product.
+For example, <code>example-product.pivotal</code> from Tanzu Network will be outputted
+as <code>example-product.pivotal</code>.</p>
 
 === "Task"
     ---excerpt--- "tasks/download-product"
@@ -407,30 +417,34 @@ This avoids breaking current pipelines.
 
 ## download-product-s3
 
-!!! warning "Deprecation Notice"
-    This task is deprecated in favor of [`download-product`][download-product],
-    which can now download from all supported blobstores.
-    Usage has been changed to reflect the preferred command.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Deprecation Notice</b>:
+<br><br>
+This task is deprecated in favor of
+<a href="#download-product">download-product</a>,
+which can now download from all supported blobstores.
+Usage has been changed to reflect the preferred command.</p>
 
 Downloads a product specified in a config file from an S3-compatible blobstore.
 This is useful when retrieving assets in an offline environment.
 
 Downloads are cached, so files are not re-downloaded each time.
 
-This is intended to be used with files downloaded from Tanzu Network by [`download-product`][download-product]
+This is intended to be used with files downloaded from Tanzu Network by [`download-product`](#download-product)
 and then persisted to a blobstore using a `put` step.
 
 Outputs can be used directly as an input to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
 This task requires a [download-product config file][download-product-config].
-The same configuration file should be used with both this task and [`download-product`][download-product].
+The same configuration file should be used with both this task and [`download-product`](#download-product).
 This ensures that the same file
 is being captured with both tasks.
 
 The product files uploaded to s3 for download with this task require a specific prefix:
 `[product-slug,semantic-version]`.
-This prefix is added by the [`download-product`][download-product] task
+This prefix is added by the [`download-product`](#download-product) task
 when S3 keys are present in the configuration file.
 This is the meta information about the product from Tanzu Network,
 which is _not guaranteed_ to be in the original filename.
@@ -451,16 +465,19 @@ For example:
   [elastic-runtime,2.5.0]cf-2.5.0-build.45.pivotal
   ```
 
-!!! info "When only downloading from Tanzu Network"
-    When the download product config only has Tanzu Network credentials,
-    it will not add the prefix to the downloaded product.
-    For example, `example-product.pivotal` from Tanzu Network will be outputted
-    as `example-product.pivotal`.
+<p class="note important">
+<span class="note__title">Important</span>
+When the download product config only has Tanzu Network credentials,
+it will not add the prefix to the downloaded product.
+For example, <code>example-product.pivotal</code> from Tanzu Network will be outputted
+as <code>example-product.pivotal</code>.</p>
 
-!!! info
-    It's possible to use IAM instance credentials
-    instead of providing S3 creds in the config file.
-    See [download-product config file][download-product-config] for details.
+<p class="note">
+<span class="note__title">Note</span>
+It's possible to use IAM instance credentials
+instead of providing S3 creds in the config file.
+See <a href="./inputs-outputs.html.md.erb#download-product-config">download-product-config file</a>
+for details.</p>
 
 === "Task"
     ---excerpt--- "tasks/download-product-s3"
@@ -499,10 +516,11 @@ params:
   INSTALLATION_FILE: installation-$timestamp.zip
 ```
 
-!!! info
-    The timestamp is generated using the time on concourse worker.
-    If the time is different on different workers, the generated timestamp may fail to sort correctly.
-    Changing the time or timezone on workers might interfere with ordering.
+<p class="note">
+<span class="note__title">Note</span>
+The timestamp is generated using the time on Concourse worker.
+If the time is different on different workers, the generated timestamp may fail to sort correctly.
+Changing the time or timezone on workers might interfere with ordering.</p>
 
 === "Task"
     ---excerpt--- "tasks/export-installation"
@@ -540,14 +558,16 @@ Also useful for persisting the configuration output from:
 - [staged-config](#staged-config)
 - [staged-director-config](#staged-director-config)
 
-!!! info
-    This commits **all changes** present
-    in the repo used for the `repository` input,
-    in addition to copying in a single file.
+<p class="note">
+<span class="note__title">Note</span>
+This commits <b>all changes</b> present
+in the repo used for the <code>repository</code> input,
+in addition to copying in a single file.</p>
 
-!!! info
-    This does not perform a `git push`!
-    You will need to `put` the output of this task to a git resource to persist it.
+<p class="note important">
+<span class="note__title">Important</span>
+This does not perform a <code>git push</code>.
+You must <code>put</code> the output of this task to a git resource to persist it.</p>
 
 === "Task"
     ---excerpt--- "tasks/make-git-commit"
@@ -589,13 +609,16 @@ before an `apply-changes` could start.
 ## prepare-tasks-with-secrets
 Modifies task files to include variables needed for config files as environment variables
 for run-time interpolation from a secret store.
-Learn more about [secrets handling][secrets-handling].
+See [Secrets Handling](./concepts/secrets-handling.html).
 
-!!! warn "Concourse 5+ Only"
-    This task uses a Concourse feature
-    that allows inputs and outputs to have the same name.
-    This feature is only available in Concourse 5+.
-    `prepare-tasks-with-secets` does not work with Concourse 4.
+<p class="note important">
+<span class="note__title">Important</span>
+<b>Concourse 5+ only</b>:
+<br>
+This task uses a Concourse feature
+that allows inputs and outputs to have the same name.
+This feature is only available in Concourse 5+.
+<code>prepare-tasks-with-secrets</code> does not work with Concourse 4.</p>
 
 === "Task"
     ---excerpt--- "tasks/prepare-tasks-with-secrets"
@@ -608,10 +631,11 @@ Learn more about [secrets handling][secrets-handling].
 Reverts all changes that are currently staged on the Ops Manager.
 This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 
-!!! warning "Using revert-staged-changes"
-    Since this reverts all changes on an Ops Manager,
-    it can conflict with tasks that perform stage or configure operations.
-    Use passed constraints to ensure things run in the order you mean them to.
+<p class="note important">
+<span class="note__title">Important</span>
+Since this task reverts all changes on an Ops Manager,
+it can conflict with tasks that perform stage or configure operations.
+Use passed constraints to ensure things run in the order you intend.</p>
 
 === "Task"
     ---excerpt--- "tasks/revert-staged-changes"
@@ -624,10 +648,11 @@ This is only available _for_ Ops Manager 2.5.21+, 2.6.13+, or 2.7.2+
 Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
 to VMware.
 
-!!! info Telemetry Key
-    In order to use this task,
-    you will need to acquire a license key.
-    Contact your VMware Representative.
+<p class="note important">
+<span class="note__title">Important</span>
+To use this task,
+you must have a license key for Telemetry.
+Contact your VMware Representative.</p>
 
 === "Task"
     ---excerpt--- "tasks/send-telemetry"
