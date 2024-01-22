@@ -13,7 +13,7 @@ Use `--help` for more information. To learn more see the [running-commands-local
 
 Triggers an install on the Ops Manager described by the auth file.
 
-{% include '.disable-verifiers.md' %}
+<%= partial "disable-verifiers" %>
 
 **Task**
     ---excerpt--- "tasks/apply-changes"
@@ -26,7 +26,7 @@ Triggers an install on the Ops Manager described by the auth file.
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
 
-{% include '.disable-verifiers.md' %}
+<%= partial "disable-verifiers" %>
 
 **Task**
     ---excerpt--- "tasks/apply-director-changes"

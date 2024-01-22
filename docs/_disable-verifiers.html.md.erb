@@ -1,0 +1,17 @@
+<p class="note important">
+<span class="note__title">Important</span>
+Operations Manager Verifier failures when applying changes prevent deployment.
+In cases where these verifiers are incorrectly failing for known reasons,
+they should be disabled. See
+<a href="./how-to-guides/running-commands-locally.html#disable-verifiers">Running commands locally</a>.
+The <code>IGNORE_WARNINGS</code> parameter for the
+<code>apply-changes</code>, <code>stage-configure-apply</code>, and <code>apply-director-changes</code> tasks
+allows users to ignore all warnings from ignorable verifiers.
+In an automation context, disabling <em>only</em> the particular verifiers
+where failure is well-understood allows other verifiers
+to continue to provide important feedback.
+Some verifiers continue to return warnings even when disabled,
+preventing deployment without the <code>IGNORE_WARNINGS: true</code> param set.
+If the verifiers that are preventing deployment
+are known issues based on the environment setup,
+then it is safe to use the flag.</p>
