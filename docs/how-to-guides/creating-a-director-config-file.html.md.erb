@@ -9,10 +9,10 @@ Extracting a director configuration file, an externalized config that lives outs
 
 ## Prerequisites
 To extract the configuration for a director, you will first need an Ops Manager vm.
-For detailed instructions, follow the [Installing Ops Manager][install-how-to] how-to guide.
+For detailed instructions, follow the [Installing Ops Manager](./installing-opsman.html) how-to guide.
 
 ## Extracting Configuration
-[om][om] has a command called [staged-director-config][staged-director-config], which is used to extract
+[om](https://github.com/pivotal-cf/om) has a command called [staged-director-config](../tasks.html#staged-director-config), which is used to extract
 the Ops Manager and the BOSH director configuration from the targeted foundation.
 
 <%= partial "missing_fields_opsman_director" %>
@@ -31,7 +31,7 @@ after running this command:
 Now you can modify the settings in the configuration file directly instead of
 operating in the web ui. After you finish editing the file, the configuration
 file will need to apply back to the Ops Manager instance. The command
-[configure-director][configure-director] will do the job.
+[configure-director](../tasks.html#configure-director) will do the job.
 
 Sample usage:  
 `om --env env.yml configure-director --config director.yml`  
@@ -48,7 +48,7 @@ ease the process of adapt for another foundation.
 ## VM Extensions
 You may specify custom VM extensions to be used in deployments.
 To learn more about how various IAAS's support and use these extensions,
-[see the Bosh docs][bosh-vm-extensions].
+[see the Bosh docs](https://bosh.io/docs/cloud-config/#vm-extensions).
 
 Using VM Extensions for your director configuration
 is an _advanced feature_ of Ops Manager. 
@@ -60,8 +60,8 @@ and will change default behavior if defined.
 Use at your own discretion.
 
 In the following example, two new VM extensions are defined
-and will be added to the list of available extensions on the next [`configure-director`][configure-director].
-This can be added to the end of your existing `director.yml`, 
+and will be added to the list of available extensions on the next [`configure-director`](../tasks.html#configure-director).
+This can be added to the end of your existing `director.yml`,
 or defined independently and set with no other configurations present.
 
 There are no default VM Extensions on a deployed Ops Manager.
@@ -91,7 +91,7 @@ resource-configuration:
 ## VM Types
 You may specify custom VM types to be used in deployments.
 To learn more about how various IAAS's support and use these types,
-[see the Bosh docs][bosh-vm-types].
+[see the Bosh docs](https://bosh.io/docs/cloud-config/#vm-types).
 
 Using VM Types for your director configuration
 is an _advanced feature_ of Ops Manager. 
@@ -101,7 +101,7 @@ and will change default behavior if defined.
 Use at your own discretion.
 
 In the following example, two new VM types are defined
-and will be added to the list of available types on the next [`configure-director`][configure-director].
+and will be added to the list of available types on the next [`configure-director`](../tasks.html#configure-director).
 This can be added to the end of your existing `director.yml`, 
 or defined independently and set with no other configurations present.
 
