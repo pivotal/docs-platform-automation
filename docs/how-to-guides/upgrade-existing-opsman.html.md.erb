@@ -1,7 +1,7 @@
 # Writing a Pipeline to Upgrade an Existing Operations Manager
 
 This how-to-guide shows you how to create a pipeline for upgrading an existing Ops Manager VM.
-If you don't have an Ops Manager VM, check out [Installing Ops Manager][install-how-to].
+If you don't have an Ops Manager VM, check out [Installing Ops Manager](./installing-opsman.html).
 
 <%= partial "getting-started" %>
 
@@ -34,7 +34,7 @@ We can switch the task out by changing:
 - the `name` of the task
 - the `file` of the task
 
-[`export-installation`][export-installation]
+[`export-installation`](../tasks.html#export-installation)
 has an additional required input.
 We need the `env` file used to talk to Ops Manager.
 
@@ -82,7 +82,7 @@ The first new resource we need is the env file.
 We'll push our git repo to a remote on Github
 to make this (and later, other) configuration available to the pipelines.
 
-Github has good [instructions][git-add-existing]
+Github has good [instructions](https://help.github.com/en/articles/adding-an-existing-project-to-github-using-the-command-line)
 you can follow to create a new repository on Github.
 You can skip over the part
 about using `git init` to setup your repo,
@@ -91,7 +91,7 @@ since we [already did that](#but-first-git-init).
 Go ahead and setup your remote
 and use `git push` to make what we have available.
 We will use this repository to hold our single foundation specific configuration.
-We are using the ["Single Repository for Each Foundation"][single-foundation-pattern]
+We are using the ["Single Repository for Each Foundation"](../pipeline-design/configuration-management-strategies.html#single-repository-for-each-foundation)
 pattern to structure our configurations.
 
 You will also need to add the repository URL
@@ -109,7 +109,7 @@ for a particular Ops Manager.
 
 An example `env.yml` for username/password authentication
 is shown below with the required properties.
-Please reference [Configuring Env][generating-env-file] for the entire list of properties
+Please reference [Configuring Env](./configuring-env.html#generating-an-env-file) for the entire list of properties
 that can be used with `env.yml`
 as well as an example of an `env.yml`
 that can be used with UAA (SAML, LDAP, etc.) authentication.
@@ -118,7 +118,7 @@ The property `decryption-passphrase` is required for `import-installation`,
 and therefore required for `upgrade-opsman`.
 
 If your foundation uses authentication other than basic auth,
-please reference [Inputs and Outputs][env]
+please reference [Inputs and Outputs](../inputs-outputs.html#env)
 for more detail on UAA-based authentication.
 
 
@@ -142,10 +142,10 @@ we need to add a resource to tell Concourse how to get it as `env`.
 
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
-Follow [Github's instructions][git-deploy-keys]
+Follow [Github's instructions](https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys)
 for creating a read-only deploy key.
 
-Then, put the private key in Credhub so we can use it in our pipeline:
+Then, put the private key in CredHub so we can use it in our pipeline:
 
 ```bash
 # note the starting space
@@ -167,7 +167,7 @@ Then, add this to the resources section of your pipeline file:
     branch: main
 ```
 
-We'll put the credentials we need in Credhub:
+We'll put the credentials we need in CredHub:
 
 ```bash
 # note the starting space throughout
@@ -185,8 +185,8 @@ We'll put the credentials we need in Credhub:
 <%= partial "paths-and-pipeline-names" %>
 
 In order to perform interpolation in one of our input files,
-we'll need the [`credhub-interpolate` task][credhub-interpolate]
-Earlier, we relied on Concourse's native integration with Credhub for interpolation.
+we'll need the [`credhub-interpolate`](../tasks.html#credhub-interpolate) task
+Earlier, we relied on Concourse's native integration with CredHub for interpolation.
 That worked because we needed to use the variable
 in the pipeline itself, not in one of our inputs.
 
@@ -246,12 +246,12 @@ to more explicitly define the inputs/outputs of each task.
 It is also okay to leave the output as <code>interpolated-files</code>
 if it is appropriately referenced in the next task.</p>
 
-Notice the [input mappings][concourse-input-mapping]
+Notice the [input mappings](https://concourse-ci.org/task-step.html#input_mapping)
 of the `credhub-interpolate` and `export-installation` tasks.
 This allows us to use the output of one task
 as in input of another.
 
-We now need to put our `credhub_client` and `credhub_secret` into Credhub,
+We now need to put our `credhub_client` and `credhub_secret` into CredHub,
 so Concourse's native integration can retrieve them
 and pass them as configuration to the `credhub-interpolate` task.
 
@@ -272,7 +272,7 @@ and pass it to `export-installation` as `config`.
 The other new resource we need is a blobstore,
 so we can persist the exported installation.
 
-We'll add an [S3 resource][s3-resource]
+We'll add an [S3 resource](https://github.com/concourse/s3-resource)
 to the `resources` section:
 
 ```yaml
@@ -285,7 +285,7 @@ to the `resources` section:
     regexp: installation-(.*).zip
 ```
 
-Again, we'll need to save the credentials in Credhub:
+Again, we'll need to save the credentials in CredHub:
 
 ```bash
 # note the starting space throughout
@@ -347,7 +347,7 @@ We want the export and the upgrade in separate jobs
 so they can be triggered (and re-run) independently.
 
 We know this new job is going to center
-on the [`upgrade-opsman`][upgrade-opsman] task.
+on the [`upgrade-opsman`](../tasks.html#upgrade-opsman) task.
 Click through to the task description,
 and write a new job that has `get` steps
 for our platform-automation resources
@@ -406,7 +406,7 @@ once you've figured out why and fixed it.
 This workflow makes it easy to keep what is set on Concourse
 and what is pushed to your source control remote in sync.</p>
 
-Looking over the list of inputs for [`upgrade-opsman`][upgrade-opsman]
+Looking over the list of inputs for [`upgrade-opsman`](../tasks.html#upgrade-opsman)
 we still need three required inputs:
 
 1. `state`
@@ -416,7 +416,7 @@ we still need three required inputs:
 The optional inputs are vars used with the config,
 so we'll get to those when we do `config`.
 
-Let's start with the [state file][state].
+Let's start with the [state file](../inputs-outputs.html#state).
 We need to record the `iaas` we're on
 and the ID of the _currently deployed_ Ops Manager VM.
 Different IaaS uniquely identify VMs differently;
@@ -424,29 +424,34 @@ here are examples for what this file should look like,
 depending on your IaaS:
 
 === "AWS"
-    ``` yaml
-    --8<-- 'docs/examples/state/aws.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/aws.yml'
+```
 
 === "Azure"
-    ``` yaml
-    --8<-- 'docs/examples/state/azure.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/azure.yml'
+```
 
 === "GCP"
-    ``` yaml
-    --8<-- 'docs/examples/state/gcp.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/gcp.yml'
+```
 
 === "OpenStack"
-    ``` yaml
-    --8<-- 'docs/examples/state/openstack.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/openstack.yml'
+```
 
 === "vSphere"
-    ``` yaml
-    --8<-- 'docs/examples/state/vsphere.yml'
-    ```
+
+``` yaml
+--8<-- 'docs/examples/state/vsphere.yml'
+```
 
 Find what you need for your IaaS,
 write it in your repo as `state.yml`,
@@ -458,12 +463,12 @@ git commit -m "Add state file for foundation Ops Manager"
 git push
 ```
 
-We can map the `env` resource to [`upgrade-opsman`][upgrade-opsman]'s
+We can map the `env` resource to [`upgrade-opsman`](../tasks.html#upgrade-opsman)'s
 `state` input once we add the task.
 
 But first, we've got two more inputs to arrange for.
 
-We'll write an [Ops Manager VM Configuration file][opsman-config]
+We'll write an [Ops Manager VM Configuration file](../inputs-outputs.html#ops-manager-config)
 to `opsman.yml`.
 The properties available vary by IaaS;
 regardless, you can often inspect your existing Ops Manager
@@ -543,14 +548,14 @@ git push
 
 Finally, we need the image for the new Ops Manager version.
 
-We'll use the [`download-product`][download-product] task.
+We'll use the [`download-product`](../tasks.html#download-product) task.
 It requires a config file to specify which Ops Manager to get,
 and to provide Tanzu Network credentials.
 Name this file `download-opsman.yml`:
 
 ```yaml
 ---
-pivnet-api-token: ((pivnet-refresh-token)) # interpolated from Credhub
+pivnet-api-token: ((pivnet-refresh-token)) # interpolated from CredHub
 pivnet-file-glob: "ops-manager*.ova"
 pivnet-product-slug: ops-manager
 product-version-regex: ^2\.5\.0.*$
@@ -613,21 +618,23 @@ Now, we can put it all together:
 
 <p class="note">
 <span class="note__title">Note</span>
-  We do not explicitly set the default parameters
-  for <code>upgrade-opsman</code> in this example.
-  Because <code>opsman.yml</code> is the default input to <code>OPSMAN_CONFIG_FILE</code>,
-  <code>env.yml</code> is the default input to <code>ENV_FILE</code>,
-  and <code>state.yml</code> is the default input to <code>STATE_FILE</code>,
-  it is redundant to set this param in the pipeline.
-  Refer to the [task definitions][task-reference] for a full range of the
-  available and default parameters.</p>
+We do not explicitly set the default parameters
+for <code>upgrade-opsman</code> in this example.
+Because <code>opsman.yml</code> is the default input to <code>OPSMAN_CONFIG_FILE</code>,
+<code>env.yml</code> is the default input to <code>ENV_FILE</code>,
+and <code>state.yml</code> is the default input to <code>STATE_FILE</code>,
+it is redundant to set this param in the pipeline.
+See the <a href="../tasks.html">Task Reference</a>
+for the full range of the
+available and default parameters.</p>
 
 Set the pipeline.
 
 Before we run the job,
-we should [`ensure`][ensure] that `state.yml` is always persisted
+we should [`ensure`](https://concourse-ci.org/jobs.html#schema.step.ensure) that `state.yml` is always persisted
 regardless of whether the `upgrade-opsman` job failed or passed.
 To do this, we can add the following section to the job:
+
 ```yaml hl_lines="49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68"
 - name: upgrade-opsman
   serial: true
