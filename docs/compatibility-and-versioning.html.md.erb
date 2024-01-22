@@ -49,20 +49,20 @@ Platform Automation Toolkit is designed to work with these dependencies.
 </table>
 
 <sup>1</sup> 
-    [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] replaces [`credhub-interpolate`][credhub-interpolate] in Concourse 5.x+ _only_. 
+    [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets replaces [`credhub-interpolate`](./tasks.html#credhub-interpolate) in Concourse 5.x+ _only_. 
     If using Concourse 4.x, continue using `credhub-interpolate`.
     If using Concourse 5.x+, it is strongly recommended to switch to `prepare-tasks-with-secrets`.
-    For more information about secrets handling, reference the [Secrets Handling Page][secrets-handling].
+    For more information about secrets handling, see [Secrets Handling](./concepts/secrets-handling.html).
 
 <%= partial "opsman_filename_change_note" %>
 
 ## Semantic Versioning
-This product uses [semantic versioning][semver] 2.0.0
+This product uses [semantic versioning](https://semver.org/) 2.0.0
 to describe the impact of changes to our concourse tasks. In order to take advantage of semantic versioning, we must declare an API.
 
 The following are considered part of our API:
 
-Our concourse tasks':
+Our Concourse tasks:
 
 - inputs and outputs (including the format/required information in config files)
 - specified parameters
@@ -73,7 +73,7 @@ These are all documented for each task within the task files themselves.
 Additionally, the minimum compatible version
 of Concourse and Ops Manager
 are part of the API,
-and are specified [here][external-deps].
+and are specified in [External Dependencies](#external-dependencies).
 
 The following are NOT covered:
 
@@ -112,6 +112,3 @@ for at least some users when consumed automatically.
 Automatic consumption of major versions should be limited
 to test/staging environments
 intended to endure and detect such breakage.
-
-[semver]: https://semver.org
-[external-deps]: #external-dependencies
