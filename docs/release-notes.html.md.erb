@@ -191,7 +191,7 @@ Released September 4, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.15" target="_blank">Download</a>
 
 ### Bug Fixes
-- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+- tl;dr: If you have experienced the following error with the [`create-vm`](./tasks.html#create-vm) task this is fixed.
   
     ```bash
     creating the new opsman vm
@@ -226,10 +226,10 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
     This patch ignores this value, where previously it would've not been able to parse it.
     
 - The container image has been fixed to support the `registry-image` Concourse resource
-- With [`credhub-interpolate`][credhub-interpolate] task,
+- With [`credhub-interpolate`](./tasks.html#credhub-interpolate) task,
   users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
   This allowed not having ot repeat the same value in Credhub for each var value.
-  Support has been added to the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] workflow to support secrets evaluation.
+  Support has been added to the [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets workflow to support secrets evaluation.
   
     For example, given a `config.yml`,
   
@@ -497,7 +497,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
-  When downloading a product from Pivnet, the [`download-product`][download-product] task
+  When downloading a product from Pivnet, the [`download-product`](./tasks.html#download-product) task
   uses `winfs-injector` to package the Windows rootfs in the tile.
   Newer version of TAS Windows, use a new packaging method, which requires this bump.
 
@@ -613,16 +613,16 @@ Released January 31, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.0" target="_blank">Download</a>
 
 ### What's New
-- The [`revert-staged-changes`][revert-staged-changes] task has been added.
+- The [`revert-staged-changes`](./tasks.html#revert-staged-changes) task has been added.
   This allows changes that weren't part of the pipeline to be undone,
   by guaranteeing a clean state before using various `configure-*` tasks.
 - The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration for Azure and vSphere.
   This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
 - The `credhub` cli now returns a list of parameters it could not find when `--skip-missing` is enabled.
-  This feature will show up in the [`credhub-interpolate`][credhub-interpolate],
+  This feature will show up in the [`credhub-interpolate`](./tasks.html#credhub-interpolate),
   when `SKIP_MISSING: true` is set.
-- The [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task has been added.
-  It replaces the [`credhub-interpolate`][credhub-interpolate] task and provides the following benefits:
+- The [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets) task has been added.
+  It replaces the [`credhub-interpolate`](./tasks.html#credhub-interpolate) task and provides the following benefits:
     - Support for all native Concourse secrets stores including Credhub and Vault.
     - Credhub credentials are no longer required by the task so they can be completely handled by concourse.
     - Credentials are no longer written to disk which alleviates some security concerns.
@@ -631,7 +631,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
     To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secrets does not work with Concourse 4.)
 
 - The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
-- Add the ability to recreate VMs to the [`apply-changes`][apply-changes] and [`stage-configure-apply`][stage-configure-apply] tasks.
+- Add the ability to recreate VMs to the [`apply-changes`](./tasks.html#apply-changes) and [`stage-configure-apply`](./tasks.html#stage-configure-apply) tasks.
     - If `RECREATE: true`, these commands will recreate all product VMs for their relevant product(s).
     - To recreate the BOSH director VM, make any change to the director tile, and apply-changes.
       We recommend modifying the Custom SSH Banner if this is desired.
@@ -703,7 +703,7 @@ Released September 4, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.2.18" target="_blank">Download</a>
 
 ### Bug Fixes
-- tl;dr: If you have experienced the following error with the [`create-vm`][create-vm] task this is fixed.
+- tl;dr: If you have experienced the following error with the [`create-vm`](./tasks.html#create-vm) task this is fixed.
   
     ```bash
     creating the new opsman vm
@@ -994,7 +994,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
-  When downloading a product from Pivnet, the [`download-product`][download-product] task
+  When downloading a product from Pivnet, the [`download-product`](./tasks.html#download-product) task
   uses `winfs-injector` to package the Windows rootfs in the tile.
   Newer version of TAS Windows, use a new packaging method, which requires this bump.
 
@@ -1166,19 +1166,19 @@ Released December 3, 2019
 - When creating an `create-vm` task for Azure,
   the disk type and VM type can be specified.
   The configuration `storage_sku` and `vm_size` use the Azure values accordingly.
-- The [`download-product`][download-product] task now supports the `SOURCE` param
+- The [`download-product`](./tasks.html#download-product) task now supports the `SOURCE` param
   to specify where to download products and stemcells from.
   The supported sources are the Azure(`azure`), GCS(`gcs`), S3(`s3`), Tanzu Network(`pivnet`).
-- [`configure-authentication`][configure-authentication],
-  [`configure-ldap-authentication`][configure-ldap-authentication], and
-  [`configure-saml-authentication`][configure-saml-authentication]
+- [`configure-authentication`](./tasks.html#configure-authentication),
+  [`configure-ldap-authentication`](./tasks.html#configure-ldap-authentication), and
+  [`configure-saml-authentication`](./tasks.html#configure-saml-authentication)
   now support passing through vars files to the underlying `om` command.
-- When using [`configure-product`][configure-product] and [`configure-director`][configure-director],
+- When using [`configure-product`](./tasks.html#configure-product) and [`configure-director`](./tasks.html#configure-director),
   the `additional_vm_extensions` for a resource will have the following behaviour:
     - If not set in config file, the value from Ops Manager will be persisted.
     - If defined in the config file and an emtpy array (`[]`), the values on Ops Manager will be removed.
     - If defined in the file with a value (`["web_lb"]`), these values will be set on Ops Manager.
-- When using [`configure-director`][configure-director]
+- When using [`configure-director`](./tasks.html#configure-director)
   `vmextensions-configuration` can be defined to add|remove vm_extensions
   to|from the BOSH director. An example of this in the config:
 
@@ -1194,7 +1194,7 @@ Released December 3, 2019
 
 ### Deprecation Notices
 - The `download-product-s3` task has been deprecated
-  in favor of the [`download-product`][download-product] task and setting the `SOURCE: s3` in `params`.
+  in favor of the [`download-product`](./tasks.html#download-product) task and setting the `SOURCE: s3` in `params`.
 
     For example, the `download-product-s3` in a pipeline:
 
@@ -1461,7 +1461,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
-  When downloading a product from Pivnet, the [`download-product`][download-product] task
+  When downloading a product from Pivnet, the [`download-product`](./tasks.html#download-product) task
   uses `winfs-injector` to package the Windows rootfs in the tile.
   Newer version of TAS Windows, use a new packaging method, which requires this bump.
 
@@ -1670,14 +1670,14 @@ Released October 21, 2019
 - [Telemetry][telemetry-docs] support has been added!
   To opt in, you must get the Telemetry tool from [Tanzu Network][telemetry],
   create a [config file][telemetry-config],
-  and add the [collect-telemetry][collect-telemetry] and [send-telemetry][send-telemetry] tasks to your pipeline.
+  and add the [collect-telemetry](./tasks.html#collect-telemetry) and [send-telemetry](./tasks.html#send-telemetry) tasks to your pipeline.
   For an example, please see the [Reference Pipelines][reference-pipeline].
-- [stage-configure-apply][stage-configure-apply] task has been added.
+- [stage-configure-apply](./tasks.html#stage-configure-apply) task has been added.
   This task will take a product, stage it, configure it, and apply changes
   _only_ for that product (all other products remain unchanged).
   Use this task only if you have confidence in the ordering
   in which you apply-changes for your products.
-- [check-pending-changes][check-pending-changes] task has been added.
+- [check-pending-changes](./tasks.html#check-pending-changes) task has been added.
   This task will perform a check on Ops Manager and fail if there are pending changes.
   This is useful when trying to prevent manual changes
   from being applied during the automation process.
@@ -1795,7 +1795,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
 ### Bug Fixes
 - The `winfs-injector` has been bumped to support the new TAS Windows tile.
-  When downloading a product from Pivnet, the [`download-product`][download-product] task
+  When downloading a product from Pivnet, the [`download-product`](./tasks.html#download-product) task
   uses `winfs-injector` to package the Windows rootfs in the tile.
   Newer version of TAS Windows, use a new packaging method, which requires this bump.
   
@@ -2321,13 +2321,13 @@ Released July 11, 2019, includes `om` version [2.0.0](https://github.com/pivotal
     If `skip-create-bosh-admin-client: true` is specified, manual steps are required,
     and this task is no longer "automation".
 
-- [`create-vm`][create-vm] and [`upgrade-opsman`][upgrade-opsman] now function with `gcp_service_account_name` on GCP.
+- [`create-vm`](./tasks.html#create-vm) and [`upgrade-opsman`](./tasks.html#upgrade-opsman) now function with `gcp_service_account_name` on GCP.
   Previously, only providing a full `gcp_service_account` as a JSON blob worked.
-- Environment variables passed to [`create-vm`][create-vm], [`delete-vm`][delete-vm], and [`upgrade-opsman`][upgrade-opsman]
+- Environment variables passed to [`create-vm`](./tasks.html#create-vm), [`delete-vm`](./tasks.html#delete-vm), and [`upgrade-opsman`](./tasks.html#upgrade-opsman)
   will be passed to the underlying IAAS CLI invocation.
   This allows our tasks to work with the `https_proxy` and `no_proxy` variables
   that can be [set in Concourse](https://github.com/concourse/concourse-bosh-release/blob/9764b66a6d85785735f6ea8ddcabf77785b5eddd/jobs/worker/spec#L50-L65).
-- [`download-product`][download-product] task output of `assign-stemcell.yml` will have the correct `product-name`
+- [`download-product`](./tasks.html#download-product) task output of `assign-stemcell.yml` will have the correct `product-name`
 - When using the `env.yml` for a task,
   extra values passed in the env file will now fail if they are not recognized properties.
   Invalid properties might now produce the following:
@@ -2413,7 +2413,7 @@ Released May 24, 2019, includes `om` version [1.0.0](https://github.com/pivotal-
   with breaking changes in major bumps,
   non-breaking changes for minor bumps,
   and bug fixes for patches.
-- The [`credhub-interpolate`][credhub-interpolate] task can have multiple
+- The [`credhub-interpolate`](./tasks.html#credhub-interpolate) task can have multiple
   interpolation paths. The `INTERPOLATION_PATH` param is now plural: `INTERPOLATION_PATHS`.
   IF you are using a custom `INTERPOLATION_PATH` for `credhub-interpolate`, you will need to update
   your `pipeline.yml` to this new param.
