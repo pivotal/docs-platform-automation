@@ -16,8 +16,8 @@ If you are new to Concourse, see the
 <a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Concourse documentation</a>.</p>
 
 * Persisted datastore that can be accessed by Concourse resource (for example, s3, gcs, minio)
-* A set of valid [download-product-config][download-product-config] files: Each product has a configuration YAML of what version to download from Tanzu Network.
-* Tanzu Network access to [Platform Automation Toolkit][tanzu-network-platform-automation]
+* A set of valid [download-product-config](../inputs-outputs.html#download-product-config) files: Each product has a configuration YAML of what version to download from Tanzu Network.
+* Tanzu Network access to [Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation).
 
 ## Retrieval from Tanzu Network
 
@@ -57,7 +57,7 @@ Below are examples that can be used.
 
 ### Resource Types
 
-This custom resource type uses the [pivnet-resource][pivnet-resource]
+This custom resource type uses the [pivnet-resource](https://github.com/pivotal-cf/pivnet-resource)
 to pull down and separate both pieces of the Platform Automation Toolkit product (tasks and image)
 so they can be stored separately in S3.
 
@@ -65,7 +65,7 @@ so they can be stored separately in S3.
 
 ### Product Resources
 
-S3 resources where Platform Automation Toolkit [`download-product`][download-product] outputs will be stored.
+S3 resources where Platform Automation Toolkit [`download-product`](../tasks.html#download-product) outputs will be stored.
 Each product/stemcell needs a separate resource defined.
 Platform Automation Toolkit will not create these resources for you.
 
@@ -84,10 +84,10 @@ Platform Automation Toolkit will not create this resource for you.
 
 ### Configured Resources
 
-You will need to add your [`download-product` configuration][download-product-config] configuration files
+You will need to add your [`download-product`](../inputs-outputs.html#download-product-config) configuration files
 to your configurations repo.
 Platform Automation Toolkit will not create these resources for you.
-For more details, see the [Inputs and Outputs][inputs-outputs] section.
+For more details, see the [Inputs and Outputs](../inputs-outputs.html) section.
 
 ---excerpt--- "reference/resources-pipeline-configurations"
 
@@ -97,10 +97,10 @@ For more details, see the [Inputs and Outputs][inputs-outputs] section.
 
 ### Secrets Handling
 
-This helps load secrets stored in an external credential manager -- such as Credhub.
-Concourse supports several [credential managers][concourse-secrets-handling] natively.
+This helps load secrets stored in an external credential manager -- such as CredHub.
+Concourse supports several [credential managers](https://concourse-ci.org/creds.html) natively.
  
-The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
+The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
 to load secrets from your external configuration files.
 
 ---excerpt--- "reference/resources-pipeline-prepare-tasks-with-secrets"
