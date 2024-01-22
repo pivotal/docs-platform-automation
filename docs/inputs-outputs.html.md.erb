@@ -129,7 +129,7 @@ These required properties are adapted from the instructions outlined in
 
 ---excerpt--- "examples/aws-configuration"
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -146,7 +146,7 @@ These required properties are adapted from the instructions outlined in
 
 ---excerpt--- "examples/azure-configuration"
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 ### GCP
 These required properties are adapted from the instructions outlined in
@@ -154,7 +154,7 @@ These required properties are adapted from the instructions outlined in
 
 ---excerpt--- "examples/gcp-configuration"
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -179,7 +179,7 @@ These required properties are adapted from the instructions outlined in
 
 ---excerpt--- "examples/openstack-configuration"
 
-{% include '.ip-addresses.md' %}
+<%= partial "ip-addresses" %>
 
 ### vSphere
 
@@ -190,18 +190,18 @@ These required properties are adapted from the instructions outlined in
 
 ## opsman image
 
-This file is an [artifact from Tanzu Network](https://network.pivotal.io/products/ops-manager),
+This file is an [artifact from Tanzu Network](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/index.html),
 which contains the VM image for a specific IaaS.
 For vsphere and openstack, it's a full disk image.
 For AWS, GCP, and Azure, it's a YAML file listing the location
 of images that are already available on the IaaS.
 
 These are examples to download the image artifact for each IaaS
-using the [download-product][download-product] task.
+using the [download-product](./tasks.html#download-product) task.
 
 ### opsman.yml
 
-{% include "how-to-guides/.opsman-config.md" %}
+<%= partial "how-to-guides/opsman-config" %>
 
 The `p-automator` CLI includes the ability to extract the Ops Manager VM configuration (GCP, AWS, Azure, and VSphere).
 This works for Ops Managers that are already running and useful when [migrating to automation][upgrade-how-to].
@@ -209,9 +209,9 @@ This works for Ops Managers that are already running and useful when [migrating 
 Usage:
 
 1. Get the Platform Automation Toolkit image from Tanzu Network.
-1. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
-1. Create a [state file][state] that represents your current VM and IAAS.
-1. Invoke the `p-automator` CLI to get the configuration.
+2. Import that image into `docker` to run the [`p-automation` locally][running-commands-locally].
+3. Create a [state file][state] that represents your current VM and IAAS.
+4. Invoke the `p-automator` CLI to get the configuration.
 
 For example, on AWS with an access key and secret key:
 
