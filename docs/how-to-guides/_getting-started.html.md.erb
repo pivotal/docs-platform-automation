@@ -2,25 +2,23 @@
 
 Over the course of this guide,
 we're going to use Platform Automation Toolkit
-to create a [pipeline][concourse-pipeline]
-using [Concourse][concourse].
+to create a [pipeline](https://concourse-ci.org/pipelines.html)
+using [Concourse](https://concourse-ci.org/).
 
 Before we get started, you'll need a few things ready to go:
 
-{% if upgradeHowTo %}
-1. A running Ops Manager VM that you would like to upgrade
-{% endif %}
-1. Credentials for an IaaS that Ops Manager is compatible with
+1. If you are upgrading, you must have a running Ops Manager VM that you would like to upgrade.
+2. Credentials for an IaaS that Ops Manager is compatible with
     - It doesn't actually matter what IaaS you use for Ops Manager,
     as long as your Concourse can connect to it.
     Pipelines built with Platform Automation Toolkit can be platform-agnostic.
-1. A Concourse instance
-   with access to a Credhub instance
+3. A Concourse instance
+   with access to a CredHub instance
    and to the Internet
-1. GitHub account
-1. Read/write credentials and bucket name for an S3 bucket
-1. An account on [VMware Tanzu Network][tanzu-network]
-1. A MacOS workstation
+4. GitHub account
+5. Read/write credentials and bucket name for an S3 bucket
+6. An account on [VMware Tanzu Network](https://network.pivotal.io)
+7. A MacOS workstation
     - with Docker installed
     - a text editor you like
     - a terminal emulator you like
@@ -34,9 +32,9 @@ We'll explain some basics,
 and link to resources to learn more:
 
 - the bash terminal
-- [git][git]
-- [YAML][yaml]
-- [Concourse][concourse]
+- [git](https://git-scm.com/)
+- [YAML](https://learnxinyminutes.com/docs/yaml/)
+- [Concourse](https://concourse-ci.org/)
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -122,7 +120,7 @@ However, you may create multiple pipelines over time.
 If there's a more sensible name for the pipeline you're working on,
 feel free to use that instead.</p>
 
-Write this at the top, and save the file. This is [YAML][yaml] for "the start of the document". It's optional, but traditional:
+Write this at the top, and save the file. This is [YAML](https://learnxinyminutes.com/docs/yaml/) for "the start of the document". It's optional, but traditional:
 
 ```yaml
 
@@ -135,7 +133,7 @@ It's valid YAML, at least.
 
 ### <a></a> Getting `fly`
 
-Let's try to set it as a pipeline with [`fly`][concourse-fly],
+Let's try to set it as a pipeline with [`fly`](https://concourse-ci.org/fly.html),
 the Concourse command-line Interface (CLI).
 
 First, check if we've got `fly` installed at all:
@@ -154,7 +152,7 @@ Navigate to the address for your Concourse instance in a web browser.
 At this point, you don't even need to be signed in!
 If there are no public pipelines, you should see something like this:
 
-![Get Fly][fly-download-image]
+![alt-text=""](../img/concourse-fly-download.png)
 
 If there _are_ public pipelines,
 or if you're signed in and there are pipelines you can see,
@@ -302,8 +300,8 @@ git commit --allow-empty -m "Empty initial commit"
 
 If it gives you a config error instead,
 you might need to configure `git` a bit.
-Here's a [good guide][git-first-time-setup]
-to initial setup.
+See [Git first time setup](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup)
+for instructions.
 Get that done, and try again.
 
 Now we can add our `pipeline.yml`,
@@ -339,7 +337,7 @@ and to current-and-future teammates and collaborators.</p>
 
 #### <a></a> The Test Task
 
-Platform Automation Toolkit comes with a [`test`][test] task
+Platform Automation Toolkit comes with a [`test`](../tasks.html#test) task
 meant to validate that it's been installed correctly.
 Let's use it to get setup.
 
@@ -532,7 +530,7 @@ and hide the characters of your password when you type them.
 This method of entry can be better in some situations.</p>
 
 Then, we can set the credential name
-to the path [where Concourse will look for it][concourse-credhub-lookup-rules]:
+to the path [where Concourse will look for it](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):
 
 ```bash
 # note the starting space
