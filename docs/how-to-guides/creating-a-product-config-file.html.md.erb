@@ -241,7 +241,7 @@ concourse allows you to persist this config outside the concourse container.
 Alternatively, this can be run external to concourse by using docker. An example
 of how to do this using on the linux/mac command line:
 
-{% include ".docker-import-tile.md" %}
+<%= partial "docker-import-tile" %>
 
 ## Using Ops Files for Multi-Foundation
 
@@ -256,7 +256,7 @@ This section will explain how to support multiple foundations using ops files.
 
 Starting with an **incomplete** [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime/) config from **vSphere** as an example:
 
-{% include ".cf-partial-config.md" %}
+<%= partial "cf-partial-config" %>
 
 For a single foundation deploy, leaving values such as
 `".cloud_controller.apps_domain"` as-is would work fine. For multiple
@@ -282,7 +282,7 @@ To test that the ops file will work in your `base.yml`, this can be done locally
 
 This will output `base.yml` with the replaced(interpolated) values:
 
-{% include ".cf-partial-config-domain-interpolated.md" %}
+<%= partial "cf-partial-config-domain-interpolated" %>
 
 Anything that needs to be different per deployment can be replaced via ops files as long as the `path:` is correct.
 
