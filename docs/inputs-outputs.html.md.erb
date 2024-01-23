@@ -50,13 +50,13 @@ The `config` input for a download product task
 can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
-=== "Tanzu Network"
+**Tanzu Network**
     ---excerpt--- "examples/download-product-config-pivnet"
-=== "S3"
+**S3**
     ---excerpt--- "examples/download-product-config-s3"
-=== "GCS"
+**GCS**
     ---excerpt--- "examples/download-product-config-gcs"
-=== "Azure"
+**Azure**
     ---excerpt--- "examples/download-product-config-azure"
 
 ## download-stemcell-product-config
@@ -298,27 +298,27 @@ Different IaaS uniquely identify VMs differently;
 here are examples for what this file should look like,
 depending on your IAAS:
 
-=== "AWS"
+**AWS**
     ``` yaml
     --8<-- 'docs/examples/state/aws.yml'
     ```
 
-=== "Azure"
+**Azure**
     ``` yaml
     --8<-- 'docs/examples/state/azure.yml'
     ```
 
-=== "GCP"
+**GCP**
     ``` yaml
     --8<-- 'docs/examples/state/gcp.yml'
     ```
 
-=== "OpenStack"
+**OpenStack**
     ``` yaml
     --8<-- 'docs/examples/state/openstack.yml'
     ```
 
-=== "vSphere"
+**vSphere**
     ``` yaml
     --8<-- 'docs/examples/state/vsphere.yml'
     ```
@@ -337,7 +337,7 @@ using the [download-product](./tasks.html#download-product) task.
 
 ### stemcell.yml
 
-=== "AWS"
+**AWS**
     ```yaml
     ---
     pivnet-api-token: token
@@ -346,7 +346,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "Azure"
+**Azure**
     ```yaml
     ---
     pivnet-api-token: token
@@ -355,7 +355,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "GCP"
+**GCP**
     ```yaml
     ---
     pivnet-api-token: token
@@ -364,7 +364,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "OpenStack"
+**OpenStack**
     ```yaml
     ---
     pivnet-api-token: token
@@ -373,7 +373,7 @@ using the [download-product](./tasks.html#download-product) task.
     product-version-regex: ^170\..*$
     ```
 
-=== "vSphere"
+**vSphere**
     ```yaml
     ---
     pivnet-api-token: token
