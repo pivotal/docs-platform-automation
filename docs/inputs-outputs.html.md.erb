@@ -1,4 +1,5 @@
 # Task Inputs
+
 These are the inputs that can be provided to the tasks.
 Each task can only take a specific set, indicated under the `inputs` property of the YAML.
 
@@ -7,11 +8,11 @@ Each task can only take a specific set, indicated under the `inputs` property of
 The config director will set the bosh tile (director) on Ops Manager.
 
 The `config` input for a director task expects to have a `director.yml` file.
-The configuration of the `director.yml` is IAAS specific for some properties -- i.e. networking.
+The configuration of the `director.yml` is IAAS specific for some properties -- that is, networking.
 
 There are two ways to build a director config.
 
-1. Using an already deployed Ops Manager, you can extract the config using [staged-director-config].
+1. Using an already deployed Ops Manager, you can extract the config using [staged-director-config](./tasks.html#staged-director-config).
 2. Deploying a brand new Ops Manager requires more effort for a `director.yml`.
    The configuration of director is variables based on the features enabled.
    For brevity, this `director.yml` is a basic example for vsphere.
@@ -252,10 +253,10 @@ For example:
 
 `projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]`
 
-### Openstack
+### OpenStack
 
 These required properties are adapted from the instructions outlined in
-[Launching an Ops Manager Director Instance on Openstack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
+[Launching an Ops Manager Director Instance on OpenStack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-openstack.html).
 
 <%= partial "examples/opsman-config/openstack" %>
 
@@ -351,11 +352,11 @@ This file cannot be manually created. It must retrieved from Tanzu Network.</p>
 
 There are two ways to build a product config.
 
-1. Using an already deployed product (tile), you can extract the config using [staged-config].
-1. Use an example and fill in the values based on the meta information from the tile.
+1. Using an already deployed product (tile), you can extract the config using [staged-config](./tasks.html#staged-config).
+2. Use an example and fill in the values based on the meta information from the tile.
 For brevity, this `product.yml` is a basic example for `healthwatch`.
 
----excerpt--- "examples/product-configuration"
+<%= partial "examples/product" %>
 
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
@@ -496,4 +497,4 @@ so they can learn and measure results
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 
----excerpt--- "examples/telemetry"
+<%= partial "examples/telemetry" %>
