@@ -13,7 +13,7 @@ It's important to note when upgrading your Ops Manager:
 * installation is separate from upgrade
 * an initial installation is done, which maintains state
 
-The [`upgrade-opsman`](./tasks.html#upgrade-opsman) task follows the flow based on state of an Ops Manager VM.
+The [`upgrade-opsman`](../tasks.html#upgrade-opsman) task follows the flow based on state of an Ops Manager VM.
 This flowchart gives a high level overview of how the task makes decisions for an upgrade.
 
 ![alt-text=""](../img/upgrade-flowchart.png)
@@ -33,7 +33,7 @@ Recovering your VM can be done in two different ways.
 Both methods require an exported installation.
 
 1. **Recovery using the upgrade-opsman task**. Depending on the error,
-   the VM could be recovered by re-running [`upgrade-opsman`](./tasks.html#upgrade-opsman).
+   the VM could be recovered by re-running [`upgrade-opsman`](../tasks.html#upgrade-opsman).
    This may or may not require a change to the [state file](../inputs-outputs.html#state),
    depending on if there is an [ensure](ttps://concourse-ci.org/jobs.html#schema.step.ensure) 
    set for the state file resource.
@@ -44,14 +44,14 @@ Both methods require an exported installation.
 Below is a list of common errors when running `upgrade-opsman`.
 
 - **Error: The Ops Manager API is inaccessible.**
-  Rerun the [`upgrade-opsman`](./tasks.html#upgrade-opsman) task. The task will assume that the Ops Manager VM is not
-  created, and will run the [`create-vm`](./tasks.html#create-vm) and
-  [`import-installation`](./tasks.html#import-installation) tasks.
+  Rerun the [`upgrade-opsman`](../tasks.html#upgrade-opsman) task. The task will assume that the Ops Manager VM is not
+  created, and will run the [`create-vm`](../tasks.html#create-vm) and
+  [`import-installation`](../tasks.html#import-installation) tasks.
 
 - **Error: The CLI for a supported IAAS fails.** (that is, bad network, outage, etc)
   The specific error will be returned as output,
   but most errors can be fixed
-  by re-running the [`upgrade-opsman`](./tasks.html#upgrade-opsman) task.
+  by re-running the [`upgrade-opsman`](../tasks.html#upgrade-opsman) task.
 
 ## Restoring the Original Ops Manager VM
 There may be an instance in which you want to restore a previous Ops Manager VM
