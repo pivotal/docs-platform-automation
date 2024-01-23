@@ -54,7 +54,14 @@ _This minimizes parameter mapping in the platform-automation tasks_.
 For example, in the [`configure-director`](../tasks.html#configure-director)
 step:
 
----excerpt--- "examples/configure-director-usage"
+```yaml
+- task: configure-director
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/configure-director.yml
+  input_mapping:
+    config: configuration
+    env: configuration
+```
 
 we map the config files
 to the expected input named `env` of the `configure-director` task.
