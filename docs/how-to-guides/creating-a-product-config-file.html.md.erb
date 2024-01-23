@@ -72,7 +72,7 @@ This can be useful if there are vars that need to be interpolated when you apply
 rather than when you create the final template.
 You might consider creating a separate vars file for each of the following cases:
 
-- credentials (these vars can then be [persisted separately/securely][secrets-handling])
+- credentials (these vars can then be [persisted separately/securely](../concepts/secrets-handling.html))
 - foundation-specific variables when using the same template for multiple foundations
 
 You can use the `--skip-missing` flag when creating your final template
@@ -123,7 +123,7 @@ you'll need to use some of the ops files in one of the following four directorie
     </tr>
 </table>
 
-For more information on BOSH VM Extensions, refer to the [Creating a Director Config File How-to Guide][vm-extensions].
+For more information on BOSH VM Extensions, see [Creating a Director Config File](./creating-a-director-config-file.html#vm-extensions).
 
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
@@ -171,7 +171,7 @@ om interpolate \
 
 You can check-in the resulting configuration to a git repo.
 For vars that do not include credentials, you can check those vars files in, as well.
-Handle vars that are secret [more carefully][secrets-handling].
+Handle vars that are secret [more carefully](../concepts/secrets-handling.html).
 
 You can then dispose of the config template directory.
 
@@ -184,16 +184,16 @@ A configuration can be generated from a staged product on an already existing Op
 To extract the configuration for a product, you will first need to do the following:
 
 1. Upload and stage your desired product(s) to a fully deployed Ops Manager.
-For example, let's use [Tanzu Application Service][tas] on Vsphere with NSX-T
+For example, let's use [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime) on vSphere with NSX-T
 1. Configure your product _manually_ according to the product's
-[install instructions][tas-install-vsphere].
+[install instructions](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/vsphere-nsx-t.html).
 
 ### Workflow
 
 [om] has a command called [staged-config], which is used to extract staged product
 configuration present in the Ops Manager UI of the targeted foundation.
 
-Sample usage, using `om` directly and assuming the [Tanzu Application Service][tas] product:  
+Sample usage, using `om` directly and assuming the [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime/) product:  
 `om --env env.yml staged-config --include-placeholders --product-name cf > tile-config.yml`  
 
 Most products will contain the following high level keys:
@@ -206,7 +206,7 @@ You can check the file in to git.
 
 For convenience, Platform Automation Toolkit provides you with two ways to use the
 `om staged-config` command. The command can be run as a [task](./tasks.html#staged-config)
-inside of your pipeline. As an example of how to invoke this for the [Tanzu Application Service][tas] product
+inside of your pipeline. As an example of how to invoke this for the [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime/) product
 in your pipeline.yml(resources not listed):
 ```yaml
 jobs:
@@ -234,7 +234,7 @@ jobs:
     params:
       file: generated-config/pas.yml
 ```
-This task will connect to the Ops Manager defined in your [`env.yml`][generating-env-file], download the current staged
+This task will connect to the Ops Manager defined in your [`env.yml`](./configuring-env.html#generating-an-env-file), download the current staged
 configuration of your product, and put it into a `generated-config` folder in the concourse job. The `put` in
 concourse allows you to persist this config outside the concourse container.
 
@@ -251,10 +251,10 @@ for fields marked as "secrets", and replace those values with
 `((placeholder_credentials))`.
 
 In order to fully support multiple foundations, however, a bit more work is
-necessary. There are two ways to do this: using [secrets management][multi-foundation-secrets-handling] or ops files.
+necessary. There are two ways to do this: using [secrets management](../concepts/secrets-handling.html#storing-values-for-multi-foundation) or ops files.
 This section will explain how to support multiple foundations using ops files.
 
-Starting with an **incomplete** [Tanzu Application Service][tas] config from **vSphere** as an example:
+Starting with an **incomplete** [Tanzu Application Service](https://network.pivotal.io/products/elastic-runtime/) config from **vSphere** as an example:
 
 {% include ".cf-partial-config.md" %}
 
@@ -264,7 +264,7 @@ foundations, this value will be different per deployed foundation. Other values,
 such as `.cloud_controller.encrypt_key` have a secret that
 already have a placeholder from `om`. If different foundations have different
 load requirements, even the values in `resource-config` can be edited using
-[ops files][ops-files].
+[ops files](https://bosh.io/docs/cli-ops-files/).
 
 Using the example above, let's try filling in the existing placeholder for
 `cloud_controller.apps_domain` in our first foundation.
