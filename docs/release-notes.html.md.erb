@@ -227,9 +227,9 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
     
 - The container image has been fixed to support the `registry-image` Concourse resource
 - With [`credhub-interpolate`](./tasks.html#credhub-interpolate) task,
-  users were using secrets as a way to interpolate the same Credhub value to multiple vars values.
-  This allowed not having ot repeat the same value in Credhub for each var value.
-  Support has been added to the [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets workflow to support secrets evaluation.
+  users were using secrets as a way to interpolate the same CredHub value to multiple vars values.
+  This allowed not having ot repeat the same value in CredHub for each var value.
+  Support has been added to the [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets) workflow to support secrets evaluation.
   
     For example, given a `config.yml`,
   
@@ -404,7 +404,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
     **if you have used the workaround described in the issue**
     (storing the value as a JSON object)
-    you will need to update the credential in Credhub
+    you will need to update the credential in CredHub
     to not be a JSON object.
 - `config-template` generated `resource-vars.yml`
   that had the potential to conflict with property names
@@ -539,7 +539,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   For example, `stemcell-iaas: light*aws` should just be `stemcell-iaas: aws` now.
 - Heavy stemcells could not be downloaded.
   Support has now been added.
-  Define `stemcell-heavy: true` in your [`download-product` config file][download-product-config].
+  Define `stemcell-heavy: true` in your [`download-product` config file](./inputs-outputs.html#download-product-config).
 - CVE update to container image. Resolves [USN-4298-1](https://usn.ubuntu.com/4298-1/).
   This CVE is related to vulnerabilities with `libsqlite3`.
 - CVE update to container image. Resolves [USN-4305-1](https://usn.ubuntu.com/4305-1/).
@@ -585,7 +585,7 @@ February 11, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.2" target="_blank">Download</a>
 
 ### What's New
-- The [config][download-product-config] for the `download-product` task now recommends using `file-glob` instead of `pivnet-file-glob`.
+- The [config]Continue migrating Platform Automation Toolkit v4.3. for the `download-product` task now recommends using `file-glob` instead of `pivnet-file-glob`.
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -623,12 +623,12 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
   when `SKIP_MISSING: true` is set.
 - The [`prepare-tasks-with-secrets`](./tasks.html#prepare-tasks-with-secrets) task has been added.
   It replaces the [`credhub-interpolate`](./tasks.html#credhub-interpolate) task and provides the following benefits:
-    - Support for all native Concourse secrets stores including Credhub and Vault.
-    - Credhub credentials are no longer required by the task so they can be completely handled by concourse.
+    - Support for all native Concourse secrets stores including CredHub and Vault.
+    - CredHub credentials are no longer required by the task so they can be completely handled by concourse.
     - Credentials are no longer written to disk which alleviates some security concerns.
 
-    For a detailed explanation of this new task, see [Using prepare-tasks-with-secrets][prepare-tasks-with-secrets-how-to].
-    To replace `credhub-interpolate` with this new task, see [Replacing credhub-interpolate with prepare-tasks-with-secrets][prepare-tasks-with-secrets-replace]. (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secrets does not work with Concourse 4.)
+    For a detailed explanation of this new task, see [Secrets Handling](./concepts/secrets-handling.html).
+    To replace `credhub-interpolate` with this new task, see [Secrets Handling](./concepts/secrets-handling.html). (Note: This task uses a Concourse feature that allows inputs and outputs to have the same name. This feature is only available in Concourse 5+. prepare-tasks-with-secrets does not work with Concourse 4.)
 
 - The docker image includes the correct flavor of `nc` (`netcat-openbsd`) to be used with `bosh ssh`.
 - Add the ability to recreate VMs to the [`apply-changes`](./tasks.html#apply-changes) and [`stage-configure-apply`](./tasks.html#stage-configure-apply) tasks.
@@ -910,7 +910,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
     **if you have used the workaround described in the issue**
     (storing the value as a JSON object)
-    you will need to update the credential in Credhub
+    you will need to update the credential in CredHub
     to not be a JSON object.
 - `config-template` generated `resource-vars.yml`
   that had the potential to conflict with property names
@@ -1376,7 +1376,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 
     **if you have used the workaround described in the issue**
     (storing the value as a JSON object)
-    you will need to update the credential in Credhub
+    you will need to update the credential in CredHub
     to not be a JSON object.
 - `config-template` generated `resource-vars.yml`
   that had the potential to conflict with property names
@@ -1650,7 +1650,7 @@ Released October 21, 2019
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### What's New
-- [Ops Manager config for vSphere][inputs-outputs-vsphere] now validates the required properties
+- [Ops Manager config for vSphere](./inputs-outputs.html#vsphere) now validates the required properties
 - The new task [expiring-certificates]
   fails if there are any expiring certificates
   in a user specified time range.
@@ -1667,11 +1667,11 @@ Released October 21, 2019
   exit status 1
   ```
 
-- [Telemetry][telemetry-docs] support has been added!
-  To opt in, you must get the Telemetry tool from [Tanzu Network][telemetry],
-  create a [config file][telemetry-config],
+- [Telemetry](https://docs.vmware.com/en/Tanzu-Telemetry-for-Ops-Manager/index.html) support has been added!
+  To opt in, you must get the Telemetry tool from [Tanzu Network](https://network.pivotal.io/products/pivotal-telemetry-collector),
+  create a [config file](./inputs-outputs.html#telemetry),
   and add the [collect-telemetry](./tasks.html#collect-telemetry) and [send-telemetry](./tasks.html#send-telemetry) tasks to your pipeline.
-  For an example, please see the [Reference Pipelines][reference-pipeline].
+  For an example, please see the [Reference Pipelines](./pipelines/multiple-products.html).
 - [stage-configure-apply](./tasks.html#stage-configure-apply) task has been added.
   This task will take a product, stage it, configure it, and apply changes
   _only_ for that product (all other products remain unchanged).
@@ -1687,26 +1687,26 @@ Released October 21, 2019
   The generated state file is now outputted as YAML.
 
 ### Deprecation Notices
-- The `host` field in the vcenter section of the [vsphere opsman.yml][inputs-outputs-vsphere] has been deprecated.
+- The `host` field in the vcenter section of the [vsphere opsman.yml](./inputs-outputs.html#vsphere) has been deprecated.
   Platform Automation Toolkit can initially choose where the VM is placed
   but cannot guarantee that it stays there
   or that other generated VMs are assigned to the same host.
-- The `vpc_subnet` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
+- The `vpc_subnet` field in [azure_opsman.yml](./inputs-outputs.html#azure) has been deprecated.
   In your opsman.yml, replace `vpc_subnet` with `subnet_id`.
   This change was to help mitigate confusion
   as VPC is an AWS, not an Azure, concept.
-- The optional `use_unmanaged_disk` field in [azure_opsman.yml][inputs-outputs-azure] has been deprecated.
+- The optional `use_unmanaged_disk` field in [azure_opsman.yml](./inputs-outputs.html#azure) has been deprecated.
   In your opsman.yml, replace `use_unmanaged_disk: true` with `use_managed_disk: false`.
   The default for `use_managed_disk` is true.
   Unmanaged disk is not recommended by Azure.
   If you would like to use unmanaged disks,
   please opt-out by setting `use_managed_disk: false`.
-- The optional `use_instance_profile` field in [aws_opsman.yml][inputs-outputs-aws] has been deprecated.
+- The optional `use_instance_profile` field in [aws_opsman.yml](./inputs-outputs.html#aws) has been deprecated.
   It was redundant.
   When you don't specify `access_key_id` and `secret_access_key`,
   the authentication will try to use the instance profile on the executing machine -- for example, a concourse worker.
   This is works in conjunction of how the `aws` CLI find authentication.
-- The required `security_group_id` field in [aws_opsman.yml][inputs-outputs-aws] has been deprecated.
+- The required `security_group_id` field in [aws_opsman.yml](./inputs-outputs.html#aws) has been deprecated.
   Replace `security_group_id` with `security_group_ids` as YAML array.
   For example, `security_group_id: sg-1`
   becomes `security_group_ids: [ sg-1 ]`.
@@ -2062,17 +2062,17 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
   for the new Ops Manager VM.
   This enables you to designate a service account name
   as opposed to providing a service account json object.
-  This may be specified in the [Ops Manager config for GCP][inputs-outputs-gcp].
-  For more information on GCP service accounts, refer to the [GCP service accounts][gcp-service-accounts] docs.
+  This may be specified in the [Ops Manager config for GCP](./inputs-outputs.html#gcp).
+  For more information on GCP service accounts, refer to the [GCP service accounts](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances) docs.
 - For GCP, [`create-vm`](./tasks.html#create-vm) supports setting `scopes` for the new Ops Manager VM.
-  This may be specified in the [Ops Manager config for GCP][inputs-outputs-gcp].
-  For more information on setting GCP scopes, refer to the [GCP scope][gcp-scope] docs.
-- [`configure-director`](./tasks.html#configure-director) now support [VM Extensions][vm-extensions].
+  This may be specified in the [Ops Manager config for GCP](./inputs-outputs.html#gcp).
+  For more information on setting GCP scopes, refer to the [GCP scope](https://cloud.google.com/compute/docs/access/) docs.
+- [`configure-director`](./tasks.html#configure-director) now support [VM Extensions](./how-to-guides/creating-a-director-config-file.html#vm-extensions).
   *Please note this is an advanced feature, and should be used at your own discretion.*  
-- [`configure-director`](./tasks.html#configure-director) now support [VM Types][vm-types].
+- [`configure-director`](./tasks.html#configure-director) now support [VM Types](./how-to-guides/creating-a-director-config-file.html#vm-types).
   *Please note this is an advanced feature, and should be used at your own discretion.*
 - Add support for new NSX and NSXT format in Ops Manager 2.7+
-  when calling [`staged-config`](./tasks.html#staged-config) and [`staged-director-config`](./tasks.html#staged-director-config) - [state][state] can now be defined in a `state-$timestamp.yml` format (like [`export-installation`](./tasks.html#export-installation)).
+  when calling [`staged-config`](./tasks.html#staged-config) and [`staged-director-config`](./tasks.html#staged-director-config) - [state](./inputs-outputs.html#state) can now be defined in a `state-$timestamp.yml` format (like [`export-installation`](./tasks.html#export-installation)).
   This is an _opt-in_ feature, and is only recommended
   if you are storing state in a non-versioned s3-compatible blobstore.
   To opt-in to this feature,
@@ -2082,7 +2082,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
       - [`create-vm`](./tasks.html#create-vm)
       - [`delete-vm`](./tasks.html#delete-vm)
       - [`upgrade-opsman`](./tasks.html#upgrade-opsman)
-- [gcp opsman.yml][inputs-outputs-gcp] now supports `ssh_public_key`.
+- [gcp opsman.yml](./inputs-outputs.html#gcp) now supports `ssh_public_key`.
   This is used to ssh into the Ops Manager VM to manage non-tile bosh add-ons.
 - **EXPERIMENTAL** `config-template` now will provide required-vars in addition to default-vars.
 - **EXPERIMENTAL** `config-template` will define vars with an `_` instead of a `/`.
@@ -2094,7 +2094,7 @@ Released August 28, 2019, includes `om` version [3.1.0](https://github.com/pivot
 ### Bug Fixes
 - [`download-product`](./tasks.html#download-product) will now return a `download-product.json`
   if `stemcell-iaas` is defined, but there is no stemcell to download for that product.
-- [vsphere opsman.yml][inputs-outputs-vsphere] now requires `ssh_public_key` for Ops Manager 2.6+
+- [vsphere opsman.yml](./inputs-outputs.html#vsphere) now requires `ssh_public_key` for Ops Manager 2.6+
   This was added to mitigate an error during upgrade
   that would cause the VM to enter a reboot loop.
 - When using AWS to create the Ops Manager VM with encrypted disks,
@@ -2485,29 +2485,29 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - [`download-product`](./tasks.html#download-product) ensures sha sum checking when downloading the file from Tanzu Network.
 - [`download-product`](./tasks.html#download-product) can now disable ssl validation when connecting to Tanzu Network.
   This helps with environments with SSL and proxying issues.
-  Add `pivnet-disable-ssl: true` in your [download-product-config][download-product-config] to use this feature.
-- On [GCP][inputs-outputs-gcp], if you did not assign a public IP, Google would assign
+  Add `pivnet-disable-ssl: true` in your [download-product-config](./inputs-outputs.html#download-product-config) to use this feature.
+- On [GCP](./inputs-outputs.html#gcp), if you did not assign a public IP, Google would assign
   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
-- On [Azure][inputs-outputs-azure], if you did not assign a public IP, Azure would assign
+- On [Azure](./inputs-outputs.html#azure), if you did not assign a public IP, Azure would assign
   one for you. This has been changed to only assign a public IP if defined in your `opsman.yml`.
 - `om interpolate` (example in the [test task](./tasks.html#test-interpolate)) now supports
    the ability to accept partial vars files. This is added support for users who may also be using
    credhub-interpolate or who want to mix interpolation methods. To make use of this feature, include
    the `--skip-missing` flag.
 - [`credhub-interpolate`](./tasks.html#credhub-interpolate) now supports the `SKIP_MISSING`
-   parameter. For more information on how to use this feature and if it fits for your foundation(s), see the
-   [Secrets Handling][secrets-handling-multiple-sources] section.
-- the [reference pipeline][reference-pipeline] has been updated to give an example of
+   parameter. For more information on how to use this feature and if it fits for your foundation(s), see
+   [Secrets Handling](./concepts/secrets-handling.html#credub-interpolate-and-vars-files).
+- the [reference pipeline](./pipelines/multiple-products.html) has been updated to give an example of
   [`credhub-interpolate`](./tasks.html#credhub-interpolate) in practice. For more information
-  about credhub, see [Secrets Handling][secrets-handling-multiple-sources]
+  about CredHub, see [Secrets Handling](./concepts/secrets-handling.html#credub-interpolate-and-vars-files).
 - `om` now has support for `config-template` (a Platform Automation Toolkit encouraged replacement of
    `tile-config-generator`). This is an experimental command that can only be run currently using `docker run`.
    For more information and instruction on how to use `config-template`, please see
-   [Creating a Product Config File][config-template].
+   [Creating a Product Config File](./how-to-guides/creating-a-product-config-file.html#from-tanzu-network).
 - [`upload-stemcell`](./tasks.html#upload-stemcell) now supports the ability to include a config file.
   This allows you to define an expected `shasum` that will validate the calculated shasum of the provided
   `stemcell` uploaded in the task. This was added to give feature parity with [`upload-product`](./tasks.html#upload-product)
-- [Azure][inputs-outputs-azure] now allows NSG(network security group) to be optional.
+- [Azure](./inputs-outputs.html#azure) now allows NSG (network security group) to be optional.
   This change was made because NSGs can be assigned at the subnet level rather than just the VM level. This
   param is also not required by the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest).
   Platform Automation Toolkit now reflects this.
@@ -2551,5 +2551,5 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 - CVE update to container image. Resolves [USN-3911-1](https://usn.ubuntu.com/3911-1/).
   (related to vulnerabilities with `libmagic1`. While none of our code directly used these,
   they are present on the image.)
-- Improved error messaging for [vSphere][inputs-outputs-vsphere] VM creation if neither `ssh-password` or `ssh-public-key` are set.
+- Improved error messaging for [vSphere](./inputs-outputs.html#vsphere) VM creation if neither `ssh-password` or `ssh-public-key` are set.
   One or the other is required to create a VM.
