@@ -4,6 +4,10 @@ image_resource:
   type: registry-image
   source:
     repository: concourse/docker-image-resource
+    tag: 1.8.0-20230816  # Note: pinned on 1/23/24, as this is the last known functional version.  'latest' currently results
+                         #       in MANIFEST_BLOB_UNKNOWN errors on TanzuNet Harbor. seems to be an issue with docker
+                         #       versions (24.0.5 here vs 25.0.0 in 'latest').  Unpin this when the error stops.  See
+                         #       here for details: https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-binaries-image-combined/builds/2413#L64b8829b:5
 
 inputs:
 - name: packaged-product
