@@ -502,50 +502,54 @@ using a `p-automator` command to output an opsman.yml file
 in the directory it is called from. 
 
 **AWS**
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --aws-region "$AWS_REGION" \
-      --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
-      --aws-access-key-id "$AWS_ACCESS_KEY_ID"
-    ```
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+  p-automator export-opsman-config \
+  --state-file generated-state/state.yml \
+  --config-file opsman.yml \
+  --aws-region "$AWS_REGION" \
+  --aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
+  --aws-access-key-id "$AWS_ACCESS_KEY_ID"
+```
 
 **Azure**
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --azure-subscription-id "$AZURE_SUBSCRIPTION_ID" \
-      --azure-tenant-id "$AZURE_TENANT_ID" \
-      --azure-client-id "$AZURE_CLIENT_ID" \
-      --azure-client-secret "$AZURE_CLIENT_SECRET" \
-      --azure-resource-group "$AZURE_RESOURCE_GROUP"
-    ```
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+p-automator export-opsman-config \
+--state-file generated-state/state.yml \
+--config-file opsman.yml \
+--azure-subscription-id "$AZURE_SUBSCRIPTION_ID" \
+--azure-tenant-id "$AZURE_TENANT_ID" \
+--azure-client-id "$AZURE_CLIENT_ID" \
+--azure-client-secret "$AZURE_CLIENT_SECRET" \
+--azure-resource-group "$AZURE_RESOURCE_GROUP"
+```
 
 **GCP**
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --gcp-zone "$GCP_ZONE" \
-      --gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
-      --gcp-project-id "$GCP_PROJECT_ID"
-    ```
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+p-automator export-opsman-config \
+--state-file generated-state/state.yml \
+--config-file opsman.yml \
+--gcp-zone "$GCP_ZONE" \
+--gcp-service-account-json <(echo "$GCP_SERVICE_ACCOUNT_JSON") \
+--gcp-project-id "$GCP_PROJECT_ID"
+```
 
 **vSphere**
-    ```bash
-    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-      p-automator export-opsman-config \
-      --state-file generated-state/state.yml \
-      --config-file opsman.yml \
-      --vsphere-url "$VCENTER_URL" \
-      --vsphere-username "$VCENTER_USERNAME" \
-      --vsphere-password "$VCENTER_PASSWORD"
-    ```
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+p-automator export-opsman-config \
+--state-file generated-state/state.yml \
+--config-file opsman.yml \
+--vsphere-url "$VCENTER_URL" \
+--vsphere-username "$VCENTER_USERNAME" \
+--vsphere-password "$VCENTER_PASSWORD"
+```
 
 Once you have your config file, commit and push it:
 
