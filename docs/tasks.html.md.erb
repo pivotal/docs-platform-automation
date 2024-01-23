@@ -7,7 +7,7 @@ The tasks are presented, in their entirety,
 as they are found in the product.
 
 The docker image can be used to invoke the commands in each task locally.
-Use `--help` for more information. To learn more see the [running-commands-locally][running-commands-locally] section.
+Use `--help` for more information. To learn more see [Running Commands Locally](./how-to-guides/running-commands-locally.html).
 
 ## apply-changes
 
@@ -39,7 +39,7 @@ with the `--skip-deploy-products`/`-sdp` flag.
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
 This feature is only available in OpsMan 2.6+.
 For more information on how to utilize this workflow,
-check out the [Stemcell Handling][stemcell-handling] topic.
+see [Stemcell Handling](./concepts/stemcell-handling.html).
 
 **Task**
     ---excerpt--- "tasks/assign-multi-stemcell"
@@ -51,7 +51,7 @@ check out the [Stemcell Handling][stemcell-handling] topic.
 ## assign-stemcell
 `assign-stemcell` assigns a stemcell to a provided product.
 For more information on how to utilize
-this workflow, check out the [Stemcell Handling][stemcell-handling] topic.
+this workflow, see [Stemcell Handling](./concepts/stemcell-handling.html).
 
 **Task**
     ---excerpt--- "tasks/assign-stemcell"
@@ -65,7 +65,7 @@ Returns a table of the current state of your Ops Manager
 and lists whether each product is changed or unchanged and the errands for that product.
 By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
 This is useful to keep manual changes from being accidentally applied
-when automating the [configure-product][configure-product]/[apply-changes][apply-changes] of other products.
+when automating the [configure-product](#configure-product)/[apply-changes](#apply-changes) of other products.
 
 **Task**
     ---excerpt--- "tasks/check-pending-changes"
@@ -85,7 +85,7 @@ you will need to define a `resource` to supply the binary.
 This task requires a [config file][telemetry-config].
 
 After using this task,
-the [send-telemetry][send-telemetry]
+the [send-telemetry](#send-telemetry)
 may be used to send telemetry data to VMware.
 
 **Task**
@@ -191,7 +191,7 @@ The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-please refer to the [Ops Manager documentation][config-saml]
+see the [Ops Manager documentation][config-saml]
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth File](./how-to-guides/configuring-auth.html#generating-an-auth-file).
@@ -261,7 +261,7 @@ Interpolate credhub entries into configuration files
     ---excerpt--- "examples/credhub-interpolate-usage"
 
 This task requires a valid credhub with UAA client and secret. For information on how to
-set this up, see [Secrets Handling][secrets-handling]
+set this up, see [Secrets Handling](./concepts/secrets-handling.html).
 
 ## delete-installation
 Delete the Ops Manager Installation
@@ -582,7 +582,7 @@ This feature is only available in Ops Manager 2.6+.
 Additionally, checks each of the staged products
 and validates they are configured correctly.
 This task can be run at any time
-and can be used a a pre-check for [`apply-changes`][apply-changes].
+and can be used a a pre-check for [`apply-changes`](#apply-changes).
 
 The checks that this task executes are:
 
@@ -645,7 +645,7 @@ Use passed constraints to ensure things run in the order you intend.</p>
     ---excerpt--- "reference/revert-staged-changes-usage"
 
 ## send-telemetry
-Sends the `.tar` output from [`collect-telemetry`][collect-telemetry]
+Sends the `.tar` output from [`collect-telemetry`](#collect-telemetry)
 to VMware.
 
 <p class="note important">
