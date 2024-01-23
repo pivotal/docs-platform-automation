@@ -53,7 +53,35 @@ which can be retrieved using [this pipeline](./resources.html).
 
 These can either be uploaded manually or from the [reference resources pipeline](./resources.html).
 
----excerpt--- "reference/reference-resources-s3"
+```yaml
+resources:
+- name: platform-automation-tasks
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_pivnet_products_bucket))
+    regexp: .*tasks-(.*).zip
+
+- name: platform-automation-image
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_pivnet_products_bucket))
+    regexp: .*image-(.*).tgz
+
+- name: telemetry-collector-binary
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_pivnet_products_bucket))
+    regexp: .*telemetry-(.*).tgz
+```
   
 <p class="note">
 <span class="note__title">Note</span>
@@ -90,7 +118,16 @@ In a job, specify the following task:
 
 <%= partial "export_installation_note" %>
 
----excerpt--- "reference/export-installation-resource-usage"
+```yaml
+- name: installation
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: ((s3_region_name))
+    bucket: ((s3_installation_bucket))
+    regexp: ((foundation))-installation-(.*).zip
+```
 
 ### Configured Resources
 
@@ -99,11 +136,42 @@ opsman VM creation, director, product, foundation-specific vars, auth, and env f
 For more details, see the [Inputs and Outputs](../inputs-outputs.html) section.
 Platform Automation Toolkit will not create these resources for you.
 
----excerpt--- "reference/resources-configurations"
+```yaml
+# VM state and foundation configuration
+- name: state
+  type: s3
+  source:
+    access_key_id: ((s3_access_key_id))
+    bucket: ((s3_foundation_state_bucket))
+    region_name: ((s3_region_name))
+    secret_access_key: ((s3_secret_access_key))
+    versioned_file: state-((foundation)).yml
+    initial_content_text: '{}'
+    initial_version: 'empty-start'
+
+# configurations
+- name: configuration
+  type: git
+  source:
+    private_key: ((docs-ref-pipeline-repo-key.private_key))
+    uri: ((docs-ref-pipeline-repo-uri))
+    branch: develop
+```
 
 ### Trigger Resources
 
----excerpt--- "reference/resources-triggers"
+```yaml
+# triggers used to have jobs do something in a timely manner
+- name: one-time-trigger
+  type: time
+  source:
+    interval: 999999h
+
+- name: daily-trigger
+  type: time
+  source:
+    interval: 24h
+```
 
 ### Secrets Handling
 
@@ -113,7 +181,22 @@ Concourse support several [credential managers](https://concourse-ci.org/creds.h
 The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
 to load secrets from your external configuration files.
 
----excerpt--- "reference/prepare-tasks-with-secrets-usage"
+```yaml
+# This task is used in multiple jobs
+# The yaml anchor "*prepare-tasks-with-secrets" is used in its place
+prepare-tasks-with-secrets: &prepare-tasks-with-secrets
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+  input_mapping:
+    tasks: platform-automation-tasks
+    config: configuration
+    vars: configuration
+  params:
+    CONFIG_PATHS: config/foundations/config config/foundations/((foundation))/config
+    VARS_PATHS: vars/foundations/((foundation))/vars
+  output_mapping:
+    tasks: platform-automation-tasks
+```
 
 ### Jobs
 
@@ -121,4 +204,997 @@ Each job corresponds to a "box"
 on the visual representation of your Concourse pipeline.
 These jobs consume resources defined above.
 
----excerpt--- "reference/reference-jobs"
+```yaml
+jobs:
+- name: test-platform-automation
+  serial: true
+  plan:
+    - in_parallel:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: test-interpolate
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/test-interpolate.yml
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/download-tas.yml
+        SKIP_MISSING: true
+      input_mapping:
+        config: configuration
+    - task: test
+      file: platform-automation-tasks/tasks/test.yml
+      image: platform-automation-image
+
+- name: install-opsman
+  serial: true
+  serial_groups: [ install ]
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: one-time-trigger
+      trigger: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+    - get: state
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: download-opsman-image
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    input_mapping:
+      config: configuration
+      vars: configuration
+    params:
+      CONFIG_FILE: foundations/((foundation))/config/download-opsman.yml
+      VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+      SOURCE: s3
+    output_mapping:
+      downloaded-product: opsman-image
+  - task: create-vm
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/create-vm.yml
+    input_mapping:
+      image: opsman-image
+      config: configuration
+      vars: configuration
+    params:
+      OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+      STATE_FILE: state-((foundation)).yml
+      VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+    ensure: &put-state
+      do:
+      - put: state
+        params:
+          file: generated-state/state-((foundation)).yml
+  - task: configure-authentication
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-authentication.yml
+    attempts: 10
+    input_mapping:
+      env: configuration
+      config: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      AUTH_CONFIG_FILE: foundations/config/auth.yml
+  - task: configure-opsman
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-opsman.yml
+    input_mapping:
+      env: configuration
+      config: configuration
+      vars: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+      VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+  - task: configure-director
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-director.yml
+    input_mapping:
+      config: configuration
+      env: configuration
+      vars: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      DIRECTOR_CONFIG_FILE: foundations/((foundation))/config/director.yml
+      VARS_FILES: |
+        vars/foundations/((foundation))/vars/director.yml
+        vars/foundations/((foundation))/vars/tas.yml
+        vars/foundations/((foundation))/vars/pks.yml 
+  - task: apply-director-changes
+    image: platform-automation-image
+    attempts: 3
+    file: platform-automation-tasks/tasks/apply-director-changes.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: export-installation
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/export-installation.yml
+    input_mapping:
+      env: configuration
+    params:
+      INSTALLATION_FILE: ((foundation))-installation-$timestamp.zip
+      ENV_FILE: foundations/config/env.yml
+  - put: installation
+    params:
+      file: installation/((foundation))-installation*.zip
+
+- name: export-installation
+  serial_groups: [ install ]
+  serial: true
+  plan:
+  - in_parallel:
+    - get: state
+      passed: [ install-opsman ]
+    - get: daily-trigger
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: revert-staged-changes
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/revert-staged-changes.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: export-installation
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/export-installation.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      INSTALLATION_FILE: ((foundation))-installation-$timestamp.zip
+  - put: installation
+    params:
+      file: installation/((foundation))-installation*.zip
+
+- name: upgrade-opsman
+  serial: true
+  serial_groups: [ install ]
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+      trigger: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: installation
+      passed: [ export-installation ]
+    - get: configuration
+    - get: state
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: download-opsman-image
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    input_mapping:
+      config: configuration
+      vars: configuration
+    params:
+      CONFIG_FILE: foundations/((foundation))/config/download-opsman.yml
+      VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+      SOURCE: s3
+    output_mapping:
+      downloaded-product: opsman-image
+  - task: upgrade-opsman
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upgrade-opsman.yml
+    input_mapping:
+      image: opsman-image
+      config: configuration
+      env: configuration
+      vars: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+      STATE_FILE: state-((foundation)).yml
+      INSTALLATION_FILE: ((foundation))-installation*.zip
+      VARS_FILES: vars/foundations/((foundation))/vars/director.yml
+    ensure: *put-state
+  - task: configure-director
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-director.yml
+    input_mapping:
+      config: configuration
+      env: configuration
+      vars: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      DIRECTOR_CONFIG_FILE: foundations/((foundation))/config/director.yml
+      VARS_FILES: |
+        vars/foundations/((foundation))/vars/director.yml
+        vars/foundations/((foundation))/vars/tas.yml
+        vars/foundations/((foundation))/vars/pks.yml 
+  - task: apply-director-changes
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/apply-director-changes.yml
+    attempts: 3
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: export-installation
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/export-installation.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      INSTALLATION_FILE: ((foundation))-installation-$timestamp.zip
+  - put: installation
+    params:
+      file: installation/((foundation))-installation*.zip
+
+- name: download-upload-and-stage-pks
+  serial: true
+  serial_groups: [ products ]
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+      trigger: true
+      passed: [ "upgrade-opsman" ]
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: download-pks
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    input_mapping:
+      config: configuration
+      vars: configuration
+    params:
+      CONFIG_FILE: foundations/((foundation))/config/download-pks.yml
+      VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+      SOURCE: s3
+    output_mapping:
+      downloaded-product: pks-product
+      downloaded-stemcell: pks-stemcell
+  - task: upload-and-stage-pks
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upload-and-stage-product.yml
+    input_mapping:
+      product: pks-product
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: upload-pks-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upload-stemcell.yml
+    input_mapping:
+      env: configuration
+      stemcell: pks-stemcell
+    params:
+      ENV_FILE: foundations/config/env.yml
+
+- name: download-upload-and-stage-tas
+  serial: true
+  serial_groups: [ products ]
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+      trigger: true
+      passed: [ "upgrade-opsman" ]
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: download-tas
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    input_mapping:
+      config: configuration
+      vars: configuration
+    params:
+      CONFIG_FILE: foundations/((foundation))/config/download-tas.yml
+      VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+      SOURCE: s3
+    output_mapping:
+      downloaded-product: tas-product
+      downloaded-stemcell: tas-stemcell
+  - task: upload-tas-product
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upload-product.yml
+    input_mapping:
+      product: tas-product
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: upload-tas-stemcell
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/upload-stemcell.yml
+    input_mapping:
+      env: configuration
+      stemcell: tas-stemcell
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: upload-and-stage-tas
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/stage-product.yml
+    input_mapping:
+      product: tas-product
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+- name: download-upload-and-stage-healthwatch
+  serial: true
+  serial_groups: [ products ]
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+          trigger: true
+          passed: [ "upgrade-opsman" ]
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-healthwatch
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      input_mapping:
+        config: configuration
+        vars: configuration
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/download-healthwatch.yml
+        VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+        SOURCE: s3
+      output_mapping:
+        downloaded-product: healthwatch-product
+        downloaded-stemcell: healthwatch-stemcell
+    - task: upload-and-stage-healthwatch
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upload-and-stage-product.yml
+      input_mapping:
+        product: healthwatch-product
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+    - task: upload-healthwatch-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upload-stemcell.yml
+      input_mapping:
+        env: configuration
+        stemcell: healthwatch-stemcell
+      params:
+        ENV_FILE: foundations/config/env.yml
+
+- name: download-upload-and-stage-healthwatch-pas-exporter
+  serial: true
+  serial_groups: [ products ]
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+          trigger: true
+          passed: [ "upgrade-opsman" ]
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-healthwatch
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      input_mapping:
+        config: configuration
+        vars: configuration
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/download-healthwatch-pas-exporter.yml
+        VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+        SOURCE: s3
+      output_mapping:
+        downloaded-product: healthwatch-pas-exporter
+    - task: upload-and-stage-healthwatch-pas-exporter
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upload-and-stage-product.yml
+      input_mapping:
+        product: healthwatch-pas-exporter
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+
+- name: download-upload-and-stage-healthwatch-pks-exporter
+  serial: true
+  serial_groups: [ products ]
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+          trigger: true
+          passed: [ "upgrade-opsman" ]
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: download-healthwatch
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/download-product.yml
+      input_mapping:
+        config: configuration
+        vars: configuration
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/download-healthwatch-pks-exporter.yml
+        VARS_FILES: vars/foundations/((foundation))/vars/versions.yml
+        SOURCE: s3
+      output_mapping:
+        downloaded-product: healthwatch-pks-exporter
+    - task: upload-and-stage-healthwatch-pks-exporter
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/upload-and-stage-product.yml
+      input_mapping:
+        product: healthwatch-pks-exporter
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+
+- name: configure-pks
+  serial: true
+  serial_groups: [ install ]
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+      passed:
+      - download-upload-and-stage-pks
+      trigger: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: configure-pks
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/configure-product.yml
+    input_mapping:
+      config: configuration
+      env: configuration
+      vars: configuration
+    params:
+      CONFIG_FILE: foundations/((foundation))/config/pks.yml
+      ENV_FILE: foundations/config/env.yml
+      VARS_FILES: |
+        vars/foundations/((foundation))/vars/director.yml
+        vars/foundations/((foundation))/vars/pks.yml
+
+- name: configure-tas
+  serial: true
+  serial_groups: [ install ]
+  plan:
+    - in_parallel:
+      - get: platform-automation-image
+        params:
+          unpack: true
+        passed:
+          - download-upload-and-stage-tas
+        trigger: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: configure-tas
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-product.yml
+      input_mapping:
+        config: configuration
+        env: configuration
+        vars: configuration
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/tas.yml
+        ENV_FILE: foundations/config/env.yml
+        VARS_FILES: |
+          vars/foundations/((foundation))/vars/tas.yml
+          vars/foundations/((foundation))/vars/director.yml
+
+- name: configure-healthwatch
+  serial: true
+  serial_groups: [ install ]
+  plan:
+    - in_parallel:
+      - get: platform-automation-image
+        params:
+          unpack: true
+        passed:
+          - download-upload-and-stage-healthwatch
+        trigger: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: configure-healthwatch
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-product.yml
+      input_mapping:
+        config: configuration
+        env: configuration
+        vars: configuration
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/healthwatch.yml
+        ENV_FILE: foundations/config/env.yml
+        VARS_FILES: |
+          vars/foundations/((foundation))/vars/director.yml
+
+- name: configure-healthwatch-pas-exporter
+  serial: true
+  serial_groups: [ install ]
+  plan:
+    - in_parallel:
+      - get: platform-automation-image
+        params:
+          unpack: true
+        passed:
+          - download-upload-and-stage-healthwatch-pas-exporter
+        trigger: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: configure-healthwatch
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-product.yml
+      input_mapping:
+        config: configuration
+        env: configuration
+        vars: configuration
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/healthwatch-pas-exporter.yml
+        ENV_FILE: foundations/config/env.yml
+        VARS_FILES: |
+          vars/foundations/((foundation))/vars/director.yml
+
+- name: configure-healthwatch-pks-exporter
+  serial: true
+  serial_groups: [ install ]
+  plan:
+    - in_parallel:
+      - get: platform-automation-image
+        params:
+          unpack: true
+        passed:
+          - download-upload-and-stage-healthwatch-pks-exporter
+        trigger: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: configure-healthwatch
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-product.yml
+      input_mapping:
+        config: configuration
+        env: configuration
+        vars: configuration
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/healthwatch-pks-exporter.yml
+        ENV_FILE: foundations/config/env.yml
+        VARS_FILES: |
+          vars/foundations/((foundation))/vars/director.yml
+
+- name: apply-product-changes
+  serial: true
+  serial_groups: [ install ]
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+      passed:
+      - configure-pks
+      - configure-tas
+      - configure-healthwatch
+      - configure-healthwatch-pas-exporter
+      - configure-healthwatch-pks-exporter
+      trigger: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: pre-deploy-check
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/pre-deploy-check.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: apply-product-changes
+    attempts: 3
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/apply-changes.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+  - task: check-pending-changes
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/check-pending-changes.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      ALLOW_PENDING_CHANGES: true
+  - task: export-installation
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/export-installation.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      INSTALLATION_FILE: ((foundation))-installation-$timestamp.zip
+  - put: installation
+    params:
+      file: installation/((foundation))-installation*.zip
+- name: run-tas-smoketest-errand
+  serial: true
+  plan:
+  - in_parallel:
+    - get: platform-automation-image
+      params:
+        unpack: true
+      passed:
+      - configure-pks
+      - configure-tas
+      - configure-healthwatch
+      trigger: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: run-bosh-errand
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/run-bosh-errand.yml
+    input_mapping:
+      env: configuration
+    params:
+      PRODUCT_NAME: cf
+      ERRAND_NAME: smoke_tests
+      ENV_FILE: foundations/config/env.yml
+      OPSMAN_SSH_PRIVATE_KEY: ((ops_manager_ssh_private_key))
+- name: collect-telemetry
+  serial: true
+  serial_groups: [ install ]
+  plan:
+  - in_parallel:
+    - get: telemetry-collector-binary
+      params:
+        unpack: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+      passed:
+      - apply-product-changes
+      trigger: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: configuration
+  - task: prepare-tasks-with-secrets
+    <<: *prepare-tasks-with-secrets
+  - task: prepare-image
+    <<: *prepare-image
+  - task: collect-telemetry-data
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/collect-telemetry.yml
+    input_mapping:
+      env: configuration
+      config: configuration
+    params:
+      CONFIG_FILE: foundations/((foundation))/config/telemetry.yml
+      ENV_FILE: foundations/config/env.yml
+  - task: send-telemetry-data
+    attempts: 3
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/send-telemetry.yml
+    params:
+      API_KEY: no-op-test-key
+      DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
+- name: expiring-certificates
+  serial: true
+  serial_groups: [ install ]
+  plan:
+    - in_parallel:
+      - get: daily-trigger
+        trigger: true
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+      - get: state
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: expiring-certificates
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/expiring-certificates.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+        EXPIRES_WITHIN: 2m
+- name: stage-configure-apply-telemetry
+  serial_groups: [install]
+  plan:
+    - in_parallel:
+      - get: platform-automation-image
+        params:
+          unpack: true
+        passed:
+          - apply-product-changes
+        trigger: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: prepare-image
+      <<: *prepare-image
+    - task: stage-configure-apply
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/stage-configure-apply.yml
+      attempts: 3
+      params:
+        CONFIG_FILE: foundations/((foundation))/config/p-telemetry.yml
+        STAGE_PRODUCT_CONFIG_FILE: foundations/((foundation))/config/p-telemetry.yml
+        ENV_FILE: foundations/config/env.yml
+        VARS_FILES: |
+          vars/foundations/((foundation))/vars/director.yml
+      input_mapping:
+        env: configuration
+        config: configuration
+        vars: configuration
+- name: delete-installation
+  serial: true
+  serial_groups: [install]
+  plan:
+    - in_parallel:
+      - get: platform-automation-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: configuration
+      - get: state
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: delete-installation
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/delete-installation.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+    - task: delete-vm
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/delete-vm.yml
+      input_mapping:
+        config: configuration
+      params:
+        OPSMAN_CONFIG_FILE: foundations/((foundation))/config/opsman.yml
+        STATE_FILE: state-((foundation)).yml
+      ensure:
+        do:
+        - put: state
+          params:
+            file: generated-state/state-((foundation)).yml
+- name: create-root-ca
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: create-root-ca
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+
+- name: apply-new-ca
+  serial: true
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+          passed:
+            - create-root-ca
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: pre-deploy-check
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/pre-deploy-check.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+    - task: apply-product-changes
+      attempts: 3
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/apply-changes.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+        SELECTIVE_DEPLOY_PRODUCTS: "cf,p-bosh,p-healthwatch2,p-healthwatch2-pas-exporter,pivotal-telemetry-om"
+
+- name: activate-new-ca-and-regenerate-certs
+  serial: true
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+          passed:
+            - apply-new-ca
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: activate-new-ca
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/activate-certificate-authority.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+    - task: regenerate-certificates
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/regenerate-certificates.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+
+- name: apply-certificates
+  serial: true
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+          passed:
+            - activate-new-ca-and-regenerate-certs
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: pre-deploy-check
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/pre-deploy-check.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+    - task: apply-product-changes
+      attempts: 3
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/apply-changes.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+        SELECTIVE_DEPLOY_PRODUCTS: "cf,p-bosh,p-healthwatch2,p-healthwatch2-pas-exporter,pivotal-telemetry-om"
+
+- name: cleanup-ca-certificate-authorities
+  serial: true
+  plan:
+    - in_parallel:
+        - get: platform-automation-image
+          params:
+            unpack: true
+          passed:
+            - apply-certificates
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: configuration
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: delete-certificate-authority
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/delete-certificate-authority.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+    - task: pre-deploy-check
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/pre-deploy-check.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+    - task: apply-product-changes
+      attempts: 3
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/apply-changes.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+        SELECTIVE_DEPLOY_PRODUCTS: "cf,p-bosh,p-healthwatch2,p-healthwatch2-pas-exporter,pivotal-telemetry-om"
+```
