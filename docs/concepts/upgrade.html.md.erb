@@ -34,8 +34,8 @@ Both methods require an exported installation.
 
 1. **Recovery using the upgrade-opsman task**. Depending on the error,
    the VM could be recovered by re-running [`upgrade-opsman`](./tasks.html#upgrade-opsman).
-   This may or may not require a change to the [state file][state],
-   depending on if there is an [ensure][concourse-ensure] 
+   This may or may not require a change to the [state file](../inputs-outputs.html#state),
+   depending on if there is an [ensure](ttps://concourse-ci.org/jobs.html#schema.step.ensure) 
    set for the state file resource.
    
 1. **Manual recovery**. The VM can always be recovered manually 
@@ -58,29 +58,29 @@ There may be an instance in which you want to restore a previous Ops Manager VM
 before completing the upgrade process.
 
 It is recommended to restore a previous Ops Manager VM manually.
-The [Running Commands Locally How-to Guide][running-commands-locally]
-is a helpful resource to get started with the manual process below. 
+See [Running Commands Locally](../how-to-guides/running-commands-locally.html)
+to get started with the manual process below. 
 
 1. Run `delete-vm` on the failed or non-desired Ops Manager
-   using the [`state.yml`][state] if applicable. 
-   [`opsman.yml`][opsman-config] is required for this command.
+   using the [`state.yml`](../inputs-outputs.html#state) if applicable. 
+   [`opsman.yml`](../inputs-outputs.html#ops-manager-config) is required for this command.
    ```bash
    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
    p-automator delete-vm --state-file state.yml --config opsman.yml
    ```
    
-1. Run `create-vm` using either an empty [`state.yml`][state]
+2. Run `create-vm` using either an empty [`state.yml`](../inputs-outputs.html#state)
    or the state output by the previous step. 
    This command requires the image file from Tanzu Network
    of the original version that was deployed (yml, ova, raw).
-   [`opsman.yml`][opsman-config] is required for this command.
+   [`opsman.yml`](../inputs-outputs.html#ops-manager-config) is required for this command.
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
     p-automator create-vm --config opsman.yml --image-file original-opsman-image.yml \
     --state state.yml
     ```
    
-1. Run `import-installation`.
+3. Run `import-installation`.
    This command requires the exported installation of the original Ops Manager
    and the `env.yml` used by Platform Automation Toolkit
    ```bash
