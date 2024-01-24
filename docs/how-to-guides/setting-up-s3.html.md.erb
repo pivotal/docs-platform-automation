@@ -1,11 +1,10 @@
 # Setting up S3 for file storage
 
-In this guide,
-you will learn
+In this guide, you will learn
 how to set up an S3 bucket,
 how bucket permissions work,
 what we can store in a bucket,
-and how a pipeline may be set up
+and how a pipeline can be set up
 to retrieve and store objects.
 
 ## Why use S3?
@@ -133,7 +132,7 @@ or create a custom access policy.
 
 To view bucket permissions,
 from the S3 console,
-look at the "Access" column.
+look at the **Access** column.
 
 Amazon S3 has the following Access permissions:
 
@@ -156,9 +155,9 @@ for an individual bucket.
 For simplicity, in this guide, we will use public permissions
 for Concourse to access the files.
 
-1. Under the permissions tab for a bucket, choose "Public access settings"
-1. Choose "Edit" to change the public access settings
-1. Uncheck all boxes to allow public access.
+1. Under the **Permissions** tab for a bucket, select **Public access settings**.
+1. Click **Edit** to change the public access settings.
+1. Unselect all boxes to allow public access.
 
 In general, the credentials being used
 to access an S3 compatible blobstore through Concourse
@@ -337,9 +336,9 @@ Do not change the meta information
 prepended by <code>download-product</code>.
 This information is required
 if using a <code>download-product</code> with a blobstore (that is, aws, gcs)
-in order to properly parse product versions.
+to properly parse product versions.
 <br>
-If placing a product file into an blobstore bucket manually,
+If you are placing a product file into an blobstore bucket manually,
 ensure that it has the proper file name format;
 opening bracket, the product slug, a single comma, the product's version, and finally, closing bracket.
 There should be no spaces between the two brackets.
