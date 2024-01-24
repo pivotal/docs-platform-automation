@@ -585,7 +585,7 @@ February 11, 2020
 The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-4.3.2" target="_blank">Download</a>
 
 ### What's New
-- The [config]Continue migrating Platform Automation Toolkit v4.3. for the `download-product` task now recommends using `file-glob` instead of `pivnet-file-glob`.
+- The [config] for the `download-product` task now recommends using `file-glob` instead of `pivnet-file-glob`.
 
 ### Bug Fixes
 - CVE update to container image. Resolves [USN-4243-1](https://usn.ubuntu.com/4243-1/).
@@ -1650,8 +1650,9 @@ Released October 21, 2019
 | winfs-injector | [0.13.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.13.0) |
 
 ### What's New
-- [Ops Manager config for vSphere](./inputs-outputs.html#vsphere) now validates the required properties
-- The new task [expiring-certificates]
+
+- [Ops Manager config for vSphere](./inputs-outputs.html#vsphere) now validates the required properties.
+- The new task [expiring-certificates](./tasks.html#expiring-certificates)
   fails if there are any expiring certificates
   in a user specified time range.
   Root CAs cannot be included in this list until Ops Manager 2.7.

@@ -79,11 +79,11 @@ it will again complain about resources that don't exist.
 So, let's make them.
 
 The first new resource we need is the env file.
-We'll push our git repo to a remote on Github
+We'll push our git repo to a remote on GitHub
 to make this (and later, other) configuration available to the pipelines.
 
-Github has good [instructions](https://help.github.com/en/articles/adding-an-existing-project-to-github-using-the-command-line)
-you can follow to create a new repository on Github.
+GitHub has good [instructions](https://help.github.com/en/articles/adding-an-existing-project-to-github-using-the-command-line)
+you can follow to create a new repository on GitHub.
 You can skip over the part
 about using `git init` to setup your repo,
 since we [already did that](#but-first-git-init).
@@ -142,7 +142,7 @@ we need to add a resource to tell Concourse how to get it as `env`.
 
 Since this is (probably) a private repo,
 we'll need to create a deploy key Concourse can use to access it.
-Follow [Github's instructions](https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys)
+Follow [GitHub's instructions](https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys)
 for creating a read-only deploy key.
 
 Then, put the private key in CredHub so we can use it in our pipeline:
