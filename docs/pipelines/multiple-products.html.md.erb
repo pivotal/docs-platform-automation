@@ -43,7 +43,7 @@ For more information, see
 ## Installing Ops Manager and multiple products
 
 The pipeline shows how to compose the tasks
-to install Ops Manager and the Tanzu Application Service and HealthWatch products.
+to install Ops Manager and the Tanzu Application Service (TAS for VMs) and HealthWatch products.
 Its dependencies are coming from a trusted git repository,
 which can be retrieved using [this pipeline](./resources.html).
 
@@ -175,7 +175,7 @@ Platform Automation Toolkit will not create these resources for you.
 
 ### Secrets Handling
 
-This helps load secrets stored in an external credential manager -- such as CredHub.
+This helps load secrets stored in an external credential manager such as CredHub.
 Concourse support several [credential managers](https://concourse-ci.org/creds.html) natively.
  
 The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
