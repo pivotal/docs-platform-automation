@@ -52,7 +52,7 @@ Some details may be different
 if you follow along with different providers.
 If you're comfortable navigating those differences on your own,
 go for it!
-<br>See <a href="./setting-up-s3.html">Setting up S3 for file storage</a>
+<br>See <a href="./setting-up-s3.html">Setting up S3 for file storage</a>.
 <br>Similarly, in this guide, we assume the MacOS operating system.
 This should all work fine on Linux, too,
 but there might be differences in the paths you'll need to figure out.</p>
@@ -143,7 +143,7 @@ fly -v
 ```
 
 If it gives you back a version number, great!
-Skip ahead to [Setting The Pipeline](#setting-the-pipeline)
+Skip ahead to [Setting the Pipeline](#setting-the-pipeline)
 
 If it says something like `-bash: fly: command not found`,
 we have a little work to do: we've got to get `fly`.
@@ -263,7 +263,7 @@ with the version that matches the Concourse you're targeting.</p>
 
 ### <a></a> Your First Job
 
-Let's see Concourse actually _do_ something, yeah?
+Let's see Concourse actually _do_ something!
 
 Add this to your `pipeline.yml`, starting on the line after the `---`:
 
@@ -307,12 +307,21 @@ Get that done, and try again.
 Now we can add our `pipeline.yml`,
 so in the future it's easy to get back to that soothing `---` state.
 
+For new installations:
+
 ```bash
-git add pipeline.yml {% if upgradeHowTo %}vars.yml{% endif %}
-git commit -m "Add pipeline{% if upgradeHowTo %} and starter vars{% endif %}"
+git add pipeline.yml
+git commit -m "Add pipeline"
 ```
 
-Let's just make sure we're all tidy:
+If you are upgrading, use this one:
+
+```bash
+git add pipeline.yml vars.yml
+git commit -m "Add pipeline and starter vars"
+```
+
+Let's just make sure it's all tidy:
 
 ```bash
 git status
@@ -339,7 +348,7 @@ and to current-and-future teammates and collaborators.</p>
 
 Platform Automation Toolkit comes with a [`test`](../tasks.html#test) task
 meant to validate that it's been installed correctly.
-Let's use it to get setup.
+Let's use it to get set up.
 
 Add this to your `pipeline.yml`, starting on the line after the `---`:
 
@@ -466,7 +475,7 @@ start with a space, which can be easy to miss.</p>
 
 <p class="note important">
 <span class="note__title">Important</span>
-<b>Getting Your Tanzu Network Token makes it expire</b>:
+<b>Getting your Tanzu Network Token makes it expire</b>:
 <br>
 When you get your Tanzu Network token as described above,
 any previous Tanzu Network tokens you may have gotten will stop working.
