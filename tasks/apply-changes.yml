@@ -38,6 +38,14 @@ params:
   # - This is not recommended unless unless the warning failure(s)
   #   are well understood.
 
+  FORCE_LATEST_VARIABLES: false
+  # - Optional
+  # - If true, will instruct OpsMan to deploy with the latest
+  #   version of all BOSH variables, even if no stemcells are
+  #   being upgraded.
+  # - This is to provide an alternative to stemcell updates
+  #   in order to manually rotate automatically-rotated certificates.
+
   SELECTIVE_DEPLOY_PRODUCTS:
   # - Optional
   # - Comma separated list of products for apply changes.

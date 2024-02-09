@@ -14,6 +14,10 @@ if [ "${IGNORE_WARNINGS}" == "true" ]; then
   flags+=("--ignore-warnings")
 fi
 
+if [ "${FORCE_LATEST_VARIABLES}" == "true" ]; then
+  flags+=("--force_latest_variables")
+fi
+
 if [ -n "${ERRAND_CONFIG_FILE}" ]; then
   flags+=("--config" "${ERRAND_CONFIG_FILE}")
 fi
