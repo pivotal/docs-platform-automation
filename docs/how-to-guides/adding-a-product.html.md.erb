@@ -40,8 +40,9 @@ You should be able to use the pipeline YAML in this document with any pipeline,
 as long as you make sure the above names match up with what's in your pipeline,
 either by changing the example YAML or your pipeline.
 
-## Download Upload and Stage Product to Operations Manager
-For this guide, we're going to add the Tanzu Application Service(https://network.pivotal.io/products/elastic-runtime) product.
+## Download, upload, and stage product to Tanzu Operations Manager
+
+For this guide, we're going to add the [VMware Tanzu Application Service for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/) product.
 
 ### Download
 Before setting the pipeline, we will have to
@@ -255,9 +256,9 @@ and then run `staged-config` for the [Tanzu Application Service](https://network
 For more information on Running Commands Locally,
 see the corresponding [How-to Guide](./running-commands-locally.html).
 
-After the image has been downloaded from [Tanzu Network](https://network.pivotal.io/products/platform-automation)
-we're going to need the product name recognized byOperations Manager.
-This can be found using `om`, but first we should import the image
+After you download the image from [Tanzu Network](https://network.tanzu.vmware.com/products/platform-automation/)
+you need the product name recognized by Tanzu Operations Manager.
+This can be found using `om`, but first, import the image.
 
 ```bash
 export ENV_FILE=env.yml
@@ -281,8 +282,8 @@ The result should be a table that looks like the following
 ```
 
 `p-bosh` is the name of the director.
-As `cf` is the only other product on our Operations Manager,
-we can safely assume that this is the product name for Tanzu Application Service(https://network.pivotal.io/products/elastic-runtime).
+As `cf` is the only other product on our Tanzu Operations Manager,
+we can safely assume that this is the product name for [Tanzu Application Service](https://network.tanzu.vmware.com/products/elastic-runtime/).
 
 Using the product name `cf`,
 let's extract the current configuration from Operations Manager.
@@ -636,7 +637,7 @@ outlined in the how-to guide is `config-template`.
 `config-template` is an `om` command that creates a base config file with optional ops files
 from a given tile or pivnet slug.
 
-This section will assume Tanzu Application Service(https://network.pivotal.io/products/elastic-runtime), like the how-to guide above.
+This section will assume [TAS for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/), as in the how-to guide above.
 
 #### Generate the Config Template Directory
 
@@ -801,7 +802,7 @@ There are two recommended ways to support multiple foundation workflows:
 using [secrets management](../concepts/secrets-handling.html) or ops files.
 This section will explain how to support multiple foundations using ops files.
 
-Starting with an **incomplete** Tanzu Application Service(https://network.pivotal.io/products/elastic-runtime) config from vSphere as an example:
+Starting with an incomplete [Tanzu Application Service](https://network.tanzu.vmware.com/products/elastic-runtime/) config from **vSphere** as an example:
 
 <%= partial "cf-partial-config" %>
 
