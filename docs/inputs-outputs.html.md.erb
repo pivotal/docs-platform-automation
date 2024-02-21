@@ -24,16 +24,15 @@ The IAAS specific configuration can be found in the Ops Manager API documentatio
 Included below is a list of properties that can be set in the `director.yml`
 and a link to the API documentation explaining any IAAS specific properties.
 
-* `az-configuration` - a list of availability zones [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Availability-Zones/paths/~1api~1v0~1staged~1director~1availability_zones/get)
-* `network-assignment` - the network the bosh director is deployed to [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1director~1network_and_az/put)
-* `networks-configuration` - a list of named networks [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Networks/paths/~1api~1v0~1staged~1director~1networks/put)
-* `properties-configuration` [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Properties/paths/)
-    * `iaas_configuration` - configuration for the bosh IAAS CPI
-    * `director_configuration` - properties for the bosh director
-    * `security_configuration` - security properties for the bosh director
-    * `syslog_configuration` - configure the syslog sinks for the bosh director
-* `resource-configuration` - IAAS VM flavor for the bosh director [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Job-Resource-Configuration/paths/~1api~1v0~1staged~1products~1{product_guid}~1resources/get)
-* `vmextensions-configuration` - create/update/delete VM extensions [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/VM-Extensions)
+* `az-configuration` - a list of [availability zones](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Availability-Zones/paths/~1api~1v0~1staged~1director~1availability_zones~1%7Baz_guid%7D/get)
+* `network-assignment` - the [network](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1director~1network_and_az/put) the BOSH Director is deployed to
+* `networks-configuration` - a list of [named networks](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Networks/paths/~1api~1v0~1staged~1director~1networks/get)
+* `properties-configuration` - [BOSH Director configuration and properties](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Properties/paths/~1api~1v0~1staged~1director~1properties/get)
+    * `director_configuration` - BOSH Director properties
+    * `security_configuration` - BOSH Director security properties
+    * `syslog_configuration` - configure the syslog sinks for the BOSH Director
+* `resource-configuration` - [IAAS VM flavor](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Job-Resource-Configuration/paths/~1api~1v0~1staged~1products~1%7Bproduct_guid%7D~1jobs~1%7Bjob_guid%7D~1resource_config/get) for the BOSH Director
+* `vmextensions-configuration` - create/update/delete [VM extensions](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/VM-Extensions)
 
 ### GCP Shared VPC
 
@@ -271,7 +270,7 @@ These required properties are adapted from the instructions outlined in
 
 ## opsman image
 
-This file is an [artifact from Tanzu Network](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/index.html),
+This file is an [artifact from Tanzu Network](https://network.tanzu.vmware.com/products/ops-manager/),
 which contains the VM image for a specific IaaS.
 For vsphere and openstack, it's a full disk image.
 For AWS, GCP, and Azure, it's a YAML file listing the location
@@ -361,9 +360,9 @@ For brevity, this `product.yml` is a basic example for `healthwatch`.
 Included below is a list of properties that can be set in the `product.yml`
 and a link to the API documentation explaining the properties.
 
-* `product-properties` - properties for the tile [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Properties/paths/~1api~1v0~1staged~1products~1{product_guid}~1properties/get)
-* `network-properties` - a list of named networks to deploy the VMs to [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1:product_guid~1networks_and_azs/put)
-* `resource-config` - for the jobs of the tile [Ops Manager API](https://docs.pivotal.io/platform/2-10/opsman-api/#tag/Job-Resource-Configuration/paths/~1api~1v0~1staged~1products~1{product_guid}~1resources/get)
+* `product-properties` - [Tanzu Operations Manager tile properties](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Properties/paths/~1api~1v0~1staged~1director~1properties/get)
+* `network-properties` - a list of [Tanzu Operations Manager named networks](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1:product_guid~1networks_and_azs/get)
+* `resource-config` - for the jobs of the [Tanzu Operations Manager tile](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/2-10/opsman-api/#tag/Job-Resource-Configuration/paths/~1api~1v0~1staged~1products~1%7Bproduct_guid%7D~1jobs~1%7Bjob_guid%7D~1resource_config/put)
 
 ## state
 
