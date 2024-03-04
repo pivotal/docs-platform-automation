@@ -1,42 +1,43 @@
 # VMware Tanzu Operations Manager and multiple products
 
-Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't. VMware recommends that you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
+In this topic you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints. VMware recommends that you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task, see the [Task Reference](../tasks.html).
 
-These Concourse pipelines are examples of how to use the [tasks](../tasks.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
+These Concourse pipelines are examples of how to use the tasks. If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
 
 ## Prerequisites
 
 * Deployed Concourse
 
-<p class="note">
-<span class="note__title">Note</span>
-Platform Automation Toolkit is based on Concourse CI.
-We recommend that you have some familiarity with Concourse before getting started.
-If you are new to Concourse, <a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Concourse CI Tutorials</a> is a good place to start.</p>
+  <p class="note">
+  <span class="note__title">Note</span>
+  Platform Automation Toolkit is based on Concourse CI.
+  We recommend that you have some familiarity with Concourse before getting started.
+  If you are new to Concourse, <a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Concourse CI Tutorials</a> is a good place to start.</p>
 
-* Persisted datastore that can be accessed by Concourse resource (e.g. s3, gcs, minio)
+* Persisted datastore that can be accessed by Concourse resource (for example, s3, gcs, minio)
 * A valid [Env file](../how-to-guides/configuring-env.md#generating-env-file): this file will contain credentials necessary to login to Tanzu Operations Manager using the `om` CLI.
 It is used by every task within Platform Automation Toolkit
 * A valid [Auth file](../how-to-guides/configuring-auth.md#auth-file): this file will contain the credentials necessary to create the Tanzu Operations Manager login the first time
-the VM is created. The choices for this file are simple or saml authentication.
+the VM is created. The choices for this file are:
+  * simple authentication
+  * saml authentication
 
-<p class="note">
-<span class="note__title">Note</span>
-There will be some crossover between the auth file and the env file due to how <code>om</code> is set up and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you in order to maintain consistency across files.</p>
+  <p class="note">
+  <span class="note__title">Note</span>
+  There will be some crossover between the auth file and the env file due to how <code>om</code> is set up and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you to maintain consistency across files.</p>
 
-* An [opsman-configuration](../inputs-outputs.md) file: This file is required to connect to an IAAS, and control the lifecycle management
- of the Tanzu Operations Manager VM
-* A [director-configuration](../how-to-guides/creating-a-director-config-file.md) file: Each Tanzu Operations Manager needs its own configuration, but it is retrieved differently from
-a product configuration. This config is used to deploy a new Tanzu Operations Manager director, or update an existing one.
+* An [opsman-configuration](../inputs-outputs.md) file: This file is required to connect to an IAAS, and to control
+the lifecycle management of the Tanzu Operations Manager VM.
+* A [director-configuration](../how-to-guides/creating-a-director-config-file.md) file: Each Tanzu Operations Manager needs its own configuration, but it is retrieved differently than
+a product configuration. This config is used to deploy a new Tanzu Operations Manager director, or to update an existing one.
 * A set of valid [product-configuration](../how-to-guides/adding-a-product.md) files: Each product configuration is a yaml file that contains the properties
 necessary to configure a Tanzu Operations Manager product using the `om` tool. This can be used during install or update.
 * (Optional) A working [CredHub](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/credhub-index.html) setup with its own UAA client and secret.
 
-<p class="note">
-<span class="note__title">Note</span>
-<b>Retrieving products from Tanzu Network:</b>
-Ensure that products have been procured from Tanzu Network using the information in
-<a href="../pipelines/resources.md">Retrieving external dependencies</a>.</p>
+  <p class="note">
+  <span class="note__title">Note</span>
+  Ensure that products have been procured from Tanzu Network using the information in
+  <a href="../pipelines/resources.md">Retrieving external dependencies</a>.</p>
 
 ## Installing VMware Tanzu Operations Manager and multiple products
 
@@ -47,19 +48,19 @@ which can be retrieved as shown in [Retrieving external dependencies](../pipelin
 
 ### Full pipeline and reference configurations
 
-The [docs-platform-automation-reference-pipeline-config git repository](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config)
+The [docs-platform-automation-reference-pipeline-config](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) git repository
 contains the [full pipeline file](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/pipelines/pipeline.yml),
 along with other pipeline and configuration examples.
 
 This can be useful when you want to take
-a fully assembled pipeline as a starting point;
-the rest of this document covers the sections of the full pipeline in more detail.
+a fully assembled pipeline as a starting point.
+The rest of this document covers the sections of the full pipeline in more detail.
 
 ## Pipeline components
 
 ### S3 resources
 
-These can be uploaded manually or from the [reference resources pipeline](../pipelines/resources.md) in *Retrieving external dependencies*.
+These can be uploaded manually or from the [reference resources pipeline](../pipelines/resources.md).
 
 ```yaml
 resources:
@@ -91,20 +92,19 @@ resources:
     regexp: .*telemetry-(.*).tgz
 ```
 
-
 <p class="note important">
 <span class="note__title">Important</span>
-<b>Tanzu Application Service-Windows with S3:</b>
+<strong>Tanzu Application Service-Windows with S3:</strong>
 If you are retrieving <code>pas-windows</code> and <code>pas-windows-stemcell</code> from an S3 bucket,
 you must use the built in S3 concourse resource.
-This is done in the example above.
+This is shown in the previous example.
 The <code>download-product</code> task with <code>SOURCE: s3</code> does not persist meta information
 about necessary stemcell for <code>pas-windows</code>
 because VMware does not distribute the Windows file system.</p>
-    
-Alternatively, products may be downloaded using the `download-product` task with
-the param `SOURCE` set to `s3|azure|gcs`.
-In a job, specify the following task:
+
+<p>Alternatively, products may be downloaded using the <code>download-product</code> task with
+the param <code>SOURCE</code> set to <code>s3|azure|gcs</code>.
+In a job, specify the following task:</p>
 
 ```yaml
 ...
@@ -139,7 +139,7 @@ In a job, specify the following task:
 
 ### Configured resources
 
-These contain values for
+These configured resources contain values for
 Tanzu Operations Manager VM creation, director, product, foundation-specific vars, auth, and env files.
 For more details, see the [Inputs and outputs](../inputs-outputs.md) section.
 Platform Automation Toolkit will not create these resources for you.
@@ -184,7 +184,7 @@ Platform Automation Toolkit will not create these resources for you.
 
 ### Secrets handling
 
-This helps load secrets stored in an external credential manager such as CredHub.
+This secrets handling example helps load secrets stored in an external credential manager such as CredHub.
 Concourse support several [credential managers](https://concourse-ci.org/creds.html) natively.
 
 The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.md#prepare-tasks-with-secrets) task
@@ -210,7 +210,7 @@ prepare-tasks-with-secrets: &prepare-tasks-with-secrets
 
 ### Jobs
 
-Each job corresponds to a "box"
+Each job corresponds to a box
 on the visual representation of your Concourse pipeline.
 These jobs consume resources defined above.
 
