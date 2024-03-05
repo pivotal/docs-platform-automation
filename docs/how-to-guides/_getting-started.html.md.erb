@@ -354,20 +354,20 @@ before the task, as shown here:
           file: platform-automation-tasks/tasks/test.yml
     ```
 
-<p class="note">
-<span class="note__title">Note</span>
-There is a smaller vSphere container image available.
-To use it instead of the general purpose image,
-you can use this glob to get the image:
-<br>
-  <code>
-    - get: platform-automation-image
-      resource: platform-automation
-      params:
-        globs: ["vsphere-platform-automation-image*.tar.gz"]
-        unpack: true
-  </code>
-</p>
+    <p class="note">
+    <span class="note__title">Note</span>
+    There is a smaller vSphere container image available.
+    To use it instead of the general purpose image,
+    you can use this glob to get the image:
+    <br>
+      <code>
+        - get: platform-automation-image
+          resource: platform-automation
+          params:
+            globs: ["vsphere-platform-automation-image*.tar.gz"]
+            unpack: true
+      </code>
+    </p>
 
 1. Next, you might try to `fly set` this new pipeline. At this stage, you will see that it is not ready yet,
 and `fly` will return a message about invalid resources.
@@ -388,106 +388,106 @@ we have to teach Concourse to talk to Tanzu Network.
 
 1. Add the following to your pipeline file, above the `jobs` entry.
 
-  ```yaml
-  resource_types:
-  - name: pivnet
-    type: docker-image
-    source:
-      repository: pivotalcf/pivnet-resource
-      tag: latest-final
-  resources:
-  - name: platform-automation
-    type: pivnet
-    source:
-      product_slug: platform-automation
-      api_token: ((pivnet-refresh-token))
-  ```
+    ```yaml
+    resource_types:
+    - name: pivnet
+      type: docker-image
+      source:
+        repository: pivotalcf/pivnet-resource
+        tag: latest-final
+    resources:
+    - name: platform-automation
+      type: pivnet
+      source:
+        product_slug: platform-automation
+        api_token: ((pivnet-refresh-token))
+    ```
 
-  The API token is a credential,
-  which you pass in using the command-line when setting the pipeline,
-  You don't want to accidentally check it in.
+    The API token is a credential,
+    which you pass in using the command-line when setting the pipeline,
+    You don't want to accidentally check it in.
 
-  <p class="note important">
-  <span class="note__title">Important</span>
-  Bash commands that start with a space character
-  are not saved in your history.
-  This can be very useful for cases like this,
-  where you want to pass a secret,
-  but you don't want it saved.
-  Commands in this guide that contain a secret
-  start with a space, which can be easy to miss.</p>
+    <p class="note important">
+    <span class="note__title">Important</span>
+    Bash commands that start with a space character
+    are not saved in your history.
+    This can be very useful for cases like this,
+    where you want to pass a secret,
+    but you don't want it saved.
+    Commands in this guide that contain a secret
+    start with a space, which can be easy to miss.</p>
 
 1. Get a refresh token from your Tanzu Network profile
 (when logged in, click your user name, then **Edit Profile**)
 and click **Request New Refresh Token**.)
-  Then use that token in the following command:
+    Then use that token in the following command:
 
-  ```bash
-  # note the space before the command
-  fly -t control-plane set-pipeline \
-      -p foundation \
-      -c pipeline.yml \
-      -v pivnet-refresh-token=your-api-token
-  ```
+    ```bash
+    # note the space before the command
+    fly -t control-plane set-pipeline \
+        -p foundation \
+        -c pipeline.yml \
+        -v pivnet-refresh-token=your-api-token
+    ```
 
-  <p class="note caution">
-  <span class="note__title">Caution</span>
-  When you get your Tanzu Network token as described above,
-  any previous Tanzu Network tokens you have stop working.
-  If you're using your Tanzu Network refresh token anywhere,
-  retrieve it from your existing secret storage rather than getting a new one,
-  or you'll end up needing to update it everywhere it's used.</p>
+    <p class="note caution">
+    <span class="note__title">Caution</span>
+    When you get your Tanzu Network token as described above,
+    any previous Tanzu Network tokens you have stop working.
+    If you're using your Tanzu Network refresh token anywhere,
+    retrieve it from your existing secret storage rather than getting a new one,
+    or you'll end up needing to update it everywhere it's used.</p>
 
 1. Go back to the Concourse UI and trigger another build. This time, it should pass.
 
 1. Now it's time to commit.
 
-  ```bash
-  git add pipeline.yml
-  git commit -m "Add resources needed for test task"
-  ```
+    ```bash
+    git add pipeline.yml
+    git commit -m "Add resources needed for test task"
+    ```
 
 1. It's better not to pass the Tanzu Network token
 every time you need to set the pipeline.
 Fortunately, Concourse can integrate
 with secret storage services, like CredHub. In this step, put the API token in CredHub so Concourse can get it.
 
-  <p class="note">
-  <span class="note__title">Note</span>
-  <b>Backslashes in bash examples:</b>
-  The following example has been broken across multiple lines
-  by using backslash characters (<code>\</code>) to escape the newlines.
-  The backslash is used in here to keep the examples readable.
-  When you're typing these out,
-  you can skip the backslashes and put it all on one line.</p>
+    <p class="note">
+    <span class="note__title">Note</span>
+    <b>Backslashes in bash examples:</b>
+    The following example has been broken across multiple lines
+    by using backslash characters (<code>\</code>) to escape the newlines.
+    The backslash is used in here to keep the examples readable.
+    When you're typing these out,
+    you can skip the backslashes and put it all on one line.</p>
 
 1. First, log in. Again, note the space at the start.
 
-  <%= partial "logging-into-credhub" %>
+    <%= partial "logging-into-credhub" %>
 
 1. Next, set the credential name
 to the path [where Concourse will look for it](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):
 
-  ```bash
-  # note the starting space
-  credhub set \
-          --name /concourse/your-team-name/pivnet-refresh-token \
-          --type value \
-          --value your-credhub-refresh-token
-  ```
+    ```bash
+    # note the starting space
+    credhub set \
+            --name /concourse/your-team-name/pivnet-refresh-token \
+            --type value \
+            --value your-credhub-refresh-token
+    ```
 
 1. Now, set the pipeline again,
 without passing a secret this time.
 
-  ```bash
-  fly -t control-plane set-pipeline \
-      -p foundation \
-      -c pipeline.yml
-  ```
+    ```bash
+    fly -t control-plane set-pipeline \
+        -p foundation \
+        -c pipeline.yml
+    ```
 
-  This should succeed,
-  and the diff Concourse shows you should replace the literal credential
-  with `((pivnet-refresh-token))`.
+    This should succeed,
+    and the diff Concourse shows you should replace the literal credential
+    with `((pivnet-refresh-token))`.
 
 1. Go to the UI again and re-run the test job;
 this should also succeed.
