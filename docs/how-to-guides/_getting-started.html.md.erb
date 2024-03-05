@@ -70,7 +70,7 @@ and be specific enough to be navigable from your local workstation.
 <code>!$</code> is a bash shortcut.
 Pronounced "bang, dollar-sign,"
 it means "use the last argument from the most recent command."
-In this case, that's the directory we just created.</p>
+In this case, that's the directory you just created.</p>
 
 ### Gather variables to use in the pipeline (for upgrade only)
 If you are upgrading, continue with the following. If not, skip to [Creating a pipeline](#creating-a-pipeline).
@@ -280,17 +280,16 @@ see <a href="./git-repo-layout.md">Why use Git and GitHub?</a>
 
 When this is done, you can safely make changes.
 
-<p class="note important">
-<span class="note__title">Important</span>
-<code>git</code> commits are the basic unit of code history.
-<br>
-Making frequent, small, commits with good commit messages
-makes it much easier to figure out why things are the way they are,
-and to return to the way things were in simpler, better times.
-Writing short commit messages that capture the intent of the change
-really does make the pipeline history much more legible,
-both to future-you,
-and to current and future teammates and collaborators.</p>
+    <p class="note important">
+    <span class="note__title">Important</span>
+    <code>git</code> commits are the basic unit of code history.
+    Making frequent, small, commits with good commit messages
+    makes it much easier to figure out why things are the way they are,
+    and to return to the way things were in simpler, better times.
+    Writing short commit messages that capture the intent of the change
+    really does make the pipeline history much more legible,
+    both to future-you,
+    and to current and future teammates and collaborators.</p>
 
 #### <a></a> The test task
 
@@ -382,8 +381,8 @@ You need an image and the tasks directory,
 so you need to tell Concourse how to get these things by declaring Resources for them.
 
 In this case, you will download the image and the tasks directory from [Tanzu Network](https://network.tanzu.vmware.com/).
-Before we can declare the resources themselves,
-we have to teach Concourse to talk to Tanzu Network.
+Before you can declare the resources themselves,
+you must teach Concourse to talk to Tanzu Network.
 (Many resource types are built in, but this one isn't.)
 
 1. Add the following to your pipeline file, above the `jobs` entry.

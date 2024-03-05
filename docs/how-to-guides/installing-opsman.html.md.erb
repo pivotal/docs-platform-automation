@@ -54,17 +54,17 @@ So, you also need to add `serial: true` to the job.
             CONFIG_FILE: download-ops-manager.yml
     ```
 
-      1. If we try to `fly` this up to Concourse,
+      1. If you try to `fly` this up to Concourse,
       it will again throw errors about resources that don't exist,
       so the next step is to make them.
-      The first new resource we need is the config file.
+      The first new resource you need is the config file.
       2. Push your git repo to a remote on GitHub
       to make this (and later, other) configuration available to the pipelines.
       GitHub has good [instructions](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)
       you can follow to create a new repository on GitHub.
       You can skip over the part
       about using `git init` to set up your repo,
-      since we did that earlier.
+      since you did that earlier.
 
 1. Now set up your remote
 and use `git push` to make it available.
@@ -99,15 +99,15 @@ later when you declare the corresponding resource.
     git push
     ```
 
-    Now that the download-ops-manager file we need is in git,
-    we need to add a resource to tell Concourse how to get it as `config`.
+    Now that the download-ops-manager file you need is in git,
+    you need to add a resource to tell Concourse how to get it as `config`.
 
 1. Since this is (probably) a private repo,
 you need to create a deploy key Concourse can use to access it.
 Follow the [GitHub instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys)
 for creating a deploy key.
 
-2. Then, put the private key in CredHub so we can use it in our pipeline:
+2. Then, put the private key in CredHub so you can use it in your pipeline:
 
     ```bash
     # note the space at the beginning of the next line
@@ -146,8 +146,8 @@ In earlier steps, you relied on Concourse's native integration with CredHub for 
 That worked because you needed to use the variable
 in the pipeline itself, not in one of our inputs.
 
-    We can add it to our job
-    after we've retrieved our `download-ops-manager.yml` input,
+    You can add it to your job
+    after you have retrieved the `download-ops-manager.yml` input,
     but before the `download-product` task:
 
     ```yaml hl_lines="16-24"
@@ -374,7 +374,7 @@ you can add the new task to the `install-opsman` job.
           file: platform-automation-tasks/tasks/create-vm.yml
     ```
 
-1. If we try to `fly` this up to Concourse, it will again complain
+1. If you try to `fly` this up to Concourse, it will again complain
 about resources that don't exist, so it's time to make them.
 Two new inputs need to be added for `create-vm`:
 
@@ -445,25 +445,25 @@ If you created your infrastructure manually
 or would like additional configuration options,
 these are the acceptable keys for the `opsman.yml` file for each IaaS.
 
-    **AWS**
+**AWS**
 
-    <%= partial "../examples/opsman-config/aws" %>
+<%= partial "../examples/opsman-config/aws" %>
 
-    **Azure**
+**Azure**
 
-    <%= partial "../examples/opsman-config/azure" %>
+<%= partial "../examples/opsman-config/azure" %>
 
-    **GCP**
+**GCP**
 
-    <%= partial "../examples/opsman-config/gcp" %>
+<%= partial "../examples/opsman-config/gcp" %>
 
-    **Openstack**
+**Openstack**
 
-    <%= partial "../examples/opsman-config/openstack" %>
+<%= partial "../examples/opsman-config/openstack" %>
 
-    **vSphere**
+**vSphere**
 
-    <%= partial "../examples/opsman-config/vsphere" %>
+<%= partial "../examples/opsman-config/vsphere" %>
 
 ### Using the Tanzu Operations Manager config file
 
@@ -557,7 +557,7 @@ and the placeholder state file.
     Before you run the job,
     [`ensure`](https://concourse-ci.org/jobs.html#schema.step.ensure) that `state.yml` is always persisted
     regardless of whether the `install-opsman` job failed or passed.
-    To do this, we can add the following section to the job:
+    To do this, you can add the following section to the job:
 
     ```yaml hl_lines="37-56"
     jobs:
