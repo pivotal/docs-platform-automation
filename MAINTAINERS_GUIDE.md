@@ -524,6 +524,14 @@ GCP Load Balancers [do not support](https://issuetracker.google.com/issues/35904
 1. Update the Credhub instance with new values.
   * `credhub import -f export.yml`
 
+#### Rotating the Reference Pipeline Environment's certificates
+
+In our pipeline for the reference pipeline, there is a job called "[expiring-certificates](https://platform-automation.ci.cf-app.com/teams/main/pipelines/reference-pipeline/jobs/expiring-certificates/builds/latest)". This job will check the expiration dates for all of the certificates that the environment's ops manager knows about.
+
+It does this by using `om --env env/foundations/config/env.yml expiring-certificates --expires-within 2m`.
+
+If the job fails, then you'll need to read the error message which will have a description of the certificate that is expiring. It will also have a link to documentation on how to rotate the certificate. However, that link is out of date as of 2024-03-06. Here is an up to date version of the documentation: [Rotating CAs and leaf certificates using the Tanzu Operations Manager API](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/security-pcf-infrastructure-rotate-cas-and-leaf-certs.html).
+
 ## Docs Maintenance
 Most of the docs are found here in this `docs-platform-automation` repo.
 Locked versions for the docs are for every minor version released.
