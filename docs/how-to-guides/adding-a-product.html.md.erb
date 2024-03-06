@@ -430,194 +430,192 @@ commit the config file.
 
 ## Configure and apply
 
-With the hard part out of the way,
-we can now configure the product and apply changes.
+Now you can configure the product and apply changes.
 
-First, we need to update the pipeline
+1. First, update the pipeline
 to have a configure-product step.
 
-```yaml hl_lines="46-76"
-jobs:
-- name: download-upload-and-stage-tas
-  serial: true
-  plan:
-    - aggregate:
-      - get: platform-automation-image
-        resource: platform-automation
-        params:
-          globs: ["*image*.tgz"]
-          unpack: true
-      - get: platform-automation-tasks
-        resource: platform-automation
-        params:
-          globs: ["*tasks*.zip"]
-          unpack: true
-      - get: config
-    - task: prepare-tasks-with-secrets
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
-      input_mapping:
-        tasks: platform-automation-tasks
-      output_mapping:
-        tasks: platform-automation-tasks
-      params:
-        CONFIG_PATHS: config
-    - task: download-tas
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/download-product.yml
-      input_mapping:
-        config: config
-      params:
-        CONFIG_FILE: download-tas.yml
-      output_mapping:
-        downloaded-product: tas-product
-        downloaded-stemcell: tas-stemcell
-    - task: upload-tas-stemcell
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/upload-stemcell.yml
-      input_mapping:
-        env: config
-        stemcell: tas-stemcell
-      params:
-        ENV_FILE: env/env.yml
-    - task: upload-and-stage-tas
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/stage-product.yml
-      input_mapping:
-        product: tas-product
-        env: config
-- name: configure-tas
-  serial: true
-  plan:
-    - aggregate:
-      - get: platform-automation-image
-        passed: [download-upload-and-stage-tas]
-        trigger: true
-        params:
-          globs: ["*image*.tgz"]
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          globs: ["*tasks*.zip"]
-          unpack: true
-      - get: config
-        passed: [download-upload-and-stage-tas]
-    - task: prepare-tasks-with-secrets
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
-      input_mapping:
-        tasks: platform-automation-tasks
-      output_mapping:
-        tasks: platform-automation-tasks
-      params:
-        CONFIG_PATHS: config
-    - task: configure-tas
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/configure-product.yml
-      input_mapping:
-        config: config
-        env: config
-      params:
-        CONFIG_FILE: tas-config.yml
-```
+    ```yaml hl_lines="46-76"
+    jobs:
+    - name: download-upload-and-stage-tas
+      serial: true
+      plan:
+        - aggregate:
+          - get: platform-automation-image
+            resource: platform-automation
+            params:
+              globs: ["*image*.tgz"]
+              unpack: true
+          - get: platform-automation-tasks
+            resource: platform-automation
+            params:
+              globs: ["*tasks*.zip"]
+              unpack: true
+          - get: config
+        - task: prepare-tasks-with-secrets
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+          input_mapping:
+            tasks: platform-automation-tasks
+          output_mapping:
+            tasks: platform-automation-tasks
+          params:
+            CONFIG_PATHS: config
+        - task: download-tas
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/download-product.yml
+          input_mapping:
+            config: config
+          params:
+            CONFIG_FILE: download-tas.yml
+          output_mapping:
+            downloaded-product: tas-product
+            downloaded-stemcell: tas-stemcell
+        - task: upload-tas-stemcell
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/upload-stemcell.yml
+          input_mapping:
+            env: config
+            stemcell: tas-stemcell
+          params:
+            ENV_FILE: env/env.yml
+        - task: upload-and-stage-tas
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/stage-product.yml
+          input_mapping:
+            product: tas-product
+            env: config
+    - name: configure-tas
+      serial: true
+      plan:
+        - aggregate:
+          - get: platform-automation-image
+            passed: [download-upload-and-stage-tas]
+            trigger: true
+            params:
+              globs: ["*image*.tgz"]
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              globs: ["*tasks*.zip"]
+              unpack: true
+          - get: config
+            passed: [download-upload-and-stage-tas]
+        - task: prepare-tasks-with-secrets
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+          input_mapping:
+            tasks: platform-automation-tasks
+          output_mapping:
+            tasks: platform-automation-tasks
+          params:
+            CONFIG_PATHS: config
+        - task: configure-tas
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/configure-product.yml
+          input_mapping:
+            config: config
+            env: config
+          params:
+            CONFIG_FILE: tas-config.yml
+    ```
 
-This new job will configure the TAS product
-with the config file we previously created.
+    This new job will configure the TAS product
+    with the config file we previously created.
 
-Next, we need to add an apply-changes job
+2. Add an `apply-changes` job
 so that these changes will be applied by the Tanzu Operations Manager.
 
-```yaml hl_lines="31-56"
-- name: configure-tas
-  serial: true
-  plan:
-    - aggregate:
-      - get: platform-automation-image
-        trigger: true
-        params:
-          globs: ["*image*.tgz"]
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          globs: ["*tasks*.zip"]
-          unpack: true
-      - get: config
-        passed: [download-upload-and-stage-tas]
-    - task: prepare-tasks-with-secrets
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
-      input_mapping:
-        tasks: platform-automation-tasks
-      output_mapping:
-        tasks: platform-automation-tasks
-      params:
-        CONFIG_PATHS: config
-    - task: configure-tas
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/configure-product.yml
-      input_mapping:
-        config: config
-        env: config
-      params:
-        CONFIG_FILE: tas-config.yml
-- name: apply-changes
-  serial: true
-  plan:
-    - aggregate:
-      - get: platform-automation-image
-        params:
-          globs: ["*image*.tgz"]
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          globs: ["*tasks*.zip"]
-          unpack: true
-      - get: config
-        passed: [configure-tas]
-    - task: prepare-tasks-with-secrets
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
-      input_mapping:
-        tasks: platform-automation-tasks
-      output_mapping:
-        tasks: platform-automation-tasks
-      params:
-        CONFIG_PATHS: config
-    - task: apply-changes
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/apply-changes.yml
-      input_mapping:
-        env: config
-```
+    ```yaml hl_lines="31-56"
+    - name: configure-tas
+      serial: true
+      plan:
+        - aggregate:
+          - get: platform-automation-image
+            trigger: true
+            params:
+              globs: ["*image*.tgz"]
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              globs: ["*tasks*.zip"]
+              unpack: true
+          - get: config
+            passed: [download-upload-and-stage-tas]
+        - task: prepare-tasks-with-secrets
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+          input_mapping:
+            tasks: platform-automation-tasks
+          output_mapping:
+            tasks: platform-automation-tasks
+          params:
+            CONFIG_PATHS: config
+        - task: configure-tas
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/configure-product.yml
+          input_mapping:
+            config: config
+            env: config
+          params:
+            CONFIG_FILE: tas-config.yml
+    - name: apply-changes
+      serial: true
+      plan:
+        - aggregate:
+          - get: platform-automation-image
+            params:
+              globs: ["*image*.tgz"]
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              globs: ["*tasks*.zip"]
+              unpack: true
+          - get: config
+            passed: [configure-tas]
+        - task: prepare-tasks-with-secrets
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+          input_mapping:
+            tasks: platform-automation-tasks
+          output_mapping:
+            tasks: platform-automation-tasks
+          params:
+            CONFIG_PATHS: config
+        - task: apply-changes
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/apply-changes.yml
+          input_mapping:
+            env: config
+    ```
 
-<p class="note">
-<span class="note__title">Note</span>
-<b>Adding multiple products:</b>
-When adding multiple products, you can add the configure jobs as passed constraints
-to the apply-changes job so that they all are applied at once.
-Tanzu Operations Manager will handle any inter-product dependency ordering.
-This will speed up your apply changes
-when compared with running apply changes for each product separately.
-<br>
-Example:
-<code>passed: [configure-tas, configure-tas-windows, configure-healthwatch]</code>
-</p>
+    <p class="note">
+    <span class="note__title">Note</span>
+    <b>Adding multiple products:</b>
+    When adding multiple products, you can add the configure jobs as passed constraints
+    to the apply-changes job so that they all are applied at once.
+    Tanzu Operations Manager will handle any inter-product dependency ordering.
+    This will speed up your apply changes
+    when compared with running apply changes for each product separately.
+    <br>
+    Example:
+    <code>passed: [configure-tas, configure-tas-windows, configure-healthwatch]</code>
+    </p>
 
+1. Set the pipeline one final time,
+run the job, and confirm that it passes.
 
-Set the pipeline one final time,
-run the job, and see it pass.
+    ```bash
+    fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+    ```
 
-```bash
-fly -t control-plane set-pipeline -p foundation -c pipeline.yml
-```
+1. Commit the final changes to your repository.
 
-Commit the final changes to your repository.
-
-```bash
-git add pipeline.yml
-git commit -m "configure-tas and apply-changes"
-git push
-```
+    ```bash
+    git add pipeline.yml
+    git commit -m "configure-tas and apply-changes"
+    git push
+    ```
 
 You have now successfully added a product to your automation pipeline.
 
@@ -625,12 +623,14 @@ You have now successfully added a product to your automation pipeline.
 ### Config template
 
 An alternative to the staged-config workflow
-outlined in the how-to guide is `config-template`.
+outlined in these examples is `config-template`.
 
 `config-template` is an `om` command that creates a base config file with optional ops files
 from a given tile or pivnet slug.
 
-This section will assume [TAS for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/), as in the how-to guide above.
+This section assumes that you are adding 
+[TAS for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/), 
+as in the procedure above.
 
 #### Generate the config template directory
 
@@ -649,37 +649,38 @@ om config-template \
   --product-file-glob 'cf*.pivotal' # Only necessary if the product has multiple .pivotal files
 ```
 
-This will create or update a directory at `$HOME/configs/cf/2.5.0/`.
+This series of commands creates or updates a directory at `$HOME/configs/cf/2.5.0/`.
 
 `cd` into the directory to get started creating your config.
 
 #### Interpolate a Config
 
-The directory will contain a `product.yml` file.
+In the directory, you'll see a `product.yml` file.
 This is the template for the product configuration you're about to build.
 Open it in an editor of your choice.
-Get familiar with what's in there.
-The values will be variables intended to be interpolated from other sources,
+Get familiar with the file's contents.
+The values are variables intended to be interpolated from other sources,
 designated with the`(())` syntax.
 
 You can find the value for any property with a default in the `product-default-vars.yml` file.
 This file serves as a good example of a variable source.
-You'll need to create a vars file of your own for variables without default values.
-For the base template, you can get a list of required variables by running
-```bash
-docker run -it -v $HOME/configs:/configs platform-automation-image \
-om interpolate \
-  --config product.yml \
-  -l product-default-vars.yml \
-  -l resource-vars.yml \
-  -l errand-vars.yml
-```
 
-Put all those vars in a file and give them the appropriate values.
-Once you've included all the variables,
+1. Create a vars file of your own for variables without default values.
+For the base template, you can get a list of required variables by running:
+
+    ```bash
+    docker run -it -v $HOME/configs:/configs platform-automation-image \
+    om interpolate \
+      --config product.yml \
+      -l product-default-vars.yml \
+      -l resource-vars.yml \
+      -l errand-vars.yml
+    ```
+
+1. Put these vars in a file and give them the appropriate values.
+After you've included all the variables,
 the output will be the finished template.
-For the rest of this guide,
-we will refer to these vars as `required-vars.yml`.
+The rest of this guide refers to these vars as `required-vars.yml`.
 
 There may be situations that call for splitting your vars across multiple files.
 This can be useful if there are vars that need to be interpolated when you apply the configuration,
@@ -689,8 +690,8 @@ You might consider creating a separate vars file for each of the following cases
 - credentials (These vars can then be persisted separately/securely. See [Using a secrets store to store credentials](../concepts/secrets-handling.md))
 - foundation-specific variables when using the same template for multiple foundations
 
-You can use the `--skip-missing` flag when creating your final template
-using `om interpolate` to leave such vars to be rendered later.
+When creating your final template
+using `om interpolate`, you can use the `--skip-missing` flag  to leave such vars to be rendered later.
 
 If you're having trouble figuring out what the values should be,
 here are some approaches you can use:
@@ -700,8 +701,8 @@ here are some approaches you can use:
 - Upload the tile to a Tanzu Operations Manager
   and visit the tile in the Tanzu Operations Manager UI to see if that provides any hints.
   
-    If you are still struggling, inspecting the html of the Tanzu Operations Manager webpage
-    can more accurately map the value names to the associated UI element.
+    If you are still struggling, inspect the HTML of the Tanzu Operations Manager web page
+    to help you map the value names to the associated UI elements.
 
 <p class="note">
 <span class="note__title">Note</span>
@@ -717,33 +718,33 @@ that is entirely deployed in a single Availability Zone (AZ).
 To provide non-required variables,
 use multiple AZs,
 or make non-default selections for some options,
-you'll need to use some of the ops files in one of the following four directories:
+use some of the ops files in one of the following four directories:
 
 <table>
     <tr>
-        <td>features</td>
+        <td><strong>features</strong></td>
         <td>Allow the enabling of selectors for a product; for example, enabling/disabling of an s3 bucket</td>
     </tr>
     <tr>
-        <td>network</td>
+        <td><strong>network</strong></td>
         <td>Contains options for enabling 2-3 availability zones for network configuration</td>
     </tr>
     <tr>
-        <td>optional</td>
+        <td><strong>optional</strong></td>
         <td>Contains optional properties without defaults. For optional values that can be provided more than once, there's an ops file for each param count.</td>
     </tr>
     <tr>
-        <td>resource</td>
+        <td><strong>resource</strong></td>
         <td>Contains configuration that can be applied to resource configuration; for example, BOSH VM extensions</td>
     </tr>
 </table>
 
-For more information on BOSH VM Extensions, refer to the [Creating a director config file](./creating-a-director-config-file.md#vm-extensions).
+For more information on BOSH VM Extensions, see [Creating a director config file](./creating-a-director-config-file.md#vm-extensions).
 
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
 
-So, to enable TCP routing in Tanzu Application Service, you would add `-o features/tcp_routing-enable.yml`.
+So, to enable TCP routing in Tanzu Application Service, add `-o features/tcp_routing-enable.yml`.
 For the rest of this guide, the vars for this feature
 are referred to as `feature-vars.yml`.
 If you run your complete command, you should again get a list of any newly-required variables.
@@ -762,12 +763,12 @@ om interpolate \
 
 #### Finalize your configuration
 
-Once you've selected your ops files and created your vars files,
+After selecting your ops files and created your vars files,
 decide which vars you want in the template
 and which you want to have interpolated later.
 
 Create a final template and write it to a file,
-using only the vars you want to in the template,
+using only the vars you want in the template,
 and using `--skip-missing` to allow the rest to remain as variables.
 
 ```bash
@@ -784,51 +785,56 @@ om interpolate \
   > pas-config-template.yml
 ```
 
-You can check-in the resulting configuration to a git repo.
-For vars that do not include credentials, you can check those vars files in, as well.
+You can check the resulting configuration into a git repo.
+For vars that do not include credentials, you can check those vars files in, too.
 Handle vars that are secret more carefully. See [Using a secrets store to store credentials](../concepts/secrets-handling.md).
 
-You can then dispose of the config template directory.
+You can then delete the config template directory.
 
 ## Using ops files for multi-foundation
 
 There are two recommended ways to support multiple foundation workflows:
-using [secrets management](../concepts/secrets-handling.md#multi-foundation-secrets-handling) or ops files.
-This section will explain how to support multiple foundations using ops files.
+
+* Using [secrets management](../concepts/secrets-handling.md#multi-foundation-secrets-handling)
+* Using ops files
+
+This section explains how to support multiple foundations using ops files.
 
 Starting with an incomplete [Tanzu Application Service](https://network.tanzu.vmware.com/products/elastic-runtime/) config from **vSphere** as an example:
 
 <%= partial "cf-partial-config" %>
 
-For a single foundation deploy, leaving values such as
-`".cloud_controller.apps_domain"` as-is would work fine. For multiple
-foundations, this value will be different per deployed foundation. Other values,
-such as `.cloud_controller.encrypt_key` have a secret that
-already have a placeholder from `om`. If different foundations have different
-load requirements, even the values in `resource-config` can be edited using
+For a single foundation deployment, leaving values such as
+`".cloud_controller.apps_domain"` as they are works fine. For multiple
+foundations, this value will be different for each deployed foundation. Other values,
+such as `.cloud_controller.encrypt_key`, have a secret that
+already has a placeholder from `om`. If different foundations have different
+load requirements, the values in `resource-config` can also be edited using
 [ops files](https://bosh.io/docs/cli-ops-files/).
 
-Using the example above, let's try filling in the existing placeholder for
-`cloud_controller.apps_domain` in our first foundation.
+1. Using the earlier example, fill in the existing placeholder for
+`cloud_controller.apps_domain` in the first foundation.
 
-```yaml
-# replace-domain-ops-file.yml
-- type: replace
-  path: /product-properties/.cloud_controller.apps_domain/value?
-  value: unique.foundation.one.domain
-```
+    ```yaml
+    # replace-domain-ops-file.yml
+    - type: replace
+      path: /product-properties/.cloud_controller.apps_domain/value?
+      value: unique.foundation.one.domain
+    ```
 
-To test that the ops file will work in your `base.yml`, this can be done locally using `bosh int`:
+2. To test that the ops file works in your `base.yml`, do this locally using `bosh int`:
 
-```bash
- bosh int base.yml -o replace-domain.yml
-```
+    ```bash
+    bosh int base.yml -o replace-domain.yml
+    ```
 
-This will output `base.yml` with the replaced (interpolated) values:
+The following code returns `base.yml` with the replaced (interpolated) values:
 
 <%= partial "cf-partial-config-domain-interpolated" %>
 
-Anything that needs to be different per deployment can be replaced via ops files as long as the `path:` is correct.
+Anything that needs to be different per deployment can be replaced using ops files as long as the `path:` is correct.
+
+### Additional notes
 
 Upgrading products to new patch versions:
 
@@ -841,8 +847,3 @@ Replicating configuration settings from one product to the same product on a dif
 
 * Because properties and property names can change between patch versions of a product,
   you can only safely apply configuration settings across products if their versions exactly match.
-
-[//]: # ({% with path="../" %})
-[//]: # (    {% include ".internal_link_url.md" %})
-[//]: # ({% endwith %})
-[//]: # ({% include ".external_link_url.md" %})

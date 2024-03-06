@@ -138,24 +138,24 @@ The precedence rules are listed in the following table.
 
 <table>
   <tr>
-    <td>1.</td>
+    <td>1</td>
     <td>If <code>custom_only</code> is <code>true</code>,
     the VM types specified in your configuration will replace the entire list of available VM types in the Tanzu Operations Manager.</td>
   </tr>
     <tr>
-    <td>2.</td>
+    <td>2</td>
     <td>If the property is set to false or is omitted, <code>configure_director</code> will append the listed VM types to the list of default VM types for your IaaS.</td>
   </tr>
     <tr>
-    <td>3.</td>
+    <td>3</td>
     <td>If a specified VM type is named the same as a predefined VM type, it will overwrite the predefined type.</td>
   </tr>
     <tr>
-    <td>4.</td>
+    <td>4</td>
     <td>If multiple specified VM types have the same name, the one specified last will be created.</td>
   </tr>
     <tr>
-    <td>5.</td>
+    <td>5</td>
     <td>Existing custom VM types do not persist across configure-director calls, and it should be expected that the entire list of custom VM types is specified in the director configuration.</td>
   </tr>
 </table>
