@@ -1,245 +1,237 @@
 # Extending a pipeline to install a product
 
-This how-to-guide will teach you how to add a product to an existing pipeline.
+This topic will teach you how to add a product to an existing pipeline.
 This includes downloading the product from Tanzu Network,
-extracting configuration,
+extracting the configuration,
 and installing the configured product.
 
 ## Prerequisites
 
 1. A pipeline, such as one created in [Installing Tanzu Operations Manager](./installing-opsman.md)
    or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md).
-2. A fully configured Tanzu Operations Manager and Director. See [Deploying the Director](./creating-a-director-config-file.md).
-3. The Platform Automation Toolkit Docker Image [imported and ready to run](./running-commands-locally.md).
+2. A fully configured Tanzu Operations Manager and Director. See [Creating a director config file](./creating-a-director-config-file.md).
+3. The Platform Automation Toolkit Docker Image imported and ready to run. See [Running commands locally](./running-commands-locally.md).
 4. A glob pattern uniquely matching one product file on Tanzu Network.
 
 ### Assumptions about your existing pipeline
 
-This guide assumes you're working
-from one of the pipelines created in previous guides,
+This guide assumes that you are working
+from one of the pipelines created in [Installing Tanzu Operations Manager](./installing-opsman.md) or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md),
 but you don't have to have exactly that pipeline.
 If your pipeline is different, though,
-you may run into trouble with some of our assumptions.
-
-We assume:
+you may run into trouble with some of the assumptions made here:
 
 - Resource declarations for `config` and `platform-automation`.
 - A pivnet token stored in CredHub as a credential named `pivnet_token`.
-- A previous job responsible for deploying the director
+- A previous job responsible for deploying the director,
   called `apply-director-changes`.
-- You have created an `env.yml` from the [Configuring Env](./configuring-env.md)
-  how-to guide. This file exists in the `configuration` resource.
-- You have a `fly` target named `control-plane` with an existing pipeline called `foundation`.
+- You have an `env.yml` based on the instructions in [Configuring Env](./configuring-env.md). This file exists in the `configuration` resource.
+- You have a `fly` target named `control-plane`, with an existing pipeline called `foundation`.
 - You have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
 
 You should be able to use the pipeline YAML in this document with any pipeline,
-as long as you make sure the above names match up with what's in your pipeline,
+as long as you make sure the names in the assumptions list match what's in your pipeline,
 either by changing the example YAML or your pipeline.
 
 ## Download, upload, and stage product to Tanzu Operations Manager
 
-For this guide, we're going to add the [VMware Tanzu Application Service for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/) product.
+The instructions and example in the following add the [VMware Tanzu Application Service for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/) product.
 
 ### Download
 
-Before setting the pipeline, create a config file for [`download-product`](../tasks.md#download-product)
+1. Before setting the pipeline, create a config file for [`download-product`](../tasks.md#download-product)
 to download Tanzu Application Service from Tanzu Network.
 
-Create a `download-tas.yml` file.
+    Create a `download-tas.yml` file for the IaaS you are using.
 
-<%= partial "download-tas-tabs" %>
+    <%= partial "download-tas-tabs" %>
 
-Add and commit this file to the same directory as the previous guides.
-This file should be accessible from the `configuration` resource.
-```bash
-git add download-tas.yml
-git commit -m "Add download-tas file for foundation"
-git push
-``` 
+1. Add and commit this file to the same directory as the previous guides.
+    This file should be accessible from the `configuration` resource.
 
-Now that we have a config file,
-we can add a new `download-upload-and-stage-tas` job in your `pipeline.yml`.
+    ```bash
+    git add download-tas.yml
+    git commit -m "Add download-tas file for foundation"
+    git push
+    ```
 
-```yaml hl_lines="3-32"
-jobs: # Do not duplicate this if it already exists in your pipeline.yml,
-      # just add the following lines to the jobs section
-- name: download-upload-and-stage-tas
-  serial: true
-  plan:
-    - aggregate:
-      - get: platform-automation-image
-        params:
-          globs: ["*image*.tgz"]
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          globs: ["*tasks*.zip"]
-          unpack: true
-      - get: config
-    - task: prepare-tasks-with-secrets
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
-      input_mapping:
-        tasks: platform-automation-tasks
-      output_mapping:
-        tasks: platform-automation-tasks
-      params:
-        CONFIG_PATHS: config
-    - task: download-tas
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/download-product.yml
-      input_mapping:
-        config: config
-      params:
-        CONFIG_FILE: download-tas.yml
-      output_mapping:
-        downloaded-product: tas-product
-        downloaded-stemcell: tas-stemcell
-```
+1. Now that you have a config file,
+you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` file.
 
-Now that we have a runnable job, let's make a commit
+    ```yaml hl_lines="3-32"
+    jobs: # Do not duplicate this if it already exists in your pipeline.yml,
+          # just add the following lines to the jobs section
+    - name: download-upload-and-stage-tas
+      serial: true
+      plan:
+        - aggregate:
+          - get: platform-automation-image
+            params:
+              globs: ["*image*.tgz"]
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              globs: ["*tasks*.zip"]
+              unpack: true
+          - get: config
+        - task: prepare-tasks-with-secrets
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+          input_mapping:
+            tasks: platform-automation-tasks
+          output_mapping:
+            tasks: platform-automation-tasks
+          params:
+            CONFIG_PATHS: config
+        - task: download-tas
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/download-product.yml
+          input_mapping:
+            config: config
+          params:
+            CONFIG_FILE: download-tas.yml
+          output_mapping:
+            downloaded-product: tas-product
+            downloaded-stemcell: tas-stemcell
+    ```
 
-```bash
-git add pipeline.yml
-git commit -m 'download TAS and its stemcell'
-```
+1. Commit your changes.
 
-Then we can set the pipeline
+    ```bash
+    git add pipeline.yml
+    git commit -m 'download TAS and its stemcell'
+    ```
 
-```bash
-fly -t control-plane set-pipeline -p foundation -c pipeline.yml
-```
+1. Now, set the pipeline
 
-If the pipeline sets without errors, run a `git push` of the config.
+    ```bash
+    fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+    ```
 
-<div class="note">
-<span class="note__title">Note</span>
-<b>If fly set-pipeline returns an error:</b>
-Fix any and all errors until the pipeline can be set.
+1. If the pipeline sets without errors, run a `git push` of the config.
+
+1. If fly set-pipeline returns an error,
+fix any and all errors until the pipeline can be set.
 When the pipeline can be set properly, run:
-    
-<pre>
-  <code>
+        
+    ```
     git add pipeline.yml
     git commit --amend --no-edit
     git push
-  </code>
-</pre>
-</div>
+    ```
 
-<p class="note">
-<span class="note__title">Note</span>
-<b>Testing your pipeline:</b>
-We generally want to try things out right away to see if they're working right.
-However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
-you might want to hold off until we've got the job doing more,
-so that if it works, you don't have to wait for the download again.</p>
+    <p class="note">
+    <span class="note__title">Note</span>
+    <b>Testing your pipeline:</b>
+    We generally want to try things out right away to see if they're working right.
+    However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
+    you might want to hold off until we've got the job doing more,
+    so that if it works, you don't have to wait for the download again.</p>
 
 ### Upload and stage
-We have a product downloaded and (potentially) cached on a Concourse worker.
-The next step is to upload and stage that product to Tanzu Operations Manager.
 
-```yaml hl_lines="32-45"
-jobs:
-- name: download-upload-and-stage-tas
-  serial: true
-  plan:
-    - aggregate:
-      - get: platform-automation-image
-        params:
-          globs: ["*image*.tgz"]
-          unpack: true
-      - get: platform-automation-tasks
-        params:
-          globs: ["*tasks*.zip"]
-          unpack: true
-      - get: config
-    - task: prepare-tasks-with-secrets
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
-      input_mapping:
-        tasks: platform-automation-tasks
-      output_mapping:
-        tasks: platform-automation-tasks
-      params:
-        CONFIG_PATHS: config
-    - task: download-tas
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/download-product.yml
-      input_mapping:
-        config: config
-      params:
-        CONFIG_FILE: download-tas.yml
-      output_mapping:
-        downloaded-product: tas-product
-        downloaded-stemcell: tas-stemcell
-    - task: upload-tas-stemcell
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/upload-stemcell.yml
-      input_mapping:
-        env: config
-        stemcell: tas-stemcell
-      params:
-        ENV_FILE: env.yml
-    - task: upload-and-stage-tas
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/upload-and-stage-product.yml
-      input_mapping:
-        product: tas-product
-        env: config
-```
+1. Now that you have a product downloaded and (potentially) cached on a Concourse worker,
+upload and stage the new product to Tanzu Operations Manager.
 
-Then we can re-set the pipeline
+    ```yaml hl_lines="32-45"
+    jobs:
+    - name: download-upload-and-stage-tas
+      serial: true
+      plan:
+        - aggregate:
+          - get: platform-automation-image
+            params:
+              globs: ["*image*.tgz"]
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              globs: ["*tasks*.zip"]
+              unpack: true
+          - get: config
+        - task: prepare-tasks-with-secrets
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+          input_mapping:
+            tasks: platform-automation-tasks
+          output_mapping:
+            tasks: platform-automation-tasks
+          params:
+            CONFIG_PATHS: config
+        - task: download-tas
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/download-product.yml
+          input_mapping:
+            config: config
+          params:
+            CONFIG_FILE: download-tas.yml
+          output_mapping:
+            downloaded-product: tas-product
+            downloaded-stemcell: tas-stemcell
+        - task: upload-tas-stemcell
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/upload-stemcell.yml
+          input_mapping:
+            env: config
+            stemcell: tas-stemcell
+          params:
+            ENV_FILE: env.yml
+        - task: upload-and-stage-tas
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/upload-and-stage-product.yml
+          input_mapping:
+            product: tas-product
+            env: config
+    ```
 
-```bash
-fly -t control-plane set-pipeline -p foundation -c pipeline.yml
-```
+1. Re-set the pipeline.
 
-and if all is well, make a commit and push
+    ```bash
+    fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+    ```
 
-```bash
-git add pipeline.yml
-git commit -m 'upload tas and stemcell to Ops Manager'
-git push
-```
+1. When this finishes successfully, make a commit and push the changes.
+
+    ```bash
+    git add pipeline.yml
+    git commit -m 'upload tas and stemcell to Ops Manager'
+    git push
+    ```
 
 ## Product configuration
 
-Before automating the configuration and install of the product,
-we need a config file.
-The simplest way is to choose your config options in the Tanzu Operations Manager UI,
-then pull its resulting configuration.
+Before automating the configuration and installation of the product,
+add a config file.
+The simplest way to do this is to choose your config options in the Tanzu Operations Manager UI,
+and then pull its resulting configuration.
 
 <p class="note">
 <span class="note__title">Note</span>
 <b>Advanced Tile Config Option:</b>
 For an alternative that generates the configuration
 from the product file, using ops files to select options,
-see <a href="./adding-a-product.md#config-template">Config template</a>
+see <a href="#config-template">Config template</a>.
 </p>
 
 ### Pulling Configuration from Tanzu Operations Manager
 
-Configure the product _manually_ according to the product's install instructions.
-This guide installs [Tanzu Application Service](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/vsphere-nsx-t.html).
-You can find installation instructions in [VMware Tanzu Docs](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/toc-installing-index.html).
+Configure the product _manually_ according to the product's installation instructions.
+Use the installation instructions in the [VMware Tanzu Application Service documentation](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/toc-installing-index.html).
 
-Once the product is fully configured, apply changes in the Tanzu Operations Manager UI,
+After the product is fully configured, apply the changes (**Apply Changes**) in the Tanzu Operations Manager UI,
 and then continue this guide.
 
 <p class="note important">
 <span class="note__title">Important</span>
-<b>If you do not Apply Changes:</b>
-Tanzu Operations Manager cannot generate credentials for you
-until you have applied changes (at least once).
+If you do not click <strong>Apply Changes</strong>,
+Tanzu Operations Manager cannot generate credentials.
 You can still go through this process without an initial applying changes,
 but you will be unable to use <code>om staged-config</code> with <code>--include-credentials</code>,
 and may have an incomplete configuration at the end of this process.</p>
 
-[`om`](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.md#staged-config),
-which is used to extract staged product
+[`om`](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.md#staged-config).
+It is used to extract staged product
 configuration from the Tanzu Operations Manager UI.
-`om` requires a `env.yml`, which we already used in the `upload-and-stage` task.
+`om` requires a `env.yml`, which is available. It was used in the `upload-and-stage` task.
 
 Most products will contain the following top-level keys:
 
@@ -247,50 +239,54 @@ Most products will contain the following top-level keys:
 - product-properties
 - resource-config
 
-The command can be run directly using Docker.
-We'll need to download the image to our local workstation, import it into Docker,
-and then run `staged-config` for the [Tanzu Application Service](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/vsphere-nsx-t.html) product.
+The command can be run directly using Docker:
+1. Download the image to our local workstation.
+1. Import the image into Docker.
+2. Run `staged-config` for the [Tanzu Application Service](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/5.0/tas-for-vms/toc-installing-index.html) product.
 For more information, see [Running commands locally](./running-commands-locally.md).
 
-After you download the image from [Tanzu Network](https://network.tanzu.vmware.com/products/platform-automation/)
-you need the product name recognized by Tanzu Operations Manager.
-This can be found using `om`, but first, import the image.
+To pull the configuration from Tanzu Operations Manager:
 
-```bash
-export ENV_FILE=env.yml
-docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
-```
+1. Download the image from [Tanzu Network](https://network.tanzu.vmware.com/products/platform-automation/).
 
-Then, we can run `om staged-products` to find the name of the product in Tanzu Operations Manager.
-```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-om --env ${ENV_FILE} staged-products
-```
+2. Import the image.
 
-The result should be a table that looks like the following
-```text
-+---------------------------+-----------------+
-|           NAME            |     VERSION     |
-+---------------------------+-----------------+
-| cf                        | <VERSION>       |
-| p-bosh                    | <VERSION>       |
-+---------------------------+-----------------+
-```
+    ```bash
+    export ENV_FILE=env.yml
+    docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+    ```
 
-`p-bosh` is the name of the director.
-As `cf` is the only other product on our Tanzu Operations Manager,
-we can safely assume that this is the product name for [Tanzu Application Service](https://network.tanzu.vmware.com/products/elastic-runtime/).
+1. Run `om staged-products` to find the name of the product in Tanzu Operations Manager.
 
-Using the product name `cf`,
-let's extract the current configuration from Tanzu Operations Manager.
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+    om --env ${ENV_FILE} staged-products
+    ```
 
-```bash
-docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
-om --env ${ENV_FILE} staged-config --include-credentials --product-name cf > tas-config.yml
-```
+    The result should be a table that looks like the following
+    ```text
+    +---------------------------+-----------------+
+    |           NAME            |     VERSION     |
+    +---------------------------+-----------------+
+    | cf                        | <VERSION>       |
+    | p-bosh                    | <VERSION>       |
+    +---------------------------+-----------------+
+    ```
 
-We have a configuration file for our tile ready to back up! Almost.
-There are a few more steps required before we're ready to commit.
+    `p-bosh` is the name of the director.
+    As `cf` is the only other product on our Tanzu Operations Manager,
+    we can safely assume that this is the product name for [Tanzu Application Service](https://network.tanzu.vmware.com/products/elastic-runtime/).
+
+1. Using the product name `cf`,
+extract the current configuration from Tanzu Operations Manager.
+
+    ```bash
+    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+    om --env ${ENV_FILE} staged-config --include-credentials --product-name cf > tas-config.yml
+    ```
+
+Now you have a configuration file for our tile ready to back up (almost).
+There are a few more steps required before you are ready to commit.
 
 #### Parameterizing the config
 
@@ -298,140 +294,139 @@ Look through your `tas-config.yml` for any sensitive values.
 These values should be `((parameterized))`
 and saved off in a secrets store (in this example, we use CredHub).
 
-You should still be logged into CredHub.
-If not, login. Be sure to note the space at the beginning of the line.
+1. Log in to CredHub, if you are not already logged in.
+Be sure to note the space at the beginning of the line.
 This will ensure your valuable secrets are not saved in terminal history.
 
-<%= partial "logging-into-credhub" %>
+    <%= partial "logging-into-credhub" %>
 
-The example list of some sensitive values from our `tas-config.yml` are as follows,
-note that this is intentionally incomplete.
-```yaml
-product-properties:
-  .properties.cloud_controller.encrypt_key:
-    value:
-      secret: my-super-secure-secret
-  .properties.networking_poe_ssl_certs:
-    value:
-    - certificate:
-        cert_pem: |-
-          -----BEGIN CERTIFICATE-----
-          my-cert
-          -----END CERTIFICATE-----
-        private_key_pem: |-
-          -----BEGIN RSA PRIVATE KEY-----
-          my-private-key
-          -----END RSA PRIVATE KEY-----
-      name: certificate
-```
+    The example list of some sensitive values from our `tas-config.yml` are as follows,
+    note that this is intentionally incomplete.
+    ```yaml
+    product-properties:
+      .properties.cloud_controller.encrypt_key:
+        value:
+          secret: my-super-secure-secret
+      .properties.networking_poe_ssl_certs:
+        value:
+        - certificate:
+            cert_pem: |-
+              -----BEGIN CERTIFICATE-----
+              my-cert
+              -----END CERTIFICATE-----
+            private_key_pem: |-
+              -----BEGIN RSA PRIVATE KEY-----
+              my-private-key
+              -----END RSA PRIVATE KEY-----
+          name: certificate
+    ```
 
-We'll start with the Cloud Controller encrypt key.
-As this is a value that you might wish to rotate at some point,
-we're going to store it off as a `password` type into CredHub.
+1. Start with the Cloud Controller encrypt key because
+this is a value that you might want to rotate at some point.
+Store it as a `password` type in CredHub.
 
-```bash
-# note the starting space
- credhub set \
-   --name /concourse/your-team-name/cloud_controller_encrypt_key \
-   --type password \
-   --password my-super-secure-secret
-```
+    ```bash
+    # note the starting space
+    credhub set \
+      --name /concourse/your-team-name/cloud_controller_encrypt_key \
+      --type password \
+      --password my-super-secure-secret
+    ```
 
-To validate that we set this correctly,
-we should run.
+1. To validate that you have set this correctly, run:
 
-```bash
-# no need for an extra space
-credhub get --name /concourse/your-team-name/cloud_controller_encrypt_key
-```
+    ```bash
+    # no need for an extra space
+    credhub get --name /concourse/your-team-name/cloud_controller_encrypt_key
+    ```
 
-Expect an output like this:
+    Expect an output like this:
 
-```text
-id: <guid>
-name: /concourse/your-team-name/cloud_controller_encrypt_key
-type: password
-value: my-super-secure-secret
-version_created_at: "<timestamp>"
-```
+    ```text
+    id: <guid>
+    name: /concourse/your-team-name/cloud_controller_encrypt_key
+    type: password
+    value: my-super-secure-secret
+    version_created_at: "<timestamp>"
+    ```
 
-We are then going to store off the Networking POE certs
-as a `certificate` type in CredHub. 
-But first, we're going to save off the certificate and private key 
-as plain text files to simplify this process.
-We named these files `poe-cert.txt` and `poe-private-key.txt`.
+1. In preparation for storing the Networking POE certs
+as a `certificate` type in CredHub,
+save the certificate and private key
+as plain text files.
+In this example, these files are named `poe-cert.txt` and `poe-private-key.txt`.
 There should be no formatting or indentation in these files, only new lines.
 
-```bash
-# note the starting space
- credhub set \
-   --name /concourse/your-team-name/networking_poe_ssl_certs \
-   --type rsa \
-   --public poe-cert.txt \
-   --private poe-private-key.txt
-```
+    ```bash
+    # note the starting space
+    credhub set \
+      --name /concourse/your-team-name/networking_poe_ssl_certs \
+      --type rsa \
+      --public poe-cert.txt \
+      --private poe-private-key.txt
+    ```
 
-And again, we're going to validate that we set this correctly
+1. Validate that these are set correctly.
 
-```bash
-# no need for an extra space
-credhub get --name /concourse/your-team-name/networking_poe_ssl_certs
-```
+    ```bash
+    # no need for an extra space
+    credhub get --name /concourse/your-team-name/networking_poe_ssl_certs
+    ```
 
-and expect and output like
+    The output should look like this:
 
-```text
-id: <guid>
-name: /concourse/your-team-name/networking_poe_ssl_certs
-type: rsa
-value:
-  private_key: |
-    -----BEGIN RSA PRIVATE KEY-----
-    my-private-key
-    -----END RSA PRIVATE KEY-----
-  public_key: |
-    -----BEGIN CERTIFICATE-----
-    my-cert
-    -----END CERTIFICATE-----
-version_created_at: "<timestamp>"
-```
+    ```text
+    id: <guid>
+    name: /concourse/your-team-name/networking_poe_ssl_certs
+    type: rsa
+    value:
+      private_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        my-private-key
+        -----END RSA PRIVATE KEY-----
+      public_key: |
+        -----BEGIN CERTIFICATE-----
+        my-cert
+        -----END CERTIFICATE-----
+    version_created_at: "<timestamp>"
+    ```
 
-<p class="note important">
-<span class="note__title">Important</span>
-<b>Remove credentials from disk:</b>
-Once you have validated that the certificatess are set correctly in CredHub,
-remember to delete <code>poe-cert.txt</code> and <code>poe-private-key.txt</code> from your working directory.
-This will prevent a potential security leak
-or an accidental commit of those credentials.</p>
+    <p class="note important">
+    <span class="note__title">Important</span>
+    <b>Remove credentials from disk:</b>
+    Once you have validated that the certificatess are set correctly in CredHub,
+    remember to delete <code>poe-cert.txt</code> and <code>poe-private-key.txt</code> from your working directory.
+    This will prevent a potential security leak
+    or an accidental commit of those credentials.</p>
 
-Repeat this process for all sensitive values found in your `tas-config.yml`.
+1. Repeat this process for all sensitive values in your `tas-config.yml`.
 
-Once completed, we can remove those secrets from `tas-config.yml`
+1. After this is complete, you can remove those secrets from `tas-config.yml`
 and replace them with `((parameterized-values))`.
 The parameterized value name should match the name in CredHub.
-For our example, we parameterized the config like:
+For this example, it looks like this:
 
-```yaml
-product-properties:
-  .properties.cloud_controller.encrypt_key:
-    value:
-      secret: ((cloud_controller_encrypt_key))
-  .properties.networking_poe_ssl_certs:
-    value:
-    - certificate:
-        cert_pem: ((networking_poe_ssl_certs.public_key))
-        private_key_pem: ((networking_poe_ssl_certs.private_key))
-      name: certificate
-```
+    ```yaml
+    product-properties:
+      .properties.cloud_controller.encrypt_key:
+        value:
+          secret: ((cloud_controller_encrypt_key))
+      .properties.networking_poe_ssl_certs:
+        value:
+        - certificate:
+            cert_pem: ((networking_poe_ssl_certs.public_key))
+            private_key_pem: ((networking_poe_ssl_certs.private_key))
+          name: certificate
+    ```
 
-Once your `tas-config.yml` is parameterized to your liking,
-we can finally commit the config file.
+1. When this is ready; that is, `tas-config.yml` is parameterized to your liking,
+commit the config file.
 
-```bash
-git add tas-config.yml
-git commit -m "Add tas-config file for foundation"
-git push
-```
+    ```bash
+    git add tas-config.yml
+    git commit -m "Add tas-config file for foundation"
+    git push
+    ```
 
 ## Configure and apply
 
