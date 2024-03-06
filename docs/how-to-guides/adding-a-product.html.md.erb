@@ -39,12 +39,12 @@ The instructions and example in the following add the [VMware Tanzu Application 
 
 ### Download
 
-1. Before setting the pipeline, create a config file for [`download-product`](../tasks.md#download-product)
+Before setting the pipeline, create a config file for [`download-product`](../tasks.md#download-product)
 to download Tanzu Application Service from Tanzu Network.
 
-    Create a `download-tas.yml` file for the IaaS you are using.
+Create a `download-tas.yml` file for the IaaS you are using.
 
-    <%= partial "download-tas-tabs" %>
+<%= partial "download-tas-tabs" %>
 
 1. Add and commit this file to the same directory as the previous guides.
     This file should be accessible from the `configuration` resource.
@@ -55,7 +55,7 @@ to download Tanzu Application Service from Tanzu Network.
     git push
     ```
 
-1. Now that you have a config file,
+2. Now that you have a config file,
 you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` file.
 
     ```yaml hl_lines="3-32"
@@ -102,15 +102,15 @@ you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` fil
     git commit -m 'download TAS and its stemcell'
     ```
 
-1. Now, set the pipeline
+2. Now, set the pipeline
 
     ```bash
     fly -t control-plane set-pipeline -p foundation -c pipeline.yml
     ```
 
-1. If the pipeline sets without errors, run a `git push` of the config.
+3. If the pipeline sets without errors, run a `git push` of the config.
 
-1. If fly set-pipeline returns an error,
+4. If fly set-pipeline returns an error,
 fix any and all errors until the pipeline can be set.
 When the pipeline can be set properly, run:
         
