@@ -1,229 +1,221 @@
 # Writing a pipeline to rotate the foundation Certificate Authority
 
-This how-to-guide shows you how to write a pipeline for rotating the
+This topic shows you how to write a pipeline for rotating the
 certificate authority on an existing VMware Tanzu Operations Manager.
 
 ## Prerequisites
 
-1. A pipeline, such as one created in [Installing Tanzu Operations Manager](./installing-opsman.md)
-   or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md).
-2. A fully configured Tanzu Operations Manager and Director.
-3. The Platform Automation Toolkit Docker Image [imported and ready to run](./running-commands-locally.md).
+* A pipeline, such as one created in [Installing Tanzu Operations Manager](./installing-opsman.md)
+   or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md)
+* A fully configured Tanzu Operations Manager and Director
+* The Platform Automation Toolkit Docker Image [imported and ready to run](./running-commands-locally.md)
 
 ## Creating the pipeline
 
-We will be creating a new pipeline for this workflow. It will ultimately
+You will be creating a new pipeline for this workflow. It will ultimately
 rotate the certificate authority for a single foundation via a series of jobs,
-but it will start with some resources. Create a file titled `ca-rotation.yml`
-with this content:
+but it will start with some resources.
 
-```yaml
----
-resource_types:
-- name: pivnet
-  type: docker-image
-  source:
-    repository: pivotalcf/pivnet-resource
-    tag: latest-final
-resources:
-- name: platform-automation
-  type: pivnet
-  source:
-    product_slug: platform-automation
-    api_token: ((pivnet-refresh-token))
-- name: config
-  type: git
-  source:
-    uri: ((pipeline-repo))
-    private_key: ((plat-auto-pipes-deploy-key.private_key))
-    branch: main
-```
+1. Create a file titled `ca-rotation.yml` with this content:
 
-This will give us access to the Platform Automation tasks and the environment
-configuration file.
+    ```yaml
+    ---
+    resource_types:
+    - name: pivnet
+      type: docker-image
+      source:
+        repository: pivotalcf/pivnet-resource
+        tag: latest-final
+    resources:
+    - name: platform-automation
+      type: pivnet
+      source:
+        product_slug: platform-automation
+        api_token: ((pivnet-refresh-token))
+    - name: config
+      type: git
+      source:
+        uri: ((pipeline-repo))
+        private_key: ((plat-auto-pipes-deploy-key.private_key))
+        branch: main
+    ```
 
-We will also set this new pipeline.
-```bash
-fly -t control-plane set-pipeline -p foundation -c ca-rotation.yml
-```
+    This will give us access to the Platform Automation tasks and the environment
+    configuration file.
+
+1. Set this new pipeline.
+
+    ```bash
+    fly -t control-plane set-pipeline -p foundation -c ca-rotation.yml
+    ```
 
 ## Generating a Root Certificate Authority
 
 There are two methods to configure a new root certificate authority in Ops
 Manager:
 
-1. Use Tanzu Operations Manager to generate a new certificate authority.
-1. Give Tanzu Operations Manager an existing root certificate authority to use.
+* Use Tanzu Operations Manager to generate a new certificate authority.
+* Give Tanzu Operations Manager an existing root certificate authority to use.
 
 <p class="note caution">
 <span class="note__title">Caution</span>
 <b>Use with <code>pivotal-container-service</code> tile:</b>
 Rotating certificate authority with the pivotal-container-service
-tile installed will cause warnings in the pipeline. Only certificates
+tile installed causes warnings in the pipeline. Only certificates
 managed by Tanzu Operations Manager will be rotated in this process.</p>
 
-Regardless of method, we are going to add our first job to the pipeline.
+1. For both methods, the first step is to add the job to the pipeline.
 
-```yaml
-jobs:
-- name: configure-new-ca
-  plan:
-  - get: env
-    resource: config
-  - get: platform-automation-image
-    resource: platform-automation
-    params:
-      globs: ["*image*.tgz"]
-      unpack: true
-  - get: platform-automation-tasks
-    resource: platform-automation
-    params:
-      globs: ["*tasks*.zip"]
-      unpack: true
-  - task: configure-new-ca
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
-```
+    ```yaml
+    jobs:
+    - name: configure-new-ca
+      plan:
+      - get: env
+        resource: config
+      - get: platform-automation-image
+        resource: platform-automation
+        params:
+          globs: ["*image*.tgz"]
+          unpack: true
+      - get: platform-automation-tasks
+        resource: platform-automation
+        params:
+          globs: ["*tasks*.zip"]
+          unpack: true
+      - task: configure-new-ca
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
+    ```
 
-### Generate a new Certificate Authority
+1. Option 1: Generate a new Certificate Authority. If you want a certificate authority
+generated by Tanzu Operations Manager, the job shown in the previous step will create it for you.
 
-If we want a certificate authority generated by Tanzu Operations Manager, the above job
-will create it for us.
-
-### Configure Tanzu Operations Manager to use an existing Certificate Authority
-
-If we want to provide a certificate authority to the Tanzu Operations Manager to use (e.g.
+1. Option 2: Configure Tanzu Operations Manager to use an existing Certificate Authority. To
+provide a certificate authority to the Tanzu Operations Manager to use (for example,
 an externally signed certificate), we can provide that to the Tanzu Operations Manager
 with an input resource and additional configuration of the task.
 
-We'll add an [S3 resource](https://github.com/concourse/s3-resource) and the configuration repo
-to the `resources` section:
-```yaml hl_lines="2-8"
-resources:
-- name: certificate-authority
-  type: s3
-  source:
-    access_key_id: ((s3-access-key-id))
-    secret_access_key: ((s3-secret-key))
-    bucket: ((certificate-authority-bucket))
-    regexp: (certificate|privatekey)\.pem
-```
+    1. Add an [S3 resource](https://github.com/concourse/s3-resource) and the configuration repo
+    to the `resources` section:
 
-Also, we will fetch the resource before the task. This will configure the task
-to use the `certificate.pem` and `privatekey.pem` files from the s3 resource
-as the new CA in Tanzu Operations Manager.
+        ```yaml hl_lines="2-8"
+        resources:
+        - name: certificate-authority
+          type: s3
+          source:
+            access_key_id: ((s3-access-key-id))
+            secret_access_key: ((s3-secret-key))
+            bucket: ((certificate-authority-bucket))
+            regexp: (certificate|privatekey)\.pem
+        ```
 
-```yaml hl_lines="1-2"
-  - get: certs
-    resource: certificate-authority
-  - get: env
-    resource: config
-  - task: configure-new-ca
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
-```
+    1. Fetch the resource before the task. This will configure the task
+    to use the `certificate.pem` and `privatekey.pem` files from the s3 resource
+    as the new CA in Tanzu Operations Manager.
 
-### Apply Changes
+        ```yaml hl_lines="1-2"
+          - get: certs
+            resource: certificate-authority
+          - get: env
+            resource: config
+          - task: configure-new-ca
+            image: platform-automation-image
+            file: platform-automation-tasks/tasks/configure-new-certificate-authority.yml
+        ```
 
-After configuring a new certificate authority, Tanzu Operations Manager needs to apply
+1. Apply the changes. After configuring a new certificate authority, Tanzu Operations Manager must apply
 changes before the new CA is available to generate and sign certificates. This
 also registers the CA with components so that they will trust certificates
 from the new CA. This next job will be appended after the `configure-new-ca`
 job.
 
-```yaml
-- name: apply-changes
-  plan:
-  - get: env
-    resource: config
-    passed:
-    - configure-new-ca
-  - task: apply-new-ca
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/apply-changes.yml
-```
+    ```yaml
+    - name: apply-changes
+      plan:
+      - get: env
+        resource: config
+        passed:
+        - configure-new-ca
+      - task: apply-new-ca
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/apply-changes.yml
+    ```
 
-## Activate the new Certificate Authority
-
-We need to set our new certificate authority as the active certificate authority. After this, any certificates created by the CredHub will be signed by the new CA.
+1. Activate the new Certificate Authority. Set your new certificate authority as the active certificate authority. After this, any certificates created by the CredHub will be signed by the new CA.
 Append a new job to the end of the jobs list.
 
-```yaml
-- name: activate-new-ca
-  plan:
-  - get: env
-    resource: config
-    passed:
-    - apply-changes
-  - get: platform-automation-image
-    resource: platform-automation
-    params:
-      globs: ["*image*.tgz"]
-      unpack: true
-  - get: platform-automation-tasks
-    resource: platform-automation
-    params:
-      globs: ["*tasks*.zip"]
-      unpack: true
-  - task: activate-new-ca
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/activate-certificate-authority.yml
-```
+    ```yaml
+    - name: activate-new-ca
+      plan:
+      - get: env
+        resource: config
+        passed:
+        - apply-changes
+      - get: platform-automation-image
+        resource: platform-automation
+        params:
+          globs: ["*image*.tgz"]
+          unpack: true
+      - get: platform-automation-tasks
+        resource: platform-automation
+        params:
+          globs: ["*tasks*.zip"]
+          unpack: true
+      - task: activate-new-ca
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/activate-certificate-authority.yml
+    ```
 
-## Regenerate certificates
+1. Regenerate the certificates:
 
-### Non-configurable leaf certificates
+    1. Non-configurable leaf certificates: Now that a new certificate authority is active, any internal, non-configurable certificates need to be regenerated and signed by the new CA. We are going to add another job that will regenerate the non configurable leaf certificates.
 
-Now that a new certificate authority is active, any internal, non-configurable certificates need to be regenerated and signed by the new CA. We are going to add another job that will regenerate the non configurable leaf certificates.
-```yaml
-- name: regenerate-non-configurable-leaf-certificates
-  plan:
-  - get: env
-    resource: config
-    passed:
-    - activate-new-ca
-  - get: platform-automation-image
-    resource: platform-automation
-    params:
-      globs: ["*image*.tgz"]
-      unpack: true
-  - get: platform-automation-tasks
-    resource: platform-automation
-    params:
-      globs: ["*tasks*.zip"]
-      unpack: true
-  - task: regenerate-certificates
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/regenerate-certificates.yml
-```
-This will delete the existing certificates from CredHub, which causes CredHub to generate new certificates on the next run of Apply Changes.
+        ```yaml
+        - name: regenerate-non-configurable-leaf-certificates
+          plan:
+          - get: env
+            resource: config
+            passed:
+            - activate-new-ca
+          - get: platform-automation-image
+            resource: platform-automation
+            params:
+              globs: ["*image*.tgz"]
+              unpack: true
+          - get: platform-automation-tasks
+            resource: platform-automation
+            params:
+              globs: ["*tasks*.zip"]
+              unpack: true
+          - task: regenerate-certificates
+            image: platform-automation-image
+            file: platform-automation-tasks/tasks/regenerate-certificates.yml
+        ```
 
-### Configurable certificates
+        This will delete the existing certificates from CredHub, which causes CredHub to generate new certificates on the next run of Apply Changes.
 
-Any manually configured certificates that are signed by the foundation root certificate authority need to be regenerated as well. Tanzu Application Service needs at least two configurable certificates, one for networking components and one for UAA.
-After generating a new certificate, it needs to be configured in Tanzu Operations Manager with a manifest file specific to the certificate.
+      1. Configurable certificates: Any manually configured certificates that are signed by the foundation root certificate authority need to be regenerated as well. Tanzu Application Service needs at least two configurable certificates, one for networking components and one for UAA.
+      After generating a new certificate, it needs to be configured in Tanzu Operations Manager with a manifest file specific to the certificate.
 
-Please check the docs on how to [rotate CAs and leaf certificates](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/security-pcf-infrastructure-rotate-cas-and-leaf-certs.html) to manually rotate.
+      See [rotate CAs and leaf certificates](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/security-pcf-infrastructure-rotate-cas-and-leaf-certs.html) to manually rotate the CAs and certificates.
 
-### Apply Changes
+1. Apply changes to create and use the new certificates.
 
-Now apply changes to create and use the new certificates.
-
-```yaml
-- name: apply-certificate-changes
-  plan:
-  - get: env
-    resource: config
-    passed:
-    - regenerate-non-configurable-leaf-certificates
-  - task: apply-new-ca
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/apply-changes.yml
-```
+    ```yaml
+    - name: apply-certificate-changes
+      plan:
+      - get: env
+        resource: config
+        passed:
+        - regenerate-non-configurable-leaf-certificates
+      - task: apply-new-ca
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/apply-changes.yml
+    ```
 
 ## Cleaning up
 
-Once the function of the foundation is validated with new certificates, the old certificate authority can be deleted by adding a job that will cleanup the certificate authority and applying the changes.
+After the function of the foundation is validated with new certificates, the old certificate authority can be deleted by adding a job that will cleanup the certificate authority and apply the changes.
 
 ```yaml
 - name: cleanup-certificate-authorities
@@ -249,8 +241,3 @@ Once the function of the foundation is validated with new certificates, the old 
     image: platform-automation-image
     file: platform-automation-tasks/tasks/apply-changes.yml
 ```
-
-[//]: # ({% with path="../" %})
-[//]: # (    {% include ".internal_link_url.md" %})
-[//]: # ({% endwith %})
-[//]: # ({% include ".external_link_url.md" %})
