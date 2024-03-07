@@ -2,12 +2,12 @@
 
 This topic describes how to execute commands locally with Docker.
 
-If you wish to use the underlying `om` and `p-automator` CLI tools from your local workstation,
+If you want to use the underlying `om` and `p-automator` CLI tools from your local workstation,
 VMware recommends using Docker to execute commands.
 
-With `p-automator` in particular, using Docker is necessary,
-as the IaaS CLIs upon which we depend can be tricky to install.
-With `om` it's more a matter of convenience:
+With `p-automator`, in particular, using Docker is necessary,
+because the IaaS CLIs upon which we depend can be tricky to install.
+With `om`, it's more a matter of convenience,, and
 you can just as easily [download the binary](https://github.com/pivotal-cf/om/releases) if it's available for your system.
 
 
@@ -23,7 +23,7 @@ To execute commands in Docker:
 
     Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Tanzu Network.
 
-2. Then, you can use `docker run` to pass it arbitrary commands.
+2. Now you can use `docker run` to pass it arbitrary commands.
 
     Here, we're running the `p-automator` CLI to see what commands are available:
 
@@ -32,8 +32,10 @@ To execute commands in Docker:
         p-automator -h
     ```
 
-    Note:  that this will have access read and write files in your current working directory.
-    If you need to mount other directories as well, you can add additional `-v` arguments.
+    <p class="note">
+    <span class="note__title">Note</span>
+    This will have access to read / write access to files in your current working directory.
+    If you need to mount other directories as well, you can add more <code>-v</code> arguments.</p>
 
 ## Useful commands
 
@@ -45,9 +47,11 @@ To execute commands in Docker:
     --product-name ${PRODUCT_SLUG} --include-placeholders
 ```
 
-  `${ENV_FILE}` is the [environment file](../inputs-outputs.md) required for all tasks.
-  `${PRODUCT_SLUG}` is the name of the product downloaded from [Tanzu Network](https://network.tanzu.vmware.com/).
-  The resulting file can then be parameterized, saved, and committed to a config repo.
+  Where:
+  * `${ENV_FILE}` is the [environment file](../inputs-outputs.md) required for all tasks.
+  * `${PRODUCT_SLUG}` is the name of the product downloaded from [Tanzu Network](https://network.tanzu.vmware.com/).
+  
+The resulting file can then be parameterized, saved, and committed to a config repo.
 
 ### Retrieving director configuration
 
@@ -68,14 +72,14 @@ For example:
 ```
 
 Note the additional space before the `docker` command.
-This ensures the command is not kept in bash history. 
-The environment variable OM_PASSWORD will overwrite the password value in the `ENV_FILE`.
+This ensures that the command is not kept in bash history.
+The environment variable `OM_PASSWORD` overwrites the password value in the `ENV_FILE`.
 See the [`om` GitHub page](https://github.com/pivotal-cf/om) for a full list of supported environment variables.
 
 ### Disable verifiers
 
 In cases where verifiers are incorrectly failing for known reasons,
-those specific verifiers should be disabled in order to apply changes.
+you can disable those specific verifiers so that you can apply the changes.
 `om` has commands to disable individual verifiers:
 
 For director verifiers:
@@ -96,12 +100,13 @@ For product verifiers:
     --product-name ${PRODUCT_NAME} --type ${VERIFIER_TYPE}
 ```
 
-Where `${VERIFIER_TYPE}` is the failing verifier
-and `${PRODUCT_NAME}` is the metadata name of the associated product.
+Where 
+* `${VERIFIER_TYPE}` is the failing verifier
+* `${PRODUCT_NAME}` is the metadata name of the associated product.
 
 A list of failed verifiers is available in the output from the Apply Changes attempt.
 To retrieve a list of currently failing director and product verifiers
-without applying changes run:
+without applying changes, run:
 
 ```bash
   docker run -it -e "OM_PASSWORD=my-password" --rm -v $PWD:/workspace \
@@ -110,8 +115,3 @@ without applying changes run:
 ```
 
 See the [Tanzu Operations Manager Documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-granular-verifier-control.html) for information about managing verifiers.
-
-[//]: # ({% with path="../" %})
-[//]: # (    {% include ".internal_link_url.md" %})
-[//]: # ({% endwith %})
-[//]: # ({% include ".external_link_url.md" %})
