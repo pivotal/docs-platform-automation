@@ -1,31 +1,31 @@
 # Configuration management strategies
 
-When building pipelines,
-there are many possible strategies
+When building pipelines, there are many strategies
 for structuring your configuration in source control
-as well as in pipeline design.
+and in pipeline design.
 No single method can cover all situations.
-After reading this document,
-we hope you feel equipped to select an approach.
+This topic presents some of the possibilities and their uses
+so that you can choose the best approach
+for your situation.
 
 ## Single repository for each foundation
 
-This is the simplest thing that could possibly work.
-It's the default assumed in all our examples,
-unless we've articulated a specific reason to choose a different approach.
+This is the simplest approach,
+and it's the default assumed in all of the examples in these topics,
+unless there is a clear reason to use a different approach.
 It entails using a single Git repository for each foundation.
 
 Tracking foundation changes are simple,
 getting started is easy,
-duplicating foundations is simply a matter of cloning a repository,
+duplicating foundations involves only cloning a repository,
 and configuration files are not difficult to understand.
 
 This is the strategy used in
 [Install Tanzu Operations Manager](../how-to-guides/installing-opsman.md) and
 [Upgrading an existing Tanzu Operations Manager](../how-to-guides/upgrade-existing-opsman.md).
 
-Let's examine an example configuration repository
-that uses the "Single Repository for each Foundation" pattern:
+This example configuration repository
+uses the "Single Repository for each Foundation" pattern:
 
 ```
 ├── auth.yml
@@ -45,8 +45,8 @@ that uses the "Single Repository for each Foundation" pattern:
 ```
 
 Notice that there is only one subdirectory
-and that all other files are at the repositories base directory.
-_This minimizes parameter mapping in the platform-automation tasks_.
+and that all other files are in the base directory.
+This minimizes parameter mapping in the platform-automation tasks.
 For example, in the [`configure-director`](../tasks.md#configure-director)
 step:
 
@@ -59,15 +59,15 @@ step:
     env: configuration
 ```
 
-We map the config files
+You map the config files
 to the expected input named `env` of the `configure-director` task.
 Because the `configure-director` task's default `ENV` parameter is `env.yml`,
-it automatically uses the `env.yml` file in our configuration repo.
-We do not need to explicitly name the `ENV` parameter for the task.
+it automatically uses the `env.yml` file in the configuration repo.
+You do not need to explicitly name the `ENV` parameter for the task.
 This also works for `director.yml`.
 
 Another option for mapping resources to inputs is discussed in
-[Matching resource names and input names](../pipeline-design/configuration-management-strategies.md#matching-resource-names-and-input-names).
+[Matching resource names and input names](#matching-resource-names-and-input-names).
 
 For reference, here is the `configure-director` task:
 
@@ -75,17 +75,16 @@ For reference, here is the `configure-director` task:
 <span class="note__title">Note</span>
 The inputs, outputs, params, filename, and filepath
 of this task file are part of its semantically versioned API.
-See our documentation for a detailed discussion of our semver API.
-See <a href="https://semver.org/">www.semver.org</a> for an explanation of semantic versioning.
+See <a href="https://semver.org/">www.semver.org</a> for information about semantic versioning.
 </p>
 
 <%= partial "../tasks/configure-director" %>
 
 ## Multiple foundations with one repository
 
-Multiple foundations may use a single Git configuration source
+Multiple foundations can use a single Git configuration source,
 but have different variables loaded
-from a foundation specific vars file, CredHub, and so on.
+from a foundation-specific vars file, CredHub, and so on.
 
 This strategy can reduce foundation drift
 and streamline the configuration promotion process between foundations.
@@ -95,11 +94,11 @@ This is the strategy used in the [reference pipeline](../pipelines/multiple-prod
 ### Overview
 
 The [reference pipeline](../pipelines/multiple-products.md) uses a public [config repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config)
-with all secrets stored in our Concourse's CredHub.
+with all secrets stored in the CredHub belonging to Concourse.
 
-The design considerations for this strategy as implemented are as follows:
+The design considerations for this strategy, as implemented, are:
 
-- Prioritization of ease of configuration promotion
+- Prioritization of ease of configuration promotion is prioritized
   over minimization of configuration
   file duplication between foundations.
 - Global, non-public variables can be overwritten by
@@ -109,16 +108,16 @@ The design considerations for this strategy as implemented are as follows:
 - No outside tooling or additional preparation tasks
   are required to use this strategy.
   It makes use of only concepts and workflows
-  built-in to Platform Automation and Concourse.
-- No significant differences between the required setup of foundations.
+  built in to Platform Automation and Concourse.
+- There are no significant differences between the required setup of the foundations.
   
     This doesn't mean that this strategy cannot be used
     with more complicated differences.
     If the pipelines need to be different for one reason or another,
     you might want the `pipelines` directory to be at the foundation level
     and for the `pipeline.yml` to be foundation-specific.
-    
-    The Reference Pipeline handles the different environments via a `fly` variable.
+
+    The [reference pipeline](../pipelines/multiple-products.md) handles the different environments via a `fly` variable.
     The pipeline set script is found in the [`scripts`](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/scripts/update-reference-pipeline.sh) directory.
 
 ### Structure
@@ -164,11 +163,11 @@ A simplified view of the [config-repo](https://github.com/pivotal/docs-platform-
     └── update-reference-pipeline.sh
 ```
 
-Let's start with the top-level folders:
+Starting with with the top-level folders:
 
 - `download-product-pivnet` contains config files
-  for downloading products from pivnet
-  and uploading those products to a blobstore.
+  for downloading products from Tanzu Network
+  and uploading these products to a blobstore.
 - `foundations` contains all of the configuration files
   and variable files for all foundations.
 - `pipelines` contains the pipeline files
@@ -177,12 +176,12 @@ Let's start with the top-level folders:
 
 #### `foundations`
 
-Within the `foundations` folder, we have all of our foundations as well as two additional folders:
+The `foundations` folder contains all of the foundations plus two additional folders:
 
-- `config` contains any global config files -- in our case, `env.yml` and `auth.yml`.
-  These files are used by `om` and their structure is not foundation-dependent.
-  As a result, each foundation pipeline fills out the parameterized variables
-  from Concourse's credential manager.
+- `config` contains any global config files, in this case, `env.yml` and `auth.yml`.
+  These files are used by `om` and their structure is not foundation-dependent,
+  so each foundation pipeline fills out the parameterized variables
+  from the Concourse credential manager.
 - `vars` contains foundation-independent variables for any of the configuration files.
   In this example, all of the foundations are on a single IAAS,
   so the common vars tend to be IAAS-specific.
@@ -191,7 +190,7 @@ Within the `foundations` folder, we have all of our foundations as well as two a
 
 #### `foundations/<foundation>`
 
-For each foundation, we have two folders:
+For each foundation, there are two folders:
 
 - `config` contains the configuration files that `om` uses for:
     - Downloading products from a blobstore; specified with the prefix `download-`
@@ -199,15 +198,16 @@ For each foundation, we have two folders:
     - Configuring the BOSH director; specified with `director.yml`
     - Configuring the Tanzu Operations Manager VM; specified with `opsman.yml`
 - `vars` contains any foundation-specific variables used by Platform Automation tasks.
-  These variables will fill in any variables `((parameterized))` in config files
+  These variables fill in any variables `((parameterized))` in config files
   that are not stored in Concourse's credential manager.
 
 ### Config promotion example
 
-In this example, we will be updating PKS from 1.3.8 to 1.4.3.
+This example, shows how to update PKS from 1.3.8 to 1.4.3.
 We will start with updating this tile in our `sandbox` foundation
 and then promote the configuration to the `development` foundation.
-We assume that you are viewing this example
+
+This procedure assumes that you are viewing this example
 from the root of the [Platform Automation Reference Pipeline Configs repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config).
 
 1. Update `download-product-pivnet/download-pks.yml`:
@@ -217,9 +217,9 @@ from the root of the [Platform Automation Reference Pipeline Configs repo](https
     + product-version-regex: ^1\.4\..*$
     ```
 
-2. Commit this change and run the [resource pipeline](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/pipelines/download-products.yml)
-which will download the 1.4.3 PKS tile
-and make it available on S3.
+2. Commit this change and run the [resource pipeline](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/pipelines/download-products.yml).
+This downloads the 1.4.3 PKS tile
+and makes it available on S3.
 
 1. Update the versions file for sandbox:
 
@@ -230,14 +230,14 @@ and make it available on S3.
 
 2. Run the `upload-and-stage-pks` job, but do not run the `configure-pks` or `apply-product-changes` jobs.
 
-    This makes it so that the `apply-changes` step won't automatically fail
+    This ensures that the `apply-changes` step doesn't automatically fail
     if there are configuration changes
-    between what we currently have deployed
+    between what what is currently deployed
     and the new tile.
 
-3. Login to the Tanzu Operations Manager UI. If the tile has unconfigured properties:
+3. Log in to the Tanzu Operations Manager UI. If the tile has unconfigured properties:
 
-    1. Manually configure the tile and deploy
+    1. Manually configure the tile and deploy it.
 
     2. Re-export the staged-config:
 
@@ -247,13 +247,13 @@ and make it available on S3.
 
     3. Merge the resulting config with the existing `foundations/sandbox/config/pks.yml`.
 
-        Diffing the previous `pks.yml`
-        and the new one makes this process much easier.
+        Doing a diff of the previous `pks.yml`
+        against the new one makes this process much easier.
 
-    4. Pull out new parameterizable variables
+    4. Pull out the new parametrizable variables
        and store them in `foundations/vars/pks.yml` or `foundations/sandbox/vars/pks.yml`,
        or directly into CredHub.
-       Note, there may be nothing new to parameterize.
+       Note that there may be nothing new to parameterize.
        This is okay, and makes the process go faster.
 
     5. Commit any changes.
@@ -265,15 +265,15 @@ and make it available on S3.
 
 6. Modify the `foundations/development/vars/versions.yml` and `foundations/development/vars/pks.yml` files
    to have all of the property references that exist in their sandbox counterparts
-   as well as the foundation-specific values.
+   and the foundation-specific values.
 
 7. Commit these changes and run the `development` pipeline all the way through.
 
 <p class="note">
 <span class="note__title">Note</span>
-<b>A quicker <code>development</code> deploy process:</b>
-Since all of the legwork was done manually in the <code>sandbox</code> environment
-there is no need to login to the <code>development</code> Tanzu Operations Manager environment.
+<strong>A quicker <code>development</code> deploy process:</strong>
+Since all of the legwork is done manually in the <code>sandbox</code> environment,
+there is no need to log in to the <code>development</code> Tanzu Operations Manager environment.
 <br>
 If there are no configuration changes, the only file that needs to be promoted is <code>versions.yml</code>.</p>
 
@@ -283,7 +283,7 @@ If there are no configuration changes, the only file that needs to be promoted i
 ### Matching resource names and input names
 
 As an alternative to `input_mapping`,
-we can create resources that match the input names on our tasks.
+you can create resources that match the input names on the tasks.
 Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
 
@@ -303,7 +303,7 @@ they can be declared as separate inputs.
     branch: develop
 ```
 
-As long as tho3se resources have an associated `get: <resource-name>`
+As long as each of these resources have an associated `get: <resource-name>`
 in the job, they will automatically be mapped to the inputs of the tasks in that job:
 
 ```
@@ -326,10 +326,9 @@ in the job, they will automatically be mapped to the inputs of the tasks in that
       file: platform-automation-tasks/tasks/configure-director.yml
 ```
 
-<p class="note caution">
+<div class="note caution">
 <span class="note__title">Caution</span>
-<b>Passed constraints:</b>
-If you have two resources defined with the same git repository, such as env and config,
+If you have two resources defined with the same git repository, such as <code>env</code> and <code>config</code>,
 and have a passed constraint on only one of them,
 there is a possibility that they will not be at the same SHA for any given job in your pipeline.
 
@@ -341,7 +340,7 @@ Example:
      passed: [previous-job]
   </code>
 </pre>
-</p>
+</div>
 
 ### Modifying resources in-place
 
@@ -349,7 +348,7 @@ Example:
 <span class="note__title">Note</span>
 <b>Concourse v5+ only:</b>
 This section uses a Concourse feature that allows inputs and outputs to have the same name.
-This feature is only available in Concourse 5+. The following does not work with Concourse v4.</p>
+This feature is only available in Concourse 5+. The example that follows does not work with Concourse v4.</p>
 
 In certain circumstances, resources can be modified by one task in a job
 for use later in that same job. A few tasks that offer this ability include:
@@ -358,12 +357,12 @@ for use later in that same job. A few tasks that offer this ability include:
 - [prepare-tasks-with-secrets](../tasks.md#prepare-tasks-with-secrets)
 - [prepare-image](../tasks.md#prepare-image)
 
-For each of these tasks, `output_mapping` can be used to "overwrite"
+For each of these tasks, `output_mapping` can be used to overwrite
 an input with a modified input for use with tasks later in that job.
 
 In the following example, `prepare-tasks-with-secrets` takes in the
 `platform-automation-tasks` input and modifies it for the `download-product`
-task. A more in-depth explanation of this can be found on the [secrets-handling](../concepts/secrets-handling.md) page.
+task. For a more detailed explanation see [Secrets Handling](../concepts/secrets-handling.md).
 
 ```yaml
 - name: configure-director
@@ -395,8 +394,3 @@ task. A more in-depth explanation of this can be found on the [secrets-handling]
       params:
         CONFIG_FILE: download-ops-manager.yml
 ```
-
-[//]: # ({% with path="../" %})
-[//]: # (    {% include ".internal_link_url.md" %})
-[//]: # ({% endwith %})
-[//]: # ({% include ".external_link_url.md" %})
