@@ -447,13 +447,14 @@ commit it, and push it:
 to `opsman.yml`.
 The properties available vary by IaaS,
 but you can often inspect your existing Tanzu Operations Manager
-in your IaaS's console
+in your IaaS console
 (or, if your Tanzu Operations Manager was created with Terraform,
-look at your terraform outputs)
+look at your Terraform outputs)
 to find the necessary values.
 
     **AWS**
 
+    <%= partial "../examples/state/aws" %>
     <%= partial "../examples/opsman-config/aws" %>
 
     **Azure**
