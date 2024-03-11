@@ -456,230 +456,230 @@ to find the necessary values.
 
     <!--- <%= partial "../examples/opsman-config/aws1" --->
     ```
-    ---
-    opsman-configuration:
-      aws:
-        region: us-west-2
-        vpc_subnet_id: subnet-0292bc845215c2cbf
-        security_group_ids: [ sg-0354f804ba7c4bc41 ]
-        key_pair_name: ops-manager-key  # used to SSH to VM
-        iam_instance_profile_name: env_ops_manager
+        ---
+        opsman-configuration:
+          aws:
+            region: us-west-2
+            vpc_subnet_id: subnet-0292bc845215c2cbf
+            security_group_ids: [ sg-0354f804ba7c4bc41 ]
+            key_pair_name: ops-manager-key  # used to SSH to VM
+            iam_instance_profile_name: env_ops_manager
 
-        # At least one IP address (public or private) needs to be assigned to the
-        # VM. It is also permissible to assign both.
-        public_ip: 1.2.3.4      # Reserved Elastic IP
-        private_ip: 10.0.0.2
+            # At least one IP address (public or private) needs to be assigned to the
+            # VM. It is also permissible to assign both.
+            public_ip: 1.2.3.4      # Reserved Elastic IP
+            private_ip: 10.0.0.2
 
-        # Optional
-        # vm_name: ops-manager-vm    # default - ops-manager-vm
-        # boot_disk_size: 100        # default - 200 (GB)
-        # instance_type: m5.large    # default - m5.large
-                                    # NOTE - not all regions support m5.large
-        # assume_role: "arn:aws:iam::..." # necessary if a role is needed to authorize
-                                          # the OpsMan VM instance profile
-        # tags: {key: value}              # key-value pair of tags assigned to the
-        #                                 # Ops Manager VM
-        # Omit if using instance profiles
-        # And instance profile OR access_key/secret_access_key is required
-        # access_key_id: ((access-key-id))
-        # secret_access_key: ((secret-access-key))
+            # Optional
+            # vm_name: ops-manager-vm    # default - ops-manager-vm
+            # boot_disk_size: 100        # default - 200 (GB)
+            # instance_type: m5.large    # default - m5.large
+                                        # NOTE - not all regions support m5.large
+            # assume_role: "arn:aws:iam::..." # necessary if a role is needed to authorize
+                                              # the OpsMan VM instance profile
+            # tags: {key: value}              # key-value pair of tags assigned to the
+            #                                 # Ops Manager VM
+            # Omit if using instance profiles
+            # And instance profile OR access_key/secret_access_key is required
+            # access_key_id: ((access-key-id))
+            # secret_access_key: ((secret-access-key))
 
-        # security_group_id: sg-123  # DEPRECATED - use security_group_ids
-        # use_instance_profile: true # DEPRECATED - will use instance profile for
-                                    # execution VM if access_key_id and
-                                    # secret_access_key are not set
+            # security_group_id: sg-123  # DEPRECATED - use security_group_ids
+            # use_instance_profile: true # DEPRECATED - will use instance profile for
+                                        # execution VM if access_key_id and
+                                        # secret_access_key are not set
 
-      # Optional Ops Manager UI Settings for upgrade-opsman
-      # ssl-certificate: ...
-      # pivotal-network-settings: ...
-      # banner-settings: ...
-      # syslog-settings: ...
-      # rbac-settings: ...
+          # Optional Ops Manager UI Settings for upgrade-opsman
+          # ssl-certificate: ...
+          # pivotal-network-settings: ...
+          # banner-settings: ...
+          # syslog-settings: ...
+          # rbac-settings: ...
     ```
 
     **Azure**
 
     <!--- <%= partial "../examples/opsman-config/azure1" %> --->
     ```
-    ---
-    opsman-configuration:
-      azure:
-        tenant_id: 3e52862f-a01e-4b97-98d5-f31a409df682
-        subscription_id: 90f35f10-ea9e-4e80-aac4-d6778b995532
-        client_id: 5782deb6-9195-4827-83ae-a13fda90aa0d
-        client_secret: ((opsman-client-secret))
-        location: westus
-        resource_group: res-group
-        storage_account: opsman                       # account name of container
-        ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ...  # ssh key to access VM
+        ---
+        opsman-configuration:
+          azure:
+            tenant_id: 3e52862f-a01e-4b97-98d5-f31a409df682
+            subscription_id: 90f35f10-ea9e-4e80-aac4-d6778b995532
+            client_id: 5782deb6-9195-4827-83ae-a13fda90aa0d
+            client_secret: ((opsman-client-secret))
+            location: westus
+            resource_group: res-group
+            storage_account: opsman                       # account name of container
+            ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAZ...  # ssh key to access VM
 
-        # Note that there are several environment-specific details in this path
-        # This path can reach out to other resource groups if necessary
-        subnet_id: /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<VNET>/subnets/<SUBNET>
+            # Note that there are several environment-specific details in this path
+            # This path can reach out to other resource groups if necessary
+            subnet_id: /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Network/virtualNetworks/<VNET>/subnets/<SUBNET>
 
-        # At least one IP address (public or private) needs to be assigned
-        # to the VM. It is also permissible to assign both.
-        private_ip: 10.0.0.3
-        public_ip: 1.2.3.4
+            # At least one IP address (public or private) needs to be assigned
+            # to the VM. It is also permissible to assign both.
+            private_ip: 10.0.0.3
+            public_ip: 1.2.3.4
 
-        # Optional
-        # cloud_name: AzureCloud          # default - AzureCloud
-        # storage_key: ((storage-key))    # only required if your client does not
-                                          # have the needed storage permissions
-        # container: opsmanagerimage      # storage account container name
-                                          # default - opsmanagerimage
-        # network_security_group: ops-manager-security-group
-        # vm_name: ops-manager-vm         # default - ops-manager-vm
-        # boot_disk_size: 200             # default - 200 (GB)
-        # use_managed_disk: true          # this flag is only respected by the
-                                          # create-vm and upgrade-opsman commands.
-                                          # set to false if you want to create
-                                          # the new opsman VM with an unmanaged
-                                          # disk (not recommended). default - true
-        # storage_sku: Premium_LRS        # this sets the SKU of the storage account
-                                          # for the disk
-                                          # Allowed values: Standard_LRS, Premium_LRS,
-                                          # StandardSSD_LRS, UltraSSD_LRS
-        # vm_size: Standard_DS1_v2        # the size of the Ops Manager VM
-                                          # default - Standard_DS2_v2
-                                          # Allowed values: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes-general
-        # tags: Project=ECommerce         # Space-separated tags: key[=value] [key[=value] ...]. Use '' to
-                                          # clear existing tags.
-        # vpc_subnet: /subscriptions/...  # DEPRECATED - use subnet_id
-        # use_unmanaged_disk: false       # DEPRECATED - use use_managed_disk
+            # Optional
+            # cloud_name: AzureCloud          # default - AzureCloud
+            # storage_key: ((storage-key))    # only required if your client does not
+                                              # have the needed storage permissions
+            # container: opsmanagerimage      # storage account container name
+                                              # default - opsmanagerimage
+            # network_security_group: ops-manager-security-group
+            # vm_name: ops-manager-vm         # default - ops-manager-vm
+            # boot_disk_size: 200             # default - 200 (GB)
+            # use_managed_disk: true          # this flag is only respected by the
+                                              # create-vm and upgrade-opsman commands.
+                                              # set to false if you want to create
+                                              # the new opsman VM with an unmanaged
+                                              # disk (not recommended). default - true
+            # storage_sku: Premium_LRS        # this sets the SKU of the storage account
+                                              # for the disk
+                                              # Allowed values: Standard_LRS, Premium_LRS,
+                                              # StandardSSD_LRS, UltraSSD_LRS
+            # vm_size: Standard_DS1_v2        # the size of the Ops Manager VM
+                                              # default - Standard_DS2_v2
+                                              # Allowed values: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes-general
+            # tags: Project=ECommerce         # Space-separated tags: key[=value] [key[=value] ...]. Use '' to
+                                              # clear existing tags.
+            # vpc_subnet: /subscriptions/...  # DEPRECATED - use subnet_id
+            # use_unmanaged_disk: false       # DEPRECATED - use use_managed_disk
 
-      # Optional Ops Manager UI Settings for upgrade-opsman
-      # ssl-certificate: ...
-      # pivotal-network-settings: ...
-      # banner-settings: ...
-      # syslog-settings: ...
-      # rbac-settings: ...
+          # Optional Ops Manager UI Settings for upgrade-opsman
+          # ssl-certificate: ...
+          # pivotal-network-settings: ...
+          # banner-settings: ...
+          # syslog-settings: ...
+          # rbac-settings: ...
     ```
 
     **GCP**
 
     <!--- <%= partial "../examples/opsman-config/gcp1" %> --->
     ```
-    ---
-    opsman-configuration:
-      gcp:
-        # Either gcp_service_account_name or gcp_service_account json is required
-        # You must remove whichever you don't use
-        gcp_service_account_name: user@project-id.iam.gserviceaccount.com
-        gcp_service_account: ((gcp-service-account-key-json))
+        ---
+        opsman-configuration:
+          gcp:
+            # Either gcp_service_account_name or gcp_service_account json is required
+            # You must remove whichever you don't use
+            gcp_service_account_name: user@project-id.iam.gserviceaccount.com
+            gcp_service_account: ((gcp-service-account-key-json))
 
-        project: project-id
-        region: us-central1
-        zone: us-central1-b
-        vpc_subnet: infrastructure-subnet
+            project: project-id
+            region: us-central1
+            zone: us-central1-b
+            vpc_subnet: infrastructure-subnet
 
-        # At least one IP address (public or private) needs to be assigned to the
-        # VM. It is also permissible to assign both.
-        public_ip: 1.2.3.4
-        private_ip: 10.0.0.2
+            # At least one IP address (public or private) needs to be assigned to the
+            # VM. It is also permissible to assign both.
+            public_ip: 1.2.3.4
+            private_ip: 10.0.0.2
 
-        ssh_public_key: ssh-rsa some-public-key... # RECOMMENDED, but not required
-        tags: ops-manager                          # RECOMMENDED, but not required
+            ssh_public_key: ssh-rsa some-public-key... # RECOMMENDED, but not required
+            tags: ops-manager                          # RECOMMENDED, but not required
 
-        # Optional
-        # vm_name: ops-manager-vm  # default - ops-manager-vm
-        # custom_cpu: 2            # default - 2
-        # custom_memory: 8         # default - 8
-        # boot_disk_size: 100      # default - 100
-        # scopes: ["my-scope"]
-        # hostname: custom.hostname # info: https://cloud.google.com/compute/docs/instances/custom-hostname-vm
+            # Optional
+            # vm_name: ops-manager-vm  # default - ops-manager-vm
+            # custom_cpu: 2            # default - 2
+            # custom_memory: 8         # default - 8
+            # boot_disk_size: 100      # default - 100
+            # scopes: ["my-scope"]
+            # hostname: custom.hostname # info: https://cloud.google.com/compute/docs/instances/custom-hostname-vm
 
-      # Optional Ops Manager UI Settings for upgrade-opsman
-      # ssl-certificate: ...
-      # pivotal-network-settings: ...
-      # banner-settings: ...
-      # syslog-settings: ...
-      # rbac-settings: ...
+          # Optional Ops Manager UI Settings for upgrade-opsman
+          # ssl-certificate: ...
+          # pivotal-network-settings: ...
+          # banner-settings: ...
+          # syslog-settings: ...
+          # rbac-settings: ...
     ```
 
     **Openstack**
 
     <!--- <%= partial "../examples/opsman-config/openstack1" %> --->
     ```
-    ---
-    opsman-configuration:
-      openstack:
-        project_name: project
-        auth_url: http://os.example.com:5000/v2.0
-        username: ((opsman-openstack-username))
-        password: ((opsman-openstack-password))
-        net_id: 26a13112-b6c2-11e8-96f8-529269fb1459
-        security_group_name: opsman-sec-group
-        key_pair_name: opsman-keypair
+        ---
+        opsman-configuration:
+          openstack:
+            project_name: project
+            auth_url: http://os.example.com:5000/v2.0
+            username: ((opsman-openstack-username))
+            password: ((opsman-openstack-password))
+            net_id: 26a13112-b6c2-11e8-96f8-529269fb1459
+            security_group_name: opsman-sec-group
+            key_pair_name: opsman-keypair
 
-        # At least one IP address (public or private) needs to be assigned to the VM.
-        public_ip: 1.2.3.4 # must be an already allocated floating IP
-        private_ip: 10.0.0.3
+            # At least one IP address (public or private) needs to be assigned to the VM.
+            public_ip: 1.2.3.4 # must be an already allocated floating IP
+            private_ip: 10.0.0.3
 
-        # Optional
-        # availability_zone: zone-01
-        # project_domain_name: default
-        # user_domain_name: default
-        # vm_name: ops-manager-vm       # default - ops-manager-vm
-        # flavor: m1.xlarge             # default - m1.xlarge
-        # identity_api_version: 2       # default - 3
-        # insecure: true                # default - false
+            # Optional
+            # availability_zone: zone-01
+            # project_domain_name: default
+            # user_domain_name: default
+            # vm_name: ops-manager-vm       # default - ops-manager-vm
+            # flavor: m1.xlarge             # default - m1.xlarge
+            # identity_api_version: 2       # default - 3
+            # insecure: true                # default - false
 
-      # Optional Ops Manager UI Settings for upgrade-opsman
-      # ssl-certificate: ...
-      # pivotal-network-settings: ...
-      # banner-settings: ...
-      # syslog-settings: ...
-      # rbac-settings: ...
+          # Optional Ops Manager UI Settings for upgrade-opsman
+          # ssl-certificate: ...
+          # pivotal-network-settings: ...
+          # banner-settings: ...
+          # syslog-settings: ...
+          # rbac-settings: ...
     ```
 
     **vSphere**
 
     <!--- <%= partial "../examples/opsman-config/vsphere1" %> --->
     ```
-    ---
-    opsman-configuration:
-      vsphere:
-        vcenter:
-          ca_cert: cert                 # REQUIRED if insecure = 0 (secure)
-          datacenter: example-dc
-          datastore: example-ds-1
-          folder: /example-dc/vm/Folder # RECOMMENDED, but not required
-          url: vcenter.example.com
-          username: ((vcenter-username))
-          password: ((vcenter-password))
-          resource_pool: /example-dc/host/example-cluster/Resources/example-pool
-          # resource_pool can use a cluster - /example-dc/host/example-cluster
+        ---
+        opsman-configuration:
+          vsphere:
+            vcenter:
+              ca_cert: cert                 # REQUIRED if insecure = 0 (secure)
+              datacenter: example-dc
+              datastore: example-ds-1
+              folder: /example-dc/vm/Folder # RECOMMENDED, but not required
+              url: vcenter.example.com
+              username: ((vcenter-username))
+              password: ((vcenter-password))
+              resource_pool: /example-dc/host/example-cluster/Resources/example-pool
+              # resource_pool can use a cluster - /example-dc/host/example-cluster
 
-          # Optional
-          # host: host      # DEPRECATED - Platform Automation cannot guarantee
-                            # the location of the VM, given the nature of vSphere
-          # insecure: 0     # default - 0 (secure) | 1 (insecure)
+              # Optional
+              # host: host      # DEPRECATED - Platform Automation cannot guarantee
+                                # the location of the VM, given the nature of vSphere
+              # insecure: 0     # default - 0 (secure) | 1 (insecure)
 
-        disk_type: thin     # thin|thick
-        dns: 8.8.8.8
-        gateway: 192.168.10.1
-        hostname: ops-manager.example.com
-        netmask: 255.255.255.192
-        network: example-virtual-network
-        ntp: ntp.ubuntu.com
-        private_ip: 10.0.0.10
-        ssh_public_key: ssh-rsa ......   # REQUIRED Ops Manager >= 2.6
+            disk_type: thin     # thin|thick
+            dns: 8.8.8.8
+            gateway: 192.168.10.1
+            hostname: ops-manager.example.com
+            netmask: 255.255.255.192
+            network: example-virtual-network
+            ntp: ntp.ubuntu.com
+            private_ip: 10.0.0.10
+            ssh_public_key: ssh-rsa ......   # REQUIRED Ops Manager >= 2.6
 
-        # Optional
-        # cpu: 1                         # default - 1
-        # memory: 8                      # default - 8 (GB)
-        # ssh_password: ((ssh-password)) # REQUIRED if ssh_public_key not defined
-                                        # (Ops Manager < 2.6 ONLY)
-        # vm_name: ops-manager-vm        # default - ops-manager-vm
-        # disk_size: 200                 # default - 160 (GB), only larger values allowed
+            # Optional
+            # cpu: 1                         # default - 1
+            # memory: 8                      # default - 8 (GB)
+            # ssh_password: ((ssh-password)) # REQUIRED if ssh_public_key not defined
+                                            # (Ops Manager < 2.6 ONLY)
+            # vm_name: ops-manager-vm        # default - ops-manager-vm
+            # disk_size: 200                 # default - 160 (GB), only larger values allowed
 
-      # Optional Ops Manager UI Settings for upgrade-opsman
-      # ssl-certificate: ...
-      # pivotal-network-settings: ...
-      # banner-settings: ...
-      # syslog-settings: ...
-      # rbac-settings: ...
+          # Optional Ops Manager UI Settings for upgrade-opsman
+          # ssl-certificate: ...
+          # pivotal-network-settings: ...
+          # banner-settings: ...
+          # syslog-settings: ...
+          # rbac-settings: ...
     ```
 
 1. Option 2: Alternatively, you can auto-generate your opsman.yml
