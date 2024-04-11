@@ -43,6 +43,9 @@ params:
   # - The source location where products and stemcells are downloaded from.
   # - Values: pivnet, s3, gcs, azure
 
+  HOST:
+  # - Optional
+  # - The HOST URL for downloading artifacts from
 run:
   path: platform-automation-tasks/tasks/download-product.sh
 # code_snippet download-product end

@@ -24,6 +24,7 @@ om download-product \
   --output-directory downloaded-product \
   --stemcell-output-directory downloaded-stemcell \
   --source "${SOURCE}"
+  --pivnet-host "${HOST}"
 
 { printf "\nChecking if product needs winfs injected..."; } 2>/dev/null
 # shellcheck disable=SC2068
