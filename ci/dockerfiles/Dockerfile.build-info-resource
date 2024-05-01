@@ -1,6 +1,0 @@
-FROM concourse/buildroot:base
-
-ADD build-info-resource-files/check /opt/resource/
-ADD build-info-resource-files/in /opt/resource/
-ADD build-info-resource-files/out /opt/resource/
-RUN chmod +x /opt/resource/*

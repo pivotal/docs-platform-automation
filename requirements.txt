@@ -1,1 +1,0 @@
-git+https://github.com/pivotal/mkdocs-pivotal-theme#egg=mkdocs-pivotal
