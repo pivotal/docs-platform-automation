@@ -23,7 +23,7 @@ om download-product \
   --config config/"${CONFIG_FILE}" ${vars_files_args[@]} \
   --output-directory downloaded-product \
   --stemcell-output-directory downloaded-stemcell \
-  --source "${SOURCE}"
+  --source "${SOURCE}" \
   --pivnet-host "${HOST}"
 
 { printf "\nChecking if product needs winfs injected..."; } 2>/dev/null
