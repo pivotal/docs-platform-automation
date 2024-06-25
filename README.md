@@ -1,16 +1,22 @@
 # Introduction
 
-This is the docs source for
-[Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation),
-available from VMware Tanzu Network.
+This is the download source for
+[Platform Automation Toolkit](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Platform%20Automation%20Toolkit
+),
+available from the Broadcom Support portal.
 
 The production docs are here:
-https://docs.pivotal.io/platform-automation/
+https://docs.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.1/vmware-automation-toolkit/GUID-docs-index.html
 
-There is a public staging copy here:
-https://docs-pcf-staging.tas.vmware.com/platform-automation/
+There is a staging copy here:
+https://docs-staging.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.1/vmware-automation-toolkit/GUID-docs-index.html
 
 # Usage
+
+>**Important**: Mkdocs is no longer used. This doc set is now built in DocWorks.
+>Contact your writer on the TAS IX team for help building the docs.
+>See https://docworks.vmware.com/one/scene?permalink=uniqueId%3DMarkdown-Project-3084.
+
 
 We use [`mkdocs`](https://www.mkdocs.org/) for our documentation engine.
 To use it locally, it will require `python3` to be installed.

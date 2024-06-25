@@ -17,7 +17,7 @@ Exported installation files may also be quite large.
 * For environments that can't access the greater internet.
   This is a common security practice,
   but it also means that it's not possible
-  to connect directly to [Tanzu Network](https://network.tanzu.vmware.com/)
+  to connect directly to the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads)
   to access the latest product versions for your upgrades.
 
 The integration of S3 and Concourse
@@ -29,7 +29,7 @@ into a network "allow-listed" S3 bucket
 to be used by Platform Automation Toolkit tasks.
 You can even create a [Resources pipeline](../pipelines/resources.md)
 that gets the latest version of products
-from Tanzu Network and places them into your S3 bucket automatically.
+from the Broadcom Support portal and places them into your S3 bucket automatically.
 
 Alternatively, because your foundation backup may be quite large,
 it is advantageous to persist it in a blobstore
@@ -265,7 +265,7 @@ Ensure that Concourse can communicate with your S3 bucket.
 ## Reference resources pipeline
 
 The [resources pipeline](../pipelines/resources.md)
-may be used to download dependencies from Tanzu Network
+may be used to download dependencies from the Broadcom Support portal
 and place them into a trusted S3 bucket.
 The various `resources_types` use the [Concourse S3 Resource type](https://github.com/concourse/s3-resource)
 and several Platform Automation Toolkit tasks to accomplish this.
@@ -274,7 +274,7 @@ and where to find more information.
 
 #### The download-product task
 
-The [`download-product`](../tasks.md#download-product) task lets you download products from Tanzu Network.
+The [`download-product`](../tasks.md#download-product) task lets you download products from the Broadcom Support portal.
 If S3 properties are set in the [download config](../inputs-outputs.md#download-product-config),
 these files can be put into an S3 bucket.
 
@@ -283,17 +283,17 @@ this task will perform a specific filename operation
 that will prepend metadata to the filename.
 If you are downloading:
 
-* product `Example Product version 2.2.1` from Tanzu Network
+* product `Example Product version 2.2.1` from the Broadcom Support portal
 * with product slug `example-product`
 * and version is `2.2.1`
 
-When downloaded directly from Tanzu Network, the file might look like this:
+When downloaded directly from the Broadcom Support portal, the file might look like this:
 
 ```
 product-2.2-build99.pivotal
 ```
 
-Because Tanzu Network file names
+Because the Broadcom Support portal file names
 do not always have the necessary metadata required by Platform Automation Toolkit,
 the download product task will prepend the necessary information
 to the filename before it is placed in the S3 bucket:
