@@ -272,7 +272,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - `download-product` will work with supported versions of TAS Windows
   released after Friday August 20th, 2020.
   These versions do not work with older versions of Platform Automation.
-  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  The TAS Windows tiles on the Broadcom Support portal now include Open Source License files
   in the tile itself.
   Platform Automation needed to bump the winfs-injector version
   to ensure compatibility with this new arrangement.
@@ -780,7 +780,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - `download-product` will work with supported versions of TAS Windows
   released after Friday August 20th, 2020.
   These versions do not work with older versions of Platform Automation.
-  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  The TAS Windows tiles on the Broadcom Support portal now include Open Source License files
   in the tile itself.
   Platform Automation needed to bump the winfs-injector version
   to ensure compatibility with this new arrangement.
@@ -1145,7 +1145,7 @@ Released December 3, 2019
 
   Usage:
 
-  1. Get the Platform Automation Toolkit image from Tanzu Network.
+  1. Get the Platform Automation Toolkit image from the Broadcom Support portal.
   1. Import that image into `docker` to run the [`p-automation` locally](./how-to-guides/running-commands-locally.html).
   1. Create a [state file](./inputs-outputs.html#state) that represents your current VM and IAAS.
   1. Invoke the `p-automator` CLI to get the configuration.
@@ -1168,7 +1168,7 @@ Released December 3, 2019
   The configuration `storage_sku` and `vm_size` use the Azure values accordingly.
 - The [`download-product`](./tasks.html#download-product) task now supports the `SOURCE` param
   to specify where to download products and stemcells from.
-  The supported sources are the Azure(`azure`), GCS(`gcs`), S3(`s3`), Tanzu Network(`pivnet`).
+  The supported sources are the Azure(`azure`), GCS(`gcs`), S3(`s3`), Broadcom Support portal(`pivnet`).
 - [`configure-authentication`](./tasks.html#configure-authentication),
   [`configure-ldap-authentication`](./tasks.html#configure-ldap-authentication), and
   [`configure-saml-authentication`](./tasks.html#configure-saml-authentication)
@@ -1246,7 +1246,7 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 - `download-product` will work with supported versions of TAS Windows
   released after Friday August 20th, 2020.
   These versions do not work with older versions of Platform Automation.
-  The TAS Windows tiles on Tanzu Network now include Open Source License files
+  The TAS Windows tiles on the Broadcom Support portal now include Open Source License files
   in the tile itself.
   Platform Automation needed to bump the winfs-injector version
   to ensure compatibility with this new arrangement.
@@ -1669,7 +1669,7 @@ Released October 21, 2019
   ```
 
 - [Telemetry](https://docs.vmware.com/en/Tanzu-Telemetry-for-Ops-Manager/index.html) support has been added!
-  To opt in, you must get the Telemetry tool from [Tanzu Network](https://network.pivotal.io/products/pivotal-telemetry-collector),
+  To opt in, you must get the Telemetry tool from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Telemetry%20for%20VMware%20Tanzu%20%5BVMs%5D),
   create a [config file](./inputs-outputs.html#telemetry),
   and add the [collect-telemetry](./tasks.html#collect-telemetry) and [send-telemetry](./tasks.html#send-telemetry) tasks to your pipeline.
   For an example, please see the [Reference Pipelines](./pipelines/multiple-products.html).
@@ -2483,8 +2483,8 @@ shasum: 6daededd8fb4c341d0cd437a # NOTE the name of this value is changed
 ### What's New
 - The new command [`assign-multi-stemcell`](./tasks.html#assign-multi-stemcell) assigns multiple stemcells to a provided product.
   This feature is only available in OpsMan 2.6+.
-- [`download-product`](./tasks.html#download-product) ensures sha sum checking when downloading the file from Tanzu Network.
-- [`download-product`](./tasks.html#download-product) can now disable ssl validation when connecting to Tanzu Network.
+- [`download-product`](./tasks.html#download-product) ensures sha sum checking when downloading the file from the Broadcom Support portal.
+- [`download-product`](./tasks.html#download-product) can now disable ssl validation when connecting to the Broadcom Support portal.
   This helps with environments with SSL and proxying issues.
   Add `pivnet-disable-ssl: true` in your [download-product-config](./inputs-outputs.html#download-product-config) to use this feature.
 - On [GCP](./inputs-outputs.html#gcp), if you did not assign a public IP, Google would assign
