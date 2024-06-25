@@ -32,7 +32,7 @@ Do this by changing:
 
     The first task in the job should be [`download-product`](../tasks.md#download-product).
     It has an additional required input;
-    the `config` file `download-product` uses to talk to Tanzu Network.
+    the `config` file `download-product` uses to talk to the Broadcom Support portal.
 
 1. Before writing that file and making it available as a resource,
 `get` it (and reference it in the params)
@@ -751,7 +751,7 @@ in the directory it is called from.
 
 2. Get the image for the new Tanzu Operations Manager version using the [`download-product`](../tasks.md#download-product) task.
 It requires a config file to specify which Tanzu Operations Manager to get,
-and to provide Tanzu Network credentials.
+and to provide the Broadcom Support portal credentials.
 Name this file `download-opsman.yml`:
 
     ```yaml
