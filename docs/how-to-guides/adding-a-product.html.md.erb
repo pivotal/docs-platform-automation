@@ -1,8 +1,8 @@
 # Extending a Pipeline to Install a Product
 
-This how-to-guide will teach you how to add a product to an existing pipeline.
-This includes downloading the product from Pivnet,
-extracting configuration,
+This topic will teach you how to add a product to an existing pipeline.
+This includes downloading the product from the Broadcom Support portal,
+extracting the configuration,
 and installing the configured product.
 If you don't already have an Operations Manager and deployed Director,
 check out [Installing Operations Manager](./installing-opsman.html) and
@@ -14,7 +14,7 @@ check out [Installing Operations Manager](./installing-opsman.html) and
    or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.html).
 2. A fully configured Tanzu Operations Manager and Director. See [Deploying the Director](./creating-a-director-config-file.html).
 3. The Platform Automation Toolkit Docker Image [imported and ready to run](./running-commands-locally.html).
-4. A glob pattern uniquely matching one product file on Tanzu Network.
+4. A glob pattern uniquely matching one product file on the Broadcom Support portal.
 
 ### Assumptions About Your Existing Pipeline
 
@@ -42,12 +42,12 @@ either by changing the example YAML or your pipeline.
 
 ## Download, upload, and stage product to Tanzu Operations Manager
 
-For this guide, we're going to add the [VMware Tanzu Application Service for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/) product.
+The instructions and example in the following add the [VMware Tanzu Application Service for VMs](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs) product.
 
 ### Download
-Before setting the pipeline, we will have to
-create a config file for [`download-product`](../tasks.html#download-product)
-to download Tanzu Application Service from Tanzu Network.
+
+Before setting the pipeline, create a config file for [`download-product`](../tasks.md#download-product)
+to download Tanzu Application Service from the Broadcom Support portal.
 
 Create a `download-tas.yml`.
 
@@ -224,7 +224,7 @@ see <a href="#config-template">Config Template</a>.</p>
 
 #### Pulling Configuration from Operations Manager
 Configure the product _manually_ according to the product's install instructions.
-This guide installs Tanzu Application Service(https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/vsphere-nsx-t.html).
+This guide installs Tanzu Application Service(https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/vsphere-nsx-t.html).
 Other install instructions may be found in [VMware Tanzu Docs](https://docs.vmware.com/).
 
 Once the product is fully configured, apply changes in the Operations Manager UI,
@@ -256,9 +256,11 @@ and then run `staged-config` for the [Tanzu Application Service](https://network
 For more information on Running Commands Locally,
 see the corresponding [How-to Guide](./running-commands-locally.html).
 
-After you download the image from [Tanzu Network](https://network.tanzu.vmware.com/products/platform-automation/)
-you need the product name recognized by Tanzu Operations Manager.
-This can be found using `om`, but first, import the image.
+To pull the configuration from Tanzu Operations Manager:
+
+1. Download the image from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Platform%20Automation%20Toolkit).
+
+2. Import the image.
 
 ```bash
 export ENV_FILE=env.yml
@@ -281,12 +283,12 @@ The result should be a table that looks like the following
 +---------------------------+-----------------+
 ```
 
-`p-bosh` is the name of the director.
-As `cf` is the only other product on our Tanzu Operations Manager,
-we can safely assume that this is the product name for [Tanzu Application Service](https://network.tanzu.vmware.com/products/elastic-runtime/).
+    `p-bosh` is the name of the director.
+    As `cf` is the only other product on our Tanzu Operations Manager,
+    we can safely assume that this is the product name for [Tanzu Application Service](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs).
 
-Using the product name `cf`,
-let's extract the current configuration from Operations Manager.
+4. Using the product name `cf`,
+extract the current configuration from Tanzu Operations Manager.
 
 ```bash
 docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
@@ -637,7 +639,9 @@ outlined in the how-to guide is `config-template`.
 `config-template` is an `om` command that creates a base config file with optional ops files
 from a given tile or pivnet slug.
 
-This section will assume [TAS for VMs](https://network.tanzu.vmware.com/products/elastic-runtime/), as in the how-to guide above.
+This section assumes that you are adding 
+[TAS for VMs](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs),
+as in the procedure above.
 
 #### Generate the Config Template Directory
 
@@ -802,7 +806,7 @@ There are two recommended ways to support multiple foundation workflows:
 using [secrets management](../concepts/secrets-handling.html) or ops files.
 This section will explain how to support multiple foundations using ops files.
 
-Starting with an incomplete [Tanzu Application Service](https://network.tanzu.vmware.com/products/elastic-runtime/) config from **vSphere** as an example:
+Starting with an incomplete [Tanzu Application Service](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs) config from **vSphere** as an example:
 
 <%= partial "cf-partial-config" %>
 

@@ -225,7 +225,7 @@ Collects foundation information
 using the [Telemetry Collector](https://docs.vmware.com/en/Tanzu-Telemetry-for-Ops-Manager/index.html) tool.
 
 This task requires the `telemetry-collector-binary` as an input.
-The binary is available on [Tanzu Network](https://network.tanzu.vmware.com/products/pivotal-telemetry-om/);
+The binary is available on the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Telemetry%20for%20VMware%20Tanzu%20%5BVMs%5D);
 you must define a `resource` to supply the binary.
 
 This task requires a [config file](./inputs-outputs.html).
@@ -502,15 +502,15 @@ The task does specific CLI commands for the creation of the Operations Manager V
 
 **AWS**
 
-1. Requires the image YAML file from Tanzu Network
+1. Requires the image YAML file from the Broadcom Support portal
 2. Validates the existence of the VM if defined in the statefile, if so do nothing
-3. Chooses the correct ami to use based on the provided image YAML file from Tanzu Network
-4. Creates the VM configured via opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
+3. Chooses the correct ami to use based on the provided image YAML file from the Broadcom Support portal
+4. Creates the VM configured using the opsman config and the image YAML. This only attaches existing infrastructure to a newly created VM. This does not create any new resources
 5. The public IP address, if provided, is assigned after successful creation
 
 **Azure**
 
-1. Requires the image YAML file from Tanzu Network
+1. Requires the image YAML file from the Broadcom Support portal
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Copies the image (of the OpsMan VM from the specified region) as a blob into the specified storage account
 1. Creates the Operations Manager image
@@ -518,14 +518,14 @@ The task does specific CLI commands for the creation of the Operations Manager V
 
 **GCP**
 
-1. Requires the image YAML file from Tanzu Network
+1. Requires the image YAML file from the Broadcom Support portal
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Creates a compute image based on the region specific Operations Manager source URI in the specified Operations Manager account
 1. Creates a VM from the image. This will assign a public and/or private IP address, VM sizing, and tags. This does not create any new resources.
 
 **OpenStack**
 
-1. Requires the image YAML file from Tanzu Network
+1. Requires the image YAML file from the Broadcom Support portal
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Recreates the image in openstack if it already exists to validate we are using the correct version of the image
 1. Creates a VM from the image. This does not create any new resources
@@ -533,7 +533,7 @@ The task does specific CLI commands for the creation of the Operations Manager V
 
 **Vsphere**
 
-1. Requires the OVA image from Tanzu Network
+1. Requires the OVA image from the Broadcom Support portal
 1. Validates the existence of the VM if defined in the statefile, if so do nothing
 1. Build ipath from the provided datacenter, folder, and vmname provided in the config file. The created VM is stored on the generated path. If folder is not provided, the VM will be placed in the datacenter.
 1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources
@@ -675,10 +675,9 @@ as it takes the same product config.
 There are no `outputs` for this task
 because the products (and stemcell) don't need to be shared downstream.
 
-	
-<p class="note important">
-<span class="note__title">Important</span>
-This currently only works with product source being Tanzu Network.</p>
+<p class="note caution">
+<span class="note__title">Caution</span>
+This currently only works with product source being the Broadcom Support portal.</p>
 
 **Task**
 
@@ -704,13 +703,13 @@ This currently only works with product source being Tanzu Network.</p>
 
 ### download-product
 
-Downloads a product specified in a config file from Tanzu Network(`pivnet`), S3(`s3`), GCS(`gcs`), or Azure(`azure`).
+Downloads a product specified in a config file from the Broadcom Support portal: (`pivnet`), S3(`s3`), GCS(`gcs`), or Azure(`azure`).
 Optionally, also downloads the latest stemcell for that product.
 
 Downloads are cached, so files are not re-downloaded each time.
-When downloading from Tanzu Network,
+When downloading from the Broadcom Support portal,
 the cached file is verified
-using the Tanzu Network checksum
+using the the Broadcom Support portal checksum
 to validate the integrity of that file.
 If it does not, the file is re-downloaded.
 When downloading from a supported blobstore
@@ -753,18 +752,17 @@ For example:
   ```
 
 This is to allow the same config parameters
-that let us select a file from Tanzu Network
+that let us select a file from the Broadcom Support portal
 select it again when pulling from the supported blobstore.
 Note that the filename will be unchanged
 if supported blobstore keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
-	
-<p class="note important">
-<span class="note__title">Important</span>
-When using the s3 resource in Concourse,
-if you are using a <code>regexp</code> in your S3 resource definition
-that explicitly requires the Tanzu Network filename
+<p class="note caution">
+<span class="note__title">Caution</span>
+<b>When using the s3 resource in Concourse:</b>
+If you are using a <code>regexp</code> in your s3 resource definition
+that explicitly requires the the Broadcom Support portal filename
 to be the start of the regex, (that is, the pattern starts with <code>^</code>)
 this won't work when using S3 config.
 The new file format preserves the original filename,
@@ -786,9 +784,9 @@ To build this stemcell manually, see
 
 <p class="note important">
 <span class="note__title">Important</span>
-When the download product config only has Tanzu Network credentials,
+When the download product config only has the Broadcom Support Portal credentials,
 it will not add the prefix to the downloaded product.
-For example, <code>example-product.pivotal</code> from Tanzu Network will be output
+For example, <code>example-product.pivotal</code> from the Broadcom Support portal will be displayed in the output
 as <code>example-product.pivotal</code>.</p>
 
 **Task**
@@ -799,7 +797,7 @@ as <code>example-product.pivotal</code>.</p>
 
 <%= partial "tasks/download-product-script" %>
 
-**Tanzu Network Usage**
+**Broadcom Support Portal Usage** (formerly **Tanzu Network**)
 
 ```yaml
 - name: fetch-pks
@@ -1577,7 +1575,7 @@ with that shasum before uploading.
 ### upload-stemcell
 Uploads a stemcell to Operations Manager.
 
-Note that the filename of the stemcell must be exactly as downloaded from Tanzu Network.
+Note that the filename of the stemcell must be exactly as downloaded from the Broadcom Support portal.
 Operations Manager parses this filename to determine the version and OS of the stemcell.
 
 **Task**
