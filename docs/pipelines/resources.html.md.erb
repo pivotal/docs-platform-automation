@@ -15,10 +15,10 @@ These Concourse pipelines are examples on how to use the tasks. If you use a dif
   If you are new to Concourse, see <a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Installing Concourse with BOSH</a>.</p>
 
 * Persisted datastore that can be accessed by Concourse resource (for example, s3, gcs, minio)
-* A set of valid [download-product-config](../pipelines/multiple-products.md#download-product-config) files: Each product has a configuration YAML of what version to download from [Tanzu Network](https://network.tanzu.vmware.com/).
-* Tanzu Network access to [Platform Automation Toolkit](https://network.tanzu.vmware.com/products/platform-automation/)
+* A set of valid [download-product-config](../pipelines/multiple-products.md#download-product-config) files: Each product has a configuration YAML of what version to download from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads).
+* Broadcom Support portal access to [Platform Automation Toolkit](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Platform%20Automation%20Toolkit)
 
-## Retrieval from Tanzu Network
+## Retrieval from the Broadcom Support portal (formerly Tanzu Network)
 
 The pipeline downloads dependencies consumed by the tasks
 and places them into a trusted s3-like storage provider.
@@ -32,7 +32,7 @@ See the following for examples that you can use.
 <span class="note__title">Important</span>
 Note the unique regex format for blob names,
 for example: <code>\[p-healthwatch,(.*)\]p-healthwatch-.*.pivotal</code>.
-Tanzu Network file names will not always contain the necessary metadata
+The Broadcom Support portal file names will not always contain the necessary metadata
 to accurately download files from a blobstore (for example, s3, gcs, azure),
 so the product slug and version are prepended when using <code>download-product</code>.
 For more information about how this works,
@@ -237,8 +237,8 @@ resources:
 
 ### Platform Automation Toolkit resources
 
-`platform-automation-pivnet` is downloaded directly from Tanzu Network
-and will be used to download all other products from Tanzu Network.
+`platform-automation-pivnet` is downloaded directly from the Broadcom Support portal
+and will be used to download all other products from the Broadcom Support portal.
 
 `platform-automation-tasks` and `platform-automation-image` are S3 resources
 that will be stored for internet-restricted, or faster, access.

@@ -17,7 +17,7 @@ You need:
    and to the Internet
 4. A GitHub account
 5. Read/write credentials and bucket name for an S3 bucket
-6. An account on [VMware Tanzu Network](https://network.tanzu.vmware.com/)
+6. An account on the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads)
 7. A MacOS workstation with:
     - a text editor of your choice
     - a terminal emulator of your choice
@@ -380,9 +380,9 @@ Resources are Concourse's main approach to managing artifacts.
 You need an image and the tasks directory,
 so you need to tell Concourse how to get these things by declaring Resources for them.
 
-In this case, you will download the image and the tasks directory from [Tanzu Network](https://network.tanzu.vmware.com/).
+In this case, you will download the image and the tasks directory from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads).
 Before you can declare the resources themselves,
-you must teach Concourse to talk to Tanzu Network.
+you must teach Concourse to talk to the Broadcom Support portal.
 (Many resource types are built in, but this one isn't.)
 
 1. Add the following to your pipeline file, above the `jobs` entry.
@@ -416,7 +416,7 @@ you must teach Concourse to talk to Tanzu Network.
     Commands in this guide that contain a secret
     start with a space, which can be easy to miss.</p>
 
-1. Get a refresh token from your Tanzu Network profile
+2. Get a refresh token from your Broadcom Support profile
 (when logged in, click your user name, then **Edit Profile**)
 and click **Request New Refresh Token**.)
     Then use that token in the following command:
@@ -431,22 +431,22 @@ and click **Request New Refresh Token**.)
 
     <p class="note caution">
     <span class="note__title">Caution</span>
-    When you get your Tanzu Network token as described above,
-    any previous Tanzu Network tokens you have stop working.
-    If you're using your Tanzu Network refresh token anywhere,
+    When you get your Broadcom Support token as described above,
+    any previous Broadcom Support tokens you have stop working.
+    If you're using your Broadcom Support refresh token anywhere,
     retrieve it from your existing secret storage rather than getting a new one,
     or you'll end up needing to update it everywhere it's used.</p>
 
 1. Go back to the Concourse UI and trigger another build. This time, it should pass.
 
-1. Now it's time to commit.
+2. Now it's time to commit.
 
     ```bash
     git add pipeline.yml
     git commit -m "Add resources needed for test task"
     ```
 
-1. It's better not to pass the Tanzu Network token
+3. It's better not to pass the Broadcom Support token
 every time you need to set the pipeline.
 Fortunately, Concourse can integrate
 with secret storage services, like CredHub. In this step, put the API token in CredHub so Concourse can get it.
@@ -464,7 +464,7 @@ with secret storage services, like CredHub. In this step, put the API token in C
 
     <%= partial "logging-into-credhub" %>
 
-1. Next, set the credential name
+2. Next, set the credential name
 to the path [where Concourse will look for it](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):
 
     ```bash

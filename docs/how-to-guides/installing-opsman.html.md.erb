@@ -17,7 +17,7 @@ Do this by changing:
 
     The first task in the job should be [`download-product`](../tasks.md#download-product).
     It has an additional required input;
-    the `config` file `download-product` uses to talk to Tanzu Network.
+    the `config` file `download-product` uses to talk to the Broadcom Support portal.
 
 1. Before writing that file and making it available as a resource,
 `get` it (and reference it in the params)
@@ -82,7 +82,7 @@ later when you declare the corresponding resource.
             -t value -v git@github.com:username/your-repo-name
     ```
 
-    `download-ops-manager.yml` holds creds for communicating with Tanzu Network,
+    `download-ops-manager.yml` holds creds for communicating with the Broadcom Support portal,
     and uniquely identifies a Tanzu Operations Manager image to download.
 
     An example `download-ops-manager.yml` is shown below.
@@ -129,7 +129,7 @@ for creating a deploy key.
         branch: main
     ```
 
-1. Now place the Tanzu Network token in CredHub:
+1. Now place the Broadcom Support token in CredHub:
 
     ```bash
     # note the starting space throughout
