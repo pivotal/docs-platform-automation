@@ -17,7 +17,7 @@ Before we get started, you'll need a few things ready to go:
    and to the Internet
 4. GitHub account
 5. Read/write credentials and bucket name for an S3 bucket
-6. An account on [VMware Tanzu Network](https://network.tanzu.vmware.com/)
+6. An account on the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads)
 7. A MacOS workstation
     - with Docker installed
     - a text editor you like
@@ -421,9 +421,9 @@ Resources are Concourse's main approach to managing artifacts.
 We need an image, and the tasks directory -
 so we'll tell Concourse how to get these things by declaring Resources for them.
 
-In this case, we'll be downloading the image and the tasks directory from Tanzu Network.
-Before we can declare the resources themselves,
-we have to teach Concourse to talk to Tanzu Network.
+In this case, you will download the image and the tasks directory from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads).
+Before you can declare the resources themselves,
+you must teach Concourse to talk to the Broadcom Support portal.
 (Many resource types are built in, but this one isn't.)
 
 Add the following to your pipeline file.
@@ -475,26 +475,25 @@ start with a space, which can be easy to miss.</p>
 
 <p class="note important">
 <span class="note__title">Important</span>
-<b>Getting your Tanzu Network Token makes it expire</b>:
-<br>
-When you get your Tanzu Network token as described above,
-any previous Tanzu Network tokens you may have gotten will stop working.
-If you're using your Tanzu Network refresh token anywhere,
+<b>Getting your Broadcom Support portal token causes it to expire</b>:
+When you get your Broadcom Support token as described above,
+any previous Broadcom Support tokens you may have stop working.
+If you're using your Broadcom Support refresh token anywhere,
 retrieve it from your existing secret storage rather than getting a new one,
 or you'll end up needing to update it everywhere it's used.</p>
 
 Go back to the Concourse UI and trigger another build.
 This time, it should pass.
 
-Commit time!
+2. Now it's time to commit.
 
 ```bash
 git add pipeline.yml
 git commit -m "Add resources needed for test task"
 ```
 
-We'd rather not pass our Tanzu Network token
-every time we need to set the pipeline.
+3. It's better not to pass the Broadcom Support token
+every time you need to set the pipeline.
 Fortunately, Concourse can integrate
 with secret storage services.
 

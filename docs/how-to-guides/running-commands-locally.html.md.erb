@@ -22,7 +22,7 @@ To execute commands in Docker:
       docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
     ```
 
-    Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from Tanzu Network.
+    Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from the Broadcom Support portal.
 
 2. Then, you can use `docker run` to pass it arbitrary commands.
 
@@ -47,7 +47,9 @@ To execute commands in Docker:
 ```
 
   `${ENV_FILE}` is the [environment file](../inputs-outputs.md) required for all tasks.
-  `${PRODUCT_SLUG}` is the name of the product downloaded from [Tanzu Network](https://network.tanzu.vmware.com/).
+  
+  `${PRODUCT_SLUG}` is the name of the product downloaded from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads).
+
   The resulting file can then be parameterized, saved, and committed to a config repo.
 
 ### Retrieving Director Configuration
