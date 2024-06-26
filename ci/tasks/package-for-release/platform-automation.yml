@@ -106,4 +106,7 @@ run:
       if [ -d odp/ ]; then
         cp odp/VMware-Tanzu-platform-automation-toolkit*.tar.gz packaged-product/VMware-Tanzu-platform-automation-toolkit-"$VERSION"-ODP.tar.gz
       fi
-        
+
+      # Zip everything into one file we can store on s3
+      cd packaged-product
+      GZIP=-9 tar -czvf artifacts.tar.gz *
