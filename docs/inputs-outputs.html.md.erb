@@ -1,0 +1,591 @@
+# Task inputs and outputs
+
+
+This topic describes the inputs that can be provided to the tasks, and their outputs.
+Each task can only take a specific set of inputs, indicated under the `inputs` property of the YAML.
+
+<p class="note important">
+<span class="note__title">Important</span>
+To get the slug needed for many of the procedures on this page, go to [My Dashboard](https://support.broadcom.com/group/ecx/my-dashboard) on the Broadcom Support Portal.
+This site requires you to log in.
+</p>
+
+## director config
+
+The config director sets the BOSH tile (director) on Tanzu Operations Manager.
+
+The `config` input for a director task expects to have a `director.yml` file.
+The configuration of the `director.yml` is IAAS specific for some properties; that is, networking.
+
+There are two ways to build a director config.
+
+1. Using an already deployed Tanzu Operations Manager, you can extract the config using [staged-director-config](./tasks.md#staged-director-config).
+2. Deploying a new Tanzu Operations Manager requires more effort for a `director.yml`.
+   The configuration of director is variables, based on the features enabled.
+   This `director.yml` is a very basic example for vSphere.
+
+    ```yaml
+    ---
+    az-configuration:
+    - clusters:
+      - cluster: cluster-name
+        resource_pool: resource-pool-name
+      name: AZ01
+
+    properties-configuration:
+      iaas_configuration:
+        vcenter_host: vcenter.example.com
+        vcenter_username: admin
+        vcenter_password: password
+        ......
+      director_configuration:
+        blobstore_type: local
+        bosh_recreate_on_next_deploy: false
+        custom_ssh_banner: null
+        ......
+      security_configuration:
+        generate_vm_passwords: true
+        trusted_certificates:
+      syslog_configuration:
+        enabled: false
+
+    network-assignment:
+      network:
+        name: INFRASTRUCTURE
+      other_availability_zones: []
+      singleton_availability_zone:
+        name: AZ01
+
+    networks-configuration:
+      icmp_checks_enabled: false
+      networks:
+      - name: NETWORK-NAME
+      ......
+
+    resource-configuration:
+      compilation:
+        instance_type:
+          id: automatic
+        instances: automatic
+      ......
+    ```
+
+The IAAS-specific configuration can be found in the Tanzu Operations Manager API documentation.
+
+What follows is a list of properties that can be set in the `director.yml`
+and a link to the API documentation explaining any IAAS specific properties.
+
+* `az-configuration` - a list of [availability zones](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/director/availability_zones/get/)
+* `networks-configuration` - a list of [named networks](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/director/networks/get/)
+* `properties-configuration` - [BOSH Director configuration and properties](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/director/properties/get/)
+    * `director_configuration` - BOSH Director properties
+    * `security_configuration` - BOSH Director security properties
+    * `syslog_configuration` - configure the syslog sinks for the BOSH Director
+* `resource-configuration` - [IAAS VM flavor](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/products/product_guid/resources/get/) for the BOSH Director
+* `vmextensions-configuration` - create/update/delete [VM extensions](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0/vm-extensions/)
+
+### GCP Shared VPC
+
+Support for Shared VPC is done by configuring the `iaas_identifier` path for the [infrastructure subnet](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/gcp-prepare-env-manual.html#create_network),
+which includes the host project ID, region of the subnet, and the subnet name.
+
+For example:
+
+`[HOST_PROJECT_ID]/[NETWORK]/[SUBNET]/[REGION]`
+
+## download-product-config
+
+The `config` input for a download product task
+can be used with a `download-config.yml` file to download a tile.
+Here are examples of the configuration of the `download-config.yml`:
+
+**Broadcom Support Portal** (formerly **Tanzu Network**)
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+
+# Either product-version OR product-version-regex is required
+# product-version-regex: ^1\.2\..*$ # must not be quoted
+product-version: 1.2.3
+
+# Optional
+# pivnet-disable-ssl: true  # default - false
+# stemcell-iaas: aws        # aws|azure|google|openstack|vsphere
+                            # will attempt to download the latest stemcell
+                            # associated with a product by default
+# stemcell-version: 90.90   # specific stemcell version to download
+# stemcell-heavy: true      # will force download of heavy stemcell
+                            # not available on all IaaSes
+# blobstore-bucket: bucket  # if set, product files will have their slug and
+                            # version prepended. Set if the product will
+                            # ever be stored in a blobstore
+```
+
+**S3**
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+s3-region-name: us-west-1           # if NOT using AWS s3, value is 'region'
+
+# Required unless `s3-auth-type: iam`
+s3-access-key-id: aws-or-minio-key-id
+s3-secret-access-key: aws-or-minio-secret-key
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+# s3-disable-ssl: true                        # default - false
+# s3-enable-v2-signing: true                  # available for compatibility
+# s3-auth-type: iam                           # default - accesskey
+# s3-endpoint: s3.endpoint.com                # required if NOT using AWS S3
+```
+
+**GCS**
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: bucket-name
+gcs-project-id: project-id
+gcs-service-account-json: |
+  {
+    "type": "service_account",
+    "project_id": "project-id",
+    "private_key_id": "fake-key-id",
+    "private_key": "-----BEGIN PRIVATE KEY-----\fake-key-----END PRIVATE KEY-----\n",
+    "client_email": "email@project-id.iam.gserviceaccount.com",
+    "client_id": "123456789876543212345",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/project%40project-id.iam.gserviceaccount.com"
+  }
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+```
+
+**Azure**
+
+```yaml
+---
+pivnet-file-glob: "*.pivotal"       # must be quoted if starting with a *
+pivnet-product-slug: product-slug
+blobstore-bucket: container-name
+azure-storage-account: 1234567890abcdefghij
+azure-storage-key: storage-access-key-from-azure-portal
+
+# Optional
+# blobstore-product-path: /path/to/product    # default - root path of bucket
+# blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+```
+
+## download-stemcell-product-config
+
+The `config` input for a download product task
+can be used with a `download-config.yml` file to download a stemcell.
+The configuration of the `download-config.yml` looks like this:
+
+<%= partial "examples/download-stemcell-product" %>
+
+## env
+
+The `env` input for a task expects to have a `env.yml` file.
+This file contains properties for targeting and logging into the Tanzu Operations Manager API.
+
+**basic auth**
+
+<%= partial "../examples/env" %>
+
+**uaa auth**
+
+<%= partial "../examples/env-uaa" %>
+
+### Getting the `client-id` and `client-secret`
+
+Tanzu Operations Manager, by preference, uses Client ID and Client Secret, if these are provided.
+To create a Client ID and Client Secret:
+
+1. Add `uaac target https://YOUR_OPSMANAGER/uaa`.
+1. If you are using SAML, `uaac token sso get`.
+1. If you are using basic auth, add `uaac token owner get`.
+1. Specify the Client ID as `opsman` and leave Client Secret blank.
+1. Generate a client ID and secret.
+
+```bash
+uaac client add -i
+Client ID:  NEW_CLIENT_NAME
+New client secret:  DESIRED_PASSWORD
+Verify new client secret:  DESIRED_PASSWORD
+scope (list):  opsman.admin
+authorized grant types (list):  client_credentials
+authorities (list):  opsman.admin
+access token validity (seconds):  43200
+refresh token validity (seconds):  43200
+redirect uri (list):
+autoapprove (list):
+signup redirect url (url):
+```
+
+## errand config
+
+The `ERRAND_CONFIG_FILE` input is used in the [`apply-changes`](./tasks.md#apply-changes) task.
+This file contains properties for enabling and disabling errands
+for a particular run of `apply-changes`.
+
+To retrieve the default configuration of your product's errands,
+you can use [`staged-config`](./tasks.md#staged-config).
+
+The expected format for this errand config is:
+
+  ```yaml
+  errands:
+    sample-product-1:
+      run_post_deploy:
+        smoke_tests: default
+        push-app: false
+      run_pre_delete:
+        smoke_tests: true
+    sample-product-2:
+      run_post_deploy:
+        smoke_tests: default
+  ```
+
+## installation
+
+The file contains the information to restore a Tanzu Operations Manager VM.
+The `installation` input for a opsman VM task expects to have a `installation.zip` file.
+
+This file can be exported from a Tanzu Operations Manager VM using the [export-installation](./tasks.md#export-installation) task.
+This file can be imported to a Tanzu Operations Manager VM using the [import-installation](./tasks.md#import-installation) task.
+
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. It is a file that must be generated using the export function of Tanzu Operations Manager.</p>
+
+## Tanzu Operations Manager config
+
+The config for a Tanzu Operations Manager described IAAS specific information for creating the VM; that is, VM flavor (size) and IP addresses.
+
+The `config` input for opsman task expects to have a `opsman.yml` file.
+The configuration of the `opsman.yml` is IAAS specific.
+
+<h3>AWS</h3>
+
+<%= partial "./examples/opsman-config/aws1" %>
+
+<h3>Azure</h3>
+
+<%= partial "./examples/opsman-config/azure1" %>
+
+<h3>GCP</h3>
+
+<%= partial "./examples/opsman-config/gcp1" %>
+
+<h3>Openstack</h3>
+
+<%= partial "./examples/opsman-config/openstack1" %>
+
+<h3>vSphere</h3>
+
+<%= partial "./examples/opsman-config/vsphere1" %>
+
+<h3>Additional settings</h3>
+
+<%= partial "./examples/opsman-config/settings" %>
+
+Specific advice and features for the different IaaSs are documented below.
+
+### AWS
+
+These required properties are adapted from the instructions outlined in
+[Requirements and prerequisites for Tanzu Operations Manager on AWS](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-aws.html).
+
+<%= partial "ip-addresses" %>
+
+<p class="note important">
+<span class="note__title">Important</span>
+For authentication, you must either set <code>use_instance_profile: true</code>
+or provide a <code>secret_key_id</code> and <code>secret_access_key</code>.
+You must remove key information if you're using an instance profile.
+Using an instance profile allows you to avoid interpolation
+because this file then contains no secrets.</p>
+
+### Azure
+
+The required properties are adapted from the instructions outlined in
+[Requirements and prerequisites for Tanzu Operations Manager on Azure](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-azure.html).
+
+<%= partial "ip-addresses" %>
+
+### GCP
+
+The required properties are adapted from the instructions outlined in
+[Requirements and prerequisites for Tanzu Operations Manager on GCP](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-gcp.html.)
+
+<%= partial "ip-addresses" %>
+
+<p class="note important">
+<span class="note__title">Important</span>
+For authentication either <code>gcp_service_account</code> or <code>gcp_service_account_name</code> is required.
+You must remove the one you are not using.
+Note that using <code>gcp_service_account_name</code> allows you to avoid interpolation,
+because this file then contains no secrets.</p>
+
+Support for Shared VPC is done using [configuring the `vpc_subnet` path](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#creating_an_instance_in_a_shared_subnet)
+to include the host project id, region of the subnet, and the subnet name.
+
+For example:
+
+`projects/[HOST_PROJECT_ID]/regions/[REGION]/subnetworks/[SUBNET]`
+
+### OpenStack
+
+The required properties are adapted from the instructions in
+[Installing and configuring Tanzu Operations Manager on OpenStack](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/openstack-index.html)
+
+<%= partial "ip-addresses" %>
+
+### vSphere
+
+The required properties are adapted from the instructions in
+[Installing and configuring Tanzu Operations Manager on vSphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/vsphere-index.html)
+
+## opsman image
+
+This file is an artifact from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Operations%20Manager),
+which contains the VM image for a specific IaaS.
+For vSphere and OpenStack, it's a full disk image.
+For AWS, GCP, and Azure, it's a YAML file that lists the location
+of images that are already available on the IaaS.
+
+These are examples to download the image artifact for each IaaS
+using the [download-product](./tasks.md#download-product) task.
+
+### opsman.yml
+
+<%= partial "how-to-guides/opsman-config-tabs" %>
+
+The `p-automator` CLI includes the ability to extract the Tanzu Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
+This works for Tanzu Operations Managers that are already running. It is useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.md).
+
+Usage:
+
+1. Get the Platform Automation Toolkit image from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Platform%20Automation%20Toolkit).
+2. Import the image into `docker` to run the `p-automation` locally. See [Running commands locally](./how-to-guides/running-commands-locally.md).
+3. Create a [state file](./inputs-outputs.md#state]) that represents your current VM and IAAS.
+4. Invoke the `p-automator` CLI to get the configuration.
+
+For example, on AWS with an access key and secret key:
+
+```bash
+docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+p-automator export-opsman-config \
+--state-file=state.yml \
+--aws-region=us-west-1 \
+--aws-secret-access-key some-secret-key \
+--aws-access-key-id some-access-key
+```
+
+The outputted `opsman.yml` contains the information needed for Platform Automation Toolkit to manage the Tanzu Operations Manager VM.
+
+### download-product task
+
+```yaml
+- task: download-opsman-image
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: opsman.yml
+```
+
+## product
+
+The `product` input requires a single tile file (`.pivotal`) as downloaded from the Broadcom Support portal.
+
+Here's an example of how to pull the Tanzu Application Service tile
+using the [download-product](./tasks.md#download-product) task.
+
+### product.yml
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "cf-*.pivotal"
+pivnet-product-slug: elastic-runtime
+product-version-regex: ^2\.6\..*$
+```
+
+### download-product task
+
+```yaml
+- task: download-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: product.yml
+```
+
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. This file must retrieved from the Broadcom Support portal.</p>
+
+## product config
+
+There are two ways to build a product config.
+
+1. Using an already deployed product (tile), you can extract the config using [staged-config](./tasks.md#staged-config).
+1. Use an example and fill in the values based on the meta information from the tile.
+This `product.yml` is a very basic example for `healthwatch`.
+
+<%= partial "../examples/product" %>
+
+The following is a list of properties that can be set in the `product.yml`
+and a link to the API documentation explaining the properties.
+
+* `product-properties` - [Tanzu Operations Manager tile properties](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/director/properties/get/)
+
+* `network-properties` - a list of [Tanzu Operations Manager named networks](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/3-0/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1%7Bproduct_guid%7D~1networks_and_azs/get)
+<!--- The Broadcom link for this is https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/products/:product_guid/networks_and_azs/get/ but this shows "Object not found" error --->
+
+* `resource-config` - for the jobs of the [Tanzu Operations Manager tile](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/products/product_guid/jobs/job_guid/resource_config/put/)
+
+## state
+
+This file contains the meta-information needed to manage the Tanzu Operations Manager VM.
+The `state` input for a opsman VM task expects to have a `state.yml` file.
+
+The `state.yml` file contains two properties:
+
+1. `iaas` is the IAAS the Tanzu Operations Manager VM is hosted on. (`gcp`, `vsphere`, `aws`, `azure`, `openstack`)
+2. `vm_id` is the VM unique identifier for the VM. For some IAAS, the VM ID is the VM name.
+
+      Different IaaS uniquely identify VMs differently;
+      here are examples for what this file should look like,
+      depending on your IAAS:
+
+    **AWS**
+
+    <%= partial "../examples/state/aws" %>
+
+    **Azure**
+
+    <%= partial "../examples/state/azure" %>
+
+    **GCP**
+
+    <%= partial "../examples/state/gcp" %>
+
+    **OpenStack**
+
+    <%= partial "../examples/state/openstack" %>
+
+    **vSphere**
+
+    <%= partial "../examples/state/vsphere" %>
+
+## stemcell
+
+This `stemcell` input requires the stemcell tarball (`.tgz`) as downloaded from the Broadcom Support portal.
+It must be in the original filename as that is used by Tanzu Operations Manager to parse metadata.
+The filename might look something like `bosh-stemcell-621.76-vsphere-esxi-ubuntu-xenial-go_agent.tgz`.
+
+<p class="note important">
+<span class="note__title">Important</span>
+This file cannot be manually created. This file must retrieved from the Broadcom Support portal.</p>
+
+Here's an example of how to pull the vSphere stemcell
+using the [download-product](./tasks.md#download-product) task.
+
+### stemcell.yml
+
+**AWS**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-aws*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+**Azure**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-azure*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+**GCP**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-google*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+**OpenStack**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-openstack*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+**vSphere**
+
+```yaml
+---
+pivnet-api-token: token
+pivnet-file-glob: "bosh-stemcell-*-vsphere*.tgz"
+pivnet-product-slug: stemcells-ubuntu-xenial
+product-version-regex: ^170\..*$
+```
+
+
+### download-product task
+
+```yaml
+- task: download-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  params:
+    CONFIG_FILE: stemcell.yml
+```
+
+### assign-stemcell-task
+
+This artifact is an output of [`download-product`](./tasks.md#download-product)
+located in the `assign-stemcell-config` output directory.
+
+This file should resemble the following:
+
+```yaml
+product: cf
+stemcell: "97.190"
+```
+
+## telemetry
+
+The `config` input for the [collect-telemetry](./tasks.md#collect-telemetry) task
+can be used with a `telemetry.yml` file to collect data for VMware
+so that VMware staff can learn and measure results
+to help put customer experience at the forefront of their product decisions.
+The configuration of the `telemetry.yml` looks like this:
+
+<%= partial "../examples/telemetry" %>
