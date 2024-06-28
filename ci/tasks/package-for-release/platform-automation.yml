@@ -109,4 +109,4 @@ run:
 
       # Zip everything into one file we can store on s3
       cd packaged-product
-      GZIP=-9 tar -czvf artifacts.tar.gz *
+      GZIP=-9 tar -czvf artifacts-"$VERSION".tar.gz *
