@@ -33,12 +33,9 @@ deployments:
     tags: [ ]
     enable_timed_trigger: false
 versions:
-  - number: v4.4
-    regex: 4\.4\..*
-    vsphere_image: false
-  - number: v5.0
-    regex: 5\.0\..*
-    vsphere_image: true
   - number: v5.1
     regex: 5\.1\..*
+    vsphere_image: true
+  - number: v5.2
+    regex: 5\.2\..*
     vsphere_image: true
