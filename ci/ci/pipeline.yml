@@ -20,7 +20,7 @@ groups:
   - upgrade-opsman-gcp
 - name: minor-bump
   jobs:
-  - final-minor-release
+  - promote-to-final
 - name: patch-bump
   jobs:
   - bump-test-image-dependency-stability
@@ -168,15 +168,6 @@ resources:
     bucket: ((s3_with_role.buckets.release_candidate))
     regexp: vsphere-platform-automation-image-(.*).tar.gz
     region_name: ((s3_with_role.region_name))
-- name: rc-artifacts-s3
-  source:
-    access_key_id: ((s3_with_role.access_key_id))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate_artifacts))
-    versioned_file: artifacts.tar.gz
-    region_name: ((s3_with_role.region_name))
-    secret_access_key: ((s3_with_role.secret_access_key))
-  type: s3-with-arn
 - name: image-tanzunet-dev
   type: registry-image
   source:
@@ -351,14 +342,15 @@ resources:
     branch: #@ version.number
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
-- name: #@ "pivnet-release-" + version.number
-  type: pivnet
+- name: #@ "rc-artifacts-s3-" + version.number
+  type: s3-with-arn
   source:
-    access_key_id: ((pivnet_aws_access_key))
-    api_token: ((pivnet_token))
-    product_slug: platform-automation
-    product_version: #@ version.regex
-    secret_access_key: ((pivnet_aws_secret_key))
+    access_key_id: ((s3_with_role.access_key_id))
+    aws_role_arn: ((s3_with_role.role_arn))
+    bucket: ((s3_with_role.buckets.release_candidate_artifacts))
+    regexp: #@ "artifacts-(" + version.regex + ").tar.gz"
+    region_name: ((s3_with_role.region_name))
+    secret_access_key: ((s3_with_role.secret_access_key))
 - name: #@ "version-" + version.number
   type: semver-with-arn
   source:
@@ -371,6 +363,15 @@ resources:
     initial_version: 0.0.1-rc.1
     key: #@ "version-" + version.number
 #@ end
+- name: rc-artifacts-s3-v5
+  type: s3-with-arn
+  source:
+    access_key_id: ((s3_with_role.access_key_id))
+    aws_role_arn: ((s3_with_role.role_arn))
+    bucket: ((s3_with_role.buckets.release_candidate_artifacts))
+    regexp: artifacts-(5\..*\.0).tar.gz
+    region_name: ((s3_with_role.region_name))
+    secret_access_key: ((s3_with_role.secret_access_key))
 - name: binaries-table
   type: s3-with-arn
   source:
@@ -689,7 +690,7 @@ jobs:
   - put: version
     params:
       bump: major
-- name: final-minor-release
+- name: promote-to-final
   plan:
   - in_parallel:
     - get: osl
@@ -737,8 +738,6 @@ jobs:
   - task: test-docker-import
     privileged: true
     file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
-  - task: generate-platform-automation-metadata
-    file: docs-platform-automation/ci/tasks/pivnet-release/generate-platform-automation-metadata-v5.1.yml
   - task: generate-dpkg-list-for-osl
     file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
     image: rc-image-s3
@@ -755,8 +754,8 @@ jobs:
       file: rc-image-receipt-s3/image-receipt-*
       acl: public-read
   - params:
-      file: packaged-product/artifacts.tar.gz
-    put: rc-artifacts-s3  
+      file: packaged-product/artifacts-*.tar.gz
+    put: rc-artifacts-s3-v5
 - name: prepare-resource-for-reference-pipeline
   serial_groups:
   - image
@@ -1757,10 +1756,6 @@ jobs:
       image: platform-automation-image
       input_mapping:
         platform-automation-tasks: #@ "platform-automation-" + version.number
-    - task: generate-platform-automation-metadata
-      file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-platform-automation-metadata-bump.yml
-      params:
-        ALL_USERS: false
     - task: generate-dpkg-list-for-osl
       file: docs-platform-automation-with-docs/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
@@ -1775,11 +1770,9 @@ jobs:
       params:
         file: rc-image-receipt-s3/image-receipt-*
         acl: public-read
-  - put: #@ "pivnet-release-" + version.number
+  - put: #@ "rc-artifacts-s3-" + version.number
     params:
-      file_glob: packaged-product/*
-      metadata_file: metadata/metadata.yml
-      s3_filepath_prefix: ((pivnet_s3_filepath_prefix))
+      file: packaged-product/artifacts-*.tar.gz
   - put: #@ "version-" + version.number
     params:
       file: version/version

@@ -34,8 +34,8 @@ deployments:
     enable_timed_trigger: false
 versions:
   - number: v5.1
-    regex: 5\.1\..*
+    regex: 5\.1\.[1-9]\d*
     vsphere_image: true
   - number: v5.2
-    regex: 5\.2\..*
+    regex: 5\.2\.[1-9]\d*
     vsphere_image: true
