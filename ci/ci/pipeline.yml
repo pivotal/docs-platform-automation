@@ -15,11 +15,13 @@ groups:
   - #@ "run-tasks-in-" + deployment.env_name + "-job"
   - create-pks-cluster-in-reference-pipeline
   - prepare-resource-for-reference-pipeline
-  - promote-to-final
   - reference-gcp-delete-infrastructure
   - test-image-dependency-stability
   - upgrade-opsman-gcp
-- name: bump
+- name: minor-bump
+  jobs:
+  - final-minor-release
+- name: patch-bump
   jobs:
   - bump-test-image-dependency-stability
   - bump-previous-versions-trigger
@@ -687,7 +689,7 @@ jobs:
   - put: version
     params:
       bump: major
-- name: promote-to-final
+- name: final-minor-release
   plan:
   - in_parallel:
     - get: osl
@@ -1859,8 +1861,8 @@ jobs:
   - in_parallel:
     - get: srp-helper
     - get: docs-platform-automation
-    - get: docs-platform-automation-v5.0
-    - get: version-v5.0
+    - get: docs-platform-automation-v5.2
+    - get: version-v5.2
   - put: concourse-build-info
     params:
       metadata:
