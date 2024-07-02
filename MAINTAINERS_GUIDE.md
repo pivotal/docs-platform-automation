@@ -23,7 +23,7 @@ and are not intended to be useful to the public.
 
 ## CVEs and Patching Steps
 
-[Platform Automation Toolkit](https://network.pivotal.io/products/platform-automation) distributes three artifacts.
+[Platform Automation Toolkit](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Platform%20Automation%20Toolkit) distributes three artifacts.
 This includes a zip file of Concourse YAML tasks and two tarballs of container images, one smaller, vsphere-only image and one larger
 image that can be used on all platforms.
 
@@ -32,31 +32,9 @@ VMware (through Pivotal) has a support license, which provides timely security u
 
 This document contains instructions of how the container is updated and released for security purposes:
 
-1. [Identifying CVE notices](#identifying-cve-notices)
 1. [Verifying the Patch](#verifying-the-patch)
 1. [Updating Patch Notes](#updating-patch-notes)
 1. [Release the Patch](#release-the-patch)
-
-### Identifying CVE notices
-
-Stories are automatically created in [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2535033) identifying there is a CVE on our container image.
-
-   <img width="390" alt="Screen Shot 2021-01-13 at 9 29 42 AM" src="https://user-images.githubusercontent.com/75184/104483047-e6bb2300-5584-11eb-81e2-e1ccfb89b9a6.png">
-
-With each story,
-1. Inspect the description for the package name and version number. 
-   The container image is built upon `Ubuntu 18.04`. The version listed in the description has the the CVE fix.
-
-   <img width="377" alt="Screen Shot 2021-01-13 at 9 54 02 AM" src="https://user-images.githubusercontent.com/75184/104483369-46193300-5585-11eb-9370-111ea383d6c7.png">
-1. Inpect our container image to see if has this package and version. 
-   - Go to the Platform Automation [CI pipeline](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci), click on [`build-binaries-image-combined`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-binaries-image-combined/builds/latest), and look for the `put` of the resource named `rc-image-receipt-s3`. Download the public file in the `url` attribute.
-   <img width="1257" alt="Screen Shot 2021-01-13 at 10 01 38 AM" src="https://user-images.githubusercontent.com/75184/104484289-5c73be80-5586-11eb-9ef8-ec98e724d316.png">
-   
-   - With the file just downloaded (e.g. `image-receipt-5.1.0-rc.129`), open in your text editor of choice.
-   Search for the package name (e.g. `ca-certificates`) and ensure the version number is correct.
-   <img width="975" alt="Screen Shot 2021-01-13 at 10 04 49 AM" src="https://user-images.githubusercontent.com/75184/104484653-c7bd9080-5586-11eb-864b-556904ecaa93.png">
-   
-   > **NOTE:** In this example, it is the wrong version (purposely). It should be `ca-certificates 20201027ubuntu0.18.04.1`
 
 ### Verifying the Patch
 If the container image does not have the correct version, the pipeline needs to be triggered to pull in the latest package.
@@ -68,7 +46,8 @@ If the container image does not have the correct version, the pipeline needs to 
 1. Update the release notes with features, bug fixes, and CVEs.
    The release notes are found in: [`docs-platform-automation/ci/patch-notes`](https://github.com/pivotal/docs-platform-automation/tree/develop/ci/patch-notes)
    
-   > **NOTE:** Release notes are _required_ for every release. If patch notes are omitted, CI will fail `create-release-notes-for-patch` job in `update-v5.0` and `update-v4.4` jobs.
+   > **NOTE:** Release notes are _required_ for every release. If patch notes are omitted, CI will fail `create-release-notes-for-patch` job in `update-vX.X` jobs.
+
    > **NOTE:** Any release notes in `cve-patch-notes.md` will be applied to _all supported versions_.<br />
    To add bug fixes to a specific version, edit the `X.X-patch-notes.md` file instead. 
    
@@ -84,9 +63,9 @@ If the container image does not have the correct version, the pipeline needs to 
 
 ### Release the Patch
 1. In the `ci` pipeline, make sure the build has passed all jobs that are not `promote-to-final`.
-1. In the `bump` group, trigger the [`bump-previous-versions-trigger`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/29) job. The `get`s should have the same version as the `put`s from the [`build-binaries-image-combined`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-binaries-image-combined/builds/latest) job.
+1. In the `patch-bump` group, trigger the [`bump-previous-versions-trigger`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/29) job. The `get`s should have the same version as the `put`s from the [`build-binaries-image-combined`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/build-binaries-image-combined/builds/latest) job.
 
-   This will trigger the CVE/patch process.
+   This will trigger the patch process.
    To validate the appropriate CVEs were updated in supported versions,
    wait until the `update-vX.X` job has completed,
    then download the `image-receipt-X.X.X` from AWS S3
@@ -99,15 +78,8 @@ If the container image does not have the correct version, the pipeline needs to 
    first run for the patch was. The task that generates the release notes 
    for each minor/major version is called `create-release-notes-for-patch`.
 
-1. The job pushes each patch directly to Tanzunet for Admins Only.
-Use the `platform-automation-pivnet` credential in Lastpass to log into [TanzuNet](https://network.pivotal.io/).
-Update the EOGS (same as the other patches) and the availability to All Users on the product Platform Automation Toolkit. 
-	* Click "manage releases" and double click the new release and then fill EOGS(end of general support) and set availability to "all users" then click "update release".
-You're almost done!
-
-
-
-1. New releases of v4.4.x trigger an additional pipeline, [python-mitigation-support](https://platform-automation.ci.cf-app.com/teams/main/pipelines/python-mitigation-support).  Ensure that this pipeline goes green and you are now done.  FWIW.. this pipeline builds a special TanzuNet release for a customer with the python-based `az` and `gcloud` clis removed so their security scans don't complain.  Once that customer upgrades to v5.x this pipeline can be removed.  
+1. The `update-vX.X` job pushes each patch release & its artifacts directly to S3 to be uploaded to RMT manually.
+ - Eventually this will be done via automation, however it is a manual process as of the TanzuNet to RMT cutover.
 
 ### If Needed, Updating the Release Notes Manually
 There is an easy (manual) way to undo the docs created for CVE patching.
@@ -121,18 +93,19 @@ The following steps are a manual process to "revert"
 the generated release notes and re-create them manually.<br />
 **NOTE:** if due to a failed build, you _must_ stop before the last step.
 CI will fail if the version already exists.
-1. `git clone https://github.com/pivotal/platform-automation-ci` (private)
-1. git pull in `docs-platform-automation`
+1. `git clone https://github.com/pivotal/docs-platform-automation` 
 1. `git submodule update --init --recursive` in `docs-platform-automation`
-1. make a list of each version that will be patched in x.x.x format
+1. Make a list of each version that will be patched in x.x.x format
   (this is the most recent version of each supported minor).
-1. manually remove the entirety of each supported minor section from `docs-platform-automation/docs/release-notes.md`
+1. Manually remove the entirety of each supported minor section from `docs-platform-automation/docs/release-notes.html.md.erb` & its respective branch:
+   * `v5.2` [release notes](https://github.com/pivotal/docs-platform-automation/blob/v5.2/docs/release-notes.html.md.erb)
+   * `v5.1` [release notes](https://github.com/pivotal/docs-platform-automation/blob/migration-v5.1/docs/release-notes.html.md.erb)
 1. commit and push
 1. run the following command to remove those sections from the previous branches
 
    ```bash
    go run docs-platform-automation/ci/scripts/generate-release-notes/generate-release-notes.go \
-   --docs-dir /path/to/docs-platform-automation
+   --docs-dir docs-platform-automation/docs
    ```
 
 1. If there are bug fixes for specific versions, do not create release notes for all versions (a.),
@@ -140,13 +113,13 @@ CI will fail if the version already exists.
    
    **a.** all versions
    
-     with an updated `docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md`,
+     with an updated `docs-platform-automation/ci/patch-notes/cve-patch-notes.md`,
      and the list of each supported full patch version,
      run the following command:
 
      ```bash
      go run docs-platform-automation/ci/scripts/generate-release-notes/generate-release-notes.go \
-     --docs-dir /path/to/docs-platform-automation \
+     --docs-dir docs-platform-automation/docs \
      --cve-patch-notes-path /path/to/docs-platform-automation/ci/cve-patch-notes/cve-patch-notes.md \
      --cve-patch-versions x.x.x \
      --cve-patch-versions y.y.y \
