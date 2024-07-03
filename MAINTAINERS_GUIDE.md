@@ -513,7 +513,7 @@ Release notes and release-specific docs can be found in the release branches for
    * [`Platform Automation v5.1.x` branch](https://github.com/pivotal/docs-platform-automation/blob/migration-v5.1/docs)
 
 
-The Docs team build the docs & release notes for Platform Automation using [DocWorks](docworks.vmware.com). Becuase they do this great sevice for us, if you need to make changes to the docs please do so via a PR to the corresponding doc branch & tag [Anita Flegg](https://github.com/anita-flegg) for review. Anita will perform a build with your PR branch to verify the Docs compile properly before submitting.
+The Docs team build the docs & release notes for Platform Automation using [DocWorks](docworks.vmware.com). Because they do this great service for us, if you need to make changes to the docs, please do so via a PR to the corresponding doc branch & tag [Anita Flegg](https://github.com/anita-flegg) for review. Anita will perform a build with your PR branch to verify the Docs compile properly before submitting.
 
 
 ## OM [Releases]( https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci?group=om ) 
