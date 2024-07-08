@@ -27,13 +27,13 @@ resources:
   - name: rc-image-tanzunet-dev
     type: registry-image
     source:
-      repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
-      username: ((tanzunet.username))
-      password: ((tanzunet.password))
-      pre_releases: true
+      repository: gcr.io/cf-norm-ci/platform-automation/platform-automation-image
+      username: _json_key
+      password: ((gcr.key_json))
+      tag: develop
 
-  - name: version-v4.4
-    type: semver-with-arn
+  - name: version-v5.2
+    type: semver-with-arn 
     source:
       driver: s3
       access_key_id: ((s3_with_role.access_key_id))
@@ -41,7 +41,8 @@ resources:
       assume_role_arn: ((s3_with_role.role_arn))
       bucket: ((s3.bucket))
       region_name: ((s3.region_name))
-      key: version-v4.4
+      key: version-v5.2
+      initial_version: 0.0.1-rc.1
 
 jobs:
   - name: osm
@@ -55,7 +56,7 @@ jobs:
             params:
               format: oci
           - get: version
-            resource: version-v4.4
+            resource: version-v5.2
             params: {bump: patch}
       - task: osspi-scan-om
         file: docs-platform-automation/ci/tasks/run-osspi-source.yaml
