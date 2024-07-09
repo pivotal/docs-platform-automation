@@ -103,8 +103,7 @@ jobs:
           USERNAME: ((osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
           PRODUCT: platform-automation
-          VERSION_FILE: version/version
+          VERSION: latest
           CT_TRACKER_OS: ubuntu
           TAR_PATH: image/image.tar
           TAG: latest
-          APPEND:
