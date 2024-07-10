@@ -13,6 +13,7 @@ resource_types:
 resources:
   - name: docs-platform-automation
     type: git
+    icon: github
     source:
       branch: fix-osm
       uri: git@github.com:pivotal/docs-platform-automation
@@ -20,12 +21,15 @@ resources:
 
   - name: om
     type: git
+    icon: github
     source:
+      branch: main
       uri: git@github.com:pivotal-cf/om.git
       private_key: ((platform_automation_docs.private_key))
 
   - name: rc-image-tanzunet-dev
     type: registry-image
+    icon: google-cloud
     source:
       repository: gcr.io/cf-norm-ci/platform-automation/platform-automation-image
       username: _json_key
@@ -42,6 +46,7 @@ resources:
 
   - name: version-v5.2
     type: semver-with-arn 
+    icon: aws
     source:
       driver: s3
       access_key_id: ((s3_with_role.access_key_id))
