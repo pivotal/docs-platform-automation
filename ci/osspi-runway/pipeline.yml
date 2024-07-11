@@ -23,10 +23,10 @@ resources:
     type: git
     icon: github
     source:
-      branch: main
       uri: git@github.com:pivotal-cf/om.git
       private_key: ((platform_automation_docs.private_key))
-
+      branch: main
+      
   - name: rc-image-tanzunet-dev
     type: registry-image
     icon: google-cloud
