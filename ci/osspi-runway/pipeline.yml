@@ -13,6 +13,7 @@ resource_types:
 resources:
   - name: docs-platform-automation
     type: git
+    icon: github
     source:
       branch: develop
       uri: git@github.com:pivotal/docs-platform-automation
@@ -20,20 +21,32 @@ resources:
 
   - name: om
     type: git
+    icon: github
     source:
       uri: git@github.com:pivotal-cf/om.git
       private_key: ((platform_automation_docs.private_key))
-
+      branch: main
+      
   - name: rc-image-tanzunet-dev
     type: registry-image
+    icon: google-cloud
     source:
-      repository: dev.registry.pivotal.io/platform-automation/platform-automation-image
-      username: ((tanzunet.username))
-      password: ((tanzunet.password))
-      pre_releases: true
+      repository: gcr.io/cf-norm-ci/platform-automation/platform-automation-image
+      username: _json_key
+      password: ((gcr.key_json))
+      tag: develop
 
-  - name: version-v4.4
-    type: semver-with-arn
+  - name: norsk-to-osspi
+    type: git
+    icon: gitlab
+    source:
+      uri: git@gitlab.eng.vmware.com:source-insight-tooling/norsk-to-osspi.git
+      private_key: ((gitlab.private_key))
+      branch: main
+
+  - name: version-v5.2
+    type: semver-with-arn 
+    icon: aws
     source:
       driver: s3
       access_key_id: ((s3_with_role.access_key_id))
@@ -41,7 +54,8 @@ resources:
       assume_role_arn: ((s3_with_role.role_arn))
       bucket: ((s3.bucket))
       region_name: ((s3.region_name))
-      key: version-v4.4
+      key: version-v5.2
+      initial_version: 0.0.1-rc.1
 
 jobs:
   - name: osm
@@ -54,24 +68,22 @@ jobs:
           - get: rc-image-tanzunet-dev
             params:
               format: oci
-          - get: version
-            resource: version-v4.4
-            params: {bump: patch}
+          - get: version-v5.2
+          - get: norsk-to-osspi
       - task: osspi-scan-om
-        file: docs-platform-automation/ci/tasks/run-osspi-source.yaml
+        file: norsk-to-osspi/tasks/osspi/run-osspi-source.yaml
         input_mapping:
-          repo1: docs-platform-automation
+          repo1: norsk-to-osspi
           repo2: om
         params:
           OSM_ENVIRONMENT: production
           API_KEY: ((osm.production_api_key))
           USERNAME: ((osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
-          PRODUCT: platform-automation
-          VERSION_FILE: version/version
-          GITHUB_KEY: ((platform_automation_docs.private_key))
+          PRODUCT: 'platform-automation'
+          VERSION: 'latest'
           REPO: repo2
-          OSSTP_LOAD_DRY_RUN: false
+          OSSTP_LOAD_DRY_RUN: true  
           PREPARE: |
             go mod vendor
           OSSPI_SCANNING_PARAMS: |
@@ -85,18 +97,18 @@ jobs:
             - name_regex: gomega
               version_regex: .*
       - task: osspi-scan-docker
-        file: docs-platform-automation/ci/tasks/run-osspi-docker.yaml
+        file: norsk-to-osspi/tasks/osspi/run-osspi-docker.yaml
         input_mapping:
-          repo1: docs-platform-automation
+          repo1: norsk-to-osspi
           image: rc-image-tanzunet-dev
         params:
           OSM_ENVIRONMENT: production
+          OSSTP_LOAD_DRY_RUN: true
           API_KEY: ((osm.production_api_key))
           USERNAME: ((osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
           PRODUCT: platform-automation
-          VERSION_FILE: version/version
+          VERSION: latest
           CT_TRACKER_OS: ubuntu
           TAR_PATH: image/image.tar
           TAG: latest
-          APPEND:

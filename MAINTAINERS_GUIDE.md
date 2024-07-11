@@ -158,8 +158,8 @@ In the event that we _do_ release such changes
 despite our best intentions and efforts,
 we should release a subsequent patch that documents and reverts the changes.
 
-## ⭐️ New OSSPI Process to obtain the ODP & OSL files from OSM ⭐️
-When you commit your change to the Platform Automation Toolkit, propagate your committed change through the `ci` pipeline **until** you are ready to start the [bump-previous-versions-trigger job](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/latest), right before you plan to release the integrated change. The current process is very manual unfortunately, however, our instructions shall guide you through the process!
+## 📋 Process to obtain the ODP & OSL files from OSM using OSSPI Tooling 
+When you commit a change to the Platform Automation Toolkit, propagate the committed change through the `ci` pipeline **until** you are ready to start the [bump-previous-versions-trigger job](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/latest), right before you plan to release the integrated change. The current process is very manual unfortunately, however, our instructions shall guide you through the process!
 
 ### When to do this process❓
 If your changes have altered the packages being used in the [Platform Automation Image](dev.registry.pivotal.io/platform-automation/platform-automation-image) or in the [om-cli](), then you more than likely have to perform the OSM process. 
@@ -167,168 +167,111 @@ If your changes have altered the packages being used in the [Platform Automation
 * 🤔 If you're unsure, it never hurts to run through our OSM process as it will report no changes if there are actually none.
 * ⚠️ There should not regularly be changes to packages in Platform Automation! Any changes go to the Docker images go into _all_ released versions of Platform Automation Toolkit.
 
-### BOSS Director 🎬
-To begin actually getting a product into OSM, the new product release versions must first be uploaded to [BOSS Director](https://vmware-lme.my.salesforce.com/) ([wiki](https://confluence.eng.vmware.com/display/VESVLM/BOSS+Director+Home)). Unfortunately, a manager with elevated privileges must submit these on our team's behalf. 
+### Add 🆕 versions to BRM1
+With BOSS Director being decommissioned, classic VMware teams moved to [BRM1](https://www.appsheet.com/start/24827112-c290-44b6-9b96-565d41f312f3). New Versions need to be added to BRM1 with some time allowed for them to sync to OSM.
+* If you already have access, go to the next step. If you don't already have access, request it via [this form](https://forms.gle/AbTj3xz5uC7ZNjHa9). If that doesn't resolve, reach out to [GTO-Devops-BRM1-Assist Gchat](https://chat.google.com/room/AAAAw3fDxpo?cls=7). If all else fails, here's [other BRM1 FAQ](https://bsg-confluence.broadcom.net/display/DEVOPSRM/BRM1+-+Access) (Broadcom VPN Required). Access was granted within 1 hour of request.
+* Go to [BRM1](https://www.appsheet.com/start/24827112-c290-44b6-9b96-565d41f312f3)
+* Search for `Platform Automation Toolkit` in the Products, once it appears click the `>` on the right-side.
+* There should be a `Related Releases` Section, click the `Add` button within it to add the new release version. Fill out the following:
+   * **Product** -> `Platform Automation Toolkit`
+   * **Version** -> `<New Release Version here>`
+   * **Name** -> `Platform Automation Toolkit`
+   * **Type** -> `<New Release Type here>`
+   * **SLDC Phase** -> `Done`
+   * **Product Manager** -> `rreza@vmware.com`
+   * **Release Manager** -> `rreza@vmware.com`
+   * **Engineering Lead** -> `rreza@vmware.com`
+   * **General Availability Date** -> `<New Release GA Date here>`
+* Click `Save` in the top-right corner, and th enew version should appear within the `Related Releases` for `Platform Automation Toolkit` now. 
+* It will take some time for the version to sync to OSM. 
+   * The addition of Platform Automation Toolkit versions previously propogated to OSM in < 4 hours.
+   * **If this is an urgent release** you can simply proceed and update the version in line 3 of the OSL file later.
 
-Currently our team's contact for this is [Mark Arroyo](https://vmware.slack.com/archives/D04LUAQGFU4). To help Mark make the entries in BOSS Director, you must provide him the new version numbers of your release. You will need a version number for all 3 of our releases:
-* `5.1.x`
-* `5.0.x`
-* `4.4.x`
- 
-If you can't determine these, look in the `get: version` task in the following jobs:
-* [update-v4.4](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v4.4/builds/latest)
-* [update-v5.0](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.0/builds/latest)
-* [update-v5.1](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.1/builds/latest)
 
-Your versions will be the next in sequence from the highest version seen in that task, usually the next in sequence from the current latest releases.
+### 🛠️ OSSPI Pipeline Time 
 
-Approval can take a few days, it's on the [#bossd-assist](https://vmware.slack.com/archives/C01KLN7HZ7G) team from here until they add it.
-
-### Make the new 4.4.x Release in OSM 🖥️
-
-After the new releases are confirmed by the BOSS Director, log into [OSM](https://osm.eng.vmware.com/oss/#/) and click `Add a Version / Clone Packages`. When you're in this view, we're going to enter the Platform Automation Toolkit information like so:
-
-* **OSM Release Name** -> `platform-automation`
-* **New Version / Clone to Version** -> `4.4.x`
-* **First Milestone Release** -> `GA`
-* **Release Manager** -> `arroyoma@vmware.com`
-* **Product Manager** -> `arroyoma@vmware.com`
-* **Engineering Manager** -> `arroyoma@vmware.com`
-* **CC List** -> `Anyone else you want to involve in this process`
-* **Product License Type** -> `VMW_Proprietary`
-* **Distributed with VMware Release Name** -> `Platform Automation Toolkit`
-* **Distributed with VMware Release Version** -> `4.4.x`
-* **Requested Open Source License Date** -> `Today's date + 2 weeks, at least`
-* NOTES:
-  * `4.4.x` should be the actual new 4.4.x series version. 
-  * We will clone `5.0.x` & `5.1.x` later.
-  * There is no VP or OSPO contact to add in this form.
-  * Do not check the box for  "This release is not distributed as a standalone release".
-  * "Distributed with VMware Release Version" will only show what's in the BOSS Director.
-  * "Requested Open Source License Date" needs 2 weeks of leeway, for reasons.
-
-Once the form is completed, you should be able to click the `Submit Request` button, so do it!
-
-### "Automated" OSSPI Tool Time 🛠️
 Run the [OSM Job](https://runway-ci.eng.vmware.com/teams/ppe-platform-automation/pipelines/osspi/jobs/osm/builds/latest).
 
-The scans are going to run PPE's integrated versions of the `run-osspi-source` & `run-osspi-docker` jobs based on [Tony Wong's norsk-to-osspi tasks](https://gitlab.eng.vmware.com/source-insight-tooling/norsk-to-osspi/-/tree/main/tasks/osspi). We're scanning the `om-cli` & our Platform Automation Image for changes to report to OSM for compliance. The results will upload using [Ryan Hall's](https://vmware.slack.com/archives/DUWBJE4RL) API key for the OSM platform. Once the jobs are all green in the OSSPI Pipeline, validate the scans are in OSM.
+The scans are going to run the `run-osspi-source` & `run-osspi-docker` tasks from [Tony Wong's norsk-to-osspi tasks](https://gitlab.eng.vmware.com/source-insight-tooling/norsk-to-osspi/-/tree/main/tasks/osspi). These tasks will scan the main branches of `om-cli` & our Platform Automation Image for changes to report to OSM for compliance. The results will upload using [Ryan Hall's](ryan.hall@broadcom.com) API key for the OSM platform. Once the jobs are all green in the OSSPI Pipeline, the scans should be submitted to the `latest` version of the `platform-automation` release, which should be [here](https://osm.eng.vmware.com/oss/#/release/64167). The `latest` version acts as an inventory for the latest versions of these codebases. Once the OSM job has completed, verify the scans are uploaded and resolved. Get to the release by doing the following:
 
 * Go to [OSM Releases](https://osm.eng.vmware.com/oss/#/release).
 * Filter by **Release Name** of `platform-automation`.
-* Click on the `4.4.x` release version you uploaded for.
+* Click on the `latest` [version](https://osm.eng.vmware.com/oss/#/release/64167)
 * You should see a link to `View all open source packages in this release`
+* All the release's packages should in an `APPROVED` and/or `RESOLVED` state. 
+  * If for some reason they are in error and you cannot determine why, reach out to [OSM Gchat](https://chat.google.com/room/AAAAHL9zc1k?cls=7) for assistance.
 
-From here, it's more waiting, it's on our [#OSM Team](https://vmware.slack.com/archives/C41ELJFA5) to confirm the uploaded results. The emails added to the release when you created should get updates on the analysis progress. Resolve any issues they report to advance the process, you will likely just need to point them in the direction of any package sources they can't find.
+## Clone the packages
 
-If everything is approved at this point, you should see all the release's packages in an `APPROVED` and/or `RESOLVED` state. In the OSM Release page, there will be links to get what we need, OSL & ODP. 
+Once you have the new version of Platform Automation that you're going to release, click the `Add a Version / Clone Packages` button at the [top of the OSM Page](https://osm.eng.vmware.com/oss/#/version-cloning-request/new). Fill out the information for the new release(s):
+* **OSM Release Name** -> `platform-automation`
+* **New Version / Clone to Version** -> `<your new version here>`
+* **First Milestone Release** -> `GA`
 
-### Download the new 4.4.x OSL
+**Clone Packages / Release References** Section:
+
+* **From Release Name** -> `platform-automation`
+* **From Release Version** -> `latest`
+
+This will fill out the managers, CC List, Licence Type, and some other fields. Continue to update the following:
+
+* **CC List** -> `Add yourself and anyone else you want to involve in this process`
+* **Distributed with VMware Release Name** -> `Platform Automation Toolkit`
+* **Distributed with VMware Release Version** -> `<Version added to BRM1>` 
+   * *You can update this later on line 3 in the OSL file if your new version hasn't propogated to OSM yet*
+* **Requested Open Source License Date** -> `Today's date + 2 weeks, at least`
+* Submit the request. OSPO will review this usually within a business day, then you can proceed once it's approved.
+
+In the OSM Release page, there will be links to get what we need, OSL & ODP. 
+
+### Download the new version OSL
 * Go to [OSM Releases](https://osm.eng.vmware.com/oss/#/release).
 * Filter by **Release Name** of `platform-automation`.
-* Click on the `4.4.x` release version you uploaded for. 
+* Click on the new release version you uploaded for. 
 * Scroll down to the `License File Review` section.
 * Click the link to `View LFR Ticket`.
-* In the new view, you should see the OSL <open_source_license_*_GA.txt> file in the `Distributed OSLs` section. Download it and save it to upload it to S3.
+* Click `DEFINE PACKAGES LIST FOR OSL`, review and accept any prompts.
+* For `Release`, click the dropdown and select the version you added to BRM1.
+   * *You can update this later on line 3 in the OSL file if your new version hasn't propogated to OSM yet*
+* For `Milestone`, click the dropdown and select `GA`.
+* Click `GENERATE OSL`, review and accept any prompts.
+* The file will take a moment to be generated.
+* Once available, and after refreshing the release view, you will see the OSL `.zip` file in the `Generated OSLs` section. Download it and save it to upload it to S3 later.
 
-### Download the new 4.4.x ODP
+### Download the new version ODP
 * Go to [OSM Releases](https://osm.eng.vmware.com/oss/#/release).
 * Filter by **Release Name** of `platform-automation`.
-* Click on the `4.4.x` release version you uploaded for.
+* Click on the new release version you uploaded for. 
 * Click on the `ODP` tab.
-* Click the button for `Generate ODP`. This will take a moment.
-* Once the ODP is ready, you should see a link in the `ODP Image` section of this view.
+* Click the button for `Generate ODP`, review and accept any prompts. This will take a moment.
+* Once available, and after refreshing the release view, you will see a link in the `ODP Image` section of this view.
 * Download the ODP, and save it to upload it to S3.
 
 ### Upload the OSL & ODP to S3 🪣
 
-* Pull the platform-automation-deployments repository and `cd platform-automation-deploments/concourse-credhub`.
-* Gather the S3 credentials for `s3://platform-automation-release-candidate` and export them to utilize the `aws s3 cli` for uploading OSL & ODP. Once you have the credentials in place, you will use the cli to move the files to their respective bucket locations.:
-   * `export AWS_ACCESS_KEY_ID=$(credhub get -q -n /concourse/main/s3_access_key_id)`
-   * `export AWS_SECRET_ACCESS_KEY=$(credhub get -q -n /concourse/main/s3_secret_access_key)`
+###TODO BELOW
+
+* Go to [Cloudgate](https://console.cloudgate.vmware.com/ui/#/home?provider=aws) > **Tanzu TAS Operabiltiy** > `View Organization Accounts`
+* Programatically, or through the web UI, get Power User access
+* Once you're in, rename & move the OSL & ODP as described below:
 * **OSL**:
-  * The [OSL Resource](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/resources/osl) is looking for a file called `open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt`, rename your OSL file to this.
-  * `mv ~/path/to/downloaded/OSL.txt ~/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt`
-  * `aws s3 cp ~/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_5.1.2_GA.txt s3://platform-automation-release-candidate`
+  * The [OSL Resource](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/resources/osl) is looking for a file called `open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_(.*)_GA.txt`, rename your OSL file to this convention.
+  * `mv ~/path/to/downloaded/OSL.txt ~/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_<VERSION>_GA.txt`
+  * `aws s3 cp ~/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_<VERSION>_GA.txt s3://platform-automation-release-candidate`
 * **ODP**:
-  * The [ODP Resource](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/resources/osl) is looking for a file called `VMware-Tanzu-platform-automation-toolkit-5.1.2-ODP.tar.gz`, rename your ODP file to this.
-  * `mv ~/path/to/downloaded/ODP.zip ~/VMware-Tanzu-platform-automation-toolkit-5.1.2-ODP.tar.gz`
-  * `aws s3 cp ~/VMware-Tanzu-platform-automation-toolkit-5.1.2-ODP.tar.gz s3://platform-automation-release-candidate`
+  * The [ODP Resource](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/resources/odp) is looking for a file called `VMware-Tanzu-platform-automation-toolkit-(.*)-ODP.tar.gz`, rename your ODP file to this convention.
+  * `mv ~/path/to/downloaded/ODP.zip ~/VMware-Tanzu-platform-automation-toolkit-<VERSION>-ODP.tar.gz`
+  * `aws s3 cp ~/VMware-Tanzu-platform-automation-toolkit-<VERSION>-ODP.tar.gz s3://platform-automation-release-candidate`
   * This file is > 1GB so the upload will take a moment.
-
-### Clone the OSM Releases for 5.0.x & 5.1.x
-Now that the compliance files are in the right buckets for our CI, we need to clone the `4.4.x` release in OSM for our other versions.
-
-Log into [OSM](https://osm.eng.vmware.com/oss/#/) and click `Add a Version / Clone Packages`. When you're in this view, we're going to clone the Platform Automation Toolkit. In the "Clone Packages / Release References" box, select the following:
-
-* **From Release Name** -> `platform-automation`
-* **From Release Version** -> `4.4.x`
-
-You will need to add the remaining information:
-
-* **OSM Release Name** -> `platform-automation`
-* **New Version / Clone to Version** -> `5.0.x`/`5.1.x`
-* **First Milestone Release** -> `GA`
-* **CC List** -> `Anyone else you want to involve in this process`
-* **Distributed with VMware Release Name** -> `Platform Automation Toolkit`
-* **Distributed with VMware Release Version** -> `5.0.x`/`5.1.x`
-* **Requested Open Source License Date** -> `Today's date + 2 weeks, at least`
-* NOTES:
-  * You will need to do this twice, once for the `5.0.x` version and once for the `5.1.x` version.
-  * `5.0.x`/`5.1.x` should be the actual new 4.4.x series version. 
-  * There is no VP or OSPO contact to add in this form.
-  * Do not check the box for  "This release is not distributed as a standalone release".
-  * "Distributed with VMware Release Version" will only show what's in the BOSS Director. If you don't see the `5.0.x`/`5.1.x` release versions then the BOSS Director has not created them yet.
-  * "Requested Open Source License Date" needs 2 weeks of leeway, for reasons.
-
 
 ### Resume the Release Process
 With OSL & ODP where they need to be, you may now run the [bump-previous-versions-trigger](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/bump-previous-versions-trigger/builds/latest) job. Once the job completes, it will automatically start the following update jobs:
 
-* [update-v4.4](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v4.4/builds/latest)
-* [update-v5.0](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.0/builds/latest)
 * [update-v5.1](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.1/builds/latest)
+* [update-v5.2](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/update-v5.2/builds/latest)
 
 If these jobs successfully pull the OSL & ODP resources, then you have succesfully performed the OSSPI Process 🎉
 
-
-#### BUILD.txt and INSTALL.txt
-If any dependencies require SBR,
-add the following 2 files into the generated folder
-before zipping the directory:
-
-BUILD.txt
-```
-# install build dependencies
-apt-get update && apt-get install build-essential fakeroot devscripts equivs
-
-# unpackage and enter source code directory
-tar -xzf <package-version>.tar.gz
-cd <package-version>
-tar -xf <package-version>.tar.xz
-
-# if there is a <package-version>.debian.tar.xz
-tar -xf <package-version>.debian.tar.xz
-mv debian <package-version>
-
-# once you have the debian directory, move inside
-cd <package-version>
-
-# apply any necessary patches
-patch -p1 < SomePackagePatch.patch
-
-# install package dependencies and create package
-mk-build-deps
-
-# move final package
-mv <package-version>.deb ../..
-```
-
-INSTALL.txt
-```
-# assuming you have followed the BUILD.txt instruction to build
-dpkg -i <package-version>.deb
-```
 
 ## [Reference Pipeline](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config) Maintenance
 The reference pipeline (not "example pipeline") from our [docs](https://docs-pcf-staging.tas.vmware.com/platform-automation/develop/pipelines/multiple-products.html)
