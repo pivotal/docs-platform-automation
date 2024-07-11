@@ -15,7 +15,7 @@ resources:
     type: git
     icon: github
     source:
-      branch: fix-osm
+      branch: develop
       uri: git@github.com:pivotal/docs-platform-automation
       private_key: ((platform_automation_docs.private_key))
 
