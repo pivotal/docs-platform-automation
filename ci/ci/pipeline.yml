@@ -32,10 +32,6 @@ groups:
   jobs:
   #@ for/end bump in ["patch", "minor", "major"]:
   - #@ "bump-om-" + bump
-- name: vmware-srp-report
-  jobs:
-  - build-concourse-buildinfo-image
-  - send-srp-report
 
 resources:
 - name: docs-platform-automation-reference-pipeline-config
@@ -126,12 +122,6 @@ resources:
     repository: internalpcfplatformautomation/platform-automation
     tag: vsphere-only
     username: ((docker.username))
-- name: srp-helper
-  type: registry-image
-  source:
-    repository: harbor.dhaka.cf-app.com/srp/srp-helper-task 
-    username: ((srp-cli-registry-creds.username))
-    password: ((srp-cli-registry-creds.password))
 - name: osl
   type: s3-with-arn
   source:
@@ -321,10 +311,6 @@ resources:
     access_token: ((om.access_token))
     owner: pivotal-cf
     repository: replicator
-- name: slack
-  type: slack-notification
-  source:
-    url: ((slack_webhook_url))
 - name: os-conf-release
   type: bosh-io-release
   source:
@@ -401,21 +387,6 @@ resources:
     branch: main
     file: version
     private_key: ((om.private_key))
-- name: concourse-build-info
-  type: buildinfo
-  icon: tag-text-outline
-  expose_build_created_by: true
-  source:
-    metadata:
-      project: aloha
-      key2: value2
-- name: build-info-image
-  type: registry-image
-  source:
-    password: ((docker.password))
-    repository: ((docker.ci-repository))
-    tag: buildinfo
-    username: ((docker.username))
 
 resource_types:
 - name: pivnet
@@ -423,11 +394,6 @@ resource_types:
   source:
     repository: pivotalcf/pivnet-resource
     tag: latest-final
-- name: slack-notification
-  type: registry-image
-  source:
-    repository: cfcommunity/slack-notification-resource
-    tag: latest
 - name: buildinfo
   type: registry-image
   source:
@@ -1418,14 +1384,6 @@ jobs:
       FLY_PASSWORD: ((fly.password))
       FLY_TARGET: ((fly.target))
       SECRET_ALLOWLIST: ((secret-allowlist))
-    on_failure:
-      do:
-      - task: create-secret-slack-notification
-        file: docs-platform-automation/ci/tasks/create-secret-slack-notification.yml
-      - put: slack
-        params:
-          silent: true
-          text_file: notification-text/text
 - name: create-pks-cluster-in-reference-pipeline
   serial: true
   plan:
@@ -1776,10 +1734,6 @@ jobs:
   - put: #@ "version-" + version.number
     params:
       file: version/version
-  - put: slack
-    params:
-      silent: true
-      text: #@ "A new patch version was released to Tanzunet: " + version.number
 #@ end
 - name: empty-cve-patch-notes-file
   plan:
@@ -1825,45 +1779,3 @@ jobs:
     params:
       bump: #@ bump
 #@ end
-- name: build-concourse-buildinfo-image
-  plan:
-  - in_parallel:
-    - get: docs-platform-automation
-  - task: build-image
-    privileged: true
-    config:
-      platform: linux
-      image_resource:
-        type: registry-image
-        source:
-          repository: concourse/oci-build-task
-      inputs:
-      - name: docs-platform-automation
-      outputs:
-      - name: image
-      params:
-        CONTEXT: docs-platform-automation/ci/dockerfiles
-        DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.build-info-resource
-      run:
-        path: build
-  - put: build-info-image
-    params:
-      image: image/image.tar
-- name: send-srp-report
-  plan:
-  - in_parallel:
-    - get: srp-helper
-    - get: docs-platform-automation
-    - get: docs-platform-automation-v5.2
-    - get: version-v5.2
-  - put: concourse-build-info
-    params:
-      metadata:
-        key3: value3
-
-  - task: srp-collect-and-submit
-    file: docs-platform-automation/ci/tasks/srp-collect-and-submit/task.yml
-    params:
-      CLIENT_ID: ((srp-mds-client-id))
-      CLIENT_SECRET: ((srp-mds-client-secrets))
-      DOMAIN: platform-automation
