@@ -1,0 +1,18 @@
+inputs:
+- name: om-release
+outputs:
+- name: om-cli
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((docker.ci-repository))
+    tag: testing
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    mv om-release/om-* om-cli/om
