@@ -32,6 +32,7 @@ groups:
   jobs:
   #@ for/end bump in ["patch", "minor", "major"]:
   - #@ "bump-om-" + bump
+  - download-and-test-om
 
 resources:
 - name: docs-platform-automation-reference-pipeline-config
@@ -367,7 +368,7 @@ resources:
     bucket: ((s3_with_role.buckets.release_candidate))
     regexp: bump-image-cli-versions-(.*).md
     region_name: ((s3_with_role.region_name))
-- name: om
+- name: om-release
   type: github-release
   source:
     access_token: ((om.access_token))
@@ -382,6 +383,17 @@ resources:
     branch: main
     file: version
     private_key: ((om.private_key))
+- name: om
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf/om.git
+    branch: main
+    ignore_paths:
+    - version
+    - README.md
+    - docs
+    private_key: ((om.private_key))
+    fetch_tags: false
 
 resource_types:
 - name: pivnet
@@ -433,6 +445,20 @@ jobs:
   - put: packages-image
     params: { image: image/image.tar }
 
+- name: download-and-test-om
+  plan:
+  - get: daily
+    trigger: true
+  - get: om
+  - get: docs-platform-automation
+  - task: download-product
+    params:
+      OM_pivnet_token: ((pivnet_token))
+    file: docs-platform-automation/ci/tasks/download-product.yml
+  - task: test
+    attempts: 3
+    file: docs-platform-automation/ci/tasks/test-and-build-om.yml
+
 - name: build-binaries-image-combined
   serial_groups:
   - image
@@ -470,8 +496,11 @@ jobs:
       params:
         globs:
         - '*linux'
-    - get: om
+    - get: om-release
       trigger: true
+      params:
+        globs:
+        - 'om-linux-amd64-\d+.\d+.\d+$'
     - get: docs-platform-automation
       trigger: false
     - get: packages-image
@@ -483,14 +512,8 @@ jobs:
     - get: version
       params:
         pre: rc
-  - in_parallel:
-    - task: download-product
-      params:
-        OM_pivnet_token: ((pivnet_token))
-      file: docs-platform-automation/ci/tasks/download-product.yml
-    - task: test
-      attempts: 3
-      file: docs-platform-automation/ci/tasks/test-and-build-om.yml
+  - task: rename-om-binary
+    file: docs-platform-automation/ci/tasks/rename-om-binary.yml
   - task: build-binaries-image
     privileged: true
     config:
