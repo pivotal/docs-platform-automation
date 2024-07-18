@@ -39,11 +39,14 @@ RUN chmod +x ./yj && \
     mv ./yj /usr/bin/yj
 
 # install om
-RUN git clone https://github.com/pivotal-cf/om
-RUN cd om && \
-    go build . && \
-    mv om /usr/bin/ && \
-    cd -
+RUN wget $(curl -s https://api.github.com/repos/pivotal-cf/om/releases/latest | jq -r '.assets[] | select(.name? | match("om-linux-amd64-\\d+.\\d+.\\d+$")) | .browser_download_url') -O om
+RUN chmod +x ./om && \
+    mv ./om /usr/bin/om
+# RUN wget "https://github.com/pivotal-cf//om/releases/download/latest
+# RUN cd om && \
+#     go build . && \
+#     mv om /usr/bin/ && \
+#     cd -
 
 # rspec
 RUN apt-get -y install ruby ruby-dev && \
