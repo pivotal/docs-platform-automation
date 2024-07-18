@@ -702,11 +702,6 @@ jobs:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
-    - get: om
-      passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
     - get: version
       passed:
       #@ for/end deployment in deployments_without_gcp:
@@ -770,9 +765,6 @@ jobs:
   serial_groups: [ ci-upgrade ]
   plan:
   - in_parallel:
-    - get: om
-      passed:
-      - build-binaries-image-combined
     - get: version
       passed:
       - build-binaries-image-combined
@@ -1044,10 +1036,6 @@ jobs:
   - #@ env_name
   plan:
   - in_parallel:
-    - get: om
-      passed:
-      - build-binaries-image-combined
-      tags: #@ tags
     - get: version
       passed:
       - build-binaries-image-combined
@@ -1452,9 +1440,6 @@ jobs:
       passed:
         - create-pks-cluster-in-reference-pipeline
       trigger: true
-    - get: om
-      passed:
-      - build-binaries-image-combined
     - get: binaries-table
       passed:
       - build-binaries-image-combined
@@ -1777,10 +1762,7 @@ jobs:
   - in_parallel:
     - get: om
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
-      - additional-task-testing
+      - download-and-test-om
     - get: om-version
       params:
         bump: #@ bump

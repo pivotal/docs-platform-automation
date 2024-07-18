@@ -38,7 +38,7 @@ run:
         -r \
         -race \
         -succinct \
-        -nodes 1 \
+        -nodes 3 \
         -randomizeAllSpecs \
         -randomizeSuites \
         -keepGoing \
