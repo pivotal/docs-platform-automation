@@ -368,16 +368,11 @@ resources:
     regexp: bump-image-cli-versions-(.*).md
     region_name: ((s3_with_role.region_name))
 - name: om
-  type: git
+  type: github-release
   source:
-    uri: git@github.com:pivotal-cf/om.git
-    branch: main
-    ignore_paths:
-    - version
-    - README.md
-    - docs
-    private_key: ((om.private_key))
-    fetch_tags: false
+    access_token: ((om.access_token))
+    owner: pivotal-cf
+    repository: om
 - name: om-version
   type: semver
   source:
