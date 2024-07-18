@@ -500,7 +500,7 @@ jobs:
       trigger: true
       params:
         globs:
-        - 'om-linux-amd64-\d+.\d+.\d+$'
+        - 'om-linux-amd64-*[^.tar.gz]'
     - get: docs-platform-automation
       trigger: false
     - get: packages-image
