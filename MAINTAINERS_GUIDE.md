@@ -459,12 +459,14 @@ Release notes and release-specific docs can be found in the release branches for
 The Docs team build the docs & release notes for Platform Automation using [DocWorks](docworks.vmware.com). Because they do this great service for us, if you need to make changes to the docs, please do so via a PR to the corresponding doc branch & tag [Anita Flegg](https://github.com/anita-flegg) for review. Anita will perform a build with your PR branch to verify the Docs compile properly before submitting.
 
 
-## OM [Releases]( https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci?group=om ) 
+## OM Releases
+
+In the [OM CI Group](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci?group=om), the [`download-and-test-om`](https://platform-automation.ci.cf-app.com/teams/main/pipelines/ci/jobs/download-and-test-om/builds/latest) will run daily. This job downloads the latest code from the OM cli repo, and executes its bundled test suite. As long as it is green & passing, then you are safe to create a new release.
 
 [Depending what kind of release you need to do](https://semver.org/), trigger a new build.
 After the CI has completed go to [Github](https://github.com/pivotal-cf/om/releases) and update the release notes.
 
-Most OM cli users will consume these upgrades through the Platform Automation toolkit, so every om cli bump should be accompanied by a Platform Automation release.
+*Most* OM cli users will utilize the version that is bundled with their version of the Platform Automation toolkit. Each OM cli bump should be accompanied by a new Platform Automation release that contains the new OM cli version.
 
 ## Slack and Support
 
