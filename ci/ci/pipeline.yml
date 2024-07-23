@@ -93,7 +93,7 @@ resources:
   source:
     api_token: ((pivnet_token))
     product_slug: pivotal-container-service
-    product_version: 1\.9\.[0-9]+$
+    product_version: 1\.10\.[0-9]+$
     sort_by: semver
 - name: packages-image
   type: registry-image
