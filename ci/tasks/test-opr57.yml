@@ -4,6 +4,8 @@ image_resource:
   type: registry-image
   source:
     repository: ubuntu
+params:
+  TEST_SPECIAL: ((test))
 run:
   path: bash
   args:
@@ -11,3 +13,4 @@ run:
   - |
     set -eux
     echo "Hello Ryan & Harish"
+    echo $TEST_SPECIAL
