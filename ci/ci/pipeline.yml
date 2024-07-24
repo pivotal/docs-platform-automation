@@ -13,7 +13,6 @@ groups:
   - #@ deployment.env_name + "-delete-infrastructure"
   #@ for/end deployment in deployments_without_gcp:
   - #@ "run-tasks-in-" + deployment.env_name + "-job"
-  - create-pks-cluster-in-reference-pipeline
   - prepare-resource-for-reference-pipeline
   - reference-gcp-delete-infrastructure
   - test-image-dependency-stability
@@ -87,13 +86,6 @@ resources:
     api_token: ((pivnet_token))
     product_slug: ops-manager
     product_version: 2\.9\.[0-9]+$
-    sort_by: semver
-- name: pks-cli
-  type: pivnet
-  source:
-    api_token: ((pivnet_token))
-    product_slug: pivotal-container-service
-    product_version: 1\.10\.[0-9]+$
     sort_by: semver
 - name: packages-image
   type: registry-image
@@ -1390,30 +1382,6 @@ jobs:
       FLY_PASSWORD: ((fly.password))
       FLY_TARGET: ((fly.target))
       SECRET_ALLOWLIST: ((secret-allowlist))
-- name: create-pks-cluster-in-reference-pipeline
-  serial: true
-  plan:
-  - in_parallel:
-    - get: docs-platform-automation
-    - get: deployments
-    - get: pks-cli
-      params:
-        globs:
-        - 'tkgi-linux-amd64*'
-    - get: rc-image-s3
-      passed:
-        - build-binaries-image-combined
-    - get: rc-image-s3-vsphere
-      passed:
-        - build-binaries-image-combined
-    - get: rc-tasks-s3
-      passed:
-        - build-binaries-image-combined
-      trigger: true
-  - task: create-pks-cluster
-    file: docs-platform-automation/ci/tasks/create-pks-cluster/task.yml
-    params:
-      ENV_FILE: deployments/reference-gcp/env.yml
 - name: additional-task-testing
   serial: true
   plan:
@@ -1424,21 +1392,15 @@ jobs:
         version: 22.0.0
     - get: docs-platform-automation-reference-pipeline-config
     - get: rc-image-s3-vsphere
-      passed:
-        - create-pks-cluster-in-reference-pipeline
     - get: platform-automation-image
       resource: rc-image-s3
       params:
         unpack: true
-      passed:
-        - create-pks-cluster-in-reference-pipeline
       trigger: true
     - get: platform-automation-tasks
       resource: rc-tasks-s3
       params:
         unpack: true
-      passed:
-        - create-pks-cluster-in-reference-pipeline
       trigger: true
     - get: binaries-table
       passed:
@@ -1544,28 +1506,6 @@ jobs:
                 set -eux
 
                 curl -vvv -L https://self-signed.badssl.com
-    - do:
-      - task: backup-tkgi
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/backup-tkgi.yml
-        params:
-          ENV_FILE: foundations/config/env.yml
-          OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
-      - task: check-backup-tkgi
-        image: platform-automation-image
-        config:
-          platform: linux
-          inputs:
-            - name: backup
-          run:
-            path: bash
-            args:
-              - -c
-              - |
-                set -eux
-
-                test -e backup/pivotal-container-service*_clusters_*.tgz
-                tar -tzf backup/pivotal-container-service*_clusters_*.tgz > /dev/null
     - do:
       - task: download-and-upload-product
         image: platform-automation-image
