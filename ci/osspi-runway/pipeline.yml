@@ -83,7 +83,7 @@ jobs:
           PRODUCT: 'platform-automation'
           VERSION: 'latest'
           REPO: repo2
-          OSSTP_LOAD_DRY_RUN: true  
+          OSSTP_LOAD_DRY_RUN: false  
           PREPARE: |
             go mod vendor
           OSSPI_SCANNING_PARAMS: |
@@ -103,7 +103,7 @@ jobs:
           image: rc-image-tanzunet-dev
         params:
           OSM_ENVIRONMENT: production
-          OSSTP_LOAD_DRY_RUN: true
+          OSSTP_LOAD_DRY_RUN: false
           API_KEY: ((osm.production_api_key))
           USERNAME: ((osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
