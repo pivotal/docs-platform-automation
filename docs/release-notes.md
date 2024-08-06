@@ -5,6 +5,8 @@
 </style>
 
 
+### Maintenance release
+
 ## v5.0.26
 June 25, 2024
 
@@ -109,5 +111,4 @@ May 5, 2023
 ### Bug Fixes
 - Update govc to v0.30.4
 - Delete all python files from vsphere-only docker image
-
 
