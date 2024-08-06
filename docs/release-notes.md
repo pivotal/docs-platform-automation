@@ -5,8 +5,6 @@
 </style>
 
 
-### Maintenance release
-
 ## v5.0.26
 June 25, 2024
 
