@@ -5,6 +5,8 @@
 </style>
 
 
+### Maintenance release
+
 ## v5.1.2
 June 15, 2023
 
@@ -72,15 +74,15 @@ February 27, 2023
     The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.0" target="_blank">Download</a>
 
 ### What's New
-- Added new How-to Guide about [Rotating Certificate Authority][rotating-certificate-authority]. 
+- Added new How-to Guide about [Rotating Certificate Authority][rotating-certificate-authority].
   This how-to-guide shows you how to write a pipeline for rotating the certificate authority on an existing Tanzu Operations Manager.
 - The following additional tasks have been added to help with rotating certificate authorities:
-    * [`activate-certificate-authority`][activate-certificate-authority]
-    * [`configure-new-certificate-authority`][configure-new-certificate-authority]
-    * [`delete-certificate-authority`][delete-certificate-authority]
-    * [`generate-certificate`][generate-certificate]
-    * [`regenerate-certificates`][regenerate-certificates]
-      
+  * [`activate-certificate-authority`][activate-certificate-authority]
+  * [`configure-new-certificate-authority`][configure-new-certificate-authority]
+  * [`delete-certificate-authority`][delete-certificate-authority]
+  * [`generate-certificate`][generate-certificate]
+  * [`regenerate-certificates`][regenerate-certificates]
+
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
 ## v5.0.26
@@ -187,5 +189,4 @@ May 5, 2023
 ### Bug Fixes
 - Update govc to v0.30.4
 - Delete all python files from vsphere-only docker image
-
 
