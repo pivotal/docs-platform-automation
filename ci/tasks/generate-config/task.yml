@@ -15,5 +15,6 @@ image_resource:
     tag: testing
 params:
   IAAS:
+  BOSH_ENV_PREFIX:
 run:
   path: docs-platform-automation/ci/tasks/generate-config/task.sh
