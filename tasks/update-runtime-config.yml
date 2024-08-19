@@ -53,6 +53,11 @@ params:
   # - Filepaths of the product configuration vars yaml file
   # - The path is relative to the root of the task build,
   #   so `vars` can be used.
+
+  BOSH_ENV_PREFIX:
+  # - Optional
+  # - Prefix that can be used to tell BOSH to use approprately named
+  #   arguments from the environment when interpolating secrets
 run:
   path: platform-automation-tasks/tasks/update-runtime-config.sh
 # code_snippet update-runtime-config end

@@ -29,12 +29,18 @@ for vf in ${VARS_FILES}; do
   vars_files_args+=("--vars-file ${vf}")
 done
 
+vars_env_args=("")
+if [[ -n "${BOSH_ENV_PREFIX}" ]]; then
+  vars_env_args+=("--vars-env=${BOSH_ENV_PREFIX}")
+fi
+
 # ${vars_files_args[@] needs to be globbed to pass through properly
 # shellcheck disable=SC2068
 bosh -n update-config \
   --type runtime \
   --name "${NAME}" \
   config/"${CONFIG_FILE}" \
-  ${vars_files_args[@]}
+  ${vars_files_args[@]} \
+  ${vars_env_args[@]}
 
 # code_snippet update-runtime-config-script end
