@@ -15,9 +15,15 @@ cp deployments/platform-automation/"$IAAS"/state/*.yml state/ || true
 cp deployments/platform-automation/"$IAAS"/vars/*.yml vars/ || true
 cp deployments/platform-automation/"$IAAS"/config/*.yml config/
 
+interpolation_args=("--vars-file /tmp/tf-vars.yml")
+
+if [[ -n "${BOSH_ENV_PREFIX}" ]]; then
+  interpolation_args+=("--vars-env=${BOSH_ENV_PREFIX}")
+fi
+
 echo "Interpolating configs..."
-bosh int -l /tmp/tf-vars.yml deployments/platform-automation/"$IAAS"/config/opsman.yml > config/opsman.yml
-bosh int -l /tmp/tf-vars.yml --vars-env=TF_VARS deployments/platform-automation/"$IAAS"/config/director.yml > config/director.yml
-bosh int -l /tmp/tf-vars.yml --vars-env=TF_VARS deployments/platform-automation/"$IAAS"/env/env.yml > env/env.yml
+bosh interpolate ${interpolation_args[@]} deployments/platform-automation/"$IAAS"/config/opsman.yml > config/opsman.yml
+bosh interpolate ${interpolation_args[@]} --vars-env=TF_VARS deployments/platform-automation/"$IAAS"/config/director.yml > config/director.yml
+bosh interpolate ${interpolation_args[@]} --vars-env=TF_VARS deployments/platform-automation/"$IAAS"/env/env.yml > env/env.yml
 
 echo "Config generation nominal"
