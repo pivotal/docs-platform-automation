@@ -31,7 +31,7 @@ done
 
 vars_env_args=("")
 if [[ -n "${BOSH_ENV_PREFIX}" ]]; then
-  vars_env_args+=("--vars-env=${BOSH_ENV_PREFIX}")
+  vars_env_args+=("--vars-env ${BOSH_ENV_PREFIX}")
 fi
 
 # ${vars_files_args[@] needs to be globbed to pass through properly
