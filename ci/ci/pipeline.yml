@@ -1548,7 +1548,7 @@ jobs:
           ENV_FILE: foundations/config/env.yml
           CONFIG_FILE: ci/config/runtime-config.yml
           NAME: my-runtime-config
-          BOSH_ENV_PREFIX: BOSH
+          BOSH_ENV_PREFIX: OPSMAN
           OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
 
 #! bump jobs
