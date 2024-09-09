@@ -1,4 +1,3 @@
-#@data/values
 ---
 deployments:
   - env_name: ci-aws

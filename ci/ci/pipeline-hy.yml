@@ -1,5 +1,3 @@
-#@ load("@ytt:data", "data")
-#@ deployments_without_gcp = [x for x in data.values.deployments if x.paving_dir != "gcp"]
 groups:
 - name: ci
   jobs:
@@ -9,10 +7,13 @@ groups:
   - build-packages-image
   - bump-version-to-major
   - check-for-secrets-in-tasks
-  #@ for/end deployment in data.values.deployments:
-  - #@ deployment.env_name + "-delete-infrastructure"
-  #@ for/end deployment in deployments_without_gcp:
-  - #@ "run-tasks-in-" + deployment.env_name + "-job"
+  - ci-aws-delete-infrastructure
+  - ci-azure-delete-infrastructure
+  - ci-upgrade-delete-infrastructure
+  - ci-support-delete-infrastructure
+  - reference-gcp-delete-infrastructure
+  - run-tasks-in-ci-aws-job
+  - run-tasks-in-ci-azure-job
   - prepare-resource-for-reference-pipeline
   - reference-gcp-delete-infrastructure
   - test-image-dependency-stability
@@ -24,15 +25,14 @@ groups:
   jobs:
   - bump-test-image-dependency-stability
   - bump-previous-versions-trigger
-  #@ for/end version in data.values.versions:
-  - #@ "update-" + version.number
+  - update-v5.2
   - empty-cve-patch-notes-file
 - name: om
   jobs:
-  #@ for/end bump in ["patch", "minor", "major"]:
-  - #@ "bump-om-" + bump
+  - bump-om-patch
+  - bump-om-minor
+  - bump-om-major
   - download-and-test-om
-
 resources:
 - name: docs-platform-automation-reference-pipeline-config
   type: git
@@ -53,11 +53,11 @@ resources:
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:
-      - docs
+    - docs
 - name: docs-platform-automation-with-docs
   type: git
   source:
-    branch: develop
+    branch: develop-hy
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
 - name: pas-windows
@@ -308,29 +308,28 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/os-conf-release
-#@ for version in data.values.versions:
-- name: #@ "docs-platform-automation-" + version.number
+- name: docs-platform-automation-v5.2
   type: git
   source:
-    branch: #@ version.number
+    branch: v5.2
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
-- name: #@ "platform-automation-" + version.number
+- name: platform-automation-v5.2
   type: git
   source:
-    branch: #@ version.number
+    branch: v5.2
     private_key: ((platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
-- name: #@ "rc-artifacts-s3-" + version.number
+- name: rc-artifacts-s3-v5.2
   type: s3-with-arn
   source:
     access_key_id: ((s3_with_role.access_key_id))
     aws_role_arn: ((s3_with_role.role_arn))
     bucket: ((s3_with_role.buckets.release_candidate_artifacts))
-    regexp: #@ "artifacts-(" + version.regex + ").tar.gz"
+    regexp: artifacts-(5\.2\.[1-9]\d*).tar.gz
     region_name: ((s3_with_role.region_name))
     secret_access_key: ((s3_with_role.secret_access_key))
-- name: #@ "version-" + version.number
+- name: version-v5.2
   type: semver-with-arn
   source:
     driver: s3
@@ -340,8 +339,7 @@ resources:
     bucket: ((s3_with_role.buckets.release_candidate))
     region_name: ((s3_with_role.region_name))
     initial_version: 0.0.1-rc.1
-    key: #@ "version-" + version.number
-#@ end
+    key: version-v5.2
 - name: rc-artifacts-s3-v5
   type: s3-with-arn
   source:
@@ -386,7 +384,6 @@ resources:
     - docs
     private_key: ((om.private_key))
     fetch_tags: false
-
 resource_types:
 - name: pivnet
   type: registry-image
@@ -408,7 +405,6 @@ resource_types:
   source:
     repository: concourse/semver-resource
     tag: 1.6.0-ubuntu
-
 jobs:
 - name: build-ci-image
   plan:
@@ -421,9 +417,10 @@ jobs:
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
   - put: ci-image
-    params: { image: image/image.tar }
-    get_params: { skip_download: true }
-
+    params:
+      image: image/image.tar
+    get_params:
+      skip_download: true
 - name: build-packages-image
   plan:
   - get: daily
@@ -435,8 +432,8 @@ jobs:
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
   - put: packages-image
-    params: { image: image/image.tar }
-
+    params:
+      image: image/image.tar
 - name: download-and-test-om
   plan:
   - get: daily
@@ -450,7 +447,6 @@ jobs:
   - task: test
     attempts: 3
     file: docs-platform-automation/ci/tasks/test-and-build-om.yml
-
 - name: build-binaries-image-combined
   serial_groups:
   - image
@@ -462,7 +458,7 @@ jobs:
       trigger: true
       params:
         globs:
-          - 'govc_Linux_x86_64*'
+        - govc_Linux_x86_64*
     - get: bosh-cli
       trigger: true
       params:
@@ -472,12 +468,12 @@ jobs:
       trigger: true
       params:
         globs:
-          - '*linux*'
+        - '*linux*'
     - get: bbr-cli
       trigger: true
       params:
         globs:
-        - 'bbr-[^s3]*linux*[^.sha256]'
+        - bbr-[^s3]*linux*[^.sha256]
     - get: winfs-injector
       trigger: true
       params:
@@ -492,7 +488,7 @@ jobs:
       trigger: true
       params:
         globs:
-        - 'om-linux-amd64-*[^.tar.gz]'
+        - om-linux-amd64-*[^.tar.gz]
     - get: docs-platform-automation
       trigger: false
     - get: packages-image
@@ -500,7 +496,8 @@ jobs:
       passed:
       - build-packages-image
     - get: packages-image-oci
-      params: { format: oci }
+      params:
+        format: oci
     - get: version
       params:
         pre: rc
@@ -518,22 +515,24 @@ jobs:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
         IMAGE_ARG_base_image: packages-image-oci/image.tar
       inputs:
-        - name: bbr-cli
-        - name: bosh-cli
-        - name: isolation-segment-replicator
-        - name: om-cli
-        - name: winfs-injector
-        - name: govc-cli
-        - name: credhub-cli
-        - name: docs-platform-automation
-        - name: packages-image-oci
+      - name: bbr-cli
+      - name: bosh-cli
+      - name: isolation-segment-replicator
+      - name: om-cli
+      - name: winfs-injector
+      - name: govc-cli
+      - name: credhub-cli
+      - name: docs-platform-automation
+      - name: packages-image-oci
       outputs:
-        - name: image
+      - name: image
       run:
         path: build
-    output_mapping: { image: binaries-image-oci }
+    output_mapping:
+      image: binaries-image-oci
   - put: binaries-image
-    params: { image: binaries-image-oci/image.tar }
+    params:
+      image: binaries-image-oci/image.tar
   - task: build-vsphere-image
     privileged: true
     config:
@@ -546,14 +545,15 @@ jobs:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
         IMAGE_ARG_base_image: binaries-image-oci/image.tar
       inputs:
-        - name: docs-platform-automation
-        - name: binaries-image-oci
+      - name: docs-platform-automation
+      - name: binaries-image-oci
       outputs:
-        - name: image
+      - name: image
       run:
         path: build
   - put: vsphere-only-image
-    params: { image: image/image.tar }
+    params:
+      image: image/image.tar
   - in_parallel:
     - task: define-cli-versions
       image: binaries-image
@@ -634,7 +634,8 @@ jobs:
     - get: docs-platform-automation
     - get: binaries-image
       resource: rc-image-s3
-      passed: [ build-binaries-image-combined ]
+      passed:
+      - build-binaries-image-combined
       trigger: true
       params:
         unpack: true
@@ -674,8 +675,8 @@ jobs:
     - get: docs-platform-automation
     - get: rc-image-s3
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - run-tasks-in-ci-aws-job
+      - run-tasks-in-ci-azure-job
       - upgrade-opsman-gcp
       - additional-task-testing
       params:
@@ -684,20 +685,20 @@ jobs:
       params:
         unpack: true
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - run-tasks-in-ci-aws-job
+      - run-tasks-in-ci-azure-job
       - upgrade-opsman-gcp
       - additional-task-testing
     - get: platform-automation-tasks
       resource: rc-tasks-s3
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - run-tasks-in-ci-aws-job
+      - run-tasks-in-ci-azure-job
       - upgrade-opsman-gcp
     - get: version
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - run-tasks-in-ci-aws-job
+      - run-tasks-in-ci-azure-job
       - upgrade-opsman-gcp
       params:
         bump: final
@@ -754,7 +755,8 @@ jobs:
         skip_download: "true"
 - name: upgrade-opsman-gcp
   serial: true
-  serial_groups: [ ci-upgrade ]
+  serial_groups:
+  - ci-upgrade
   plan:
   - in_parallel:
     - get: version
@@ -841,7 +843,7 @@ jobs:
           params:
             GIT_AUTHOR_NAME: platform-automation-bot
             GIT_AUTHOR_EMAIL: ((platform-automation-email))
-            COMMIT_MESSAGE: "create-vm update state file for ci-upgrade"
+            COMMIT_MESSAGE: create-vm update state file for ci-upgrade
             FILE_SOURCE_PATH: state.yml
             FILE_DESTINATION_PATH: ci-upgrade/state.yml
           input_mapping:
@@ -1004,7 +1006,7 @@ jobs:
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
           GIT_AUTHOR_EMAIL: ((platform-automation-email))
-          COMMIT_MESSAGE: "delete-vm update state file for ci-upgrade"
+          COMMIT_MESSAGE: delete-vm update state file for ci-upgrade
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: ci-upgrade/state.yml
         input_mapping:
@@ -1015,91 +1017,71 @@ jobs:
         params:
           rebase: true
           repository: repository-commit
-
-
-#@ for deployment in deployments_without_gcp:
-#@ env_name = deployment.env_name
-#@ opsman_glob = deployment.opsman_glob
-#@ tags = deployment.tags
-#@ paving_dir = deployment.paving_dir
-- name: #@ "run-tasks-in-" + env_name + "-job"
+- name: run-tasks-in-ci-aws-job
   serial: true
   serial_groups:
-  - #@ env_name
+  - ci-aws
   plan:
   - in_parallel:
     - get: version
       passed:
       - build-binaries-image-combined
-      tags: #@ tags
+      tags: []
     - get: platform-automation-tasks
       resource: rc-tasks-s3
       passed:
       - build-binaries-image-combined
       params:
         unpack: true
-      tags: #@ tags
+      tags: []
     - get: binaries-table
       passed:
       - build-binaries-image-combined
-      tags: #@ tags
+      tags: []
     - get: docs-platform-automation
-      tags: #@ tags
+      tags: []
     - get: paving
-      tags: #@ tags
+      tags: []
     - get: deployments
-      tags: #@ tags
-#@ if deployment.paving_dir == "nsxt":
+      tags: []
     - get: platform-automation-image
-      passed: [ build-binaries-image-combined ]
-      resource: rc-image-s3-vsphere
-      tags: #@ tags
-      params:
-        unpack: true
-    - get: rc-image-s3
-      passed: [ build-binaries-image-combined ]
-      trigger: true
-      params:
-        unpack: true
-      tags: #@ tags
-#@ else:
-    - get: platform-automation-image
-      passed: [ build-binaries-image-combined ]
+      passed:
+      - build-binaries-image-combined
       resource: rc-image-s3
-      tags: #@ tags
+      tags: []
       params:
         unpack: true
     - get: rc-image-s3-vsphere
-      passed: [ build-binaries-image-combined ]
+      passed:
+      - build-binaries-image-combined
       trigger: true
       params:
         unpack: true
-      tags: #@ tags
-#@ end
+      tags: []
     - get: opsman-image
       trigger: true
       params:
         globs:
-        - #@ opsman_glob
-      tags: #@ tags
+        - '*aws*.yml'
+      tags: []
   - task: run-terraform
     attempts: 2
-    tags: #@ tags
+    tags: []
     file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
     params:
-      IAAS: #@ paving_dir
-      DEPLOYMENT_NAME: #@ env_name
+      IAAS: aws
+      DEPLOYMENT_NAME: ci-aws
       OM_PASSWORD: ((opsman-login.password))
       OM_USERNAME: ((opsman-login.username))
       PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
     ensure:
       put: deployments
-      tags: #@ tags
+      tags: []
       params:
         rebase: true
         repository: deployments
   - task: prepare-tasks-with-secrets
-    tags: #@ tags
+    tags: []
     image: platform-automation-image
     file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
     input_mapping:
@@ -1109,10 +1091,10 @@ jobs:
     output_mapping:
       tasks: platform-automation-tasks
     params:
-      CONFIG_PATHS: #@ "config/ci/configuration/" + paving_dir + "/director.yml config/ci/configuration/auth.yml"
-      VARS_PATHS: #@ "vars/" + env_name + "/terraform-vars.yml"
+      CONFIG_PATHS: config/ci/configuration/aws/director.yml config/ci/configuration/auth.yml
+      VARS_PATHS: vars/ci-aws/terraform-vars.yml
   - task: create-vm
-    tags: #@ tags
+    tags: []
     file: platform-automation-tasks/tasks/create-vm.yml
     attempts: 3
     input_mapping:
@@ -1121,33 +1103,33 @@ jobs:
       config: paving
       vars: deployments
     params:
-      STATE_FILE: #@ env_name + "/state.yml"
-      OPSMAN_CONFIG_FILE: #@ "ci/configuration/" + paving_dir + "/ops-manager.yml"
-      VARS_FILES: #@ "vars/" + env_name + "/terraform-vars.yml"
+      STATE_FILE: ci-aws/state.yml
+      OPSMAN_CONFIG_FILE: ci/configuration/aws/ops-manager.yml
+      VARS_FILES: vars/ci-aws/terraform-vars.yml
       GOTRACEBACK: all
     image: platform-automation-image
     ensure:
       do:
       - task: state-file
-        tags: #@ tags
+        tags: []
         file: platform-automation-tasks/tasks/make-git-commit.yml
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
           GIT_AUTHOR_EMAIL: ((platform-automation-email))
-          COMMIT_MESSAGE: #@ "create-vm update state file for " + env_name
+          COMMIT_MESSAGE: create-vm update state file for ci-aws
           FILE_SOURCE_PATH: state.yml
-          FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
+          FILE_DESTINATION_PATH: ci-aws/state.yml
         input_mapping:
           repository: deployments
           file-source: generated-state
         image: platform-automation-image
       - put: deployments
-        tags: #@ tags
+        tags: []
         params:
           rebase: true
           repository: repository-commit
   - task: configure-authentication
-    tags: #@ tags
+    tags: []
     file: platform-automation-tasks/tasks/configure-authentication.yml
     image: platform-automation-image
     attempts: 20
@@ -1155,118 +1137,148 @@ jobs:
       env: deployments
       config: paving
     params:
-      ENV_FILE: #@ env_name + "/env.yml"
+      ENV_FILE: ci-aws/env.yml
       AUTH_CONFIG_FILE: ci/configuration/auth.yml
-      VARS_FILES: #@ "env/" + env_name + "/terraform-vars.yml"
+      VARS_FILES: env/ci-aws/terraform-vars.yml
   - task: staged-director-config
-    tags: #@ tags
+    tags: []
     file: platform-automation-tasks/tasks/staged-director-config.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: #@ env_name + "/env.yml"
+      ENV_FILE: ci-aws/env.yml
   - task: configure-director
-    tags: #@ tags
+    tags: []
     file: platform-automation-tasks/tasks/configure-director.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
       config: paving
     params:
-      ENV_FILE: #@ env_name + "/env.yml"
-      VARS_FILES: #@ "env/" + env_name + "/terraform-vars.yml"
-      DIRECTOR_CONFIG_FILE: #@ "ci/configuration/" + paving_dir + "/director.yml"
+      ENV_FILE: ci-aws/env.yml
+      VARS_FILES: env/ci-aws/terraform-vars.yml
+      DIRECTOR_CONFIG_FILE: ci/configuration/aws/director.yml
   - task: apply-director-changes
-    tags: #@ tags
+    tags: []
     file: platform-automation-tasks/tasks/apply-director-changes.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: #@ env_name + "/env.yml"
+      ENV_FILE: ci-aws/env.yml
   - task: staged-director-config
-    tags: #@ tags
+    tags: []
     file: platform-automation-tasks/tasks/staged-director-config.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: #@ env_name + "/env.yml"
+      ENV_FILE: ci-aws/env.yml
   - task: delete-installation
-    tags: #@ tags
+    tags: []
     file: platform-automation-tasks/tasks/delete-installation.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: #@ env_name + "/env.yml"
-  - task: #@ "delete-" + env_name + "-opsman-vm"
-    tags: #@ tags
+      ENV_FILE: ci-aws/env.yml
+  - task: delete-ci-aws-opsman-vm
+    tags: []
     file: platform-automation-tasks/tasks/delete-vm.yml
     input_mapping:
       state: generated-state
       config: paving
       vars: deployments
     params:
-      OPSMAN_CONFIG_FILE: #@ "ci/configuration/" + paving_dir + "/ops-manager.yml"
-      VARS_FILES: #@ "vars/" + env_name + "/terraform-vars.yml"
+      OPSMAN_CONFIG_FILE: ci/configuration/aws/ops-manager.yml
+      VARS_FILES: vars/ci-aws/terraform-vars.yml
     image: platform-automation-image
     ensure:
       do:
       - task: state-file
-        tags: #@ tags
+        tags: []
         file: platform-automation-tasks/tasks/make-git-commit.yml
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
           GIT_AUTHOR_EMAIL: ((platform-automation-email))
-          COMMIT_MESSAGE: #@ "delete-vm update state file for " + env_name
+          COMMIT_MESSAGE: delete-vm update state file for ci-aws
           FILE_SOURCE_PATH: state.yml
-          FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
+          FILE_DESTINATION_PATH: ci-aws/state.yml
         input_mapping:
           repository: deployments
           file-source: generated-state
         image: platform-automation-image
       - put: deployments
-        tags: #@ tags
+        tags: []
         params:
           rebase: true
           repository: repository-commit
-#@ end
-
-#@ for deployment in data.values.deployments:
-#@ env_name = deployment.env_name
-#@ opsman_glob = deployment.opsman_glob
-#@ tags = deployment.tags
-#@ paving_dir = deployment.paving_dir
-- name: #@ env_name + "-delete-infrastructure"
+- name: run-tasks-in-ci-azure-job
+  serial: true
   serial_groups:
-  - #@ env_name
+  - ci-azure
   plan:
   - in_parallel:
-#@ if deployment.enable_timed_trigger:
-    - get: nightly
-      trigger: true
-      tags: #@ tags
-#@ end
-    - get: docs-platform-automation
-      tags: #@ tags
-    - get: paving
-      tags: #@ tags
-    - get: deployments
-      tags: #@ tags
-    - get: platform-automation-image
-      resource: rc-image-s3
-      params:
-        unpack: true
-      tags: #@ tags
+    - get: version
+      passed:
+      - build-binaries-image-combined
+      tags: []
     - get: platform-automation-tasks
       resource: rc-tasks-s3
+      passed:
+      - build-binaries-image-combined
       params:
         unpack: true
-      tags: #@ tags
+      tags: []
+    - get: binaries-table
+      passed:
+      - build-binaries-image-combined
+      tags: []
+    - get: docs-platform-automation
+      tags: []
+    - get: paving
+      tags: []
+    - get: deployments
+      tags: []
+    - get: platform-automation-image
+      passed:
+      - build-binaries-image-combined
+      resource: rc-image-s3
+      tags: []
+      params:
+        unpack: true
+    - get: rc-image-s3-vsphere
+      passed:
+      - build-binaries-image-combined
+      trigger: true
+      params:
+        unpack: true
+      tags: []
+    - get: opsman-image
+      trigger: true
+      params:
+        globs:
+        - '*azure*.yml'
+      tags: []
+  - task: run-terraform
+    attempts: 2
+    tags: []
+    file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
+    params:
+      IAAS: azure
+      DEPLOYMENT_NAME: ci-azure
+      OM_PASSWORD: ((opsman-login.password))
+      OM_USERNAME: ((opsman-login.username))
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+    ensure:
+      put: deployments
+      tags: []
+      params:
+        rebase: true
+        repository: deployments
   - task: prepare-tasks-with-secrets
-    tags: #@ tags
+    tags: []
     image: platform-automation-image
     file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
     input_mapping:
@@ -1276,20 +1288,178 @@ jobs:
     output_mapping:
       tasks: platform-automation-tasks
     params:
-      CONFIG_PATHS: #@ "config/ci/configuration/" + paving_dir + "/director.yml config/ci/configuration/" + paving_dir + "/ops-manager.yml config/ci/configuration/auth.yml"
-      VARS_PATHS: #@ "vars/" + env_name + "/terraform-vars.yml"
+      CONFIG_PATHS: config/ci/configuration/azure/director.yml config/ci/configuration/auth.yml
+      VARS_PATHS: vars/ci-azure/terraform-vars.yml
+  - task: create-vm
+    tags: []
+    file: platform-automation-tasks/tasks/create-vm.yml
+    attempts: 3
+    input_mapping:
+      image: opsman-image
+      state: deployments
+      config: paving
+      vars: deployments
+    params:
+      STATE_FILE: ci-azure/state.yml
+      OPSMAN_CONFIG_FILE: ci/configuration/azure/ops-manager.yml
+      VARS_FILES: vars/ci-azure/terraform-vars.yml
+      GOTRACEBACK: all
+    image: platform-automation-image
+    ensure:
+      do:
+      - task: state-file
+        tags: []
+        file: platform-automation-tasks/tasks/make-git-commit.yml
+        params:
+          GIT_AUTHOR_NAME: platform-automation-bot
+          GIT_AUTHOR_EMAIL: ((platform-automation-email))
+          COMMIT_MESSAGE: create-vm update state file for ci-azure
+          FILE_SOURCE_PATH: state.yml
+          FILE_DESTINATION_PATH: ci-azure/state.yml
+        input_mapping:
+          repository: deployments
+          file-source: generated-state
+        image: platform-automation-image
+      - put: deployments
+        tags: []
+        params:
+          rebase: true
+          repository: repository-commit
+  - task: configure-authentication
+    tags: []
+    file: platform-automation-tasks/tasks/configure-authentication.yml
+    image: platform-automation-image
+    attempts: 20
+    input_mapping:
+      env: deployments
+      config: paving
+    params:
+      ENV_FILE: ci-azure/env.yml
+      AUTH_CONFIG_FILE: ci/configuration/auth.yml
+      VARS_FILES: env/ci-azure/terraform-vars.yml
+  - task: staged-director-config
+    tags: []
+    file: platform-automation-tasks/tasks/staged-director-config.yml
+    image: platform-automation-image
+    input_mapping:
+      env: deployments
+    params:
+      ENV_FILE: ci-azure/env.yml
+  - task: configure-director
+    tags: []
+    file: platform-automation-tasks/tasks/configure-director.yml
+    image: platform-automation-image
+    input_mapping:
+      env: deployments
+      config: paving
+    params:
+      ENV_FILE: ci-azure/env.yml
+      VARS_FILES: env/ci-azure/terraform-vars.yml
+      DIRECTOR_CONFIG_FILE: ci/configuration/azure/director.yml
+  - task: apply-director-changes
+    tags: []
+    file: platform-automation-tasks/tasks/apply-director-changes.yml
+    image: platform-automation-image
+    input_mapping:
+      env: deployments
+    params:
+      ENV_FILE: ci-azure/env.yml
+  - task: staged-director-config
+    tags: []
+    file: platform-automation-tasks/tasks/staged-director-config.yml
+    image: platform-automation-image
+    input_mapping:
+      env: deployments
+    params:
+      ENV_FILE: ci-azure/env.yml
+  - task: delete-installation
+    tags: []
+    file: platform-automation-tasks/tasks/delete-installation.yml
+    image: platform-automation-image
+    input_mapping:
+      env: deployments
+    params:
+      ENV_FILE: ci-azure/env.yml
+  - task: delete-ci-azure-opsman-vm
+    tags: []
+    file: platform-automation-tasks/tasks/delete-vm.yml
+    input_mapping:
+      state: generated-state
+      config: paving
+      vars: deployments
+    params:
+      OPSMAN_CONFIG_FILE: ci/configuration/azure/ops-manager.yml
+      VARS_FILES: vars/ci-azure/terraform-vars.yml
+    image: platform-automation-image
+    ensure:
+      do:
+      - task: state-file
+        tags: []
+        file: platform-automation-tasks/tasks/make-git-commit.yml
+        params:
+          GIT_AUTHOR_NAME: platform-automation-bot
+          GIT_AUTHOR_EMAIL: ((platform-automation-email))
+          COMMIT_MESSAGE: delete-vm update state file for ci-azure
+          FILE_SOURCE_PATH: state.yml
+          FILE_DESTINATION_PATH: ci-azure/state.yml
+        input_mapping:
+          repository: deployments
+          file-source: generated-state
+        image: platform-automation-image
+      - put: deployments
+        tags: []
+        params:
+          rebase: true
+          repository: repository-commit
+- name: ci-aws-delete-infrastructure
+  serial_groups:
+  - ci-aws
+  plan:
+  - in_parallel:
+    - get: nightly
+      trigger: true
+      tags: []
+    - get: docs-platform-automation
+      tags: []
+    - get: paving
+      tags: []
+    - get: deployments
+      tags: []
+    - get: platform-automation-image
+      resource: rc-image-s3
+      params:
+        unpack: true
+      tags: []
+    - get: platform-automation-tasks
+      resource: rc-tasks-s3
+      params:
+        unpack: true
+      tags: []
+  - task: prepare-tasks-with-secrets
+    tags: []
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+    input_mapping:
+      config: paving
+      tasks: platform-automation-tasks
+      vars: deployments
+    output_mapping:
+      tasks: platform-automation-tasks
+    params:
+      CONFIG_PATHS: config/ci/configuration/aws/director.yml config/ci/configuration/aws/ops-manager.yml config/ci/configuration/auth.yml
+      VARS_PATHS: vars/ci-aws/terraform-vars.yml
   - try:
       task: delete-installation
-      tags: #@ tags
+      tags: []
       file: platform-automation-tasks/tasks/delete-installation.yml
       input_mapping:
         env: deployments
       params:
-        ENV_FILE: #@ env_name + "/env.yml"
+        ENV_FILE: ci-aws/env.yml
       image: platform-automation-image
   - try:
       task: delete-opsman-vm
-      tags: #@ tags
+      tags: []
       file: platform-automation-tasks/tasks/delete-vm.yml
       image: platform-automation-image
       input_mapping:
@@ -1298,48 +1468,48 @@ jobs:
         config: paving
         vars: deployments
       params:
-        STATE_FILE: #@ env_name + "/state.yml"
-        OPSMAN_CONFIG_FILE: #@ "ci/configuration/" + paving_dir + "/ops-manager.yml"
-        VARS_FILES: #@ "vars/" + env_name + "/terraform-vars.yml"
+        STATE_FILE: ci-aws/state.yml
+        OPSMAN_CONFIG_FILE: ci/configuration/aws/ops-manager.yml
+        VARS_FILES: vars/ci-aws/terraform-vars.yml
       ensure:
         do:
         - task: state-file
-          tags: #@ tags
+          tags: []
           file: platform-automation-tasks/tasks/make-git-commit.yml
           image: platform-automation-image
           params:
             GIT_AUTHOR_NAME: platform-automation-bot
             GIT_AUTHOR_EMAIL: ((platform-automation-email))
-            COMMIT_MESSAGE: #@ "delete-vm update state file for " + env_name
+            COMMIT_MESSAGE: delete-vm update state file for ci-aws
             FILE_SOURCE_PATH: state.yml
-            FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
+            FILE_DESTINATION_PATH: ci-aws/state.yml
           input_mapping:
             repository: deployments
             file-source: generated-state
         - put: deployments
-          tags: #@ tags
+          tags: []
           params:
             rebase: true
             repository: repository-commit
   - try:
       task: delete-infrastructure
-      tags: #@ tags
+      tags: []
       file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
       params:
-        IAAS: #@ paving_dir
-        DEPLOYMENT_NAME: #@ env_name
+        IAAS: aws
+        DEPLOYMENT_NAME: ci-aws
         PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
       ensure:
         put: deployments
-        tags: #@ tags
+        tags: []
         params:
           rebase: true
           repository: deployments
   - task: leftovers
-    tags: #@ tags
+    tags: []
     file: docs-platform-automation/ci/tasks/leftovers.yml
     params:
-      BBL_IAAS: #@ paving_dir
+      BBL_IAAS: aws
       BBL_AWS_ACCESS_KEY_ID: ((s3_with_role.access_key_id))
       BBL_AWS_SECRET_ACCESS_KEY: ((s3_with_role.secret_access_key))
       BBL_AWS_ASSUME_ROLE: ((s3_with_role.role_arn))
@@ -1352,22 +1522,522 @@ jobs:
       BBL_NSXT_PASSWORD: ((nsx.password))
       BBL_NSXT_USERNAME: ((nsx.username))
       BBL_NSXT_MANAGER_HOST: ((nsx.url))
-      FILTER: #@ env_name
+      FILTER: ci-aws
       DRY_RUN: false
       NO_CONFIRM: true
   - task: remove-state-files
-    tags: #@ tags
+    tags: []
     file: docs-platform-automation/ci/tasks/delete-state-file.yml
     params:
-      DEPLOYMENT: #@ env_name
+      DEPLOYMENT: ci-aws
       PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
     ensure:
       put: deployments
-      tags: #@ tags
+      tags: []
       params:
         rebase: true
         repository: deployments
-#@ end
+- name: ci-azure-delete-infrastructure
+  serial_groups:
+  - ci-azure
+  plan:
+  - in_parallel:
+    - get: nightly
+      trigger: true
+      tags: []
+    - get: docs-platform-automation
+      tags: []
+    - get: paving
+      tags: []
+    - get: deployments
+      tags: []
+    - get: platform-automation-image
+      resource: rc-image-s3
+      params:
+        unpack: true
+      tags: []
+    - get: platform-automation-tasks
+      resource: rc-tasks-s3
+      params:
+        unpack: true
+      tags: []
+  - task: prepare-tasks-with-secrets
+    tags: []
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+    input_mapping:
+      config: paving
+      tasks: platform-automation-tasks
+      vars: deployments
+    output_mapping:
+      tasks: platform-automation-tasks
+    params:
+      CONFIG_PATHS: config/ci/configuration/azure/director.yml config/ci/configuration/azure/ops-manager.yml config/ci/configuration/auth.yml
+      VARS_PATHS: vars/ci-azure/terraform-vars.yml
+  - try:
+      task: delete-installation
+      tags: []
+      file: platform-automation-tasks/tasks/delete-installation.yml
+      input_mapping:
+        env: deployments
+      params:
+        ENV_FILE: ci-azure/env.yml
+      image: platform-automation-image
+  - try:
+      task: delete-opsman-vm
+      tags: []
+      file: platform-automation-tasks/tasks/delete-vm.yml
+      image: platform-automation-image
+      input_mapping:
+        image: opsman-image
+        state: deployments
+        config: paving
+        vars: deployments
+      params:
+        STATE_FILE: ci-azure/state.yml
+        OPSMAN_CONFIG_FILE: ci/configuration/azure/ops-manager.yml
+        VARS_FILES: vars/ci-azure/terraform-vars.yml
+      ensure:
+        do:
+        - task: state-file
+          tags: []
+          file: platform-automation-tasks/tasks/make-git-commit.yml
+          image: platform-automation-image
+          params:
+            GIT_AUTHOR_NAME: platform-automation-bot
+            GIT_AUTHOR_EMAIL: ((platform-automation-email))
+            COMMIT_MESSAGE: delete-vm update state file for ci-azure
+            FILE_SOURCE_PATH: state.yml
+            FILE_DESTINATION_PATH: ci-azure/state.yml
+          input_mapping:
+            repository: deployments
+            file-source: generated-state
+        - put: deployments
+          tags: []
+          params:
+            rebase: true
+            repository: repository-commit
+  - try:
+      task: delete-infrastructure
+      tags: []
+      file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
+      params:
+        IAAS: azure
+        DEPLOYMENT_NAME: ci-azure
+        PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+      ensure:
+        put: deployments
+        tags: []
+        params:
+          rebase: true
+          repository: deployments
+  - task: leftovers
+    tags: []
+    file: docs-platform-automation/ci/tasks/leftovers.yml
+    params:
+      BBL_IAAS: azure
+      BBL_AWS_ACCESS_KEY_ID: ((s3_with_role.access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((s3_with_role.secret_access_key))
+      BBL_AWS_ASSUME_ROLE: ((s3_with_role.role_arn))
+      BBL_AWS_REGION: ((s3_with_role.region_name))
+      BBL_AZURE_CLIENT_ID: ((azure.client_id))
+      BBL_AZURE_CLIENT_SECRET: ((azure.client_secret))
+      BBL_AZURE_TENANT_ID: ((azure.tenant_id))
+      BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+      BBL_NSXT_PASSWORD: ((nsx.password))
+      BBL_NSXT_USERNAME: ((nsx.username))
+      BBL_NSXT_MANAGER_HOST: ((nsx.url))
+      FILTER: ci-azure
+      DRY_RUN: false
+      NO_CONFIRM: true
+  - task: remove-state-files
+    tags: []
+    file: docs-platform-automation/ci/tasks/delete-state-file.yml
+    params:
+      DEPLOYMENT: ci-azure
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+    ensure:
+      put: deployments
+      tags: []
+      params:
+        rebase: true
+        repository: deployments
+- name: ci-upgrade-delete-infrastructure
+  serial_groups:
+  - ci-upgrade
+  plan:
+  - in_parallel:
+    - get: nightly
+      trigger: true
+      tags: []
+    - get: docs-platform-automation
+      tags: []
+    - get: paving
+      tags: []
+    - get: deployments
+      tags: []
+    - get: platform-automation-image
+      resource: rc-image-s3
+      params:
+        unpack: true
+      tags: []
+    - get: platform-automation-tasks
+      resource: rc-tasks-s3
+      params:
+        unpack: true
+      tags: []
+  - task: prepare-tasks-with-secrets
+    tags: []
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+    input_mapping:
+      config: paving
+      tasks: platform-automation-tasks
+      vars: deployments
+    output_mapping:
+      tasks: platform-automation-tasks
+    params:
+      CONFIG_PATHS: config/ci/configuration/gcp/director.yml config/ci/configuration/gcp/ops-manager.yml config/ci/configuration/auth.yml
+      VARS_PATHS: vars/ci-upgrade/terraform-vars.yml
+  - try:
+      task: delete-installation
+      tags: []
+      file: platform-automation-tasks/tasks/delete-installation.yml
+      input_mapping:
+        env: deployments
+      params:
+        ENV_FILE: ci-upgrade/env.yml
+      image: platform-automation-image
+  - try:
+      task: delete-opsman-vm
+      tags: []
+      file: platform-automation-tasks/tasks/delete-vm.yml
+      image: platform-automation-image
+      input_mapping:
+        image: opsman-image
+        state: deployments
+        config: paving
+        vars: deployments
+      params:
+        STATE_FILE: ci-upgrade/state.yml
+        OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
+        VARS_FILES: vars/ci-upgrade/terraform-vars.yml
+      ensure:
+        do:
+        - task: state-file
+          tags: []
+          file: platform-automation-tasks/tasks/make-git-commit.yml
+          image: platform-automation-image
+          params:
+            GIT_AUTHOR_NAME: platform-automation-bot
+            GIT_AUTHOR_EMAIL: ((platform-automation-email))
+            COMMIT_MESSAGE: delete-vm update state file for ci-upgrade
+            FILE_SOURCE_PATH: state.yml
+            FILE_DESTINATION_PATH: ci-upgrade/state.yml
+          input_mapping:
+            repository: deployments
+            file-source: generated-state
+        - put: deployments
+          tags: []
+          params:
+            rebase: true
+            repository: repository-commit
+  - try:
+      task: delete-infrastructure
+      tags: []
+      file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
+      params:
+        IAAS: gcp
+        DEPLOYMENT_NAME: ci-upgrade
+        PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+      ensure:
+        put: deployments
+        tags: []
+        params:
+          rebase: true
+          repository: deployments
+  - task: leftovers
+    tags: []
+    file: docs-platform-automation/ci/tasks/leftovers.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_AWS_ACCESS_KEY_ID: ((s3_with_role.access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((s3_with_role.secret_access_key))
+      BBL_AWS_ASSUME_ROLE: ((s3_with_role.role_arn))
+      BBL_AWS_REGION: ((s3_with_role.region_name))
+      BBL_AZURE_CLIENT_ID: ((azure.client_id))
+      BBL_AZURE_CLIENT_SECRET: ((azure.client_secret))
+      BBL_AZURE_TENANT_ID: ((azure.tenant_id))
+      BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+      BBL_NSXT_PASSWORD: ((nsx.password))
+      BBL_NSXT_USERNAME: ((nsx.username))
+      BBL_NSXT_MANAGER_HOST: ((nsx.url))
+      FILTER: ci-upgrade
+      DRY_RUN: false
+      NO_CONFIRM: true
+  - task: remove-state-files
+    tags: []
+    file: docs-platform-automation/ci/tasks/delete-state-file.yml
+    params:
+      DEPLOYMENT: ci-upgrade
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+    ensure:
+      put: deployments
+      tags: []
+      params:
+        rebase: true
+        repository: deployments
+- name: ci-support-delete-infrastructure
+  serial_groups:
+  - ci-support
+  plan:
+  - in_parallel:
+    - get: nightly
+      trigger: true
+      tags: []
+    - get: docs-platform-automation
+      tags: []
+    - get: paving
+      tags: []
+    - get: deployments
+      tags: []
+    - get: platform-automation-image
+      resource: rc-image-s3
+      params:
+        unpack: true
+      tags: []
+    - get: platform-automation-tasks
+      resource: rc-tasks-s3
+      params:
+        unpack: true
+      tags: []
+  - task: prepare-tasks-with-secrets
+    tags: []
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+    input_mapping:
+      config: paving
+      tasks: platform-automation-tasks
+      vars: deployments
+    output_mapping:
+      tasks: platform-automation-tasks
+    params:
+      CONFIG_PATHS: config/ci/configuration/gcp/director.yml config/ci/configuration/gcp/ops-manager.yml config/ci/configuration/auth.yml
+      VARS_PATHS: vars/ci-support/terraform-vars.yml
+  - try:
+      task: delete-installation
+      tags: []
+      file: platform-automation-tasks/tasks/delete-installation.yml
+      input_mapping:
+        env: deployments
+      params:
+        ENV_FILE: ci-support/env.yml
+      image: platform-automation-image
+  - try:
+      task: delete-opsman-vm
+      tags: []
+      file: platform-automation-tasks/tasks/delete-vm.yml
+      image: platform-automation-image
+      input_mapping:
+        image: opsman-image
+        state: deployments
+        config: paving
+        vars: deployments
+      params:
+        STATE_FILE: ci-support/state.yml
+        OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
+        VARS_FILES: vars/ci-support/terraform-vars.yml
+      ensure:
+        do:
+        - task: state-file
+          tags: []
+          file: platform-automation-tasks/tasks/make-git-commit.yml
+          image: platform-automation-image
+          params:
+            GIT_AUTHOR_NAME: platform-automation-bot
+            GIT_AUTHOR_EMAIL: ((platform-automation-email))
+            COMMIT_MESSAGE: delete-vm update state file for ci-support
+            FILE_SOURCE_PATH: state.yml
+            FILE_DESTINATION_PATH: ci-support/state.yml
+          input_mapping:
+            repository: deployments
+            file-source: generated-state
+        - put: deployments
+          tags: []
+          params:
+            rebase: true
+            repository: repository-commit
+  - try:
+      task: delete-infrastructure
+      tags: []
+      file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
+      params:
+        IAAS: gcp
+        DEPLOYMENT_NAME: ci-support
+        PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+      ensure:
+        put: deployments
+        tags: []
+        params:
+          rebase: true
+          repository: deployments
+  - task: leftovers
+    tags: []
+    file: docs-platform-automation/ci/tasks/leftovers.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_AWS_ACCESS_KEY_ID: ((s3_with_role.access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((s3_with_role.secret_access_key))
+      BBL_AWS_ASSUME_ROLE: ((s3_with_role.role_arn))
+      BBL_AWS_REGION: ((s3_with_role.region_name))
+      BBL_AZURE_CLIENT_ID: ((azure.client_id))
+      BBL_AZURE_CLIENT_SECRET: ((azure.client_secret))
+      BBL_AZURE_TENANT_ID: ((azure.tenant_id))
+      BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+      BBL_NSXT_PASSWORD: ((nsx.password))
+      BBL_NSXT_USERNAME: ((nsx.username))
+      BBL_NSXT_MANAGER_HOST: ((nsx.url))
+      FILTER: ci-support
+      DRY_RUN: false
+      NO_CONFIRM: true
+  - task: remove-state-files
+    tags: []
+    file: docs-platform-automation/ci/tasks/delete-state-file.yml
+    params:
+      DEPLOYMENT: ci-support
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+    ensure:
+      put: deployments
+      tags: []
+      params:
+        rebase: true
+        repository: deployments
+- name: reference-gcp-delete-infrastructure
+  serial_groups:
+  - reference-gcp
+  plan:
+  - in_parallel:
+    - get: docs-platform-automation
+      tags: []
+    - get: paving
+      tags: []
+    - get: deployments
+      tags: []
+    - get: platform-automation-image
+      resource: rc-image-s3
+      params:
+        unpack: true
+      tags: []
+    - get: platform-automation-tasks
+      resource: rc-tasks-s3
+      params:
+        unpack: true
+      tags: []
+  - task: prepare-tasks-with-secrets
+    tags: []
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+    input_mapping:
+      config: paving
+      tasks: platform-automation-tasks
+      vars: deployments
+    output_mapping:
+      tasks: platform-automation-tasks
+    params:
+      CONFIG_PATHS: config/ci/configuration/gcp/director.yml config/ci/configuration/gcp/ops-manager.yml config/ci/configuration/auth.yml
+      VARS_PATHS: vars/reference-gcp/terraform-vars.yml
+  - try:
+      task: delete-installation
+      tags: []
+      file: platform-automation-tasks/tasks/delete-installation.yml
+      input_mapping:
+        env: deployments
+      params:
+        ENV_FILE: reference-gcp/env.yml
+      image: platform-automation-image
+  - try:
+      task: delete-opsman-vm
+      tags: []
+      file: platform-automation-tasks/tasks/delete-vm.yml
+      image: platform-automation-image
+      input_mapping:
+        image: opsman-image
+        state: deployments
+        config: paving
+        vars: deployments
+      params:
+        STATE_FILE: reference-gcp/state.yml
+        OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
+        VARS_FILES: vars/reference-gcp/terraform-vars.yml
+      ensure:
+        do:
+        - task: state-file
+          tags: []
+          file: platform-automation-tasks/tasks/make-git-commit.yml
+          image: platform-automation-image
+          params:
+            GIT_AUTHOR_NAME: platform-automation-bot
+            GIT_AUTHOR_EMAIL: ((platform-automation-email))
+            COMMIT_MESSAGE: delete-vm update state file for reference-gcp
+            FILE_SOURCE_PATH: state.yml
+            FILE_DESTINATION_PATH: reference-gcp/state.yml
+          input_mapping:
+            repository: deployments
+            file-source: generated-state
+        - put: deployments
+          tags: []
+          params:
+            rebase: true
+            repository: repository-commit
+  - try:
+      task: delete-infrastructure
+      tags: []
+      file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
+      params:
+        IAAS: gcp
+        DEPLOYMENT_NAME: reference-gcp
+        PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+      ensure:
+        put: deployments
+        tags: []
+        params:
+          rebase: true
+          repository: deployments
+  - task: leftovers
+    tags: []
+    file: docs-platform-automation/ci/tasks/leftovers.yml
+    params:
+      BBL_IAAS: gcp
+      BBL_AWS_ACCESS_KEY_ID: ((s3_with_role.access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((s3_with_role.secret_access_key))
+      BBL_AWS_ASSUME_ROLE: ((s3_with_role.role_arn))
+      BBL_AWS_REGION: ((s3_with_role.region_name))
+      BBL_AZURE_CLIENT_ID: ((azure.client_id))
+      BBL_AZURE_CLIENT_SECRET: ((azure.client_secret))
+      BBL_AZURE_TENANT_ID: ((azure.tenant_id))
+      BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
+      BBL_NSXT_PASSWORD: ((nsx.password))
+      BBL_NSXT_USERNAME: ((nsx.username))
+      BBL_NSXT_MANAGER_HOST: ((nsx.url))
+      FILTER: reference-gcp
+      DRY_RUN: false
+      NO_CONFIRM: true
+  - task: remove-state-files
+    tags: []
+    file: docs-platform-automation/ci/tasks/delete-state-file.yml
+    params:
+      DEPLOYMENT: reference-gcp
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+    ensure:
+      put: deployments
+      tags: []
+      params:
+        rebase: true
+        repository: deployments
 - name: check-for-secrets-in-tasks
   plan:
   - in_parallel:
@@ -1408,7 +2078,7 @@ jobs:
     - get: pas-windows
       params:
         globs:
-          - '*.pivotal'
+        - '*.pivotal'
   - task: credhub-interpolate
     image: platform-automation-image
     file: platform-automation-tasks/tasks/credhub-interpolate.yml
@@ -1465,30 +2135,29 @@ jobs:
           run:
             path: bash
             args:
-              - -c
-              - |
-                set -eux
+            - -c
+            - |
+              set -eux
 
-                test -e replicated-product/awesome.pivotal
-                unzip -t replicated-product/awesome.pivotal
-
+              test -e replicated-product/awesome.pivotal
+              unzip -t replicated-product/awesome.pivotal
     - do:
       - task: get-ca-cert
         image: platform-automation-image
         config:
           platform: linux
           outputs:
-            - name: config
+          - name: config
           run:
             path: bash
             args:
-              - -c
-              - |
-                set -eux
+            - -c
+            - |
+              set -eux
 
-                echo quit | openssl s_client -showcerts \
-                  -servername self-signed.badssl.com \
-                  -connect self-signed.badssl.com:443 > config/cacert.pem
+              echo quit | openssl s_client -showcerts \
+                -servername self-signed.badssl.com \
+                -connect self-signed.badssl.com:443 > config/cacert.pem
       - task: prepare-image
         image: platform-automation-image
         file: platform-automation-tasks/tasks/prepare-image.yml
@@ -1501,11 +2170,11 @@ jobs:
           run:
             path: bash
             args:
-              - -c
-              - |
-                set -eux
+            - -c
+            - |
+              set -eux
 
-                curl -vvv -L https://self-signed.badssl.com
+              curl -vvv -L https://self-signed.badssl.com
     - do:
       - task: download-and-upload-product
         image: platform-automation-image
@@ -1527,16 +2196,16 @@ jobs:
         config:
           platform: linux
           inputs:
-            - name: backup
+          - name: backup
           run:
             path: bash
             args:
-              - -c
-              - |
-                set -eux
+            - -c
+            - |
+              set -eux
 
-                test -e backup/director_*.tgz
-                tar -tzf  backup/director_*.tgz > /dev/null
+              test -e backup/director_*.tgz
+              tar -tzf  backup/director_*.tgz > /dev/null
     - do:
       - task: update-runtime-config
         image: platform-automation-image
@@ -1550,31 +2219,29 @@ jobs:
           NAME: my-runtime-config
           BOSH_ENV_PREFIX: OPSMAN
           OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
-
-#! bump jobs
 - name: bump-previous-versions-trigger
   serial: true
   plan:
   - in_parallel:
     - get: rc-image-s3-vsphere
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - run-tasks-in-ci-aws-job
+      - run-tasks-in-ci-azure-job
       - upgrade-opsman-gcp
       - additional-task-testing
     - get: binaries-image
       resource: rc-image-s3
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - run-tasks-in-ci-aws-job
+      - run-tasks-in-ci-azure-job
       - upgrade-opsman-gcp
       - additional-task-testing
       params:
         unpack: true
     - get: binaries-table
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      - run-tasks-in-ci-aws-job
+      - run-tasks-in-ci-azure-job
       - upgrade-opsman-gcp
       - additional-task-testing
 - name: bump-test-image-dependency-stability
@@ -1583,7 +2250,8 @@ jobs:
     - get: docs-platform-automation
     - get: binaries-image
       resource: rc-image-s3
-      passed: [ bump-previous-versions-trigger ]
+      passed:
+      - bump-previous-versions-trigger
       trigger: true
       params:
         unpack: true
@@ -1610,32 +2278,35 @@ jobs:
     image: binaries-image
   - task: check-osl-reuse-validity
     file: docs-platform-automation/ci/tasks/check-osl-reuse-validity.yml
-#@ for version in data.values.versions:
-- name: #@ "update-" + version.number
-  serial_groups: [ bump ]
+- name: update-v5.2
+  serial_groups:
+  - bump
   plan:
   - in_parallel:
     - get: osl
     - get: odp
-    - get: #@ "platform-automation-" + version.number
-    - get: #@ "docs-platform-automation-" + version.number
+    - get: platform-automation-v5.2
+    - get: docs-platform-automation-v5.2
     - get: docs-platform-automation-with-docs
     - get: version
-      resource: #@ "version-" + version.number
+      resource: version-v5.2
       params:
         bump: patch
     - get: rc-image-s3-vsphere
-      passed: [ bump-previous-versions-trigger ]
+      passed:
+      - bump-previous-versions-trigger
       params:
         unpack: true
     - get: binaries-image
       resource: rc-image-s3
-      passed: [ bump-previous-versions-trigger ]
+      passed:
+      - bump-previous-versions-trigger
       trigger: true
       params:
         unpack: true
     - get: binaries-table
-      passed: [ bump-previous-versions-trigger ]
+      passed:
+      - bump-previous-versions-trigger
   - task: create-release-notes-for-patch
     file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-release-notes-hy.yml
     params:
@@ -1644,27 +2315,25 @@ jobs:
     file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
       docs-platform-automation: docs-platform-automation-with-docs
-      platform-automation: #@ "platform-automation-" + version.number
+      platform-automation: platform-automation-v5.2
       platform-automation-image: binaries-image
-      #@ if version.vsphere_image:
       vsphere-platform-automation-image: rc-image-s3-vsphere
-      #@ end
   - in_parallel:
     - task: test-docker-import
       privileged: true
       file: docs-platform-automation-with-docs/ci/tasks/test-docker-import/task.yml
     - task: test-task
-      file: #@ "platform-automation-" + version.number + "/tasks/test.yml"
+      file: platform-automation-v5.2/tasks/test.yml
       image: platform-automation-image
       input_mapping:
-        platform-automation-tasks: #@ "platform-automation-" + version.number
+        platform-automation-tasks: platform-automation-v5.2
     - task: generate-dpkg-list-for-osl
       file: docs-platform-automation-with-docs/ci/tasks/generate-dpkg-list-for-OSL.yml
       image: binaries-image
   - in_parallel:
-    - put: #@ "platform-automation-" + version.number
+    - put: platform-automation-v5.2
       params:
-        repository: #@ "platform-automation-" + version.number
+        repository: platform-automation-v5.2
         tag: version/version
         tag_prefix: v
         rebase: true
@@ -1672,33 +2341,29 @@ jobs:
       params:
         file: rc-image-receipt-s3/image-receipt-*
         acl: public-read
-  - put: #@ "rc-artifacts-s3-" + version.number
+  - put: rc-artifacts-s3-v5.2
     params:
       file: packaged-product/artifacts-*.tar.gz
-  - put: #@ "version-" + version.number
+  - put: version-v5.2
     params:
       file: version/version
-#@ end
 - name: empty-cve-patch-notes-file
   plan:
-    - in_parallel:
-      - get: rc-image-s3
-        passed:
-        #@ for version in data.values.versions:
-        - #@ "update-" + version.number
-        #@ end
-        trigger: true
-      - get: docs-platform-automation-with-docs
-    - task: empty-cve-patch-notes
-      file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/empty-cve-patch-notes.yml
-      input_mapping:
-        docs-platform-automation: docs-platform-automation-with-docs
-    - put: docs-platform-automation-with-docs
-      params:
-        repository: docs-platform-automation
-        rebase: true
-#@ for bump in ["patch", "minor", "major"]:
-- name: #@ "bump-om-" + bump
+  - in_parallel:
+    - get: rc-image-s3
+      passed:
+      - update-v5.2
+      trigger: true
+    - get: docs-platform-automation-with-docs
+  - task: empty-cve-patch-notes
+    file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/empty-cve-patch-notes.yml
+    input_mapping:
+      docs-platform-automation: docs-platform-automation-with-docs
+  - put: docs-platform-automation-with-docs
+    params:
+      repository: docs-platform-automation
+      rebase: true
+- name: bump-om-patch
   plan:
   - in_parallel:
     - get: om
@@ -1706,7 +2371,7 @@ jobs:
       - download-and-test-om
     - get: om-version
       params:
-        bump: #@ bump
+        bump: patch
   - put: om
     params:
       repository: om
@@ -1718,5 +2383,46 @@ jobs:
       GITHUB_TOKEN: ((om.access_token))
   - put: om-version
     params:
-      bump: #@ bump
-#@ end
+      bump: patch
+- name: bump-om-minor
+  plan:
+  - in_parallel:
+    - get: om
+      passed:
+      - download-and-test-om
+    - get: om-version
+      params:
+        bump: minor
+  - put: om
+    params:
+      repository: om
+      only_tag: true
+      tag: om-version/version
+  - task: build
+    file: om/ci/tasks/build/task.yml
+    params:
+      GITHUB_TOKEN: ((om.access_token))
+  - put: om-version
+    params:
+      bump: minor
+- name: bump-om-major
+  plan:
+  - in_parallel:
+    - get: om
+      passed:
+      - download-and-test-om
+    - get: om-version
+      params:
+        bump: major
+  - put: om
+    params:
+      repository: om
+      only_tag: true
+      tag: om-version/version
+  - task: build
+    file: om/ci/tasks/build/task.yml
+    params:
+      GITHUB_TOKEN: ((om.access_token))
+  - put: om-version
+    params:
+      bump: major
