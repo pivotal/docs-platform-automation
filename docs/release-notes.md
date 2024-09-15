@@ -4,6 +4,12 @@
     }
 </style>
 
+## v5.2.2
+September 15, 2024
+
+### Bug Fixes
+- Update tasks to use user supplied env var prefix
+
 ## v5.2.1
 July 26, 2024
 
