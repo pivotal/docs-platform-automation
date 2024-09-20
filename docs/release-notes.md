@@ -1,28 +1,25 @@
-<style>
-    .md-typeset h2 {
-        font-weight: bold;
-    }
-</style>
+# Release Notes for Platform Automation Toolkit
+
+These are the release notes for Platform Automation Toolkit for VMware Tanzu.
 
 ## v5.2.3
 September 18, 2024
 
+**CLI Versions**
 
-??? info "CLI Versions"
+| Name | version |
+|---|---|
+| aws-cli | 1.34.21 |
+| azure-cli | 2.64.0 |
+| bbr-cli | [1.9.69](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.69) |
+| bosh-cli | [v7.7.2](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.7.2) |
+| credhub | [2.9.37](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.37) |
+| gcloud-cli | 493.0.0 |
+| govc-cli | 0.43.0 |
+| om | [7.14.0](https://github.com/pivotal-cf/om/releases/tag/7.14.0) |
+| winfs-injector | [0.26.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.26.0) |
 
-    | Name | version |
-    |---|---|
-    | aws-cli | 1.34.21 |
-    | azure-cli | 2.64.0 |
-    | bbr-cli | [1.9.69](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.69) |
-    | bosh-cli | [v7.7.2](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.7.2) |
-    | credhub | [2.9.37](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.37) |
-    | gcloud-cli | 493.0.0 |
-    | govc-cli | 0.43.0 |
-    | om | [7.14.0](https://github.com/pivotal-cf/om/releases/tag/7.14.0) |
-    | winfs-injector | [0.26.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.26.0) |
-
-    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.2.3" target="_blank">Download</a>
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.2.3" target="_blank">Download</a>
 
 ### Bug Fixes
 - Update tasks to use user supplied env var prefix
@@ -36,27 +33,69 @@ September 15, 2024
 ## v5.2.1
 July 26, 2024
 
+**CLI Versions**
+
+| Name | version |
+|---|---|
+| aws-cli | [1.33.30](https://github.com/aws/aws-cli/releases/tag/1.33.30) |
+| azure-cli | [2.62.0](https://github.com/Azure/azure-cli/releases/tag/azure-cli-2.62.0) |
+| bbr-cli | [1.9.66](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.66) |
+| bosh-cli | [v7.6.2](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.6.2) |
+| credhub | [2.9.35](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.35) |
+| gcloud-cli | 485.0.0 |
+| govc-cli | [0.39.0](https://github.com/vmware/govmomi/releases/tag/v0.39.0) |
+| om | [7.13.0](https://github.com/pivotal-cf/om/releases/tag/7.13.0) |
+| winfs-injector | [0.26.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.26.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.2.1" target="_blank">Download</a>
+
+### What's New
+
+* `om` has been updated to 7.13.0 for bug fixes and dependency updates.
+* Adds `FORCE_LATEST_VARIABLES` param to apply changes tasks by @selzoc in #52
 
 
+## v5.2.0
+June 28, 2024
+
+**CLI Versions**
+
+| Name | version |
+|---|---|
+| aws-cli | [1.33.13](https://github.com/aws/aws-cli/releases/tag/1.33.13) |
+| azure-cli | [2.61.0](https://github.com/Azure/azure-cli/releases/tag/azure-cli-2.61.0) |
+| bbr-cli | [1.9.66](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.66) |
+| bosh-cli | [v7.6.1](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.6.1) |
+| credhub | [2.9.33](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.33) |
+| gcloud-cli | 481.0.0 |
+| govc-cli | [0.37.3](https://github.com/vmware/govmomi/releases/tag/v0.37.3) |
+| om | [7.12.0](https://github.com/pivotal-cf/om/releases/tag/7.12.0) |
+| winfs-injector | [0.25.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.25.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.2" target="_blank">Download</a>
+
+### What's New
+
+* `om` has been updated to 7.12.0 in order to have the Auto-Accept EULA functionality for TanzuNet depreciation.
 
 ## v5.1.2
 June 15, 2023
 
-??? info "CLI Versions"
+**CLI Versions**
 
-    | Name | version |
-    |---|---|
-    | aws-cli | 1.27.153 |
-    | azure-cli | 2.49.0 |
-    | bbr-cli | [1.9.46](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.46) |
-    | bosh-cli | [v7.2.3](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.2.3) |
-    | credhub | [2.9.16](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.16) |
-    | gcloud-cli | 435.0.1 |
-    | govc-cli | 0.30.4 |
-    | om | 45876ef5954ddb419cd88126d77b4e8ebb2ca554-2023-05-03T17:38:11-07:00 |
-    | winfs-injector | [0.22.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.22.0) |
+| Name | version |
+|---|---|
+| aws-cli | 1.27.153 |
+| azure-cli | 2.49.0 |
+| bbr-cli | [1.9.46](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.46) |
+| bosh-cli | [v7.2.3](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.2.3) |
+| credhub | [2.9.16](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.16) |
+| gcloud-cli | 435.0.1 |
+| govc-cli | 0.30.4 |
+| om | 45876ef5954ddb419cd88126d77b4e8ebb2ca554-2023-05-03T17:38:11-07:00 |
+| winfs-injector | [0.22.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.22.0) |
 
-    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.2" target="_blank">Download</a>
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.2" target="_blank">Download</a>
 
 ### Maintenance Release
 - Update Platform Automation Toolkit to use Ubuntu Jammy-based Paketo buildpack images
@@ -65,21 +104,21 @@ June 15, 2023
 ## v5.1.1
 May 5, 2023
 
-??? info "CLI Versions"
+**CLI Versions**
 
-    | Name | version |
-    |---|---|
-    | aws-cli | 1.24.10 |
-    | azure-cli | 2.39.0 |
-    | bbr-cli | [1.9.44](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.44) |
-    | bosh-cli | [v7.2.3](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.2.3) |
-    | credhub | [2.9.14](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.14) |
-    | gcloud-cli | 429.0.0 |
-    | govc-cli | 0.30.4 |
-    | om | 45876ef5954ddb419cd88126d77b4e8ebb2ca554-2023-05-03T17:38:11-07:00 |
-    | winfs-injector | [0.22.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.22.0) |
+| Name | version |
+|---|---|
+| aws-cli | 1.24.10 |
+| azure-cli | 2.39.0 |
+| bbr-cli | [1.9.44](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.44) |
+| bosh-cli | [v7.2.3](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.2.3) |
+| credhub | [2.9.14](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.14) |
+| gcloud-cli | 429.0.0 |
+| govc-cli | 0.30.4 |
+| om | 45876ef5954ddb419cd88126d77b4e8ebb2ca554-2023-05-03T17:38:11-07:00 |
+| winfs-injector | [0.22.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.22.0) |
 
-    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.1" target="_blank">Download</a>
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.1" target="_blank">Download</a>
 
 ### Bug Fixes
 - Update govc to v0.30.4
@@ -89,21 +128,21 @@ May 5, 2023
 ## v5.1.0
 February 27, 2023
 
-??? info "CLI Versions"
+**CLI Versions**
 
-     | Name | version |
-     |---|---|
-     | aws-cli | 1.24.10 |
-     | azure-cli | 2.39.0 |
-     | bbr-cli | [1.9.38](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.38) |
-     | bosh-cli | [v7.1.3](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.1.3) |
-     | credhub | [2.9.11](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.11) |
-     | gcloud-cli | 419.0.0 |
-     | govc-cli | 0.30.2 |
-     | om | 2ba733630d765e1b41e815ce1b49e825da2c192b-2023-02-24T11:33:19-07:00 |
-     | winfs-injector | [0.21.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.21.0) |
+| Name | version |
+|---|---|
+| aws-cli | 1.24.10 |
+| azure-cli | 2.39.0 |
+| bbr-cli | [1.9.38](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.38) |
+| bosh-cli | [v7.1.3](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.1.3) |
+| credhub | [2.9.11](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.11) |
+| gcloud-cli | 419.0.0 |
+| govc-cli | 0.30.2 |
+| om | 2ba733630d765e1b41e815ce1b49e825da2c192b-2023-02-24T11:33:19-07:00 |
+| winfs-injector | [0.21.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.21.0) |
          
-    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.0" target="_blank">Download</a>
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.1.0" target="_blank">Download</a>
 
 ### What's New
 - Added new How-to Guide about [Rotating Certificate Authority][rotating-certificate-authority]. 
@@ -115,8 +154,7 @@ February 27, 2023
     * [`generate-certificate`][generate-certificate]
     * [`regenerate-certificates`][regenerate-certificates]
       
-{% include ".internal_link_url.md" %}
-{% include ".external_link_url.md" %}
+
 ## v5.0.26
 June 25, 2024
 
