@@ -17,14 +17,14 @@ resources:
     source:
       branch: develop
       uri: git@github.com:pivotal/docs-platform-automation
-      private_key: ((platform_automation_docs.private_key))
+      private_key: ((platform-automation/platform_automation_docs.private_key))
 
   - name: om
     type: git
     icon: github
     source:
       uri: git@github.com:pivotal-cf/om.git
-      private_key: ((platform_automation_docs.private_key))
+      private_key: ((platform-automation/platform_automation_docs.private_key))
       branch: main
       
   - name: rc-image-tanzunet-dev
@@ -33,7 +33,7 @@ resources:
     source:
       repository: gcr.io/cf-norm-ci/platform-automation/platform-automation-image
       username: _json_key
-      password: ((gcr.key_json))
+      password: ((platform-automation/gcr.key_json))
       tag: develop
 
   - name: norsk-to-osspi
@@ -41,7 +41,7 @@ resources:
     icon: gitlab
     source:
       uri: git@gitlab.eng.vmware.com:source-insight-tooling/norsk-to-osspi.git
-      private_key: ((gitlab.private_key))
+      private_key: ((platform-automation/gitlab.private_key))
       branch: main
 
   - name: version-v5.2
@@ -49,11 +49,11 @@ resources:
     icon: aws
     source:
       driver: s3
-      access_key_id: ((s3_with_role.access_key_id))
-      secret_access_key: ((s3_with_role.secret_access_key))
-      assume_role_arn: ((s3_with_role.role_arn))
-      bucket: ((s3.bucket))
-      region_name: ((s3.region_name))
+      access_key_id: ((platform-automation/s3_with_role.access_key_id))
+      secret_access_key: ((platform-automation/s3_with_role.secret_access_key))
+      assume_role_arn: ((platform-automation/s3_with_role.role_arn))
+      bucket: ((platform-automation/s3.bucket))
+      region_name: ((platform-automation/s3.region_name))
       key: version-v5.2
       initial_version: 0.0.1-rc.1
 
@@ -77,8 +77,8 @@ jobs:
           repo2: om
         params:
           OSM_ENVIRONMENT: production
-          API_KEY: ((osm.production_api_key))
-          USERNAME: ((osm.production_username))
+          API_KEY: ((platform-automation/osm.production_api_key))
+          USERNAME: ((platform-automation/osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
           PRODUCT: 'platform-automation'
           VERSION: 'latest'
@@ -104,8 +104,8 @@ jobs:
         params:
           OSM_ENVIRONMENT: production
           OSSTP_LOAD_DRY_RUN: false
-          API_KEY: ((osm.production_api_key))
-          USERNAME: ((osm.production_username))
+          API_KEY: ((platform-automation/osm.production_api_key))
+          USERNAME: ((platform-automation/osm.production_username))
           ENDPOINT: https://osm.eng.vmware.com
           PRODUCT: platform-automation
           VERSION: latest
