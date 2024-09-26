@@ -13,10 +13,10 @@ which fly || (
   exit 1
 )
 
-echo "Setting Docs CI pipeline on Runway..."
-fly -t runway-platform-automation sp -p platform-automation-docs -c <(ytt -f "$WORKING_DIR/../docs/") \
+echo "Setting Docs CI pipeline on TPE CI..."
+fly -t tpe-ci sp -p platform-automation-docs -c <(ytt -f "$WORKING_DIR/../docs/") \
   --check-creds
 
-echo "Setting OSSPI pipeline on Runway..."
-fly -t runway-platform-automation sp -p osspi -c <(ytt -f "$WORKING_DIR/../osspi-runway/") \
+echo "Setting OSSPI pipeline on TPE CI..."
+fly -t tpe-ci sp -p osspi-platform-automation -c <(ytt -f "$WORKING_DIR/../osspi-tpe-ci/") \
   --check-creds
