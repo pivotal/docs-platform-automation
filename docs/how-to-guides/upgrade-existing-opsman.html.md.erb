@@ -12,7 +12,6 @@ you must first download and persist
 an export of the current installation.
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 VMware <b><em>strongly recommends</em></b> automatically exporting
 the Tanzu Operations Manager installation
 and <b><em>persisting it to your blobstore</em></b> on a regular basis.
@@ -227,7 +226,6 @@ in the pipeline itself, not in one of your inputs.
     ```
 
     <p class="note">
-    <span class="note__title">Note</span>
     The <code>credhub-interpolate</code> task for this job
     maps the output from the task (<code>interpolated-files</code>)
     to <code>interpolated-env</code>.
@@ -305,7 +303,6 @@ you need to load vars from `vars.yml`.
 1. Manually trigger a build. This time, it should pass.
 
     <p class="note important">
-    <span class="note__title">Important</span>
     You'll be using this,
     the ultimate form of the <code>fly</code> command to set your pipeline,
     for the rest of the tutorial.
@@ -371,7 +368,6 @@ it's a good place to start.
     ```
 
     <p class="note important">
-    <span class="note__title">Important</span>
     We recommend frequent, small commits that can be <code>fly</code> set and,
     ideally, go green.
     <br>
@@ -816,7 +812,6 @@ Name this file `download-opsman.yml`:
     ```
 
     <p class="note">
-    <span class="note__title">Note</span>
     We do not explicitly set the default parameters
     for <code>upgrade-opsman</code> in this example.
     Because <code>opsman.yml</code> is the default input to <code>OPSMAN_CONFIG_FILE</code>,

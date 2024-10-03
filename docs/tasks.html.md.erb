@@ -14,7 +14,6 @@ Use `--help` for more information.
 To learn more see [Running commands locally](./how-to-guides/running-commands-locally.md).
 
 <p class="note">
-<span class="note__title">Note</span>
 The inputs, outputs, params, filename, and filepath
 of this task file are part of its semantically versioned API.
 See our documentation for a detailed discussion of our semver API.
@@ -204,13 +203,11 @@ Use BBR to backup Tanzu Kubernetes Grid Integrated Edition(TKGI)
 deployed with Tanzu Operations Manager.
 
 <p class="note">
-<span class="note__title">Note</span>
 <b>PKS CLI may be temporarily unavailable:</b>
 During the backup, the PKS CLI is disabled.
 Due to the nature of the backup, some commands may not work as expected.</p>
-    
+
 <div class="note caution">
-<span class="note__title">Caution</span>
 <b>Known issue:</b>
 When using the task <a href="#backup-tkgi">backup-tkgi</a> behind a proxy,
 the values for <code>no_proxy</code> can affect the SSH (though jumpbox) tunneling.
@@ -376,7 +373,6 @@ which can extract a config file.
 ```
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 <b>GCP with service account:</b>
 For GCP, if service account is used, the property associated_service_account has to be set explicitly in the <code>iaas_configuration</code> section.</p>
 
@@ -551,7 +547,6 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 ```
 
 <div class="note">
-<span class="note__title">Note</span>
 <b>BOSH admin client:</b>
 By default, this task creates a BOSH admin client.
 This is helpful for some advanced workflows
@@ -652,12 +647,10 @@ The task does specific CLI commands for the creation of the Tanzu Operations Man
 Interpolate credhub entries into configuration files.
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 <b>Deprecation Notice:</b>
 The <code>credhub-interpolate</code> task will be deprecated in future <em>major</em> versions of Platform Automation Toolkit.</p>
 
 <p class="note">
-<span class="note__title">Note</span>
 The <code>prepare-tasks-with-secrets</code> task replaces the <code>credhub-interpolate</code> task on Concourse versions 5.x+
 and provides additional benefits.</p>
 
@@ -811,8 +804,7 @@ There are no `outputs` for this task
 because the products (and stemcell) don't need to be shared downstream.
 
 <p class="note caution">
-<span class="note__title">Caution</span>
-This currently only works with product source being the Broadcom Support portal.</p>
+This currently works only with product source being the Broadcom Support portal.</p>
 
 **Task**
 
@@ -871,7 +863,7 @@ The valid IaaSs are:
 - `vsphere`
 
 If a configuration for S3, GCS, or Azure is present in the [download-product config file](./inputs-outputs.md#download-product-config),
-the slug and version of the downloaded product file will be prepended in brackets to the filename.  
+the slug and version of the downloaded product file will be prepended in brackets to the filename.
 For example:
 
 - original-pivnet-filenames:
@@ -894,7 +886,6 @@ if supported blobstore keys are not present in the configuration file.
 This avoids breaking current pipelines.
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 <b>When using the s3 resource in Concourse:</b>
 If you are using a <code>regexp</code> in your s3 resource definition
 that explicitly requires the the Broadcom Support portal filename
@@ -906,19 +897,16 @@ but if you need to match from the beginning of the filename,
 that will have been replaced by the prefix described earlier.</p>
 
 <p class="note">
-<span class="note__title">Note</span>
 <b>When specifying Tanzu Application Service [Windows]:</b>
 This task will automatically download and inject the winfs for pas-windows.</p>
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 This task cannot download the stemcell for pas-windows on vSphere.
 To build this stemcell manually, see
 <a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows stemcell using stembuild</a>
 in the VMware Tanzu Application Service documentation.</p>
 
 <p class="note">
-<span class="note__title">Note</span>
 When the download product config only has the Broadcom Support portal credentials,
 it will not add the prefix to the downloaded product.
 For example, <code>example-product.pivotal</code> from the Broadcom Support portal will be displayed in the output
@@ -1062,7 +1050,6 @@ params:
 ```
 
 <p class="note">
-<span class="note__title">Note</span>
 The timestamp is generated using the time on Concourse worker.
 If the time is different on different workers, the generated timestamp may fail to sort correctly.
 Changing the time or timezone on workers might interfere with ordering.</p>
@@ -1152,13 +1139,11 @@ It is also useful for persisting the configuration output from:
 - [staged-director-config](#staged-director-config)
 
 <p class="note">
-<span class="note__title">Note</span>
 This commits <b>all changes</b> present
 in the repo used for the <code>repository</code> input,
 in addition to copying in a single file.</p>
 
 <p class="note important">
-<span class="note__title">Important</span>
 This does not perform a <code>git push</code>.
 You must <code>put</code> the output of this task to a git resource to persist it.</p>
 
@@ -1241,7 +1226,6 @@ which can help secure HTTP connections with a proxy server
 and allows the use of a custom CA on the Tanzu Operations Manager.
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 <b>Concourse 5+ only:</b>
 This task uses a Concourse feature
 that allows inputs and outputs to have the same name.
@@ -1273,7 +1257,6 @@ for run-time interpolation from a secret store.
 See [Using a secrets store to store credentials](./concepts/secrets-handling.md).
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 <b>Concourse 5+ only:</b>
 This task uses a Concourse feature
 that allows inputs and outputs to have the same name.
@@ -1339,7 +1322,6 @@ The task requires a downloaded product prior to replication.
 The output is a replicated tile with a new name in the metadata and filename.
 
 <p class="note">
-<span class="note__title">Note</span>
 <code>replicate-product</code> does not support storing the replicated product
 in a non-versioned blobstore, because it cannot generate a unique name.
 It is recommended to use the replicated tile immediately in the next task
@@ -1370,7 +1352,6 @@ rather than storing it and using it in a different job.</p>
 Reverts all changes that are currently staged on the Tanzu Operations Manager.
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 Since <code>revert-staged-changes</code> reverts all changes on a Tanzu Operations Manager,
 it can conflict with tasks that perform stage or configure operations.
 Use passed constraints to ensure things run in the order you mean them to.</p>
@@ -1401,7 +1382,6 @@ Runs a specified BOSH errand directly on the BOSH Director
 by tunneling through Tanzu Operations Manager.
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 Tanzu Operations Manager is the main interface for interacting with BOSH,
 and it has no way of knowing what is happening to the BOSH Director
 outside of the Tanzu Operations Manager UI context.
@@ -1409,7 +1389,6 @@ By using this task, you are accepting the risk
 that what you are doing cannot be tracked by your Tanzu Operations Manager.</p>
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 Tanzu Operations Manager, by design, will re-run failed errands for you.
 As this task interacts with BOSH directly,
 your errand will not be re-run if it fails.
@@ -1446,7 +1425,6 @@ Sends the `.tar` output from [`collect-telemetry`](#collect-telemetry)
 to VMware.
 
 <p class="note">
-<span class="note__title">Note</span>
 To use the <code>send-telemetry</code>,
 you must acquire a license key.
 Contact your VMware representative.</p>
@@ -1643,7 +1621,7 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
     SKIP_MISSING: true
   input_mapping:
     config: configuration
-```  
+```
 
 ### update-runtime-config
 
@@ -1679,7 +1657,6 @@ This is useful when installing agents on BOSH deployed VMs that don't have a Tan
 ```
 
 <p class="note caution">
-<span class="note__title">Caution</span>
 When using runtime configs, Tanzu Operations Manager owns the default runtime config.
 If you use this task to edit "default" it will be replaced on every <b>Apply Changes</b>.
 Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>

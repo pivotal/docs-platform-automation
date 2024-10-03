@@ -113,7 +113,7 @@ you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` fil
 4. If fly set-pipeline returns an error,
 fix any and all errors until the pipeline can be set.
 When the pipeline can be set properly, run:
-        
+
     ```
     git add pipeline.yml
     git commit --amend --no-edit
@@ -121,7 +121,6 @@ When the pipeline can be set properly, run:
     ```
 
     <p class="note">
-    <span class="note__title">Note</span>
     <b>Testing your pipeline:</b>
     We generally want to try things out right away to see if they're working right.
     However, in this case, if you have a very slow internet connection and/or multiple Concourse workers,
@@ -205,7 +204,6 @@ The simplest way to do this is to choose your config options in the Tanzu Operat
 and then pull its resulting configuration.
 
 <p class="note">
-<span class="note__title">Note</span>
 <b>Advanced Tile Config Option:</b>
 For an alternative that generates the configuration
 from the product file, using ops files to select options,
@@ -221,7 +219,6 @@ After the product is fully configured, apply the changes (**Apply Changes**) in 
 and then continue this guide.
 
 <p class="note important">
-<span class="note__title">Important</span>
 If you do not click <strong>Apply Changes</strong>,
 Tanzu Operations Manager cannot generate credentials.
 You can still go through this process without an initial applying changes,
@@ -392,9 +389,8 @@ There should be no formatting or indentation in these files, only new lines.
     ```
 
     <p class="note important">
-    <span class="note__title">Important</span>
     <b>Remove credentials from disk:</b>
-    Once you have validated that the certificatess are set correctly in CredHub,
+    Once you have validated that the certificates are set correctly in CredHub,
     remember to delete <code>poe-cert.txt</code> and <code>poe-private-key.txt</code> from your working directory.
     This will prevent a potential security leak
     or an accidental commit of those credentials.</p>
@@ -590,7 +586,6 @@ so that these changes will be applied by the Tanzu Operations Manager.
     ```
 
     <p class="note">
-    <span class="note__title">Note</span>
     <b>Adding multiple products:</b>
     When adding multiple products, you can add the configure jobs as passed constraints
     to the apply-changes job so that they all are applied at once.
@@ -628,7 +623,7 @@ outlined in these examples is `config-template`.
 `config-template` is an `om` command that creates a base config file with optional ops files
 from a given tile or pivnet slug.
 
-This section assumes that you are adding 
+This section assumes that you are adding
 [TAS for VMs](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs),
 as in the procedure above.
 
@@ -700,12 +695,11 @@ here are some approaches you can use:
 - Look at the tile's online documentation
 - Upload the tile to a Tanzu Operations Manager
   and visit the tile in the Tanzu Operations Manager UI to see if that provides any hints.
-  
+
     If you are still struggling, inspect the HTML of the Tanzu Operations Manager web page
     to help you map the value names to the associated UI elements.
 
 <p class="note">
-<span class="note__title">Note</span>
 When using the Tanzu Operations Manager docs and UI,
 be aware that the field names in the UI do not necessarily map directly to property names.</p>
 

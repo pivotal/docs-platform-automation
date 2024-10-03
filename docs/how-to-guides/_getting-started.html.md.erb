@@ -34,7 +34,6 @@ you will fine some basics explained here, along with links to resources to learn
 - [Concourse](https://concourse-ci.org/)
 
 <p class="note">
-<span class="note__title">Note</span>
 While this guide uses GitHub to provide a git remote,
 and an S3 bucket as a blobstore,
 Platform Automation Toolkit supports arbitrary git providers
@@ -66,7 +65,6 @@ This repo name should relate to your situation
 and be specific enough to be navigable from your local workstation.
 
 <p class="note">
-<span class="note__title">Note</span>
 <code>!$</code> is a bash shortcut.
 Pronounced "bang, dollar-sign,"
 it means "use the last argument from the most recent command."
@@ -89,7 +87,6 @@ opsman-url: https://pcf.foundation.example.com
 ```
 
 <p class="note important">
-<span class="note__title">Important</span>
 This example assumes that that you are using DNS and host names.
 You can use IP addresses for all these resources instead,
 but you still need to provide the information as a URL,
@@ -145,7 +142,6 @@ Click the icon for your OS and save the file, move
 and use `chmod` to make it executable:
 
 <p class="note">
-<span class="note__title">Note</span>
 <strong>About command-line examples:</strong>
 In some cases, you can copy-paste the examples directly into your terminal.
 Some of them won't work that way,
@@ -203,7 +199,6 @@ You should see a login link you can click
 to complete login from your browser.
 
 <p class="note important">
-<span class="note__title">Important</span>
 The <code>-t</code> flag sets the name when used with <code>login</code> and <code>-c</code>.
 In the future, you can leave out the <code>-c</code> argument.
 <br>
@@ -222,7 +217,6 @@ It should say `no changes to apply`,
 which is expected, since the `pipeline.yml` file is still empty.
 
 <p class="note">
-<span class="note__title">Note</span>
 If <code>fly</code> says something about a "version discrepancy,"
 "significant" or otherwise, run <code>fly sync</code> and try again.
 <code>fly sync</code> automatically updates the CLI
@@ -281,7 +275,6 @@ see <a href="./git-repo-layout.md">Why use Git and GitHub?</a>
 When this is done, you can safely make changes.
 
 <p class="note important">
-<span class="note__title">Important</span>
 <code>git</code> commits are the basic unit of code history.
 Making frequent, small, commits with good commit messages
 makes it much easier to figure out why things are the way they are,
@@ -354,7 +347,6 @@ before the task, as shown here:
     ```
 
     <p class="note">
-    <span class="note__title">Note</span>
     There is a smaller vSphere container image available.
     To use it instead of the general purpose image,
     you can use this glob to get the image:
@@ -407,7 +399,6 @@ you must teach Concourse to talk to the Broadcom Support portal.
     You don't want to accidentally check it in.
 
     <p class="note important">
-    <span class="note__title">Important</span>
     Bash commands that start with a space character
     are not saved in your history.
     This can be very useful for cases like this,
@@ -430,7 +421,6 @@ and click **Request New Refresh Token**.)
     ```
 
     <p class="note caution">
-    <span class="note__title">Caution</span>
     When you get your Broadcom Support token as described above,
     any previous Broadcom Support tokens you have stop working.
     If you're using your Broadcom Support refresh token anywhere,
@@ -452,7 +442,6 @@ Fortunately, Concourse can integrate
 with secret storage services, like CredHub. In this step, put the API token in CredHub so Concourse can get it.
 
     <p class="note">
-    <span class="note__title">Note</span>
     <b>Backslashes in bash examples:</b>
     The following example has been broken across multiple lines
     by using backslash characters (<code>\</code>) to escape the newlines.
