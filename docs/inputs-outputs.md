@@ -47,7 +47,7 @@ For example:
 
 ### download-product-config
 
-The `config` input for a download product task 
+The `config` input for a download product task
 can be used with a `download-config.yml` file to download a tile.
 The configuration of the `download-config.yml` looks like this:
 
@@ -62,7 +62,7 @@ The configuration of the `download-config.yml` looks like this:
 
 ### download-stemcell-product-config
 
-The `config` input for a download product task 
+The `config` input for a download product task
 can be used with a `download-config.yml` file to download a stemcell.
 The configuration of the `download-config.yml` looks like this:
 
@@ -78,7 +78,7 @@ This file contains properties for targeting and logging into the Tanzu Operation
 === "uaa auth"
     ---excerpt--- "examples/env-uaa"
 
-#### Getting the `client-id` and `client-secret`
+#### Getting the client-id and client-secret
 
 Tanzu Operations Manager will by preference use Client ID and Client Secret if provided.
 To create a Client ID and Client Secret
@@ -286,7 +286,7 @@ product-version-regex: ^2\.6\..*$
 
 !!! warning
     This file cannot be manually created. It is a file that must retrieved from Tanzu Network.
-    
+
 ### product config
 
 There are two ways to build a product config.
@@ -424,9 +424,9 @@ stemcell: "97.190"
 
 ### telemetry
 
-The `config` input for the [collect-telemetry][collect-telemetry] task 
+The `config` input for the [collect-telemetry][collect-telemetry] task
 can be used with a `telemetry.yml` file to collect data for VMware
-so they can learn and measure results 
+so they can learn and measure results
 in order to put customer experience at the forefront of their product decisions.
 The configuration of the `telemetry.yml` looks like this:
 

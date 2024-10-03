@@ -28,7 +28,7 @@ pivnet-product-slug: product-slug
 blobstore-bucket: bucket-name
 s3-region-name: us-west-1           # if NOT using AWS s3, value is 'region'
 
-## Required unless `s3-auth-type: iam`
+## Required unless "s3-auth-type: iam"
 s3-access-key-id: aws-or-minio-key-id
 s3-secret-access-key: aws-or-minio-secret-key
 

@@ -52,10 +52,10 @@ step:
 
 ---excerpt--- "examples/configure-director-usage"
 
-We map the config files 
+We map the config files
 to the expected input named `env` of the `configure-director` task.
 Because the `configure-director` task's default `ENV` parameter is `env.yml`,
-it automatically uses the `env.yml` file in our configuration repo. 
+it automatically uses the `env.yml` file in our configuration repo.
 We do not need to explicitly name the `ENV` parameter for the task.
 This also works for `director.yml`.
 
@@ -69,10 +69,10 @@ For reference, here is the `configure-director` task:
 ## Multiple Foundations with one Repository
 
 Multiple foundations may use a single Git configuration source
-but have different variables loaded 
+but have different variables loaded
 from a foundation specific vars file, Credhub, etc.
 
-This strategy can reduce foundation drift 
+This strategy can reduce foundation drift
 and streamline the configuration promotion process between foundations.
 
 **This is the strategy used in our [Reference Pipeline][reference-pipeline]**
@@ -88,7 +88,7 @@ The design considerations for this strategy as implemented are as follows:
   over minimization of configuration
   file duplication between foundations.
 - Global, non-public variables can be overwritten by
-  foundation-specific variables based on `VARS_FILES` ordering. 
+  foundation-specific variables based on `VARS_FILES` ordering.
 - Product configuration can differ between product versions,
   so the entire configuration file is promoted between foundations.
 - No outside tooling or additional preparation tasks
@@ -96,13 +96,13 @@ The design considerations for this strategy as implemented are as follows:
   It makes use of only concepts and workflows
   built-in to Platform Automation and Concourse.
 - No significant differences between the required setup of foundations.
-  
-    This doesn't mean that this strategy cannot be used 
+
+    This doesn't mean that this strategy cannot be used
     with more complicated differences.
     If the pipelines need to be different for one reason or another,
     you might want the `pipelines` directory to be at the foundation level
     and for the `pipeline.yml` to be foundation-specific.
-    
+
     The Reference Pipeline handles the different environments via a `fly` variable.
     The pipeline set script is found in the [`scripts`][ref-config-update-script] directory.
 
@@ -160,7 +160,7 @@ Let's start with the top-level folders:
   for the resources pipeline and the foundation pipelines.
 - `scripts` contains the BASH script for setting all of the pipelines.
 
-#### `foundations`
+#### foundations
 
 Within the `foundations` folder, we have all of our foundations as well as two additional folders:
 
@@ -174,7 +174,7 @@ Within the `foundations` folder, we have all of our foundations as well as two a
   These files can also include any other variables determined
   to be consistently the same across foundations.
 
-#### `foundations/<foundation>`
+#### foundations/<foundation>
 
 For each foundation, we have two folders:
 
@@ -192,7 +192,7 @@ For each foundation, we have two folders:
 In this example, we will be updating PKS from 1.3.8 to 1.4.3.
 We will start with updating this tile in our `sandbox` foundation
 and then promote the configuration to the `development` foundation.
-We assume that you are viewing this example 
+We assume that you are viewing this example
 from the root of the [Reference Pipeline Config Repo][ref-config-repo].
 
 1. Update `download-product-pivnet/download-pks.yml`:
@@ -265,7 +265,7 @@ and make it available on S3.
 
 ### Matching Resource Names and Input Names
 
-As an alternative to `input_mapping`, 
+As an alternative to `input_mapping`,
 we can create resources that match the input names on our tasks.
 Even if these resources map to the same git repository and branch,
 they can be declared as separate inputs.
@@ -281,7 +281,7 @@ in the job, they will automatically be mapped to the inputs of the tasks in that
      If you have two resources defined with the same git repository, such as env and config,
      and have a passed constraint on only one of them,
      there is a possibility that they will not be at the same SHA for any given job in your pipeline.
-     
+
      Example:
      ```yaml
      - get: config
