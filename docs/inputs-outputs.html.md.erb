@@ -5,7 +5,6 @@ This topic describes the inputs that can be provided to the tasks, and their out
 Each task can only take a specific set of inputs, indicated under the `inputs` property of the YAML.
 
 <p class="note important">
-<span class="note__title">Important</span>
 To get the slug needed for many of the procedures on this page, go to
 <a href="https://support.broadcom.com/group/ecx/my-dashboard">My Dashboard</a>
 on the Broadcom Support Portal.
@@ -270,7 +269,6 @@ This file can be exported from a Tanzu Operations Manager VM using the [export-i
 This file can be imported to a Tanzu Operations Manager VM using the [import-installation](./tasks.md#import-installation) task.
 
 <p class="note important">
-<span class="note__title">Important</span>
 This file cannot be manually created. It is a file that must be generated using the export function of Tanzu Operations Manager.</p>
 
 ## Tanzu Operations Manager config
@@ -314,7 +312,6 @@ These required properties are adapted from the instructions outlined in
 <%= partial "ip-addresses" %>
 
 <p class="note important">
-<span class="note__title">Important</span>
 For authentication, you must either set <code>use_instance_profile: true</code>
 or provide a <code>secret_key_id</code> and <code>secret_access_key</code>.
 You must remove key information if you're using an instance profile.
@@ -336,7 +333,6 @@ The required properties are adapted from the instructions outlined in
 <%= partial "ip-addresses" %>
 
 <p class="note important">
-<span class="note__title">Important</span>
 For authentication either <code>gcp_service_account</code> or <code>gcp_service_account_name</code> is required.
 You must remove the one you are not using.
 Note that using <code>gcp_service_account_name</code> allows you to avoid interpolation,
@@ -437,7 +433,6 @@ product-version-regex: ^2\.6\..*$
 ```
 
 <p class="note important">
-<span class="note__title">Important</span>
 This file cannot be manually created. This file must retrieved from the Broadcom Support portal.</p>
 
 ## product config
@@ -501,7 +496,6 @@ It must be in the original filename as that is used by Tanzu Operations Manager 
 The filename might look something like `bosh-stemcell-621.76-vsphere-esxi-ubuntu-xenial-go_agent.tgz`.
 
 <p class="note important">
-<span class="note__title">Important</span>
 This file cannot be manually created. This file must retrieved from the Broadcom Support portal.</p>
 
 Here's an example of how to pull the vSphere stemcell
