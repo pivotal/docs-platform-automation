@@ -52,7 +52,6 @@ could not execute "interpolate": Expected to find variables: ((missing-value))
 ```
 
 <p class="note">
-<span class="note__title">Note</span>
 If you are using an additional secrets manager, such as CredHub, you can add the flag
 <code>--skip-missing</code> to your <code>om interpolate</code> call to allow parametrized variables to
 still be present in your config after interpolation, to be filled in later by
@@ -111,6 +110,6 @@ jobs:
     params:
       VARS_FILES: vars/vars.yml # vars/vars2.yml
       CONFIG_FILE: base.yml
-      SKIP_MISSING: true       # false to enable strict interpolation  
+      SKIP_MISSING: true       # false to enable strict interpolation
 
 ```

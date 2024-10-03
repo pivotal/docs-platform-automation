@@ -33,7 +33,6 @@ To execute commands in Docker:
     ```
 
     <p class="note">
-    <span class="note__title">Note</span>
     This will have read / write access to files in your current working directory.
     If you need to mount other directories as well, you can add more <code>-v</code> arguments.</p>
 
@@ -50,7 +49,7 @@ To execute commands in Docker:
   Where:
   * `${ENV_FILE}` is the [environment file](../inputs-outputs.md) required for all tasks.
   * `${PRODUCT_SLUG}` is the name of the product downloaded from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads).
-  
+
 The resulting file can then be parameterized, saved, and committed to a config repo.
 
 ### Retrieving director configuration
@@ -100,7 +99,7 @@ For product verifiers:
     --product-name ${PRODUCT_NAME} --type ${VERIFIER_TYPE}
 ```
 
-Where 
+Where
 * `${VERIFIER_TYPE}` is the failing verifier
 * `${PRODUCT_NAME}` is the metadata name of the associated product.
 

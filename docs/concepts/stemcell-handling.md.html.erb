@@ -56,7 +56,6 @@ Follow these steps:
       ```
 
       <p class="note caution">
-      <span class="note__title">Caution</span>
       Do not run <code>upload-stemcell</code> until after the <code>stage-product</code> task has completed. When the two tasks are run in the
       opposite order, the stemcell still auto-associates with the product.</p>
 
@@ -65,7 +64,7 @@ Follow these steps:
    using the `input_mapping` key to assign the outputted config to the config that `assign-stemcell` is
    expecting. Upon successful completion, the stemcell specified in the config will be associated with the product
    specified in the config, and no other product will be associated with that stemcell.
-   
+
     Here is an example of this, in a pipeline:
 
     ```yaml
