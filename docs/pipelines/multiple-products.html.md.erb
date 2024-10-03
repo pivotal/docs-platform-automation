@@ -9,7 +9,6 @@ These Concourse pipelines are examples of how to use the tasks. If you use a dif
 * Deployed Concourse
 
   <p class="note">
-  <span class="note__title">Note</span>
   Platform Automation Toolkit is based on Concourse CI.
   We recommend that you have some familiarity with Concourse before getting started.
   If you are new to Concourse, <a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Concourse CI Tutorials</a> is a good place to start.</p>
@@ -23,7 +22,6 @@ the VM is created. The choices for this file are:
   * saml authentication
 
   <p class="note">
-  <span class="note__title">Note</span>
   There will be some crossover between the auth file and the env file due to how <code>om</code> is set up and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you to maintain consistency across files.</p>
 
 * An [opsman-configuration](../inputs-outputs.md) file: This file is required to connect to an IAAS, and to control
@@ -35,7 +33,6 @@ necessary to configure a Tanzu Operations Manager product using the `om` tool. T
 * (Optional) A working [CredHub](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/credhub-index.html) setup with its own UAA client and secret.
 
   <p class="note">
-  <span class="note__title">Note</span>
   Ensure that products have been procured from the Broadcom Support portal using the information in
   <a href="../pipelines/resources.md">Retrieving external dependencies</a>.</p>
 
@@ -93,7 +90,6 @@ resources:
 ```
 
 <p class="note important">
-<span class="note__title">Important</span>
 If you are retrieving <code>pas-windows</code> and <code>pas-windows-stemcell</code> from an S3 bucket,
 you must use the built-in S3 Concourse resource.
 This is shown in the previous example.
@@ -319,7 +315,7 @@ jobs:
       VARS_FILES: |
         vars/foundations/((foundation))/vars/director.yml
         vars/foundations/((foundation))/vars/tas.yml
-        vars/foundations/((foundation))/vars/pks.yml 
+        vars/foundations/((foundation))/vars/pks.yml
   - task: apply-director-changes
     image: platform-automation-image
     attempts: 3
@@ -439,7 +435,7 @@ jobs:
       VARS_FILES: |
         vars/foundations/((foundation))/vars/director.yml
         vars/foundations/((foundation))/vars/tas.yml
-        vars/foundations/((foundation))/vars/pks.yml 
+        vars/foundations/((foundation))/vars/pks.yml
   - task: apply-director-changes
     image: platform-automation-image
     file: platform-automation-tasks/tasks/apply-director-changes.yml

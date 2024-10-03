@@ -72,7 +72,6 @@ Another option for mapping resources to inputs is discussed in
 For reference, here is the `configure-director` task:
 
 <p class="note">
-<span class="note__title">Note</span>
 The inputs, outputs, params, filename, and filepath
 of this task file are part of its semantically versioned API.
 See <a href="https://semver.org/">www.semver.org</a> for information about semantic versioning.
@@ -110,7 +109,7 @@ The design considerations for this strategy, as implemented, are:
   It makes use of only concepts and workflows
   built in to Platform Automation and Concourse.
 - There are no significant differences between the required setup of the foundations.
-  
+
     This doesn't mean that this strategy cannot be used
     with more complicated differences.
     If the pipelines need to be different for one reason or another,
@@ -270,7 +269,6 @@ and makes it available on S3.
 7. Commit these changes and run the `development` pipeline all the way through.
 
 <p class="note">
-<span class="note__title">Note</span>
 <strong>A quicker <code>development</code> deploy process:</strong>
 Since all of the legwork is done manually in the <code>sandbox</code> environment,
 there is no need to log in to the <code>development</code> Tanzu Operations Manager environment.
@@ -327,7 +325,6 @@ in the job, they will automatically be mapped to the inputs of the tasks in that
 ```
 
 <div class="note caution">
-<span class="note__title">Caution</span>
 If you have two resources defined with the same git repository, such as <code>env</code> and <code>config</code>,
 and have a passed constraint on only one of them,
 there is a possibility that they will not be at the same SHA for any given job in your pipeline.
@@ -344,11 +341,8 @@ Example:
 
 ### Modifying resources in-place
 
-<p class="note">
-<span class="note__title">Note</span>
-<b>Concourse v5+ only:</b>
 This section uses a Concourse feature that allows inputs and outputs to have the same name.
-This feature is only available in Concourse 5+. The example that follows does not work with Concourse v4.</p>
+This feature is only available in Concourse 5+. The example that follows does not work with Concourse v4.
 
 In certain circumstances, resources can be modified by one task in a job
 for use later in that same job. A few tasks that offer this ability include:

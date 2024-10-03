@@ -45,7 +45,6 @@ are easily restorable and persistent.
 1. An [Amazon Web Services account(AWS)](https://aws.amazon.com/s3/) with access to S3
 
     <p class="note">
-    <span class="note__title">Note</span>
     <strong>S3 blobstore compatibility:</strong> Many cloud storage options exist,
     including <a href="https://aws.amazon.com/s3/">Amazon S3</a>,
     <a href="https://cloud.google.com/storage/">Google Storage</a>,
@@ -66,7 +65,6 @@ and sign up for S3. Follow the on-screen prompts.
 Now you are ready for buckets.
 
     <p class="note important">
-    <span class="note__title">Important</span>
     <b>AWS root user:</b>
     When you sign up for the S3 service on Amazon,
     the account with the email and password you use
@@ -152,7 +150,6 @@ with different credentials to separate users who can `Read`
 objects from the bucket and users who can `Write` objects to the bucket.
 
 <p class="note">
-<span class="note__title">Note</span>
 Amazon S3 provides many
 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html">permission settings for buckets</a>.
 Specific IAM users can have access and objects can have their own permissions. In addition, buckets can have their own custom policies.
@@ -208,7 +205,7 @@ You should probably **_not_** store the following in S3:
 - `secrets.yaml` environment and secret files - There are a number of ways
 to handle these types of files, but they should not be stored in S3.
 See [Using a secrets store to store credentials](../concepts/secrets-handling.md)
-for information about working with these types of files.  
+for information about working with these types of files.
 
 ## Structuring your bucket
 
@@ -238,7 +235,7 @@ The following sample shows one way to set up your bucket file structure:
 
 When viewing a bucket in the AWS S3 console,
 click **Create Folder**.
-To create a sub-folder, select **Create Folder** again.  
+To create a sub-folder, select **Create Folder** again.
 
 When attempting to access a specific object in a folder,
 include the folder structure before the object name:
@@ -303,7 +300,6 @@ to the filename before it is placed in the S3 bucket:
 ```
 
 <p class="note important">
-<span class="note__title">Important</span>
 Do not change the meta information prepended by <code>download-product</code>.
 This information is required
 if using a <code>download-product</code> with a blobstore (that is, AWS, GCS)

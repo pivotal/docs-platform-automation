@@ -175,7 +175,7 @@ in the pipeline itself, not in one of our inputs.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:
@@ -248,7 +248,7 @@ Follow these steps to use the `paving` repository:
     # cp -Ra paving/${IAAS} paving-${IAAS}
     mkdir paving-${IAAS}
     cp -a paving/$IAAS/. paving-$IAAS
-    cd paving-${IAAS} 
+    cd paving-${IAAS}
     ```
 
     `IAAS` must be set to match one of the infrastructure directories
@@ -288,7 +288,7 @@ Follow these steps to use the `paving` repository:
     ```bash
     terraform apply \
       -parallelism=5 \
-      terraform.tfplan 
+      terraform.tfplan
     ```
 
 8. Save the output from `terraform output stable_config`
@@ -331,7 +331,6 @@ Platform Automation Toolkit will do this for you.
 - [vSphere](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-vsphere.html)
 
 <p class="note">
-<span class="note__title">Note</span>
 If you need to install an earlier version of Tanzu Operations Manager,
 select your desired version from the version selector at the top of the page.</p>
 
@@ -364,7 +363,7 @@ you can add the new task to the `install-opsman` job.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:
@@ -434,7 +433,6 @@ Tanzu Operations Manager must be deployed with the IaaS-specific configuration.
        which can be provided via vars file for YAML interpolation in a subsequent step.
 
 <p class="note">
-<span class="note__title">Note</span>
 For a supported IaaS not listed above,
 see the <a href="../inputs-outputs.html#ops-manager-config">Operations Manager config</a>.
 </p>
@@ -526,7 +524,7 @@ and the placeholder state file.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:
@@ -542,7 +540,6 @@ and the placeholder state file.
     ```
 
     <p class="note">
-    <span class="note__title">Note</span>
     <strong>Defaults for tasks:</strong>
     We do not explicitly set the default parameters
     for <code>create-vm</code> in this example.
@@ -583,7 +580,7 @@ and the placeholder state file.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:
