@@ -47,8 +47,8 @@ resources:
     type: git
     source:
       branch: main
-      private_key: ((platform_automation_deployments.private_key))
-      uri: git@github.com:pivotal/platform-automation-deployments
+      private_key: ((platform_automation_deployments_ghe_deploy_key.private_key))
+      uri: ((platform_automation_deployments_ghe_uri))
 
 #@ for opsman_version in opsman_versions:
   - name: #@ "opsman-image-" + opsman_version
