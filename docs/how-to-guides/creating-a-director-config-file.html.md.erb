@@ -14,13 +14,13 @@ For detailed instructions, see [Installing Tanzu Operations Manager](./installin
 
 ## Extracting configuration
 
-In [om](https://github.com/pivotal-cf/om) there is a command called [staged-director-config](../tasks.md#staged-director-config), which is used to extract
+In [om](https://github.com/pivotal-cf/om) there is a command called [staged-director-config](../tasks.html#staged-director-config), which is used to extract
 the Tanzu Operations Manager and the BOSH director configuration from the targeted foundation.
 
 <%= partial "../missing_fields_opsman_director" %>
 
-Sample usage:  
-`om --env env.yml staged-director-config > director.yml`  
+Sample usage:
+`om --env env.yml staged-director-config > director.yml`
 
 This gives you the whole configuration of Tanzu Operations Manager in a single YAML file.
 It will look more or less the same as the example above. You can check it
@@ -36,10 +36,10 @@ after running this command:
 Now you can modify the settings in the configuration file directly instead of
 operating in the Web UI. After you finish editing the file, the configuration
 file will need to be applied back to the Tanzu Operations Manager instance. The command
-[configure-director](../tasks.md#configure-director) will do the job.
+[configure-director](../tasks.html#configure-director) will do the job.
 
-Sample usage:  
-`om --env env.yml configure-director --config director.yml`  
+Sample usage:
+`om --env env.yml configure-director --config director.yml`
 
 
 ## Promoting Tanzu Operations Manager to another foundation
@@ -67,7 +67,7 @@ and they change the default behavior if they are defined.
 Use with caution.
 
 In the following example, two new VM extensions are defined
-and will be added to the list of available extensions on the next [`configure-director`](../tasks.md#configure-director).
+and will be added to the list of available extensions on the next [`configure-director`](../tasks.html#configure-director).
 This can be added to the end of your existing `director.yml`,
 or defined independently and set with no other configurations present.
 
@@ -111,7 +111,7 @@ and they change the default behavior if they are defined.
 Use with caution.
 
 In the following example, two new VM types are defined
-and will be added to the list of available types on the next [`configure-director`](../tasks.md#configure-director).
+and will be added to the list of available types on the next [`configure-director`](../tasks.html#configure-director).
 This can be added to the end of your existing `director.yml`,
 or defined independently and set with no other configurations present.
 

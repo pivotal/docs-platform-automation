@@ -47,7 +47,7 @@ uses the "Single Repository for each Foundation" pattern:
 Notice that there is only one subdirectory
 and that all other files are in the base directory.
 This minimizes parameter mapping in the platform-automation tasks.
-For example, in the [`configure-director`](../tasks.md#configure-director)
+For example, in the [`configure-director`](../tasks.html#configure-director)
 step:
 
 ```yaml
@@ -347,9 +347,9 @@ This feature is only available in Concourse 5+. The example that follows does no
 In certain circumstances, resources can be modified by one task in a job
 for use later in that same job. A few tasks that offer this ability include:
 
-- [credhub-interpolate](../tasks.md#credhub-interpolate)
-- [prepare-tasks-with-secrets](../tasks.md#prepare-tasks-with-secrets)
-- [prepare-image](../tasks.md#prepare-image)
+- [credhub-interpolate](../tasks.html#credhub-interpolate)
+- [prepare-tasks-with-secrets](../tasks.html#prepare-tasks-with-secrets)
+- [prepare-image](../tasks.html#prepare-image)
 
 For each of these tasks, `output_mapping` can be used to overwrite
 an input with a modified input for use with tasks later in that job.
