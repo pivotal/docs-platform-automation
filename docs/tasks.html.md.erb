@@ -7,7 +7,7 @@ and provides information about their intentions, inputs, and outputs.
 The tasks are presented, in their entirety,
 as they are found in the product.
 
-## Task types
+## <a id='task-types'></a>Task types
 
 The Docker image can be used to invoke the commands in each task locally.
 Use `--help` for more information.
@@ -20,7 +20,7 @@ See our documentation for a detailed discussion of our semver API.
 See <a href="https://semver.org/">www.semver.org</a> for an explanation of semantic versioning.
 </p>
 
-### activate-certificate-authority
+### <a id='send-telemetry'></a>activate-certificate-authority
 
 Ensures that the newest certificate authority on Tanzu Operations Manager is active.
 
@@ -44,7 +44,7 @@ Ensures that the newest certificate authority on Tanzu Operations Manager is act
     ENV_FILE: foundations/config/env.yml
 ```
 
-### apply-changes
+### <a id='apply-changes'></a>apply-changes
 
 Triggers an install on the Tanzu Operations Manager described by the auth file.
 
@@ -75,7 +75,7 @@ To see an example of this config file, see [Inputs and outputs](./inputs-outputs
     ENV_FILE: foundations/config/env.yml
 ```
 
-### apply-director-changes
+### <a id='apply-director-changes'></a>apply-director-changes
 
 `apply-changes` can also be used to trigger an install for just the BOSH Director
 with the `--skip-deploy-products`/`-sdp` flag.
@@ -103,7 +103,7 @@ with the `--skip-deploy-products`/`-sdp` flag.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### assign-multi-stemcell
+### <a id='assign-multi-stemcell'></a>assign-multi-stemcell
 
 `assign-multi-stemcell` assigns multiple stemcells to a provided product.
 For more information about how to utilize this workflow,
@@ -127,7 +127,7 @@ see [Stemcell Handling](./concepts/stemcell-handling.md).
     ENV_FILE: ((foundation))/env/env.yml
 ```
 
-### assign-stemcell
+### <a id='assign-stemcell'></a>assign-stemcell
 
 `assign-stemcell` assigns a stemcell to a provided product.
 For more information about how to use
@@ -151,7 +151,7 @@ this workflow, see [Stemcell Handling](./concepts/stemcell-handling.md).
     ENV_FILE: ((foundation))/env/env.yml
 ```
 
-### backup-director
+### <a id='backup-director'></a>backup-director
 
 Use BBR to backup a BOSH Director deployed with Tanzu Operations Manager.
 
@@ -173,7 +173,7 @@ Use BBR to backup a BOSH Director deployed with Tanzu Operations Manager.
     OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
 ```
 
-### backup-product
+### <a id='backup-product'></a>backup-product
 
 Use BBR to backup a product deployed with Tanzu Operations Manager.
 
@@ -197,9 +197,9 @@ Use BBR to backup a product deployed with Tanzu Operations Manager.
     OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
 ```
 
-### backup-tkgi
+### <a id='backup-tkgi'></a>backup-tkgi
 
-Use BBR to backup Tanzu Kubernetes Grid Integrated Edition(TKGI)
+Use BBR to backup Tanzu Kubernetes Grid Integrated Edition (TKGI)
 deployed with Tanzu Operations Manager.
 
 <p class="note">
@@ -249,7 +249,7 @@ For example,
     OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
 ```
 
-### check-pending-changes
+### <a id='check-pending-changes'></a>check-pending-changes
 
 Returns a table of the current state of your Tanzu Operations Manager
 and lists whether each product is changed or unchanged and the errands for that product.
@@ -278,7 +278,7 @@ when automating the [configure-product](./tasks.md#configure-product)/[apply-cha
     ALLOW_PENDING_CHANGES: true
 ```
 
-### collect-telemetry
+### <a id='collect-telemetry'></a>collect-telemetry
 
 Collects foundation information
 using the [Tanzu Telemetry for Tanzu Operations Manager](https://docs.vmware.com/en/Tanzu-Telemetry-for-Ops-Manager/index.html) tool.
@@ -289,9 +289,9 @@ you must define a `resource` to supply the binary.
 
 This task requires a [config file](./inputs-outputs.md#telemetry).
 
-After using this task,
+After using this task, use
 the [send-telemetry](#send-telemetry) task
-may be used to send telemetry data to VMware.
+to send telemetry data to VMware.
 
 **Task**
 
@@ -315,7 +315,7 @@ may be used to send telemetry data to VMware.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### configure-authentication
+### <a id='configure-authentication'></a>configure-authentication
 
 Configures Tanzu Operations Manager with an internal userstore and admin user account.
 See [configure-saml-authentication](#configure-saml-authentication) to configure an external SAML user store,
@@ -347,7 +347,7 @@ and [configure-ldap-authentication](#configure-ldap-authentication) to configure
 For details on the config file expected in the `config` input,
 see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
-### configure-director
+### <a id='configure-director'></a>configure-director
 
 Configures the BOSH Director with settings from a config file.
 See [staged-director-config](#staged-director-config),
@@ -376,7 +376,7 @@ which can extract a config file.
 <b>GCP with service account:</b>
 For GCP, if service account is used, the property associated_service_account has to be set explicitly in the <code>iaas_configuration</code> section.</p>
 
-### configure-ldap-authentication
+### <a id='configure-ldap-authentication'></a>configure-ldap-authentication
 
 Configures Tanzu Operations Manager with an external LDAP user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
@@ -407,7 +407,7 @@ see [Tanzu Operations Manager documentation](https://docs.vmware.com/en/VMware-T
 For details about the config file expected in the `config` input,
 please see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
-### configure-opsman
+### <a id='configure-opsman'></a>configure-opsman
 
 This task supports configuring settings
 on the Tanzu Operations Manager Settings page in the UI.
@@ -439,7 +439,7 @@ It is recommended to use this task in the initial setup of the Tanzu Operations 
     AUTH_CONFIG_FILE: ((foundation))/auth/auth.yml
 ```
 
-### configure-product
+### <a id='configure-product'></a>configure-product
 
 Configures an individual, staged product with settings from a config file.
 
@@ -479,7 +479,7 @@ which can stage a product that's been uploaded.
       vars/foundations/((foundation))/vars/pks.yml
 ```
 
-### configure-new-certificate-authority
+### <a id='configure-new-certificate-authority'></a>configure-new-certificate-authority
 
 <p>Creates a new certificate authority on Tanzu Operations Manager. This can either create a
 new CA using CredHub or create a new CA using a provided certificate and
@@ -521,7 +521,7 @@ fi
     ENV_FILE: foundations/config/env.yml
 ```
 
-### configure-saml-authentication
+### <a id='configure-saml-authentication'></a>configure-saml-authentication
 
 Configures Tanzu Operations Manager with an external SAML user store and admin user account.
 See [configure-authentication](#configure-authentication) to configure an internal user store,
@@ -566,7 +566,7 @@ see [Tanzu Operations Manager documentation](https://docs.vmware.com/en/VMware-T
 For details on the config file expected in the `config` input,
 please see [Generating an Auth file](./how-to-guides/configuring-auth.md).
 
-### create-vm
+### <a id='create-vm'></a>create-vm
 
 Creates an unconfigured Tanzu Operations Manager VM.
 
@@ -642,9 +642,9 @@ The task does specific CLI commands for the creation of the Tanzu Operations Man
 1. Build ipath from the provided datacenter, folder, and VM name (vmname) provided in the config file. The created VM is stored on the generated path. If folder is not provided, the VM will be placed in the datacenter.
 1. Creates a VM from the image provided to the `create-vm` command. This does not create any new resources
 
-### credhub-interpolate
+### <a id='credhub-interpolate'></a>credhub-interpolate
 
-Interpolate credhub entries into configuration files.
+Interpolate CredHub entries into configuration files.
 
 <p class="note caution">
 <b>Deprecation Notice:</b>
@@ -684,7 +684,7 @@ and provides additional benefits.</p>
 This task requires a valid credhub with UAA client and secret. For information about how to
 set this up, see [Using a secrets store to store credentials](./concepts/secrets-handling.md).
 
-### delete-certificate-authority
+### <a id='delete-certificate-authority'></a>delete-certificate-authority
 
 Deletes all inactive certificate authorities from the Tanzu Operations Manager.
 
@@ -708,7 +708,7 @@ Deletes all inactive certificate authorities from the Tanzu Operations Manager.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### delete-installation
+### <a id='delete-installation'></a>delete-installation
 
 Deletes the Tanzu Operations Manager installation.
 
@@ -732,7 +732,7 @@ Deletes the Tanzu Operations Manager installation.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### delete-vm
+### <a id='delete-vm'></a>delete-vm
 
 Deletes the Tanzu Operations Manager VM instantiated by [create-vm](#create-vm).
 
@@ -791,7 +791,7 @@ The task does specific CLI commands for the deletion of the Tanzu Operations Man
 
 1. Deletes the VM
 
-### download-and-upload-product
+### <a id='download-and-upload-product'></a>download-and-upload-product
 
 This is an _advanced task_.
 If a product (and its associated stemcell) has already been uploaded to Tanzu Operations Manager
@@ -828,7 +828,7 @@ This currently works only with product source being the Broadcom Support portal.
     CONFIG_FILE: download-product-pivnet/download-tas.yml
 ```
 
-### download-product
+### <a id='download-product'></a>download-product
 
 Downloads a product specified in a config file from the Broadcom Support portal: (`pivnet`), S3(`s3`), GCS(`gcs`), or Azure(`azure`).
 Optionally, also downloads the latest stemcell for that product.
@@ -1004,7 +1004,7 @@ as <code>example-product.pivotal</code>.</p>
     downloaded-stemcell: pas-stemcell
 ```
 
-### expiring-certificates
+### <a id='expiring-certificates'></a>expiring-certificates
 
 Returns a list of certificates that are expiring within a specified time frame.
 These certificates can be Tanzu Operations Manager or CredHub certificates.
@@ -1031,7 +1031,7 @@ This is a purely informational task.
     EXPIRES_WITHIN: 2m
 ```
 
-### export-installation
+### <a id='export-installation'></a>export-installation
 
 Exports an existing Tanzu Operations Manager to a file.
 
@@ -1077,7 +1077,7 @@ Changing the time or timezone on workers might interfere with ordering.</p>
 
 <%= partial "./export_installation_note" %>
 
-### generate-certificate
+### <a id='generate-certificate'></a>generate-certificate
 
 Generate a certificate, signed by the active Tanzu Operations Manager certificate authority,
 for the domains specified in the `DOMAINS` environment variable.
@@ -1096,7 +1096,7 @@ This task outputs `certificate`, containing `certificate.pem` and
 <!-- **Usage**
     ---excerpt--- "reference/generate-certificate-usage" -->
 
-### import-installation
+### <a id='import-installation'></a>import-installation
 
 Imports a previously exported installation to Tanzu Operations Manager.
 
@@ -1125,7 +1125,8 @@ has been deployed, but before the new Tanzu Operations Manager is configured.
     INSTALLATION_FILE: installation-*.zip
 ```
 
-### make-git-commit
+### <a id='make-git-commit'></a>make-git-commit
+
 Copies a single file into a repo and makes a commit.
 This is useful for persisting the state output of tasks that manage the VM, such as:
 
@@ -1174,7 +1175,7 @@ You must <code>put</code> the output of this task to a git resource to persist i
     COMMIT_MESSAGE: 'Update state file'
 ```
 
-### pre-deploy-check
+### <a id='pre-deploy-check'></a>pre-deploy-check
 
 Checks if the Tanzu Operations Manager director is configured properly and validates the configuration.
 This feature is only available in Tanzu Operations Manager 2.6+.
@@ -1218,7 +1219,7 @@ before an `apply-changes` operation can start.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### prepare-image
+### <a id='prepare-image'></a>prepare-image
 
 This task modifies the container image with runtime dependencies.
 `CA_CERTS` can be added,
@@ -1250,7 +1251,7 @@ prepare-image: &prepare-image
     CA_CERTS: ((opsman-ssl.ca))
 ```
 
-### prepare-tasks-with-secrets
+### <a id='prepare-tasks-with-secrets'></a>prepare-tasks-with-secrets
 
 Modifies task files to include variables needed for config files as environment variables
 for run-time interpolation from a secret store.
@@ -1290,7 +1291,7 @@ prepare-tasks-with-secrets: &prepare-tasks-with-secrets
     tasks: platform-automation-tasks
 ```
 
-### regenerate-certificates
+### <a id='regenerate-certificates'></a>regenerate-certificates
 
 Regenerates all non-configurable leaf certificates managed by Tanzu Operations Manager using
 the active certificate authority.
@@ -1315,7 +1316,7 @@ the active certificate authority.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### replicate-product
+### <a id='replicate-product'></a>replicate-product
 
 This replicates the product for use in isolation segments.
 The task requires a downloaded product prior to replication.
@@ -1347,7 +1348,7 @@ rather than storing it and using it in a different job.</p>
     REPLICATED_NAME: iso-1
 ```
 
-### revert-staged-changes
+### <a id='revert-staged-changes'></a>revert-staged-changes
 
 Reverts all changes that are currently staged on the Tanzu Operations Manager.
 
@@ -1376,7 +1377,7 @@ Use passed constraints to ensure things run in the order you mean them to.</p>
     ENV_FILE: foundations/config/env.yml
 ```
 
-### run-bosh-errand
+### <a id='run-bosh-errand'></a>run-bosh-errand
 
 Runs a specified BOSH errand directly on the BOSH Director
 by tunneling through Tanzu Operations Manager.
@@ -1419,7 +1420,7 @@ Concourse feature to run the task more than once.</p>
     OPSMAN_SSH_PRIVATE_KEY: ((ops_manager_ssh_private_key))
 ```
 
-### send-telemetry
+### <a id='send-telemetry'></a>send-telemetry
 
 Sends the `.tar` output from [`collect-telemetry`](#collect-telemetry)
 to VMware.
@@ -1449,7 +1450,7 @@ Contact your VMware representative.</p>
     DATA_FILE_PATH: collected-telemetry-data/FoundationDetails*.tar
 ```
 
-### stage-configure-apply
+### <a id='stage-configure-apply'></a>stage-configure-apply
 
 This is an _advanced task_.
 Stage a product to Tanzu Operations Manager, configure that product, and apply changes
@@ -1484,7 +1485,7 @@ only to that product without applying changes to the rest of the foundation.
     vars: configuration
 ```
 
-### stage-product
+### <a id='stage-product'></a>stage-product
 Staged a product to the Tanzu Operations Manager specified in the config file.
 
 **Task**
@@ -1508,7 +1509,7 @@ Staged a product to the Tanzu Operations Manager specified in the config file.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### staged-config
+### <a id='staged-config'></a>staged-config
 
 Downloads the configuration for a product from Tanzu Operations Manager.
 
@@ -1542,7 +1543,7 @@ intended for import as part of backup/restore and upgrade lifecycle processes.
           file: generated-state/state.yml
 ```
 
-### staged-director-config
+### <a id='staged-director-config'></a>staged-director-config
 
 Downloads configuration for the BOSH director from Tanzu Operations Manager.
 
@@ -1577,7 +1578,7 @@ The credentials need to be provided from an external configuration when invoking
 
 <%= partial "missing_fields_opsman_director" %>
 
-### test
+### <a id='test'></a>test
 
 An example task to ensure the assets and Docker image are setup correctly in your Concourse pipeline.
 
@@ -1597,7 +1598,7 @@ An example task to ensure the assets and Docker image are setup correctly in you
   image: platform-automation-image
 ```
 
-### test-interpolate
+### <a id='test-interpolate'></a>test-interpolate
 
 An example task to ensure that all required vars are present when interpolating into a base file.
 For more instruction on this topic, see the [variables](concepts/variables.md) section.
@@ -1623,7 +1624,7 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
     config: configuration
 ```
 
-### update-runtime-config
+### <a id='update-runtime-config'></a>update-runtime-config
 
 This is an _advanced task_.
 Updates a runtime config on the Tanzu Operations Manager deployed BOSH director.
@@ -1661,7 +1662,7 @@ When using runtime configs, Tanzu Operations Manager owns the default runtime co
 If you use this task to edit "default" it will be replaced on every <b>Apply Changes</b>.
 Use the <code>NAME</code> param to provide a non-conflicting runtime config.</p>
 
-### upgrade-opsman
+### <a id='upgrade-opsman'></a>upgrade-opsman
 
 Upgrades an existing Tanzu Operations Manager to a new given Tanzu Operations Manager version
 
@@ -1695,7 +1696,7 @@ Upgrades an existing Tanzu Operations Manager to a new given Tanzu Operations Ma
 
 For more information about this task and how it works, see [Recovering and upgrading Tanzu Operations Manager](concepts/upgrade.md).
 
-### upload-and-stage-product
+### <a id='upload-and-stage-product'></a>upload-and-stage-product
 
 Uploads and stages product to the Tanzu Operations Manager specified in the config file.
 
@@ -1720,7 +1721,7 @@ Uploads and stages product to the Tanzu Operations Manager specified in the conf
     ENV_FILE: foundations/config/env.yml
 ```
 
-### upload-product
+### <a id='upload-product'></a>upload-product
 
 Uploads a product to the Tanzu Operations Manager specified in the config file.
 
@@ -1749,7 +1750,7 @@ with that shasum before uploading.
     ENV_FILE: foundations/config/env.yml
 ```
 
-### upload-stemcell
+### <a id='upload-stemcell'></a>upload-stemcell
 
 Uploads a stemcell to Tanzu Operations Manager.
 
