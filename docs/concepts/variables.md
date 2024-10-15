@@ -3,7 +3,7 @@
 
 Variables provide a way to define parameters for a YAML document. Each variable has a value
 and can be referenced in one or more locations. Variables are used in the Platform Automation Toolkit
-[tasks][task-reference]. One example usage is in [configure director][configure-director]. 
+[tasks][task-reference]. One example usage is in [configure director][configure-director].
 
 ## Why use variables?
 It's typically necessary to separate passwords, certificates, S3 bucket names etc. from YAML
@@ -30,8 +30,8 @@ foundation_one_bucket: aws-bucket-one
 foundation_one_domain_name: foundation.one.domain.com
 ```
 
-To check the base.yml has the variables defined in vars.yml, you can run:  
-`om interpolate --config base.yml --vars-file vars.yml`  
+To check the base.yml has the variables defined in vars.yml, you can run:
+`om interpolate --config base.yml --vars-file vars.yml`
 If everything works as expected, you should see the following output:
 
 ```yaml
@@ -46,16 +46,16 @@ could not execute "interpolate": Expected to find variables: ((missing-value))
 
 !!! info
     If you are using an additional secrets manager, such as credhub, you can add the flag
-    `--skip-missing` to your `om interpolate` call to allow parametrized variables to 
-    still be present in your config after interpolation, to be later filled in by 
+    `--skip-missing` to your `om interpolate` call to allow parametrized variables to
+    still be present in your config after interpolation, to be later filled in by
     interpolating with your secrets manager. See the [Secrets Handling][secrets-handling] page for a more
     detailed explanation.
 
 ## Why use variables if you're already using a secrets manager?
 [Secrets Handling][secrets-handling] is a secure way to store sensitive information about your foundation, such as
-access keys, passwords, ssh keys, etc. The following flowchart gives an example workflow on how you might use 
-a mix of a secrets manager and vars files across multiple foundations with a single shared `base_vars_template`, 
-that can be used to generate the `interpolated_vars` unique to a particular foundation, and passed into the relevant 
+access keys, passwords, ssh keys, etc. The following flowchart gives an example workflow on how you might use
+a mix of a secrets manager and vars files across multiple foundations with a single shared `base_vars_template`,
+that can be used to generate the `interpolated_vars` unique to a particular foundation, and passed into the relevant
 tasks. A separate `var_template.yml` could be used for every foundation to give unique credentials to those
 foundations. More common shared settings could be included in the `vars_file.yml`.
 
@@ -74,7 +74,7 @@ have a single `base_vars_template.yml` shared across foundations.
 Some Platform Automation Toolkit tasks have an optional vars input.
 Using the flow described above, these files can be plugged in to the tasks.
 
-We provide a [Test Task](../tasks.md#test-interpolate)
+We provide a [Test Task](../tasks.html#test-interpolate)
 to allow pipeline testing before installing Tanzu Operations Manager.
 An example pipeline for this is below:
 
@@ -99,7 +99,7 @@ jobs:
     params:
       VARS_FILES: vars/vars.yml # vars/vars2.yml
       CONFIG_FILE: base.yml
-      SKIP_MISSING: true       # false to enable strict interpolation  
+      SKIP_MISSING: true       # false to enable strict interpolation
 
 ```
 

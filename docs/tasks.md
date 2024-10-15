@@ -30,7 +30,7 @@ Triggers an install on the Tanzu Operations Manager described by the auth file.
 
 To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
-To see an example of this config file, see the [Inputs and outputs][inputs-outputs.md] section.
+To see an example of this config file, see the [Inputs and outputs][inputs-outputs.html] section.
 
 {% include '.disable-verifiers.md' %}
 
@@ -109,7 +109,7 @@ deployed with Tanzu Operations Manager.
 !!! info "PKS CLI may be Temporarily Unavailable"
     During the backup, the PKS CLI is disabled.
     Due to the nature of the backup, some commands may not work as expected.
-    
+
 ??? warning "Known Issue"
 
     When using the task [`backup-tkgi`][backup-tkgi] behind a proxy
@@ -117,12 +117,12 @@ deployed with Tanzu Operations Manager.
     When the task invokes the `bbr` CLI, an environment variable (`BOSH_ALL_PROXY`) has been set,
     this environment variable tries to honor the `no_proxy` settings.
     The task's usage of the ssh tunnel requires the `no_proxy` to not be set.
-  
+
     If you experience an error, such as an SSH connection refused or connection timeout,
     try setting the `no_proxy: ""` as `params` on the task.
-    
+
     For example,
-    
+
     ```yaml
     - task: backup-tkgi
       file: platform-automation-tasks/tasks/backup-tkgi.yml
@@ -491,7 +491,7 @@ The valid IaaSs are:
 - `vsphere`
 
 If a configuration for S3, GCS, or Azure is present in the [download-product config file][download-product-config],
-the slug and version of the downloaded product file will be prepended in brackets to the filename.  
+the slug and version of the downloaded product file will be prepended in brackets to the filename.
 For example:
 
 - original-pivnet-filenames:

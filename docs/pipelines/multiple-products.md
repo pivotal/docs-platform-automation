@@ -2,7 +2,7 @@
 
 Below you will find a reference pipeline that illustrates the tasks and provides an example of a basic pipeline design. You know your environment and constraints and we don't. VMware recommends that you look at the tasks that make up the pipeline, and see how they can be arranged for your specific automation needs. For a deeper dive into each task see the Task Reference.
 
-These Concourse pipelines are examples of how to use the [tasks](../tasks.md). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
+These Concourse pipelines are examples of how to use the [tasks](../tasks.html). If you use a different CI/CD platform, you can use these Concourse files as examples of the inputs, outputs, and arguments used in each step in the workflow.
 
 ## Prerequisites
 
@@ -58,15 +58,15 @@ the rest of this document covers the sections of the full pipeline in more detai
 These can either be uploaded manually or from the [reference resources pipeline][reference-resources].
 
 ---excerpt--- "reference/reference-resources-s3"
-  
+
 !!! tip "Tanzu Application Service-Windows with S3"
     If retrieving `pas-windows` and `pas-windows-stemcell` from an S3 bucket,
     you must use the built in S3 concourse resource.
     This is done in the example above.
-    The `download-product` task with `SOURCE: s3` does not persist meta information 
+    The `download-product` task with `SOURCE: s3` does not persist meta information
     about necessary stemcell for `pas-windows`
-    because VMware does not distribute the Window's file system. 
-    
+    because VMware does not distribute the Window's file system.
+
 Alternatively, products may be downloaded using the `download-product` task with
 the param `SOURCE` set to `s3|azure|gcs`.
 In a job, specify the following task:
@@ -110,7 +110,7 @@ Platform Automation Toolkit will not create these resources for you.
 
 This helps load secrets stored in an external credential manager -- such as Credhub.
 Concourse support several [credential managers][concourse-secrets-handling] natively.
- 
+
 The configuration below uses the [`prepare-tasks-with-secrets`][prepare-tasks-with-secrets] task
 to load secrets from your external configuration files.
 

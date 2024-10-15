@@ -30,12 +30,12 @@ see one of the following reference pipelines:
 
 ## Other References
 
-To see a list of all of the tasks, their usage, 
+To see a list of all of the tasks, their usage,
 their inputs and outputs, and their parameters,
 see the [Task Reference][task-reference].
 
-To learn more about the format of the files used with the tasks, 
-see the [Task Inputs and Outputs Reference][inputs-outputs].
+To learn more about the format of the files used with the tasks,
+see the [Task Inputs and Outputs Reference][inputs-outputs.html].
 
 {% include ".internal_link_url.md" %}
 {% include ".external_link_url.md" %}
