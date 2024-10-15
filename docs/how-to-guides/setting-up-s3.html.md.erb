@@ -208,7 +208,7 @@ You should probably **_not_** store the following in S3:
 - `secrets.yaml` environment and secret files - There are a number of ways
 to handle these types of files, but they should not be stored in S3.
 See [Using a secrets store to store credentials](../concepts/secrets-handling.md)
-for information about working with these types of files.  
+for information about working with these types of files.
 
 ## Structuring your bucket
 
@@ -238,7 +238,7 @@ The following sample shows one way to set up your bucket file structure:
 
 When viewing a bucket in the AWS S3 console,
 click **Create Folder**.
-To create a sub-folder, select **Create Folder** again.  
+To create a sub-folder, select **Create Folder** again.
 
 When attempting to access a specific object in a folder,
 include the folder structure before the object name:
@@ -274,7 +274,7 @@ and where to find more information.
 
 #### The download-product task
 
-The [`download-product`](../tasks.md#download-product) task lets you download products from the Broadcom Support portal.
+The [`download-product`](../tasks.html#download-product) task lets you download products from the Broadcom Support portal.
 If S3 properties are set in the [download config](../inputs-outputs.md#download-product-config),
 these files can be put into an S3 bucket.
 
@@ -320,7 +320,7 @@ For example, for a product with slug of <code>product-slug</code> and version of
 </code>
 </p>
 
-The [`download-product`](../tasks.md#download-product)
+The [`download-product`](../tasks.html#download-product)
 task lets you download products from an blobstore bucket if you define the `SOURCE` param.
 The prefixed metadata added by `download-product` with `SOURCE: pivnet` is used to find the appropriate file.
 This task uses the same [download-product config file](../inputs-outputs.md#download-product-config)
@@ -333,4 +333,4 @@ to be used together.
 The download product config should be different between the two tasks.
 
 For complete information on this task
-and how it works, see the [Task Reference](../tasks.md#download-product).
+and how it works, see the [Task Reference](../tasks.html#download-product).

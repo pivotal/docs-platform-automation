@@ -15,7 +15,7 @@ Do this by changing:
    - the `name` of the task
    - the `file` of the task
 
-    The first task in the job should be [`download-product`](../tasks.md#download-product).
+    The first task in the job should be [`download-product`](../tasks.html#download-product).
     It has an additional required input;
     the `config` file `download-product` uses to talk to the Broadcom Support portal.
 
@@ -141,7 +141,7 @@ for creating a deploy key.
     <%= partial include './paths-and-pipeline-names' %>
 
 1. To perform interpolation in one of your input files,
-use the [`prepare-tasks-with-secrets` task](../tasks.md#prepare-tasks-with-secrets).
+use the [`prepare-tasks-with-secrets` task](../tasks.html#prepare-tasks-with-secrets).
 In earlier steps, you relied on Concourse's native integration with CredHub for interpolation.
 That worked because you needed to use the variable
 in the pipeline itself, not in one of our inputs.
@@ -175,7 +175,7 @@ in the pipeline itself, not in one of our inputs.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:
@@ -248,7 +248,7 @@ Follow these steps to use the `paving` repository:
     # cp -Ra paving/${IAAS} paving-${IAAS}
     mkdir paving-${IAAS}
     cp -a paving/$IAAS/. paving-$IAAS
-    cd paving-${IAAS} 
+    cd paving-${IAAS}
     ```
 
     `IAAS` must be set to match one of the infrastructure directories
@@ -288,7 +288,7 @@ Follow these steps to use the `paving` repository:
     ```bash
     terraform apply \
       -parallelism=5 \
-      terraform.tfplan 
+      terraform.tfplan
     ```
 
 8. Save the output from `terraform output stable_config`
@@ -364,7 +364,7 @@ you can add the new task to the `install-opsman` job.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:
@@ -526,7 +526,7 @@ and the placeholder state file.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:
@@ -549,7 +549,7 @@ and the placeholder state file.
     Because <code>opsman.yml</code> is the default input to
     <code>OPSMAN_CONFIG_FILE</code>, it is redundant
     to set this param in the pipeline.
-    See the <a href="../tasks.md">Task reference</a>
+    See the <a href="../tasks.html">Task reference</a>
     available and default parameters.</p>
 
 1. Now set the pipeline.
@@ -583,7 +583,7 @@ and the placeholder state file.
             tasks: platform-automation-tasks
           params:
             CONFIG_PATHS: config
-        - task: download-product        
+        - task: download-product
           image: platform-automation-image
           file: platform-automation-tasks/tasks/download-product.yml
           params:

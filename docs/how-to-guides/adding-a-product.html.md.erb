@@ -39,7 +39,7 @@ The instructions and example in the following add the [VMware Tanzu Application 
 
 ### Download
 
-Before setting the pipeline, create a config file for [`download-product`](../tasks.md#download-product)
+Before setting the pipeline, create a config file for [`download-product`](../tasks.html#download-product)
 to download Tanzu Application Service from the Broadcom Support portal.
 
 Create a `download-tas.yml` file for the IaaS you are using.
@@ -113,7 +113,7 @@ you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` fil
 4. If fly set-pipeline returns an error,
 fix any and all errors until the pipeline can be set.
 When the pipeline can be set properly, run:
-        
+
     ```
     git add pipeline.yml
     git commit --amend --no-edit
@@ -228,7 +228,7 @@ You can still go through this process without an initial applying changes,
 but you will be unable to use <code>om staged-config</code> with <code>--include-credentials</code>,
 and may have an incomplete configuration at the end of this process.</p>
 
-[`om`](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.md#staged-config).
+[`om`](https://github.com/pivotal-cf/om) has a command called [staged-config](../tasks.html#staged-config).
 It is used to extract staged product
 configuration from the Tanzu Operations Manager UI.
 `om` requires a `env.yml`, which is available. It was used in the `upload-and-stage` task.
@@ -628,7 +628,7 @@ outlined in these examples is `config-template`.
 `config-template` is an `om` command that creates a base config file with optional ops files
 from a given tile or pivnet slug.
 
-This section assumes that you are adding 
+This section assumes that you are adding
 [TAS for VMs](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs),
 as in the procedure above.
 
@@ -700,7 +700,7 @@ here are some approaches you can use:
 - Look at the tile's online documentation
 - Upload the tile to a Tanzu Operations Manager
   and visit the tile in the Tanzu Operations Manager UI to see if that provides any hints.
-  
+
     If you are still struggling, inspect the HTML of the Tanzu Operations Manager web page
     to help you map the value names to the associated UI elements.
 

@@ -25,7 +25,7 @@ and places them into a trusted s3-like storage provider.
 This helps other Concourse deployments without internet access
 retrieve task dependencies.
 
-The pipeline requires configuration for the [download-product](../tasks.md#download-product) task.
+The pipeline requires configuration for the [download-product](../tasks.html#download-product) task.
 See the following for examples that you can use.
 
 <p class="note important">
@@ -37,7 +37,7 @@ to accurately download files from a blobstore (for example, s3, gcs, azure),
 so the product slug and version are prepended when using <code>download-product</code>.
 For more information about how this works,
 and what to expect when using <code>download-product</code>,
-see the <a href="../tasks.md#download-product"><code>download-product</code> task reference</a></p>
+see the <a href="../tasks.html#download-product"><code>download-product</code> task reference</a></p>
 
 **Healthwatch**
 
@@ -138,7 +138,7 @@ resource_types:
 
 ### Product resources
 
-These are the S3 resources where Platform Automation Toolkit [`download-product`](../tasks.md#download-product) outputs will be stored.
+These are the S3 resources where Platform Automation Toolkit [`download-product`](../tasks.html#download-product) outputs will be stored.
 Each product/stemcell needs a separate resource defined.
 Platform Automation Toolkit will not create these resources for you.
 
@@ -304,7 +304,7 @@ For more details, see [Inputs and outputs](../inputs-outputs.md).
 This example shows how to load secrets stored in an external credential manager such as CredHub.
 Concourse supports several [credential managers](https://concourse-ci.org/creds.html) natively.
 
-The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.md#prepare-tasks-with-secrets) task
+The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
 to load secrets from your external configuration files.
 
 ```yaml

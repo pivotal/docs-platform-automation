@@ -186,7 +186,7 @@ Platform Automation Toolkit will not create these resources for you.
 This secrets handling example helps load secrets stored in an external credential manager such as CredHub.
 Concourse support several [credential managers](https://concourse-ci.org/creds.html) natively.
 
-The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.md#prepare-tasks-with-secrets) task
+The configuration below uses the [`prepare-tasks-with-secrets`](../tasks.html#prepare-tasks-with-secrets) task
 to load secrets from your external configuration files.
 
 ```yaml
@@ -319,7 +319,7 @@ jobs:
       VARS_FILES: |
         vars/foundations/((foundation))/vars/director.yml
         vars/foundations/((foundation))/vars/tas.yml
-        vars/foundations/((foundation))/vars/pks.yml 
+        vars/foundations/((foundation))/vars/pks.yml
   - task: apply-director-changes
     image: platform-automation-image
     attempts: 3
@@ -439,7 +439,7 @@ jobs:
       VARS_FILES: |
         vars/foundations/((foundation))/vars/director.yml
         vars/foundations/((foundation))/vars/tas.yml
-        vars/foundations/((foundation))/vars/pks.yml 
+        vars/foundations/((foundation))/vars/pks.yml
   - task: apply-director-changes
     image: platform-automation-image
     file: platform-automation-tasks/tasks/apply-director-changes.yml
