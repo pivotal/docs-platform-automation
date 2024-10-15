@@ -13,7 +13,7 @@ The configuration of the `director.yml` is IAAS specific for some properties; th
 
 There are two ways to build a director config.
 
-1. Using an already deployed Tanzu Operations Manager, you can extract the config using [staged-director-config](./tasks.md#staged-director-config).
+1. Using an already deployed Tanzu Operations Manager, you can extract the config using [staged-director-config](./tasks.html#staged-director-config).
 2. Deploying a new Tanzu Operations Manager requires more effort for a `director.yml`.
    The configuration of director is variables, based on the features enabled.
    This `director.yml` is a very basic example for vSphere.
@@ -231,12 +231,12 @@ signup redirect url (url):
 
 ## errand config
 
-The `ERRAND_CONFIG_FILE` input is used in the [`apply-changes`](./tasks.md#apply-changes) task.
+The `ERRAND_CONFIG_FILE` input is used in the [`apply-changes`](./tasks.html#apply-changes) task.
 This file contains properties for enabling and disabling errands
 for a particular run of `apply-changes`.
 
 To retrieve the default configuration of your product's errands,
-you can use [`staged-config`](./tasks.md#staged-config).
+you can use [`staged-config`](./tasks.html#staged-config).
 
 The expected format for this errand config is:
 
@@ -258,8 +258,8 @@ The expected format for this errand config is:
 The file contains the information to restore a Tanzu Operations Manager VM.
 The `installation` input for a opsman VM task expects to have a `installation.zip` file.
 
-This file can be exported from a Tanzu Operations Manager VM using the [export-installation](./tasks.md#export-installation) task.
-This file can be imported to a Tanzu Operations Manager VM using the [import-installation](./tasks.md#import-installation) task.
+This file can be exported from a Tanzu Operations Manager VM using the [export-installation](./tasks.html#export-installation) task.
+This file can be imported to a Tanzu Operations Manager VM using the [import-installation](./tasks.html#import-installation) task.
 
 <p class="note important">
 <span class="note__title">Important</span>
@@ -362,7 +362,7 @@ For AWS, GCP, and Azure, it's a YAML file that lists the location
 of images that are already available on the IaaS.
 
 These are examples to download the image artifact for each IaaS
-using the [download-product](./tasks.md#download-product) task.
+using the [download-product](./tasks.html#download-product) task.
 
 ### opsman.yml
 
@@ -406,7 +406,7 @@ The outputted `opsman.yml` contains the information needed for Platform Automati
 The `product` input requires a single tile file (`.pivotal`) as downloaded from the Broadcom Support portal.
 
 Here's an example of how to pull the Tanzu Application Service tile
-using the [download-product](./tasks.md#download-product) task.
+using the [download-product](./tasks.html#download-product) task.
 
 ### product.yml
 
@@ -436,7 +436,7 @@ This file cannot be manually created. This file must retrieved from the Broadcom
 
 There are two ways to build a product config.
 
-1. Using an already deployed product (tile), you can extract the config using [staged-config](./tasks.md#staged-config).
+1. Using an already deployed product (tile), you can extract the config using [staged-config](./tasks.html#staged-config).
 1. Use an example and fill in the values based on the meta information from the tile.
 This `product.yml` is a very basic example for `healthwatch`.
 
@@ -497,7 +497,7 @@ The filename might look something like `bosh-stemcell-621.76-vsphere-esxi-ubuntu
 This file cannot be manually created. This file must retrieved from the Broadcom Support portal.</p>
 
 Here's an example of how to pull the vSphere stemcell
-using the [download-product](./tasks.md#download-product) task.
+using the [download-product](./tasks.html#download-product) task.
 
 ### stemcell.yml
 
@@ -564,7 +564,7 @@ product-version-regex: ^170\..*$
 
 ### assign-stemcell-task
 
-This artifact is an output of [`download-product`](./tasks.md#download-product)
+This artifact is an output of [`download-product`](./tasks.html#download-product)
 located in the `assign-stemcell-config` output directory.
 
 This file should resemble the following:
@@ -576,7 +576,7 @@ stemcell: "97.190"
 
 ## telemetry
 
-The `config` input for the [collect-telemetry](./tasks.md#collect-telemetry) task
+The `config` input for the [collect-telemetry](./tasks.html#collect-telemetry) task
 can be used with a `telemetry.yml` file to collect data for VMware
 so that VMware staff can learn and measure results
 to help put customer experience at the forefront of their product decisions.

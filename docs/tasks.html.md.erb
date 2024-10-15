@@ -208,7 +208,7 @@ deployed with Tanzu Operations Manager.
 <b>PKS CLI may be temporarily unavailable:</b>
 During the backup, the PKS CLI is disabled.
 Due to the nature of the backup, some commands may not work as expected.</p>
-    
+
 <div class="note caution">
 <span class="note__title">Caution</span>
 <b>Known issue:</b>
@@ -258,7 +258,7 @@ Returns a table of the current state of your Tanzu Operations Manager
 and lists whether each product is changed or unchanged and the errands for that product.
 By default, `ALLOW_PENDING_CHANGES: false` will force the task to fail.
 This is useful to keep manual changes from being accidentally applied
-when automating the [configure-product](./tasks.md#configure-product)/[apply-changes](./tasks.md#apply-changes) of other products.
+when automating the [configure-product](#configure-product)/[apply-changes](#apply-changes) of other products.
 
 **Task**
 
@@ -871,7 +871,7 @@ The valid IaaSs are:
 - `vsphere`
 
 If a configuration for S3, GCS, or Azure is present in the [download-product config file](./inputs-outputs.md#download-product-config),
-the slug and version of the downloaded product file will be prepended in brackets to the filename.  
+the slug and version of the downloaded product file will be prepended in brackets to the filename.
 For example:
 
 - original-pivnet-filenames:
@@ -1644,7 +1644,7 @@ For more instruction on this topic, see the [variables](concepts/variables.md) s
     SKIP_MISSING: true
   input_mapping:
     config: configuration
-```  
+```
 
 ### <a id='update-runtime-config'></a>update-runtime-config
 
