@@ -50,7 +50,7 @@ Triggers an install on the Tanzu Operations Manager described by the auth file.
 
 To optionally provide an errand file to manually control errands
 for a particular of run of `apply-changes`.
-To see an example of this config file, see [Inputs and outputs](./inputs-outputs.md).
+To see an example of this config file, see [Inputs and outputs](./inputs-outputs.html).
 
 <%= partial "disable-verifiers" %>
 
@@ -287,7 +287,7 @@ This task requires the `telemetry-collector-binary` as an input.
 The binary is available on the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Telemetry%20for%20VMware%20Tanzu%20%5BVMs%5D);
 you must define a `resource` to supply the binary.
 
-This task requires a [config file](./inputs-outputs.md#telemetry).
+This task requires a [config file](./inputs-outputs.html#telemetry).
 
 After using this task, use
 the [send-telemetry](#send-telemetry) task
@@ -413,7 +413,7 @@ This task supports configuring settings
 on the Tanzu Operations Manager Settings page in the UI.
 For example, the SSL cert for the Tanzu Operations Manager VM can be configured.
 
-Configuration can be added directly to [`opsman.yml`](./inputs-outputs.md#tanzu-operations-manager-config).
+Configuration can be added directly to [`opsman.yml`](./inputs-outputs.html#tanzu-operations-manager-config).
 An example of all configurable properties can be found in the "Additional Settings" tab.
 
 The [`upgrade-opsman`](#upgrade-opsman) task will automatically call `configure-opsman`,
@@ -600,7 +600,7 @@ Creates an unconfigured Tanzu Operations Manager VM.
 ```
 
 This task requires a config file specific to the IaaS being deployed to.
-See the [configuration](./inputs-outputs.md#tanzu-operations-manager-config) page for more specific examples.
+See the [configuration](./inputs-outputs.html#tanzu-operations-manager-config) page for more specific examples.
 
 The task does specific CLI commands for the creation of the Tanzu Operations Manager VM on each IAAS. See the following for more information:
 
@@ -762,7 +762,7 @@ Deletes the Tanzu Operations Manager VM instantiated by [create-vm](#create-vm).
         file: generated-state/state-((foundation)).yml
 ```
 
-This task requires the [state file](./inputs-outputs.md#state) generated [create-vm](#create-vm).
+This task requires the [state file](./inputs-outputs.html#state) generated [create-vm](#create-vm).
 
 The task does specific CLI commands for the deletion of the Tanzu Operations Manager VM and resources on each IAAS. See the following for more information:
 
@@ -848,7 +848,7 @@ for later use with download-product using the `SOURCE` parameter,
 or used directly as inputs to [upload-and-stage-product](#upload-and-stage-product)
 and [upload-stemcell](#upload-stemcell) tasks.
 
-This task requires a [download-product config file](./inputs-outputs.md#download-product-config).
+This task requires a [download-product config file](./inputs-outputs.html#download-product-config).
 
 If stemcell-iaas is specified in the download-product config file,
 and the specified product is a `.pivotal` file,
@@ -862,7 +862,7 @@ The valid IaaSs are:
 - `openstack`
 - `vsphere`
 
-If a configuration for S3, GCS, or Azure is present in the [download-product config file](./inputs-outputs.md#download-product-config),
+If a configuration for S3, GCS, or Azure is present in the [download-product config file](./inputs-outputs.html#download-product-config),
 the slug and version of the downloaded product file will be prepended in brackets to the filename.
 For example:
 

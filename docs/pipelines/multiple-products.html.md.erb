@@ -24,7 +24,7 @@ the VM is created. The choices for this file are:
   <p class="note">
   There will be some crossover between the auth file and the env file due to how <code>om</code> is set up and how the system works. It is highly recommended to parameterize these values, and let a credential management system (such as CredHub) fill in these values for you to maintain consistency across files.</p>
 
-* An [opsman-configuration](../inputs-outputs.md) file: This file is required to connect to an IAAS, and to control
+* An [opsman-configuration](../inputs-outputs.html) file: This file is required to connect to an IAAS, and to control
 the lifecycle management of the Tanzu Operations Manager VM.
 * A [director-configuration](../how-to-guides/creating-a-director-config-file.md) file: Each Tanzu Operations Manager needs its own configuration, but it is retrieved differently than
 a product configuration. This config is used to deploy a new Tanzu Operations Manager director, or to update an existing one.
@@ -136,7 +136,7 @@ In a job, specify the following task:</p>
 
 These configured resources contain values for
 Tanzu Operations Manager VM creation, director, product, foundation-specific vars, auth, and env files.
-For more details, see the [Inputs and outputs](../inputs-outputs.md) section.
+For more details, see the [Inputs and outputs](../inputs-outputs.html) section.
 Platform Automation Toolkit will not create these resources for you.
 
 ```yaml

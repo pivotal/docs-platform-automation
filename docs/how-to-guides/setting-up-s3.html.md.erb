@@ -272,7 +272,7 @@ and where to find more information.
 #### The download-product task
 
 The [`download-product`](../tasks.html#download-product) task lets you download products from the Broadcom Support portal.
-If S3 properties are set in the [download config](../inputs-outputs.md#download-product-config),
+If S3 properties are set in the [download config](../inputs-outputs.html#download-product-config),
 these files can be put into an S3 bucket.
 
 If S3 configurations are set,
@@ -319,7 +319,7 @@ For example, for a product with slug of <code>product-slug</code> and version of
 The [`download-product`](../tasks.html#download-product)
 task lets you download products from an blobstore bucket if you define the `SOURCE` param.
 The prefixed metadata added by `download-product` with `SOURCE: pivnet` is used to find the appropriate file.
-This task uses the same [download-product config file](../inputs-outputs.md#download-product-config)
+This task uses the same [download-product config file](../inputs-outputs.html#download-product-config)
 as `download-product` to ensure consistency
 between what is `put` in the blobstore
 and what is being accessed later.

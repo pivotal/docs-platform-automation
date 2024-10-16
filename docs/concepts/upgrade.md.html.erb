@@ -41,7 +41,7 @@ Both methods require an exported installation.
 
 * **Recovery using the upgrade-opsman task**. Depending on the error,
 the VM could be recovered by re-running [`upgrade-opsman`](../tasks.html#upgrade-opsman).
-This may or may not require a change to the [state file](../inputs-outputs.md#state),
+This may or may not require a change to the [state file](../inputs-outputs.html#state),
 depending on if there is an [ensure](https://concourse-ci.org/jobs.html#schema.step.ensure)
 set for the state file resource.
 
@@ -71,19 +71,19 @@ See [Running commands locally](../how-to-guides/running-commands-locally.md)
 for information about the following manual process.
 
 1. Run `delete-vm` on the failed or non-desired Tanzu Operations Manager
-   using the [`state.yml`](../inputs-outputs.md#state) if applicable.
-   [`opsman.yml`](../inputs-outputs.md#tanzu-operations-manager-config) is required for this command.
+   using the [`state.yml`](../inputs-outputs.html#state) if applicable.
+   [`opsman.yml`](../inputs-outputs.html#tanzu-operations-manager-config) is required for this command.
 
    ```bash
    docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
    p-automator delete-vm --state-file state.yml --config opsman.yml
    ```
 
-2. Run `create-vm` using either an empty [`state.yml`](../inputs-outputs.md#state)
+2. Run `create-vm` using either an empty [`state.yml`](../inputs-outputs.html#state)
    or the state that was output by the previous step.
    This command requires the image file from the originally deployed version from Tanzu Network
    (yaml, ova, raw).
-   [`opsman.yml`](../inputs-outputs.md#tanzu-operations-manager-config) is required for this command.
+   [`opsman.yml`](../inputs-outputs.html#tanzu-operations-manager-config) is required for this command.
 
     ```bash
     docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
