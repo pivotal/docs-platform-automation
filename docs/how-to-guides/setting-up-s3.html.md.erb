@@ -27,7 +27,7 @@ and retrieve the latest product versions in offline environments.
 With S3, you can place product files and new versions of Operations Manager
 into a network "allow-listed" S3 bucket
 to be used by Platform Automation Toolkit tasks.
-You can even create a [Resources pipeline](../pipelines/resources.md)
+You can even create a [Resources pipeline](../pipelines/resources.html)
 that gets the latest version of products
 from the Broadcom Support portal and places them into your S3 bucket automatically.
 
@@ -204,7 +204,7 @@ You should probably **_not_** store the following in S3:
 - `.yaml` configuration files - Git is better suited for this
 - `secrets.yaml` environment and secret files - There are a number of ways
 to handle these types of files, but they should not be stored in S3.
-See [Using a secrets store to store credentials](../concepts/secrets-handling.md)
+See [Using a secrets store to store credentials](../concepts/secrets-handling.html)
 for information about working with these types of files.
 
 ## Structuring your bucket
@@ -261,7 +261,7 @@ Ensure that Concourse can communicate with your S3 bucket.
 
 ## Reference resources pipeline
 
-The [resources pipeline](../pipelines/resources.md)
+The [resources pipeline](../pipelines/resources.html)
 may be used to download dependencies from the Broadcom Support portal
 and place them into a trusted S3 bucket.
 The various `resources_types` use the [Concourse S3 Resource type](https://github.com/concourse/s3-resource)
