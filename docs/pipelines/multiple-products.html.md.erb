@@ -14,9 +14,9 @@ These Concourse pipelines are examples of how to use the tasks. If you use a dif
   If you are new to Concourse, <a href="https://docs.vmware.com/en/Concourse-for-VMware-Tanzu/7.0/vmware-tanzu-concourse/GUID-installation-install-concourse-bosh.html">Concourse CI Tutorials</a> is a good place to start.</p>
 
 * Persisted datastore that can be accessed by Concourse resource (for example, s3, gcs, minio)
-* A valid [Env file](../how-to-guides/configuring-env.md#generating-env-file): this file will contain credentials necessary to login to Tanzu Operations Manager using the `om` CLI.
+* A valid [Env file](../how-to-guides/configuring-env.html#generating-env-file): this file will contain credentials necessary to login to Tanzu Operations Manager using the `om` CLI.
 It is used by every task within Platform Automation Toolkit
-* A valid [Auth file](../how-to-guides/configuring-auth.md#auth-file): this file will contain the credentials necessary to create the Tanzu Operations Manager login the first time
+* A valid [Auth file](../how-to-guides/configuring-auth.html#auth-file): this file will contain the credentials necessary to create the Tanzu Operations Manager login the first time
 the VM is created. The choices for this file are:
   * simple authentication
   * saml authentication
@@ -26,9 +26,9 @@ the VM is created. The choices for this file are:
 
 * An [opsman-configuration](../inputs-outputs.html) file: This file is required to connect to an IAAS, and to control
 the lifecycle management of the Tanzu Operations Manager VM.
-* A [director-configuration](../how-to-guides/creating-a-director-config-file.md) file: Each Tanzu Operations Manager needs its own configuration, but it is retrieved differently than
+* A [director-configuration](../how-to-guides/creating-a-director-config-file.html) file: Each Tanzu Operations Manager needs its own configuration, but it is retrieved differently than
 a product configuration. This config is used to deploy a new Tanzu Operations Manager director, or to update an existing one.
-* A set of valid [product-configuration](../how-to-guides/adding-a-product.md) files: Each product configuration is a YAML file that contains the properties
+* A set of valid [product-configuration](../how-to-guides/adding-a-product.html) files: Each product configuration is a YAML file that contains the properties
 necessary to configure a Tanzu Operations Manager product using the `om` tool. This can be used during install or update.
 * (Optional) A working [CredHub](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/credhub-index.html) setup with its own UAA client and secret.
 
@@ -41,7 +41,7 @@ necessary to configure a Tanzu Operations Manager product using the `om` tool. T
 The pipeline shows how to compose the tasks
 to install Tanzu Operations Manager and the Tanzu Application Service and Healthwatch products.
 Its dependencies are coming from a trusted git repository,
-which can be retrieved as shown in [Retrieving external dependencies](../pipelines/resources.md).
+which can be retrieved as shown in [Retrieving external dependencies](../pipelines/resources.html).
 
 ### Full pipeline and reference configurations
 
@@ -57,7 +57,7 @@ The rest of this document covers the sections of the full pipeline in more detai
 
 ### S3 resources
 
-These can be uploaded manually or from the [reference resources pipeline](../pipelines/resources.md).
+These can be uploaded manually or from the [reference resources pipeline](../pipelines/resources.html).
 
 ```yaml
 resources:

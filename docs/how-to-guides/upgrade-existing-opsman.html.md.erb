@@ -85,7 +85,7 @@ you also need to add `serial: true` to the job.
 1. Now set up your remote
 and use `git push` to make it available.
 You will use this repository to hold our single foundation specific configuration.
-These instructions use the ["Single repository for each Foundation"](../pipeline-design/configuration-management-strategies.md#single-foundation-pattern)
+These instructions use the ["Single repository for each Foundation"](../pipeline-design/configuration-management-strategies.html#single-foundation-pattern)
 pattern to structure the configurations.
 
 1. Add the repository URL to CredHub so that you can reference it
@@ -240,7 +240,7 @@ in the pipeline itself, not in one of your inputs.
     as in input of another.
 
     An alternative to `input_mappings` is discussed in
-    [Configuration Management Strategies](../pipeline-design/configuration-management-strategies.md#advanced-pipeline-design).
+    [Configuration Management Strategies](../pipeline-design/configuration-management-strategies.html#advanced-pipeline-design).
 
 1. Put your `credhub_client` and `credhub_secret` into CredHub,
 so Concourse's native integration can retrieve them

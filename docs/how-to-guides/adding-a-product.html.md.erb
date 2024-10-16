@@ -7,16 +7,16 @@ and installing the configured product.
 
 ## Prerequisites
 
-1. A pipeline, such as one created in [Installing Tanzu Operations Manager](./installing-opsman.md)
-   or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md).
-2. A fully configured Tanzu Operations Manager and Director. See [Creating a director config file](./creating-a-director-config-file.md).
-3. The Platform Automation Toolkit Docker Image imported and ready to run. See [Running commands locally](./running-commands-locally.md).
+1. A pipeline, such as one created in [Installing Tanzu Operations Manager](./installing-opsman.html)
+   or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.html).
+2. A fully configured Tanzu Operations Manager and Director. See [Creating a director config file](./creating-a-director-config-file.html).
+3. The Platform Automation Toolkit Docker Image imported and ready to run. See [Running commands locally](./running-commands-locally.html).
 4. A glob pattern uniquely matching one product file on the Broadcom Support portal.
 
 ### Assumptions about your existing pipeline
 
 This guide assumes that you are working
-from one of the pipelines created in [Installing Tanzu Operations Manager](./installing-opsman.md) or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.md),
+from one of the pipelines created in [Installing Tanzu Operations Manager](./installing-opsman.html) or [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.html),
 but you don't have to have exactly that pipeline.
 If your pipeline is different, though,
 you may run into trouble with some of the assumptions made here:
@@ -25,7 +25,7 @@ you may run into trouble with some of the assumptions made here:
 - A pivnet token stored in CredHub as a credential named `pivnet_token`.
 - A previous job responsible for deploying the director,
   called `apply-director-changes`.
-- You have an `env.yml` based on the instructions in [Configuring Env](./configuring-env.md). This file exists in the `configuration` resource.
+- You have an `env.yml` based on the instructions in [Configuring Env](./configuring-env.html). This file exists in the `configuration` resource.
 - You have a `fly` target named `control-plane`, with an existing pipeline called `foundation`.
 - You have a source control repo that contains the `foundation` pipeline's `pipeline.yml`.
 
@@ -240,7 +240,7 @@ The command can be run directly using Docker:
 1. Download the image to our local workstation.
 1. Import the image into Docker.
 2. Run `staged-config` for the [Tanzu Application Service](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/toc-installing-index.html) product.
-For more information, see [Running commands locally](./running-commands-locally.md).
+For more information, see [Running commands locally](./running-commands-locally.html).
 
 To pull the configuration from Tanzu Operations Manager:
 
@@ -682,7 +682,7 @@ This can be useful if there are vars that need to be interpolated when you apply
 rather than when you create the final template.
 You might consider creating a separate vars file for each of the following cases:
 
-- credentials (These vars can then be persisted separately/securely. See [Using a secrets store to store credentials](../concepts/secrets-handling.md))
+- credentials (These vars can then be persisted separately/securely. See [Using a secrets store to store credentials](../concepts/secrets-handling.html))
 - foundation-specific variables when using the same template for multiple foundations
 
 When creating your final template
@@ -733,7 +733,7 @@ use some of the ops files in one of the following four directories:
     </tr>
 </table>
 
-For more information on BOSH VM Extensions, see [Creating a director config file](./creating-a-director-config-file.md#vm-extensions).
+For more information on BOSH VM Extensions, see [Creating a director config file](./creating-a-director-config-file.html#vm-extensions).
 
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
@@ -781,7 +781,7 @@ om interpolate \
 
 You can check the resulting configuration into a git repo.
 For vars that do not include credentials, you can check those vars files in, too.
-Handle vars that are secret more carefully. See [Using a secrets store to store credentials](../concepts/secrets-handling.md).
+Handle vars that are secret more carefully. See [Using a secrets store to store credentials](../concepts/secrets-handling.html).
 
 You can then delete the config template directory.
 
@@ -789,7 +789,7 @@ You can then delete the config template directory.
 
 There are two recommended ways to support multiple foundation workflows:
 
-* Using [secrets management](../concepts/secrets-handling.md#multi-foundation-secrets-handling)
+* Using [secrets management](../concepts/secrets-handling.html#multi-foundation-secrets-handling)
 * Using ops files
 
 This section explains how to support multiple foundations using ops files.

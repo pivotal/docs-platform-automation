@@ -21,8 +21,8 @@ duplicating foundations involves only cloning a repository,
 and configuration files are not difficult to understand.
 
 This is the strategy used in
-[Install Tanzu Operations Manager](../how-to-guides/installing-opsman.md) and
-[Upgrading an existing Tanzu Operations Manager](../how-to-guides/upgrade-existing-opsman.md).
+[Install Tanzu Operations Manager](../how-to-guides/installing-opsman.html) and
+[Upgrading an existing Tanzu Operations Manager](../how-to-guides/upgrade-existing-opsman.html).
 
 This example configuration repository
 uses the "Single Repository for each Foundation" pattern:
@@ -88,11 +88,11 @@ from a foundation-specific vars file, CredHub, and so on.
 This strategy can reduce foundation drift
 and streamline the configuration promotion process between foundations.
 
-This is the strategy used in the [reference pipeline](../pipelines/multiple-products.md).
+This is the strategy used in the [reference pipeline](../pipelines/multiple-products.html).
 
 ### Overview
 
-The [reference pipeline](../pipelines/multiple-products.md) uses a public [config repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config)
+The [reference pipeline](../pipelines/multiple-products.html) uses a public [config repo](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config)
 with all secrets stored in the CredHub belonging to Concourse.
 
 The design considerations for this strategy, as implemented, are:
@@ -116,7 +116,7 @@ The design considerations for this strategy, as implemented, are:
     you might want the `pipelines` directory to be at the foundation level
     and for the `pipeline.yml` to be foundation-specific.
 
-    The [reference pipeline](../pipelines/multiple-products.md) handles the different environments via a `fly` variable.
+    The [reference pipeline](../pipelines/multiple-products.html) handles the different environments via a `fly` variable.
     The pipeline set script is found in the [`scripts`](https://github.com/pivotal/docs-platform-automation-reference-pipeline-config/blob/develop/scripts/update-reference-pipeline.sh) directory.
 
 ### Structure
@@ -356,7 +356,7 @@ an input with a modified input for use with tasks later in that job.
 
 In the following example, `prepare-tasks-with-secrets` takes in the
 `platform-automation-tasks` input and modifies it for the `download-product`
-task. For a more detailed explanation see [Secrets Handling](../concepts/secrets-handling.md).
+task. For a more detailed explanation see [Secrets Handling](../concepts/secrets-handling.html).
 
 ```yaml
 - name: configure-director
