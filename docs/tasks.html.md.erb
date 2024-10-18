@@ -281,7 +281,7 @@ when automating the [configure-product](#configure-product)/[apply-changes](#app
 ### <a id='collect-telemetry'></a>collect-telemetry
 
 Collects foundation information
-using the [Tanzu Telemetry for Tanzu Operations Manager](https://docs.vmware.com/en/Tanzu-Telemetry-for-Ops-Manager/index.html) tool.
+using the [Tanzu Telemetry for Tanzu Operations Manager](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform-services/telemetry-for-tanzu/2-2/telemetry-tanzu/index.html) tool.
 
 This task requires the `telemetry-collector-binary` as an input.
 The binary is available on the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Telemetry%20for%20VMware%20Tanzu%20%5BVMs%5D);
@@ -402,7 +402,7 @@ and [configure-saml-authentication](#configure-saml-authentication) to configure
 ```
 
 For more details about using LDAP,
-see [Tanzu Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html#ldap).
+see [Tanzu Operations Manager documentation](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/pcf-interface.html#ldap).
 
 For details about the config file expected in the `config` input,
 please see [Generating an Auth file](./how-to-guides/configuring-auth.html).
@@ -444,7 +444,7 @@ It is recommended to use this task in the initial setup of the Tanzu Operations 
 Configures an individual, staged product with settings from a config file.
 
 Not to be confused with Tanzu Operations Manager's
-built-in [import](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-restore-pcf-bbr.html#deploy-import),
+built-in [import](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/install-backup-restore-restore-pcf-bbr.html#deploy-import),
 which reads all deployed products and configurations from a single opaque file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
@@ -561,7 +561,7 @@ The UI will have a browser based login flow.
 The CLI will require `client-id` and `client-secret` as it cannot do a browser login flow.
 
 For more details on using SAML,
-see [Tanzu Operations Manager documentation](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/opsguide-config-rbac.html#enable-saml).
+see [Tanzu Operations Manager documentation](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/opsguide-config-rbac.html#enable-saml).
 
 For details on the config file expected in the `config` input,
 please see [Generating an Auth file](./how-to-guides/configuring-auth.html).
@@ -903,7 +903,7 @@ This task will automatically download and inject the winfs for pas-windows.</p>
 <p class="note caution">
 This task cannot download the stemcell for pas-windows on vSphere.
 To build this stemcell manually, see
-<a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows stemcell using stembuild</a>
+<a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/6-0/tpcf/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows stemcell using stembuild</a>
 in the VMware Tanzu Application Service documentation.</p>
 
 <p class="note">
@@ -1514,7 +1514,7 @@ Staged a product to the Tanzu Operations Manager specified in the config file.
 Downloads the configuration for a product from Tanzu Operations Manager.
 
 This is not to be confused with Tanzu Operations Manager's
-built-in [export](https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-backup-restore-backup-pcf-bbr.html#export),
+built-in [export](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/install-backup-restore-backup-pcf-bbr.html#export),
 which puts all deployed products and configurations into a single file,
 intended for import as part of backup/restore and upgrade lifecycle processes.
 
