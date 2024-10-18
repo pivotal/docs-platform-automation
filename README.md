@@ -6,10 +6,10 @@ This is the download source for
 available from the Broadcom Support portal.
 
 The production docs are here:
-https://docs.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.1/vmware-automation-toolkit/GUID-docs-index.html
+https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/platform-automation-toolkit-for-tanzu/5-1/vmware-automation-toolkit/docs-index.html
 
 There is a staging copy here:
-https://docs-staging.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.1/vmware-automation-toolkit/GUID-docs-index.html
+https://author-techdocs2-prod.adobecqms.net/content/broadcom/techdocs/us/en/vmware-tanzu/platform/platform-automation-toolkit-for-tanzu/5-1/vmware-automation-toolkit/docs-index.html
 
 # Usage
 
