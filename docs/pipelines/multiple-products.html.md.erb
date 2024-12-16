@@ -32,9 +32,7 @@ the lifecycle management of the Tanzu Operations Manager VM.
 a product configuration. This config is used to deploy a new Tanzu Operations Manager director, or to update an existing one.
 * A set of valid [product-configuration](../how-to-guides/adding-a-product.html) files: Each product configuration is a YAML file that contains the properties
 necessary to configure a Tanzu Operations Manager product using the `om` tool. This can be used during install or update.
-* (Optional) A working [CredHub](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/6-0/tpcf/credhub-index.html) setup with its own UAA client and secret.
-
-<!-- https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/credhub-index.html -->
+* (Optional) A working [CredHub](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/10-0/tpcf/credhub-index.html) setup with its own UAA client and secret.
 
   <p class="note">
   Ensure that products have been procured from the Broadcom Support portal using the information in
@@ -43,7 +41,7 @@ necessary to configure a Tanzu Operations Manager product using the `om` tool. T
 ## Installing VMware Tanzu Operations Manager and multiple products
 
 The pipeline shows how to compose the tasks
-to install Tanzu Operations Manager and the Tanzu Application Service and Healthwatch products.
+to install Tanzu Operations Manager and the Tanzu Platform for Cloud Foundry and Healthwatch products.
 Its dependencies are coming from a trusted git repository,
 which can be retrieved as shown in [Retrieving external dependencies](../pipelines/resources.html).
 

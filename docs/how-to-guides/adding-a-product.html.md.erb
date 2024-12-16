@@ -35,12 +35,12 @@ either by changing the example YAML or your pipeline.
 
 ## Download, upload, and stage product to Tanzu Operations Manager
 
-The instructions and example in the following add the [VMware Tanzu Application Service for VMs](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs) product.
+The instructions and example in the following add the [VMware Tanzu Platform for Cloud Foundry](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry) product.
 
 ### Download
 
 Before setting the pipeline, create a config file for [`download-product`](../tasks.html#download-product)
-to download Tanzu Application Service from the Broadcom Support portal.
+to download Tanzu Platform for Cloud Foundry from the Broadcom Support portal.
 
 Create a `download-tas.yml` file for the IaaS you are using.
 
@@ -99,7 +99,7 @@ you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` fil
 
     ```bash
     git add pipeline.yml
-    git commit -m 'download TAS and its stemcell'
+    git commit -m 'download TPCF and its stemcell'
     ```
 
 2. Now, set the pipeline
@@ -213,9 +213,7 @@ see <a href="#config-template">Config template</a>.
 ### Pulling Configuration from Tanzu Operations Manager
 
 Configure the product _manually_ according to the product's installation instructions.
-Use the installation instructions in the [VMware Tanzu Application Service documentation](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/6-0/tpcf/toc-installing-index.html).
-
-<!-- https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/toc-installing-index.html -->
+Use the installation instructions in the [VMware Tanzu Platform for Cloud Foundry documentation](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/10-0/tpcf/toc-installing-index.html).
 
 After the product is fully configured, apply the changes (**Apply Changes**) in the Tanzu Operations Manager UI,
 and then continue this guide.
@@ -241,7 +239,7 @@ Most products will contain the following top-level keys:
 The command can be run directly using Docker:
 1. Download the image to our local workstation.
 1. Import the image into Docker.
-2. Run `staged-config` for the [Tanzu Application Service](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/6-0/tpcf/toc-installing-index.html) product.
+2. Run `staged-config` for the [Tanzu Platform for Cloud Foundry](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/10-0/tpcf/toc-installing-index.html) product.
 For more information, see [Running commands locally](./running-commands-locally.html).
 
 To pull the configuration from Tanzu Operations Manager:
@@ -274,7 +272,7 @@ To pull the configuration from Tanzu Operations Manager:
 
     `p-bosh` is the name of the director.
     As `cf` is the only other product on our Tanzu Operations Manager,
-    we can safely assume that this is the product name for [Tanzu Application Service](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs).
+    we can safely assume that this is the product name for [Tanzu Platform for Cloud Foundry](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry).
 
 4. Using the product name `cf`,
 extract the current configuration from Tanzu Operations Manager.
@@ -518,7 +516,7 @@ to have a configure-product step.
             CONFIG_FILE: tas-config.yml
     ```
 
-    This new job will configure the TAS product
+    This new job will configure the Tanzu Platform for Cloud Foundry product
     with the config file we previously created.
 
 2. Add an `apply-changes` job
@@ -626,7 +624,7 @@ outlined in these examples is `config-template`.
 from a given tile or pivnet slug.
 
 This section assumes that you are adding
-[TAS for VMs](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs),
+[Tanzu Platform for Cloud FOundry](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry),
 as in the procedure above.
 
 #### Generate the config template directory
@@ -740,7 +738,7 @@ For more information on BOSH VM Extensions, see [Creating a director config file
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
 
-So, to enable TCP routing in Tanzu Application Service, add `-o features/tcp_routing-enable.yml`.
+So, to enable TCP routing in Tanzu Platform for Cloud Foundry, add `-o features/tcp_routing-enable.yml`.
 For the rest of this guide, the vars for this feature
 are referred to as `feature-vars.yml`.
 If you run your complete command, you should again get a list of any newly-required variables.
@@ -796,7 +794,7 @@ There are two recommended ways to support multiple foundation workflows:
 
 This section explains how to support multiple foundations using ops files.
 
-Starting with an incomplete [Tanzu Application Service](https://support.broadcom.com/group/ecx/productdownloads?subfamily=VMware%20Tanzu%20Application%20Service%20for%20VMs) config from **vSphere** as an example:
+Starting with an incomplete [Tanzu Platform for Cloud Foundry](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry) config from **vSphere** as an example:
 
 <%= partial "cf-partial-config" %>
 
@@ -818,7 +816,7 @@ load requirements, the values in `resource-config` can also be edited using
       value: unique.foundation.one.domain
     ```
 
-2. To test that the ops file works in your `base.yml`, do this locally using `bosh int`:
+1. To test that the ops file works in your `base.yml`, do this locally using `bosh int`:
 
     ```bash
     bosh int base.yml -o replace-domain.yml
