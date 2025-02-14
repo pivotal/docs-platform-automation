@@ -477,7 +477,7 @@ jobs:
       trigger: true
       params:
         globs:
-        - 'bbr-[^s3]*linux*[^.sha256]'
+        - 'bbr-[^s3]*-linux-amd64'
     - get: winfs-injector
       trigger: true
       params:
