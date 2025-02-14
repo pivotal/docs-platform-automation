@@ -1521,7 +1521,7 @@ jobs:
         file: platform-automation-tasks/tasks/backup-director.yml
         params:
           ENV_FILE: foundations/config/env.yml
-          OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
+          OPSMAN_SSH_PRIVATE_KEY: ((reference-pipeline/ops_manager_ssh_private_key))
       - task: check-backup-director
         image: platform-automation-image
         config:
@@ -1549,7 +1549,7 @@ jobs:
           CONFIG_FILE: ci/config/runtime-config.yml
           NAME: my-runtime-config
           BOSH_ENV_PREFIX: OPSMAN
-          OPSMAN_SSH_PRIVATE_KEY: ((vsphere_private_ssh_key))
+          OPSMAN_SSH_PRIVATE_KEY: ((reference-pipeline/ops_manager_ssh_private_key))
 
 #! bump jobs
 - name: bump-previous-versions-trigger
