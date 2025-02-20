@@ -42,15 +42,15 @@ resources:
 - name: ci-image
   type: registry-image
   source:
-    password: ((docker.password))
-    repository: ((docker.ci-repository))
+    password: ((platform-automation/main/docker.password))
+    repository: ((platform-automation/main/docker.ci-repository))
     tag: testing
-    username: ((docker.username))
+    username: ((platform-automation/main/docker.username))
 - name: docs-platform-automation
   type: git
   source:
     branch: develop
-    private_key: ((platform_automation_docs.private_key))
+    private_key: ((platform-automation/main/platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:
       - docs
@@ -58,105 +58,105 @@ resources:
   type: git
   source:
     branch: develop
-    private_key: ((platform_automation_docs.private_key))
+    private_key: ((platform-automation/main/platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
 - name: pas-windows
   type: pivnet
   source:
-    api_token: ((pivnet_token))
+    api_token: ((platform-automation/main.pivnet_token))
     product_slug: pas-windows
     product_version: 4\.[0-9]+.\d+(?:\+LTS-T)?$
     sort_by: semver
 - name: opsman-image
   type: pivnet
   source:
-    api_token: ((pivnet_token))
+    api_token: ((platform-automation/main.pivnet_token))
     product_slug: ops-manager
     product_version: 2\.[0-9]+\.[0-9]+$
     sort_by: semver
 - name: opsman-image-2.9.42
   type: pivnet
   source:
-    api_token: ((pivnet_token))
+    api_token: ((platform-automation/main.pivnet_token))
     product_slug: ops-manager
     product_version: 2\.9\.42$
 - name: opsman-image-2.9.x
   type: pivnet
   source:
-    api_token: ((pivnet_token))
+    api_token: ((platform-automation/main.pivnet_token))
     product_slug: ops-manager
     product_version: 2\.9\.[0-9]+$
     sort_by: semver
 - name: packages-image
   type: registry-image
   source:
-    password: ((docker.password))
+    password: ((platform-automation/main/docker.password))
     repository: internalpcfplatformautomation/platform-automation
     tag: packages
-    username: ((docker.username))
+    username: ((platform-automation/main/docker.username))
 - name: packages-image-oci
   type: registry-image
   source:
-    password: ((docker.password))
+    password: ((platform-automation/main/docker.password))
     repository: internalpcfplatformautomation/platform-automation
     tag: packages
-    username: ((docker.username))
+    username: ((platform-automation/main/docker.username))
 - name: binaries-image
   type: registry-image
   source:
-    password: ((docker.password))
+    password: ((platform-automation/main/docker.password))
     repository: internalpcfplatformautomation/platform-automation
     tag: testing
-    username: ((docker.username))
+    username: ((platform-automation/main/docker.username))
 - name: vsphere-only-image
   type: registry-image
   source:
-    password: ((docker.password))
+    password: ((platform-automation/main/docker.password))
     repository: internalpcfplatformautomation/platform-automation
     tag: vsphere-only
-    username: ((docker.username))
+    username: ((platform-automation/main/docker.username))
 - name: osl
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_(.*)_GA.txt
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: odp
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: VMware-Tanzu-platform-automation-toolkit-(.*)-ODP.tar.gz
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-image-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: platform-automation-image-(.*).tgz
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-image-s3-vsphere
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: vsphere-platform-automation-image-(.*).tar.gz
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: image-tanzunet-dev
   type: registry-image
   source:
     repository: gcr.io/cf-norm-ci/platform-automation/platform-automation-image
     username: _json_key
-    password: ((gcr.service_account))
+    password: ((platform-automation/main/ci/gcr.service_account))
     pre_releases: true
     tag: develop
 - name: image-tanzunet-dev-vsphere
@@ -164,83 +164,83 @@ resources:
   source:
     repository: gcr.io/cf-norm-ci/platform-automation/vsphere-platform-automation-image
     username: _json_key
-    password: ((gcr.service_account))
+    password: ((platform-automation/main/ci/gcr.service_account))
     pre_releases: true
     tag: develop
 - name: rc-tasks-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: platform-automation-tasks-(.*).zip
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-image-receipt-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: image-receipt-(.*)
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-vsphere-image-receipt-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: vsphere/image-receipt-(.*)
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: osl-validated-image-receipt-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: image-receipt-(.*)
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
   version:
     path: image-receipt-5.2.0-rc.131
 - name: image-receipt-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: image-receipt-(.*)
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: platform-automation-tasks-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.pivnet_products))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.pivnet_products))
     regexp: platform-automation-tasks-(.*).zip
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: platform-automation-image-s3
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.pivnet_products))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.pivnet_products))
     regexp: platform-automation-image-(.*).tgz
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: version
   type: semver-with-arn
   source:
     driver: s3
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    assume_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
-    region_name: ((s3_with_role.region_name))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    assume_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
     key: version
     initial_version: 0.0.1-rc.1
 - name: daily
@@ -261,8 +261,8 @@ resources:
   type: git
   source:
     branch: main
-    private_key: ((platform_automation_deployments_ghe_deploy_key.private_key))
-    uri: git@github.com:pivotal/platform-automation-deployments
+    private_key: ((platform-automation/main/platform_automation_deployments_ghe_deploy_key.private_key))
+    uri: ((platform-automation/main.platform_automation_deployments_ghe_uri))
 - name: paving
   type: git
   source:
@@ -271,37 +271,37 @@ resources:
 - name: govc-cli
   type: github-release
   source:
-    access_token: ((om.access_token))
+    access_token: ((platform-automation/main/om.access_token))
     owner: vmware
     repository: govmomi
 - name: credhub-cli
   type: github-release
   source:
-    access_token: ((om.access_token))
+    access_token: ((platform-automation/main/om.access_token))
     owner: cloudfoundry-incubator
     repository: credhub-cli
 - name: bbr-cli
   type: github-release
   source:
-    access_token: ((om.access_token))
+    access_token: ((platform-automation/main/om.access_token))
     owner: cloudfoundry-incubator
     repository: bosh-backup-and-restore
 - name: bosh-cli
   type: github-release
   source:
-    access_token: ((om.access_token))
+    access_token: ((platform-automation/main/om.access_token))
     owner: cloudfoundry
     repository: bosh-cli
 - name: winfs-injector
   type: github-release
   source:
-    access_token: ((om.access_token))
+    access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
     repository: winfs-injector
 - name: isolation-segment-replicator
   type: github-release
   source:
-    access_token: ((om.access_token))
+    access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
     repository: replicator
 - name: os-conf-release
@@ -313,57 +313,57 @@ resources:
   type: git
   source:
     branch: #@ version.number
-    private_key: ((platform_automation_docs.private_key))
+    private_key: ((platform-automation/main/platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
 - name: #@ "platform-automation-" + version.number
   type: git
   source:
     branch: #@ version.number
-    private_key: ((platform_automation_docs.private_key))
+    private_key: ((platform-automation/main/platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
 - name: #@ "rc-artifacts-s3-" + version.number
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate_artifacts))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate_artifacts))
     regexp: #@ "artifacts-(" + version.regex + ").tar.gz"
-    region_name: ((s3_with_role.region_name))
-    secret_access_key: ((s3_with_role.secret_access_key))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
 - name: #@ "version-" + version.number
   type: semver-with-arn
   source:
     driver: s3
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    assume_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
-    region_name: ((s3_with_role.region_name))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    assume_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
     initial_version: 0.0.1-rc.1
     key: #@ "version-" + version.number
 #@ end
 - name: rc-artifacts-s3-v5
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate_artifacts))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate_artifacts))
     regexp: artifacts-(5\..*\.0).tar.gz
-    region_name: ((s3_with_role.region_name))
-    secret_access_key: ((s3_with_role.secret_access_key))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
 - name: binaries-table
   type: s3-with-arn
   source:
-    access_key_id: ((s3_with_role.access_key_id))
-    secret_access_key: ((s3_with_role.secret_access_key))
-    aws_role_arn: ((s3_with_role.role_arn))
-    bucket: ((s3_with_role.buckets.release_candidate))
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: bump-image-cli-versions-(.*).md
-    region_name: ((s3_with_role.region_name))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: om-release
   type: github-release
   source:
-    access_token: ((om.access_token))
+    access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
     repository: om
 - name: om-version
@@ -374,7 +374,7 @@ resources:
     uri: git@github.com:pivotal-cf/om.git
     branch: main
     file: version
-    private_key: ((om.private_key))
+    private_key: ((platform-automation/main/om.private_key))
 - name: om
   type: git
   source:
@@ -384,7 +384,7 @@ resources:
     - version
     - README.md
     - docs
-    private_key: ((om.private_key))
+    private_key: ((platform-automation/main/om.private_key))
     fetch_tags: false
 
 resource_types:
@@ -396,7 +396,7 @@ resource_types:
 - name: buildinfo
   type: registry-image
   source:
-    repository: ((docker.ci-repository))
+    repository: ((platform-automation/main/docker.ci-repository))
     tag: buildinfo
 - name: s3-with-arn
   type: docker-image
@@ -445,7 +445,7 @@ jobs:
   - get: docs-platform-automation
   - task: download-product
     params:
-      OM_pivnet_token: ((pivnet_token))
+      OM_pivnet_token: ((platform-automation/main.pivnet_token))
     file: docs-platform-automation/ci/tasks/download-product.yml
   - task: test
     attempts: 3
@@ -644,7 +644,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((docker.ci-repository))
+          repository: ((platform-automation/main/docker.ci-repository))
           tag: testing
       platform: linux
       outputs:
@@ -801,9 +801,9 @@ jobs:
     params:
       IAAS: gcp
       DEPLOYMENT_NAME: ci-upgrade
-      OM_PASSWORD: ((opsman-login.password))
-      OM_USERNAME: ((opsman-login.username))
-      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+      OM_PASSWORD: ((platform-automation/main/opsman-login.password))
+      OM_USERNAME: ((platform-automation/main/opsman-login.username))
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
     ensure:
       put: deployments
       params:
@@ -840,7 +840,7 @@ jobs:
           file: platform-automation-tasks/tasks/make-git-commit.yml
           params:
             GIT_AUTHOR_NAME: platform-automation-bot
-            GIT_AUTHOR_EMAIL: ((platform-automation-email))
+            GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
             COMMIT_MESSAGE: "create-vm update state file for ci-upgrade"
             FILE_SOURCE_PATH: state.yml
             FILE_DESTINATION_PATH: ci-upgrade/state.yml
@@ -1003,7 +1003,7 @@ jobs:
         file: platform-automation-tasks/tasks/make-git-commit.yml
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
-          GIT_AUTHOR_EMAIL: ((platform-automation-email))
+          GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
           COMMIT_MESSAGE: "delete-vm update state file for ci-upgrade"
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: ci-upgrade/state.yml
@@ -1089,9 +1089,9 @@ jobs:
     params:
       IAAS: #@ paving_dir
       DEPLOYMENT_NAME: #@ env_name
-      OM_PASSWORD: ((opsman-login.password))
-      OM_USERNAME: ((opsman-login.username))
-      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+      OM_PASSWORD: ((platform-automation/main/opsman-login.password))
+      OM_USERNAME: ((platform-automation/main/opsman-login.username))
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
     ensure:
       put: deployments
       tags: #@ tags
@@ -1133,7 +1133,7 @@ jobs:
         file: platform-automation-tasks/tasks/make-git-commit.yml
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
-          GIT_AUTHOR_EMAIL: ((platform-automation-email))
+          GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
           COMMIT_MESSAGE: #@ "create-vm update state file for " + env_name
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
@@ -1219,7 +1219,7 @@ jobs:
         file: platform-automation-tasks/tasks/make-git-commit.yml
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
-          GIT_AUTHOR_EMAIL: ((platform-automation-email))
+          GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
           COMMIT_MESSAGE: #@ "delete-vm update state file for " + env_name
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
@@ -1309,7 +1309,7 @@ jobs:
           image: platform-automation-image
           params:
             GIT_AUTHOR_NAME: platform-automation-bot
-            GIT_AUTHOR_EMAIL: ((platform-automation-email))
+            GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
             COMMIT_MESSAGE: #@ "delete-vm update state file for " + env_name
             FILE_SOURCE_PATH: state.yml
             FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
@@ -1328,7 +1328,7 @@ jobs:
       params:
         IAAS: #@ paving_dir
         DEPLOYMENT_NAME: #@ env_name
-        PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+        PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
       ensure:
         put: deployments
         tags: #@ tags
@@ -1340,18 +1340,18 @@ jobs:
     file: docs-platform-automation/ci/tasks/leftovers.yml
     params:
       BBL_IAAS: #@ paving_dir
-      BBL_AWS_ACCESS_KEY_ID: ((s3_with_role.access_key_id))
-      BBL_AWS_SECRET_ACCESS_KEY: ((s3_with_role.secret_access_key))
-      BBL_AWS_ASSUME_ROLE: ((s3_with_role.role_arn))
-      BBL_AWS_REGION: ((s3_with_role.region_name))
-      BBL_AZURE_CLIENT_ID: ((azure.client_id))
-      BBL_AZURE_CLIENT_SECRET: ((azure.client_secret))
-      BBL_AZURE_TENANT_ID: ((azure.tenant_id))
-      BBL_AZURE_SUBSCRIPTION_ID: ((azure.subscription_id))
-      BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
-      BBL_NSXT_PASSWORD: ((nsx.password))
-      BBL_NSXT_USERNAME: ((nsx.username))
-      BBL_NSXT_MANAGER_HOST: ((nsx.url))
+      BBL_AWS_ACCESS_KEY_ID: ((platform-automation/main/s3_with_role.access_key_id))
+      BBL_AWS_SECRET_ACCESS_KEY: ((platform-automation/main/s3_with_role.secret_access_key))
+      BBL_AWS_ASSUME_ROLE: ((platform-automation/main/s3_with_role.role_arn))
+      BBL_AWS_REGION: ((platform-automation/main/s3_with_role.region_name))
+      BBL_AZURE_CLIENT_ID: ((platform-automation/main/azure.client_id))
+      BBL_AZURE_CLIENT_SECRET: ((platform-automation/main/azure.client_secret))
+      BBL_AZURE_TENANT_ID: ((platform-automation/main/azure.tenant_id))
+      BBL_AZURE_SUBSCRIPTION_ID: ((platform-automation/main/azure.subscription_id))
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((platform-automation/main/gcp.service_account))
+      BBL_NSXT_PASSWORD: ((platform-automation/main/nsx.password))
+      BBL_NSXT_USERNAME: ((platform-automation/main/nsx.username))
+      BBL_NSXT_MANAGER_HOST: ((platform-automation/main/nsx.url))
       FILTER: #@ env_name
       DRY_RUN: false
       NO_CONFIRM: true
@@ -1360,7 +1360,7 @@ jobs:
     file: docs-platform-automation/ci/tasks/delete-state-file.yml
     params:
       DEPLOYMENT: #@ env_name
-      PLATFORM_AUTOMATION_EMAIL: ((platform-automation-email))
+      PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
     ensure:
       put: deployments
       tags: #@ tags
@@ -1378,10 +1378,10 @@ jobs:
   - task: check-for-secrets
     file: docs-platform-automation/ci/tasks/secrets-verifier/task.yml
     params:
-      FLY_USERNAME: ((fly.username))
-      FLY_PASSWORD: ((fly.password))
-      FLY_TARGET: ((fly.target))
-      SECRET_ALLOWLIST: ((secret-allowlist))
+      FLY_USERNAME: ((platform-automation/main/fly.username))
+      FLY_PASSWORD: ((platform-automation/main/fly.password))
+      FLY_TARGET: ((platform-automation/main/fly.target))
+      SECRET_ALLOWLIST: ((platform-automation/main/ci.secret-allowlist))
 - name: additional-task-testing
   serial: true
   plan:
@@ -1417,10 +1417,10 @@ jobs:
     output_mapping:
       interpolated-files: env
     params:
-      CREDHUB_CLIENT: ((credhub-client))
-      CREDHUB_SECRET: ((credhub-secret))
-      CREDHUB_SERVER: ((credhub-server))
-      CREDHUB_CA_CERT: ((credhub-ca-cert))
+      CREDHUB_CLIENT: ((platform-automation/main.credhub-client))
+      CREDHUB_SECRET: ((platform-automation/main.credhub-secret))
+      CREDHUB_SERVER: ((platform-automation/main.credhub-server))
+      CREDHUB_CA_CERT: ((platform-automation/main.credhub-ca-cert))
       PREFIX: /concourse/main/reference-pipeline
       INTERPOLATION_PATHS: .
   - in_parallel:
@@ -1521,7 +1521,7 @@ jobs:
         file: platform-automation-tasks/tasks/backup-director.yml
         params:
           ENV_FILE: foundations/config/env.yml
-          OPSMAN_SSH_PRIVATE_KEY: ((reference-pipeline/ops_manager_ssh_private_key))
+          OPSMAN_SSH_PRIVATE_KEY: ((platform-automation/main/reference-pipeline.ops_manager_ssh_private_key))
       - task: check-backup-director
         image: platform-automation-image
         config:
@@ -1549,7 +1549,7 @@ jobs:
           CONFIG_FILE: ci/config/runtime-config.yml
           NAME: my-runtime-config
           BOSH_ENV_PREFIX: OPSMAN
-          OPSMAN_SSH_PRIVATE_KEY: ((reference-pipeline/ops_manager_ssh_private_key))
+          OPSMAN_SSH_PRIVATE_KEY: ((platform-automation/main/reference-pipeline.ops_manager_ssh_private_key))
 
 #! bump jobs
 - name: bump-previous-versions-trigger
@@ -1593,7 +1593,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((docker.ci-repository))
+          repository: ((platform-automation/main/docker.ci-repository))
           tag: testing
       platform: linux
       outputs:
@@ -1639,7 +1639,7 @@ jobs:
   - task: create-release-notes-for-patch
     file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-release-notes.yml
     params:
-      GITHUB_SSH_KEY: ((platform_automation_docs.private_key))
+      GITHUB_SSH_KEY: ((platform-automation/main/platform_automation_docs.private_key))
   - task: create-release-file
     file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
@@ -1715,7 +1715,7 @@ jobs:
   - task: build
     file: om/ci/tasks/build/task.yml
     params:
-      GITHUB_TOKEN: ((om.access_token))
+      GITHUB_TOKEN: ((platform-automation/main/om.access_token))
   - put: om-version
     params:
       bump: #@ bump
