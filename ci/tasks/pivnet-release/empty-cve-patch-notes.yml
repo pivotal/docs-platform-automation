@@ -3,7 +3,7 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: ((docker.ci-repository))
+    repository: ((platform-automation/main/docker.ci-repository))
     tag: testing
 
 inputs:

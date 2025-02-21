@@ -12,12 +12,12 @@ outputs:
 caches:
 - path: go
 params:
-  TEST_GCP_SERVICE_ACCOUNT_KEY: ((gcp.service_account))
-  TEST_GCP_PROJECT_ID: ((gcp.project_id))
-  TEST_AZURE_STORAGE_ACCOUNT: ((azure.storage.account))
-  TEST_AZURE_STORAGE_KEY: ((azure.storage.key))
-  TEST_AZURE_CONTAINER_NAME: ((azure.storage.container))
-  TEST_PIVNET_TOKEN: ((pivnet_token))
+  TEST_GCP_SERVICE_ACCOUNT_KEY: ((platform-automation/main/gcp.service_account))
+  TEST_GCP_PROJECT_ID: ((platform-automation/main/gcp.project_id))
+  TEST_AZURE_STORAGE_ACCOUNT: ((platform-automation/main/azure.storage.account))
+  TEST_AZURE_STORAGE_KEY: ((platform-automation/main/azure.storage.key))
+  TEST_AZURE_CONTAINER_NAME: ((platform-automation/main/azure.storage.container))
+  TEST_PIVNET_TOKEN: ((platform-automation/main.pivnet_token))
 run:
   path: "/bin/bash"
   args:
