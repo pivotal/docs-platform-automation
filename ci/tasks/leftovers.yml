@@ -3,6 +3,8 @@ image_resource:
   type: registry-image
   source:
     repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
     tag: testing
 params:
   # A list of IAAS specific authentication and targeting params.
