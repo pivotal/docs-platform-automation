@@ -513,7 +513,9 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: vito/oci-build-task
+          repository: ((concourse-team/dev_image_registry.url))/vito/oci-build-task
+          username: ((concourse-team/dev_image_registry.username))
+          password: ((concourse-team/dev_image_registry.password))
       params:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
         IMAGE_ARG_base_image: packages-image-oci/image.tar

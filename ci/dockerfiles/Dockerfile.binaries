@@ -1,4 +1,4 @@
-ARG base_image=internalpcfplatformautomation/platform-automation:packages
+ARG base_image=tas-operability-docker-virtual.usw1.packages.broadcom.com/internalpcfplatformautomation/platform-automation:packages
 FROM ${base_image}
 
 # copy files directly from the inputs/resource of concourse
