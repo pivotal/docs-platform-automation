@@ -1,4 +1,5 @@
-FROM paketobuildpacks/builder-jammy-buildpackless-tiny:0.0.79
+ARG base_image=tas-operability-docker-virtual.usw1.packages.broadcom.com/paketobuildpacks/builder-jammy-buildpackless-tiny:0.0.79
+FROM ${base_image}
 
 # Install necessary binary
 USER root
