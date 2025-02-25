@@ -9,7 +9,9 @@ outputs:
 image_resource:
   type: registry-image
   source:
-    repository: ((platform-automation/main/docker.ci-repository))
+    repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
     tag: testing
 params:
   IAAS:
