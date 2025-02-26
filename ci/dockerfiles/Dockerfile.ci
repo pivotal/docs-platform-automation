@@ -1,16 +1,6 @@
 ARG base_image=tas-operability-docker-virtual.usw1.packages.broadcom.com/golang:latest
 
-FROM scratch AS builder
-ARG REGISTRY_USERNAME
-ARG REGISTRY_PASSWORD
-ARG REGISTRY_URL
-
-RUN --mount=type=secret,id=registry-auth echo "$REGISTRY_USERNAME:$REGISTRY_PASSWORD" | base64 > /tmp/auth.txt \
-    && mkdir -p /root/.docker \
-    && echo "{\"auths\":{\"${REGISTRY_URL}":{\"auth\":\"$(cat /tmp/auth.txt)\"}}}" > /root/.docker/config.json \
-    && rm /tmp/auth.txt
-
-FROM $base_image
+FROM ${base_image}
 
 RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils
 
