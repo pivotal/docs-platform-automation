@@ -1,4 +1,4 @@
-FROM ${jammy_image}
+FROM ${base_image}
 
 # Install necessary binary
 USER root
