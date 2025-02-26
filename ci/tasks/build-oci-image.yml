@@ -13,6 +13,8 @@ outputs:
 - name: image
 params:
   DOCKERFILE:
-
+  REGISTRY_USERNAME: ((concourse-team/dev_image_registry.username))
+  REGISTRY_PASSWORD: ((concourse-team/dev_image_registry.password))
+  REGISTRY_URL: ((concourse-team/dev_image_registry.url))
 run:
   path: build
