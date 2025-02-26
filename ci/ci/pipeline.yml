@@ -400,8 +400,8 @@ resources:
   check_every: 4h
   icon: language-go
   source:
-    repository: ((concourse-team/dev_image_registry.url))/builder-jammy-buildpackless-tiny:0.0.79
-    tag: latest
+    repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
+    tag: 0.0.79
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 
