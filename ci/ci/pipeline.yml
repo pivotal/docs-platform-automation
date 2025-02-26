@@ -441,11 +441,11 @@ jobs:
   - task: build-ci-image
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
-    inputs:
-    - name: golang-image
+    input_mapping:
+       base-image: golang-image    
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
-      IMAGE_ARG_base_image: golang-image/image.tar
+      IMAGE_ARG_base_image: base-image/image.tar
   - put: ci-image
     params: { image: image/image.tar }
     get_params: { skip_download: true }
@@ -463,11 +463,11 @@ jobs:
   - task: build-packages-image
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
-    inputs:
-    - name: builder-jammy-buildpackless-tiny-image
+    input_mapping:
+       base-image: builder-jammy-buildpackless-tiny-image   
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
-      IMAGE_ARG_base_image: builder-jammy-buildpackless-tiny-image/image.tar
+      IMAGE_ARG_base_image: base-image/image.tar
   - put: packages-image
     params: { image: image/image.tar }
 

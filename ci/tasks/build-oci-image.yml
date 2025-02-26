@@ -9,6 +9,7 @@ image_resource:
 
 inputs:
 - name: docs-platform-automation
+- name: base-image
 outputs:
 - name: image
 params:
