@@ -1,3 +1,5 @@
+ARG base_image=tas-operability-docker-virtual.usw1.packages.broadcom.com/golang:latest
+
 FROM scratch AS builder
 ARG REGISTRY_USERNAME
 ARG REGISTRY_PASSWORD
@@ -7,8 +9,6 @@ RUN --mount=type=secret,id=registry-auth echo "$REGISTRY_USERNAME:$REGISTRY_PASS
     && mkdir -p /root/.docker \
     && echo "{\"auths\":{\"${REGISTRY_URL}":{\"auth\":\"$(cat /tmp/auth.txt)\"}}}" > /root/.docker/config.json \
     && rm /tmp/auth.txt
-
-ARG base_image=tas-operability-docker-virtual.usw1.packages.broadcom.com/golang:latest
 
 FROM $base_image
 
