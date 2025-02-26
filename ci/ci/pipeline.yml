@@ -395,6 +395,15 @@ resources:
     tag: latest
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
+- name: builder-jammy-buildpackless-tiny-image
+  type: registry-image
+  check_every: 4h
+  icon: language-go
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/builder-jammy-buildpackless-tiny:0.0.79
+    tag: latest
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 
 resource_types:
 - name: pivnet
@@ -443,6 +452,11 @@ jobs:
   - get: daily
     trigger: true
   - get: docs-platform-automation
+  - get: builder-jammy-buildpackless-tiny-image
+    trigger: true
+    attempts: 3
+    params:
+      format: oci
   - task: build-packages-image
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
