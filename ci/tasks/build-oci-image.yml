@@ -9,12 +9,10 @@ image_resource:
 
 inputs:
 - name: docs-platform-automation
-- name: golang-image
 outputs:
 - name: image
 params:
   DOCKERFILE:
-  IMAGE_ARG_base_image: golang-image/image.tar
-  IMAGE_ARG_jammy_image: builder-jammy-buildpackless-tiny-image/image.tar
+  IMAGE_ARG_base_image:
 run:
   path: build
