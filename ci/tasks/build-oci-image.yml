@@ -4,7 +4,6 @@ image_resource:
   type: registry-image
   source:
     repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
-    tag: 0.11.1
     username: ((concourse-team/dev_image_registry.username))                                           
     password: ((concourse-team/dev_image_registry.password))
 
