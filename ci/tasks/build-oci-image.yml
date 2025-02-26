@@ -2,19 +2,20 @@
 platform: linux
 image_resource:
   type: registry-image
+  icon: oci
   source:
-    repository: ((concourse-team/dev_image_registry.url))/vito/oci-build-task
-    username: ((concourse-team/dev_image_registry.username))
+    repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
+    tag: 0.11.1
+    username: ((concourse-team/dev_image_registry.username))                                           
     password: ((concourse-team/dev_image_registry.password))
 
 inputs:
 - name: docs-platform-automation
+- name: golang-image
 outputs:
 - name: image
 params:
   DOCKERFILE:
-  REGISTRY_USERNAME: ((concourse-team/dev_image_registry.username))
-  REGISTRY_PASSWORD: ((concourse-team/dev_image_registry.password))
-  REGISTRY_URL: ((concourse-team/dev_image_registry.url))
+  IMAGE_ARG_base_image: golang-image/image.tar
 run:
   path: build
