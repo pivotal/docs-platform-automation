@@ -442,7 +442,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     input_mapping:
-       base-image: golang-image    
+      base-image: golang-image    
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
       IMAGE_ARG_base_image: base-image/image.tar
@@ -464,7 +464,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     input_mapping:
-       base-image: builder-jammy-buildpackless-tiny-image   
+      base-image: builder-jammy-buildpackless-tiny-image   
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
       IMAGE_ARG_base_image: base-image/image.tar
