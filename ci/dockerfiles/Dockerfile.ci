@@ -1,3 +1,4 @@
+ARG base_image
 FROM ${base_image}
 
 RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils
