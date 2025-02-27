@@ -404,7 +404,14 @@ resources:
     tag: 0.0.79
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
-
+- name: platform-automation-packages-image
+  type: registry-image
+  icon: language-go
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/internalpcfplatformautomation/platform-automation
+    tag: packages
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 resource_types:
 - name: pivnet
   type: registry-image
@@ -542,6 +549,11 @@ jobs:
     file: docs-platform-automation/ci/tasks/rename-om-binary.yml
   - task: build-binaries-image
     privileged: true
+  - get: platform-automation-packages-image
+    trigger: true
+    attempts: 3
+    params:
+      format: oci
     config:
       platform: linux
       image_resource:
@@ -550,9 +562,11 @@ jobs:
           repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
+      input_mapping:
+        base-image: platform-automation-packages-image
       params:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
-        IMAGE_ARG_base_image: packages-image-oci/image.tar
+        IMAGE_ARG_base_image: base-image/image.tar
       inputs:
         - name: bbr-cli
         - name: bosh-cli
@@ -577,7 +591,9 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: vito/oci-build-task
+          repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
+          username: ((concourse-team/dev_image_registry.username))
+          password: ((concourse-team/dev_image_registry.password))
       params:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
         IMAGE_ARG_base_image: binaries-image-oci/image.tar

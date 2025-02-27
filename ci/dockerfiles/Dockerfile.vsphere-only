@@ -1,4 +1,4 @@
-ARG base_image=tas-operability-docker-virtual.usw1.packages.broadcom.com/internalpcfplatformautomation/platform-automation:testing
+ARG base_image
 FROM ${base_image}
 
 # remove azure cli
