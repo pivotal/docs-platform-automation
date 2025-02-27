@@ -404,14 +404,6 @@ resources:
     tag: 0.0.79
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
-- name: platform-automation-packages-image
-  type: registry-image
-  icon: language-go
-  source:
-    repository: ((concourse-team/dev_image_registry.url))/internalpcfplatformautomation/platform-automation
-    tag: packages
-    username: ((concourse-team/dev_image_registry.username))
-    password: ((concourse-team/dev_image_registry.password))
 resource_types:
 - name: pivnet
   type: registry-image
@@ -557,11 +549,9 @@ jobs:
           repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
-      input_mapping:
-        base-image: packages-image-oci
       params:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
-        IMAGE_ARG_base_image: base-image/image.tar
+        IMAGE_ARG_base_image: packages-image-oci/image.tar
       inputs:
         - name: bbr-cli
         - name: bosh-cli
