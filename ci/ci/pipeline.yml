@@ -549,11 +549,6 @@ jobs:
     file: docs-platform-automation/ci/tasks/rename-om-binary.yml
   - task: build-binaries-image
     privileged: true
-  - get: platform-automation-packages-image
-    trigger: true
-    attempts: 3
-    params:
-      format: oci
     config:
       platform: linux
       image_resource:
@@ -563,7 +558,7 @@ jobs:
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
       input_mapping:
-        base-image: platform-automation-packages-image
+        base-image: packages-image-oci
       params:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.binaries
         IMAGE_ARG_base_image: base-image/image.tar
