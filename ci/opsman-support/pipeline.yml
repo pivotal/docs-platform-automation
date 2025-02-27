@@ -5,7 +5,9 @@ resource_types:
 - name: pivnet
   type: registry-image
   source:
-    repository: pivotalcf/pivnet-resource
+    repository: ((concourse-team/dev_image_registry.url))/pivotalcf/pivnet-resource
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
     tag: latest-final
 resources:
   - name: weekly
@@ -70,7 +72,7 @@ resources:
     source:
       api_token: ((platform-automation/main.pivnet_token))
       product_slug: stemcells-ubuntu-xenial
-      product_version: ^97\..*
+      product_version: ^621\..*
 
 jobs:
 #@ for pat_version in pat_versions:
