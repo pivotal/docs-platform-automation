@@ -408,23 +408,31 @@ resource_types:
 - name: pivnet
   type: registry-image
   source:
-    repository: pivotalcf/pivnet-resource
+    repository: ((concourse-team/dev_image_registry.url))/pivotalcf/pivnet-resource
     tag: latest-final
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 - name: buildinfo
   type: registry-image
   source:
-    repository: ((platform-automation/main/docker.ci-repository))
+    repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
     tag: buildinfo
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 - name: s3-with-arn
   type: docker-image
   source:
-    repository: concourse/s3-resource
+    repository:  ((concourse-team/dev_image_registry.url))/concourse/s3-resource
     tag: 1.2.1-ubuntu
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 - name: semver-with-arn
   type: docker-image
   source:
-    repository: concourse/semver-resource
+    repository: ((concourse-team/dev_image_registry.url))/concourse/semver-resource
     tag: 1.6.0-ubuntu
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 
 jobs:
 - name: build-ci-image
@@ -681,8 +689,11 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((platform-automation/main/docker.ci-repository))
+          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))      
           tag: testing
+          username: ((concourse-team/dev_image_registry.username))
+          password: ((concourse-team/dev_image_registry.password))
+          
       platform: linux
       outputs:
       - name: version
@@ -1630,8 +1641,10 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((platform-automation/main/docker.ci-repository))
+          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))      
           tag: testing
+          username: ((concourse-team/dev_image_registry.username))
+          password: ((concourse-team/dev_image_registry.password))
       platform: linux
       outputs:
       - name: version
