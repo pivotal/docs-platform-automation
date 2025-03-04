@@ -1436,8 +1436,6 @@ jobs:
   - in_parallel:
     - get: docs-platform-automation
     - get: os-conf-release
-      version:
-        version: 22.0.0
     - get: docs-platform-automation-reference-pipeline-config
     - get: rc-image-s3-vsphere
     - get: platform-automation-image
