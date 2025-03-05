@@ -2,8 +2,10 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: internalpcfplatformautomation/ci
+    repository: ((concourse-team/dev_image_registry.url))/internalpcfplatformautomation/ci
     tag: testing
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 inputs:
 - name: om
 - name: docs-platform-automation
