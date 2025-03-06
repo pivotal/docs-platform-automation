@@ -4,10 +4,10 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: ((concourse-team/dev_image_registry.url))/internalpcfplatformautomation/ci
+    password: ((platform-automation/main/docker.password))
+    repository: ((platform-automation/main/docker.ci-repository))
     tag: testing
-    username: ((concourse-team/dev_image_registry.username))
-    password: ((concourse-team/dev_image_registry.password))
+    username: ((platform-automation/main/docker.username))
 params:
   OM_pivnet_token:
 run:
