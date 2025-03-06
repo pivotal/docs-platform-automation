@@ -17,7 +17,7 @@ which fly || (
 
 echo "Setting CI pipeline..."
 
-fly -t $TARGET sp -p ci -c <(ytt -f $WORKING_DIR/../ci/) \
+fly -t $TARGET sp -p platform-automation-ci -c <(ytt -f $WORKING_DIR/../ci/) \
   --check-creds
 
 echo "Setting support pipeline..."
