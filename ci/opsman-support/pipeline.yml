@@ -58,7 +58,7 @@ resources:
     source:
       api_token: ((platform-automation/main.pivnet_token))
       product_slug: ops-manager
-      product_version: #@ "^" + opsman_version.replace('.', '\.') + "\.\d+$"
+      product_version: #@ "^" + opsman_version.replace('.', '\.') + "\.\d+" + ("(\+LTS-T)?" if opsman_version == "3.0" else "") + "$"
 
   - name: #@ "example-product-" + opsman_version
     type: s3
