@@ -73,6 +73,13 @@ resources:
       api_token: ((platform-automation/main.pivnet_token))
       product_slug: stemcells-ubuntu-xenial
       product_version: ^621\..*
+  
+  - name: stemcells-ubuntu-jammy
+    type: pivnet
+    source:
+      api_token: ((platform-automation/main.pivnet_token))
+      product_slug: stemcells-ubuntu-jammy
+      product_version: ^1\..*
 
 jobs:
 #@ for pat_version in pat_versions:
@@ -86,6 +93,12 @@ jobs:
       params:
         globs:
           - '*google*.tgz'
+    #@ if opsman_version == "3.0":
+    - get: stemcells-ubuntu-jammy
+      params:
+        globs:
+          - '*google*.tgz'
+    #@ end
     - get: #@ "example-product-" + opsman_version
     - get: #@ "opsman-image-" + opsman_version
       params:
@@ -222,6 +235,9 @@ jobs:
       product: #@ "example-product-" + opsman_version
       env: deployments
       config: deployments
+      #@ if opsman_version == "3.0":
+      stemcell: stemcells-ubuntu-jammy
+      #@ end
     params:
       ENV_FILE: ci-support/env.yml
       CONFIG_FILE: ci-support/example-product.yml
