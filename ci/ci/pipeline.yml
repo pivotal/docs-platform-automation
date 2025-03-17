@@ -26,6 +26,8 @@ groups:
   - bump-previous-versions-trigger
   #@ for/end version in data.values.versions:
   - #@ "update-" + version.number
+  #@ for/end version in data.values.versions:
+  - #@ "submit-release-sboms-" + version.number
   - empty-cve-patch-notes-file
 - name: om
   jobs:
@@ -404,6 +406,13 @@ resources:
     tag: 0.0.79
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
+- name: tvs-cli
+  type: github-release
+  source:
+    access_token: ((platform-automation/ghe.access_token))
+    github_api_url: ((platform-automation/ghe.github_api_url))
+    owner: ((platform-automation/ghe.org))
+    repository: tpe-vulnerability
 resource_types:
 - name: pivnet
   type: registry-image
@@ -449,7 +458,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     input_mapping:
-      base-image: golang-image    
+      base-image: golang-image
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
       IMAGE_ARG_base_image: base-image/image.tar
@@ -471,7 +480,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     input_mapping:
-      base-image: builder-jammy-buildpackless-tiny-image   
+      base-image: builder-jammy-buildpackless-tiny-image
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
       IMAGE_ARG_base_image: base-image/image.tar
@@ -689,11 +698,11 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))      
+          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
           tag: testing
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
-          
+
       platform: linux
       outputs:
       - name: version
@@ -1639,7 +1648,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))      
+          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
           tag: testing
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
@@ -1726,6 +1735,23 @@ jobs:
   - put: #@ "version-" + version.number
     params:
       file: version/version
+- name: #@ "submit-release-sboms-" + version.number
+  plan:
+    - in_parallel:
+      - get: #@ "rc-artifacts-s3-" + version.number
+        passed:
+        #@ for version in data.values.versions:
+        - #@ "update-" + version.number
+        #@ end
+        trigger: true
+      - get: docs-platform-automation-with-docs
+      - get: tvs-cli
+      - get: version
+        resource: #@ "version-" + version.number
+    - task: submit-release-sbom
+      file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
+      input_mapping:
+        packaged-product: #@ "rc-artifacts-s3-" + version.number
 #@ end
 - name: empty-cve-patch-notes-file
   plan:

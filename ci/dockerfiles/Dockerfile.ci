@@ -86,4 +86,7 @@ RUN go install github.com/onsi/ginkgo/ginkgo@latest
 RUN wget -O /usr/bin/leftovers "https://github.com/genevieve/leftovers/releases/download/v0.70.0/leftovers-v0.70.0-linux-amd64"
 RUN chmod +x /usr/bin/leftovers
 
+# install syft for scanning images
+RUN curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
 ENV CGO_ENABLED=0
