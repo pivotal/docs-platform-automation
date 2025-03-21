@@ -3,8 +3,10 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: ((platform-automation/main/docker.ci-repository))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
     tag: testing
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 
 params:
   GITHUB_SSH_KEY:
