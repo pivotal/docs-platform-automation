@@ -2,10 +2,10 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    password: ((platform-automation/main/docker.password))
-    repository: ((platform-automation/main/docker.ci-repository))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
     tag: testing
-    username: ((platform-automation/main/docker.username))
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 inputs:
 - name: om
 - name: docs-platform-automation

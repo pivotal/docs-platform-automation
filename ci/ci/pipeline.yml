@@ -44,10 +44,10 @@ resources:
 - name: ci-image
   type: registry-image
   source:
-    password: ((platform-automation/main/docker.password))
-    repository: ((platform-automation/main/docker.ci-repository))
+    password: ((concourse-team/dev_image_registry.password))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
     tag: testing
-    username: ((platform-automation/main/docker.username))
+    username: ((concourse-team/dev_image_registry.username))
 - name: docs-platform-automation
   type: git
   source:
@@ -92,31 +92,31 @@ resources:
 - name: packages-image
   type: registry-image
   source:
-    password: ((platform-automation/main/docker.password))
-    repository: internalpcfplatformautomation/platform-automation
+    password: ((concourse-team/dev_image_registry.password))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
     tag: packages
-    username: ((platform-automation/main/docker.username))
+    username: ((concourse-team/dev_image_registry.username))
 - name: packages-image-oci
   type: registry-image
   source:
-    password: ((platform-automation/main/docker.password))
-    repository: internalpcfplatformautomation/platform-automation
+    password: ((concourse-team/dev_image_registry.password))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
     tag: packages
-    username: ((platform-automation/main/docker.username))
+    username: ((concourse-team/dev_image_registry.username))
 - name: binaries-image
   type: registry-image
   source:
-    password: ((platform-automation/main/docker.password))
-    repository: internalpcfplatformautomation/platform-automation
+    password: ((concourse-team/dev_image_registry.password))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
     tag: testing
-    username: ((platform-automation/main/docker.username))
+    username: ((concourse-team/dev_image_registry.username))
 - name: vsphere-only-image
   type: registry-image
   source:
-    password: ((platform-automation/main/docker.password))
-    repository: internalpcfplatformautomation/platform-automation
+    password: ((concourse-team/dev_image_registry.password))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
     tag: vsphere-only
-    username: ((platform-automation/main/docker.username))
+    username: ((concourse-team/dev_image_registry.username))
 - name: osl
   type: s3-with-arn
   source:
@@ -424,7 +424,7 @@ resource_types:
 - name: buildinfo
   type: registry-image
   source:
-    repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
     tag: buildinfo
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
@@ -698,7 +698,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
+          repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
           tag: testing
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
@@ -1648,7 +1648,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: ((concourse-team/dev_image_registry.url))/((platform-automation/main/docker.ci-repository))
+          repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
           tag: testing
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
