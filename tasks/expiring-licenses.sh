@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# code_snippet expiring-licenses-script start bash
+
+cat /var/version && echo ""
+set -eux
+
+# Build the command with optional flags
+cmd="om --env env/"${ENV_FILE}" expiring-licenses --format json"
+
+if [ -n "${EXPIRES_WITHIN:-}" ]; then
+  cmd="${cmd} --expires-within ${EXPIRES_WITHIN}"
+fi
+
+if [ "${STAGED:-false}" = "true" ]; then
+  cmd="${cmd} --staged"
+fi
+
+if [ "${DEPLOYED:-false}" = "true" ]; then
+  cmd="${cmd} --deployed"
+fi
+
+# Run the command and capture the output
+output=$(${cmd})
+
+# Check if there are any expiring licenses (empty array means no licenses)
+if [ "$output" != "[]" ]; then
+  echo "Found expiring licenses:"
+  echo "$output"
+  exit 1
+fi
+
+echo "No expiring licenses found within ${EXPIRES_WITHIN:-3m}"
+# code_snippet expiring-licenses-script end
