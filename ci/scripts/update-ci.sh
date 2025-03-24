@@ -25,10 +25,10 @@ echo "Setting support pipeline..."
 fly -t $TARGET sp -p support-pipeline -c <(ytt -f $WORKING_DIR/../opsman-support) \
   --check-creds
 
-echo "Setting Docs CI pipeline on TPE CI..."
-
-fly -t $TARGET sp -p platform-automation-docs -c <(ytt -f "$WORKING_DIR/../docs/") \
-  --check-creds
+# echo "Setting Docs CI pipeline on TPE CI..."
+# 
+# fly -t $TARGET sp -p platform-automation-docs -c <(ytt -f "$WORKING_DIR/../docs/") \
+#   --check-creds
 
 echo "Setting OSSPI pipeline on TPE CI..."
 
