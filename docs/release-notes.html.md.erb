@@ -11,6 +11,22 @@ The current version of Tanzu Platform for Cloud Foundry is 10.0.</p>
 March 26, 2025
 
 
+??? info "CLI Versions"
+
+    | Name | version |
+    |---|---|
+    | aws-cli | 1.38.18 |
+    | azure-cli | 2.70.0 |
+    | bbr-cli | [1.9.74](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.74) |
+    | bosh-cli | [v7.9.4](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.9.4) |
+    | credhub | [2.9.44](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.44) |
+    | gcloud-cli | 515.0.0 |
+    | govc-cli | 0.49.0 |
+    | om | [7.15.0](https://github.com/pivotal-cf/om/releases/tag/7.15.0) |
+    | winfs-injector | [0.26.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.26.0) |
+
+    The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.2.3" target="_blank">Download</a>
+
 ### What's New
 - Added support for specifying a stemcell slug when downloading a product through the `om download-product` command
 
