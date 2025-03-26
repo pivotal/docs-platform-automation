@@ -267,9 +267,10 @@ func checkoutBranchForReleaseNotes(docsRepoDir, branchName string) error {
 func generateReleaseNotes(docsRepoDir, minorVersion string, header []byte, sections []section) error {
 	fmt.Printf("creating release notes for %s\n", minorVersion)
 
-	// Get the appropriate file path based on branch
+	// Get the appropriate file path based on version
+	// The 5.2 branch is using the html.md.erb file type, as requested by the Docs team
 	releaseNotesPath := filepath.Join(docsRepoDir, "docs", "release-notes.md")
-	if minorVersion != "10000.0" { // 10000.0 is used for develop branch
+	if minorVersion == "5.2" {
 		releaseNotesPath = filepath.Join(docsRepoDir, "docs", "release-notes.html.md.erb")
 	}
 
