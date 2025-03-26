@@ -1,8 +1,10 @@
-<style>
-    .md-typeset h2 {
-        font-weight: bold;
-    }
-</style>
+# Release Notes for Platform Automation Toolkit
+
+These are the release notes for Platform Automation Toolkit for VMware Tanzu.
+
+<p class="note">
+Tanzu Application Service is now called Tanzu Platform for Cloud Foundry.
+The current version of Tanzu Platform for Cloud Foundry is 10.0.</p>
 
 
 ## v4.4.33
