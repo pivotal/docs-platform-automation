@@ -1,16 +1,11 @@
-<style>
-    .md-typeset h2 {
-        font-weight: bold;
-    }
-</style>
+# Release Notes for Platform Automation Toolkit
 
+These are the release notes for Platform Automation Toolkit for VMware Tanzu.
 
-## v5.2.3
-March 26, 2025
+<p class="note">
+Tanzu Application Service is now called Tanzu Platform for Cloud Foundry.
+The current version of Tanzu Platform for Cloud Foundry is 10.0.</p>
 
-
-### What's New
-- Added support for specifying a stemcell slug when downloading a product through the `om download-product` command
 
 ## v5.2.2
 September 18, 2024

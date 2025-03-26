@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/blang/semver"
-	"github.com/jessevdk/go-flags"
 	"io"
 	"io/ioutil"
 	"log"
@@ -16,6 +14,9 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/blang/semver"
+	"github.com/jessevdk/go-flags"
 )
 
 type command struct {
@@ -190,7 +191,7 @@ func (c *command) createReleaseNoteLines(version semver.Version) ([]string, erro
 		}
 		lines = append(lines, strings.Split(contents, "\n")...)
 	}
-	
+
 	lines = append(lines, "")
 	return lines, nil
 }
@@ -265,7 +266,14 @@ func checkoutBranchForReleaseNotes(docsRepoDir, branchName string) error {
 
 func generateReleaseNotes(docsRepoDir, minorVersion string, header []byte, sections []section) error {
 	fmt.Printf("creating release notes for %s\n", minorVersion)
-	releaseNotesFile, err := os.Create(filepath.Join(docsRepoDir, "docs", "release-notes.md"))
+
+	// Get the appropriate file path based on branch
+	releaseNotesPath := filepath.Join(docsRepoDir, "docs", "release-notes.md")
+	if minorVersion != "10000.0" { // 10000.0 is used for develop branch
+		releaseNotesPath = filepath.Join(docsRepoDir, "docs", "release-notes.html.md.erb")
+	}
+
+	releaseNotesFile, err := os.Create(releaseNotesPath)
 	if err != nil {
 		return fmt.Errorf("could not create file for %s: %s", minorVersion, err)
 	}
