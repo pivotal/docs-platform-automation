@@ -7,6 +7,13 @@ Tanzu Application Service is now called Tanzu Platform for Cloud Foundry.
 The current version of Tanzu Platform for Cloud Foundry is 10.0.</p>
 
 
+## v5.2.3
+March 26, 2025
+
+
+### What's New
+- Added support for specifying a stemcell slug when downloading a product through the `om download-product` command
+
 ## v5.2.2
 September 18, 2024
 
