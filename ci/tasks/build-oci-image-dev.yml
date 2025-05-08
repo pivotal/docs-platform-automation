@@ -1,16 +1,16 @@
+---
 platform: linux
 image_resource:
   type: registry-image
   source:
     repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
-    username: ((concourse-team/dev_image_registry.username))
+    username: ((concourse-team/dev_image_registry.username))                                           
     password: ((concourse-team/dev_image_registry.password))
-
 inputs:
-  - name: docs-platform-automation
-  - name: base-image
+- name: base-image
+- name: docs-platform-automation
 outputs:
-  - name: image
+- name: image
 params:
   DOCKERFILE:
   IMAGE_ARG_base_image:

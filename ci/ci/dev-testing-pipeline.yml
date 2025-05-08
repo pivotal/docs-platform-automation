@@ -1,0 +1,78 @@
+#@ load("@ytt:data", "data")
+#@ deployments_without_gcp = [x for x in data.values.deployments if x.paving_dir != "gcp"]
+groups:
+- name: dev-testing
+  jobs:
+   - build-dev-image
+   - dev-task-testing
+
+resources:
+- name: platform-automation-dev-image
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation-dev
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+    tag: dev
+- name: golang-image
+  type: registry-image
+  check_every: 4h
+  icon: language-go
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/golang
+    tag: latest
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+- name: docs-platform-automation-reference-pipeline-config
+  type: git
+  source:
+    branch: develop
+    uri: https://github.com/pivotal/docs-platform-automation-reference-pipeline-config
+- name: docs-platform-automation
+  type: git
+  source:
+    branch: dev-image-testing
+    private_key: ((platform-automation/main/platform_automation_docs.private_key))
+    uri: git@github.com:pivotal/docs-platform-automation
+    ignore_paths:
+      - docs
+jobs:
+- name: build-dev-image
+  plan:
+  - get: docs-platform-automation
+  - get: golang-image
+    trigger: true
+    attempts: 3
+    params:
+      format: oci
+  - task: build-dev-image-task
+    privileged: true
+    file: docs-platform-automation/ci/tasks/build-oci-image.yml
+    input_mapping:
+      base-image: golang-image
+    params:
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.dev
+      IMAGE_ARG_base_image: base-image/image.tar
+  - put: platform-automation-dev-image
+    params: { image: image/image.tar }
+    get_params: { skip_download: true }
+
+- name: expiring-licenses
+  serial: true
+  plan:
+    - in_parallel:
+      - get: platform-automation-dev-image
+        params:
+          unpack: true
+      - get: platform-automation-tasks
+        params:
+          unpack: true
+      - get: docs-platform-automation-reference-pipeline-config
+    - task: expiring-licenses
+      image: platform-automation-dev-image
+      file: platform-automation-tasks/tasks/expiring-licenses.yml
+      input_mapping:
+        env: docs-platform-automation-reference-pipeline-config
+      params:
+        ENV_FILE: foundations/config/env.yml
+        EXPIRES_WITHIN: 3m

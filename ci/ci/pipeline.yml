@@ -34,6 +34,11 @@ groups:
   #@ for/end bump in ["patch", "minor", "major"]:
   - #@ "bump-om-" + bump
   - download-and-test-om
+- name: dev_testing
+  jobs:
+   - build-dev-image
+   - dev-task-testing
+  
 
 resources:
 - name: docs-platform-automation-reference-pipeline-config
@@ -52,6 +57,14 @@ resources:
   type: git
   source:
     branch: develop
+    private_key: ((platform-automation/main/platform_automation_docs.private_key))
+    uri: git@github.com:pivotal/docs-platform-automation
+    ignore_paths:
+      - docs 
+- name: docs-platform-automation-dev
+  type: git
+  source:
+    branch: add-expiring-licenses-task
     private_key: ((platform-automation/main/platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:
@@ -413,6 +426,13 @@ resources:
     github_api_url: ((platform-automation/ghe.github_api_url))
     owner: ((platform-automation/ghe.org))
     repository: tpe-vulnerability
+- name: pa_dev-image
+  type: registry-image
+  source:
+    password: ((concourse-team/dev_image_registry.password))
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
+    tag: testing
+    username: ((concourse-team/dev_image_registry.username))
 resource_types:
 - name: pivnet
   type: registry-image
@@ -1794,3 +1814,60 @@ jobs:
     params:
       bump: #@ bump
 #@ end
+
+- name: build-dev-image
+  plan:
+  - get: docs-platform-automation-dev
+  - get: golang-image
+    trigger: true
+    attempts: 3
+    params:
+      format: oci
+  - task: build-dev-image-task
+    privileged: true
+    file: docs-platform-automation/ci/tasks/build-oci-image-dev.yml
+    input_mapping:
+      base-image: golang-image
+    params:
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.dev
+      IMAGE_ARG_base_image: base-image/image.tar
+  - put: pa_dev-image
+    params: { image: image/image.tar }
+    get_params: { skip_download: true }
+
+- name: dev-task-testing
+  plan:
+  - in_parallel:
+    - get: docs-platform-automation-dev
+    - get: docs-platform-automation-reference-pipeline-config
+    - get: pa_dev-image
+      resource: rc-image-s3
+      params:
+        unpack: true
+      trigger: true
+      passed:
+      - build-dev-image
+ 
+  - task: credhub-interpolate
+    image: pa_dev-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    input_mapping:
+      files: docs-platform-automation-reference-pipeline-config
+    output_mapping:
+      interpolated-files: env
+    params:
+      CREDHUB_CLIENT: ((platform-automation/main.credhub-client))
+      CREDHUB_SECRET: ((platform-automation/main.credhub-secret))
+      CREDHUB_SERVER: ((platform-automation/main.credhub-server))
+      CREDHUB_CA_CERT: ((platform-automation/main.credhub-ca-cert))
+      PREFIX: /concourse/main/reference-pipeline
+      INTERPOLATION_PATHS: .
+      
+  - task: expiring-certificates
+    image: pa_dev-image
+    file: platform-automation-tasks/tasks/expiring-licenses.yml
+    input_mapping:
+      env: configuration
+    params:
+      ENV_FILE: foundations/config/env.yml
+      EXPIRES_WITHIN: 3m
