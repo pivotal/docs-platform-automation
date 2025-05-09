@@ -9,7 +9,6 @@ platform: linux
 
 inputs:
   - name: platform-automation-tasks
-  - name: env # contains the env file with target OpsMan Information
 
 params:
   ENV_FILE: env.yml
