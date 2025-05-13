@@ -62,11 +62,10 @@ jobs:
     plan:
       - in_parallel:
           - get: platform-automation-dev-image
-            params:
-              unpack: true
+            trigger: true
+            passed:
+              - build-dev-image
           - get: platform-automation-tasks
-            params:
-              unpack: true
           - get: docs-platform-automation-reference-pipeline-config
       - task: expiring-licenses
         image: platform-automation-dev-image
