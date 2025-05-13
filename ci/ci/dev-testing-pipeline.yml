@@ -1,5 +1,3 @@
-#@ load("@ytt:data", "data")
-#@ deployments_without_gcp = [x for x in data.values.deployments if x.paving_dir != "gcp"]
 groups:
 - name: dev-testing
   jobs:
@@ -51,7 +49,7 @@ jobs:
     input_mapping:
       base-image: golang-image
     params:
-      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.dev
+      DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.om
       IMAGE_ARG_base_image: base-image/image.tar
   - put: platform-automation-dev-image
     params: { image: image/image.tar }
@@ -62,11 +60,10 @@ jobs:
   plan:
     - in_parallel:
       - get: platform-automation-dev-image
-        params:
-          unpack: true
+        trigger: true
+        passed:
+          - build-dev-image
       - get: platform-automation-tasks
-        params:
-          unpack: true
       - get: docs-platform-automation-reference-pipeline-config
     - task: expiring-licenses
       image: platform-automation-dev-image
