@@ -4,7 +4,7 @@ groups:
   - name: dev-testing
     jobs:
       - build-dev-image
-      - dev-task-testing
+      - expiring-licenses
 
 resources:
   - name: platform-automation-dev-image
@@ -65,11 +65,11 @@ jobs:
             trigger: true
             passed:
               - build-dev-image
-          - get: platform-automation-tasks
+          - get: docs-platform-automation
           - get: docs-platform-automation-reference-pipeline-config
       - task: expiring-licenses
         image: platform-automation-dev-image
-        file: platform-automation-tasks/tasks/expiring-licenses.yml
+        file: docs-platform-automation/tasks/expiring-licenses.yml
         input_mapping:
           env: docs-platform-automation-reference-pipeline-config
         params:
