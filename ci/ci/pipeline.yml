@@ -19,7 +19,7 @@ groups:
   - upgrade-opsman-gcp
 - name: minor-bump
   jobs:
-  - promote-to-final
+  - bump-minor
 - name: patch-bump
   jobs:
   - bump-test-image-dependency-stability
@@ -245,6 +245,17 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
     key: version
     initial_version: 0.0.1-rc.1
+- name: version-v5.x
+  type: semver-with-arn
+  source:
+    driver: s3
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    assume_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+    key: version-v5.x
+    initial_version: 5.3.0
 - name: daily
   type: time
   source:
@@ -723,7 +734,7 @@ jobs:
   - put: version
     params:
       bump: major
-- name: promote-to-final
+- name: bump-minor
   plan:
   - in_parallel:
     - get: osl
@@ -751,13 +762,14 @@ jobs:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
-    - get: version
+    - get: version-ci
+      resource: version
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-gcp
-      params:
-        bump: final
+    - get: version
+      resource: version-v5.x
   - task: create-release-file
     file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
@@ -772,9 +784,14 @@ jobs:
   - put: docs-platform-automation
     params:
       repository: docs-platform-automation
-      tag: version/version
+      tag: version-v5.x/version
       tag_prefix: v
   - put: version
+    resource: version-v5.x
+    params:
+      bump: minor
+  - put: version-ci
+    resource: version
     params:
       bump: minor
   - put: image-receipt-s3
