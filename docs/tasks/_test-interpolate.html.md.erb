@@ -1,0 +1,33 @@
+<pre>
+<code>
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: config # contains the base configuration file
+- name: vars # variable files to be made available
+  optional: true
+
+params:
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the vars YAML file
+  # - The path is relative to root of the task build
+  # - These vars can come from the `vars` or `config` inputs
+
+  CONFIG_FILE: base.yml
+  # - Required
+  # - Filepath to the base YAML file to interpolate from
+  # - The path is relative to root of the task build
+
+  SKIP_MISSING: true
+  # - Optional
+  # - Change to false to have strict interpolation
+  #   and fail if params are missing from vars
+
+run:
+  path: platform-automation-tasks/tasks/test-interpolate.sh
+
+</code>
+</pre>

@@ -1,6 +1,6 @@
 # Concepts
 
-* [Secrets handling](./secrets-handling.md)
-* [Stemcell handling](./stemcell-handling.md)
-* [Platform Automation Toolkit variables](./variables.md)
-* [Recovering and upgrading Tanzu Operations Manager](./upgrade.md)
+* [Secrets handling](./secrets-handling.md.html.erb)
+* [Stemcell handling](./stemcell-handling.md.html.erb)
+* [Platform Automation Toolkit variables](./variables.md.html.erb)
+* [Recovering and upgrading Tanzu Operations Manager](./upgrade.md.html.erb)

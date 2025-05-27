@@ -1,0 +1,10 @@
+<pre>
+<code>
+
+cat /var/version && echo ""
+set -eux
+om --env env/"${ENV_FILE}" assign-multi-stemcell \
+  --config config/"${CONFIG_FILE}"
+
+</code>
+</pre>

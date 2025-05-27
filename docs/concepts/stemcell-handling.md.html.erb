@@ -1,0 +1,87 @@
+# Handling stemcells
+
+
+In Tanzu Operations Manager, every product uploaded and staged needs to be given a [stemcell](https://bosh.io/docs/stemcell/) in
+order to operate. By default, every stemcell uploaded to Tanzu Operations Manager automatically associates
+with any new or existing products. Using the automation tasks, this default can be overridden to
+not have a stemcell associate with any products, and can be manually assigned as you deem necessary.
+
+## Why do your stemcell handling manually?
+
+Unless there is a specific need to manually handle the stemcells in Tanzu Operations Manager, it is recommended
+that you use the default. A common use case for manual stemcell handling is updating the product stemcells
+one at a time to minimize downtime during Apply Changes. This is particularly beneficial in environments
+with large numbers of tiles that share the same stemcell.
+
+## How to use the stemcell handling tasks in automation
+
+Platform Automation Toolkit has tasks for the manual handling of stemcells in
+Tanzu Operations Manager. These tasks, in order, are:
+
+- [download-product](../tasks.html#download-product)
+- [upload-product](../tasks.html#upload-product)
+- [stage-product](../tasks.html#stage-product)
+- [upload-stemcell](../tasks.html#upload-stemcell)
+- [assign-stemcell](../tasks.html#assign-stemcell)
+
+Follow these steps:
+
+1. `download-product`: Create a `config.yml` for this task using the [example provided](../inputs-outputs.html#download-product-config).
+
+    After running the task, there will be a new file named `assign-stemcell.yml`.
+    The task put a config file containing two values, `product` and `stemcell`, into the `assign-stemcell-config`
+    output directory. This can be used with [assign-stemcell](../tasks.html#assign-stemcell) to ensure that the latest stemcell is
+    used with that product.
+
+2. Run the [upload-product](../tasks.html#upload-product) and [stage-product](../tasks.html#stage-product) tasks to get the
+   resources into Tanzu Operations Manager.
+
+3. Run the [upload-stemcell](../tasks.html#upload-stemcell) task.
+
+    To upload the stemcell to Tanzu Operations Manager without associating it with a product, execute the
+    `upload-stemcell` task with the `FLOATING_STEMCELL: false` flag set.
+
+    Here is an example of this, in a pipeline:
+
+      ```yaml
+      - task: upload-stemcell
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: configuration
+          stemcell: downloaded-stemcell
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+          FLOATING_STEMCELL: false
+      ```
+
+      <p class="note caution">
+      Do not run <code>upload-stemcell</code> until after the <code>stage-product</code> task has completed. When the two tasks are run in the
+      opposite order, the stemcell still auto-associates with the product.</p>
+
+4. Run the [assign-stemcell](../tasks.html#assign-stemcell) task to associate the stemcell with the staged product.
+   If you are using the `download-product` task before doing this in the same job, you must assign the config
+   using the `input_mapping` key to assign the outputted config to the config that `assign-stemcell` is
+   expecting. Upon successful completion, the stemcell specified in the config will be associated with the product
+   specified in the config, and no other product will be associated with that stemcell.
+
+    Here is an example of this, in a pipeline:
+
+    ```yaml
+    - task: assign-stemcell
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/assign-stemcell.yml
+      input_mapping:
+        env: configuration
+        config: assign-stemcell-config
+      params:
+        ENV_FILE: ((foundation))/env/env.yml
+    ```
+
+5. Now you can run [configure product](../tasks.html#configure-product) and [apply changes](../tasks.html#apply-changes) on the
+product as normal.
+
+## How to download a specific stemcell
+
+Platform Automation Toolkit can be used to download a specific stemcell. To do this, create a `config.yml` for this
+task using the example provided in [Task inputs and outputs](../inputs-outputs.html#download-stemcell-product-config).
