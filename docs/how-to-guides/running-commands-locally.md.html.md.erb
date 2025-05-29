@@ -1,0 +1,118 @@
+# Running commands locally
+
+This topic describes how to execute commands locally with Docker.
+
+If you want to use the underlying `om` and `p-automator` CLI tools from your local workstation,
+VMware recommends using Docker to execute commands.
+
+With `p-automator`, in particular, using Docker is necessary,
+because the IaaS CLIs upon which we depend can be tricky to install.
+With `om`, it's more a matter of convenience,, and
+you can just as easily [download the binary](https://github.com/pivotal-cf/om/releases) if it's available for your system.
+
+
+## Executing commands
+
+To execute commands in Docker:
+
+1. First import the image:
+
+    ```bash
+      docker import ${PLATFORM_AUTOMATION_IMAGE_TGZ} platform-automation-image
+    ```
+
+    Where `${PLATFORM_AUTOMATION_IMAGE_TGZ}` is the image file downloaded from the Broadcom Support portal.
+
+2. Now you can use `docker run` to pass it arbitrary commands.
+
+    Here, we're running the `p-automator` CLI to see what commands are available:
+
+    ```bash
+      docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+        p-automator -h
+    ```
+
+    <p class="note">
+    This will have read / write access to files in your current working directory.
+    If you need to mount other directories as well, you can add more <code>-v</code> arguments.</p>
+
+## Useful commands
+
+### Retrieving product staged configuration
+
+```bash
+  docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+    export OM_PASSWORD='ASDF' om --env ${ENV_FILE} staged-config \
+    --product-name ${PRODUCT_SLUG} --include-placeholders
+```
+
+  Where:
+  * `${ENV_FILE}` is the [environment file](../inputs-outputs.html) required for all tasks.
+  * `${PRODUCT_SLUG}` is the name of the product downloaded from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads).
+
+The resulting file can then be parameterized, saved, and committed to a config repo.
+
+### Retrieving director configuration
+
+```bash
+  docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image \
+    om --env ${ENV_FILE} staged-director-config --include-placeholders
+```
+
+### Tanzu Operations Manager targeting
+
+Use environment variables to set what Tanzu Operations Manager `om` is targeting.
+For example:
+
+```bash
+ docker run -it -e "OM_PASSWORD=my-password" --rm -v $PWD:/workspace \
+    -w /workspace platform-automation-image \
+    om --env ${ENV_FILE} staged-director-config --include-placeholders
+```
+
+Note the additional space before the `docker` command.
+This ensures that the command is not kept in bash history.
+The environment variable `OM_PASSWORD` overwrites the password value in the `ENV_FILE`.
+See the [`om` GitHub page](https://github.com/pivotal-cf/om) for a full list of supported environment variables.
+
+### Disable verifiers
+
+In cases where verifiers are incorrectly failing for known reasons,
+you can disable those specific verifiers so that you can apply the changes.
+`om` has commands to disable individual verifiers:
+
+For director verifiers:
+```bash
+  docker run -it -e "OM_PASSWORD=my-password" --rm -v $PWD:/workspace \
+    -w /workspace platform-automation-image \
+    om --env ${ENV_FILE} disable-director-verifiers \
+    --type ${VERIFIER_TYPE}
+```
+
+Where `${VERIFIER_TYPE}` is the failing verifier.
+
+For product verifiers:
+```bash
+  docker run -it -e "OM_PASSWORD=my-password" --rm -v $PWD:/workspace \
+    -w /workspace platform-automation-image \
+    om --env ${ENV_FILE} disable-product-verifiers \
+    --product-name ${PRODUCT_NAME} --type ${VERIFIER_TYPE}
+```
+
+Where
+* `${VERIFIER_TYPE}` is the failing verifier
+* `${PRODUCT_NAME}` is the metadata name of the associated product.
+
+A list of failed verifiers is available in the output from the Apply Changes attempt.
+To retrieve a list of currently failing director and product verifiers
+without applying changes, run:
+
+```bash
+  docker run -it -e "OM_PASSWORD=my-password" --rm -v $PWD:/workspace \
+    -w /workspace platform-automation-image \
+    om --env ${ENV_FILE} pre-deploy-check
+```
+
+See the [Tanzu Operations Manager Documentation](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/install-granular-verifier-control.html) for information about managing verifiers.
+
+<!-- https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/install-granular-verifier-control.html -->

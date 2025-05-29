@@ -1,0 +1,33 @@
+# Generating an Auth file
+
+The VMware Tanzu Operations Manager authentication system can be configured several ways.
+The format of the configuration file varies
+according to the authentication method to be used.
+
+## Configure authentication
+
+See [configure-authentication](../tasks.html#configure-authentication).
+
+<%= partial "examples/auth" %>
+
+## Configure LDAP authentication
+
+See [configure-ldap-authentication](../tasks.html#configure-ldap-authentication).
+
+<%= partial "examples/auth-ldap" %>
+
+## Configure SAML authentication
+
+See [configure-saml-authentication](../tasks.html#configure-saml-authentication).
+
+<%= partial "examples/auth-saml" %>
+
+## Managing configuration, auth, and state files
+
+To use all these files with the Concourse tasks that require them,
+you need to make them available as Concourse resources.
+They’re all text files.
+There are many resource types that can work for this.
+In our examples, we use a git repository.
+As with the tasks and image,
+you need to declare a resource in your pipeline for each repo you need.

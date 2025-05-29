@@ -1,0 +1,481 @@
+## Prerequisites
+
+Over the course of this guide,
+you will use Platform Automation Toolkit
+to create a [pipeline](https://concourse-ci.org/pipelines.html)
+using [Concourse](https://concourse-ci.org/).
+
+You need:
+
+1. For upgrade only: A running Tanzu Operations Manager VM that you would like to upgrade
+2. Credentials for an IaaS that Tanzu Operations Manager is compatible with
+    - It doesn't matter what IaaS you use for Tanzu Operations Manager,
+    as long as your Concourse can connect to it.
+    Pipelines built with Platform Automation Toolkit can be platform-agnostic.
+3. A Concourse instance
+   with access to a CredHub instance
+   and to the Internet
+4. A GitHub account
+5. Read/write credentials and bucket name for an S3 bucket
+6. An account on the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads)
+7. A MacOS workstation with:
+    - a text editor of your choice
+    - a terminal emulator of your choice
+    - a browser that works with Concourse, like Firefox or Chrome
+    - `git`installed
+    - Docker installed
+
+It will be very helpful to have a basic familiarity with the following. If you don't have basic familiarity with all these things,
+you will fine some basics explained here, along with links to resources to learn more:
+
+- the bash terminal
+- [git](https://git-scm.com/)
+- [YAML](https://learnxinyminutes.com/docs/yaml/)
+- [Concourse](https://concourse-ci.org/)
+
+<p class="note">
+While this guide uses GitHub to provide a git remote,
+and an S3 bucket as a blobstore,
+Platform Automation Toolkit supports arbitrary git providers
+and S3-compatible blobstores.
+<br>
+Specific examples are described in some detail, but
+if you follow along with different providers
+some details may be different.
+Also see <a href="../how-to-guides/setting-up-s3.md">Setting up S3 for file storage</a>.
+<br>
+Similarly, in this guide, MacOS is assumed, but
+Linux should work well, too.
+Keep in mind that there might be differences in the paths that
+you will need to figure out.</p>
+
+## Creating a Concourse pipeline
+
+Platform Automation Toolkit's tasks and image are meant to be used in a Concourse pipeline.
+
+Using your bash command-line client,
+create a directory to keep your pipeline files in, and `cd` into it.
+
+```bash
+mkdir your-repo-name
+cd !$
+```
+
+This repo name should relate to your situation
+and be specific enough to be navigable from your local workstation.
+
+<p class="note">
+<code>!$</code> is a bash shortcut.
+Pronounced "bang, dollar-sign,"
+it means "use the last argument from the most recent command."
+In this case, that's the directory you just created.</p>
+
+### Gather variables to use in the pipeline (for upgrade only)
+If you are upgrading, continue with the following. If not, skip to [Creating a pipeline](#creating-a-pipeline).
+
+Before getting started with the pipeline,
+gather some variables in a file that
+you can use throughout your pipeline.
+
+Open your text editor and create `vars.yml`.
+Here's what it should look like to start. You can add more variables as you go:
+
+```yaml
+platform-automation-bucket: your-bucket-name
+credhub-server: https://your-credhub.example.com
+opsman-url: https://pcf.foundation.example.com
+```
+
+<p class="note important">
+This example assumes that that you are using DNS and host names.
+You can use IP addresses for all these resources instead,
+but you still need to provide the information as a URL,
+for example: <code>https://120.121.123.124</code>.</p>
+
+### Creating a pipeline
+
+Create a file called `pipeline.yml`.
+
+The examples in this guide use `pipeline.yml`, but
+you might create multiple pipelines over time.
+If there's a more sensible name for the pipeline you're working on,
+feel free to use that instead.
+
+Start the file as shown here. This is [YAML](https://learnxinyminutes.com/docs/yaml/) for "the start of the document." It's optional, but traditional:
+
+```yaml
+
+---
+```
+
+Now you have a valid YAML pipeline file.
+
+### <a></a> Getting fly
+
+First, try to set your new YAML file as a pipeline with [`fly`](https://concourse-ci.org/fly.html),
+the Concourse command-line Interface (CLI).
+
+To check if you have `fly` installed:
+
+```bash
+fly -v
+```
+
+If it returns a version number, you're ready for the next steps.
+Skip ahead to [Setting the pipeline](#setting-the-pipeline)
+
+If it says something like `-bash: fly: command not found`,
+you need to get `fly`.
+
+Navigate to the address for your Concourse instance in a web browser.
+At this point, you don't need to be signed in.
+If there are no public pipelines, you should see something like this:
+
+![Get Fly](../img/concourse-fly-download.png)
+
+If there are public pipelines,
+or if you're signed in and there are pipelines you can see,
+you'll see something similar in the lower-right hand corner.
+
+Click the icon for your OS and save the file, move
+(`mv`) the resulting file to somewhere in your `$PATH`,
+and use `chmod` to make it executable:
+
+<p class="note">
+<strong>About command-line examples:</strong>
+In some cases, you can copy-paste the examples directly into your terminal.
+Some of them won't work that way,
+or even if they did, would require you to edit them to replace our example values
+with your actual values.
+Best practice is to type all of the bash examples by hand,
+substituting values, if necessary, as you go.
+Don't forget that you can often hit the tab key
+to auto-complete the names of files that already exist;
+it makes all that typing just a little easier,
+and serves as a sort of command-line autocorrect.</p>
+
+Type the following into your terminal to get `fly`.
+
+```bash
+mv ~/Downloads/fly /usr/local/bin/fly
+chmod +x !$
+```
+
+This means that you downloaded the `fly` binary,
+and moved it into the bash PATH,
+which is where bash looks for things to execute
+when you type a command.
+Then you added permissions that allow it to be executed (`+x`).
+Now, the CLI is installed, you won't have to do it again,
+because `fly` has the ability to update itself,
+(which is be described in more detail is a later section).
+
+### <a></a> Setting the pipeline
+
+Now set your pipeline with `fly`, the Concourse CLI.
+
+`fly` keeps a list of Concourses it knows how to talk to.
+To find out if the Concourse you need is already on the list, type:
+
+```bash
+fly targets
+```
+
+If you see the address of the Concourse you want to use in the list,
+note its name, and use it in the login command. The examples in this book use the Concourse
+name `control-plane`.
+
+```bash
+fly -t control-plane login
+```
+
+If you don't see the Concourse you need, you can add it with the `-c` (`--concourse-url`)flag:
+
+```bash
+fly -t control-plane login -c https://your-concourse.example.com
+```
+
+You should see a login link you can click
+to complete login from your browser.
+
+<p class="note important">
+The <code>-t</code> flag sets the name when used with <code>login</code> and <code>-c</code>.
+In the future, you can leave out the <code>-c</code> argument.
+<br>
+If you ever want to know what a short flag stands for,
+you can run the command with <code>-h</code> (<code>--help</code>) at the end.</p>
+
+Time to set the pipeline.
+The example here use the name "foundation" for this pipeline,
+but if your foundation has a name, use that instead.
+
+```bash
+fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+```
+
+It should say `no changes to apply`,
+which is expected, since the `pipeline.yml` file is still empty.
+
+<p class="note">
+If <code>fly</code> says something about a "version discrepancy,"
+"significant" or otherwise, run <code>fly sync</code> and try again.
+<code>fly sync</code> automatically updates the CLI
+with the version that matches the Concourse you're targeting.</p>
+
+### <a></a> Your first job
+
+Before running your pipeline the first time, turn your directory into a git repository.
+
+This allows to reverting edits to your pipeline as needed.
+This is one of many reasons you should keep your pipeline under version control.
+
+#### <a></a> But first, git init
+
+This section describes a step-by-step approach for getting set up with git.
+
+For an example of the repository file structure
+for single and multiple foundation systems,
+see <a href="./git-repo-layout.md">Why use Git and GitHub?</a>
+
+1. Run `git init`. `git` should come back with information about the commit you just created:
+
+    ```bash
+    git init
+    git commit --allow-empty -m "Empty initial commit"
+    ```
+
+    If this gives you a config error instead,
+    you might need to configure `git` first.
+    See [First-Time Git Setup](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup)
+    to complete the initial setup.
+    When you have finished going through the steps in this guide, try again.
+
+1. Now add your `pipeline.yml`.
+
+    ```bash
+    git add pipeline.yml
+    git commit -m "Add pipeline"
+    ```
+
+    If you are performing an upgrade, use this instead:
+
+    ```bash
+    git add pipeline.yml vars.yml
+    git commit -m "Add pipeline and starter vars"
+    ```
+
+1. Check that everything is tidy:
+
+    ```bash
+    git status
+    ```
+
+    `git` should return `nothing to commit, working tree clean`.
+
+When this is done, you can safely make changes.
+
+<p class="note important">
+<code>git</code> commits are the basic unit of code history.
+Making frequent, small, commits with good commit messages
+makes it much easier to figure out why things are the way they are,
+and to return to the way things were in simpler, better times.
+Writing short commit messages that capture the intent of the change
+really does make the pipeline history much more legible,
+both to future-you,
+and to current and future teammates and collaborators.</p>
+
+#### <a></a> The test task
+
+Platform Automation Toolkit comes with a [`test`](../tasks.html#test) task you
+can use to validate that it's been installed correctly.
+
+1. Add the following to your `pipeline.yml`, starting on the line after the `---`:
+
+    ```yaml
+    jobs:
+    - name: test
+      plan:
+        - task: test
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/test.yml
+    ```
+
+1. Try to set the pipeline now.
+
+    ```bash
+    fly -t control-plane set-pipeline -p foundation -c pipeline.yml
+    ```
+
+    Now you should be able to see your pipeline
+    in the Concourse UI.
+    It starts in the paused state, so click the play button to unpause it.
+    Then click in to the gray box for the `test` job,
+    and click the plus (**+**) button to schedule a build.
+
+    It should return an error immediately, with `unknown artifact source: platform-automation-tasks`.
+    This is because there isn't a source for the task file yet.
+
+    This preparation has resulted in a pipeline code that Concourse accepts.
+
+1. Before starting the next step, make a commit:
+
+    ```bash
+    git add pipeline.yml
+    git commit -m "Add (nonfunctional) test task"
+    ```
+
+1. Get the inputs you need by adding `get` steps to the plan
+before the task, as shown here:
+
+    ```yaml  hl_lines="4-13"
+    jobs:
+    - name: test
+      plan:
+        - get: platform-automation-image
+          resource: platform-automation
+          params:
+            globs: ["*image*.tgz"]
+            unpack: true
+        - get: platform-automation-tasks
+          resource: platform-automation
+          params:
+            globs: ["*tasks*.zip"]
+            unpack: true
+        - task: test
+          image: platform-automation-image
+          file: platform-automation-tasks/tasks/test.yml
+    ```
+
+    <p class="note">
+    There is a smaller vSphere container image available.
+    To use it instead of the general purpose image,
+    you can use this glob to get the image:
+    <br>
+      <code>
+        - get: platform-automation-image
+          resource: platform-automation
+          params:
+            globs: ["vsphere-platform-automation-image*.tar.gz"]
+            unpack: true
+      </code>
+    </p>
+
+1. Next, you might try to `fly set` this new pipeline. At this stage, you will see that it is not ready yet,
+and `fly` will return a message about invalid resources.
+
+    This is because you need to make the `image` and `file` available, so
+    you need to set up some Resources.
+
+#### <a></a> Adding resources
+
+Resources are Concourse's main approach to managing artifacts.
+You need an image and the tasks directory,
+so you need to tell Concourse how to get these things by declaring Resources for them.
+
+In this case, you will download the image and the tasks directory from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/downloads).
+Before you can declare the resources themselves,
+you must teach Concourse to talk to the Broadcom Support portal.
+(Many resource types are built in, but this one isn't.)
+
+1. Add the following to your pipeline file, above the `jobs` entry.
+
+    ```yaml
+    resource_types:
+    - name: pivnet
+      type: docker-image
+      source:
+        repository: pivotalcf/pivnet-resource
+        tag: latest-final
+    resources:
+    - name: platform-automation
+      type: pivnet
+      source:
+        product_slug: platform-automation
+        api_token: ((pivnet-refresh-token))
+    ```
+
+    The API token is a credential,
+    which you pass in using the command-line when setting the pipeline,
+    You don't want to accidentally check it in.
+
+    <p class="note important">
+    Bash commands that start with a space character
+    are not saved in your history.
+    This can be very useful for cases like this,
+    where you want to pass a secret,
+    but you don't want it saved.
+    Commands in this guide that contain a secret
+    start with a space, which can be easy to miss.</p>
+
+2. Get a refresh token from your Broadcom Support profile
+(when logged in, click your user name, then **Edit Profile**)
+and click **Request New Refresh Token**.)
+    Then use that token in the following command:
+
+    ```bash
+    # note the space before the command
+    fly -t control-plane set-pipeline \
+        -p foundation \
+        -c pipeline.yml \
+        -v pivnet-refresh-token=your-api-token
+    ```
+
+    <p class="note caution">
+    When you get your Broadcom Support token as described above,
+    any previous Broadcom Support tokens you have stop working.
+    If you're using your Broadcom Support refresh token anywhere,
+    retrieve it from your existing secret storage rather than getting a new one,
+    or you'll end up needing to update it everywhere it's used.</p>
+
+1. Go back to the Concourse UI and trigger another build. This time, it should pass.
+
+2. Now it's time to commit.
+
+    ```bash
+    git add pipeline.yml
+    git commit -m "Add resources needed for test task"
+    ```
+
+3. It's better not to pass the Broadcom Support token
+every time you need to set the pipeline.
+Fortunately, Concourse can integrate
+with secret storage services, like CredHub. In this step, put the API token in CredHub so Concourse can get it.
+
+    <p class="note">
+    <b>Backslashes in bash examples:</b>
+    The following example has been broken across multiple lines
+    by using backslash characters (<code>\</code>) to escape the newlines.
+    The backslash is used in here to keep the examples readable.
+    When you're typing these out,
+    you can skip the backslashes and put it all on one line.</p>
+
+1. First, log in. Again, note the space at the start.
+
+    <%= partial "logging-into-credhub" %>
+
+2. Next, set the credential name
+to the path [where Concourse will look for it](https://concourse-ci.org/credhub-credential-manager.html#credential-lookup-rules):
+
+    ```bash
+    # note the starting space
+    credhub set \
+            --name /concourse/your-team-name/pivnet-refresh-token \
+            --type value \
+            --value your-credhub-refresh-token
+    ```
+
+1. Now, set the pipeline again,
+without passing a secret this time.
+
+    ```bash
+    fly -t control-plane set-pipeline \
+        -p foundation \
+        -c pipeline.yml
+    ```
+
+    This should succeed,
+    and the diff Concourse shows you should replace the literal credential
+    with `((pivnet-refresh-token))`.
+
+1. Go to the UI again and re-run the test job;
+this should also succeed.
