@@ -1,0 +1,41 @@
+<pre>
+<code>
+---
+platform: linux
+
+inputs:
+  - name: platform-automation-tasks
+  - name: config # contains the OpsMan configuration file
+  - name: env # contains the environment information for OpsMan
+  - name: vars # variable files to be made available
+    optional: true
+  - name: secrets # secret files to be made available
+    # separate from vars, so they can be stored securely
+    optional: true
+
+params:
+  VARS_FILES:
+  # - Optional
+  # - space-seperated array of filepaths to YAML vars files
+  #   to be loaded with the CONFIG_FILE
+  # - relative to root of the task build,
+  #   so both `vars` and `secrets` can be used.
+
+  ENV_FILE: env.yml
+  # - Required
+  # - filepath of the env config YAML
+  # - relative to root of the `env` input
+
+  OPSMAN_CONFIG_FILE: opsman.yml
+  # - Required
+  # - filepath of the Ops Manager Application Settings
+  #   config file. (such as banner, pivnet token, etc)
+  # - relative to root of the `config` input
+  # - VMware recommends using one config file to
+  #   configure-opsman, upgrade-opsman, create-vm, delete-vm
+
+run:
+  path: platform-automation-tasks/tasks/configure-opsman.sh
+
+</code>
+</pre>
