@@ -784,7 +784,7 @@ jobs:
   - put: docs-platform-automation
     params:
       repository: docs-platform-automation
-      tag: version-v5.x/version
+      tag: version/version
       tag_prefix: v
   - put: version
     resource: version-v5.x
