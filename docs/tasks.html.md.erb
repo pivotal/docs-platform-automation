@@ -1031,6 +1031,33 @@ This is a purely informational task.
     EXPIRES_WITHIN: 2m
 ```
 
+### <a id='expiring-licenses'></a>expiring-licenses
+
+Checks for expiring licenses across the Tanzu Operations Manager installation.
+Provides flexibility for checking expiring licenses in both staged and deployed products within a specified timeframe.
+This is a purely informational task.
+
+**Task**
+
+<%= partial "../tasks/expiring-licenses" %>
+
+**Implementation**
+
+<%= partial "../tasks/expiring-licenses-script" %>
+
+**Usage**
+
+```yaml
+- task: expiring-licenses
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/expiring-licenses.yml
+  input_mapping:
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    EXPIRES_WITHIN: 2m
+```
+
 ### <a id='export-installation'></a>export-installation
 
 Exports an existing Tanzu Operations Manager to a file.
