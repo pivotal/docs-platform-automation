@@ -985,6 +985,31 @@ jobs:
       params:
         ENV_FILE: foundations/config/env.yml
         EXPIRES_WITHIN: 2m
+- name: expiring-licenses
+  serial: true
+  serial_groups: [ install ]
+  plan:
+    - in_parallel:
+        - get: daily-trigger
+          trigger: true
+        - get: platform-automation-tasks
+          params:
+            unpack: true
+        - get: platform-automation-image
+          params:
+            unpack: true
+        - get: configuration
+        - get: state
+    - task: prepare-tasks-with-secrets
+      <<: *prepare-tasks-with-secrets
+    - task: expiring-licenses
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/expiring-licenses.yml
+      input_mapping:
+        env: configuration
+      params:
+        ENV_FILE: foundations/config/env.yml
+        EXPIRES_WITHIN: 3m
 - name: stage-configure-apply-telemetry
   serial_groups: [install]
   plan:

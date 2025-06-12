@@ -397,6 +397,14 @@ There should be no formatting or indentation in these files, only new lines.
 
 1. Repeat this process for all sensitive values in your `tas-config.yml`.
 
+1. If the configuration file doesn't have the `license_key` property, it must be added for TAS releases starting from version 10.2.0
+
+    ```yaml
+    product-properties:
+      .properties.license_key:
+        value: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+    ```
+
 1. After this is complete, you can remove those secrets from `tas-config.yml`
 and replace them with `((parameterized-values))`.
 The parameterized value name should match the name in CredHub.
