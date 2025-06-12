@@ -1,0 +1,161 @@
+# Configuring a Director config file
+
+A director config file is an externalized config that lives outside of VMware Tanzu Operations Manager. Extracting this file can make it easier to manage multiple foundations. It also helps with:
+
+- traceability
+- avoiding configuration drift
+- configuration promotion
+
+
+## Prerequisites
+
+To extract the configuration for a director, you need a Tanzu Operations Manager VM.
+For detailed instructions, see [Installing Tanzu Operations Manager](./installing-opsman.html).
+
+## Extracting configuration
+
+In [om](https://github.com/pivotal-cf/om) there is a command called [staged-director-config](../tasks.html#staged-director-config), which is used to extract
+the Tanzu Operations Manager and the BOSH director configuration from the targeted foundation.
+
+<%= partial "../missing_fields_opsman_director" %>
+
+Sample usage:
+`om --env env.yml staged-director-config > director.yml`
+
+This gives you the whole configuration of Tanzu Operations Manager in a single YAML file.
+It will look more or less the same as the example above. You can check it
+in to your VCS.
+
+The following is an example configuration file for Tanzu Operations Manager that might be returned
+after running this command:
+
+<%= partial "../examples/director" %>
+
+## Configuring Director using config file
+
+Now you can modify the settings in the configuration file directly instead of
+operating in the Web UI. After you finish editing the file, the configuration
+file will need to be applied back to the Tanzu Operations Manager instance. The command
+[configure-director](../tasks.html#configure-director) will do the job.
+
+Sample usage:
+`om --env env.yml configure-director --config director.yml`
+
+
+## Promoting Tanzu Operations Manager to another foundation
+
+The configuration file is the exact state of a given foundation, and it contains
+some environment-specific properties. You need to  edit these
+properties manually to reflect the state of the new foundation. Or, when extracting
+the configuration file from the foundation, you can use the flag
+`--include-placeholders`. It will help to parameterize some variables to
+ease the process of adapting the configuration for another foundation.
+
+## VM extensions
+
+You may specify custom VM extensions to be used in deployments.
+To learn more about how various IaaS's support and use these extensions,
+see the [BOSH docs](https://bosh.io/docs/cloud-config/#vm-extensions).
+
+Using VM Extensions for your director configuration
+is an advanced feature of Tanzu Operations Manager.
+Sometimes it is necessary to define these extensions
+to perform certain tasks on your Tanzu Operations Manager director,
+but they are not required to run a foundation(s),
+and they change the default behavior if they are defined.
+
+Use with caution.
+
+In the following example, two new VM extensions are defined
+and will be added to the list of available extensions on the next [`configure-director`](../tasks.html#configure-director).
+This can be added to the end of your existing `director.yml`,
+or defined independently and set with no other configurations present.
+
+There are no default VM Extensions on a deployed Tanzu Operations Manager.
+
+`director.yml` Example:
+
+```yaml
+vmextensions-configuration:
+- name: a_vm_extension
+  cloud_properties:
+    source_dest_check: false
+- name: another_vm_extension
+  cloud_properties:
+    foo: bar
+...
+```
+
+To use VM Extensions in either your director or product,
+define `additional_vm_extensions`:
+
+```yaml
+resource-configuration:
+  director:
+    additional_networks: []
+    additional_vm_extensions: [a_vm_extension,another_vm_extension]
+...
+```
+
+## VM types
+
+You may specify custom VM types to be used in deployments.
+To learn more about how various IAAS's support and use these types,
+[see the BOSH docs](https://bosh.io/docs/cloud-config/#vm-types).
+
+Using VM Types for your director configuration
+is an advanced feature of Tanzu Operations Manager.
+VM Types are not required to run a foundation(s),
+and they change the default behavior if they are defined.
+
+Use with caution.
+
+In the following example, two new VM types are defined
+and will be added to the list of available types on the next [`configure-director`](../tasks.html#configure-director).
+This can be added to the end of your existing `director.yml`,
+or defined independently and set with no other configurations present.
+
+`director.yml` Example:
+
+```yaml
+vmtypes-configuration:
+  custom_only: false
+  vm_types:
+  - name: x1.large
+    cpu: 8
+    ram: 8192
+    ephemeral_disk: 10240
+  - name: mycustomvmtype
+    cpu: 4
+    ram: 16384
+    ephemeral_disk: 4096
+...
+```
+
+### VM Types precedence
+
+The precedence rules are listed in the following table.
+
+<table>
+  <tr>
+    <td>1</td>
+    <td>If <code>custom_only</code> is <code>true</code>,
+    the VM types specified in your configuration will replace the entire list of available VM types in the Tanzu Operations Manager.</td>
+  </tr>
+    <tr>
+    <td>2</td>
+    <td>If the property is set to false or is omitted, <code>configure_director</code> will append the listed VM types to the list of default VM types for your IaaS.</td>
+  </tr>
+    <tr>
+    <td>3</td>
+    <td>If a specified VM type is named the same as a predefined VM type, it will overwrite the predefined type.</td>
+  </tr>
+    <tr>
+    <td>4</td>
+    <td>If multiple specified VM types have the same name, the one specified last will be created.</td>
+  </tr>
+    <tr>
+    <td>5</td>
+    <td>Existing custom VM types do not persist across configure-director calls, and it should be expected that the entire list of custom VM types is specified in the director configuration.</td>
+  </tr>
+</table>
