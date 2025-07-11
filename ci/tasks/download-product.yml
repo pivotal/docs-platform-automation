@@ -57,7 +57,7 @@ run:
 
     ls downloads-pivnet/
 
-    mc config host add local http://localhost:9000 minio password
+    mc alias set local http://localhost:9000 minio password
     mc mb local/bucket
     mc cp -q "$PWD"/downloads-pivnet/*.pivotal local/bucket/product-path/
     mc cp -q "$PWD"/downloads-pivnet/*.tgz local/bucket/stemcell-path/
