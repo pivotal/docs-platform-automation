@@ -1,0 +1,43 @@
+# code_snippet opsman-settings start yaml
+# These are OPTIONAL settings that can exist in your opsman.yml
+# When upgrading an Ops Manager, these are configurations
+# that can be updated on the Settings page in the Ops Manager UI.
+# These settings can be updated with the upgrade-opsman command
+# even if the Ops Manager VM is not recreated.
+ssl-certificate:
+  certificate: |
+    -----BEGIN CERTIFICATE-----
+    certificate
+    -----END CERTIFICATE-----
+  private_key:
+    ----BEGIN RSA PRIVATE KEY-----
+    private-key
+    -----END RSA PRIVATE KEY-----
+pivotal-network-settings:
+  api_token: your-pivnet-token
+banner-settings:
+  ui_banner_contents: UI Banner Contents
+  ssh_banner_contents: SSH Banner Contents
+syslog-settings:
+  enabled: true
+  address: 1.2.3.4
+  port: 999
+  transport_protocol: tcp
+  tls_enabled: true
+  permitted_peer: "*.example.com"
+  ssl_ca_certificate: |
+    -----BEGIN CERTIFICATE-----
+    certificate
+    -----END CERTIFICATE-----
+  queue_size: 100000
+  forward_debug_logs: false
+  custom_rsyslog_configuration: if $message contains 'test' then stop
+rbac-settings: # if your RBAC is SAML, use these settings
+  rbac_saml_admin_group: example_group_name
+  rbac_saml_groups_attribute: example_attribute_name
+#rbac-settings: # if your RBAC is LDAP, replace the above
+#  ldap_rbac_admin_group_name: cn=opsmgradmins,ou=groups,dc=mycompany,dc=com
+opsman-configuration:
+  aws: # azure, gcp, openstack, vsphere
+    ...
+# code_snippet opsman-settings end yaml
