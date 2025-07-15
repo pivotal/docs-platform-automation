@@ -28,11 +28,11 @@ opsman-configuration:
     private_ip: 10.0.0.10
     ssh_public_key: ssh-rsa ......   # REQUIRED Ops Manager >= 2.6
 
-      # Optional
-      # cpu: 1                         # default - 1
-      # memory: 8                      # default - 8 (GB)
-      # ssh_password: ((ssh-password)) # REQUIRED if ssh_public_key not defined
-    # (Ops Manager < 2.6 ONLY)
+    # Optional
+    # cpu: 1                         # default - 1
+    # memory: 8                      # default - 8 (GB)
+    # ssh_password: ((ssh-password)) # REQUIRED if ssh_public_key not defined
+                                     # (Ops Manager < 2.6 ONLY)
     # vm_name: ops-manager-vm        # default - ops-manager-vm
     # disk_size: 200                 # default - 160 (GB), only larger values allowed
 
