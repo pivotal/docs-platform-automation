@@ -1,6 +1,8 @@
 ARG base_image
 FROM ${base_image}
 
+ARG concourse_url
+
 RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils
 
 RUN wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
@@ -30,7 +32,7 @@ RUN chmod +x ./credhub && \
     mv ./credhub /usr/bin/credhub
 
 # install fly
-RUN wget "https://platform-automation.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux" -O fly
+RUN wget "${concourse_url}api/v1/cli?arch=amd64&platform=linux" -O fly
 RUN chmod +x ./fly && \
     mv ./fly /usr/bin/fly
 

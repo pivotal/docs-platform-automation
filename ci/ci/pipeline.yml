@@ -473,6 +473,7 @@ jobs:
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
       IMAGE_ARG_base_image: base-image/image.tar
+      IMAGE_ARG_concourse_url: ((platform-automation/main/fly.newtarget))
   - put: ci-image
     params: { image: image/image.tar }
     get_params: { skip_download: true }
@@ -1454,7 +1455,7 @@ jobs:
     params:
       FLY_USERNAME: ((platform-automation/main/fly.username))
       FLY_PASSWORD: ((platform-automation/main/fly.password))
-      FLY_TARGET: ((platform-automation/main/fly.target))
+      FLY_TARGET: ((platform-automation/main/fly.newtarget))
       SECRET_ALLOWLIST: ((platform-automation/main/ci.secret-allowlist))
 - name: additional-task-testing
   serial: true
