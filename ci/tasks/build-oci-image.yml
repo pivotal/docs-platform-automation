@@ -15,5 +15,6 @@ outputs:
 params:
   DOCKERFILE:
   IMAGE_ARG_base_image:
+  IMAGE_ARG_concourse_url:
 run:
   path: build
