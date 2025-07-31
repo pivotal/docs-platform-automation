@@ -1,0 +1,87 @@
+---
+resource_types:
+  - name: pivnet
+    type: registry-image
+    source:
+      repository: ((concourse-team/dev_image_registry.url))/pivotalcf/pivnet-resource
+      tag: latest-final
+      username: ((concourse-team/dev_image_registry.username))
+      password: ((concourse-team/dev_image_registry.password))
+  - name: s3-with-arn
+    type: docker-image
+    source:
+      repository:  ((concourse-team/dev_image_registry.url))/concourse/s3-resource
+      tag: 1.2.1-ubuntu
+      username: ((concourse-team/dev_image_registry.username))
+      password: ((concourse-team/dev_image_registry.password))
+resources:
+- name: opsman-image
+  type: pivnet
+  source:
+    api_token: ((platform-automation/main.pivnet_token))
+    product_slug: ops-manager
+    product_version: 3.1.0
+    sort_by: semver
+- name: rc-image-s3
+  type: s3-with-arn
+  source:
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
+    regexp: platform-automation-image-(.*).tgz
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+jobs:
+  - name: hello-world
+    public: true
+    plan:
+    - in_parallel:
+      - get: opsman-image
+        tags: [platform-automation]
+        params:
+          globs:
+            - '*.ova'
+      - get: platform-automation-image
+        tags: [platform-automation]
+        resource: rc-image-s3
+        params:
+          unpack: true
+    - task: say-hello
+      tags: [platform-automation]
+      image: platform-automation-image
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+          - name: opsman-image
+        run:
+          path: sh
+          args:
+            - -c
+            - |
+              om version
+              cat <<EOF > opsman-config.yml
+              ---
+              opsman-configuration:
+                vsphere:
+                  vcenter:
+                    datacenter: tanzu-dc01
+                    datastore: iscsi-storage
+                    url: https://192.168.110.20/sdk
+                    username: administrator@vsphere.local
+                    password: VMware1!
+                    resource_pool: rp02_tas
+                    insecure: true
+                  disk_type: thin
+                  dns: 192.168.110.10,192.19.189.10
+                  gateway: 192.168.121.1
+                  hostname: opsmgr-hy-1
+                  netmask: 255.255.255.0
+                  network: seg_tas-infra
+                  ntp: 192.168.110.10
+                  private_ip: 192.168.121.12
+                  ssh_public_key: /root/.ssh/id_rsa.pub
+              EOF
+              cat opsman-config.yml
+              ls /root/.ssh/id_rsa.pub
+              om vm-lifecycle create-vm --config opsman-config.yml --image-file opsman-image/ops-manager-vsphere-3.1.0.ova
