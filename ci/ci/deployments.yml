@@ -22,11 +22,6 @@ deployments:
     opsman_glob: "*gcp*.yml"
     tags: [ ]
     enable_timed_trigger: true
-  - env_name: ci-support
-    paving_dir: gcp
-    opsman_glob: "*gcp*.yml"
-    tags: [ ]
-    enable_timed_trigger: true
   - env_name: reference-gcp
     paving_dir: gcp
     opsman_glob: "*gcp*.yml"
