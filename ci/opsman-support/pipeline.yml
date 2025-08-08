@@ -1,6 +1,8 @@
 ---
-#@ opsman_versions = [ "2.10", "3.0"]
-#@ pat_versions = ["5.2"]
+common-tags: &common-tags
+  - platform-automation
+#@ opsman_versions = [ "2.10", "3.0", "3.1"]
+#@ pat_versions = ["5.2", "5.3"]
 resource_types:
 - name: pivnet
   type: registry-image
@@ -43,12 +45,12 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal/docs-platform-automation
-      branch: develop
+      branch: fix-support-pipeline
 
   - name: deployments
     type: git
     source:
-      branch: main
+      branch: ci-support-epc
       private_key: ((platform-automation/main/platform_automation_deployments_ghe_deploy_key.private_key))
       uri: ((platform-automation/main.platform_automation_deployments_ghe_uri))
 
@@ -92,73 +94,70 @@ jobs:
     - get: stemcells-ubuntu-xenial
       params:
         globs:
-          - '*google*.tgz'
+          - '*vsphere*.tgz'
+      tags: *common-tags
     #@ if opsman_version == "3.0":
     - get: stemcells-ubuntu-jammy
       params:
         globs:
-          - '*google*.tgz'
+          - '*vsphere*.tgz'
+      tags: *common-tags
     #@ end
     - get: #@ "example-product-" + opsman_version
+      tags: *common-tags
     - get: #@ "opsman-image-" + opsman_version
+      tags: *common-tags
       params:
         globs:
-          - '*gcp*.yml'
-          - '*GCP.yml'
+          - '*vsphere*'
     - get: weekly
+      tags: *common-tags
       trigger: true
     - get: paving
+      tags: *common-tags
     - get: platform-automation-tasks
+      tags: *common-tags
       resource: #@ "platform-automation-tasks-" + pat_version
       params:
         unpack: true
         globs:
         - "*tasks*.zip"
     - get: platform-automation-image
+      tags: *common-tags
       resource: #@ "platform-automation-image-" + pat_version
       params:
         unpack: true
         globs:
         - "*image*.tgz"
     - get: deployments
+      tags: *common-tags
     - get: docs-platform-automation
-  - task: run-terraform
-    attempts: 2
-    file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
-    params:
-      IAAS: gcp
-      DEPLOYMENT_NAME: ci-support
-      OM_PASSWORD: ((platform-automation/main/opsman-login.password))
-      OM_USERNAME: ((platform-automation/main/opsman-login.username))
-      PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
-    ensure:
-      put: deployments
-      params:
-        rebase: true
-        repository: deployments
+      tags: *common-tags
   - task: prepare-tasks-with-secrets
     image: platform-automation-image
     file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
     input_mapping:
-      config: paving
+      config: deployments
       tasks: platform-automation-tasks
       vars: deployments
     output_mapping:
       tasks: platform-automation-tasks
     params:
-      CONFIG_PATHS: config/ci/configuration/gcp/director.yml config/ci/configuration/gcp/ops-manager.yml config/ci/configuration/auth.yml
-      VARS_PATHS: vars/ci-support/terraform-vars.yml
+      CONFIG_PATHS: config/ci-support-epc/director.yml config/ci-support-epc/ops-manager.yml config/ci-support-epc/auth.yml
+      VARS_PATHS: vars/ci-support-epc/terraform-vars.yml
+    tags: *common-tags
   - task: create-vm
     file: platform-automation-tasks/tasks/create-vm.yml
     input_mapping:
       image: #@ "opsman-image-" + opsman_version
       state: deployments
-      config: paving
+      config: deployments
       vars: deployments
     params:
-      STATE_FILE: ci-support/state.yml
-      OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
-      VARS_FILES: vars/ci-support/terraform-vars.yml
+      STATE_FILE: ci-support-epc/state.yml
+      OPSMAN_CONFIG_FILE: ci-support-epc/ops-manager.yml
+      VARS_FILES: vars/ci-support-epc/terraform-vars.yml
+    tags: *common-tags
     image: platform-automation-image
     ensure:
       do:
@@ -169,57 +168,64 @@ jobs:
             GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
             COMMIT_MESSAGE: #@ "create-vm update state file for support at " + opsman_version
             FILE_SOURCE_PATH: state.yml
-            FILE_DESTINATION_PATH: ci-support/state.yml
+            FILE_DESTINATION_PATH: ci-support-epc/state.yml
           input_mapping:
             repository: deployments
             file-source: generated-state
           image: platform-automation-image
+          tags: *common-tags
         - put: deployments
           params:
             rebase: true
             repository: repository-commit
+          tags: *common-tags
   - task: configure-authentication
     file: platform-automation-tasks/tasks/configure-authentication.yml
     image: platform-automation-image
     attempts: 20
     input_mapping:
       env: deployments
-      config: paving
+      config: deployments
     params:
-      ENV_FILE: ci-support/env.yml
-      AUTH_CONFIG_FILE: ci/configuration/auth.yml
-      VARS_FILES: env/ci-support/terraform-vars.yml
+      ENV_FILE: ci-support-epc/env.yml
+      AUTH_CONFIG_FILE: ci/ci-support-epc/auth.yml
+      VARS_FILES: env/ci-support-epc/terraform-vars.yml
+    tags: *common-tags
   - task: configure-director
     file: platform-automation-tasks/tasks/configure-director.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
-      config: paving
+      config: deployments
     params:
-      ENV_FILE: ci-support/env.yml
-      VARS_FILES: env/ci-support/terraform-vars.yml
+      ENV_FILE: ci-support-epc/env.yml
+      VARS_FILES: env/ci-support-epc/terraform-vars.yml
       DIRECTOR_CONFIG_FILE: ci/configuration/gcp/director.yml
+    tags: *common-tags
   - task: apply-director-changes
     file: platform-automation-tasks/tasks/apply-director-changes.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-support/env.yml
+      ENV_FILE: ci-support-epc/env.yml
+    tags: *common-tags
   - task: staged-director-config
     file: platform-automation-tasks/tasks/staged-director-config.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-support/env.yml
+      ENV_FILE: ci-support-epc/env.yml
+    tags: *common-tags
   - task: export-installation
     file: platform-automation-tasks/tasks/export-installation.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-support/env.yml
+      ENV_FILE: ci-support-epc/env.yml
+    tags: *common-tags
   - task: upload-product
     image: platform-automation-image
     file: platform-automation-tasks/tasks/upload-product.yml
@@ -227,7 +233,8 @@ jobs:
       env: deployments
       product: #@ "example-product-" + opsman_version
     params:
-      ENV_FILE: ci-support/env.yml
+      ENV_FILE: ci-support-epc/env.yml
+    tags: *common-tags
   - task: stage-configure-apply
     image: platform-automation-image
     file: platform-automation-tasks/tasks/stage-configure-apply.yml
@@ -239,26 +246,29 @@ jobs:
       stemcell: stemcells-ubuntu-jammy
       #@ end
     params:
-      ENV_FILE: ci-support/env.yml
-      CONFIG_FILE: ci-support/example-product.yml
-      VARS_FILES: env/ci-support/terraform-vars.yml
+      ENV_FILE: ci-support-epc/env.yml
+      CONFIG_FILE: ci-support-epc/example-product.yml
+      VARS_FILES: env/ci-support-epc/terraform-vars.yml
       ALLOW_PENDING_CHANGES: false
+    tags: *common-tags
   - task: delete-installation
     file: platform-automation-tasks/tasks/delete-installation.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-support/env.yml
+      ENV_FILE: ci-support-epc/env.yml
+    tags: *common-tags
   - task: delete-gcp-opsman-vm
     file: platform-automation-tasks/tasks/delete-vm.yml
     input_mapping:
       state: generated-state
-      config: paving
+      config: deployments
       vars: deployments
     params:
-      OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
-      VARS_FILES: vars/ci-support/terraform-vars.yml
+      OPSMAN_CONFIG_FILE: ci/ci-support-epc/ops-manager.yml
+      VARS_FILES: vars/ci-support-epc/terraform-vars.yml
+    tags: *common-tags
     image: platform-automation-image
     ensure:
       do:
@@ -269,42 +279,62 @@ jobs:
             GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
             COMMIT_MESSAGE: #@ "delete-vm update state file for support at " + opsman_version
             FILE_SOURCE_PATH: state.yml
-            FILE_DESTINATION_PATH: ci-support/state.yml
+            FILE_DESTINATION_PATH: ci-support-epc/state.yml
           input_mapping:
             repository: deployments
             file-source: generated-state
           image: platform-automation-image
+          tags: *common-tags
         - put: deployments
           params:
             rebase: true
             repository: repository-commit
-  - task: delete-infrastructure
-    file: docs-platform-automation/ci/tasks/delete-infrastructure/task.yml
+          tags: *common-tags
+  - try:
+        task: delete-opsman-vm
+        tags: *common-tags
+        file: platform-automation-tasks/tasks/delete-vm.yml
+        image: platform-automation-image
+        input_mapping:
+          image: opsman-image
+          state: deployments
+          config: deployments
+          vars: deployments
+        params:
+          STATE_FILE: ci-support-epc/state.yml
+          OPSMAN_CONFIG_FILE: ci-support-epc/ops-manager.yml
+        ensure:
+          do:
+            - task: state-file
+              tags: *common-tags
+              file: platform-automation-tasks/tasks/make-git-commit.yml
+              image: platform-automation-image
+              params:
+                GIT_AUTHOR_NAME: platform-automation-bot
+                GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
+                COMMIT_MESSAGE: delete-vm update state file for ci-support-epc
+                FILE_SOURCE_PATH: state.yml
+                FILE_DESTINATION_PATH:  ci-support-epc/state.yml
+              input_mapping:
+                repository: deployments
+                file-source: generated-state
+            - put: deployments
+              tags: *common-tags
+              params:
+                rebase: true
+                repository: repository-commit
+  - task: remove-state-files
+    tags: *common-tags
+    file: docs-platform-automation/ci/tasks/delete-state-file.yml
     params:
-      IAAS: gcp
-      DEPLOYMENT_NAME: ci-support
+      DEPLOYMENT: ci-support-epc
       PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
     ensure:
       put: deployments
+      tags: *common-tags
       params:
         rebase: true
         repository: deployments
-  ensure:
-    task: leftovers
-    file: docs-platform-automation/ci/tasks/leftovers.yml
-    params:
-      BBL_IAAS: gcp
-      BBL_AWS_ACCESS_KEY_ID: ((platform-automation/main/s3_with_role.access_key_id))
-      BBL_AWS_SECRET_ACCESS_KEY: ((platform-automation/main/s3_with_role.secret_access_key))
-      BBL_AWS_ASSUME_ROLE: ((platform-automation/main/s3_with_role.role_arn))
-      BBL_AWS_REGION: ((platform-automation/main/s3_with_role.region_name)f
-      BBL_AZURE_CLIENT_ID: ((platform-automation/main/azure.client_id))
-      BBL_AZURE_CLIENT_SECRET: ((platform-automation/main/azure.client_secret))
-      BBL_AZURE_TENANT_ID: ((platform-automation/main/azure.tenant_id))
-      BBL_AZURE_SUBSCRIPTION_ID: ((platform-automation/main/azure.subscription_id))
-      BBL_GCP_SERVICE_ACCOUNT_KEY: ((platform-automation/main/gcp.service_account))
-      FILTER: ci-support
-      DRY_RUN: false
-      NO_CONFIRM: true
 #@ end
+
 #@ end
