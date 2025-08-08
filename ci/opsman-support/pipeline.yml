@@ -199,10 +199,10 @@ jobs:
       config: deployments
     params:
       ENV_FILE: ci-support-epc/env.yml
-      VARS_FILES: env/ci-support-epc/terraform-vars.yml
       DIRECTOR_CONFIG_FILE: ci-support-epc/director.yml
     tags: *common-tags
   - task: apply-director-changes
+    attempts: 3
     file: platform-automation-tasks/tasks/apply-director-changes.yml
     image: platform-automation-image
     input_mapping:
