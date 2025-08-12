@@ -407,9 +407,7 @@ you must teach Concourse to talk to the Broadcom Support portal.
     Commands in this guide that contain a secret
     start with a space, which can be easy to miss.</p>
 
-2. Get a refresh token from your Broadcom Support profile
-(when logged in, click your user name, then **Edit Profile**)
-and click **Request New Refresh Token**.)
+2. Get a refresh token from Quick Links on the right side of the Broadcom Support profile (when logged in) and click **Request New Refresh Token**.
     Then use that token in the following command:
 
     ```bash
@@ -427,16 +425,16 @@ and click **Request New Refresh Token**.)
     retrieve it from your existing secret storage rather than getting a new one,
     or you'll end up needing to update it everywhere it's used.</p>
 
-1. Go back to the Concourse UI and trigger another build. This time, it should pass.
+3. Go back to the Concourse UI and trigger another build. This time, it should pass.
 
-2. Now it's time to commit.
+4. Now it's time to commit.
 
     ```bash
     git add pipeline.yml
     git commit -m "Add resources needed for test task"
     ```
 
-3. It's better not to pass the Broadcom Support token
+5. It's better not to pass the Broadcom Support token
 every time you need to set the pipeline.
 Fortunately, Concourse can integrate
 with secret storage services, like CredHub. In this step, put the API token in CredHub so Concourse can get it.
