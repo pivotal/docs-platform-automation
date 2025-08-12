@@ -2,7 +2,7 @@
 common-tags: &common-tags
   - platform-automation
 #@ opsman_versions = [ "2.10", "3.0", "3.1"]
-#@ pat_versions = ["5.2", "5.3"]
+#@ pat_versions = ["5.2"]
 resource_types:
 - name: pivnet
   type: registry-image
@@ -35,11 +35,6 @@ resources:
       product_slug: platform-automation
       product_version: #@ "^" + pat_version.replace('.', '\.') + "\.\d+$"
 #@ end
-  - name: paving
-    type: git
-    source:
-      uri: https://github.com/pivotal/paving
-      branch: low-privilege
 
   - name: docs-platform-automation
     type: git
@@ -96,7 +91,7 @@ jobs:
         globs:
           - '*vsphere*.tgz'
       tags: *common-tags
-    #@ if opsman_version == "3.0":
+    #@ if opsman_version == "3.0" or opsman_version == "3.1":
     - get: stemcells-ubuntu-jammy
       params:
         globs:
@@ -113,8 +108,6 @@ jobs:
     - get: weekly
       tags: *common-tags
       trigger: true
-    - get: paving
-      tags: *common-tags
     - get: platform-automation-tasks
       tags: *common-tags
       resource: #@ "platform-automation-tasks-" + pat_version
@@ -211,6 +204,7 @@ jobs:
       ENV_FILE: ci-support-epc/env.yml
     tags: *common-tags
   - task: staged-director-config
+    attempts: 3
     file: platform-automation-tasks/tasks/staged-director-config.yml
     image: platform-automation-image
     input_mapping:
@@ -219,6 +213,7 @@ jobs:
       ENV_FILE: ci-support-epc/env.yml
     tags: *common-tags
   - task: export-installation
+    attempts: 3
     file: platform-automation-tasks/tasks/export-installation.yml
     image: platform-automation-image
     input_mapping:
@@ -227,6 +222,7 @@ jobs:
       ENV_FILE: ci-support-epc/env.yml
     tags: *common-tags
   - task: upload-product
+    attempts: 3
     image: platform-automation-image
     file: platform-automation-tasks/tasks/upload-product.yml
     input_mapping:
@@ -236,13 +232,14 @@ jobs:
       ENV_FILE: ci-support-epc/env.yml
     tags: *common-tags
   - task: stage-configure-apply
+    attempts: 3
     image: platform-automation-image
     file: platform-automation-tasks/tasks/stage-configure-apply.yml
     input_mapping:
       product: #@ "example-product-" + opsman_version
       env: deployments
       config: deployments
-      #@ if opsman_version == "3.0":
+      #@ if opsman_version == "3.0" or opsman_version == "3.1":
       stemcell: stemcells-ubuntu-jammy
       #@ end
     params:
@@ -252,6 +249,7 @@ jobs:
       ALLOW_PENDING_CHANGES: false
     tags: *common-tags
   - task: delete-installation
+    attempts: 3
     file: platform-automation-tasks/tasks/delete-installation.yml
     image: platform-automation-image
     input_mapping:
