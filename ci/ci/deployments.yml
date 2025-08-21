@@ -17,11 +17,6 @@ deployments:
 #!    tags:
 #!      - vsphere-pez
 #!    enable_timed_trigger: true
-  - env_name: ci-upgrade
-    paving_dir: gcp
-    opsman_glob: "*gcp*.yml"
-    tags: [ ]
-    enable_timed_trigger: true
   - env_name: ci-support
     paving_dir: gcp
     opsman_glob: "*gcp*.yml"
