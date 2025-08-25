@@ -53,7 +53,7 @@ resources:
 - name: docs-platform-automation
   type: git
   source:
-    branch: develop
+    branch: fix-ci-aws-azure
     private_key: ((platform-automation/main/platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:
@@ -110,7 +110,7 @@ resources:
   source:
     password: ((concourse-team/dev_image_registry.password))
     repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
-    tag: testing
+    tag: fix-ci-aws-azure
     username: ((concourse-team/dev_image_registry.username))
 - name: vsphere-only-image
   type: registry-image
@@ -552,10 +552,11 @@ jobs:
         globs:
         - '*linux'
     - get: om-release
+      version: { tag: 'testtag' }
       trigger: true
       params:
         globs:
-        - 'om-linux-amd64-*[^.tar.gz]'
+        - 'om-linux-amd64*[^.tar.gz]'
     - get: docs-platform-automation
       trigger: false
     - get: packages-image

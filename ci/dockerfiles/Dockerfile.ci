@@ -67,10 +67,11 @@ RUN wget https://github.com/vmware/govmomi/releases/latest/download/govc_Linux_x
 RUN apt install -y python3-openstackclient
 
 # add keys for gcloud and azure
-RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ jammy main" | tee /etc/apt/sources.list.d/azure-cli.list
-RUN curl -L https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg && \
+    chmod go+r /etc/apt/keyrings/microsoft.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/microsoft.gpg]  https://packages.microsoft.com/repos/azure-cli/ jammy main" | tee /etc/apt/sources.list.d/azure-cli.list
 RUN apt -y update
 
 # install gcloud and azure
