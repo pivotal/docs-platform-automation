@@ -18,6 +18,7 @@ groups:
   - reference-gcp-delete-infrastructure
   - test-image-dependency-stability
   - upgrade-opsman-epc
+  - submit-sboms-rc
 - name: minor-bump
   jobs:
   - bump-minor
@@ -197,6 +198,15 @@ resources:
     aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
     bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: vsphere/image-receipt-(.*)
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+- name: rc-artifacts-s3
+  type: s3-with-arn
+  source:
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate_temp))
+    regexp: artifacts-(.*).tar.gz
     region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: osl-validated-image-receipt-s3
   type: s3-with-arn
@@ -416,7 +426,7 @@ resources:
   icon: language-go
   source:
     repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
-    tag: 0.0.79
+    tag: 0.0.184
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
@@ -695,6 +705,9 @@ jobs:
   - put: version
     params:
       file: version/version
+  - put: rc-artifacts-s3
+    params:
+      file: packaged-product/artifacts-*.tar.gz
 - name: test-image-dependency-stability
   plan:
   - in_parallel:
@@ -1873,6 +1886,22 @@ jobs:
     file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
     input_mapping:
       packaged-product: rc-artifacts-s3-v5
+
+- name: submit-sboms-rc
+  plan:
+    - in_parallel:
+        steps:
+          - get: rc-artifacts-s3
+            trigger: true
+            passed:
+              - build-binaries-image-combined
+          - get: docs-platform-automation-with-docs
+          - get: tvs-cli
+          - get: version
+    - task: submit-sbom-rc
+      file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
+      input_mapping:
+        packaged-product: rc-artifacts-s3
 
 - name: empty-cve-patch-notes-file
   plan:
