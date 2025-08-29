@@ -40,12 +40,12 @@ resources:
     type: git
     source:
       uri: https://github.com/pivotal/docs-platform-automation
-      branch: fix-support-pipeline
+      branch: develop
 
   - name: deployments
     type: git
     source:
-      branch: ci-support-epc
+      branch: main
       private_key: ((platform-automation/main/platform_automation_deployments_ghe_deploy_key.private_key))
       uri: ((platform-automation/main.platform_automation_deployments_ghe_uri))
 
