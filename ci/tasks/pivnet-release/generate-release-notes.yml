@@ -35,7 +35,7 @@ run:
 
     echo "Checking presence of release notes..."
     set +e
-    grep -q "^## v$VERSION$" docs-platform-automation/docs/release-notes.md
+    grep -q "^## v$VERSION$" docs-platform-automation/docs/release-notes.html.md.erb
     version_exists=$?
     if [ "$version_exists" == "0" ]; then
       echo "Release Notes already exist for $VERSION. Skipping..."
@@ -55,7 +55,7 @@ run:
     pushd docs-platform-automation/ci
       echo "Inserting version table into release notes..."
       go run ./scripts/insert-cli-versions-into-release-notes/insert-cli-versions-into-release-notes.go \
-         "$workspace"/docs-platform-automation/docs/release-notes.md \
+         "$workspace"/docs-platform-automation/docs/release-notes.html.md.erb \
          "$workspace"/binaries-table/bump-image-cli-versions* \
          "$VERSION"
     popd
