@@ -1,7 +1,7 @@
 # Platform Automation Toolkit for VMware Tanzu
 
 * [Overview](./index.md)
-* [Release Notes](./release-notes.md)
+* [Release Notes](./release-notes.html.md.erb)
 * [Compatibility and versioning](./compatibility-and-versioning.md)
 * [Getting started](./getting-started.md)
 * [**Reference pipelines**](./pipelines/resources.md)
