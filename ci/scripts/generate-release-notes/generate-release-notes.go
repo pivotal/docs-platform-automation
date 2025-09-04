@@ -228,7 +228,7 @@ func getReleaseNotes(docsRepoDir string) ([]byte, error) {
 		return []byte{}, fmt.Errorf("the provided '%s' is not a directory", docsRepoDir)
 	}
 
-	releaseNotes, err := ioutil.ReadFile(filepath.Join(docsRepoDir, "docs", "release-notes.md"))
+	releaseNotes, err := ioutil.ReadFile(filepath.Join(docsRepoDir, "docs", "release-notes.html.md.erb"))
 	if err != nil {
 		return []byte{}, err
 	}
@@ -269,7 +269,7 @@ func generateReleaseNotes(docsRepoDir, minorVersion string, header []byte, secti
 
 	// Get the appropriate file path based on version
 	// The 5.2 branch is using the html.md.erb file type, as requested by the Docs team
-	releaseNotesPath := filepath.Join(docsRepoDir, "docs", "release-notes.md")
+	releaseNotesPath := filepath.Join(docsRepoDir, "docs", "release-notes.html.md.erb")
 	if minorVersion == "5.2" {
 		releaseNotesPath = filepath.Join(docsRepoDir, "docs", "release-notes.html.md.erb")
 	}

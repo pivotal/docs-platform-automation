@@ -2,14 +2,15 @@ package main_test
 
 import (
 	"fmt"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/gbytes"
-	"github.com/onsi/gomega/gexec"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"time"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gbytes"
+	"github.com/onsi/gomega/gexec"
 )
 
 var _ = Describe("GenerateReleaseNotes", func() {
@@ -33,7 +34,7 @@ var _ = Describe("GenerateReleaseNotes", func() {
 		err = repo.run("remote", "add", "origin", upstreamRepo.dir)
 		Expect(err).NotTo(HaveOccurred())
 
-		err = repo.write("docs/release-notes.md", stableReleaseNotes)
+		err = repo.write("docs/release-notes.html.md.erb", stableReleaseNotes)
 		Expect(err).NotTo(HaveOccurred())
 
 		err = repo.run("add", "-A")
@@ -56,7 +57,7 @@ var _ = Describe("GenerateReleaseNotes", func() {
 			Eventually(session).Should(gexec.Exit(0))
 
 			By("keeping all the release notes on develop")
-			notes, err := repo.readFileFrom("develop", "docs/release-notes.md")
+			notes, err := repo.readFileFrom("develop", "docs/release-notes.html.md.erb")
 			Expect(err).NotTo(HaveOccurred())
 			Expect(notes).To(Equal(stableReleaseNotes))
 
@@ -83,7 +84,7 @@ var _ = Describe("GenerateReleaseNotes", func() {
 	When("automatically adding release notes", func() {
 		When("the release notes have been previously generated", func() {
 			It("errors with a helpful message", func() {
-				err := repo.write("docs/release-notes.md", stableReleaseNotes + "\n\n## v1.0.1")
+				err := repo.write("docs/release-notes.html.md.erb", stableReleaseNotes+"\n\n## v1.0.1")
 				Expect(err).NotTo(HaveOccurred())
 
 				err = repo.run("add", "-A")
@@ -133,7 +134,7 @@ var _ = Describe("GenerateReleaseNotes", func() {
 			Eventually(session).Should(gexec.Exit(0))
 
 			By("keeping all the release notes on develop")
-			notes, err := repo.readFileFrom("develop", "docs/release-notes.md")
+			notes, err := repo.readFileFrom("develop", "docs/release-notes.html.md.erb")
 			Expect(err).NotTo(HaveOccurred())
 			Expect(notes).To(ContainSubstring(expectedReleaseNotesWithPatches))
 
