@@ -1,0 +1,24 @@
+---
+template_variables:
+  support_link: <a href="https://support.broadcom.com/group/ecx/software-contact-support" target="_blank">Broadcom Support</a>
+  support_call_to_action: <a href="https://support.broadcom.com/group/ecx/software-contact-support" target="_blank">Need Support?</a>
+  support_url: https://support.broadcom.com/group/ecx/software-contact-support
+  global_header_product_href: https://support.broadcom.com/group/ecx/downloads
+
+  # Concourse name & version
+  current_major_version: "5-3"
+  v_major_version: "v5.3"
+  dot_major_version: "5.3"
+  cf_bosh_concourse_version: 7.4.4
+  product_name_full: Platform Automation Toolkit for Tanzu
+  product_name_short: Platform Automation Toolkit
+  product_name_abbr: Platform Automation
+
+  # Other prod names
+  harbor_prod_name_full: VMware Harbor Registry
+  concourse_prod_name_full: Concourse for Tanzu
+  concourse_prod_name_short: Concourse for Tanzu
+  concourse_prod_name_abbr: Concourse
+  opsman_prod_name_full: Tanzu Operations Manager
+  opsman_prod_name_short: Operations Manager
+  tas_prod: Elastic Application Runtime
