@@ -1,13 +1,14 @@
-<pre>
-<code>
+# code_snippet aws-configuration start yaml
 ---
 opsman-configuration:
   aws:
     region: us-west-2
     vpc_subnet_id: subnet-0292bc845215c2cbf
     security_group_ids: [ sg-0354f804ba7c4bc41 ]
-    key_pair_name: ops-manager-key  # used to SSH to VM
+    key_pair_name: ops-manager-key  # used to ssh to VM
     iam_instance_profile_name: env_ops_manager
+
+    authentication_type: access-key # Allowed values are access-key, instance-profile or assume-role
 
     # At least one IP address (public or private) needs to be assigned to the
     # VM. It is also permissible to assign both.
@@ -32,7 +33,7 @@ opsman-configuration:
     # security_group_id: sg-123  # DEPRECATED - use security_group_ids
     # use_instance_profile: true # DEPRECATED - will use instance profile for
                                  # execution VM if access_key_id and
-                                 # secret_access_key are not set
+                                 # secret_access_k ey are not set
 
   # Optional Ops Manager UI Settings for upgrade-opsman
   # ssl-certificate: ...
@@ -40,5 +41,4 @@ opsman-configuration:
   # banner-settings: ...
   # syslog-settings: ...
   # rbac-settings: ...
-</code>
-</pre>
+# code_snippet aws-configuration end

@@ -30,7 +30,7 @@ RUN chmod +x ./credhub && \
     mv ./credhub /usr/bin/credhub
 
 # install fly
-RUN wget "https://platform-automation.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux" -O fly
+RUN wget "https://tpe-concourse-rock.acc.broadcom.net/api/v1/cli?arch=amd64&platform=linux" -O fly
 RUN chmod +x ./fly && \
     mv ./fly /usr/bin/fly
 

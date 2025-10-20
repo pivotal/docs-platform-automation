@@ -13,13 +13,16 @@ groups:
   - #@ deployment.env_name + "-delete-infrastructure"
   #@ for/end deployment in deployments_without_gcp:
   - #@ "run-tasks-in-" + deployment.env_name + "-job"
+  - ci-upgrade-delete-infrastructure
   - prepare-resource-for-reference-pipeline
   - reference-gcp-delete-infrastructure
   - test-image-dependency-stability
-  - upgrade-opsman-gcp
+  - upgrade-opsman-epc
+  - submit-sboms-rc
 - name: minor-bump
   jobs:
   - bump-minor
+  - submit-release-sboms-v5.x
 - name: patch-bump
   jobs:
   - bump-test-image-dependency-stability
@@ -156,17 +159,17 @@ resources:
 - name: image-tanzunet-dev
   type: registry-image
   source:
-    repository: gcr.io/cf-norm-ci/platform-automation/platform-automation-image
-    username: _json_key
-    password: ((platform-automation/main/ci/gcr.service_account))
+    repository: ((concourse-team/dev_image_registry.url))/platform-automation/platform-automation-image
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
     pre_releases: true
     tag: develop
 - name: image-tanzunet-dev-vsphere
   type: registry-image
   source:
-    repository: gcr.io/cf-norm-ci/platform-automation/vsphere-platform-automation-image
-    username: _json_key
-    password: ((platform-automation/main/ci/gcr.service_account))
+    repository: ((concourse-team/dev_image_registry.url))/platform-automation/vsphere-platform-automation-image
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
     pre_releases: true
     tag: develop
 - name: rc-tasks-s3
@@ -195,6 +198,15 @@ resources:
     aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
     bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     regexp: vsphere/image-receipt-(.*)
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+- name: rc-artifacts-s3
+  type: s3-with-arn
+  source:
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate_temp))
+    regexp: artifacts-(.*).tar.gz
     region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: osl-validated-image-receipt-s3
   type: s3-with-arn
@@ -414,7 +426,7 @@ resources:
   icon: language-go
   source:
     repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
-    tag: 0.0.79
+    tag: 0.0.184
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
@@ -693,6 +705,9 @@ jobs:
   - put: version
     params:
       file: version/version
+  - put: rc-artifacts-s3
+    params:
+      file: packaged-product/artifacts-*.tar.gz
 - name: test-image-dependency-stability
   plan:
   - in_parallel:
@@ -744,7 +759,7 @@ jobs:
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
+      - upgrade-opsman-epc
       - additional-task-testing
       params:
         unpack: true
@@ -754,20 +769,20 @@ jobs:
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
+      - upgrade-opsman-epc
       - additional-task-testing
     - get: platform-automation-tasks
       resource: rc-tasks-s3
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
+      - upgrade-opsman-epc
     - get: version-ci
       resource: version
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
+      - upgrade-opsman-epc
     - get: version
       resource: version-v5.x
   - task: create-release-file
@@ -826,251 +841,245 @@ jobs:
         file: rc-tasks-s3/platform-automation-tasks-*.zip
       get_params:
         skip_download: "true"
-- name: upgrade-opsman-gcp
+- name: upgrade-opsman-epc
   serial: true
   serial_groups: [ ci-upgrade ]
   plan:
   - in_parallel:
     - get: version
+      tags: [platform-automation]
       passed:
-      - build-binaries-image-combined
+        - build-binaries-image-combined
     - get: platform-automation-tasks
+      tags: [platform-automation]
       resource: rc-tasks-s3
-      passed:
-      - build-binaries-image-combined
       params:
         unpack: true
+      passed:
+      - build-binaries-image-combined
     - get: binaries-table
+      tags: [platform-automation]
       passed:
       - build-binaries-image-combined
-    - get: docs-platform-automation
     - get: paving
+      tags: [platform-automation]
+    - get: docs-platform-automation
+      tags: [platform-automation]
     - get: deployments
+      tags: [platform-automation]
     - get: platform-automation-image
+      tags: [platform-automation]
       resource: rc-image-s3
-      passed:
-      - build-binaries-image-combined
       trigger: true
       params:
         unpack: true
+      passed:
+      - build-binaries-image-combined
     - get: rc-image-s3-vsphere
+      tags: [platform-automation]
       passed:
       - build-binaries-image-combined
     - get: opsman-image-2.9.42
+      tags: [platform-automation]
       params:
         globs:
-        - '*gcp*.yml'
+        - '*.ova'
     - get: opsman-image-2.9.x
+      tags: [platform-automation]
       params:
         globs:
-        - '*gcp*.yml'
+        - '*.ova'
     - get: opsman-image
+      tags: [platform-automation]
       trigger: true
       params:
         globs:
-        - '*gcp*.yml'
-  - task: run-terraform
-    attempts: 2
-    file: docs-platform-automation/ci/tasks/create-infrastructure/task.yml
-    params:
-      IAAS: gcp
-      DEPLOYMENT_NAME: ci-upgrade
-      OM_PASSWORD: ((platform-automation/main/opsman-login.password))
-      OM_USERNAME: ((platform-automation/main/opsman-login.username))
-      PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
-    ensure:
-      put: deployments
-      params:
-        rebase: true
-        repository: deployments
+        - '*.ova'
   - task: prepare-tasks-with-secrets
+    tags: [platform-automation]
     image: platform-automation-image
     file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
     input_mapping:
-      config: paving
+      config: deployments
       tasks: platform-automation-tasks
       vars: deployments
     output_mapping:
       tasks: platform-automation-tasks
     params:
-      CONFIG_PATHS: config/ci/configuration/gcp/director.yml config/ci/configuration/auth.yml
-      VARS_PATHS: vars/ci-upgrade/terraform-vars.yml
+      CONFIG_PATHS: config/ci-upgrade-epc/director.yml config/ci-upgrade-epc/auth.yml
   - in_parallel:
     - task: create-vm
-      file: platform-automation-tasks/tasks/create-vm.yml
+      tags: [platform-automation]
+      file: docs-platform-automation/tasks/create-vm.yml
       input_mapping:
         image: opsman-image-2.9.42
         state: deployments
-        config: paving
+        config: deployments
         vars: deployments
       params:
-        STATE_FILE: ci-upgrade/state.yml
-        OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
-        VARS_FILES: vars/ci-upgrade/terraform-vars.yml
+        STATE_FILE: ci-upgrade-epc/state.yml
+        OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
       image: platform-automation-image
       ensure:
         do:
-        - task: state-file
-          file: platform-automation-tasks/tasks/make-git-commit.yml
-          params:
-            GIT_AUTHOR_NAME: platform-automation-bot
-            GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
-            COMMIT_MESSAGE: "create-vm update state file for ci-upgrade"
-            FILE_SOURCE_PATH: state.yml
-            FILE_DESTINATION_PATH: ci-upgrade/state.yml
-          input_mapping:
-            repository: deployments
-            file-source: generated-state
-          image: platform-automation-image
-        - put: deployments
-          params:
-            rebase: true
-            repository: repository-commit
+          - task: state-file
+            tags: [platform-automation]
+            file: platform-automation-tasks/tasks/make-git-commit.yml
+            params:
+              GIT_AUTHOR_NAME: platform-automation-bot
+              GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
+              COMMIT_MESSAGE: "create-vm update state file for ci-upgrade"
+              FILE_SOURCE_PATH: state.yml
+              FILE_DESTINATION_PATH: ci-upgrade-epc/state.yml
+            input_mapping:
+              repository: deployments
+              file-source: generated-state
+            image: platform-automation-image
+          - put: deployments
+            tags: [platform-automation]
+            params:
+              rebase: true
+              repository: repository-commit
   - task: configure-authentication
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/configure-authentication.yml
     image: platform-automation-image
     attempts: 20
     input_mapping:
       env: deployments
-      config: paving
+      config: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
-      AUTH_CONFIG_FILE: ci/configuration/auth.yml
-      VARS_FILES: env/ci-upgrade/terraform-vars.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
+      AUTH_CONFIG_FILE: ci-upgrade-epc/auth.yml
   - task: configure-director
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/configure-director.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
-      config: paving
+      config: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
-      VARS_FILES: env/ci-upgrade/terraform-vars.yml
-      DIRECTOR_CONFIG_FILE: ci/configuration/gcp/director.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
+      DIRECTOR_CONFIG_FILE: ci-upgrade-epc/director.yml
   - task: apply-director-changes
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/apply-director-changes.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
-  - task: stage-configure-apply-telemetry
-    file: platform-automation-tasks/tasks/stage-configure-apply.yml
-    image: platform-automation-image
-    attempts: 3
-    input_mapping:
-      env: deployments
-      config: deployments
-      vars: deployments
-    params:
-      ENV_FILE: ci-upgrade/env.yml
-      CONFIG_FILE: ci-upgrade/p-telemetry.yml
-      STAGE_PRODUCT_CONFIG_FILE: ci-upgrade/p-telemetry.yml
-      VARS_FILE: env/ci-upgrade/terraform-vars.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: staged-director-config
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/staged-director-config.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: export-installation
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/export-installation.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: upgrade-opsman-patch
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/upgrade-opsman.yml
     input_mapping:
       image: opsman-image-2.9.x
-      state: deployments
-      config: paving
+      config: deployments
       vars: deployments
       env: deployments
+      state: deployments
     params:
-      STATE_FILE: ci-upgrade/state.yml
-      OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
-      VARS_FILES: vars/ci-upgrade/terraform-vars.yml
-      ENV_FILE: ci-upgrade/env.yml
+      STATE_FILE: ci-upgrade-epc/state.yml
+      OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
     image: platform-automation-image
   - task: apply-director-changes
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/apply-director-changes.yml
     image: platform-automation-image
     attempts: 5
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: export-installation
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/export-installation.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: upgrade-opsman-minor
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/upgrade-opsman.yml
     image: platform-automation-image
     input_mapping:
       image: opsman-image
       state: deployments
-      config: paving
+      config: deployments
       vars: deployments
       env: deployments
     params:
-      STATE_FILE: ci-upgrade/state.yml
-      OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
-      VARS_FILES: vars/ci-upgrade/terraform-vars.yml
-      ENV_FILE: ci-upgrade/env.yml
+      STATE_FILE: ci-upgrade-epc/state.yml
+      OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: apply-director-changes
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/apply-director-changes.yml
     image: platform-automation-image
     attempts: 5
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: upgrade-opsman
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/upgrade-opsman.yml
     image: platform-automation-image
     input_mapping:
       image: opsman-image
       state: deployments
-      config: paving
+      config: deployments
       vars: deployments
       env: deployments
     params:
-      STATE_FILE: ci-upgrade/state.yml
-      OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
-      VARS_FILES: vars/ci-upgrade/terraform-vars.yml
-      ENV_FILE: ci-upgrade/env.yml
+      STATE_FILE: ci-upgrade-epc/state.yml
+      OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: apply-director-changes
+    tags: [platform-automation]
     file: platform-automation-tasks/tasks/apply-director-changes.yml
     image: platform-automation-image
     attempts: 5
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
+      ENV_FILE: ci-upgrade-epc/env.yml
   - task: delete-installation
+    tags: [ platform-automation ]
     file: platform-automation-tasks/tasks/delete-installation.yml
     image: platform-automation-image
     input_mapping:
       env: deployments
     params:
-      ENV_FILE: ci-upgrade/env.yml
-  - task: delete-gcp-opsman-vm
+      ENV_FILE: ci-upgrade-epc/env.yml
+  - task: delete-epc-opsman-vm
+    tags: [ platform-automation ]
     file: platform-automation-tasks/tasks/delete-vm.yml
     image: platform-automation-image
     input_mapping:
       state: generated-state
-      config: paving
+      config: deployments
       vars: deployments
     params:
-      OPSMAN_CONFIG_FILE: ci/configuration/gcp/ops-manager.yml
-      VARS_FILES: vars/ci-upgrade/terraform-vars.yml
+      OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
     ensure:
       do:
       - task: state-file
@@ -1442,6 +1451,99 @@ jobs:
         rebase: true
         repository: deployments
 #@ end
+
+- name: ci-upgrade-delete-infrastructure
+  serial_groups:
+    - ci-upgrade
+  plan:
+    - in_parallel:
+      - get: nightly
+        trigger: true
+        tags: [platform-automation]
+      - get: docs-platform-automation
+        tags: [platform-automation]
+      - get: paving
+        tags: [platform-automation]
+      - get: deployments
+        tags: [platform-automation]
+      - get: platform-automation-image
+        resource: rc-image-s3
+        params:
+          unpack: true
+        tags: [platform-automation]
+      - get: platform-automation-tasks
+        resource: rc-tasks-s3
+        params:
+          unpack: true
+        tags: [platform-automation]
+    - task: prepare-tasks-with-secrets
+      tags: [platform-automation]
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/prepare-tasks-with-secrets.yml
+      input_mapping:
+        config: deployments
+        tasks: platform-automation-tasks
+        vars: deployments
+      output_mapping:
+        tasks: platform-automation-tasks
+      params:
+        CONFIG_PATHS: config/ci-upgrade-epc/director.yml config/ci-upgrade-epc/ops-manager.yml config/ci-upgrade-epc/auth.yml
+        VARS_PATHS: vars/ci-upgrade-epc/terraform-vars.yml
+    - try:
+        task: delete-installation
+        tags: [platform-automation]
+        file: platform-automation-tasks/tasks/delete-installation.yml
+        input_mapping:
+          env: deployments
+        params:
+          ENV_FILE:  ci-upgrade-epc/env.yml
+        image: platform-automation-image
+    - try:
+        task: delete-opsman-vm
+        tags: [platform-automation]
+        file: platform-automation-tasks/tasks/delete-vm.yml
+        image: platform-automation-image
+        input_mapping:
+          image: opsman-image
+          state: deployments
+          config: deployments
+          vars: deployments
+        params:
+          STATE_FILE: ci-upgrade-epc/state.yml
+          OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
+        ensure:
+          do:
+            - task: state-file
+              tags: [platform-automation]
+              file: platform-automation-tasks/tasks/make-git-commit.yml
+              image: platform-automation-image
+              params:
+                GIT_AUTHOR_NAME: platform-automation-bot
+                GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
+                COMMIT_MESSAGE: delete-vm update state file for ci-upgrade-epc
+                FILE_SOURCE_PATH: state.yml
+                FILE_DESTINATION_PATH:  ci-upgrade-epc/state.yml
+              input_mapping:
+                repository: deployments
+                file-source: generated-state
+            - put: deployments
+              tags: [platform-automation]
+              params:
+                rebase: true
+                repository: repository-commit
+    - task: remove-state-files
+      tags: [platform-automation]
+      file: docs-platform-automation/ci/tasks/delete-state-file.yml
+      params:
+        DEPLOYMENT: ci-upgrade-epc
+        PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
+      ensure:
+        put: deployments
+        tags: [platform-automation]
+        params:
+          rebase: true
+          repository: deployments
+
 - name: check-for-secrets-in-tasks
   plan:
   - in_parallel:
@@ -1632,14 +1734,14 @@ jobs:
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
+      - upgrade-opsman-epc
       - additional-task-testing
     - get: binaries-image
       resource: rc-image-s3
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
+      - upgrade-opsman-epc
       - additional-task-testing
       params:
         unpack: true
@@ -1647,7 +1749,7 @@ jobs:
       passed:
       #@ for/end deployment in deployments_without_gcp:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-gcp
+      - upgrade-opsman-epc
       - additional-task-testing
 - name: bump-test-image-dependency-stability
   plan:
@@ -1757,9 +1859,7 @@ jobs:
     - in_parallel:
       - get: #@ "rc-artifacts-s3-" + version.number
         passed:
-        #@ for version in data.values.versions:
         - #@ "update-" + version.number
-        #@ end
         trigger: true
       - get: docs-platform-automation-with-docs
       - get: tvs-cli
@@ -1770,6 +1870,39 @@ jobs:
       input_mapping:
         packaged-product: #@ "rc-artifacts-s3-" + version.number
 #@ end
+- name: submit-release-sboms-v5.x
+  plan:
+  - in_parallel:
+      steps:
+      - get: rc-artifacts-s3-v5
+        passed:
+        - bump-minor
+        trigger: true
+      - get: docs-platform-automation-with-docs
+      - get: tvs-cli
+      - get: version
+        resource: version-v5.x
+  - task: submit-release-sbom
+    file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
+    input_mapping:
+      packaged-product: rc-artifacts-s3-v5
+
+- name: submit-sboms-rc
+  plan:
+    - in_parallel:
+        steps:
+          - get: rc-artifacts-s3
+            trigger: true
+            passed:
+              - build-binaries-image-combined
+          - get: docs-platform-automation-with-docs
+          - get: tvs-cli
+          - get: version
+    - task: submit-sbom-rc
+      file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
+      input_mapping:
+        packaged-product: rc-artifacts-s3
+
 - name: empty-cve-patch-notes-file
   plan:
     - in_parallel:

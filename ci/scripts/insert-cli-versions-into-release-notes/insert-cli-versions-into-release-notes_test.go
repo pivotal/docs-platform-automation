@@ -25,7 +25,7 @@ var _ = Describe("Insert cli versions into release notes script", func() {
 
 	When("improper number of arguments are provided", func() {
 		It("gives an error saying a path to the release notes file, version table, and version number are required", func() {
-			command := exec.Command(compiledPath, "release-notes.md", "versionTable.md")
+			command := exec.Command(compiledPath, "release-notes.html.md.erb", "versionTable.md")
 			session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 
 			Expect(err).NotTo(HaveOccurred())
@@ -170,7 +170,6 @@ etc
 
 				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 
-
 				Expect(err).NotTo(HaveOccurred())
 				Eventually(session).Should(gexec.Exit(1))
 				Expect(session.Err).To(gbytes.Say(regexp.QuoteMeta("the requested version is not present in the release notes")))
@@ -183,7 +182,6 @@ etc
 				command := exec.Command(compiledPath, releaseNotesFile.Name(), versionTableFile.Name(), versionArg)
 
 				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-
 
 				Expect(err).NotTo(HaveOccurred())
 				Eventually(session).Should(gexec.Exit(1))
