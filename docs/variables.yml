@@ -14,11 +14,14 @@ template_variables:
   product_name_short: Platform Automation Toolkit
   product_name_abbr: Platform Automation
 
-  # Other prod names
+  # Other prod names and versions
   harbor_prod_name_full: VMware Harbor Registry
   concourse_prod_name_full: Concourse for Tanzu
   concourse_prod_name_short: Concourse for Tanzu
   concourse_prod_name_abbr: Concourse
   opsman_prod_name_full: Tanzu Operations Manager
   opsman_prod_name_short: Operations Manager
-  tas_prod: Elastic Application Runtime
+  opsman_prod_version: 3.2
+  tas_prod_name: Elastic Application Runtime
+  tas_prod_version: 10-3
+  hub_prod_version: 10-3
