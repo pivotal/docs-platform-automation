@@ -13,5 +13,9 @@ inputs:
   - name: packaged-product
   - name: tvs-cli
   - name: docs-platform-automation-with-docs
+
+params:
+  TAGS:
+
 run:
   path: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.sh
