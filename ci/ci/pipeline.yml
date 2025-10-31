@@ -1869,6 +1869,8 @@ jobs:
       file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
       input_mapping:
         packaged-product: #@ "rc-artifacts-s3-" + version.number
+      params:
+        TAGS: '["GA"]'
 #@ end
 - name: submit-release-sboms-v5.x
   plan:
@@ -1886,6 +1888,8 @@ jobs:
     file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
     input_mapping:
       packaged-product: rc-artifacts-s3-v5
+    params:
+      TAGS: '["GA"]'
 
 - name: submit-sboms-rc
   plan:
@@ -1902,6 +1906,8 @@ jobs:
       file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
       input_mapping:
         packaged-product: rc-artifacts-s3
+      params:
+        TAGS: '["Dev/RC"]'
 
 - name: empty-cve-patch-notes-file
   plan:

@@ -24,7 +24,7 @@ build:
   component: "platform-automation"
   version: $VERSION
   release-line: $RELEASE_LINE
-  tags: ["GA"]
+  tags: $TAGS
   artifacts:
     - name: "platform-automation-task-image"
       version: $VERSION
