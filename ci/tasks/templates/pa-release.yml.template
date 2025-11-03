@@ -1,0 +1,60 @@
+business_unit: Tanzu and Cloud Health
+contact: indira.chandrabhatta@broadcom.com
+title: Platform Automation Toolkit
+product_name: Platform Automation Toolkit
+display_group: Platform Automation Toolkit
+lang: EN
+type: Release Update / MP
+version: ${VERSION}
+status: ${STATUS}
+third_party_classification: "N"
+no_encryption_change: "Y"
+oct_request_id: "3608"
+ga_date_mm/dd/yyyy: ${GA_DATE}
+published_date_mm/dd/yyyy: ""
+end_of_support_date_mm/dd/yyyy: ${END_OF_SUPPORT_DATE}
+docs_link: https://docs.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.3/vmware-automation-toolkit/GUID-docs-release-notes.html#${VERSION}
+export_control_status: ENTITLEMENT_REQUIRED
+product_slug: platform-automation
+skus:
+  - code: TNZ-PLAT-V2
+  - code: PKS-ENCFS-100P-P-TLSS-C
+  - code: PKS-ENS-100C-3P-TLSS-C
+  - code: CNA-NXT-PKS-C
+  - code: CNA-PKSC-3P-TLSS-C
+  - code: TNZ-UN-SM
+  - code: NFR-TNZ-PLAT
+  - code: PKS-ENS-100P-P-TLSS-C
+  - code: TNZ-PLAT-SM
+  - code: PKS-ENS-100C-P-TLSS-C
+  - code: PKS-ESP-SUB-500AD-C
+  - code: NFR-TNZ-PLAT-V2
+  - code: PV-CFERS-3P-TLSS-C
+  - code: PV-CFERS-P-TLSS-F
+  - code: TNZ-UN-TKGI
+  - code: PKS-ENCFS-100C-P-TLSS-C
+  - code: NFR-TNZ-PLAT-SM
+  - code: TNZ-KUBERNETES-SM
+  - code: PKS-ENCFA-50P-P-TLSS-C
+  - code: PKS-ENS-100C-P-TLSS-A
+  - code: CNA-PKS-P-TLSS-C
+  - code: CNA-PKSC-AK-P-TLSS-C
+  - code: CNA-PKSC-TLSS-C
+  - code: TNZ-TKGI
+  - code: TNZ-CLD-FOUNDRY-SM
+  - code: PKS-ENCFA-8C-P-TLSS-C
+  - code: PKS-ESC-SUB-500AD-C
+  - code: CNA-PKSC-8-3P-TLSS-C
+  - code: CNA-PKSC-8-P-TLSS-C
+  - code: CNA-PKSC-P-TLSS-A
+  - code: CF4-TKG-VS7-KUBC-1Y-C
+  - code: TNZ-UN
+  - code: PV-TAS-CR-P-TLSS-C
+  - code: PKS-ENCFC-3P-TLSS-A
+  - code: CNA-PKSC-P-TLSS-C
+  - code: TNZ-TP-CORE
+  - code: TNZ-PLAT
+  - code: PV-CFERS-P-TLSS-C
+  - code: PKS-ENCFC-P-TLSS-C
+  - code: PKS-ESC-SUB-8AD-C
+  - code: CNA-PKSP-50-P-TLSS-C

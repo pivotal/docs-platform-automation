@@ -1,0 +1,27 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/golang
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+inputs:
+  - name: rmt-assets
+  - name: docs-platform-automation
+outputs:
+  - name: rmt-artifacts
+params:
+  RMT_HOST: ((concourse-team/rmt.rmt_host))
+  RMT_USERNAME: ((concourse-team/rmt.rmt_username))
+  RMT_PASSWORD: ((concourse-team/rmt.rmt_password))
+  RMT_EMAIL: ((concourse-team/rmt.rmt_email))
+  SFTP_HOST: ((concourse-team/rmt.sftp_host))
+  SFTP_USERNAME: ((concourse-team/rmt.sftp_username))
+  SFTP_PASSWORD: ((concourse-team/rmt.sftp_password))
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      echo ${prior_release_version}
+      docs-platform-automation/ci/tasks/build-and-setup-gormt.sh

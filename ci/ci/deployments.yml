@@ -23,9 +23,9 @@ deployments:
     tags: [ ]
     enable_timed_trigger: false
 versions:
-  - number: v5.2
-    regex: 5\.2\.[1-9]\d*
-    vsphere_image: true
   - number: v5.3
     regex: 5\.3\.[1-9]\d*
     vsphere_image: true
+    release_version: 5.3.3
+    ga_date: 10/01/2026
+    eos_date: 10/01/2027
