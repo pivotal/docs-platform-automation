@@ -23,6 +23,7 @@ groups:
   jobs:
   - bump-minor
   - submit-release-sboms-v5.x
+  - publish-release-minor
 - name: patch-bump
   jobs:
   - bump-test-image-dependency-stability
@@ -31,6 +32,8 @@ groups:
   - #@ "update-" + version.number
   #@ for/end version in data.values.versions:
   - #@ "submit-release-sboms-" + version.number
+  #@ for/end version in data.values.versions:
+  - #@ "publish-release-" + version.number
   - empty-cve-patch-notes-file
 - name: om
   jobs:
@@ -436,6 +439,13 @@ resources:
     github_api_url: ((platform-automation/ghe.github_api_url))
     owner: ((platform-automation/ghe.org))
     repository: tpe-vulnerability
+- name: gormt
+  type: github-release
+  source:
+    repository: gormt
+    owner: TNZ
+    github_api_url: https://github.gwd.broadcom.net/api/v3
+    access_token: ((concourse-team/gormt-pat))
 resource_types:
 - name: pivnet
   type: registry-image
@@ -1871,6 +1881,48 @@ jobs:
         packaged-product: #@ "rc-artifacts-s3-" + version.number
       params:
         TAGS: '["GA"]'
+- name: #@ "publish-release-" + version.number
+  plan:
+    - in_parallel:
+      - get: rmt-assets
+        resource: gormt
+      - get: docs-platform-automation
+      - get: #@ "rc-artifacts-s3-" + version.number
+        passed:
+        - #@ "submit-release-sboms-" + version.number
+        params:
+          unpack: true
+      - get: version
+        resource: #@ "version-" + version.number
+    - task: build-and-setup-gormt
+      file: docs-platform-automation/ci/tasks/build-and-setup-gormt.yml
+    - load_var: version-number
+      file: version/version
+      reveal: true
+    - task: generate-rmt-release-manifest
+      file: docs-platform-automation/ci/tasks/generate-rmt-release-manifest.yml
+      input_mapping:
+        packaged-product: #@ "rc-artifacts-s3-" + version.number
+      params:
+        VERSION: ((.:version-number))
+        END_OF_SUPPORT_DATE: ((eos_date))
+        RELEASE_CONTACT: ((platform-automation/main/ci/release.release_contact))
+    - task: create-rmt-release
+      file: docs-platform-automation/ci/tasks/create-rmt-release.yml
+      params:
+        VERSION: ((.:version-number))
+    - task: upload-files-to-rmt
+      file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
+      input_mapping:
+        packaged-product: #@ "rc-artifacts-s3-" + version.number
+      params:
+        VERSION: ((.:version-number))
+    - task: release-files-update
+      file: docs-platform-automation/ci/tasks/release-files-update.yml
+      input_mapping:
+        packaged-product: #@ "rc-artifacts-s3-" + version.number
+      params:
+        VERSION: ((.:version-number))
 #@ end
 - name: submit-release-sboms-v5.x
   plan:
@@ -1907,7 +1959,7 @@ jobs:
       input_mapping:
         packaged-product: rc-artifacts-s3
       params:
-        TAGS: '["RC"]'
+        TAGS: '["DEV"]'
 
 - name: empty-cve-patch-notes-file
   plan:
@@ -1950,3 +2002,43 @@ jobs:
     params:
       bump: #@ bump
 #@ end
+- name: publish-release-minor
+  plan:
+    - in_parallel:
+      - get: rmt-assets
+        resource: gormt
+      - get: docs-platform-automation
+      - get: rc-artifacts-s3-v5
+        passed:
+          - submit-release-sboms-v5.x
+        params:
+          unpack: true
+      - get: version
+        resource: version-v5.x
+    - task: build-and-setup-gormt
+      file: docs-platform-automation/ci/tasks/build-and-setup-gormt.yml
+    - load_var: version-number
+      file: version/version
+      reveal: true
+    - task: generate-rmt-release-manifest
+      file: docs-platform-automation/ci/tasks/generate-rmt-release-manifest.yml
+      input_mapping:
+        packaged-product: rc-artifacts-s3-v5
+      params:
+        VERSION: ((.:version-number))
+        END_OF_SUPPORT_DATE: ((eos_date))
+        RELEASE_CONTACT: ((platform-automation/main/ci/release.release_contact))
+    - task: create-rmt-release
+      file: docs-platform-automation/ci/tasks/create-rmt-release.yml
+      params:
+        VERSION: ((.:version-number))
+    - task: upload-files-to-rmt
+      file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
+      params:
+        VERSION: ((.:version-number))
+    - task: release-files-update
+      file: docs-platform-automation/ci/tasks/release-files-update.yml
+      input_mapping:
+        packaged-product: rc-artifacts-s3-v5
+      params:
+        VERSION: ((.:version-number))

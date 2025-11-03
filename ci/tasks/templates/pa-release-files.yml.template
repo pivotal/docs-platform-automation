@@ -1,0 +1,10 @@
+files:
+  - file: packaged-product/platform-automation-tasks-${VERSION}.zip
+    description: Concourse Tasks
+    status: ${STATUS}
+  - file: packaged-product/platform-automation-image-${VERSION}.tgz
+    description: Docker Image for Concourse Tasks on all IaaSes
+    status: ${STATUS}
+  - file: packaged-product/vsphere-platform-automation-image-${VERSION}.tar.gz
+    description: Docker Image for Concourse Tasks on vSphere
+    status: ${STATUS}
