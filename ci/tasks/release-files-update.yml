@@ -1,0 +1,40 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/golang
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+inputs:
+  - name: rmt-artifacts
+  - name: rmt-release-config
+  - name: release-created
+  - name: docs-platform-automation
+  - name: packaged-product
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      RELEASE_ID="$(cat release-created/id)"
+      
+      cd rmt-artifacts
+      while true; do
+        release=$(./rmt release-get --id ${RELEASE_ID} --output json)
+        files_length=$(echo "$release" | jq '.Files | length')
+
+        if [ "$files_length" -eq 3 ]; then
+        break
+        fi
+
+        echo "Files length is not 3 yet. Waiting..."
+        sleep 30
+      done
+    
+      cp ../rmt-release-config/pa-release-${VERSION}.yml release.yml
+      cat ../rmt-release-config/pa-release-files-${VERSION}.yml >> release.yml
+      cat release.yml
+      
+      # Check for the virus scan status on release files
+      ./rmt release-file-check --id ${RELEASE_ID}
+      ./rmt release-file-update --release-file release.yml --id ${RELEASE_ID}

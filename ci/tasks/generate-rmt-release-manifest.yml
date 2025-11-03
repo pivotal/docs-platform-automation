@@ -1,0 +1,37 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/alpine
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+inputs:
+  - name: docs-platform-automation
+  - name: packaged-product
+outputs:
+  - name: rmt-release-config
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      apk update
+      apk add --no-cache gettext coreutils
+
+      export STATUS="Dev/Internal"
+      export VERSION=${VERSION}
+      export END_OF_SUPPORT_DATE_=$(date -d "$END_OF_SUPPORT_DATE" +"%m/%d/%Y")
+
+      INPUT_RELEASE_TEMPLATE_FILE=docs-platform-automation/ci/tasks/templates/pa-release.yml.template
+      OUTPUT_RELEASE_FILE=rmt-release-config/pa-release-${VERSION}.yml
+
+      envsubst < "$INPUT_RELEASE_TEMPLATE_FILE" > "$OUTPUT_RELEASE_FILE"
+      echo "Relase manifest without files section..."
+      cat $OUTPUT_RELEASE_FILE
+
+      INPUT_FILES_TEMPLATE_FILE=docs-platform-automation/ci/tasks/templates/pa-release-files.yml.template
+      OUTPUT_FILES_CONFIG_FILE=rmt-release-config/pa-release-files-${VERSION}.yml
+
+      envsubst < "$INPUT_FILES_TEMPLATE_FILE" > "$OUTPUT_FILES_CONFIG_FILE"
+      echo "Release file config..."
+      cat $OUTPUT_FILES_CONFIG_FILE

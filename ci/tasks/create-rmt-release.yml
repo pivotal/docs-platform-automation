@@ -1,0 +1,21 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/golang
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+inputs:
+  - name: rmt-artifacts
+  - name: rmt-release-config
+outputs:
+  - name: release-created
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      cd rmt-artifacts
+      ./rmt release-create --release-file ../rmt-release-config/pa-release-${VERSION}.yml | tee rmt.stdout
+      release_id=$(tail -n 1 rmt.stdout | awk -F"'" '{print $2}')
+      echo "${release_id}" > ../release-created/id

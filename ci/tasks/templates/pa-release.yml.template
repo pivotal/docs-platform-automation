@@ -1,0 +1,17 @@
+business_unit: Tanzu and Cloud Health
+contact: ${RELEASE_CONTACT}
+title: Platform Automation Toolkit
+product_name: Platform Automation Toolkit
+display_group: Platform Automation Toolkit
+lang: EN
+type: Release Update / MP
+version: ${VERSION}
+status: ${STATUS}
+third_party_classification: "N"
+no_encryption_change: "Y"
+oct_request_id: "3608"
+published_date_mm/dd/yyyy: ""
+end_of_support_date_mm/dd/yyyy: ${END_OF_SUPPORT_DATE}
+docs_link: https://docs.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.3/vmware-automation-toolkit/GUID-docs-release-notes.html#${VERSION}
+export_control_status: ENTITLEMENT_REQUIRED
+product_slug: platform-automation
