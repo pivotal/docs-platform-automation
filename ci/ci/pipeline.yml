@@ -1907,7 +1907,7 @@ jobs:
       input_mapping:
         packaged-product: rc-artifacts-s3
       params:
-        TAGS: '["Dev/RC"]'
+        TAGS: '["RC"]'
 
 - name: empty-cve-patch-notes-file
   plan:

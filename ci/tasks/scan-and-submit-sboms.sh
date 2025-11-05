@@ -2,7 +2,14 @@
 set -eux
 
 VERSION="$(cat version/version)"
+ARTIFACT_VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
+
+# Remove RC suffix from version if TAGS is RC
+if [ "$TAGS" = "RC" ]; then
+  VERSION="${VERSION%-rc*}"
+  RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
+fi
 
 mkdir -p platform-automation-product
 tar -xf packaged-product/artifacts*.tar.gz -C platform-automation-product
@@ -27,13 +34,13 @@ build:
   tags: $TAGS
   artifacts:
     - name: "platform-automation-task-image"
-      version: $VERSION
+      version: $ARTIFACT_VERSION
       digest: $pa_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
     - name: "platform-automation-vsphere-image"
-      version: $VERSION
+      version: $ARTIFACT_VERSION
       digest: $pa_vsphere_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
