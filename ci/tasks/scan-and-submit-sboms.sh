@@ -15,14 +15,14 @@ mkdir -p platform-automation-product
 tar -xf packaged-product/artifacts*.tar.gz -C platform-automation-product
 
 mkdir -p platform-automation-image
-tar -xf platform-automation-product/platform-automation-image-$VERSION.tgz -C platform-automation-image
+tar -xf platform-automation-product/platform-automation-image-$ARTIFACT_VERSION.tgz -C platform-automation-image
 syft platform-automation-image -o cyclonedx-json=platform-automation-image-sbom
-pa_image_sha=$(sha1sum platform-automation-product/platform-automation-image-$VERSION.tgz | cut -d' ' -f1)
+pa_image_sha=$(sha1sum platform-automation-product/platform-automation-image-$ARTIFACT_VERSION.tgz | cut -d' ' -f1)
 
 mkdir -p vsphere-platform-automation-image
-tar -xf platform-automation-product/vsphere-platform-automation-image-$VERSION.tar.gz -C vsphere-platform-automation-image
+tar -xf platform-automation-product/vsphere-platform-automation-image-$ARTIFACT_VERSION.tar.gz -C vsphere-platform-automation-image
 syft vsphere-platform-automation-image -o cyclonedx-json=platform-automation-vsphere-image-sbom
-pa_vsphere_image_sha=$(sha1sum platform-automation-product/vsphere-platform-automation-image-$VERSION.tar.gz | cut -d' ' -f1)
+pa_vsphere_image_sha=$(sha1sum platform-automation-product/vsphere-platform-automation-image-$ARTIFACT_VERSION.tar.gz | cut -d' ' -f1)
 
 cat << MANIFEST > manifest.yml
 ---
@@ -34,13 +34,13 @@ build:
   tags: $TAGS
   artifacts:
     - name: "platform-automation-task-image"
-      version: $ARTIFACT_VERSION
+      version: $VERSION
       digest: $pa_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
     - name: "platform-automation-vsphere-image"
-      version: $ARTIFACT_VERSION
+      version: $VERSION
       digest: $pa_vsphere_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
