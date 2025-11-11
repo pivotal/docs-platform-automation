@@ -6,7 +6,7 @@ ARTIFACT_VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 
 # Remove RC suffix from version if TAGS is RC
-if [ "$TAGS" = '["RC"]' ]; then
+if [ "$TAGS" = '["DEV"]' ]; then
   VERSION="${VERSION%-rc*}"
   RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 fi
