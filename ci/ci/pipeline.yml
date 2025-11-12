@@ -57,7 +57,7 @@ resources:
 - name: docs-platform-automation
   type: git
   source:
-    branch: develop
+    branch: hy/5.3.3
     private_key: ((platform-automation/main/platform_automation_docs.private_key))
     uri: git@github.com:pivotal/docs-platform-automation
     ignore_paths:

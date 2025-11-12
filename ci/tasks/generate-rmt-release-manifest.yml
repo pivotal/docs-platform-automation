@@ -15,6 +15,9 @@ run:
   args:
     - -exc
     - |
+      
+      ls packaged-product
+      
       apk update
       apk add --no-cache gettext coreutils
 
