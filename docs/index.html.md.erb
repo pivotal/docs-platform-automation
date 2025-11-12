@@ -15,7 +15,7 @@ on how to start using Platform Automation Toolkit.
 * Uses the [GitHub om repo](https://github.com/pivotal-cf/om),
   (and by extension, the Tanzu Operations Manager API)
   to enable command-line interaction with Tanzu Operations Manager
-  ([Understanding the Tanzu Operations Manager Interface](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/pcf-interface.html))
+  ([Understanding the Tanzu Operations Manager Interface](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/<%= vars.opsman_prod_version %>/tanzu-ops-manager/pcf-interface.html))
 
   <!-- https://docs.vmware.com/en/VMware-Tanzu-Operations-Manager/3.0/vmware-tanzu-ops-manager/pcf-interface.html -->
 
@@ -96,7 +96,7 @@ How do we do this?
 With Platform Automation Toolkit,
 platform teams have the tools to create an automated perpetual upgrade machine,
 which can continuously take the latest updates when new software is available,
-including Tanzu Platform for Cloud Foundry, VMware Tanzu PKS, Tanzu Operations Manager, stemcells, products, and services.
+including <%= vars.tas_prod_name %>, VMware Tanzu PKS, Tanzu Operations Manager, stemcells, products, and services.
 In addition, Platform Automation Toolkit allows you to:
 
 * manage multiple foundations and reduce configuration drift
@@ -106,8 +106,8 @@ In addition, Platform Automation Toolkit allows you to:
 * create pipelines that handle installs and upgrades to streamline workflows
 
 <p class="note">
-Tanzu Application Service is now called Tanzu Platform for Cloud Foundry.
-The current version of Tanzu Platform for Cloud Foundry is 10.0.</p>
+Tanzu Application Service is now called <%= vars.tas_prod_name %>.
+The current version of <%= vars.tas_prod_name %> is 10.0.</p>
 
 ## Platform Automation Toolkit and Tanzu Operations Manager
 

@@ -87,7 +87,7 @@ and a link to the API documentation explaining any IAAS specific properties.
 
 ### GCP Shared VPC
 
-Support for Shared VPC is done by configuring the `iaas_identifier` path for the [infrastructure subnet](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/gcp-prepare-env-manual.html#create_network),
+Support for Shared VPC is done by configuring the `iaas_identifier` path for the [infrastructure subnet](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/<%= vars.opsman_prod_version %>/tanzu-ops-manager/gcp-prepare-env-manual.html#create_network),
 which includes the host project ID, region of the subnet, and the subnet name.
 
 For example:
@@ -307,7 +307,7 @@ Specific advice and features for the different IaaSs are documented below.
 ### AWS
 
 These required properties are adapted from the instructions outlined in
-[Requirements and prerequisites for Tanzu Operations Manager on AWS](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/install-aws.html).
+[Requirements and prerequisites for Tanzu Operations Manager on AWS](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/<%= vars.opsman_prod_version %>/tanzu-ops-manager/install-aws.html).
 
 <%= partial "ip-addresses" %>
 
@@ -321,14 +321,14 @@ because this file then contains no secrets.</p>
 ### Azure
 
 The required properties are adapted from the instructions outlined in
-[Requirements and prerequisites for Tanzu Operations Manager on Azure](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/install-azure.html).
+[Requirements and prerequisites for Tanzu Operations Manager on Azure](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/<%= vars.opsman_prod_version %>/tanzu-ops-manager/install-azure.html).
 
 <%= partial "ip-addresses" %>
 
 ### GCP
 
 The required properties are adapted from the instructions outlined in
-[Requirements and prerequisites for Tanzu Operations Manager on GCP](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/install-gcp.html).
+[Requirements and prerequisites for Tanzu Operations Manager on GCP](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/<%= vars.opsman_prod_version %>/tanzu-ops-manager/install-gcp.html).
 
 <%= partial "ip-addresses" %>
 
@@ -348,14 +348,14 @@ For example:
 ### OpenStack
 
 The required properties are adapted from the instructions in
-[Installing and configuring Tanzu Operations Manager on OpenStack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/openstack-index.html)
+[Installing and configuring Tanzu Operations Manager on OpenStack](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/<%= vars.opsman_prod_version %>/tanzu-ops-manager/openstack-index.html)
 
 <%= partial "ip-addresses" %>
 
 ### vSphere
 
 The required properties are adapted from the instructions in
-[Installing and configuring Tanzu Operations Manager on vSphere](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/3-0/tanzu-ops-manager/vsphere-index.html)
+[Installing and configuring Tanzu Operations Manager on vSphere](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-operations-manager/<%= vars.opsman_prod_version %>/tanzu-ops-manager/vsphere-index.html)
 
 ## opsman image
 
@@ -409,7 +409,7 @@ The outputted `opsman.yml` contains the information needed for Platform Automati
 
 The `product` input requires a single tile file (`.pivotal`) as downloaded from the Broadcom Support portal.
 
-Here's an example of how to pull the Tanzu Platform for Cloud Foundry tile
+Here's an example of how to pull the <%= vars.tas_prod_name %> tile
 using the [download-product](./tasks.html#download-product) task.
 
 ### product.yml
@@ -443,6 +443,10 @@ There are two ways to build a product config.
 1. Use an example and fill in the values based on the meta information from the tile.
 This `product.yml` is a very basic example for `healthwatch`.
 
+  <p class="note important">
+  The Healthwatch product is no longer supported. The Healthwatch observability functions are now built into <a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-hub/<%= vars.hub_prod_version %>/tnz-hub/foundations-tile-info.html">Foundation Core</a>, as part of Tanzu Hub.
+  </p>
+
 <%= partial "../examples/product" %>
 
 The following is a list of properties that can be set in the `product.yml`
@@ -450,7 +454,7 @@ and a link to the API documentation explaining the properties.
 
 * `product-properties` - [Tanzu Operations Manager tile properties](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/director/properties/get/)
 
-* `network-properties` - a list of [Tanzu Operations Manager named networks](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/3-0/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1%7Bproduct_guid%7D~1networks_and_azs/get)
+* `network-properties` - a list of [Tanzu Operations Manager named networks](https://apigw-test.vmware.com/stg/v1/m12/api/TanzuOperationsManagerAPIDocumentation/<%= vars.opsman_prod_version %>/opsman-api/#tag/Networks-and-AZs-assignment/paths/~1api~1v0~1staged~1products~1%7Bproduct_guid%7D~1networks_and_azs/get)
 <!--- The Broadcom link for this is https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/products/:product_guid/networks_and_azs/get/ but this shows "Object not found" error --->
 
 * `resource-config` - for the jobs of the [Tanzu Operations Manager tile](https://developer.broadcom.com/xapis/tanzu-operations-manager-api/3.0//api/v0/staged/products/product_guid/jobs/job_guid/resource_config/put/)
