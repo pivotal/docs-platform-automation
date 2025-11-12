@@ -32,8 +32,13 @@ run:
       done
     
       cp ../rmt-release-config/pa-release-${VERSION}.yml release.yml
+      cp ../rmt-release-config/pa-release-files-${VERSION}.yml release-files.yml
+
+      sed -i 's|Dev/Internal|GA|g' release-files.yml
+
       cat ../rmt-release-config/pa-release-files-${VERSION}.yml >> release.yml
       cat release.yml
+      ./rmt release-update --release-file release.yml --id ${RELEASE_ID}
       
       # Check for the virus scan status on release files
       ./rmt release-file-check --id ${RELEASE_ID}
