@@ -16,6 +16,8 @@ run:
   args:
     - -exc
     - |
+      apt-get update -qq && apt-get install -qqy make curl jq
+      
       RELEASE_ID="$(cat release-created/id)"
       
       cd rmt-artifacts
