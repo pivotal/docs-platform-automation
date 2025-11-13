@@ -2,27 +2,26 @@
 set -eux
 
 VERSION="$(cat version/version)"
-ARTIFACT_VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 
-# Remove RC suffix from version if TAGS is RC
+# Remove RC suffix from RELEASE_LINE if TAGS is DEV
 if [ "$TAGS" = '["DEV"]' ]; then
-  VERSION="${VERSION%-rc*}"
-  RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
+  RELEASE_LINE="${RELEASE_LINE%-rc*}"
+  RELEASE_LINE="$(echo $RELEASE_LINE | rev | cut -d'.' -f2- | rev)"
 fi
 
 mkdir -p platform-automation-product
 tar -xf packaged-product/artifacts*.tar.gz -C platform-automation-product
 
 mkdir -p platform-automation-image
-tar -xf platform-automation-product/platform-automation-image-$ARTIFACT_VERSION.tgz -C platform-automation-image
+tar -xf platform-automation-product/platform-automation-image-$VERSION.tgz -C platform-automation-image
 syft platform-automation-image -o cyclonedx-json=platform-automation-image-sbom
-pa_image_sha=$(sha1sum platform-automation-product/platform-automation-image-$ARTIFACT_VERSION.tgz | cut -d' ' -f1)
+pa_image_sha=$(sha1sum platform-automation-product/platform-automation-image-$VERSION.tgz | cut -d' ' -f1)
 
 mkdir -p vsphere-platform-automation-image
-tar -xf platform-automation-product/vsphere-platform-automation-image-$ARTIFACT_VERSION.tar.gz -C vsphere-platform-automation-image
+tar -xf platform-automation-product/vsphere-platform-automation-image-$VERSION.tar.gz -C vsphere-platform-automation-image
 syft vsphere-platform-automation-image -o cyclonedx-json=platform-automation-vsphere-image-sbom
-pa_vsphere_image_sha=$(sha1sum platform-automation-product/vsphere-platform-automation-image-$ARTIFACT_VERSION.tar.gz | cut -d' ' -f1)
+pa_vsphere_image_sha=$(sha1sum platform-automation-product/vsphere-platform-automation-image-$VERSION.tar.gz | cut -d' ' -f1)
 
 cat << MANIFEST > manifest.yml
 ---
