@@ -35,6 +35,7 @@ groups:
   #@ for/end version in data.values.versions:
   - #@ "publish-release-" + version.number
   - empty-cve-patch-notes-file
+  - bump-version-ci-patch
 - name: om
   jobs:
   #@ for/end bump in ["patch", "minor", "major"]:
@@ -2042,3 +2043,11 @@ jobs:
         packaged-product: rc-artifacts-s3-v5
       params:
         VERSION: ((.:version-number))
+- name: bump-version-ci-patch
+  plan:
+    - get: version
+    - put: version
+      resource: version
+      params:
+        bump: patch
+        pre: rc
