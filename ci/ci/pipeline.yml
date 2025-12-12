@@ -1594,6 +1594,7 @@ jobs:
       params:
         globs:
           - '*.pivotal'
+    - get: om
   - task: credhub-interpolate
     image: platform-automation-image
     file: platform-automation-tasks/tasks/credhub-interpolate.yml
@@ -1735,6 +1736,68 @@ jobs:
           NAME: my-runtime-config
           BOSH_ENV_PREFIX: OPSMAN
           OPSMAN_SSH_PRIVATE_KEY: ((platform-automation/main/reference-pipeline.ops_manager_ssh_private_key))
+    - do:
+      #! Build om and spnego-infra binaries for SPNEGO test
+      - task: build-spnego-binaries
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
+              tag: testing
+              username: ((concourse-team/dev_image_registry.username))
+              password: ((concourse-team/dev_image_registry.password))
+          inputs:
+          - name: om
+          outputs:
+          - name: binaries
+          run:
+            path: bash
+            args:
+            - -c
+            - |
+              set -eux
+              mkdir -p workspace
+              cp -r om/* workspace/
+              cd workspace
+              go mod download
+              echo "Building om binary..."
+              go build -o ../binaries/om main.go
+              echo "Building spnego-infra binary..."
+              mkdir -p cmd/spnego-infra
+              cat > cmd/spnego-infra/main.go << 'EOFGO'
+              package main
+              import (
+                "fmt"
+                "os"
+                "os/signal"
+                "syscall"
+                "github.com/pivotal-cf/om/pkg/testinfra"
+              )
+              func main() {
+                fmt.Println("Starting SPNEGO test infrastructure...")
+                env, err := testinfra.StartSPNEGOInfraStandalone()
+                if err != nil {
+                  fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+                  os.Exit(1)
+                }
+                env.PrintInstructions()
+                sigCh := make(chan os.Signal, 1)
+                signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+                <-sigCh
+                fmt.Println("\nShutting down...")
+                env.Close()
+              }
+              EOFGO
+              go build -o ../binaries/spnego-infra ./cmd/spnego-infra
+              cd ..
+              echo "Verifying builds..."
+              ./binaries/om version
+              ls -la binaries/
+      - task: test-spnego-proxy
+        privileged: true
+        file: docs-platform-automation/ci/tasks/test-spnego-proxy/task.yml
 
 #! bump jobs
 - name: bump-previous-versions-trigger

@@ -1,0 +1,54 @@
+# Task for downloading products through a SPNEGO/Kerberos authenticated proxy.
+# Use this task when your organization requires Kerberos authentication for proxy access.
+#
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: config
+- name: vars
+  optional: true
+- name: secrets
+  optional: true
+- name: krb5-config
+  # Kerberos configuration directory containing krb5.conf
+
+outputs:
+- name: downloaded-product
+- name: downloaded-stemcell
+- name: assign-stemcell-config
+
+params:
+  CONFIG_FILE: download-config.yml
+  # - Required
+  # - Filepath to the product configuration yaml file
+  # - The path is relative to the root of the `config` input
+
+  VARS_FILES:
+  # - Optional
+  # - Filepath to the product configuration vars yaml file
+
+  SOURCE: pivnet
+  # - Required
+  # - Values: pivnet, s3, gcs, azure
+
+  PROXY_URL:
+  # - Required
+  # - The proxy URL (e.g., http://proxy.example.com:3128)
+
+  PROXY_USERNAME:
+  # - Required
+  # - Kerberos principal username (e.g., user@REALM.COM)
+
+  PROXY_PASSWORD:
+  # - Required
+  # - Kerberos principal password
+
+  KRB5_CONFIG_FILE: krb5.conf
+  # - Optional
+  # - Filename of krb5.conf in the krb5-config input
+  # - Default: krb5.conf
+
+run:
+  path: platform-automation-tasks/tasks/download-product-with-spnego-proxy.sh

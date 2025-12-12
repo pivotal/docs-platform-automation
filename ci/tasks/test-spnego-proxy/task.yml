@@ -1,0 +1,181 @@
+---
+# Task to test SPNEGO proxy authentication for download-product
+# This task validates the download-product-with-spnego-proxy task works correctly
+# by spinning up a Kerberos KDC and authenticated proxy via testcontainers.
+
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/concourse/docker-image-resource
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+
+inputs:
+- name: binaries
+  # Pre-built binaries: om, spnego-infra
+- name: docs-platform-automation
+
+params:
+  PIVNET_TOKEN: ((platform-automation/main.pivnet_token))
+  DOCKER_REGISTRY: tas-operability-docker-virtual.usw1.packages.broadcom.com
+  DOCKER_REGISTRY_USERNAME: ((concourse-team/dev_image_registry.username))
+  DOCKER_REGISTRY_PASSWORD: ((concourse-team/dev_image_registry.password))
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    ###########################################
+    # Phase 1: Start Docker daemon
+    ###########################################
+    echo "=== Starting Docker daemon ==="
+    source /opt/resource/common.sh
+    start_docker "5" "5" "" ""
+
+    ###########################################
+    # Phase 2: Pre-pull Docker images from internal registry
+    ###########################################
+    echo ""
+    echo "=== Pre-pulling Docker images from Broadcom registry ==="
+
+    echo "Logging into internal registry..."
+    echo "${DOCKER_REGISTRY_PASSWORD}" | docker login ${DOCKER_REGISTRY} -u "${DOCKER_REGISTRY_USERNAME}" --password-stdin
+
+    echo "Pulling KDC image from internal registry..."
+    docker pull ${DOCKER_REGISTRY}/gcavalcante8808/krb5-server:latest
+    docker tag ${DOCKER_REGISTRY}/gcavalcante8808/krb5-server:latest gcavalcante8808/krb5-server:latest
+
+    echo "Pulling Squid image from internal registry..."
+    docker pull ${DOCKER_REGISTRY}/ubuntu/squid:latest
+    docker tag ${DOCKER_REGISTRY}/ubuntu/squid:latest ubuntu/squid:latest
+
+    echo "Docker images pulled and tagged successfully"
+    docker images
+
+    ###########################################
+    # Phase 3: Install pre-built binaries
+    ###########################################
+    echo ""
+    echo "=== Installing pre-built binaries ==="
+    cp binaries/om /usr/local/bin/om
+    chmod +x /usr/local/bin/om
+    om version
+
+    chmod +x binaries/spnego-infra
+
+    ###########################################
+    # Phase 4: Start SPNEGO infrastructure
+    ###########################################
+    echo ""
+    echo "=== Starting SPNEGO infrastructure ==="
+
+    binaries/spnego-infra 2>&1 | tee /tmp/infra.log &
+    INFRA_PID=$!
+
+    # Wait for infrastructure to be ready
+    for i in $(seq 1 120); do
+      if grep -q "Press Ctrl+C to stop" /tmp/infra.log 2>/dev/null; then
+        echo "SPNEGO infrastructure is ready"
+        break
+      fi
+      # Show progress from log
+      if [ $((i % 10)) -eq 0 ]; then
+        echo "--- Current log output (iteration $i/120) ---"
+        tail -5 /tmp/infra.log 2>/dev/null || true
+      fi
+      echo "Waiting for infrastructure... ($i/120)"
+      sleep 2
+    done
+
+    if ! grep -q "Press Ctrl+C to stop" /tmp/infra.log 2>/dev/null; then
+      echo "SPNEGO infrastructure failed to start"
+      echo "=== Full log output ==="
+      cat /tmp/infra.log
+      echo "=== Docker containers ==="
+      docker ps -a
+      echo "=== Docker logs ==="
+      docker logs $(docker ps -aq | head -1) 2>/dev/null || true
+      exit 1
+    fi
+
+    cat /tmp/infra.log
+
+    ###########################################
+    # Phase 5: Prepare inputs for PA task
+    ###########################################
+    echo ""
+    echo "=== Preparing PA task inputs ==="
+
+    KRB5_DIR=$(ls -d /tmp/spnego-infra-* | head -1)
+    PROXY_PORT=$(docker ps --format '{{.Ports}}' | sed -n 's/.*0\.0\.0\.0:\([0-9]*\)->3128.*/\1/p' | head -1)
+
+    echo "KRB5_DIR: ${KRB5_DIR}"
+    echo "PROXY_PORT: ${PROXY_PORT}"
+
+    mkdir -p platform-automation-tasks/tasks
+    mkdir -p krb5-config
+    mkdir -p config
+    mkdir -p downloaded-product downloaded-stemcell assign-stemcell-config
+
+    cp docs-platform-automation/tasks/download-product-with-spnego-proxy.sh platform-automation-tasks/tasks/
+    cp docs-platform-automation/tasks/download-product-with-spnego-proxy.yml platform-automation-tasks/tasks/
+    cp "${KRB5_DIR}/krb5.conf" krb5-config/
+
+    # Create download config
+    echo "---" > config/download-config.yml
+    echo "pivnet-api-token: ${PIVNET_TOKEN}" >> config/download-config.yml
+    echo 'pivnet-file-glob: "*vsphere*.tgz"' >> config/download-config.yml
+    echo "pivnet-product-slug: stemcells-ubuntu-jammy" >> config/download-config.yml
+    echo 'product-version-regex: "^1\\..*"' >> config/download-config.yml
+
+    ###########################################
+    # Phase 6: Run the PA task script
+    ###########################################
+    echo ""
+    echo "=========================================="
+    echo "=== Running PA Task Script ==="
+    echo "=========================================="
+
+    export CONFIG_FILE="download-config.yml"
+    export VARS_FILES=""
+    export SOURCE="pivnet"
+    export PROXY_URL="http://localhost:${PROXY_PORT}"
+    export PROXY_USERNAME="testuser"
+    export PROXY_PASSWORD="testpass123"
+    export KRB5_CONFIG_FILE="krb5.conf"
+
+    bash platform-automation-tasks/tasks/download-product-with-spnego-proxy.sh
+
+    ###########################################
+    # Phase 7: Verify outputs
+    ###########################################
+    echo ""
+    echo "=========================================="
+    echo "=== PA Task Completed ==="
+    echo "=========================================="
+    echo "Downloaded files:"
+    ls -la downloaded-product/
+
+    # Verify file exists and has content
+    if [ ! -f downloaded-product/*.tgz ]; then
+      echo "ERROR: No .tgz file downloaded"
+      exit 1
+    fi
+
+    FILE_SIZE=$(stat -c%s downloaded-product/*.tgz 2>/dev/null || stat -f%z downloaded-product/*.tgz)
+    if [ "$FILE_SIZE" -lt 1000000 ]; then
+      echo "ERROR: Downloaded file is too small (${FILE_SIZE} bytes)"
+      exit 1
+    fi
+
+    echo "Downloaded file size: ${FILE_SIZE} bytes"
+
+    kill $INFRA_PID 2>/dev/null || true
+
+    echo ""
+    echo "=== SPNEGO PROXY TEST PASSED ==="
