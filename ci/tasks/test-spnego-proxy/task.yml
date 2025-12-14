@@ -1,7 +1,9 @@
 ---
-# Task to test SPNEGO proxy authentication for download-product
-# This task validates the download-product-with-spnego-proxy task works correctly
-# by spinning up a Kerberos KDC and authenticated proxy via testcontainers.
+# Task to test SPNEGO proxy authentication for the existing download-product task
+# This validates that the standard download-product task works correctly with
+# Kerberos/SPNEGO authenticated proxies by spinning up a KDC and proxy via testcontainers.
+# We test the EXISTING download-product.sh script what customers use,
+# passing SPNEGO proxy config through the download config file.
 
 platform: linux
 
@@ -113,43 +115,54 @@ run:
 
     KRB5_DIR=$(ls -d /tmp/spnego-infra-* | head -1)
     PROXY_PORT=$(docker ps --format '{{.Ports}}' | sed -n 's/.*0\.0\.0\.0:\([0-9]*\)->3128.*/\1/p' | head -1)
+    KRB5_CONFIG_PATH="${KRB5_DIR}/krb5.conf"
 
     echo "KRB5_DIR: ${KRB5_DIR}"
     echo "PROXY_PORT: ${PROXY_PORT}"
+    echo "KRB5_CONFIG_PATH: ${KRB5_CONFIG_PATH}"
 
     mkdir -p platform-automation-tasks/tasks
-    mkdir -p krb5-config
     mkdir -p config
     mkdir -p downloaded-product downloaded-stemcell assign-stemcell-config
 
-    cp docs-platform-automation/tasks/download-product-with-spnego-proxy.sh platform-automation-tasks/tasks/
-    cp docs-platform-automation/tasks/download-product-with-spnego-proxy.yml platform-automation-tasks/tasks/
-    cp "${KRB5_DIR}/krb5.conf" krb5-config/
+    # Copy the EXISTING download-product script (what customers use)
+    cp docs-platform-automation/tasks/download-product.sh platform-automation-tasks/tasks/
 
-    # Create download config
-    echo "---" > config/download-config.yml
-    echo "pivnet-api-token: ${PIVNET_TOKEN}" >> config/download-config.yml
-    echo 'pivnet-file-glob: "*vsphere*.tgz"' >> config/download-config.yml
-    echo "pivnet-product-slug: stemcells-ubuntu-jammy" >> config/download-config.yml
-    echo 'product-version-regex: "^1\\..*"' >> config/download-config.yml
+    # Create download config WITH SPNEGO proxy settings
+    # The om CLI reads proxy configuration from the config file
+    {
+      echo "---"
+      echo "pivnet-api-token: ${PIVNET_TOKEN}"
+      echo "pivnet-file-glob: \"*vsphere*.tgz\""
+      echo "pivnet-product-slug: stemcells-ubuntu-jammy"
+      echo "product-version-regex: '^1\\..*'"
+      echo "proxy-url: http://localhost:${PROXY_PORT}"
+      echo "proxy-username: testuser"
+      echo "proxy-password: testpass123"
+      echo "proxy-auth-type: spnego"
+      echo "proxy-krb5-config: ${KRB5_CONFIG_PATH}"
+    } > config/download-config.yml
+
+    echo "Download config created:"
+    cat config/download-config.yml
 
     ###########################################
-    # Phase 6: Run the PA task script
+    # Phase 6: Run the EXISTING download-product script
     ###########################################
     echo ""
     echo "=========================================="
-    echo "=== Running PA Task Script ==="
+    echo "=== Running EXISTING download-product.sh ==="
     echo "=========================================="
+    echo "This tests the actual script that customers use,"
+    echo "with SPNEGO proxy config passed via the config file."
 
+    # Set environment variables expected by the existing download-product.sh
     export CONFIG_FILE="download-config.yml"
     export VARS_FILES=""
     export SOURCE="pivnet"
-    export PROXY_URL="http://localhost:${PROXY_PORT}"
-    export PROXY_USERNAME="testuser"
-    export PROXY_PASSWORD="testpass123"
-    export KRB5_CONFIG_FILE="krb5.conf"
 
-    bash platform-automation-tasks/tasks/download-product-with-spnego-proxy.sh
+    # Run the EXISTING download-product script (not a custom one)
+    bash platform-automation-tasks/tasks/download-product.sh
 
     ###########################################
     # Phase 7: Verify outputs
@@ -178,4 +191,8 @@ run:
     kill $INFRA_PID 2>/dev/null || true
 
     echo ""
+    echo "=============================================="
     echo "=== SPNEGO PROXY TEST PASSED ==="
+    echo "=== Validated: existing download-product task ==="
+    echo "=== works with SPNEGO proxy authentication ==="
+    echo "=============================================="
