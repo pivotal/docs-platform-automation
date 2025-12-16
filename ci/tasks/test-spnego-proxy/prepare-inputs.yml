@@ -1,0 +1,136 @@
+---
+# Prepare inputs for SPNEGO proxy test
+#
+# This task prepares:
+# 1. platform-automation-tasks-with-spnego: tasks with SPNEGO-enabled om binary
+# 2. spnego-config: config directory with download-config.yml and krb5.conf
+#
+# The next task runs the actual tasks/download-product.yml
+
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/internalpcfplatformautomation/ci
+    tag: testing
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+
+inputs:
+- name: platform-automation-tasks
+  # Original platform-automation-tasks
+- name: binaries
+  # Contains SPNEGO-enabled om binary
+- name: docs-platform-automation
+  # Source repo
+
+outputs:
+- name: platform-automation-tasks-with-spnego
+  # Modified tasks with SPNEGO-enabled om
+- name: spnego-config
+  # Config directory for download-product task
+
+params:
+  PIVNET_TOKEN: ((platform-automation/main.pivnet_token))
+
+  # External SPNEGO proxy on jumpbox
+  PROXY_URL: http://192.168.110.11:13128
+  PROXY_USERNAME: testuser
+  PROXY_PASSWORD: testpass123
+
+  # KDC is also on jumpbox
+  KDC_HOST: 192.168.110.11
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -eux
+
+    echo "=============================================="
+    echo "=== Preparing SPNEGO Test Inputs ==="
+    echo "=============================================="
+
+    ###########################################
+    # Phase 1: Verify proxy is reachable
+    ###########################################
+    echo ""
+    echo "=== Phase 1: Verifying proxy connectivity ==="
+
+    if curl -s --proxy "${PROXY_URL}" --max-time 10 -I http://google.com 2>/dev/null | grep -q "HTTP/"; then
+      echo "Proxy is reachable!"
+    else
+      echo "ERROR: Cannot reach proxy at ${PROXY_URL}"
+      echo "Ensure spnego-infra service is running on jumpbox"
+      exit 1
+    fi
+
+    ###########################################
+    # Phase 2: Create platform-automation-tasks with SPNEGO om
+    ###########################################
+    echo ""
+    echo "=== Phase 2: Injecting SPNEGO-enabled om binary ==="
+
+    # Copy original platform-automation-tasks
+    cp -r platform-automation-tasks/* platform-automation-tasks-with-spnego/
+
+    # Inject SPNEGO-enabled om binary
+    cp binaries/om platform-automation-tasks-with-spnego/om
+    chmod +x platform-automation-tasks-with-spnego/om
+
+    # Verify
+    platform-automation-tasks-with-spnego/om version
+    echo "SPNEGO-enabled om injected into platform-automation-tasks"
+
+    ###########################################
+    # Phase 3: Create config with SPNEGO settings
+    ###########################################
+    echo ""
+    echo "=== Phase 3: Creating SPNEGO config ==="
+
+    # Create krb5.conf
+    cat > spnego-config/krb5.conf << EOF
+    [libdefaults]
+        default_realm = TEST.LOCAL
+        dns_lookup_realm = false
+        dns_lookup_kdc = false
+        forwardable = true
+
+    [realms]
+        TEST.LOCAL = {
+            kdc = ${KDC_HOST}
+            admin_server = ${KDC_HOST}
+        }
+
+    [domain_realm]
+        .test.local = TEST.LOCAL
+        test.local = TEST.LOCAL
+    EOF
+
+    # Create download-config.yml with SPNEGO proxy settings
+    # This is EXACTLY what a user would configure
+    cat > spnego-config/download-config.yml << EOF
+    ---
+    pivnet-api-token: ${PIVNET_TOKEN}
+    pivnet-file-glob: "*vsphere*.tgz"
+    pivnet-product-slug: stemcells-ubuntu-jammy
+    product-version-regex: '^1\..*'
+
+    # SPNEGO proxy configuration
+    proxy-url: ${PROXY_URL}
+    proxy-username: ${PROXY_USERNAME}
+    proxy-password: ${PROXY_PASSWORD}
+    proxy-auth-type: spnego
+    proxy-krb5-config: config/krb5.conf
+    EOF
+
+    echo ""
+    echo "Config files created:"
+    echo "- spnego-config/download-config.yml"
+    echo "- spnego-config/krb5.conf"
+    echo ""
+    cat spnego-config/download-config.yml
+    echo ""
+    echo "=== Inputs prepared for download-product task ==="
