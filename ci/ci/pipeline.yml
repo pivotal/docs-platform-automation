@@ -1737,7 +1737,7 @@ jobs:
           BOSH_ENV_PREFIX: OPSMAN
           OPSMAN_SSH_PRIVATE_KEY: ((platform-automation/main/reference-pipeline.ops_manager_ssh_private_key))
     - do:
-      #! Build om and spnego-infra binaries for SPNEGO test
+      #! Build om binary with SPNEGO support for SPNEGO proxy test
       - task: build-spnego-binaries
         config:
           platform: linux
@@ -1762,41 +1762,16 @@ jobs:
               cp -r om/* workspace/
               cd workspace
               go mod download
-              echo "Building om binary..."
+              echo "Building om binary with SPNEGO support..."
               go build -o ../binaries/om main.go
-              echo "Building spnego-infra binary..."
-              mkdir -p cmd/spnego-infra
-              cat > cmd/spnego-infra/main.go << 'EOFGO'
-              package main
-              import (
-                "fmt"
-                "os"
-                "os/signal"
-                "syscall"
-                "github.com/pivotal-cf/om/pkg/testinfra"
-              )
-              func main() {
-                fmt.Println("Starting SPNEGO test infrastructure...")
-                env, err := testinfra.StartSPNEGOInfraStandalone()
-                if err != nil {
-                  fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-                  os.Exit(1)
-                }
-                env.PrintInstructions()
-                sigCh := make(chan os.Signal, 1)
-                signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
-                <-sigCh
-                fmt.Println("\nShutting down...")
-                env.Close()
-              }
-              EOFGO
-              go build -o ../binaries/spnego-infra ./cmd/spnego-infra
               cd ..
-              echo "Verifying builds..."
+              echo "Verifying build..."
               ./binaries/om version
               ls -la binaries/
+      #! Test SPNEGO proxy authentication using fly execute
       - task: test-spnego-proxy
         privileged: true
+        tags: [btrfs]
         file: docs-platform-automation/ci/tasks/test-spnego-proxy/task.yml
 
 #! bump jobs

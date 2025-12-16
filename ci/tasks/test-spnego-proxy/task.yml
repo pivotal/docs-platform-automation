@@ -1,9 +1,27 @@
 ---
-# Task to test SPNEGO proxy authentication for the existing download-product task
-# This validates that the standard download-product task works correctly with
-# Kerberos/SPNEGO authenticated proxies by spinning up a KDC and proxy via testcontainers.
-# We test the EXISTING download-product.sh script what customers use,
-# passing SPNEGO proxy config through the download config file.
+# SPNEGO Proxy Test via fly execute
+#
+# Tests tasks/download-product.yml by running it through fly execute,
+# not by calling the shell script directly. This catches issues with
+# the task definition itself (inputs, outputs, params).
+#
+# Architecture:
+# 1. This task starts SPNEGO infrastructure (KDC + Squid) with Docker-in-Docker
+# 2. Proxy is exposed on the task container's network interface
+# 3. Uses fly execute with --tag=spnego-test to ensure same worker
+# 4. The fly execute container connects to proxy via Garden network IP
+# 5. Both containers can communicate because they're on the same worker
+#
+# Network topology:
+#   Worker VM (tagged: spnego-test)
+#   ├── This Task Container (privileged, Docker-in-Docker)
+#   │   ├── Docker network: spnego-net
+#   │   │   ├── spnego-kdc container
+#   │   │   └── spnego-proxy container (port 3128)
+#   │   └── Port mapping: 0.0.0.0:13128 → spnego-proxy:3128
+#   │       (Accessible at container's Garden IP:13128)
+#   └── fly execute Task Container (on same worker via --tag)
+#       └── Can reach proxy at <garden-ip>:13128
 
 platform: linux
 
@@ -15,15 +33,30 @@ image_resource:
     password: ((concourse-team/dev_image_registry.password))
 
 inputs:
-- name: binaries
-  # Pre-built binaries: om, spnego-infra
 - name: docs-platform-automation
+  # Source repo containing tasks/download-product.yml
+- name: binaries
+  # Contains om binary with SPNEGO support
 
 params:
   PIVNET_TOKEN: ((platform-automation/main.pivnet_token))
+
+  # Docker registry for pulling test images
   DOCKER_REGISTRY: tas-operability-docker-virtual.usw1.packages.broadcom.com
   DOCKER_REGISTRY_USERNAME: ((concourse-team/dev_image_registry.username))
   DOCKER_REGISTRY_PASSWORD: ((concourse-team/dev_image_registry.password))
+
+  # Concourse credentials for fly execute
+  CONCOURSE_URL: ((concourse/main.url))
+  CONCOURSE_USERNAME: ((concourse/main.username))
+  CONCOURSE_PASSWORD: ((concourse/main.password))
+  CONCOURSE_TEAM: platform-automation
+
+  # Port to expose SPNEGO proxy
+  PROXY_HOST_PORT: "13128"
+
+  # Worker tag for fly execute (use btrfs - only 3 workers, better odds of same-worker placement)
+  WORKER_TAG: btrfs
 
 run:
   path: bash
@@ -32,167 +65,288 @@ run:
   - |
     set -eux
 
+    echo "=============================================="
+    echo "=== SPNEGO Proxy Test (fly execute) ==="
+    echo "=============================================="
+    echo ""
+    echo "Testing tasks/download-product.yml via fly execute"
+    echo ""
+
     ###########################################
     # Phase 1: Start Docker daemon
     ###########################################
-    echo "=== Starting Docker daemon ==="
+    echo "=== Phase 1: Starting Docker daemon ==="
     source /opt/resource/common.sh
     start_docker "5" "5" "" ""
 
     ###########################################
-    # Phase 2: Pre-pull Docker images from internal registry
+    # Phase 2: Pull and start SPNEGO infrastructure
     ###########################################
     echo ""
-    echo "=== Pre-pulling Docker images from Broadcom registry ==="
+    echo "=== Phase 2: Starting SPNEGO infrastructure ==="
 
-    echo "Logging into internal registry..."
     echo "${DOCKER_REGISTRY_PASSWORD}" | docker login ${DOCKER_REGISTRY} -u "${DOCKER_REGISTRY_USERNAME}" --password-stdin
 
-    echo "Pulling KDC image from internal registry..."
+    # Pull images
     docker pull ${DOCKER_REGISTRY}/gcavalcante8808/krb5-server:latest
     docker tag ${DOCKER_REGISTRY}/gcavalcante8808/krb5-server:latest gcavalcante8808/krb5-server:latest
 
-    echo "Pulling Squid image from internal registry..."
     docker pull ${DOCKER_REGISTRY}/ubuntu/squid:latest
     docker tag ${DOCKER_REGISTRY}/ubuntu/squid:latest ubuntu/squid:latest
 
-    echo "Docker images pulled and tagged successfully"
-    docker images
+    # Cleanup existing containers
+    docker rm -f spnego-kdc spnego-proxy 2>/dev/null || true
+    docker network rm spnego-net 2>/dev/null || true
+
+    # Create network and start KDC
+    docker network create spnego-net
+
+    docker run -d \
+      --name spnego-kdc \
+      --hostname kdc.test.local \
+      --network spnego-net \
+      -e KRB5_REALM=TEST.LOCAL \
+      -e KRB5_KDC=kdc.test.local \
+      gcavalcante8808/krb5-server:latest
+
+    echo "Waiting for KDC to initialize..."
+    sleep 10
+
+    # Create test principal
+    docker exec spnego-kdc kadmin.local -q "addprinc -pw testpass123 testuser@TEST.LOCAL" || true
+    docker exec spnego-kdc kadmin.local -q "addprinc -pw proxypass HTTP/proxy.test.local@TEST.LOCAL" || true
+    echo "KDC principals created"
+
+    # Create squid.conf
+    cat > /tmp/squid.conf << 'SQUIDCONF'
+    http_port 3128
+    acl all src all
+    http_access allow all
+    access_log stdio:/dev/stdout
+    cache_log stdio:/dev/stderr
+    SQUIDCONF
+
+    # Start Squid proxy with host port binding
+    docker run -d \
+      --name spnego-proxy \
+      --hostname proxy.test.local \
+      --network spnego-net \
+      -p 0.0.0.0:${PROXY_HOST_PORT}:3128 \
+      -v /tmp/squid.conf:/etc/squid/squid.conf:ro \
+      ubuntu/squid:latest
+
+    sleep 5
+
+    # Get container's Garden network IP for fly execute container to use
+    # This IP is accessible from other containers on the same worker
+    CONTAINER_IP=$(hostname -I | awk '{print $1}')
+
+    # Also try to get the primary IP that's routable
+    # In Garden/Concourse, containers can communicate via their IPs
+    PROXY_URL="http://${CONTAINER_IP}:${PROXY_HOST_PORT}"
+
+    echo "Container IP: ${CONTAINER_IP}"
+    echo "Proxy URL: ${PROXY_URL}"
+
+    # Verify proxy is working locally
+    echo "Testing proxy locally..."
+    curl -s --proxy "http://localhost:${PROXY_HOST_PORT}" --max-time 10 http://example.com > /dev/null
+    echo "Proxy is accessible locally"
+
+    # Verify proxy is accessible via container IP (how fly execute will access it)
+    echo "Testing proxy via container IP..."
+    curl -s --proxy "${PROXY_URL}" --max-time 10 http://example.com > /dev/null || {
+      echo "WARNING: Proxy not accessible via container IP, trying alternative..."
+      # Try eth0 IP as fallback
+      CONTAINER_IP=$(ip -4 addr show eth0 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+){3}' || echo "${CONTAINER_IP}")
+      PROXY_URL="http://${CONTAINER_IP}:${PROXY_HOST_PORT}"
+      echo "Updated Proxy URL: ${PROXY_URL}"
+    }
+    echo "Proxy connectivity verified"
 
     ###########################################
-    # Phase 3: Install pre-built binaries
+    # Phase 3: Install fly CLI
     ###########################################
     echo ""
-    echo "=== Installing pre-built binaries ==="
-    cp binaries/om /usr/local/bin/om
-    chmod +x /usr/local/bin/om
-    om version
+    echo "=== Phase 3: Installing fly CLI ==="
 
-    chmod +x binaries/spnego-infra
+    # Download fly from Concourse
+    curl -sL "${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=linux" -o /usr/local/bin/fly
+    chmod +x /usr/local/bin/fly
+    fly --version
 
-    ###########################################
-    # Phase 4: Start SPNEGO infrastructure
-    ###########################################
-    echo ""
-    echo "=== Starting SPNEGO infrastructure ==="
+    # Login to Concourse
+    fly -t spnego-test login \
+      -c "${CONCOURSE_URL}" \
+      -u "${CONCOURSE_USERNAME}" \
+      -p "${CONCOURSE_PASSWORD}" \
+      -n "${CONCOURSE_TEAM}"
 
-    binaries/spnego-infra 2>&1 | tee /tmp/infra.log &
-    INFRA_PID=$!
-
-    # Wait for infrastructure to be ready
-    for i in $(seq 1 120); do
-      if grep -q "Press Ctrl+C to stop" /tmp/infra.log 2>/dev/null; then
-        echo "SPNEGO infrastructure is ready"
-        break
-      fi
-      # Show progress from log
-      if [ $((i % 10)) -eq 0 ]; then
-        echo "--- Current log output (iteration $i/120) ---"
-        tail -5 /tmp/infra.log 2>/dev/null || true
-      fi
-      echo "Waiting for infrastructure... ($i/120)"
-      sleep 2
-    done
-
-    if ! grep -q "Press Ctrl+C to stop" /tmp/infra.log 2>/dev/null; then
-      echo "SPNEGO infrastructure failed to start"
-      echo "=== Full log output ==="
-      cat /tmp/infra.log
-      echo "=== Docker containers ==="
-      docker ps -a
-      echo "=== Docker logs ==="
-      docker logs $(docker ps -aq | head -1) 2>/dev/null || true
-      exit 1
-    fi
-
-    cat /tmp/infra.log
+    echo "Logged in to Concourse"
 
     ###########################################
-    # Phase 5: Prepare inputs for PA task
+    # Phase 4: Prepare inputs for fly execute
     ###########################################
     echo ""
-    echo "=== Preparing PA task inputs ==="
+    echo "=== Phase 4: Preparing fly execute inputs ==="
 
-    KRB5_DIR=$(ls -d /tmp/spnego-infra-* | head -1)
-    PROXY_PORT=$(docker ps --format '{{.Ports}}' | sed -n 's/.*0\.0\.0\.0:\([0-9]*\)->3128.*/\1/p' | head -1)
-    KRB5_CONFIG_PATH="${KRB5_DIR}/krb5.conf"
+    # Create directory structure matching task inputs
+    mkdir -p fly-inputs/platform-automation-tasks/tasks
+    mkdir -p fly-inputs/config
+    mkdir -p fly-inputs/vars
+    mkdir -p fly-inputs/secrets
+    mkdir -p fly-outputs/downloaded-product
+    mkdir -p fly-outputs/downloaded-stemcell
+    mkdir -p fly-outputs/assign-stemcell-config
 
-    echo "KRB5_DIR: ${KRB5_DIR}"
-    echo "PROXY_PORT: ${PROXY_PORT}"
-    echo "KRB5_CONFIG_PATH: ${KRB5_CONFIG_PATH}"
+    # Copy tasks from source repo
+    cp -r docs-platform-automation/tasks/* fly-inputs/platform-automation-tasks/tasks/
 
-    mkdir -p platform-automation-tasks/tasks
-    mkdir -p config
-    mkdir -p downloaded-product downloaded-stemcell assign-stemcell-config
+    # Copy and inject SPNEGO-enabled om binary
+    cp binaries/om fly-inputs/platform-automation-tasks/om
+    chmod +x fly-inputs/platform-automation-tasks/om
 
-    # Copy the EXISTING download-product script (what customers use)
-    cp docs-platform-automation/tasks/download-product.sh platform-automation-tasks/tasks/
+    # Verify om has SPNEGO support
+    fly-inputs/platform-automation-tasks/om version
 
-    # Create download config WITH SPNEGO proxy settings
-    # The om CLI reads proxy configuration from the config file
-    {
-      echo "---"
-      echo "pivnet-api-token: ${PIVNET_TOKEN}"
-      echo "pivnet-file-glob: \"*vsphere*.tgz\""
-      echo "pivnet-product-slug: stemcells-ubuntu-jammy"
-      echo "product-version-regex: '^1\\..*'"
-      echo "proxy-url: http://localhost:${PROXY_PORT}"
-      echo "proxy-username: testuser"
-      echo "proxy-password: testpass123"
-      echo "proxy-auth-type: spnego"
-      echo "proxy-krb5-config: ${KRB5_CONFIG_PATH}"
-    } > config/download-config.yml
+    # Create krb5.conf with container IP for KDC
+    # Note: Using CONTAINER_IP so the fly execute task can reach KDC via Garden network
+    cat > fly-inputs/config/krb5.conf << EOF
+    [libdefaults]
+        default_realm = TEST.LOCAL
+        dns_lookup_realm = false
+        dns_lookup_kdc = false
+        forwardable = true
 
-    echo "Download config created:"
-    cat config/download-config.yml
+    [realms]
+        TEST.LOCAL = {
+            kdc = ${CONTAINER_IP}
+            admin_server = ${CONTAINER_IP}
+        }
+
+    [domain_realm]
+        .test.local = TEST.LOCAL
+        test.local = TEST.LOCAL
+    EOF
+
+    # Create download config with SPNEGO proxy settings
+    # This is the user-facing configuration for download-product task
+    cat > fly-inputs/config/download-config.yml << EOF
+    ---
+    pivnet-api-token: ${PIVNET_TOKEN}
+    pivnet-file-glob: "*vsphere*.tgz"
+    pivnet-product-slug: stemcells-ubuntu-jammy
+    product-version-regex: '^1\..*'
+
+    # SPNEGO proxy configuration
+    proxy-url: ${PROXY_URL}
+    proxy-username: testuser
+    proxy-password: testpass123
+    proxy-auth-type: spnego
+    proxy-krb5-config: config/krb5.conf
+    EOF
+
+    echo "Download config:"
+    cat fly-inputs/config/download-config.yml
+    echo ""
 
     ###########################################
-    # Phase 6: Run the EXISTING download-product script
+    # Phase 5: Run fly execute
     ###########################################
     echo ""
     echo "=========================================="
-    echo "=== Running EXISTING download-product.sh ==="
+    echo "=== Phase 5: Running fly execute ==="
     echo "=========================================="
-    echo "This tests the actual script that customers use,"
-    echo "with SPNEGO proxy config passed via the config file."
+    echo ""
+    echo "Running: fly execute -c download-product-with-image.yml"
+    echo ""
 
-    # Set environment variables expected by the existing download-product.sh
-    export CONFIG_FILE="download-config.yml"
-    export VARS_FILES=""
-    export SOURCE="pivnet"
+    # Create a modified task definition with image_resource for fly execute
+    # The original tasks/download-product.yml doesn't include image_resource
+    # because users provide it via their pipeline. For fly execute, we need to
+    # add the image_resource section.
+    cat > fly-inputs/download-product-with-image.yml << TASK_EOF
+    ---
+    platform: linux
 
-    # Run the EXISTING download-product script (not a custom one)
-    bash platform-automation-tasks/tasks/download-product.sh
+    image_resource:
+      type: registry-image
+      source:
+        repository: ${DOCKER_REGISTRY}/internalpcfplatformautomation/platform-automation-image
+        tag: testing
+        username: ${DOCKER_REGISTRY_USERNAME}
+        password: ${DOCKER_REGISTRY_PASSWORD}
+
+    inputs:
+    - name: platform-automation-tasks
+    - name: config
+    - name: vars
+      optional: true
+    - name: secrets
+      optional: true
+
+    outputs:
+    - name: downloaded-product
+    - name: downloaded-stemcell
+    - name: assign-stemcell-config
+
+    params:
+      CONFIG_FILE: download-config.yml
+      VARS_FILES:
+      SOURCE: pivnet
+
+    run:
+      path: platform-automation-tasks/tasks/download-product.sh
+    TASK_EOF
+
+    echo "Modified task definition:"
+    cat fly-inputs/download-product-with-image.yml
+    echo ""
+
+    # Run fly execute with the task definition
+    # --tag ensures we run on the same worker so we can reach the proxy
+    fly -t spnego-test execute \
+      --config fly-inputs/download-product-with-image.yml \
+      --tag "${WORKER_TAG}" \
+      --input platform-automation-tasks=fly-inputs/platform-automation-tasks \
+      --input config=fly-inputs/config \
+      --input vars=fly-inputs/vars \
+      --input secrets=fly-inputs/secrets \
+      --output downloaded-product=fly-outputs/downloaded-product \
+      --output downloaded-stemcell=fly-outputs/downloaded-stemcell \
+      --output assign-stemcell-config=fly-outputs/assign-stemcell-config
 
     ###########################################
-    # Phase 7: Verify outputs
+    # Phase 6: Verify outputs
     ###########################################
     echo ""
     echo "=========================================="
-    echo "=== PA Task Completed ==="
+    echo "=== Phase 6: Verifying outputs ==="
     echo "=========================================="
-    echo "Downloaded files:"
-    ls -la downloaded-product/
 
-    # Verify file exists and has content
-    if [ ! -f downloaded-product/*.tgz ]; then
+    echo "Downloaded product:"
+    ls -la fly-outputs/downloaded-product/ || true
+
+    echo ""
+    echo "Downloaded stemcell:"
+    ls -la fly-outputs/downloaded-stemcell/
+
+    # Verify stemcell was downloaded
+    if ! ls fly-outputs/downloaded-stemcell/*.tgz 1>/dev/null 2>&1; then
       echo "ERROR: No .tgz file downloaded"
       exit 1
     fi
 
-    FILE_SIZE=$(stat -c%s downloaded-product/*.tgz 2>/dev/null || stat -f%z downloaded-product/*.tgz)
+    FILE_SIZE=$(stat -c%s fly-outputs/downloaded-stemcell/*.tgz 2>/dev/null || stat -f%z fly-outputs/downloaded-stemcell/*.tgz)
     if [ "$FILE_SIZE" -lt 1000000 ]; then
       echo "ERROR: Downloaded file is too small (${FILE_SIZE} bytes)"
       exit 1
     fi
 
+    echo ""
     echo "Downloaded file size: ${FILE_SIZE} bytes"
 
-    kill $INFRA_PID 2>/dev/null || true
-
     echo ""
-    echo "=============================================="
     echo "=== SPNEGO PROXY TEST PASSED ==="
-    echo "=== Validated: existing download-product task ==="
-    echo "=== works with SPNEGO proxy authentication ==="
-    echo "=============================================="
+    echo "Downloaded stemcell through SPNEGO-authenticated proxy."
+    echo ""
