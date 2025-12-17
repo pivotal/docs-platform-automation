@@ -4,6 +4,11 @@
 cat /var/version && echo ""
 set -eux
 
+# Use om from platform-automation-tasks if available (allows custom builds)
+if [ -x "platform-automation-tasks/om" ]; then
+  export PATH="$(pwd)/platform-automation-tasks:$PATH"
+fi
+
 if [ -z "${SOURCE}" ]; then
   echo "No source was provided."
   echo "Please provide pivnet, s3, gcs, or azure."
