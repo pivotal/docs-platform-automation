@@ -76,6 +76,11 @@ run:
     # Copy original platform-automation-tasks
     cp -r platform-automation-tasks/* platform-automation-tasks-with-spnego/
 
+    # Overlay modified tasks from docs-platform-automation repo
+    # This includes the PATH fix for custom om binary
+    cp docs-platform-automation/tasks/*.sh platform-automation-tasks-with-spnego/tasks/
+    cp docs-platform-automation/tasks/*.yml platform-automation-tasks-with-spnego/tasks/
+
     # Inject SPNEGO-enabled om binary
     cp binaries/om platform-automation-tasks-with-spnego/om
     chmod +x platform-automation-tasks-with-spnego/om
