@@ -1735,6 +1735,76 @@ jobs:
           NAME: my-runtime-config
           BOSH_ENV_PREFIX: OPSMAN
           OPSMAN_SSH_PRIVATE_KEY: ((platform-automation/main/reference-pipeline.ops_manager_ssh_private_key))
+    #! Test SPNEGO proxy authentication using external proxy
+    - do:
+      - task: prepare-spnego-config
+        image: platform-automation-image
+        config:
+          platform: linux
+          outputs:
+            - name: spnego-config
+          params:
+            PIVNET_TOKEN: ((platform-automation/main.pivnet_token))
+            PROXY_URL: ((platform-automation/main.spnego_proxy_url))
+            PROXY_USERNAME: ((platform-automation/main.spnego_proxy_username))
+            PROXY_PASSWORD: ((platform-automation/main.spnego_proxy_password))
+            KDC_HOST: ((platform-automation/main.spnego_kdc_host))
+            KRB5_CONF_CONTENT: |
+              [libdefaults]
+                  default_realm = TEST.LOCAL
+                  dns_lookup_realm = false
+                  dns_lookup_kdc = false
+                  forwardable = true
+
+              [realms]
+                  TEST.LOCAL = {
+                      kdc = ((platform-automation/main.spnego_kdc_host))
+                      admin_server = ((platform-automation/main.spnego_kdc_host))
+                  }
+
+              [domain_realm]
+                  .test.local = TEST.LOCAL
+                  test.local = TEST.LOCAL
+          run:
+            path: bash
+            args:
+              - -c
+              - |
+                set -eux
+
+                echo "=== Verifying SPNEGO proxy connectivity ==="
+                if curl -s --proxy "${PROXY_URL}" --max-time 10 -I http://google.com 2>/dev/null | grep -q "HTTP/"; then
+                  echo "Proxy is reachable!"
+                else
+                  echo "WARNING: Cannot reach proxy at ${PROXY_URL}"
+                fi
+
+                echo "=== Creating SPNEGO config ==="
+                echo "${KRB5_CONF_CONTENT}" > spnego-config/krb5.conf
+
+                cat > spnego-config/download-config.yml << EOF
+                ---
+                pivnet-api-token: ${PIVNET_TOKEN}
+                pivnet-file-glob: "*vsphere*.tgz"
+                pivnet-product-slug: stemcells-ubuntu-jammy
+                product-version-regex: '^1\..*'
+                proxy-url: ${PROXY_URL}
+                proxy-username: ${PROXY_USERNAME}
+                proxy-password: ${PROXY_PASSWORD}
+                proxy-auth-type: spnego
+                proxy-krb5-config: config/krb5.conf
+                EOF
+
+                echo "Config created:"
+                cat spnego-config/download-config.yml
+      - task: test-spnego-download-product
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/download-product.yml
+        input_mapping:
+          config: spnego-config
+        params:
+          CONFIG_FILE: download-config.yml
+          SOURCE: pivnet
 
 #! bump jobs
 - name: bump-previous-versions-trigger

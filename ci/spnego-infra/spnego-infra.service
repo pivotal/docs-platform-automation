@@ -1,0 +1,16 @@
+[Unit]
+Description=SPNEGO Test Infrastructure (KDC + Squid Proxy)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=120
+EnvironmentFile=/opt/spnego-infra/env
+ExecStart=/opt/spnego-infra/setup-spnego-infra.sh
+ExecStop=/usr/bin/docker rm -f spnego-kdc spnego-proxy
+ExecStop=/usr/bin/docker network rm spnego-net
+
+[Install]
+WantedBy=multi-user.target
