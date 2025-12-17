@@ -44,12 +44,18 @@ echo "Creating Docker network..."
 docker network create spnego-net
 
 # Start KDC
+# Port mappings are required so external clients can reach the KDC
 echo "Starting KDC container..."
 docker run -d \
     --name spnego-kdc \
     --hostname kdc.test.local \
     --network spnego-net \
+    --network-alias kdc.test.local \
     --restart unless-stopped \
+    -p 88:88/tcp \
+    -p 88:88/udp \
+    -p 464:464 \
+    -p 749:749 \
     -e KRB5_REALM=${REALM} \
     -e KRB5_KDC=kdc.test.local \
     ${KRB5_IMAGE}
@@ -104,13 +110,31 @@ fi
 
 # Get IP for clients
 HOST_IP=$(hostname -I | awk '{print $1}')
+
+# Verify KDC port is accessible
+echo ""
+echo "Testing KDC port..."
+if nc -z -w 2 localhost 88 2>/dev/null || ss -tlnp | grep -q ":88 "; then
+    echo "KDC port 88 is listening!"
+else
+    echo "WARNING: KDC port 88 may not be accessible"
+fi
+
 echo ""
 echo "=== SPNEGO Infrastructure Ready ==="
 echo ""
-echo "Proxy URL: http://${HOST_IP}:${PROXY_PORT}"
-echo "KDC Realm: ${REALM}"
-echo "Test User: ${TEST_USER}@${REALM}"
-echo "Password:  ${TEST_PASSWORD}"
+echo "Host IP:     ${HOST_IP}"
+echo "Proxy URL:   http://${HOST_IP}:${PROXY_PORT}"
+echo "KDC Host:    ${HOST_IP}:88"
+echo "KDC Realm:   ${REALM}"
+echo "Test User:   ${TEST_USER}@${REALM}"
+echo "Password:    ${TEST_PASSWORD}"
 echo ""
-echo "Use this proxy URL in your download-config.yml"
+echo "For download-config.yml:"
+echo "  proxy-url: http://${HOST_IP}:${PROXY_PORT}"
+echo "  proxy-username: ${TEST_USER}"
+echo "  proxy-password: ${TEST_PASSWORD}"
+echo "  proxy-auth-type: spnego"
+echo ""
+echo "For krb5.conf, use KDC host: ${HOST_IP}"
 echo ""

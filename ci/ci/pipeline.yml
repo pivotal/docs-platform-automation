@@ -1768,11 +1768,21 @@ jobs:
               echo "Verifying build..."
               ./binaries/om version
               ls -la binaries/
-      #! Test SPNEGO proxy authentication using fly execute
-      - task: test-spnego-proxy
-        privileged: true
-        tags: [btrfs]
-        file: docs-platform-automation/ci/tasks/test-spnego-proxy/task.yml
+      #! Test SPNEGO proxy authentication using external jumpbox proxy
+      #! This tests the actual tasks/download-product.yml user interface
+      - task: prepare-spnego-test-inputs
+        file: docs-platform-automation/ci/tasks/test-spnego-proxy/prepare-inputs.yml
+        input_mapping:
+          platform-automation-tasks: platform-automation-tasks
+      - task: test-spnego-download-product
+        file: platform-automation-tasks-with-spnego/tasks/download-product.yml
+        image: platform-automation-image
+        input_mapping:
+          platform-automation-tasks: platform-automation-tasks-with-spnego
+          config: spnego-config
+        params:
+          CONFIG_FILE: download-config.yml
+          SOURCE: pivnet
 
 #! bump jobs
 - name: bump-previous-versions-trigger
