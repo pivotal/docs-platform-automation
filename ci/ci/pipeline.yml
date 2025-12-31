@@ -769,33 +769,15 @@ jobs:
     - get: odp
     - get: docs-platform-automation
     - get: rc-image-s3
-      passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
-      - additional-task-testing
       params:
         unpack: true
     - get: rc-image-s3-vsphere
       params:
         unpack: true
-      passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
-      - additional-task-testing
     - get: platform-automation-tasks
       resource: rc-tasks-s3
-      passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
     - get: version-ci
       resource: version
-      passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
     - get: version
       resource: version-v5.x
   - task: create-release-file
