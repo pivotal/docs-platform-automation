@@ -28,23 +28,30 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
 RUN apt-get upgrade -y gnupg2 gpgv gpg
 
 # gcloud
+# Upgrade Python packages to fix CVE-2025-13836 (http.client OOM vulnerability)
+# Ensure python3.10 >= 3.10.12-1~22.04.13 which includes the CVE fix
+RUN apt-get upgrade -y python3.10 python3.10-minimal libpython3.10-minimal libpython3.10-stdlib
+
+# gcloud - install and update to get patched Python 3.13
 RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
+RUN /root/google-cloud-sdk/bin/gcloud components update --quiet || true
 ENV PATH /root/google-cloud-sdk/bin:$PATH
 RUN ln -s /root/google-cloud-sdk/bin/* /usr/local/bin/
 RUN gcloud --version
 
-# azure
-RUN pip3 install azure-cli
+# azure - upgrade to latest to ensure security patches
+RUN pip3 install --upgrade azure-cli
 RUN az --version
 
-# aws
-RUN pip3 install awscli
+# aws - upgrade to latest to ensure security patches
+RUN pip3 install --upgrade awscli
 RUN aws --version
 
-# openstack
-RUN pip3 install python-openstackclient
+# openstack - upgrade to latest to ensure security patches
+RUN pip3 install --upgrade python-openstackclient
 RUN openstack --version
 
-# Upgrade all packages
-RUN apt-get upgrade -y
+# Final security update pass and cleanup
+RUN apt-get update && apt-get upgrade -y
 RUN apt-get autoremove -y build-essential python3-dev
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
