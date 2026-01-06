@@ -23,6 +23,10 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
   && true
 # netcat for `bosh ssh` -- the why is explained here: https://github.com/cloudfoundry/bosh-cli/issues/374
 
+# Upgrade gnupg2/gpgv to fix CVE-2025-68973 (out-of-bounds write in armor_filter)
+# Ensure gnupg2 >= 2.2.27-3ubuntu2.5 which includes the CVE fix
+RUN apt-get upgrade -y gnupg2 gpgv gpg
+
 # gcloud
 RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
 ENV PATH /root/google-cloud-sdk/bin:$PATH
