@@ -260,7 +260,7 @@ resources:
     bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     region_name: ((platform-automation/main/s3_with_role.region_name))
     key: version
-    initial_version: 5.4.0-rc.3
+    initial_version: 0.0.1-rc.1
 - name: version-v5.x
   type: semver-with-arn
   source:
@@ -2051,6 +2051,8 @@ jobs:
         VERSION: ((.:version-number))
     - task: upload-files-to-rmt
       file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
+      input_mapping:
+        packaged-product: rc-artifacts-s3-v5
       params:
         VERSION: ((.:version-number))
     - task: release-files-update
