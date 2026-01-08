@@ -741,7 +741,6 @@ jobs:
           tag: testing
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
-
       platform: linux
       outputs:
       - name: version
@@ -770,32 +769,20 @@ jobs:
     - get: docs-platform-automation
     - get: rc-image-s3
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
       - additional-task-testing
       params:
         unpack: true
     - get: rc-image-s3-vsphere
+      passed:
+      - additional-task-testing
       params:
         unpack: true
-      passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
-      - additional-task-testing
     - get: platform-automation-tasks
-      resource: rc-tasks-s3
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
+      - additional-task-testing
+      resource: rc-tasks-s3
     - get: version-ci
       resource: version
-      passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
     - get: version
       resource: version-v5.x
   - task: create-release-file
@@ -1576,40 +1563,34 @@ jobs:
   plan:
   - in_parallel:
     - get: docs-platform-automation
+      tags: [ platform-automation ]
     - get: os-conf-release
+      tags: [ platform-automation ]
     - get: docs-platform-automation-reference-pipeline-config
+      tags: [ platform-automation ]
     - get: rc-image-s3-vsphere
+      tags: [ platform-automation ]
     - get: platform-automation-image
+      tags: [ platform-automation ]
       resource: rc-image-s3
       params:
         unpack: true
       trigger: true
     - get: platform-automation-tasks
+      tags: [ platform-automation ]
       resource: rc-tasks-s3
       params:
         unpack: true
       trigger: true
     - get: binaries-table
+      tags: [ platform-automation ]
       passed:
       - build-binaries-image-combined
     - get: pas-windows
+      tags: [ platform-automation ]
       params:
         globs:
           - '*.pivotal'
-  - task: credhub-interpolate
-    image: platform-automation-image
-    file: platform-automation-tasks/tasks/credhub-interpolate.yml
-    input_mapping:
-      files: docs-platform-automation-reference-pipeline-config
-    output_mapping:
-      interpolated-files: env
-    params:
-      CREDHUB_CLIENT: ((platform-automation/main.credhub-client))
-      CREDHUB_SECRET: ((platform-automation/main.credhub-secret))
-      CREDHUB_SERVER: ((platform-automation/main.credhub-server))
-      CREDHUB_CA_CERT: ((platform-automation/main.credhub-ca-cert))
-      PREFIX: /concourse/main/reference-pipeline
-      INTERPOLATION_PATHS: .
   - in_parallel:
     - do:
       - task: ensure-clis-versions-run
@@ -1635,6 +1616,7 @@ jobs:
               credhub --version
               winfs-injector --help
               om --version
+        tags: [ platform-automation ]
     - do:
       - task: replicate-product
         image: platform-automation-image
@@ -1643,6 +1625,7 @@ jobs:
           product: pas-windows
         params:
           REPLICATED_NAME: awesome
+        tags: [ platform-automation ]
       - task: check-replicated-tile
         image: platform-automation-image
         config:
@@ -1658,7 +1641,7 @@ jobs:
 
                 test -e replicated-product/awesome.pivotal
                 unzip -t replicated-product/awesome.pivotal
-
+        tags: [ platform-automation ]
     - do:
       - task: get-ca-cert
         image: platform-automation-image
@@ -1676,11 +1659,13 @@ jobs:
                 echo quit | openssl s_client -showcerts \
                   -servername self-signed.badssl.com \
                   -connect self-signed.badssl.com:443 > config/cacert.pem
+        tags: [ platform-automation ]
       - task: prepare-image
         image: platform-automation-image
         file: platform-automation-tasks/tasks/prepare-image.yml
         params:
           CA_CERT_FILES: cacert.pem
+        tags: [ platform-automation ]
       - task: test-ca-cert-worked
         image: platform-automation-image
         config:
@@ -1693,50 +1678,7 @@ jobs:
                 set -eux
 
                 curl -vvv -L https://self-signed.badssl.com
-    - do:
-      - task: download-and-upload-product
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/download-and-upload-product.yml
-        input_mapping:
-          config: env
-        params:
-          ENV_FILE: foundations/config/env.yml
-          CONFIG_FILE: download-product-pivnet/download-healthwatch.yml
-    - do:
-      - task: backup-director
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/backup-director.yml
-        params:
-          ENV_FILE: foundations/config/env.yml
-          OPSMAN_SSH_PRIVATE_KEY: ((platform-automation/main/reference-pipeline.ops_manager_ssh_private_key))
-      - task: check-backup-director
-        image: platform-automation-image
-        config:
-          platform: linux
-          inputs:
-            - name: backup
-          run:
-            path: bash
-            args:
-              - -c
-              - |
-                set -eux
-
-                test -e backup/director_*.tgz
-                tar -tzf  backup/director_*.tgz > /dev/null
-    - do:
-      - task: update-runtime-config
-        image: platform-automation-image
-        file: platform-automation-tasks/tasks/update-runtime-config.yml
-        input_mapping:
-          config: docs-platform-automation
-          releases: os-conf-release
-        params:
-          ENV_FILE: foundations/config/env.yml
-          CONFIG_FILE: ci/config/runtime-config.yml
-          NAME: my-runtime-config
-          BOSH_ENV_PREFIX: OPSMAN
-          OPSMAN_SSH_PRIVATE_KEY: ((platform-automation/main/reference-pipeline.ops_manager_ssh_private_key))
+        tags: [ platform-automation ]
     #! Test SPNEGO proxy authentication using external proxy
     - do:
       - task: prepare-spnego-config
@@ -1799,6 +1741,7 @@ jobs:
 
                 echo "Config created:"
                 cat spnego-config/download-config.yml
+        tags: [ platform-automation ]
       - task: test-spnego-download-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/download-product.yml
@@ -1807,6 +1750,7 @@ jobs:
         params:
           CONFIG_FILE: download-config.yml
           SOURCE: pivnet
+        tags: [ platform-automation ]
 
 #! bump jobs
 - name: bump-previous-versions-trigger
@@ -2107,6 +2051,8 @@ jobs:
         VERSION: ((.:version-number))
     - task: upload-files-to-rmt
       file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
+      input_mapping:
+        packaged-product: rc-artifacts-s3-v5
       params:
         VERSION: ((.:version-number))
     - task: release-files-update
