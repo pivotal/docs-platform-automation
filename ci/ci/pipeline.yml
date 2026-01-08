@@ -16,7 +16,6 @@ groups:
   - ci-upgrade-delete-infrastructure
   - prepare-resource-for-reference-pipeline
   - reference-gcp-delete-infrastructure
-  - test-image-dependency-stability
   - upgrade-opsman-epc
   - submit-sboms-rc
 - name: minor-bump
@@ -26,7 +25,6 @@ groups:
   - publish-release-minor
 - name: patch-bump
   jobs:
-  - bump-test-image-dependency-stability
   - bump-previous-versions-trigger
   #@ for/end version in data.values.versions:
   - #@ "update-" + version.number
@@ -124,24 +122,6 @@ resources:
     repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
     tag: vsphere-only
     username: ((concourse-team/dev_image_registry.username))
-- name: osl
-  type: s3-with-arn
-  source:
-    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
-    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
-    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
-    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
-    regexp: open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_(.*)_GA.txt
-    region_name: ((platform-automation/main/s3_with_role.region_name))
-- name: odp
-  type: s3-with-arn
-  source:
-    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
-    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
-    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
-    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
-    regexp: VMware-Tanzu-platform-automation-toolkit-(.*)-ODP.tar.gz
-    region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-image-s3
   type: s3-with-arn
   source:
@@ -212,17 +192,6 @@ resources:
     bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate_temp))
     regexp: artifacts-(.*).tar.gz
     region_name: ((platform-automation/main/s3_with_role.region_name))
-- name: osl-validated-image-receipt-s3
-  type: s3-with-arn
-  source:
-    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
-    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
-    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
-    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
-    regexp: image-receipt-(.*)
-    region_name: ((platform-automation/main/s3_with_role.region_name))
-  version:
-    path: image-receipt-5.2.0-rc.131
 - name: image-receipt-s3
   type: s3-with-arn
   source:
@@ -541,7 +510,6 @@ jobs:
   - task
   plan:
   - in_parallel:
-    - get: osl
     - get: govc-cli
       trigger: true
       params:
@@ -648,14 +616,6 @@ jobs:
     - task: define-cli-versions
       image: binaries-image
       file: docs-platform-automation/ci/tasks/pivnet-release/define-cli-versions.yml
-    - task: generate-dpkg-list-for-osl
-      file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
-      image: binaries-image
-    - task: generate-dpkg-list-for-osl
-      file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
-      output_mapping:
-        rc-image-receipt-s3: rc-vsphere-image-receipt-s3
-      image: vsphere-only-image
     - task: create-release-file
       file: docs-platform-automation/ci/tasks/package-for-release/platform-automation.yml
       input_mapping:
@@ -721,41 +681,6 @@ jobs:
   - put: rc-artifacts-s3
     params:
       file: packaged-product/artifacts-*.tar.gz
-- name: test-image-dependency-stability
-  plan:
-  - in_parallel:
-    - get: docs-platform-automation
-    - get: binaries-image
-      resource: rc-image-s3
-      passed: [ build-binaries-image-combined ]
-      trigger: true
-      params:
-        unpack: true
-    - get: osl-validated-image-receipt-s3
-  - task: generate-stub-version
-    config:
-      image_resource:
-        type: registry-image
-        source:
-          repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
-          tag: testing
-          username: ((concourse-team/dev_image_registry.username))
-          password: ((concourse-team/dev_image_registry.password))
-      platform: linux
-      outputs:
-      - name: version
-      run:
-        path: bash
-        args:
-        - -c
-        - |
-          set -eux
-          echo "test" > version/version
-  - task: generate-dpkg-list-for-osl
-    file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
-    image: binaries-image
-  - task: check-osl-reuse-validity
-    file: docs-platform-automation/ci/tasks/check-osl-reuse-validity.yml
 - name: bump-version-to-major
   plan:
   - put: version
@@ -764,8 +689,6 @@ jobs:
 - name: bump-minor
   plan:
   - in_parallel:
-    - get: osl
-    - get: odp
     - get: docs-platform-automation
     - get: rc-image-s3
       passed:
@@ -793,9 +716,6 @@ jobs:
   - task: test-docker-import
     privileged: true
     file: docs-platform-automation/ci/tasks/test-docker-import/task.yml
-  - task: generate-dpkg-list-for-osl
-    file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
-    image: rc-image-s3
   - put: docs-platform-automation
     params:
       repository: docs-platform-automation
@@ -1778,48 +1698,11 @@ jobs:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-epc
       - additional-task-testing
-- name: bump-test-image-dependency-stability
-  plan:
-  - in_parallel:
-    - get: docs-platform-automation
-    - get: binaries-image
-      resource: rc-image-s3
-      passed: [ bump-previous-versions-trigger ]
-      trigger: true
-      params:
-        unpack: true
-    - get: osl-validated-image-receipt-s3
-  - task: generate-stub-version
-    config:
-      image_resource:
-        type: registry-image
-        source:
-          repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
-          tag: testing
-          username: ((concourse-team/dev_image_registry.username))
-          password: ((concourse-team/dev_image_registry.password))
-      platform: linux
-      outputs:
-      - name: version
-      run:
-        path: bash
-        args:
-        - -c
-        - |
-          set -eux
-          echo "test" > version/version
-  - task: generate-dpkg-list-for-osl
-    file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
-    image: binaries-image
-  - task: check-osl-reuse-validity
-    file: docs-platform-automation/ci/tasks/check-osl-reuse-validity.yml
 #@ for version in data.values.versions:
 - name: #@ "update-" + version.number
   serial_groups: [ bump ]
   plan:
   - in_parallel:
-    - get: osl
-    - get: odp
     - get: #@ "platform-automation-" + version.number
     - get: #@ "docs-platform-automation-" + version.number
     - get: docs-platform-automation-with-docs
@@ -1861,9 +1744,6 @@ jobs:
       image: platform-automation-image
       input_mapping:
         platform-automation-tasks: #@ "platform-automation-" + version.number
-    - task: generate-dpkg-list-for-osl
-      file: docs-platform-automation-with-docs/ci/tasks/generate-dpkg-list-for-OSL.yml
-      image: binaries-image
   - in_parallel:
     - put: #@ "platform-automation-" + version.number
       params:
