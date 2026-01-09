@@ -41,6 +41,16 @@ RUN aws --version
 RUN pip3 install python-openstackclient
 RUN openstack --version
 
+# Fix CVE-2022-40897 (GHSA-r9hx-vwmv-q579), CVE-2024-6345, and CVE-2025-47273
+RUN pip3 install --upgrade setuptools>=78.1.1
+
+# Fix CVE-2022-40898 (GHSA-qwmp-2cf2-g9g6): Upgrade wheel to a secure version (>=0.38.1)
+RUN pip3 install --upgrade wheel>=0.38.1
+
+# Fix CVE-2023-50782: Upgrade cryptography to a secure version (>=42.0.0)
+# CVE-2023-50782: Bleichenbacher timing oracle attack in cryptography < 42.0.0
+RUN pip3 install --upgrade cryptography>=42.0.0
+
 # Upgrade all packages
 RUN apt-get upgrade -y
 RUN apt-get autoremove -y build-essential python3-dev
