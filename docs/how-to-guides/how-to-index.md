@@ -4,6 +4,7 @@
 * [Upgrading an existing Tanzu Operations Manager](./upgrade-existing-opsman.html.md.erb)
 * [Configuring authentication](./configuring-auth.html.md.erb)
 * [Configuring the Env file](./configuring-env.html.md.erb)
+* [Configuring proxy authentication](./configuring-proxy-authentication.html.md.erb)
 * [Creating a director config file](./creating-a-director-config-file.html.md.erb)
 * [Adding a product](./adding-a-product.html.md.erb)
 * [Why use git and GitHub?](./git-repo-layout.html.md.erb)
