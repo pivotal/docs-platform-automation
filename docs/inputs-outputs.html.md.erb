@@ -123,6 +123,14 @@ product-version: 1.2.3
 # blobstore-bucket: bucket  # if set, product files will have their slug and
                             # version prepended. Set if the product will
                             # ever be stored in a blobstore
+
+# Proxy Configuration (Optional)
+# proxy-url: http://proxy.example.com:8080     # HTTP proxy URL
+# proxy-username: username                     # proxy authentication username
+# proxy-password: password                     # proxy authentication password
+# proxy-auth-type: basic                       # basic|spnego
+# proxy-krb5-config: path/to/krb5.conf         # required when proxy-auth-type is spnego
+                                               # path relative to config input
 ```
 
 **S3**
@@ -187,6 +195,41 @@ azure-storage-key: storage-access-key-from-azure-portal
 # Optional
 # blobstore-product-path: /path/to/product    # default - root path of bucket
 # blobstore-stemcell-path: /path/to/stemcell  # default - root path of bucket
+```
+
+**SPNEGO Proxy Configuration**
+
+```yaml
+---
+# Example configuration for SPNEGO (Kerberos) proxy authentication
+pivnet-api-token: token
+pivnet-file-glob: "*.pivotal"
+pivnet-product-slug: product-slug
+product-version: 1.2.3
+
+# SPNEGO Proxy Configuration
+proxy-url: http://proxy.example.com:8080
+proxy-username: user@REALM.COM
+proxy-password: kerberos-password
+proxy-auth-type: spnego
+proxy-krb5-config: config/krb5.conf
+
+# Example krb5.conf file (place in config input directory):
+# [libdefaults]
+#     default_realm = REALM.COM
+#     dns_lookup_realm = false
+#     dns_lookup_kdc = false
+#     forwardable = true
+#
+# [realms]
+#     REALM.COM = {
+#         kdc = kdc.example.com:88
+#         admin_server = kdc.example.com:749
+#     }
+#
+# [domain_realm]
+#     .example.com = REALM.COM
+#     example.com = REALM.COM
 ```
 
 ## download-stemcell-product-config
