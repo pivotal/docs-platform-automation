@@ -19,9 +19,6 @@ Platform Automation
 and
 [python-mitigation-support](https://platform-automation.ci.cf-app.com/teams/main/pipelines/python-mitigation-support) pipelines are managed from this repo in the ci directory.
 
-# Contributing
-
-Please see the [contribution doc](CONTRIBUTING.md) for more information.
 
 # Notes for Maintainers
 
