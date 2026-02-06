@@ -399,7 +399,7 @@ resources:
   icon: language-go
   source:
     repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
-    tag: 0.0.204
+    tag: 0.0.210
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
