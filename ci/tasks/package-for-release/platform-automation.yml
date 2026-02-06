@@ -8,6 +8,9 @@ inputs:
   optional: true
 - name: vsphere-platform-automation-image
   optional: true
+- name: osl
+- name: odp
+  optional: true
 
 outputs:
 - name: packaged-product
@@ -71,6 +74,8 @@ run:
         chmod 444 var/version
         popd
 
+        cp osl/open_source_license*.txt "${path}"/usr/share/doc/open_source_licenses.txt
+
         GZIP=-9 tar zcf "packaged-product/${image}" --exclude="./image" -C "${path}" .
       }
 
@@ -96,6 +101,12 @@ run:
       # This is to support building the "vSphere" image (only)
       if [ -n "$(ls -A vsphere-platform-automation-image 2>/dev/null)" ]; then
         package_for_release "${VSPHERE_IMAGE_FILE}" vsphere-platform-automation-image
+      fi
+        
+      # copy OSL and ODP to output for bump pipelines
+      cp osl/open_source_license*.txt packaged-product/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_"$VERSION"_GA.txt
+      if [ -d odp/ ]; then
+        cp odp/VMware-Tanzu-platform-automation-toolkit*.tar.gz packaged-product/VMware-Tanzu-platform-automation-toolkit-"$VERSION"-ODP.tar.gz
       fi
 
       # Zip everything into one file we can store on s3
