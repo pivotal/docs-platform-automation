@@ -51,6 +51,10 @@ RUN pip3 install --upgrade wheel>=0.38.1
 # CVE-2023-50782: Bleichenbacher timing oracle attack in cryptography < 42.0.0
 RUN pip3 install --upgrade cryptography>=42.0.0
 
+# Fix CVE-2026-21226 (GHSA-jm66-cg57-jjv5): Upgrade azure-core to fix deserialization vulnerability
+# azure-core is exercised when om vm-lifecycle shells out to az CLI for Azure IaaS operations
+RUN pip3 install --upgrade azure-core>=1.38.0
+
 # Upgrade all packages
 RUN apt-get upgrade -y
 RUN apt-get autoremove -y build-essential python3-dev
