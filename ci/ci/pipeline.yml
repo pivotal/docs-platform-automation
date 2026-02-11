@@ -1843,15 +1843,15 @@ jobs:
   #   file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-release-notes.yml
   #   params:
   #     GITHUB_SSH_KEY: ((platform-automation/main/platform_automation_docs.private_key))
-  # - task: create-release-file
-  #   file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
-  #   input_mapping:
-  #     docs-platform-automation: docs-platform-automation-with-docs
-  #     platform-automation: #@ "platform-automation-" + version.number
-  #     platform-automation-image: binaries-image
-  #     #@ if version.vsphere_image:
-  #     vsphere-platform-automation-image: rc-image-s3-vsphere
-  #     #@ end
+  - task: create-release-file
+    file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
+    input_mapping:
+      docs-platform-automation: docs-platform-automation-with-docs
+      platform-automation: #@ "platform-automation-" + version.number
+      platform-automation-image: binaries-image
+      #@ if version.vsphere_image:
+      vsphere-platform-automation-image: rc-image-s3-vsphere
+      #@ end
   - in_parallel:
     - task: test-docker-import
       privileged: true
