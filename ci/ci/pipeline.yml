@@ -1759,24 +1759,24 @@ jobs:
   - in_parallel:
     - get: rc-image-s3-vsphere
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
+      # #@ for/end deployment in deployments_without_gcp:
+      # - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      # - upgrade-opsman-epc
       - additional-task-testing
     - get: binaries-image
       resource: rc-image-s3
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
+      # #@ for/end deployment in deployments_without_gcp:
+      # - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      # - upgrade-opsman-epc
       - additional-task-testing
       params:
         unpack: true
     - get: binaries-table
       passed:
-      #@ for/end deployment in deployments_without_gcp:
-      - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      - upgrade-opsman-epc
+      # #@ for/end deployment in deployments_without_gcp:
+      # - #@ "run-tasks-in-" + deployment.env_name + "-job"
+      # - upgrade-opsman-epc
       - additional-task-testing
 - name: bump-test-image-dependency-stability
   plan:
@@ -1825,8 +1825,8 @@ jobs:
     - get: docs-platform-automation-with-docs
     - get: version
       resource: #@ "version-" + version.number
-      params:
-        bump: patch
+      # params:
+      #   bump: patch
     - get: rc-image-s3-vsphere
       passed: [ bump-previous-versions-trigger ]
       params:
@@ -1839,19 +1839,19 @@ jobs:
         unpack: true
     - get: binaries-table
       passed: [ bump-previous-versions-trigger ]
-  - task: create-release-notes-for-patch
-    file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-release-notes.yml
-    params:
-      GITHUB_SSH_KEY: ((platform-automation/main/platform_automation_docs.private_key))
-  - task: create-release-file
-    file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
-    input_mapping:
-      docs-platform-automation: docs-platform-automation-with-docs
-      platform-automation: #@ "platform-automation-" + version.number
-      platform-automation-image: binaries-image
-      #@ if version.vsphere_image:
-      vsphere-platform-automation-image: rc-image-s3-vsphere
-      #@ end
+  # - task: create-release-notes-for-patch
+  #   file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-release-notes.yml
+  #   params:
+  #     GITHUB_SSH_KEY: ((platform-automation/main/platform_automation_docs.private_key))
+  # - task: create-release-file
+  #   file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
+  #   input_mapping:
+  #     docs-platform-automation: docs-platform-automation-with-docs
+  #     platform-automation: #@ "platform-automation-" + version.number
+  #     platform-automation-image: binaries-image
+  #     #@ if version.vsphere_image:
+  #     vsphere-platform-automation-image: rc-image-s3-vsphere
+  #     #@ end
   - in_parallel:
     - task: test-docker-import
       privileged: true
