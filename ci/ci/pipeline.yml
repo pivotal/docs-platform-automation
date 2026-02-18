@@ -297,12 +297,6 @@ resources:
   source:
     uri: https://github.com/pivotal/paving
     branch: low-privilege
-- name: govc-cli
-  type: github-release
-  source:
-    access_token: ((platform-automation/main/om.access_token))
-    owner: vmware
-    repository: govmomi
 - name: credhub-cli
   type: github-release
   source:
@@ -542,11 +536,6 @@ jobs:
   plan:
   - in_parallel:
     - get: osl
-    - get: govc-cli
-      trigger: true
-      params:
-        globs:
-          - 'govc_Linux_x86_64*'
     - get: bosh-cli
       trigger: true
       params:
@@ -610,7 +599,6 @@ jobs:
         - name: isolation-segment-replicator
         - name: om-cli
         - name: winfs-injector
-        - name: govc-cli
         - name: credhub-cli
         - name: docs-platform-automation
         - name: packages-image-oci

@@ -1,4 +1,12 @@
 ARG base_image
+
+# Stage 1: Build govc from source (main branch)
+FROM golang:1.24 AS govc-builder
+RUN git clone --depth 1 https://github.com/vmware/govmomi.git /govmomi
+WORKDIR /govmomi
+RUN CGO_ENABLED=0 go -C govc build -o /usr/local/bin/govc .
+
+# Stage 2: Final image
 FROM ${base_image}
 
 # copy files directly from the inputs/resource of concourse
@@ -7,10 +15,11 @@ COPY bosh-cli/bosh-cli-* /usr/bin/bosh
 COPY isolation-segment-replicator/replicator-linux* /usr/bin/iso-replicator
 COPY om-cli/om /usr/bin/om
 COPY winfs-injector/winfs-injector-linux* /usr/bin/winfs-injector
-COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
 
-RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
+# Copy govc built from source
+COPY --from=govc-builder /usr/local/bin/govc /usr/bin/govc
+
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
 
 # Make copied binaries executable
