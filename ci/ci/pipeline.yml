@@ -368,7 +368,7 @@ resources:
     assume_role_arn: ((platform-automation/main/s3_with_role.role_arn))
     bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
     region_name: ((platform-automation/main/s3_with_role.region_name))
-    initial_version: 0.0.1-rc.1
+    initial_version: 5.4.1-rc.1
     key: #@ "version-" + version.number
 #@ end
 - name: rc-artifacts-s3-v5
@@ -429,8 +429,7 @@ resources:
   check_every: 4h
   icon: language-go
   source:
-    repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
-    tag: 0.0.210
+    repository: ((concourse-team/dev_image_registry.build_image_url))/builders/jammy-buildpackless-tiny-builder
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
@@ -520,6 +519,7 @@ jobs:
       IMAGE_ARG_base_image: base-image/image.tar
   - put: packages-image
     params: { image: image/image.tar }
+    get_params: {format: oci}
 
 - name: download-and-test-om
   plan:
@@ -1759,24 +1759,15 @@ jobs:
   - in_parallel:
     - get: rc-image-s3-vsphere
       passed:
-      # #@ for/end deployment in deployments_without_gcp:
-      # - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      # - upgrade-opsman-epc
       - additional-task-testing
     - get: binaries-image
       resource: rc-image-s3
       passed:
-      # #@ for/end deployment in deployments_without_gcp:
-      # - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      # - upgrade-opsman-epc
       - additional-task-testing
       params:
         unpack: true
     - get: binaries-table
       passed:
-      # #@ for/end deployment in deployments_without_gcp:
-      # - #@ "run-tasks-in-" + deployment.env_name + "-job"
-      # - upgrade-opsman-epc
       - additional-task-testing
 - name: bump-test-image-dependency-stability
   plan:
@@ -1825,8 +1816,8 @@ jobs:
     - get: docs-platform-automation-with-docs
     - get: version
       resource: #@ "version-" + version.number
-      # params:
-      #   bump: patch
+      params:
+        bump: final
     - get: rc-image-s3-vsphere
       passed: [ bump-previous-versions-trigger ]
       params:
@@ -1839,10 +1830,6 @@ jobs:
         unpack: true
     - get: binaries-table
       passed: [ bump-previous-versions-trigger ]
-  # - task: create-release-notes-for-patch
-  #   file: docs-platform-automation-with-docs/ci/tasks/pivnet-release/generate-release-notes.yml
-  #   params:
-  #     GITHUB_SSH_KEY: ((platform-automation/main/platform_automation_docs.private_key))
   - task: create-release-file
     file: docs-platform-automation-with-docs/ci/tasks/package-for-release/platform-automation.yml
     input_mapping:
