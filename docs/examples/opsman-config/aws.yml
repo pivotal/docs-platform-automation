@@ -35,6 +35,11 @@ opsman-configuration:
                                  # execution VM if access_key_id and
                                  # secret_access_k ey are not set
 
+    # Optional for create VM with encrypted volume
+    # encrypted: false           # set to true to encrypt the volume
+    # kms_key_id: ...            # default - default kms_key_id is used if not provided
+                                # it is only applicable if encrypted param is true
+
   # Optional Ops Manager UI Settings for upgrade-opsman
   # ssl-certificate: ...
   # pivotal-network-settings: ...
