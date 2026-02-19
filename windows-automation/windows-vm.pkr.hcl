@@ -209,25 +209,16 @@ locals {
   
   # ISO paths - vsphere-iso builder requires datastore paths only
   # Format: [datastore-name]/path/to/file.iso
-  # Use upload-iso.sh helper script to upload local ISO to datastore first;-    [0] = Windows OS ISO (for booting) - MUST be Windows Server ISO, not VMware Tools ISO
-  # [1] = VMware Tools ISO (mounted as additional CD/DVD drive, available as D: or E:)
+  # Use upload-iso.sh helper script to upload local ISO to datastore first
   # IMPORTANT: iso_path MUST point to Windows Server ISO, not VMware Tools ISO
   # Verify: iso_path should contain "windows" or "server" in the filename
   iso_path_final = var.iso_path != "" ? var.iso_path : ""
-  vmware_tools_iso_path = "[] /vmimages/tools-isoimages/windows.iso"  # Standard vSphere Tools ISO path
   
   # Template name - use provided name, or derive from VM name, or use default
   template_name_final = var.template_name != "" ? var.template_name : "${var.vm_name}-template"
   
   # Scripts directory
   scripts_dir = "scripts"
-  
-  # Template variables for Autounattend.xml (no longer used - build.sh processes with sed)
-  # Kept for reference, but Autounattend.xml is now processed by build.sh before Packer runs
-  # autounattend_vars = {
-  #   Username = var.windows_username
-  #   Password = var.windows_password
-  # }
   
   # Common PowerShell environment variables
   common_powershell_env = [
@@ -292,20 +283,29 @@ source "vsphere-iso" "windows" {
   # ISO configuration - Only mount Windows OS ISO initially for booting
   # VMware Tools ISO will be mounted later via provisioner after installation completes
   # This avoids boot order confusion when multiple ISOs are attached
+  # IMPORTANT: iso_path must be set via PKR_VAR_iso_path environment variable or -var flag
+  # If iso_paths is empty, the VM will start without an ISO and installation will fail
+  # ISO path format: [datastore-name]/path/to/file.iso (must match exactly, case-sensitive)
   iso_paths = local.iso_path_final != "" ? [
     local.iso_path_final                    # [0] Windows OS ISO (for booting)
   ] : []
+  
+  # CD-ROM type: "ide" for BIOS firmware, "sata" for UEFI firmware
+  # Windows Server 2019 with BIOS firmware uses IDE CD-ROM
   cdrom_type = "ide"
+  
+  # Ensure CD-ROM is connected at boot
+  # The vsphere-iso builder should handle this automatically, but we can verify
+  # Note: There's no explicit "connect_cdrom" option in vsphere-iso builder
+  # The ISO should be automatically connected when iso_paths is set
+  
+  # Validate ISO path is set (this will cause a clear error if not set)
+  # Note: We can't use validation blocks in source blocks, so we rely on the conditional above
 
   # Boot configuration - Boot from CD-ROM (Windows OS ISO) first, then disk
   boot_order = "cdrom,disk"
   # Boot wait time - allows Windows Setup to initialize before boot commands
-  # Reduced to 10s for faster execution
   boot_wait  = "10s"
-
-  # Note: vmx_data is not supported in vsphere-iso builder
-  # Boot delay and floppy connection are handled by the plugin automatically
-  # The boot_wait setting provides the delay needed
 
   # Autounattend.xml injection - FLOPPY METHOD
   # Windows Setup automatically searches for Autounattend.xml in this order:
@@ -332,10 +332,17 @@ source "vsphere-iso" "windows" {
   # Increased wait times to allow screens to fully load before navigation
   boot_command = [
     "<enter><wait>",      # Press Enter to start installation (initial "Press any key" screen)
-    "<wait30>",           # Wait for Windows Setup to load and detect Autounattend.xml (increased from 10s)
-    "<enter><wait>",      # Press Enter/Next on language selection (if shown)
+    "<wait60>",           # Wait for Windows Setup to load and detect Autounattend.xml (increased to 60s to ensure Autounattend.xml is read)
+    # Language selection screen - explicitly select English (US)
+    # If language selection screen appears, we need to navigate to English (US)
+    # Default might be Spanish Argentina or other locale, so we explicitly select English
+    "<down><wait>",       # Navigate down to find English (US) if not at top
+    "<down><wait>",       # Continue navigating if needed
+    "<up><wait>",         # Navigate up to English (US) - typically at top of list
+    "<up><wait>",         # Ensure we're at English (US)
+    "<enter><wait>",      # Press Enter to select English (US) language
     "<wait20>",           # Wait for language selection to process (increased from 10s)
-    "<enter><wait>",      # Additional Enter if language selection needs confirmation
+    "<enter><wait>",      # Press Enter/Next to confirm language selection
     "<wait20>",           # Wait for "Install Now" screen (increased from 10s)
     "<enter><wait>",      # Press Enter on "Install Now" button
     "<wait20>",           # Wait for license terms screen (FIRST PROMPT) (increased from 10s)
@@ -357,148 +364,51 @@ source "vsphere-iso" "windows" {
     "<wait20>",           # Wait for partition to be created/formatted (increased from 10s)
     "<tab><tab><wait>",   # Tab to "Next" button
     "<enter><wait>",      # Press Enter/Next to proceed with installation
-    "<wait120>"           # Wait for installation to proceed (disk formatting and file copying) (increased from 60s)
+    "<wait120>",          # Wait for installation to proceed (disk formatting and file copying)
+    # After installation, Windows will reboot automatically
+    # Password change is handled post-build in build.sh via govc keystrokes
+    "<wait60>"            # Wait for Windows to boot after installation (first boot after reboot)
   ]
 
-  # Shutdown configuration
-  shutdown_command = "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\""
-  shutdown_timeout = "15m"
+  # Communicator configuration - DISABLED
+  # All provisioners are shell-local and use govc (not WinRM)
+  # govc commands work at the vSphere API level and don't require:
+  #   - IP address assignment
+  #   - WinRM connectivity
+  #   - Guest OS login
+  # Setting communicator to "none" completely disables IP wait and communicator wait
+  # This allows shell-local provisioners to run immediately after boot commands
+  communicator = "none"
 
-  # WinRM configuration
-  # Network is configured in Autounattend.xml specialize pass (static IP)
-  # After first restart, network is configured and WinRM can connect
-  # Packer needs to wait for the static IP to be configured
-  communicator   = "winrm"
-  winrm_username = var.windows_username
-  winrm_password = var.windows_password
-  winrm_timeout  = "90m"
-  winrm_insecure = true
-  winrm_use_ssl  = false
-  winrm_port     = 5985
+  # Shutdown configuration - DISABLED
+  # We handle shutdown via govc in build.sh post-build provisioning
+  # Setting a very long shutdown timeout so Packer doesn't try to shutdown before post-build completes
+  # Post-build provisioning can take 20-30 minutes (installation wait + password change + Tools + updates)
+  # We set timeout to 2 hours to ensure Packer doesn't interfere
+  # Note: Packer will timeout on shutdown, but that's expected - build.sh handles shutdown
+  shutdown_timeout = "2h"
 
-  # IP wait configuration
-  # Network is configured in Autounattend.xml specialize pass (static IP)
-  # Packer needs to wait for the static IP to be configured after first restart
-  # Without DHCP, Packer must wait for the static IP configured in specialize pass
-  ip_wait_timeout   = "30m"  # Wait up to 30 minutes for static IP to be configured
-  ip_settle_timeout = "2m"   # Wait 2 minutes for IP to settle after configuration
-
-  # Convert to template (Step 3 from documentation)
-  convert_to_template = true
+  # VM cleanup and template conversion - DISABLED
+  # We handle shutdown and template conversion via govc in build.sh
+  # This prevents Packer from deleting VM on communicator failure
+  # Note: vsphere-iso builder doesn't have skip_clean_vm option
+  # We'll handle everything post-build in build.sh to keep VM even on failure
+  convert_to_template = false  # We'll convert via govc in build.sh
 }
 
 # Build steps
+# Packer exits immediately after boot commands via a minimal shell-local provisioner
+# This allows Packer to complete without waiting for shutdown
+# VM is kept running, and build.sh handles all post-build provisioning
 build {
   name = "windows-vm-build"
 
   sources = ["source.vsphere-iso.windows"]
 
-  # Step 1: Wait for Windows to be ready (using govc)
-  # This waits for WinRM to be available after first restart
+  # Minimal provisioner to signal Packer that boot commands are complete
+  # This allows Packer to exit immediately without waiting for shutdown
+  # VM remains running, and build.sh handles all post-build provisioning
   provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}"
-    ]
-    command = "${local.scripts_dir}/run-powershell-via-govc.sh '${local.vm_name_final}' '${local.scripts_dir}/01-wait-for-ready.ps1'"
-  }
-
-  # Step 1.5: Mount VMware Tools ISO (per documentation)
-  # This happens AFTER first restart, when WinRM is available
-  # Mounting before first restart can interfere with Windows installation and password reset
-  provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}"
-    ]
-    command = "${local.scripts_dir}/mount-vmware-tools.sh '${local.vm_name_final}'"
-  }
-
-  # Step 1.6: Install VMware Tools (per documentation: run D:\setup64.exe)
-  # This happens AFTER Tools ISO is mounted, after first restart
-  # The PowerShell script checks if Tools is already installed and skips if so
-  provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}"
-    ]
-    command = "${local.scripts_dir}/run-powershell-via-govc.sh '${local.vm_name_final}' '${local.scripts_dir}/03-install-vmware-tools.ps1'"
-  }
-
-  # Step 2: Configure network using sconfig (per tech doc)
-  # Network configuration is done after VMware Tools is mounted and installed
-  # This uses PowerShell cmdlets (sconfig is interactive, so we use equivalent PowerShell)
-  provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}",
-      "STATIC_IP=${var.static_ip}",
-      "SUBNET_MASK=${var.subnet_mask}",
-      "GATEWAY=${var.gateway}",
-      "DNS_SERVERS=${join(",", var.dns_servers)}",
-      "LOG_LEVEL=${var.log_level}"
-    ]
-    command = "${local.scripts_dir}/run-powershell-via-govc.sh '${local.vm_name_final}' '${local.scripts_dir}/02-configure-network-sconfig.ps1'"
-  }
-
-  # Step 2: Install Windows updates (using govc - network now configured via sconfig)
-  # Script handles enable_windows_updates flag internally
-  provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}",
-      "STATIC_IP=${var.static_ip}",
-      "SUBNET_MASK=${var.subnet_mask}",
-      "GATEWAY=${var.gateway}",
-      "DNS_SERVERS=${join(",", var.dns_servers)}",
-      "ENABLE_UPDATES=${var.enable_windows_updates}",
-      "LOG_LEVEL=${var.log_level}"
-    ]
-    command = "${local.scripts_dir}/run-powershell-via-govc.sh '${local.vm_name_final}' '${local.scripts_dir}/04-install-windows-updates.ps1'"
-  }
-
-
-  # Step 1: Disconnect CD/DVD drive (per documentation)
-  provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}"
-    ]
-    command = "${local.scripts_dir}/eject-cdrom.sh '${local.vm_name_final}'"
-  }
-
-  # Step 3: Rename template (if custom name provided)
-  provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}"
-    ]
-    command = "${local.scripts_dir}/rename-template.sh '${local.vm_name_final}' '${local.template_name_final}'"
-  }
-
-  # Final cleanup (using govc)
-  provisioner "shell-local" {
-    environment_vars = [
-      "GOVC_URL=${var.vcenter_server}",
-      "GOVC_USERNAME=${var.vcenter_username}",
-      "GOVC_PASSWORD=${var.vcenter_password}",
-      "GOVC_INSECURE=${var.vcenter_insecure_connection}",
-      "LOG_LEVEL=${var.log_level}"
-    ]
-    command = "${local.scripts_dir}/run-powershell-via-govc.sh '${local.vm_name_final}' '${local.scripts_dir}/06-final-cleanup.ps1'"
+    inline = ["echo 'Boot commands complete - Packer exiting, VM remains running'"]
   }
 }

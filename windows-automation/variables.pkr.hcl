@@ -10,8 +10,8 @@ vcenter_insecure_connection = true
 
 # Proxy Configuration (Optional - for accessing vCenter through HTTP/HTTPS proxy)
 # If your environment requires a proxy to access vCenter, configure these:
-http_proxy     = "http://10.144.36.207"  
-https_proxy    = "http://10.144.36.207"  
+http_proxy     = "http://10.144.36.64"  
+https_proxy    = "http://10.144.36.64"  
 no_proxy       = "localhost,127.0.0.1,.local"
 
 
@@ -20,7 +20,7 @@ vcenter_datacenter    = "tanzu-dc01"
 vcenter_cluster       = ""  # Leave empty if using host
 vcenter_host          = "esx-01.tanzu.lab"           # Leave empty if using cluster
 vcenter_datastore     = "iscsi-storage"
-vcenter_network       = "seg_tas-deployment"
+vcenter_network       = "seg_tas-infra"
 vcenter_folder        = "/Datacenter/vm/WindowsVMs"  # Optional
 vcenter_resource_pool = "rp01_tas"  # Optional
 
@@ -43,11 +43,11 @@ template_name   = "stemcell-automation-base-2019"  # Optional: Custom template n
 # Example: [iscsi-storage]/ISOs/windows-server-2019.iso
 #
 # To upload ISO to datastore first, use the upload-iso.sh helper script:
-#   ./upload-iso.sh ./windows-server-2019.iso iscsi-storage ISOs
-iso_path = "[iscsi-storage]/ISOs/windows-server-2019.iso"
+#   ./upload-iso.sh ./windows-2019.iso iscsi-storage ISOs
+iso_path = "[iscsi-storage]/ISOs/windows-2019.iso"
 
 # Option 1: Local ISO path (Packer will upload automatically)
-iso_path_local = "./windows-server-2019.iso"
+iso_path_local = "/Users/rjanakiraman/docs-platform-automation/windows-2019.iso"
 
 # Windows Configuration
 windows_username = "Administrator"

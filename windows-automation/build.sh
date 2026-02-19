@@ -148,6 +148,12 @@ setup_proxy_environment() {
 init_packer() {
     log_info "Initializing Packer plugins..."
     
+    # Ensure we're in the script directory
+    cd "$SCRIPT_DIR" || {
+        log_error "Failed to change to script directory: $SCRIPT_DIR"
+        exit 1
+    }
+    
     if packer init windows-vm.pkr.hcl; then
         log_success "Packer plugins initialized"
     else
@@ -157,17 +163,27 @@ init_packer() {
 }
 
 # Upload local ISO to datastore
+# Parameters:
+#   $1: vars_file - Variables file path
+#   $2: iso_local - Local ISO file path (original, for logging)
+#   $3: resolved_iso_path - Resolved absolute path to local ISO file
+#   $4: destination_path - Destination datastore path (e.g., [datastore]/ISOs/file.iso)
+#   $5: force_upload - Force re-upload even if exists (default: false)
 upload_iso_to_datastore() {
     local vars_file="${1:-}"
     local iso_local="${2:-}"
     local resolved_iso_path="${3:-}"
-    local force_upload="${4:-false}"  # New parameter: force re-upload even if exists
+    local destination_path="${4:-}"  # Destination path on datastore
+    local force_upload="${5:-false}"  # Force re-upload even if exists
     
     # All logging functions now go to stderr, so only the path will be returned to stdout
     log_info "=========================================="
     log_info "ISO Upload Process Starting"
     log_info "=========================================="
     log_info "Local ISO file: $resolved_iso_path"
+    
+    # Note: Proxy environment variables should be set by calling function
+    # govc uses HTTP_PROXY, HTTPS_PROXY, NO_PROXY environment variables
     
     # Extract vCenter and datastore info from variables file
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
@@ -192,12 +208,34 @@ upload_iso_to_datastore() {
         
         # Get ISO filename and size
         local iso_filename=$(basename "$resolved_iso_path")
-        local datastore_path="ISOs/$iso_filename"
         local iso_size=$(du -h "$resolved_iso_path" | cut -f1)
+        
+        # Determine destination path
+        local datastore_path=""
+        local final_destination_path=""
+        if [[ -n "$destination_path" ]] && [[ "$destination_path" =~ ^\[.+\]/ ]]; then
+            # Destination path provided in format [datastore]/path/to/file.iso
+            local dest_datastore=$(echo "$destination_path" | sed 's/^\[\([^]]*\)\].*/\1/')
+            datastore_path=$(echo "$destination_path" | sed 's/^\[[^]]*\]\///')
+            final_destination_path="$destination_path"
+            log_info "Using provided destination path: $final_destination_path"
+            
+            # Verify datastore matches
+            if [[ "$dest_datastore" != "$datastore" ]]; then
+                log_warn "Destination datastore ($dest_datastore) differs from configured datastore ($datastore)"
+                log_warn "Using destination datastore: $dest_datastore"
+                datastore="$dest_datastore"
+            fi
+        else
+            # Default: upload to ISOs folder with same filename
+            datastore_path="ISOs/$iso_filename"
+            final_destination_path="[$datastore]/$datastore_path"
+            log_info "Using default destination path: $final_destination_path"
+        fi
         
         log_info "ISO Filename: $iso_filename"
         log_info "ISO Size: $iso_size"
-        log_info "Target Datastore Path: [$datastore]/$datastore_path"
+        log_info "Target Datastore Path: $final_destination_path"
         
         # Check if govc is available and setup
         if ! command -v govc >/dev/null 2>&1; then
@@ -217,18 +255,18 @@ upload_iso_to_datastore() {
             log_info "=========================================="
             log_info "Checking if ISO already exists on datastore"
             log_info "=========================================="
-            log_info "Checking for: [$datastore]/ISOs/$iso_filename"
+            log_info "Checking for: $final_destination_path"
             
             # Get local file size for comparison
             local local_iso_size_bytes=$(stat -f%z "$resolved_iso_path" 2>/dev/null || stat -c%s "$resolved_iso_path" 2>/dev/null || echo "0")
             
             # Check if file exists on datastore
-            if govc datastore.ls -ds "$datastore" "ISOs/$iso_filename" >/dev/null 2>&1; then
-            log_success "ISO file found on datastore: [$datastore]/ISOs/$iso_filename"
+            if govc datastore.ls -ds "$datastore" "$datastore_path" >/dev/null 2>&1; then
+            log_success "ISO file found on datastore: $final_destination_path"
             
             # Try to get file size from datastore for comparison
             log_info "Verifying ISO file details..."
-            local datastore_file_info=$(govc datastore.ls -ds "$datastore" -l "ISOs/$iso_filename" 2>/dev/null || echo "")
+            local datastore_file_info=$(govc datastore.ls -ds "$datastore" -l "$datastore_path" 2>/dev/null || echo "")
             local datastore_iso_size_bytes=""
             
             if [[ -n "$datastore_file_info" ]]; then
@@ -301,13 +339,13 @@ upload_iso_to_datastore() {
                     log_error "Datastore path: '$datastore_path'"
                     exit 1
                 fi
-                local return_path="[$datastore]/$datastore_path"
+                local return_path="$final_destination_path"
                 # Trim any whitespace/newlines and ensure no trailing characters
                 return_path=$(printf '%s' "$return_path" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-                    log_info "Returning datastore path: '$return_path'"
-                    # Output ONLY the path to stdout (all logs go to stderr)
-                    printf '%s' "$return_path"
-                    return 0
+                log_info "Returning datastore path: '$return_path'"
+                # Output ONLY the path to stdout (all logs go to stderr)
+                printf '%s' "$return_path"
+                return 0
             fi
         else
             log_info "ISO not found on datastore"
@@ -319,12 +357,12 @@ upload_iso_to_datastore() {
             log_info "Force Re-upload Requested"
             log_info "=========================================="
             log_info "Skipping existence check - will re-upload ISO"
-            log_info "Target: [$datastore]/ISOs/$iso_filename"
+            log_info "Target: $final_destination_path"
             
             # Delete existing ISO if it exists (to ensure clean upload)
-            if govc datastore.ls -ds "$datastore" "ISOs/$iso_filename" >/dev/null 2>&1; then
+            if govc datastore.ls -ds "$datastore" "$datastore_path" >/dev/null 2>&1; then
                 log_info "Deleting existing ISO on datastore..."
-                if govc datastore.rm -ds "$datastore" "ISOs/$iso_filename" 2>/dev/null; then
+                if govc datastore.rm -ds "$datastore" "$datastore_path" 2>/dev/null; then
                     log_info "✓ Existing ISO deleted"
                 else
                     log_warn "Could not delete existing ISO (may be in use, will overwrite)"
@@ -367,17 +405,11 @@ upload_iso_to_datastore() {
             
             # Verify upload
             log_info "Verifying uploaded ISO..."
-            if govc datastore.ls -ds "$datastore" "ISOs/$iso_filename" >/dev/null 2>&1; then
+            if govc datastore.ls -ds "$datastore" "$datastore_path" >/dev/null 2>&1; then
                 log_success "ISO verification successful"
                 # Return datastore path in correct format: [datastore]/path/to/file.iso
-                # Ensure path is properly formatted
-                if [[ -z "$datastore" ]] || [[ -z "$datastore_path" ]]; then
-                    log_error "Cannot construct datastore path - datastore or path is empty"
-                    log_error "Datastore: '$datastore'"
-                    log_error "Datastore path: '$datastore_path'"
-                    exit 1
-                fi
-                local return_path="[$datastore]/$datastore_path"
+                # Use the final_destination_path which was already formatted
+                local return_path="$final_destination_path"
                 # Trim any whitespace/newlines
                 return_path=$(echo -n "$return_path" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
                 log_info "Returning datastore path: '$return_path'"
@@ -409,6 +441,7 @@ upload_iso_to_datastore() {
 # Validate ISO configuration
 validate_iso_config() {
     local vars_file="${1:-}"
+    local overwrite_flag="${2:-false}"
     
     log_info "Validating ISO configuration..."
     
@@ -422,16 +455,36 @@ validate_iso_config() {
         iso_local=$(echo "$iso_local" | sed 's/^"//;s/"$//')
         iso_path=$(echo "$iso_path" | sed 's/^"//;s/"$//')
         
+        # Variable to store uploaded ISO path (if upload happens)
+        local datastore_iso_path=""
+        
+        # Determine the logic based on what's provided:
+        # - iso_path_local = source file (local)
+        # - iso_path = destination path (datastore path where ISO should be)
+        # 
+        # Cases:
+        # 1. Only iso_path provided: Validate it exists, use it directly (skip upload)
+        # 2. Both provided: Upload iso_path_local to iso_path destination
+        # 3. Only iso_path_local: Error (need destination)
+        
         if [[ -z "$iso_local" ]] && [[ -z "$iso_path" ]]; then
             log_error "ISO configuration missing!"
-            log_error "You must provide either:"
-            log_error "  - iso_path_local (local file path - will be uploaded to datastore)"
-            log_error "  - iso_path (datastore path - ISO already on datastore)"
+            log_error "You must provide:"
+            log_error "  - iso_path (datastore path - ISO already on datastore, or destination for upload)"
+            log_error "  - iso_path_local (optional, local file to upload to iso_path destination)"
             exit 1
         fi
         
-        # Validate local ISO file exists if iso_path_local is set
-        if [[ -n "$iso_local" ]] && [[ "$iso_local" != '""' ]]; then
+        # Case 1: Only iso_path_local provided (without iso_path) - ERROR
+        if [[ -n "$iso_local" ]] && [[ "$iso_local" != '""' ]] && [[ -z "$iso_path" ]] || [[ "$iso_path" == '""' ]]; then
+            log_error "iso_path_local provided but iso_path (destination) is missing!"
+            log_error "When uploading a local ISO, you must specify iso_path as the destination"
+            log_error "Example: iso_path = \"[datastore1]/ISOs/windows-server-2019.iso\""
+            exit 1
+        fi
+        
+        # Case 2: Both iso_path_local and iso_path provided - Upload iso_path_local to iso_path
+        if [[ -n "$iso_local" ]] && [[ "$iso_local" != '""' ]] && [[ -n "$iso_path" ]] && [[ "$iso_path" != '""' ]]; then
             # Resolve relative paths relative to script directory (windows-automation folder)
             local resolved_iso_path="$iso_local"
             if [[ "$iso_local" != /* ]]; then
@@ -474,17 +527,62 @@ validate_iso_config() {
             
             log_info "Local ISO file found: $resolved_iso_path"
             
-                # Upload ISO to datastore and get datastore path
-                log_info "Calling upload_iso_to_datastore function..."
-                local datastore_iso_path
-                # Force upload if custom ISO was created
-                local force_upload_flag="${FORCE_ISO_UPLOAD:-false}"
-                datastore_iso_path=$(upload_iso_to_datastore "$vars_file" "$iso_local" "$resolved_iso_path" "$force_upload_flag")
+            # Check if destination (iso_path) already exists on datastore
+            log_info "Checking if destination ISO already exists on datastore..."
+            local iso_datastore=$(echo "$iso_path" | sed 's/^\[\([^]]*\)\].*/\1/')
+            local iso_file=$(echo "$iso_path" | sed 's/^\[[^]]*\]\///')
+            
+            # Set govc environment for checking
+            local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+            local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+            local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+            local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+            
+            vcenter_server=$(echo "$vcenter_server" | sed 's/^"//;s/"$//')
+            vcenter_user=$(echo "$vcenter_user" | sed 's/^"//;s/"$//')
+            vcenter_pass=$(echo "$vcenter_pass" | sed 's/^"//;s/"$//')
+            
+            export GOVC_URL="$vcenter_server"
+            export GOVC_USERNAME="$vcenter_user"
+            export GOVC_PASSWORD="$vcenter_pass"
+            if [[ "$vcenter_insecure" == "true" ]]; then
+                export GOVC_INSECURE=true
+            fi
+            
+            local iso_exists=false
+            if govc datastore.ls -ds "$iso_datastore" "$iso_file" >/dev/null 2>&1; then
+                iso_exists=true
+                log_info "ISO already exists on datastore: $iso_path"
+                
+                if [[ "$overwrite_flag" == "true" ]]; then
+                    log_info "Overwrite flag set - will upload and replace existing ISO"
+                else
+                    log_success "Skipping upload - ISO already exists at destination"
+                    log_info "Use --overwrite flag to force upload and replace existing ISO"
+                    # Set the path without uploading
+                    datastore_iso_path="$iso_path"
+                fi
+            else
+                log_info "ISO not found on datastore - will upload"
+            fi
+            
+            # Upload ISO to datastore destination (iso_path) if needed
+            if [[ "$iso_exists" != "true" ]] || [[ "$overwrite_flag" == "true" ]]; then
+                log_info "Uploading iso_path_local to iso_path destination..."
+                log_info "  Source (local): $resolved_iso_path"
+                log_info "  Destination: $iso_path"
+                # Use overwrite_flag for force upload
+                datastore_iso_path=$(upload_iso_to_datastore "$vars_file" "$iso_local" "$resolved_iso_path" "$iso_path" "$overwrite_flag")
                 local upload_exit_code=$?
             
-            if [[ $upload_exit_code -ne 0 ]]; then
-                log_error "ISO upload function failed with exit code: $upload_exit_code"
-                exit 1
+                if [[ $upload_exit_code -ne 0 ]]; then
+                    log_error "ISO upload function failed with exit code: $upload_exit_code"
+                    exit 1
+                fi
+            else
+                # Upload skipped - use existing ISO path
+                datastore_iso_path="$iso_path"
+                log_info "Using existing ISO at: $datastore_iso_path"
             fi
             
             # Trim any whitespace/newlines from the path using printf to avoid echo issues
@@ -521,80 +619,53 @@ validate_iso_config() {
             
             log_info "ISO path format validated: $datastore_iso_path"
             
-            # Verify file exists on datastore before proceeding
-            log_info "Verifying uploaded ISO exists on datastore..."
-            local datastore_name=$(echo "$datastore_iso_path" | sed 's/^\[\([^]]*\)\].*/\1/')
-            local iso_file_path=$(echo "$datastore_iso_path" | sed 's/^\[[^]]*\]\///')
-            
-            # Set govc environment for verification
-            local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-            local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-            local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-            local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-            
-            vcenter_server=$(echo "$vcenter_server" | sed 's/^"//;s/"$//')
-            vcenter_user=$(echo "$vcenter_user" | sed 's/^"//;s/"$//')
-            vcenter_pass=$(echo "$vcenter_pass" | sed 's/^"//;s/"$//')
-            
-            export GOVC_URL="$vcenter_server"
-            export GOVC_USERNAME="$vcenter_user"
-            export GOVC_PASSWORD="$vcenter_pass"
-            if [[ "$vcenter_insecure" == "true" ]]; then
-                export GOVC_INSECURE=true
-            fi
-            
-            log_info "Verifying ISO exists at:"
-            log_info "  Datastore: $datastore_name"
-            log_info "  File path: $iso_file_path"
-            log_info "  Full path: $datastore_iso_path"
-            
-            if govc datastore.ls -ds "$datastore_name" "$iso_file_path" >/dev/null 2>&1; then
-                log_success "ISO verified on datastore: $datastore_iso_path"
+            # Verify file exists on datastore (only if we uploaded, not if we skipped)
+            if [[ "$iso_exists" != "true" ]] || [[ "$overwrite_flag" == "true" ]]; then
+                log_info "Verifying uploaded ISO exists on datastore..."
+                local datastore_name=$(echo "$datastore_iso_path" | sed 's/^\[\([^]]*\)\].*/\1/')
+                local iso_file_path=$(echo "$datastore_iso_path" | sed 's/^\[[^]]*\]\///')
                 
-                # Show actual file listing to confirm
-                log_info "File listing from datastore:"
-                govc datastore.ls -ds "$datastore_name" "$iso_file_path" 2>&1 | while IFS= read -r line; do
-                    log_info "  $line"
-                done
-            else
-                log_error "ISO verification failed - file not found at: $datastore_iso_path"
-                log_error "Datastore: $datastore_name"
-                log_error "File path: $iso_file_path"
-                log_error "Listing contents of ISOs folder:"
-                govc datastore.ls -ds "$datastore_name" "ISOs" 2>&1 | while IFS= read -r line; do
-                    log_error "  $line"
-                done
-                exit 1
+                # Note: Proxy environment variables should be set by calling function
+                # govc uses HTTP_PROXY, HTTPS_PROXY, NO_PROXY environment variables
+                
+                # Set govc environment for verification
+                local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                
+                vcenter_server=$(echo "$vcenter_server" | sed 's/^"//;s/"$//')
+                vcenter_user=$(echo "$vcenter_user" | sed 's/^"//;s/"$//')
+                vcenter_pass=$(echo "$vcenter_pass" | sed 's/^"//;s/"$//')
+                
+                export GOVC_URL="$vcenter_server"
+                export GOVC_USERNAME="$vcenter_user"
+                export GOVC_PASSWORD="$vcenter_pass"
+                if [[ "$vcenter_insecure" == "true" ]]; then
+                    export GOVC_INSECURE=true
+                fi
+                
+                log_info "Verifying ISO exists at:"
+                log_info "  Datastore: $datastore_name"
+                log_info "  File path: $iso_file_path"
+                log_info "  Full path: $datastore_iso_path"
+                
+                if govc datastore.ls -ds "$datastore_name" "$iso_file_path" >/dev/null 2>&1; then
+                    log_success "ISO verified on datastore: $datastore_iso_path"
+                else
+                    log_error "ISO verification failed - file not found at: $datastore_iso_path"
+                    log_error "Datastore: $datastore_name"
+                    log_error "File path: $iso_file_path"
+                    exit 1
+                fi
+                
+                # ISO uploaded successfully to destination
+                log_info "ISO uploaded successfully to destination: $datastore_iso_path"
             fi
-            
-            # Set environment variable for Packer (Packer will read PKR_VAR_iso_path)
-            # Packer automatically reads PKR_VAR_<variable_name> and sets var.<variable_name>
-            # Ensure path is clean (no trailing newlines or spaces)
-            datastore_iso_path=$(echo "$datastore_iso_path" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-            export PKR_VAR_iso_path="$datastore_iso_path"
-            
-            log_info "=========================================="
-            log_success "ISO path configured for Packer"
-            log_info "Datastore path: '$datastore_iso_path'"
-            log_info "Path length: ${#datastore_iso_path} characters"
-            log_info "Environment variable: PKR_VAR_iso_path='$datastore_iso_path'"
-            log_info "Path format: [datastore-name]/path/to/file.iso"
-            log_info "Packer will use this path automatically"
-            log_info "=========================================="
-            
-            # Double-check the path format one more time
-            if [[ "$datastore_iso_path" =~ ^\[([^]]+)\](/.+)$ ]]; then
-                log_debug "Path format validation: OK"
-                log_debug "  Datastore: '${BASH_REMATCH[1]}'"
-                log_debug "  File path: '${BASH_REMATCH[2]}'"
-            else
-                log_error "Path format validation failed!"
-                log_error "Path does not match expected format: [datastore]/path/to/file.iso"
-                log_error "Actual path: '$datastore_iso_path'"
-                log_error "Path hex: $(echo -n "$datastore_iso_path" | xxd -p | head -1)"
-                exit 1
-            fi
-        elif [[ -n "$iso_path" ]] && [[ "$iso_path" != '""' ]]; then
+        fi
+        
+        # Case 3: Only iso_path provided - Validate it exists and use it directly
+        if [[ -n "$iso_path" ]] && [[ "$iso_path" != '""' ]]; then
             # Verify this is a Windows Server ISO, not VMware Tools ISO
             if echo "$iso_path" | grep -qiE "(tools|vmware)"; then
                 log_error "ERROR: iso_path appears to point to VMware Tools ISO, not Windows Server ISO!"
@@ -611,12 +682,55 @@ validate_iso_config() {
                 log_info "✅ Verified: ISO path is Windows Server ISO"
             fi
             
-            log_info "Using datastore ISO path: $iso_path"
-            log_info "Ensure ISO is already uploaded to vSphere datastore"
+            log_info "Using iso_path from variables file: $iso_path"
+            
+            # Verify the path format is correct (should be [datastore]/path/to/file.iso)
+            if [[ ! "$iso_path" =~ ^\[.+\]/ ]]; then
+                log_error "Invalid datastore path format in iso_path!"
+                log_error "Path: '$iso_path'"
+                log_error "Expected format: [datastore-name]/path/to/file.iso"
+                exit 1
+            fi
+            
+            # Validate ISO exists on datastore (if not uploaded in this run)
+            if [[ -z "${datastore_iso_path:-}" ]] || [[ "$datastore_iso_path" != "$iso_path" ]]; then
+                log_info "Validating ISO exists on datastore: $iso_path"
+                local iso_datastore=$(echo "$iso_path" | sed 's/^\[\([^]]*\)\].*/\1/')
+                local iso_file=$(echo "$iso_path" | sed 's/^\[[^]]*\]\///')
+                
+                # Set govc environment for validation
+                local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+                
+                vcenter_server=$(echo "$vcenter_server" | sed 's/^"//;s/"$//')
+                vcenter_user=$(echo "$vcenter_user" | sed 's/^"//;s/"$//')
+                vcenter_pass=$(echo "$vcenter_pass" | sed 's/^"//;s/"$//')
+                
+                export GOVC_URL="$vcenter_server"
+                export GOVC_USERNAME="$vcenter_user"
+                export GOVC_PASSWORD="$vcenter_pass"
+                if [[ "$vcenter_insecure" == "true" ]]; then
+                    export GOVC_INSECURE=true
+                fi
+                
+                if govc datastore.ls -ds "$iso_datastore" "$iso_file" >/dev/null 2>&1; then
+                    log_success "ISO verified on datastore: $iso_path"
+                else
+                    log_error "ISO file not found on datastore: $iso_path"
+                    log_error "Datastore: $iso_datastore"
+                    log_error "File path: $iso_file"
+                    log_error "Please verify the ISO exists at this location"
+                    exit 1
+                fi
+            fi
             
             # Set environment variable for Packer
+            # Packer automatically reads PKR_VAR_* environment variables and sets var.*
             export PKR_VAR_iso_path="$iso_path"
-            log_info "Environment variable: PKR_VAR_iso_path='$iso_path'"
+            log_info "Environment variable set: PKR_VAR_iso_path='$iso_path'"
+            log_info "Packer will use this ISO path to mount the CD-ROM drive"
         fi
     else
         log_warn "Variables file not found, skipping ISO validation"
@@ -629,6 +743,12 @@ validate_packer() {
     local vars_file="${1:-}"
     
     log_info "Validating Packer configuration..."
+    
+    # Ensure we're in the script directory
+    cd "$SCRIPT_DIR" || {
+        log_error "Failed to change to script directory: $SCRIPT_DIR"
+        exit 1
+    }
     
     local validate_cmd="packer validate"
     
@@ -774,12 +894,13 @@ print \$prefix;
     log_info "Extracted dns_server1: $dns_server1"
     [[ -n "$dns_server2" ]] && log_info "Extracted dns_server2: $dns_server2"
     
-    # Source template file
-    local template_file="http/Autounattend.xml"
-    local processed_file="http/Autounattend.processed.xml"
+    # Source template file - use path relative to script directory
+    local template_file="$SCRIPT_DIR/http/Autounattend.xml"
+    local processed_file="$SCRIPT_DIR/http/Autounattend.processed.xml"
     
     if [[ ! -f "$template_file" ]]; then
         log_error "Template file not found: $template_file"
+        log_error "Expected path relative to build script: $SCRIPT_DIR/http/Autounattend.xml"
         return 1
     fi
     
@@ -882,11 +1003,8 @@ build_vm() {
     # Solution: Ensure floppy_content is properly configured in windows-vm.pkr.hcl
     # See FLOPPY-TIMING-ANALYSIS.md for details.
     
-    # Set up proxy environment variables if proxy is configured
-    # Packer vsphere-iso builder uses these environment variables
-    # IMPORTANT: This must be done BEFORE running packer commands
-    setup_proxy_environment "$vars_file"
-    
+    # Note: Proxy environment variables should be set by calling function
+    # Packer vsphere-iso builder uses HTTP_PROXY, HTTPS_PROXY, NO_PROXY environment variables
     # Verify proxy is set (for debugging)
     if [[ -n "${HTTPS_PROXY:-}" ]]; then
         log_info "Proxy will be used for Packer connections"
@@ -895,20 +1013,91 @@ build_vm() {
         log_info "No proxy configured - direct connection to vCenter"
     fi
     
+    # Ensure we're in the script directory for Packer commands
+    cd "$SCRIPT_DIR" || {
+        log_error "Failed to change to script directory: $SCRIPT_DIR"
+        exit 1
+    }
+    
     # Build command
     # Note: PKR_VAR_iso_path may be set by validate_iso_config if iso_path_local was used
     # Packer automatically reads PKR_VAR_* environment variables
     local build_cmd="packer build"
     
+    # Validate ISO path is set before building
+    if [[ -z "${PKR_VAR_iso_path:-}" ]]; then
+        log_error "ISO path is not set! PKR_VAR_iso_path environment variable is empty"
+        log_error "This will cause the VM to start without an ISO mounted"
+        log_error "Please ensure either iso_path or iso_path_local is set in your variables file"
+        exit 1
+    fi
+    
     # Log environment variables that will be used
-    if [[ -n "${PKR_VAR_iso_path:-}" ]]; then
-        log_info "Using ISO path from environment: ${PKR_VAR_iso_path}"
+    log_info "Using ISO path from environment: ${PKR_VAR_iso_path}"
+    log_info "Packer will mount this ISO to the VM: ${PKR_VAR_iso_path}"
+    
+    # Verify ISO path format before passing to Packer
+    # Format must be: [datastore-name]/path/to/file.iso
+    if [[ ! "${PKR_VAR_iso_path}" =~ ^\[.+\]/ ]]; then
+        log_error "Invalid ISO path format: ${PKR_VAR_iso_path}"
+        log_error "Expected format: [datastore-name]/path/to/file.iso"
+        log_error "Example: [datastore1]/ISOs/windows-server-2019.iso"
+        exit 1
+    fi
+    
+    # Extract datastore name and file path for verification
+    local iso_datastore=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[\([^]]*\)\].*/\1/')
+    local iso_file=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[[^]]*\]\///')
+    log_info "ISO Datastore: $iso_datastore"
+    log_info "ISO File Path: $iso_file"
+    log_info "Full ISO Path: ${PKR_VAR_iso_path}"
+    
+    # Verify ISO is accessible on datastore before Packer tries to use it
+    if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
+        log_info "Verifying ISO is accessible on datastore before build..."
+        local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+        local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+        local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+        local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+        
+        vcenter_server=$(echo "$vcenter_server" | sed 's/^"//;s/"$//')
+        vcenter_user=$(echo "$vcenter_user" | sed 's/^"//;s/"$//')
+        vcenter_pass=$(echo "$vcenter_pass" | sed 's/^"//;s/"$//')
+        
+        export GOVC_URL="$vcenter_server"
+        export GOVC_USERNAME="$vcenter_user"
+        export GOVC_PASSWORD="$vcenter_pass"
+        if [[ "$vcenter_insecure" == "true" ]]; then
+            export GOVC_INSECURE=true
+        fi
+        
+        if govc datastore.ls -ds "$iso_datastore" "$iso_file" >/dev/null 2>&1; then
+            log_success "ISO verified accessible on datastore: ${PKR_VAR_iso_path}"
+        else
+            log_error "ISO file not accessible on datastore: ${PKR_VAR_iso_path}"
+            log_error "Datastore: $iso_datastore"
+            log_error "File path: $iso_file"
+            log_error "Please verify the ISO exists and the path is correct"
+            log_error "Listing datastore contents:"
+            govc datastore.ls -ds "$iso_datastore" 2>&1 | head -20 | while IFS= read -r line; do
+                log_error "  $line"
+            done
+            exit 1
+        fi
     fi
     
     # Add variables file if provided
     if [[ -n "$vars_file" ]]; then
         build_cmd="$build_cmd -var-file=$vars_file"
     fi
+    
+    # Explicitly pass ISO path via -var flag to ensure it takes precedence
+    # This ensures the ISO is mounted even if iso_path is empty in the variables file
+    # Note: The path with brackets needs to be properly escaped/quoted
+    # Using printf %q to properly escape the path for shell
+    local escaped_iso_path=$(printf '%q' "${PKR_VAR_iso_path}")
+    build_cmd="$build_cmd -var=iso_path=${escaped_iso_path}"
+    log_info "ISO path explicitly set via -var flag: ${PKR_VAR_iso_path}"
     
     # Add log level
     build_cmd="$build_cmd -var=log_level=$log_level"
@@ -930,28 +1119,338 @@ build_vm() {
     local build_start=$(date +%s)
     local log_file="logs/packer-build-$(date +%Y%m%d-%H%M%S).log"
     
-    # Run Packer build and capture output to log file
-    if eval "$build_cmd" 2>&1 | tee "$log_file"; then
+    # Extract VM name and timestamp BEFORE running Packer (needed for post-build provisioning)
+    local vm_name_base=$(grep -E "^vm_name\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local timestamp="${PKR_VAR_build_timestamp:-}"
+    
+    # Generate timestamp if not set (should be set by main function before Packer runs)
+    if [[ -z "$timestamp" ]]; then
+        timestamp=$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")
+        log_warn "Timestamp not found in PKR_VAR_build_timestamp - generated new one: $timestamp"
+    fi
+    
+    local vm_name_final="${vm_name_base}-${timestamp}"
+    log_info "VM name for post-build provisioning: $vm_name_final"
+    
+    # Run Packer build in background to prevent shutdown wait from blocking
+    # Packer will wait for shutdown (5 minutes), but we'll proceed with provisioning in parallel
+    log_info "Starting Packer build in background..."
+    log_info "Packer will wait for shutdown (will timeout), but build.sh proceeds immediately"
+    
+    # Start Packer in background and capture PID
+    eval "$build_cmd" > "$log_file" 2>&1 &
+    local packer_pid=$!
+    log_info "Packer started with PID: $packer_pid"
+    log_info "Packer logs: $log_file"
+    
+    # Wait for Packer to create VM in vSphere (VM creation is fast, but boot sequence takes minutes)
+    # We're only waiting for VM object creation, not for boot sequence to complete
+    # Boot sequence runs in parallel - we'll start provisioning after installation completes
+    log_info "Waiting 60 seconds for Packer to create VM in vSphere..."
+    log_info "Note: VM creation is fast (~10-30s), but boot sequence takes several minutes"
+    log_info "We're only waiting for VM object creation, not for installation to complete"
+    sleep 60
+    
+    # Verify VM exists before starting post-build provisioning
+    log_info "Verifying VM exists before starting post-build provisioning..."
+    local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+    
+    export GOVC_URL="$vcenter_server"
+    export GOVC_USERNAME="$vcenter_user"
+    export GOVC_PASSWORD="$vcenter_pass"
+    if [[ "$vcenter_insecure" == "true" ]]; then
+        export GOVC_INSECURE=true
+    fi
+    
+    # Wait for VM to be created (with timeout)
+    local vm_wait_timeout=300  # 5 minutes
+    local vm_elapsed=0
+    while [[ $vm_elapsed -lt $vm_wait_timeout ]]; do
+        if govc vm.info "$vm_name_final" >/dev/null 2>&1; then
+            log_success "VM found: $vm_name_final"
+            break
+        fi
+        sleep 5
+        vm_elapsed=$((vm_elapsed + 5))
+        if [[ $((vm_elapsed % 30)) -eq 0 ]]; then
+            log_info "Waiting for VM to be created... (${vm_elapsed}s elapsed)"
+        fi
+    done
+    
+    if [[ $vm_elapsed -ge $vm_wait_timeout ]]; then
+        log_error "VM not found after ${vm_wait_timeout}s: $vm_name_final"
+        log_error "Packer may have failed - check logs: $log_file"
+        # Kill Packer process if still running
+        if kill -0 "$packer_pid" 2>/dev/null; then
+            log_info "Killing Packer process (PID: $packer_pid)"
+            kill "$packer_pid" 2>/dev/null || true
+        fi
+        exit 1
+    fi
+    
+    # Wait for Windows installation and first boot to complete before starting post-build provisioning
+    # Packer boot commands include <wait120> for installation start and <wait60> for first boot
+    # But actual installation takes 10-30 minutes, so we need to wait longer
+    # We'll wait for the boot sequence to complete before attempting password change
+    log_info "Waiting for Windows installation and first boot to complete..."
+    log_info "Boot sequence includes: installation (~10-30 min) + first boot (~1-2 min)"
+    log_info "Waiting 10 minutes to ensure installation and first boot are complete..."
+    log_info "This ensures the password change screen is ready before we attempt to handle it"
+    sleep 600  # 10 minutes - allows Windows installation and first boot to complete
+    
+    # Start post-build provisioning (Packer continues in background waiting for shutdown)
+    log_info "Starting post-build provisioning (Packer continues in background - will timeout on shutdown)..."
+    post_build_provisioning "$vars_file" "$vm_name_final" "$log_level"
+    local provisioning_exit_code=$?
+    
+    # After template is created, stop Packer process (it's waiting for shutdown timeout)
+    # Packer has a 2-hour shutdown timeout, but we've completed all provisioning
+    # No need to wait for Packer to timeout - kill it now
+    if [[ $provisioning_exit_code -eq 0 ]]; then
         local build_end=$(date +%s)
         local build_duration=$((build_end - build_start))
         local build_minutes=$((build_duration / 60))
+        log_success "Build and provisioning completed successfully in ${build_minutes} minutes"
+        log_info "Template created - stopping Packer process (it's waiting for shutdown timeout)..."
         
-        log_success "Build completed successfully in ${build_minutes} minutes"
-        
-        # Display manifest if available
-        if [[ -f "logs/manifest.json" ]]; then
-            log_info "Build manifest:"
-            if command -v jq &> /dev/null; then
-                jq -r '.builds[] | "  VM: \(.name) | Template: \(.artifact_id)"' logs/manifest.json
-            else
-                cat logs/manifest.json
+        # Kill Packer process if still running
+        if kill -0 "$packer_pid" 2>/dev/null; then
+            log_info "Stopping Packer process (PID: $packer_pid)"
+            kill "$packer_pid" 2>/dev/null || true
+            # Wait a moment for process to terminate
+            sleep 2
+            # Force kill if still running
+            if kill -0 "$packer_pid" 2>/dev/null; then
+                log_warn "Packer process still running - forcing kill"
+                kill -9 "$packer_pid" 2>/dev/null || true
             fi
+            log_success "Packer process stopped"
+        else
+            log_info "Packer process already finished"
         fi
-        
     else
-        log_error "Build failed"
+        log_error "Post-build provisioning failed with exit code: $provisioning_exit_code"
+        log_info "Stopping Packer process..."
+        if kill -0 "$packer_pid" 2>/dev/null; then
+            kill "$packer_pid" 2>/dev/null || true
+        fi
+        log_info "VM may still exist - check vCenter for: $vm_name_final"
+        log_info "You can manually clean up the VM if needed"
         exit 1
     fi
+}
+
+# Post-build provisioning via govc
+# Handles password change, VMware Tools, network config, updates, shutdown, and template conversion
+post_build_provisioning() {
+    local vars_file="${1:-}"
+    local vm_name="${2:-}"
+    local log_level="${3:-INFO}"
+    
+    if [[ -z "$vars_file" ]] || [[ -z "$vm_name" ]]; then
+        log_error "post_build_provisioning: Missing required parameters"
+        return 1
+    fi
+    
+    log_info "Starting post-build provisioning for VM: $vm_name"
+    
+    # Extract variables from vars file
+    local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+    local windows_username=$(grep -E "^windows_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local windows_password=$(grep -E "^windows_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local template_name=$(grep -E "^template_name\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    
+    # Default username to Administrator if not specified
+    if [[ -z "$windows_username" ]]; then
+        windows_username="Administrator"
+    fi
+    
+    # Set govc environment
+    export GOVC_URL="$vcenter_server"
+    export GOVC_USERNAME="$vcenter_user"
+    export GOVC_PASSWORD="$vcenter_pass"
+    if [[ "$vcenter_insecure" == "true" ]]; then
+        export GOVC_INSECURE=true
+    fi
+    
+    # Verify VM exists
+    if ! govc vm.info "$vm_name" >/dev/null 2>&1; then
+        log_error "VM not found: $vm_name"
+        return 1
+    fi
+    
+    local scripts_dir="$SCRIPT_DIR/scripts"
+    
+    # Step 1: Wait for VM to boot and handle password change
+    # Note: Packer's boot commands already included <wait60> for Windows to boot after installation
+    # But we add a small buffer to ensure the password change screen is ready
+    log_info "Step 1: Waiting for password change screen to appear..."
+    log_info "Waiting 30 seconds for Windows to fully boot and display password change screen..."
+    sleep 30
+    
+    # Create log file for password change script
+    local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
+    mkdir -p "$(dirname "$password_change_log")"
+    log_info "Password change log: $password_change_log"
+    
+    "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
+        log_error "Password change failed - check log: $password_change_log"
+        return 1
+    }
+    
+    # Step 1.5: Mount VMware Tools ISO
+    log_info "Step 1.5: Mounting VMware Tools ISO..."
+    log_info "VM name being passed: $vm_name"
+    sleep 10
+    local tools_mount_log="$SCRIPT_DIR/logs/vmware-tools-mount-$(date +%Y%m%d-%H%M%S).log"
+    mkdir -p "$(dirname "$tools_mount_log")"
+    log_info "VMware Tools mount log: $tools_mount_log"
+    
+    # Export govc credentials for verification (if available)
+    # The mount script can use these for verification
+    export GOVC_USERNAME="$vcenter_user"
+    export GOVC_PASSWORD="$vcenter_pass"
+    
+    "$scripts_dir/mount-vmware-tools.sh" "$vm_name" "$tools_mount_log" || {
+        log_error "VMware Tools mount failed - check log: $tools_mount_log"
+        log_error "VM name used: $vm_name"
+        log_error "Please verify:"
+        log_error "  1. VM name is correct: $vm_name"
+        log_error "  2. VM is powered on"
+        log_error "  3. Check log file: $tools_mount_log"
+        return 1
+    }
+    
+    # Step 1.6: Install VMware Tools
+    # Note: We're already in command prompt after password change, so just wait and run setup
+    log_info "Step 1.6: Installing VMware Tools..."
+    log_info "Waiting 10 seconds after password change (handled in script)..."
+    local tools_install_log="$SCRIPT_DIR/logs/vmware-tools-install-$(date +%Y%m%d-%H%M%S).log"
+    mkdir -p "$(dirname "$tools_install_log")"
+    log_info "VMware Tools install log: $tools_install_log"
+    "$scripts_dir/install-vmware-tools-keystrokes.sh" "$vm_name" "$tools_install_log" || {
+        log_error "VMware Tools installation failed - check log: $tools_install_log"
+        return 1
+    }
+    
+    # Step 2: Configure network using PowerShell
+    log_info "Step 2: Configuring network using PowerShell..."
+    log_info "Waiting 30 seconds for VMware Tools installation to complete before network config..."
+    sleep 30
+    
+    local static_ip=$(grep -E "^static_ip\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local subnet_mask=$(grep -E "^subnet_mask\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local gateway=$(grep -E "^gateway\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local dns_servers=$(grep -E "^dns_servers\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\[\(.*\)\].*/\1/' | sed 's/"//g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+    
+    # Export environment variables for PowerShell script
+    export STATIC_IP="$static_ip"
+    export SUBNET_MASK="$subnet_mask"
+    export GATEWAY="$gateway"
+    export DNS_SERVERS="$dns_servers"
+    export PS_ENV_VARS="STATIC_IP,SUBNET_MASK,GATEWAY,DNS_SERVERS"
+    
+    local network_log="$SCRIPT_DIR/logs/network-config-$(date +%Y%m%d-%H%M%S).log"
+    mkdir -p "$(dirname "$network_log")"
+    log_info "Network configuration log: $network_log"
+    
+    "$scripts_dir/run-powershell-via-govc.sh" "$vm_name" "$scripts_dir/configure-network-manual.ps1" "$windows_username" "$windows_password" "$network_log" || {
+        log_error "Network configuration failed - check log: $network_log"
+        return 1
+    }
+    
+    # Step 3: Install Windows updates using PowerShell loop
+    log_info "Step 3: Installing Windows updates using PowerShell loop..."
+    local enable_updates=$(grep -E "^enable_windows_updates\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+    
+    if [[ "$enable_updates" == "true" ]]; then
+        local updates_log="$SCRIPT_DIR/logs/windows-updates-$(date +%Y%m%d-%H%M%S).log"
+        mkdir -p "$(dirname "$updates_log")"
+        log_info "Windows updates log: $updates_log"
+        
+        "$scripts_dir/run-windows-updates-loop.sh" "$vm_name" "$windows_username" "$windows_password" 10 > "$updates_log" 2>&1 || {
+            log_error "Windows updates installation failed - check log: $updates_log"
+            return 1
+        }
+    else
+        log_info "Windows updates disabled (enable_windows_updates=false)"
+    fi
+    
+    # Step 4: Eject CD-ROM
+    log_info "Step 4: Ejecting CD-ROM..."
+    "$scripts_dir/eject-cdrom.sh" "$vm_name" || {
+        log_warn "CD-ROM ejection failed (non-critical)"
+    }
+    
+    # Step 5: Final cleanup (if script exists)
+    if [[ -f "$scripts_dir/06-final-cleanup.ps1" ]]; then
+        log_info "Step 5: Running final cleanup..."
+        local cleanup_log="$SCRIPT_DIR/logs/final-cleanup-$(date +%Y%m%d-%H%M%S).log"
+        mkdir -p "$(dirname "$cleanup_log")"
+        log_info "Final cleanup log: $cleanup_log"
+        "$scripts_dir/run-powershell-via-govc.sh" "$vm_name" "$scripts_dir/06-final-cleanup.ps1" "$windows_username" "$windows_password" > "$cleanup_log" 2>&1 || {
+            log_error "Final cleanup failed - check log: $cleanup_log"
+            return 1
+        }
+    else
+        log_info "Step 5: Skipping final cleanup (script not found)"
+    fi
+    
+    # Step 6: Shutdown VM gracefully
+    log_info "Step 6: Shutting down VM gracefully..."
+    govc vm.power -s "$vm_name" || {
+        log_error "VM shutdown failed"
+        return 1
+    }
+    
+    # Wait for VM to shutdown
+    log_info "Waiting for VM to shutdown..."
+    local shutdown_timeout=300  # 5 minutes
+    local elapsed=0
+    while [[ $elapsed -lt $shutdown_timeout ]]; do
+        local power_state=$(govc vm.info "$vm_name" 2>/dev/null | grep -i "powered" | awk '{print $2}')
+        if [[ "$power_state" == "off" ]] || [[ "$power_state" == "poweredOff" ]]; then
+            log_success "VM shutdown complete"
+            break
+        fi
+        sleep 5
+        elapsed=$((elapsed + 5))
+    done
+    
+    if [[ $elapsed -ge $shutdown_timeout ]]; then
+        log_warn "VM shutdown timeout - forcing power off"
+        govc vm.power -off "$vm_name" || {
+            log_error "Force power off failed"
+            return 1
+        }
+    fi
+    
+    # Step 7: Convert to template
+    log_info "Step 7: Converting VM to template..."
+    local final_template_name="${template_name:-${vm_name_base}-template}"
+    govc vm.markastemplate "$vm_name" || {
+        log_error "Template conversion failed"
+        return 1
+    }
+    
+    # Rename template if custom name provided
+    if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name_base}-template" ]]; then
+        log_info "Renaming template to: $template_name"
+        govc vm.rename -vm "$vm_name" "$template_name" || {
+            log_warn "Template rename failed (non-critical)"
+        }
+        final_template_name="$template_name"
+    fi
+    
+    log_success "Post-build provisioning completed successfully"
+    log_success "Template created: $final_template_name"
+    return 0
 }
 
 # Show usage
@@ -966,6 +1465,7 @@ OPTIONS:
     -l, --log-level LEVEL   Logging level: DEBUG, INFO, WARN, ERROR (default: INFO)
     -i, --init-only         Only initialize Packer plugins
     -c, --validate-only     Only validate Packer configuration
+    --overwrite             Force upload ISO even if it already exists on datastore
     -h, --help              Show this help message
 
 EXAMPLES:
@@ -1002,6 +1502,7 @@ main() {
     local log_level="${LOG_LEVEL:-INFO}"
     local init_only=false
     local validate_only=false
+    local overwrite_iso=false
     
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -1020,6 +1521,10 @@ main() {
                 ;;
             -c|--validate-only)
                 validate_only=true
+                shift
+                ;;
+            --overwrite)
+                overwrite_iso=true
                 shift
                 ;;
             -h|--help)
@@ -1064,9 +1569,34 @@ main() {
         exit 1
     fi
     
+    # Verify processed file exists and is readable
+    local processed_file="$SCRIPT_DIR/http/Autounattend.processed.xml"
+    if [[ ! -f "$processed_file" ]]; then
+        log_error "Processed Autounattend.xml file not found: $processed_file"
+        log_error "Template processing may have failed"
+        exit 1
+    fi
+    if [[ ! -r "$processed_file" ]]; then
+        log_error "Processed Autounattend.xml file is not readable: $processed_file"
+        exit 1
+    fi
+    log_info "Verified processed Autounattend.xml exists: $processed_file"
+    
+    # Set up proxy environment variables BEFORE any govc operations
+    # This must be done before validate_iso_config which uses govc for ISO upload/verification
+    setup_proxy_environment "$vars_file"
+    
+    # Verify proxy is set (for debugging)
+    if [[ -n "${HTTPS_PROXY:-}" ]]; then
+        log_info "Proxy will be used for govc operations"
+        log_debug "HTTPS_PROXY=${HTTPS_PROXY}"
+    else
+        log_info "No proxy configured - direct connection to vCenter"
+    fi
+    
     # Validate and upload ISO if needed
     # This will upload local ISO to datastore and set PKR_VAR_iso_path
-    validate_iso_config "$vars_file"
+    validate_iso_config "$vars_file" "$overwrite_iso"
     
     # Validate Packer configuration
     validate_packer "$vars_file"
@@ -1091,23 +1621,13 @@ main() {
             export PKR_VAR_build_timestamp="$timestamp"
             log_info "Generated build timestamp: $timestamp"
             log_info "Passing timestamp to Packer via PKR_VAR_build_timestamp"
-            
-            # Background VMware Tools mount - DISABLED
-            # Mounting Tools during installation can interfere with disk selection
-            # "partition selected does not meet requirements" error may be caused by Tools ISO mount
-            # Strategy: Mount Tools ONLY via provisioner after installation completes and WinRM is available
-            # This ensures clean installation without interference
-            log_info "Background VMware Tools mount is DISABLED"
-            log_info "Reason: Mounting Tools during installation can interfere with disk selection"
-            log_info "VMware Tools will be mounted via provisioner after installation completes"
-            log_info "Provisioner in windows-vm.pkr.hcl will mount Tools after WinRM connects"
         fi
     fi
     
     if [[ "$validate_only" == true ]]; then
         # Clean up processed Autounattend.xml
-        if [[ -f "http/Autounattend.processed.xml" ]]; then
-            rm -f "http/Autounattend.processed.xml"
+        if [[ -f "$SCRIPT_DIR/http/Autounattend.processed.xml" ]]; then
+            rm -f "$SCRIPT_DIR/http/Autounattend.processed.xml"
         fi
         log_success "Validation complete"
         exit 0
@@ -1117,9 +1637,9 @@ main() {
     build_vm "$vars_file" "$log_level"
     
     # Clean up processed Autounattend.xml
-    if [[ -f "http/Autounattend.processed.xml" ]]; then
+    if [[ -f "$SCRIPT_DIR/http/Autounattend.processed.xml" ]]; then
         log_info "Cleaning up processed Autounattend.xml..."
-        rm -f "http/Autounattend.processed.xml"
+        rm -f "$SCRIPT_DIR/http/Autounattend.processed.xml"
     fi
     
     log_success "All done!"

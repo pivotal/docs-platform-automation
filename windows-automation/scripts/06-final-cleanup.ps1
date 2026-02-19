@@ -1,25 +1,30 @@
 # Final cleanup provisioner
 # This script performs final cleanup tasks before template creation
+# Note: This script runs via govc guest.run, so $PSScriptRoot is not available
+# Using simple Write-Host for logging instead of common.ps1 functions
 
-. "$PSScriptRoot\00-common.ps1"
+$ErrorActionPreference = "Continue"
 
-Set-BuildStatus -Step "FinalCleanup" -Status "Running" -Progress 90
-Write-InfoLog "Starting final cleanup provisioner"
+Write-Host "=========================================="
+Write-Host "Final Cleanup Script"
+Write-Host "Timestamp: $(Get-Date)"
+Write-Host "=========================================="
+Write-Host "Starting final cleanup..."
 
 try {
     # Clear Windows Update cache (optional, can be time-consuming)
-    Write-InfoLog "Clearing Windows Update cache..."
+    Write-Host "Clearing Windows Update cache..."
     try {
         Stop-Service -Name wuauserv -Force -ErrorAction SilentlyContinue
         Remove-Item -Path "$env:SystemRoot\SoftwareDistribution\Download\*" -Recurse -Force -ErrorAction SilentlyContinue
         Start-Service -Name wuauserv -ErrorAction SilentlyContinue
-        Write-InfoLog "Windows Update cache cleared"
+        Write-Host "Windows Update cache cleared"
     } catch {
-        Write-WarnLog "Could not clear Windows Update cache: $($_.Exception.Message)"
+        Write-Host "WARNING: Could not clear Windows Update cache: $($_.Exception.Message)"
     }
     
     # Clear temporary files
-    Write-InfoLog "Clearing temporary files..."
+    Write-Host "Clearing temporary files..."
     $tempPaths = @(
         "$env:TEMP\*",
         "$env:SystemRoot\Temp\*",
@@ -29,26 +34,26 @@ try {
     foreach ($path in $tempPaths) {
         try {
             Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue
-            Write-DebugLog "Cleared: $path"
+            Write-Host "Cleared: $path"
         } catch {
-            Write-DebugLog "Could not clear: $path"
+            Write-Host "Could not clear: $path"
         }
     }
     
     # Clear event logs (optional)
-    Write-InfoLog "Clearing event logs..."
+    Write-Host "Clearing event logs..."
     $logNames = Get-EventLog -List | Select-Object -ExpandProperty Log
     foreach ($logName in $logNames) {
         try {
             Clear-EventLog -LogName $logName -ErrorAction SilentlyContinue
-            Write-DebugLog "Cleared event log: $logName"
+            Write-Host "Cleared event log: $logName"
         } catch {
-            Write-DebugLog "Could not clear event log: $logName"
+            Write-Host "Could not clear event log: $logName"
         }
     }
     
     # Run disk cleanup
-    Write-InfoLog "Running disk cleanup..."
+    Write-Host "Running disk cleanup..."
     try {
         # Clean up Windows component store
         Start-Process -FilePath "dism.exe" `
@@ -56,37 +61,40 @@ try {
                       -Wait `
                       -NoNewWindow `
                       -ErrorAction SilentlyContinue
-        Write-InfoLog "Disk cleanup completed"
+        Write-Host "Disk cleanup completed"
     } catch {
-        Write-WarnLog "Disk cleanup may not have completed: $($_.Exception.Message)"
+        Write-Host "WARNING: Disk cleanup may not have completed: $($_.Exception.Message)"
     }
     
     # Disable WinRM for security (will be re-enabled if needed)
-    Write-InfoLog "Configuring WinRM for template..."
+    Write-Host "Configuring WinRM for template..."
     try {
         # Note: We keep WinRM enabled for now as it may be needed for stembuild
         # If you want to disable it, uncomment the following:
         # Stop-Service -Name WinRM -Force -ErrorAction SilentlyContinue
         # Set-Service -Name WinRM -StartupType Disabled -ErrorAction SilentlyContinue
-        Write-InfoLog "WinRM configuration complete"
+        Write-Host "WinRM configuration complete"
     } catch {
-        Write-WarnLog "Could not configure WinRM: $($_.Exception.Message)"
+        Write-Host "WARNING: Could not configure WinRM: $($_.Exception.Message)"
     }
     
     # Final system information
-    Write-InfoLog "Final system state:"
+    Write-Host "Final system state:"
     $disk = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'"
-    Write-InfoLog "  C: Drive Free Space: $([math]::Round($disk.FreeSpace / 1GB, 2)) GB"
-    Write-InfoLog "  C: Drive Total Space: $([math]::Round($disk.Size / 1GB, 2)) GB"
+    Write-Host "  C: Drive Free Space: $([math]::Round($disk.FreeSpace / 1GB, 2)) GB"
+    Write-Host "  C: Drive Total Space: $([math]::Round($disk.Size / 1GB, 2)) GB"
     
-    Write-InfoLog "Final cleanup provisioner completed successfully"
+    Write-Host "Final cleanup completed successfully"
     
 } catch {
-    Write-ErrorLog "Error during final cleanup: $($_.Exception.Message)"
-    Write-ErrorLog $_.ScriptStackTrace
-    Write-WarnLog "Continuing despite cleanup errors"
+    Write-Host "ERROR: Error during final cleanup: $($_.Exception.Message)"
+    Write-Host "ERROR: Stack trace: $($_.ScriptStackTrace)"
+    Write-Host "WARNING: Continuing despite cleanup errors"
 }
 
-Set-BuildSuccess -Step "FinalCleanup"
-Set-BuildStatus -Step "BuildComplete" -Status "Completed" -Progress 100 -Message "Build completed successfully. VM ready for template conversion."
-Write-InfoLog "Build preparation complete. VM is ready to be converted to template."
+Write-Host "=========================================="
+Write-Host "Final cleanup script completed"
+Write-Host "VM is ready to be converted to template"
+Write-Host "Timestamp: $(Get-Date)"
+Write-Host "=========================================="
+exit 0

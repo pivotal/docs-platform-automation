@@ -2,6 +2,7 @@
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
     <settings pass="windowsPE">
         <!-- Language and locale settings - MUST be in windowsPE pass -->
+        <!-- WillShowUI="Never" suppresses the language selection screen -->
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <SetupUILanguage>
                 <UILanguage>en-US</UILanguage>
@@ -14,13 +15,13 @@
         </component>
         
         <!-- Windows Setup configuration -->
+        <!-- Automatic disk configuration - Let Windows Setup handle partitioning automatically -->
+        <!-- Windows Setup will automatically detect disk, create partitions, and format -->
+        <!-- This avoids "could not prepare the selected partition" errors -->
+        <!-- Note: Windows may create System Reserved partition (100-500 MB) + OS partition -->
+        <!-- No DiskConfiguration section needed - Windows Setup handles everything -->
+        <!-- UI screens will be shown and navigated via boot commands -->
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <!-- Automatic disk configuration - Let Windows Setup handle partitioning automatically -->
-            <!-- Windows Setup will automatically detect disk, create partitions, and format -->
-            <!-- This avoids "could not prepare the selected partition" errors -->
-            <!-- Note: Windows may create System Reserved partition (100-500 MB) + OS partition -->
-            <!-- No DiskConfiguration section needed - Windows Setup handles everything -->
-            
             <!-- Image installation - Using NAME to explicitly select Server Core (per tech doc) -->
             <!-- Using /IMAGE/NAME is more reliable than /IMAGE/INDEX as it explicitly names the edition -->
             <!-- Windows Server 2019 ISO image names:
@@ -58,6 +59,7 @@
         <!-- Target language for installed OS - MUST be in specialize pass -->
         <!-- This sets the language for the installed Windows, not just the setup UI -->
         <!-- windowsPE pass sets setup UI language, specialize pass sets installed OS language -->
+        <!-- Regional settings: US time and currency format -->
         <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <InputLocale>0409:00000409</InputLocale>
             <SystemLocale>en-US</SystemLocale>
@@ -67,24 +69,10 @@
         </component>
         
         <!-- Computer name and timezone - MUST be in specialize pass per Microsoft docs -->
+        <!-- RunSynchronous is NOT valid in specialize pass for Microsoft-Windows-Shell-Setup -->
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <ComputerName>*</ComputerName>
             <TimeZone>UTC</TimeZone>
-            <!-- Disable password expiration for Administrator account -->
-            <!-- This MUST run in specialize pass (before first boot) to prevent password change prompt -->
-            <!-- Without this, AutoLogon will fail because Windows forces password change on first login -->
-            <RunSynchronous>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>1</Order>
-                    <Path>net user Administrator /expires:never</Path>
-                    <Description>Disable password expiration for Administrator</Description>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
-                    <Path>net user Administrator /passwordchg:no</Path>
-                    <Description>Prevent forced password change on first login</Description>
-                </RunSynchronousCommand>
-            </RunSynchronous>
         </component>
         
         <!-- Network configuration - Configure static IP during specialize pass -->
@@ -157,8 +145,6 @@
         <!-- ComputerName and TimeZone MUST be in specialize pass, not oobeSystem -->
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <!-- AutoLogon configuration -->
-            <!-- Note: Password change requirement will be handled after first login if needed -->
-            <!-- Removed RunSynchronous net user command to avoid potential XML processing issues -->
             <AutoLogon>
                 <!-- Simplified AutoLogon structure - compatible with Windows Server 2019 -->
                 <!-- PlainText=true allows plain text password (no hashing required) -->
@@ -172,7 +158,7 @@
                 <LogonCount>1</LogonCount>
             </AutoLogon>
             
-            <!-- First logon commands - Setup WinRM only -->
+            <!-- First logon commands - Setup WinRM -->
             <!-- Network is configured in specialize pass (before first boot) -->
             <!-- VMware Tools will be mounted and installed AFTER first restart via Packer provisioners -->
             <!-- This avoids interference with Windows installation and password reset -->

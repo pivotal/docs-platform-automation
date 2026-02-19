@@ -2,3 +2,4 @@ site
 .idea/
 .DS_Store
 windows-automation/logs/*.log
+windows-automation/http/Autounattend.processed.xml
