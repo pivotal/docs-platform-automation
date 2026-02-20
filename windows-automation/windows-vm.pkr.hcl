@@ -206,6 +206,16 @@ variable "template_path" {
   default     = ""
 }
 
+variable "windows_version" {
+  type        = string
+  description = "Windows Server version: '2019', '2022', or '2025' (default: '2019')"
+  default     = "2019"
+  validation {
+    condition     = contains(["2019", "2022", "2025"], var.windows_version)
+    error_message = "windows_version must be '2019', '2022', or '2025'"
+  }
+}
+
   # Local variables
 locals {
   # Use provided timestamp if available, otherwise generate one

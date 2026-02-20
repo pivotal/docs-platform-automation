@@ -30,6 +30,7 @@ vcenter_server              = "${VCENTER_SERVER}"
 vcenter_username            = "${VCENTER_USERNAME}"
 vcenter_password            = "${VCENTER_PASSWORD}"
 vcenter_insecure_connection = ${VCENTER_INSECURE_CONNECTION:-true}
+windows_version = "${WINDOWS_VERSION:-2019}"
 
 EOF
 

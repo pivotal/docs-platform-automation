@@ -1004,16 +1004,69 @@ print \$prefix;
         return 1
     fi
     
+    # Get Windows version for image name
+    local windows_version=$(grep -E "^windows_version\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "2019")
+    if [[ -z "$windows_version" ]]; then
+        windows_version="2019"
+    fi
+    
+    # Determine Windows image name based on version
+    local windows_image_name=""
+    case "$windows_version" in
+        2019)
+            windows_image_name="Windows Server 2019 SERVERSTANDARDCORE"
+            ;;
+        2022)
+            windows_image_name="Windows Server 2022 SERVERSTANDARDCORE"
+            ;;
+        2025)
+            windows_image_name="Windows Server 2025 SERVERSTANDARDCORE"
+            ;;
+        *)
+            log_error "Unsupported Windows version: $windows_version (supported: 2019, 2022, 2025)"
+            return 1
+            ;;
+    esac
+    log_info "Using Windows image name: $windows_image_name"
+    
     # Escape special characters for sed
-    local escaped_username=$(echo "$username" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_password=$(echo "$password" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_static_ip=$(echo "$static_ip" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_subnet_mask=$(echo "$subnet_mask" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_subnet_prefix=$(echo "$subnet_prefix" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_gateway=$(echo "$gateway" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_dns_servers=$(echo "$dns_servers" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    local escaped_dns_server1=$(echo "$dns_server1" | sed 's/[[\.*^$()+?{|]/\\&/g')
+    local escaped_username=$(echo "$username" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape username for sed"
+        return 1
+    }
+    local escaped_password=$(echo "$password" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape password for sed"
+        return 1
+    }
+    local escaped_static_ip=$(echo "$static_ip" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape static_ip for sed"
+        return 1
+    }
+    local escaped_subnet_mask=$(echo "$subnet_mask" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape subnet_mask for sed"
+        return 1
+    }
+    local escaped_subnet_prefix=$(echo "$subnet_prefix" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape subnet_prefix for sed"
+        return 1
+    }
+    local escaped_gateway=$(echo "$gateway" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape gateway for sed"
+        return 1
+    }
+    local escaped_dns_servers=$(echo "$dns_servers" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape dns_servers for sed"
+        return 1
+    }
+    local escaped_dns_server1=$(echo "$dns_server1" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape dns_server1 for sed"
+        return 1
+    }
     local escaped_dns_server2=$(echo "$dns_server2" | sed 's/[[\.*^$()+?{|]/\\&/g' 2>/dev/null || echo "")
+    local escaped_windows_image_name=$(echo "$windows_image_name" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
+        log_error "Failed to escape windows_image_name for sed"
+        return 1
+    }
     
     # Generate XML for optional DNSServer2
     # If DNSServer2 is provided, include it; otherwise leave placeholder empty (will be removed)
@@ -1025,24 +1078,38 @@ print \$prefix;
     # Replace template variables with actual values
     # Use '|' as sed delimiter to avoid conflicts with XML characters like '/' and '<'
     # First, replace all variables except DNSServer2_XML
+    # All sed commands must succeed - if any fails, the script will exit due to set -euo pipefail
     local temp_file=$(mktemp)
-    sed -e "s|{{\.Username}}|$escaped_username|g" \
+    if ! sed -e "s|{{\.Username}}|$escaped_username|g" \
         -e "s|{{\.Password}}|$escaped_password|g" \
         -e "s|{{\.StaticIP}}|$escaped_static_ip|g" \
         -e "s|{{\.SubnetMask}}|$escaped_subnet_mask|g" \
         -e "s|{{\.SubnetPrefix}}|$escaped_subnet_prefix|g" \
         -e "s|{{\.Gateway}}|$escaped_gateway|g" \
         -e "s|{{\.DNSServer1}}|$escaped_dns_server1|g" \
-        "$template_file" > "$temp_file"
+        -e "s|{{\.WindowsImageName}}|$escaped_windows_image_name|g" \
+        "$template_file" > "$temp_file"; then
+        log_error "sed command failed while processing Autounattend.xml template"
+        rm -f "$temp_file"
+        return 1
+    fi
     
     # Handle DNSServer2_XML separately - if empty, remove the placeholder line entirely
     if [[ -n "$dns_server2_xml" ]]; then
         # DNSServer2 is provided - replace placeholder with XML
         # Use awk to handle the replacement more safely (avoids sed escaping issues)
-        awk -v replacement="$dns_server2_xml" '{gsub(/\{\{\.DNSServer2_XML\}\}/, replacement); print}' "$temp_file" > "$processed_file"
+        if ! awk -v replacement="$dns_server2_xml" '{gsub(/\{\{\.DNSServer2_XML\}\}/, replacement); print}' "$temp_file" > "$processed_file"; then
+            log_error "awk command failed while processing DNSServer2_XML"
+            rm -f "$temp_file"
+            return 1
+        fi
     else
         # DNSServer2 is not provided - remove the placeholder line entirely
-        sed "/{{\.DNSServer2_XML}}/d" "$temp_file" > "$processed_file"
+        if ! sed "/{{\.DNSServer2_XML}}/d" "$temp_file" > "$processed_file"; then
+            log_error "sed command failed while removing DNSServer2_XML placeholder"
+            rm -f "$temp_file"
+            return 1
+        fi
     fi
     
     # Clean up temp file
@@ -1067,13 +1134,30 @@ print \$prefix;
         return 1
     fi
     
-    # Verify replacements
-    if grep -q "{{\.Password}}" "$processed_file" || grep -q "{{\.Username}}" "$processed_file" || \
-       grep -q "{{\.StaticIP}}" "$processed_file" || grep -q "{{\.SubnetMask}}" "$processed_file" || \
-       grep -q "{{\.SubnetPrefix}}" "$processed_file" || grep -q "{{\.Gateway}}" "$processed_file" || \
-       grep -q "{{\.DNSServer1}}" "$processed_file" || grep -q "{{\.DNSServer2_XML}}" "$processed_file"; then
+    # Verify replacements - all grep commands must succeed
+    if ! grep -q "{{\.Password}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.Username}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.StaticIP}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.SubnetMask}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.SubnetPrefix}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.Gateway}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.DNSServer1}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null; then
+        log_info "All template variables replaced successfully"
+    else
         log_error "Template variables were not replaced!"
         log_error "Check that Autounattend.xml uses correct template variables"
+        # Show which variables are still present
+        if grep -q "{{\.Password}}" "$processed_file" 2>/dev/null; then log_error "  - {{.Password}} still present"; fi
+        if grep -q "{{\.Username}}" "$processed_file" 2>/dev/null; then log_error "  - {{.Username}} still present"; fi
+        if grep -q "{{\.StaticIP}}" "$processed_file" 2>/dev/null; then log_error "  - {{.StaticIP}} still present"; fi
+        if grep -q "{{\.SubnetMask}}" "$processed_file" 2>/dev/null; then log_error "  - {{.SubnetMask}} still present"; fi
+        if grep -q "{{\.SubnetPrefix}}" "$processed_file" 2>/dev/null; then log_error "  - {{.SubnetPrefix}} still present"; fi
+        if grep -q "{{\.Gateway}}" "$processed_file" 2>/dev/null; then log_error "  - {{.Gateway}} still present"; fi
+        if grep -q "{{\.DNSServer1}}" "$processed_file" 2>/dev/null; then log_error "  - {{.DNSServer1}} still present"; fi
+        if grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.DNSServer2_XML}} still present"; fi
+        if grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null; then log_error "  - {{.WindowsImageName}} still present"; fi
         return 1
     fi
     
