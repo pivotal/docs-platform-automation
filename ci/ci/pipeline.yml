@@ -296,6 +296,12 @@ resources:
     access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
     repository: winfs-injector
+- name: stembuild-cli
+  type: github-release
+  source:
+    access_token: ((platform-automation/main/om.access_token))
+    owner: cloudfoundry
+    repository: bosh-windows-stemcell-builder
 - name: isolation-segment-replicator
   type: github-release
   source:
@@ -540,6 +546,11 @@ jobs:
       params:
         globs:
         - '*linux'
+    - get: stembuild-cli
+      trigger: true
+      params:
+        globs:
+        - 'stembuild-windows-*-linux*'
     - get: om-release
       trigger: true
       params:
@@ -580,6 +591,7 @@ jobs:
         - name: winfs-injector
         - name: govc-cli
         - name: credhub-cli
+        - name: stembuild-cli
         - name: docs-platform-automation
         - name: packages-image-oci
       outputs:

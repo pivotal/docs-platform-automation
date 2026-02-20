@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
-# Main build script for Windows VM using Packer
-# This script orchestrates the Packer build process with verbose logging
+# Create Windows stemcell from ISO or template using Packer and stembuild
+# Supports two modes: build from ISO or clone from template
 
 set -euo pipefail
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
+
+# Global variables for cleanup
+CLEANUP_VM_NAME=""
+CLEANUP_PACKER_PID=""
+CLEANUP_BUILD_MODE=""
+CLEANUP_VARS_FILE=""
+CLEANUP_ENABLED=false
 
 # Color codes for output
 RED='\033[0;31m'
@@ -37,6 +44,99 @@ log_debug() {
     if [[ "${LOG_LEVEL:-INFO}" == "DEBUG" ]]; then
         echo -e "${BLUE}[DEBUG]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
     fi
+}
+
+# Cleanup function for error handling
+cleanup_on_failure() {
+    local exit_code=${1:-1}
+    
+    if [[ "$CLEANUP_ENABLED" != "true" ]]; then
+        return 0
+    fi
+    
+    log_warn "=========================================="
+    log_warn "Cleanup triggered due to failure"
+    log_warn "Exit code: $exit_code"
+    log_warn "Build mode: $CLEANUP_BUILD_MODE"
+    log_warn "VM name: $CLEANUP_VM_NAME"
+    log_warn "=========================================="
+    
+    # Template mode: Always cleanup (stop and delete VM)
+    # ISO mode: Only cleanup on failure
+    if [[ "$CLEANUP_BUILD_MODE" == "template" ]]; then
+        log_warn "Template mode: Always cleaning up VM (stop and delete)"
+    elif [[ "$CLEANUP_BUILD_MODE" != "iso" ]]; then
+        log_info "Skipping cleanup (unknown build mode: $CLEANUP_BUILD_MODE)"
+        return 0
+    fi
+    
+    # Extract vCenter credentials for cleanup
+    if [[ -n "$CLEANUP_VARS_FILE" ]] && [[ -f "$CLEANUP_VARS_FILE" ]]; then
+        local vcenter_server=$(grep -E "^vcenter_server\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+        local vcenter_user=$(grep -E "^vcenter_username\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+        local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+        local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+        
+        export GOVC_URL="$vcenter_server"
+        export GOVC_USERNAME="$vcenter_user"
+        export GOVC_PASSWORD="$vcenter_pass"
+        if [[ "$vcenter_insecure" == "true" ]]; then
+            export GOVC_INSECURE=true
+        fi
+    fi
+    
+    # Stop Packer process
+    if [[ -n "$CLEANUP_PACKER_PID" ]] && kill -0 "$CLEANUP_PACKER_PID" 2>/dev/null; then
+        log_warn "Stopping Packer process (PID: $CLEANUP_PACKER_PID)..."
+        kill "$CLEANUP_PACKER_PID" 2>/dev/null || true
+        sleep 2
+        if kill -0 "$CLEANUP_PACKER_PID" 2>/dev/null; then
+            log_warn "Force killing Packer process..."
+            kill -9 "$CLEANUP_PACKER_PID" 2>/dev/null || true
+        fi
+    fi
+    
+    # Shutdown and delete VM
+    if [[ -n "$CLEANUP_VM_NAME" ]]; then
+        log_warn "Cleaning up VM: $CLEANUP_VM_NAME"
+        
+        # Check if VM exists
+        if govc vm.info "$CLEANUP_VM_NAME" >/dev/null 2>&1; then
+            # Get power state
+            local power_state=$(govc vm.info -json "$CLEANUP_VM_NAME" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+            
+            # Shutdown VM if powered on
+            if [[ "$power_state" != "poweredOff" ]]; then
+                log_warn "Shutting down VM..."
+                govc vm.power -s "$CLEANUP_VM_NAME" >/dev/null 2>&1 || {
+                    log_warn "Graceful shutdown failed, forcing power off..."
+                    govc vm.power -off "$CLEANUP_VM_NAME" >/dev/null 2>&1 || true
+                }
+                
+                # Wait for shutdown
+                local shutdown_timeout=60
+                local elapsed=0
+                while [[ $elapsed -lt $shutdown_timeout ]]; do
+                    sleep 2
+                    elapsed=$((elapsed + 2))
+                    power_state=$(govc vm.info -json "$CLEANUP_VM_NAME" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+                    if [[ "$power_state" == "poweredOff" ]]; then
+                        break
+                    fi
+                done
+            fi
+            
+            # Delete VM
+            log_warn "Deleting VM..."
+            govc vm.destroy "$CLEANUP_VM_NAME" >/dev/null 2>&1 || {
+                log_warn "Failed to delete VM (may require manual cleanup)"
+            }
+        else
+            log_info "VM not found (may have been deleted already)"
+        fi
+    fi
+    
+    log_warn "Cleanup completed"
 }
 
 # Check prerequisites
@@ -1045,12 +1145,14 @@ build_vm() {
         exit 1
     fi
     
-    # Extract datastore name and file path for verification
-    local iso_datastore=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[\([^]]*\)\].*/\1/')
-    local iso_file=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[[^]]*\]\///')
-    log_info "ISO Datastore: $iso_datastore"
-    log_info "ISO File Path: $iso_file"
-    log_info "Full ISO Path: ${PKR_VAR_iso_path}"
+    # Extract datastore name and file path for verification (ISO mode only)
+    if [[ "$build_mode" == "iso" ]]; then
+        local iso_datastore=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[\([^]]*\)\].*/\1/')
+        local iso_file=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[[^]]*\]\///')
+        log_info "ISO Datastore: $iso_datastore"
+        log_info "ISO File Path: $iso_file"
+        log_info "Full ISO Path: ${PKR_VAR_iso_path}"
+    fi
     
     # Verify ISO is accessible on datastore before Packer tries to use it
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
@@ -1143,6 +1245,27 @@ build_vm() {
     log_info "Packer started with PID: $packer_pid"
     log_info "Packer logs: $log_file"
     
+    # Detect build mode before setting up cleanup
+    local template_path=$(grep -E "^template_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    local iso_path=$(grep -E "^iso_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    local iso_path_local=$(grep -E "^iso_path_local\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    
+    local build_mode="iso"
+    if [[ -n "$template_path" ]] && [[ -z "$iso_path" ]] && [[ -z "$iso_path_local" ]] && [[ -z "${PKR_VAR_iso_path:-}" ]] && [[ -z "${PKR_VAR_iso_path_local:-}" ]]; then
+        build_mode="template"
+    fi
+    
+    # Set up cleanup variables and trap for error handling
+    CLEANUP_PACKER_PID="$packer_pid"
+    CLEANUP_VM_NAME="$vm_name_final"
+    CLEANUP_BUILD_MODE="$build_mode"
+    CLEANUP_VARS_FILE="$vars_file"
+    CLEANUP_ENABLED=true
+    
+    # Set trap for ERR and EXIT signals
+    trap 'cleanup_on_failure $?' ERR
+    trap 'exit_code=$?; if [[ $exit_code -ne 0 ]] && [[ "$CLEANUP_ENABLED" == "true" ]]; then cleanup_on_failure $exit_code; fi' EXIT
+    
     # Wait for Packer to create VM in vSphere (VM creation is fast, but boot sequence takes minutes)
     # We're only waiting for VM object creation, not for boot sequence to complete
     # Boot sequence runs in parallel - we'll start provisioning after installation completes
@@ -1181,13 +1304,25 @@ build_vm() {
     done
     
     if [[ $vm_elapsed -ge $vm_wait_timeout ]]; then
+        log_error "=========================================="
+        log_error "VM CREATION/CLONE FAILED"
+        log_error "=========================================="
         log_error "VM not found after ${vm_wait_timeout}s: $vm_name_final"
-        log_error "Packer may have failed - check logs: $log_file"
-        # Kill Packer process if still running
-        if kill -0 "$packer_pid" 2>/dev/null; then
-            log_info "Killing Packer process (PID: $packer_pid)"
-            kill "$packer_pid" 2>/dev/null || true
+        log_error "Build mode: $build_mode"
+        if [[ "$build_mode" == "template" ]]; then
+            log_error "Template path: $template_path"
+            log_error "Packer may have failed to clone from template"
+        else
+            log_error "ISO path: ${PKR_VAR_iso_path:-}"
+            log_error "Packer may have failed to create VM from ISO"
         fi
+        log_error "Check Packer logs: $log_file"
+        log_error "Last 50 lines of Packer log:"
+        tail -50 "$log_file" 2>/dev/null | while IFS= read -r line; do
+            log_error "  $line"
+        done || log_error "  (Could not read log file)"
+        log_error "=========================================="
+        # Cleanup will be handled by trap
         exit 1
     fi
     
@@ -1201,10 +1336,42 @@ build_vm() {
     log_info "This ensures the password change screen is ready before we attempt to handle it"
     sleep 600  # 10 minutes - allows Windows installation and first boot to complete
     
-    # Start post-build provisioning (Packer continues in background waiting for shutdown)
-    log_info "Starting post-build provisioning (Packer continues in background - will timeout on shutdown)..."
-    post_build_provisioning "$vars_file" "$vm_name_final" "$log_level"
+    # Detect build mode (iso or template)
+    # If template_path is provided and no ISO is configured, use template mode
+    # Otherwise, use ISO mode (template_path can still be used to create template after stemcell)
+    local build_mode="iso"
+    local template_path=$(grep -E "^template_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    local iso_path=$(grep -E "^iso_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    local iso_path_local=$(grep -E "^iso_path_local\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    
+    if [[ -n "$template_path" ]] && [[ -z "$iso_path" ]] && [[ -z "$iso_path_local" ]] && [[ -z "${PKR_VAR_iso_path:-}" ]] && [[ -z "${PKR_VAR_iso_path_local:-}" ]]; then
+        build_mode="template"
+        log_info "Template mode detected: will clone from $template_path"
+    else
+        build_mode="iso"
+        log_info "ISO mode detected: will build from ISO"
+        if [[ -n "$template_path" ]] || [[ -n "$(grep -E "^template_name\s*=" "$vars_file" 2>/dev/null)" ]]; then
+            log_info "Template will be created after stemcell packaging"
+        fi
+    fi
+    
+    # Start post-build provisioning
+    log_info "Starting post-build provisioning..."
+    post_build_provisioning "$vars_file" "$vm_name_final" "$build_mode" "$log_level"
     local provisioning_exit_code=$?
+    
+    # Template mode: Always cleanup (stop and delete VM) regardless of success/failure
+    if [[ "$build_mode" == "template" ]]; then
+        log_info "Template mode: Cleaning up VM (always delete after build)..."
+        CLEANUP_ENABLED=true  # Keep cleanup enabled for template mode
+        cleanup_on_failure 0  # Force cleanup even on success
+        CLEANUP_ENABLED=false
+        trap - ERR EXIT
+    else
+        # ISO mode: Disable cleanup trap on success (VM should be kept as template or stemcell)
+        CLEANUP_ENABLED=false
+        trap - ERR EXIT
+    fi
     
     # After template is created, stop Packer process (it's waiting for shutdown timeout)
     # Packer has a 2-hour shutdown timeout, but we've completed all provisioning
@@ -1232,30 +1399,37 @@ build_vm() {
             log_info "Packer process already finished"
         fi
     else
-        log_error "Post-build provisioning failed with exit code: $provisioning_exit_code"
-        log_info "Stopping Packer process..."
-        if kill -0 "$packer_pid" 2>/dev/null; then
-            kill "$packer_pid" 2>/dev/null || true
-        fi
-        log_info "VM may still exist - check vCenter for: $vm_name_final"
-        log_info "You can manually clean up the VM if needed"
+        log_error "=========================================="
+        log_error "POST-BUILD PROVISIONING FAILED"
+        log_error "=========================================="
+        log_error "Exit code: $provisioning_exit_code"
+        log_error "Build mode: $build_mode"
+        log_error "VM name: $vm_name_final"
+        log_error "Check logs in: $SCRIPT_DIR/logs/"
+        log_error "Recent log files:"
+        ls -t "$SCRIPT_DIR/logs/"*.log 2>/dev/null | head -5 | while IFS= read -r logfile; do
+            log_error "  - $logfile"
+        done || log_error "  (No log files found)"
+        log_error "=========================================="
+        # Cleanup will be handled by trap
         exit 1
     fi
 }
 
-# Post-build provisioning via govc
-# Handles password change, VMware Tools, network config, updates, shutdown, and template conversion
+# Post-build provisioning: configure VM and create stemcell
+# Mode: "iso" (full build) or "template" (clone from template)
 post_build_provisioning() {
     local vars_file="${1:-}"
     local vm_name="${2:-}"
-    local log_level="${3:-INFO}"
+    local build_mode="${3:-iso}"  # "iso" or "template"
+    local log_level="${4:-INFO}"
     
     if [[ -z "$vars_file" ]] || [[ -z "$vm_name" ]]; then
         log_error "post_build_provisioning: Missing required parameters"
         return 1
     fi
     
-    log_info "Starting post-build provisioning for VM: $vm_name"
+    log_info "Starting post-build provisioning for VM: $vm_name (mode: $build_mode)"
     
     # Extract variables from vars file
     local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
@@ -1264,6 +1438,8 @@ post_build_provisioning() {
     local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
     local windows_username=$(grep -E "^windows_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
     local windows_password=$(grep -E "^windows_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local patch_version=$(grep -E "^patch_version\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local template_path=$(grep -E "^template_path\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
     local template_name=$(grep -E "^template_name\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
     
     # Default username to Administrator if not specified
@@ -1287,62 +1463,44 @@ post_build_provisioning() {
     
     local scripts_dir="$SCRIPT_DIR/scripts"
     
-    # Step 1: Wait for VM to boot and handle password change
-    # Note: Packer's boot commands already included <wait60> for Windows to boot after installation
-    # But we add a small buffer to ensure the password change screen is ready
-    log_info "Step 1: Waiting for password change screen to appear..."
-    log_info "Waiting 30 seconds for Windows to fully boot and display password change screen..."
-    sleep 30
+    # Step 1: Password change and VMware Tools (ISO mode only)
+    if [[ "$build_mode" == "iso" ]]; then
+        log_info "Step 1: Handling password change (ISO mode)..."
+        sleep 30
+        
+        local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
+        mkdir -p "$(dirname "$password_change_log")"
+        "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
+            log_error "Password change failed"
+            return 1
+        }
+        
+        log_info "Step 1.5: Mounting VMware Tools ISO..."
+        sleep 10
+        local tools_mount_log="$SCRIPT_DIR/logs/vmware-tools-mount-$(date +%Y%m%d-%H%M%S).log"
+        mkdir -p "$(dirname "$tools_mount_log")"
+        export GOVC_USERNAME="$vcenter_user"
+        export GOVC_PASSWORD="$vcenter_pass"
+        "$scripts_dir/mount-vmware-tools.sh" "$vm_name" "$tools_mount_log" || {
+            log_error "VMware Tools mount failed"
+            return 1
+        }
+        
+        log_info "Step 1.6: Installing VMware Tools..."
+        local tools_install_log="$SCRIPT_DIR/logs/vmware-tools-install-$(date +%Y%m%d-%H%M%S).log"
+        mkdir -p "$(dirname "$tools_install_log")"
+        "$scripts_dir/install-vmware-tools-keystrokes.sh" "$vm_name" "$tools_install_log" || {
+            log_error "VMware Tools installation failed"
+            return 1
+        }
+        sleep 30
+    else
+        log_info "Step 1: Skipping password change and VMware Tools (template mode)"
+        sleep 10
+    fi
     
-    # Create log file for password change script
-    local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
-    mkdir -p "$(dirname "$password_change_log")"
-    log_info "Password change log: $password_change_log"
-    
-    "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
-        log_error "Password change failed - check log: $password_change_log"
-        return 1
-    }
-    
-    # Step 1.5: Mount VMware Tools ISO
-    log_info "Step 1.5: Mounting VMware Tools ISO..."
-    log_info "VM name being passed: $vm_name"
-    sleep 10
-    local tools_mount_log="$SCRIPT_DIR/logs/vmware-tools-mount-$(date +%Y%m%d-%H%M%S).log"
-    mkdir -p "$(dirname "$tools_mount_log")"
-    log_info "VMware Tools mount log: $tools_mount_log"
-    
-    # Export govc credentials for verification (if available)
-    # The mount script can use these for verification
-    export GOVC_USERNAME="$vcenter_user"
-    export GOVC_PASSWORD="$vcenter_pass"
-    
-    "$scripts_dir/mount-vmware-tools.sh" "$vm_name" "$tools_mount_log" || {
-        log_error "VMware Tools mount failed - check log: $tools_mount_log"
-        log_error "VM name used: $vm_name"
-        log_error "Please verify:"
-        log_error "  1. VM name is correct: $vm_name"
-        log_error "  2. VM is powered on"
-        log_error "  3. Check log file: $tools_mount_log"
-        return 1
-    }
-    
-    # Step 1.6: Install VMware Tools
-    # Note: We're already in command prompt after password change, so just wait and run setup
-    log_info "Step 1.6: Installing VMware Tools..."
-    log_info "Waiting 10 seconds after password change (handled in script)..."
-    local tools_install_log="$SCRIPT_DIR/logs/vmware-tools-install-$(date +%Y%m%d-%H%M%S).log"
-    mkdir -p "$(dirname "$tools_install_log")"
-    log_info "VMware Tools install log: $tools_install_log"
-    "$scripts_dir/install-vmware-tools-keystrokes.sh" "$vm_name" "$tools_install_log" || {
-        log_error "VMware Tools installation failed - check log: $tools_install_log"
-        return 1
-    }
-    
-    # Step 2: Configure network using PowerShell
-    log_info "Step 2: Configuring network using PowerShell..."
-    log_info "Waiting 30 seconds for VMware Tools installation to complete before network config..."
-    sleep 30
+    # Step 2: Configure network
+    log_info "Step 2: Configuring network..."
     
     local static_ip=$(grep -E "^static_ip\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
     local subnet_mask=$(grep -E "^subnet_mask\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
@@ -1365,8 +1523,8 @@ post_build_provisioning() {
         return 1
     }
     
-    # Step 3: Install Windows updates using PowerShell loop
-    log_info "Step 3: Installing Windows updates using PowerShell loop..."
+    # Step 3: Install Windows updates
+    log_info "Step 3: Installing Windows updates..."
     local enable_updates=$(grep -E "^enable_windows_updates\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
     
     if [[ "$enable_updates" == "true" ]]; then
@@ -1388,35 +1546,70 @@ post_build_provisioning() {
         log_warn "CD-ROM ejection failed (non-critical)"
     }
     
-    # Step 5: Final cleanup (if script exists)
+    # Step 5: Final cleanup
     if [[ -f "$scripts_dir/06-final-cleanup.ps1" ]]; then
         log_info "Step 5: Running final cleanup..."
         local cleanup_log="$SCRIPT_DIR/logs/final-cleanup-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$cleanup_log")"
-        log_info "Final cleanup log: $cleanup_log"
         "$scripts_dir/run-powershell-via-govc.sh" "$vm_name" "$scripts_dir/06-final-cleanup.ps1" "$windows_username" "$windows_password" > "$cleanup_log" 2>&1 || {
-            log_error "Final cleanup failed - check log: $cleanup_log"
+            log_error "Final cleanup failed"
             return 1
         }
-    else
-        log_info "Step 5: Skipping final cleanup (script not found)"
     fi
     
-    # Step 6: Shutdown VM gracefully
-    log_info "Step 6: Shutting down VM gracefully..."
-    govc vm.power -s "$vm_name" || {
-        log_error "VM shutdown failed"
+    # Step 6: Run stembuild construct
+    log_info "Step 6: Running stembuild construct..."
+    if [[ -z "$patch_version" ]]; then
+        log_error "patch_version is required for stembuild"
+        return 1
+    fi
+    
+    # Find stembuild binary
+    local stembuild_binary=""
+    if command -v stembuild &> /dev/null; then
+        stembuild_binary=$(command -v stembuild)
+    else
+        log_error "stembuild not found in PATH"
+        return 1
+    fi
+    
+    local construct_log="$SCRIPT_DIR/logs/stembuild-construct-$(date +%Y%m%d-%H%M%S).log"
+    mkdir -p "$(dirname "$construct_log")"
+    "$scripts_dir/run-stembuild-construct.sh" "$vm_name" "$patch_version" "$stembuild_binary" "$construct_log" || {
+        log_error "stembuild construct failed"
         return 1
     }
     
-    # Wait for VM to shutdown
-    log_info "Waiting for VM to shutdown..."
-    local shutdown_timeout=300  # 5 minutes
+    # Step 7: Run stembuild package
+    log_info "Step 7: Running stembuild package..."
+    local package_log="$SCRIPT_DIR/logs/stembuild-package-$(date +%Y%m%d-%H%M%S).log"
+    mkdir -p "$(dirname "$package_log")"
+    
+    # Find VM inventory path
+    local vm_inventory_path=$(govc find vm -name "$vm_name" 2>/dev/null | head -n1)
+    if [[ -z "$vm_inventory_path" ]]; then
+        log_error "VM not found: $vm_name"
+        return 1
+    fi
+    
+    # Stop VM before packaging (required by stembuild)
+    log_info "Stopping VM before packaging..."
+    govc vm.power -s "$vm_name" || {
+        log_warn "Graceful shutdown failed, forcing power off..."
+        govc vm.power -off "$vm_name" || {
+            log_error "Failed to power off VM"
+            return 1
+        }
+    }
+    
+    # Wait for VM to power off
+    log_info "Waiting for VM to power off..."
+    local shutdown_timeout=300
     local elapsed=0
     while [[ $elapsed -lt $shutdown_timeout ]]; do
-        local power_state=$(govc vm.info "$vm_name" 2>/dev/null | grep -i "powered" | awk '{print $2}')
-        if [[ "$power_state" == "off" ]] || [[ "$power_state" == "poweredOff" ]]; then
-            log_success "VM shutdown complete"
+        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+        if [[ "$power_state" == "poweredOff" ]]; then
+            log_success "VM powered off"
             break
         fi
         sleep 5
@@ -1424,32 +1617,81 @@ post_build_provisioning() {
     done
     
     if [[ $elapsed -ge $shutdown_timeout ]]; then
-        log_warn "VM shutdown timeout - forcing power off"
-        govc vm.power -off "$vm_name" || {
-            log_error "Force power off failed"
-            return 1
-        }
+        log_error "VM did not power off within timeout"
+        return 1
     fi
     
-    # Step 7: Convert to template
-    log_info "Step 7: Converting VM to template..."
-    local final_template_name="${template_name:-${vm_name_base}-template}"
-    govc vm.markastemplate "$vm_name" || {
-        log_error "Template conversion failed"
+    # Run package
+    "$SCRIPT_DIR/package-stemcell.sh" -n "$vm_name" -P "$patch_version" -i "$vm_inventory_path" > "$package_log" 2>&1 || {
+        log_error "stembuild package failed"
         return 1
     }
     
-    # Rename template if custom name provided
-    if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name_base}-template" ]]; then
-        log_info "Renaming template to: $template_name"
-        govc vm.rename -vm "$vm_name" "$template_name" || {
-            log_warn "Template rename failed (non-critical)"
-        }
-        final_template_name="$template_name"
+    # Find generated stemcell file
+    local stemcell_file=$(ls -t bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz 2>/dev/null | head -n1)
+    if [[ -n "$stemcell_file" ]]; then
+        log_success "Stemcell created: $stemcell_file"
     fi
     
-    log_success "Post-build provisioning completed successfully"
-    log_success "Template created: $final_template_name"
+    # Step 8: Create template if template_path or template_name is provided (ISO mode only)
+    if [[ "$build_mode" == "iso" ]] && ([[ -n "$template_path" ]] || [[ -n "$template_name" ]]); then
+        log_info "Step 8: Creating template from VM..."
+        
+        # Verify VM is powered off (should be after stembuild package)
+        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+        if [[ "$power_state" != "poweredOff" ]]; then
+            log_info "VM is not powered off, shutting down..."
+            govc vm.power -s "$vm_name" || {
+                log_warn "Graceful shutdown failed, forcing power off..."
+                govc vm.power -off "$vm_name" || {
+                    log_error "Failed to power off VM"
+                    return 1
+                }
+            }
+            
+            # Wait for VM to power off
+            log_info "Waiting for VM to power off..."
+            local shutdown_timeout=300
+            local elapsed=0
+            while [[ $elapsed -lt $shutdown_timeout ]]; do
+                sleep 5
+                elapsed=$((elapsed + 5))
+                power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+                if [[ "$power_state" == "poweredOff" ]]; then
+                    log_success "VM powered off"
+                    break
+                fi
+            done
+            
+            if [[ $elapsed -ge $shutdown_timeout ]]; then
+                log_error "VM did not power off within timeout"
+                return 1
+            fi
+        else
+            log_info "VM is already powered off (from stembuild package)"
+        fi
+        
+        # Convert to template
+        log_info "Converting VM to template..."
+        local final_template_name="${template_name:-${vm_name}-template}"
+        govc vm.markastemplate "$vm_name" || {
+            log_error "Template conversion failed"
+            return 1
+        }
+        
+        # Rename template if custom name provided
+        if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]]; then
+            log_info "Renaming template to: $template_name"
+            govc vm.rename -vm "$vm_name" "$template_name" || {
+                log_warn "Template rename failed (non-critical)"
+            }
+            final_template_name="$template_name"
+        fi
+        
+        log_success "Template created: $final_template_name"
+    fi
+    
+    log_success "Stemcell creation completed successfully"
     return 0
 }
 
@@ -1542,7 +1784,7 @@ main() {
     # Banner
     echo ""
     echo "=========================================="
-    echo "  Windows VM Build Script (Packer)"
+    echo "  Windows Stemcell Creation Script"
     echo "=========================================="
     echo ""
     

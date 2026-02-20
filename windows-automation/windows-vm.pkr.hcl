@@ -200,12 +200,22 @@ variable "build_timestamp" {
   default     = ""
 }
 
+variable "template_path" {
+  type        = string
+  description = "vCenter inventory path to source template (e.g., /Datacenter/vm/Templates/my-template). If provided, VM will be cloned from template instead of installing from ISO"
+  default     = ""
+}
+
   # Local variables
 locals {
   # Use provided timestamp if available, otherwise generate one
   # This ensures build.sh and Packer use the same timestamp
   timestamp     = var.build_timestamp != "" ? var.build_timestamp : regex_replace(timestamp(), "[- TZ:]", "")
   vm_name_final = "${var.vm_name}-${local.timestamp}"
+  
+  # Build mode detection: template mode if template_path is provided and no ISO is configured
+  # ISO mode if ISO is configured (template_path can still be used to create template after stemcell)
+  is_template_mode = var.template_path != "" && var.iso_path == "" && var.iso_path_local == ""
   
   # ISO paths - vsphere-iso builder requires datastore paths only
   # Format: [datastore-name]/path/to/file.iso
@@ -231,7 +241,7 @@ locals {
   ]
 }
 
-# Build source
+# Build source for ISO mode (installing from Windows ISO)
 source "vsphere-iso" "windows" {
   # vCenter connection
   vcenter_server      = var.vcenter_server
@@ -396,19 +406,76 @@ source "vsphere-iso" "windows" {
   convert_to_template = false  # We'll convert via govc in build.sh
 }
 
+# Build source for template mode (cloning from existing template)
+source "vsphere-clone" "windows-template" {
+  # vCenter connection
+  vcenter_server      = var.vcenter_server
+  username            = var.vcenter_username
+  password            = var.vcenter_password
+  insecure_connection = var.vcenter_insecure_connection
+
+  # Template configuration
+  template      = var.template_path
+  vm_name       = local.vm_name_final
+  datacenter    = var.vcenter_datacenter
+  datastore     = var.vcenter_datastore
+  folder        = var.vcenter_folder != "" ? var.vcenter_folder : null
+  cluster       = var.vcenter_cluster != "" ? var.vcenter_cluster : null
+  host          = var.vcenter_host != "" ? var.vcenter_host : null
+  resource_pool = var.vcenter_resource_pool != "" ? var.vcenter_resource_pool : null
+
+  # VM configuration (can override template settings)
+  CPUs            = var.vm_cpu_count
+  cpu_cores       = 1
+  RAM             = var.vm_memory_mb
+  RAM_reserve_all = false
+
+  # Disk configuration
+  disk {
+    disk_size             = var.vm_disk_size_gb * 1024
+    disk_thin_provisioned = true
+  }
+
+  # Network configuration
+  network_adapters {
+    network      = var.vcenter_network
+    network_card = "vmxnet3"
+  }
+
+  # Communicator configuration - DISABLED
+  # All provisioners are shell-local and use govc (not WinRM)
+  communicator = "none"
+
+  # Shutdown configuration
+  # We handle shutdown via govc in build.sh post-build provisioning
+  shutdown_timeout = "2h"
+
+  # VM cleanup - DISABLED
+  # We handle shutdown and deletion via govc in build.sh
+  # Template mode: Always delete VM after build (success or failure)
+  convert_to_template = false
+}
+
 # Build steps
-# Packer exits immediately after boot commands via a minimal shell-local provisioner
-# This allows Packer to complete without waiting for shutdown
-# VM is kept running, and build.sh handles all post-build provisioning
+# Conditionally use ISO or template source based on template_path variable
 build {
   name = "windows-vm-build"
 
-  sources = ["source.vsphere-iso.windows"]
+  # Conditionally select source based on build mode
+  dynamic "sources" {
+    for_each = local.is_template_mode ? ["template"] : ["iso"]
+    content {
+      source = sources.value == "template" ? "source.vsphere-clone.windows-template" : "source.vsphere-iso.windows"
+    }
+  }
 
-  # Minimal provisioner to signal Packer that boot commands are complete
+  # Minimal provisioner to signal Packer that build is complete
   # This allows Packer to exit immediately without waiting for shutdown
   # VM remains running, and build.sh handles all post-build provisioning
   provisioner "shell-local" {
-    inline = ["echo 'Boot commands complete - Packer exiting, VM remains running'"]
+    inline = [
+      "echo 'Packer build complete - VM remains running'",
+      "echo 'Build mode: ${local.is_template_mode ? "template" : "iso"}'"
+    ]
   }
 }

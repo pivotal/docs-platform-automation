@@ -1,0 +1,18 @@
+---
+platform: linux
+inputs:
+- name: docs-platform-automation
+- name: windows-iso
+  optional: true
+outputs:
+- name: logs
+- name: stemcell
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+    tag: testing
+run:
+  path: docs-platform-automation/ci/tasks/build-windows-stemcell/task.sh

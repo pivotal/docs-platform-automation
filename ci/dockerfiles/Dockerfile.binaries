@@ -9,9 +9,30 @@ COPY om-cli/om /usr/bin/om
 COPY winfs-injector/winfs-injector-linux* /usr/bin/winfs-injector
 COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
+COPY stembuild-cli/stembuild-windows-*-linux* /tmp/stembuild
 
 RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
+# stembuild is a binary file (not a tarball), so just copy and make executable
+RUN chmod +x /tmp/stembuild && mv /tmp/stembuild /usr/bin/stembuild
+
+# Download LGPO (Local Group Policy Object Utility) from Microsoft
+# LGPO is required by stembuild and must be in the same directory as stembuild binary
+# According to documentation: https://bosh.io/docs/windows-stemcell-create/
+# Microsoft Download Center: https://www.microsoft.com/en-us/download/details.aspx?id=55319
+# Stembuild looks for LGPO.exe in the same directory as the stembuild binary
+RUN mkdir -p /tmp/lgpo && \
+    cd /tmp/lgpo && \
+    wget -q "https://download.microsoft.com/download/8/5/C/85C25433-A1B0-4FFA-9429-7E147E8315F4/LGPO.zip" -O LGPO.zip && \
+    unzip -q LGPO.zip && \
+    # LGPO.zip contains LGPO.exe - copy it to /usr/bin/ alongside stembuild
+    # Stembuild will use LGPO.exe during the construct process on the Windows VM
+    cp LGPO.exe /usr/bin/LGPO.exe 2>/dev/null || \
+    (find . -name "*.exe" -type f | head -1 | xargs -I {} cp {} /usr/bin/LGPO.exe) && \
+    cd / && \
+    rm -rf /tmp/lgpo && \
+    # Verify LGPO.exe was copied successfully
+    test -f /usr/bin/LGPO.exe || echo "WARNING: Failed to extract LGPO.exe"
 
 # Make copied binaries executable
 RUN chmod +x \
@@ -21,4 +42,30 @@ RUN chmod +x \
     /usr/bin/govc \
     /usr/bin/iso-replicator \
     /usr/bin/om \
+    /usr/bin/stembuild \
     /usr/bin/winfs-injector
+
+# Install Packer
+ENV PACKER_VERSION=1.10.0
+RUN wget -q https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+    && unzip packer_${PACKER_VERSION}_linux_amd64.zip \
+    && chmod +x packer \
+    && mv packer /usr/bin/packer \
+    && rm -f packer_${PACKER_VERSION}_linux_amd64.zip
+
+# Create Packer plugin directory and install vsphere plugin
+RUN mkdir -p /root/.packer.d/plugins \
+    && cd /root/.packer.d/plugins \
+    && wget -q https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v1.4.0/packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip \
+    && unzip packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip \
+    && chmod +x packer-plugin-vsphere \
+    && rm -f packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip
+
+# Verify Packer installation
+RUN packer version
+
+# Verify stembuild installation
+RUN stembuild version || echo "stembuild version check (may not support version flag)"
+
+# Verify LGPO is present
+RUN ls -la /usr/bin/LGPO.exe || echo "WARNING: LGPO.exe not found - stembuild construct may fail"
