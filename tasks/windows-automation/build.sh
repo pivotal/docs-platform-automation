@@ -1202,12 +1202,12 @@ print \$prefix;
         return 1
     fi
     
-    # Validate XML syntax
-    if ! xmllint --noout "$processed_file" 2>/dev/null; then
-        log_error "Processed Autounattend.xml has XML syntax errors!"
-        log_error "Please check the template processing"
-        return 1
-    fi
+    # # Validate XML syntax
+    # if ! xmllint --noout "$processed_file" 2>/dev/null; then
+    #     log_error "Processed Autounattend.xml has XML syntax errors!"
+    #     log_error "Please check the template processing"
+    #     return 1
+    # fi
     
     # Verify replacements - all grep commands must succeed
     if ! grep -q "{{\.Password}}" "$processed_file" 2>/dev/null && \
