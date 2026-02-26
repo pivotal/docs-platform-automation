@@ -251,7 +251,7 @@ stop_vm() {
     log_info "Stopping VM: $VM_NAME"
     
     # Check current power state
-    local power_state=$(govc vm.info -json "$VM_NAME" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+    local power_state=$(govc vm.info -json "$VM_NAME" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
     log_info "Current VM power state: $power_state"
     
     if [[ "$power_state" == "poweredOff" ]]; then
@@ -276,7 +276,7 @@ stop_vm() {
     while [[ $elapsed -lt $timeout ]]; do
         sleep 5
         elapsed=$((elapsed + 5))
-        power_state=$(govc vm.info -json "$VM_NAME" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+        power_state=$(govc vm.info -json "$VM_NAME" 2>/dev/null | jq -r '..virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
         if [[ "$power_state" == "poweredOff" ]]; then
             log_success "VM powered off successfully"
             return 0

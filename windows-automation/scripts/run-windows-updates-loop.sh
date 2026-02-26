@@ -97,17 +97,8 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     govc guest.run -vm "$VM_NAME" -l "${USERNAME}:${PASSWORD}" "$INSTALL_CMD" >/dev/null 2>&1
     INSTALL_EXIT=$?
     
-    if [[ $INSTALL_EXIT -ne 0 ]]; then
-        echo "Update installation failed"
-        exit 1
-    fi
-    
-    # Wait a bit for updates to complete
-    echo "Waiting for updates to complete..."
-    sleep 60
-    
-    # Shutdown VM using govc
-    echo "Shutting down VM..."
+    if [[ $EXIT_CODE -eq 3010 ]]; then
+    echo "Reboot required. Restarting VM..."
     govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || {
         echo "Failed to shutdown VM gracefully, forcing power off..."
         govc vm.power -off "$VM_NAME" >/dev/null 2>&1
@@ -138,6 +129,19 @@ while [[ $iteration -lt $MAX_ITER ]]; do
         echo "VM did not boot within timeout"
         exit 1
     fi
+
+    elif [[ $EXIT_CODE -eq 0 ]]; then
+        echo "Updates finished. No reboot needed."
+    else
+        echo "Update script failed with code $EXIT_CODE"
+        exit 1
+    fi
+    
+    # Wait a bit for updates to complete
+    echo "Waiting for updates to complete..."
+    sleep 60
+    
+    
     
     sleep 30
 done

@@ -1,92 +1,67 @@
-# Install Windows Updates and Shutdown
+# Optimized Windows Update Script
 $ErrorActionPreference = "Stop"
+$LogFile = "$env:TEMP\windows-updates-$(Get-Date -Format 'yyyyMMdd').log"
 
-# Logging
-$LogFile = "$env:TEMP\windows-updates-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 function Write-Log {
     param([string]$Message)
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $logMessage = "[$timestamp] $Message"
+    $logMessage = "$($(Get-Date -Format 'HH:mm:ss')) $Message"
     Write-Host $logMessage
-    try {
-        Add-Content -Path $LogFile -Value $logMessage -Encoding UTF8 -ErrorAction SilentlyContinue
-    } catch {}
+    $logMessage | Out-File -FilePath $LogFile -Append
 }
 
-Write-Log "=========================================="
-Write-Log "Windows Updates Installation"
-Write-Log "=========================================="
-
-# Create Windows Update Session
 $UpdateSession = New-Object -ComObject Microsoft.Update.Session
 $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
 
-# Search for updates
 Write-Log "Searching for updates..."
 $SearchResult = $UpdateSearcher.Search("IsInstalled=0 and Type='Software'")
-
 if ($SearchResult.Updates.Count -eq 0) {
-    Write-Log "No updates available"
+    Write-Log "System up to date."
     exit 0
 }
 
-Write-Log "Found $($SearchResult.Updates.Count) update(s)"
-
-# Download updates
-Write-Log "Downloading updates..."
-$UpdatesToDownload = New-Object -ComObject Microsoft.Update.UpdateColl
-foreach ($Update in $SearchResult.Updates) {
-    $UpdatesToDownload.Add($Update) | Out-Null
-}
-
-$Downloader = $UpdateSession.CreateUpdateDownloader()
-$Downloader.Updates = $UpdatesToDownload
-$DownloadResult = $Downloader.Download()
-
-if ($DownloadResult.ResultCode -ne 2) {
-    Write-Log "Download failed or incomplete"
-    exit 1
-}
-
-Write-Log "Downloads completed"
-
-# Install updates
-Write-Log "Installing updates..."
 $UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
-# Accept EULAs first
-foreach ($Update in $UpdatesToInstall) {
-    if (-not $Update.EulaAccepted) {
-        Write-Log "Accepting EULA for: $($Update.Title)"
-        $Update.AcceptEula()
+foreach ($Update in $SearchResult.Updates) {
+    if (!$Update.EulaAccepted) { $Update.AcceptEula() }
+    $UpdatesToInstall.Add($Update) | Out-Null
+}
+
+# Download Phase
+Write-Log "Downloading $($UpdatesToInstall.Count) updates..."
+$Downloader = $UpdateSession.CreateUpdateDownloader()
+$Downloader.Updates = $UpdatesToInstall
+$Downloader.Download()
+
+# Install Phase with Retry Logic
+$MaxRetries = 2
+$CurrentRetry = 0
+$Success = $false
+
+while ($CurrentRetry -le $MaxRetries -and !$Success) {
+    Write-Log "Installation Attempt $($CurrentRetry + 1)..."
+    $Installer = $UpdateSession.CreateUpdateInstaller()
+    $Installer.Updates = $UpdatesToInstall
+    $InstallResult = $Installer.Install()
+    
+    # ResultCode 2 = Succeeded, 3 = Succeeded with Errors
+    if ($InstallResult.ResultCode -eq 2 -or $InstallResult.ResultCode -eq 3) {
+        $Success = $true
+    } else {
+        Write-Log "Warning: Installation failed with code $($InstallResult.ResultCode). Retrying in 30s..."
+        Start-Sleep -Seconds 30
+        $CurrentRetry++
     }
 }
 
-# Install updates
-Write-Log "Installing updates..."
-$Installer = $UpdateSession.CreateUpdateInstaller()
-$Installer.Updates = $UpdatesToInstall
-$InstallResult = $Installer.Install()
-
-# Detailed Logging: Loop through each update to see which one failed
+# Final Reporting
 for ($i = 0; $i -lt $UpdatesToInstall.Count; $i++) {
     $status = $InstallResult.GetUpdateResult($i).ResultCode
     $title = $UpdatesToInstall.Item($i).Title
-    Write-Log "Update: $title - Result Code: $status"
+    Write-Log "Update: $title - Status Code: $status"
 }
 
-# Flexible Exit Logic
-if ($InstallResult.ResultCode -eq 2 -or $InstallResult.ResultCode -eq 3) {
-    if ($InstallResult.RebootRequired) {
-        Write-Log "Installation complete, but REBOOT IS REQUIRED."
-        exit 0 # Or use a specific exit code like 3010 to tell govc a reboot is needed
-    }
-    Write-Log "Updates finished (Result: $($InstallResult.ResultCode))"
-    exit 0
-} else {
-    Write-Log "Installation failed with Result Code: $($InstallResult.ResultCode)"
-    exit 1
+if ($InstallResult.RebootRequired) {
+    Write-Log "REBOOT_REQUIRED"
+    exit 3010  # Standard Windows Reboot Required code
 }
 
-Write-Log "Updates installed successfully"
-Write-Log "VM will be shut down by the automation script"
 exit 0
