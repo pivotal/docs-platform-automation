@@ -204,10 +204,6 @@ if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}
     echo "Jumper flags added to execution (--jumper-ip, --jumper-user, --jumper-password)."
 fi
 
-# Initialize Packer plugins
-echo "Initializing Packer plugins..."
-packer init windows-vm.pkr.hcl
-
 # Run build script
 echo "Starting Windows stemcell creation..."
 ./build.sh -f "$VARS_FILE" "${JUMPER_ARGS[@]}" --skip-packer-init
