@@ -17,8 +17,11 @@ if ! command -v stembuild &> /dev/null; then
   echo "ERROR: stembuild not found"
   exit 1
 fi
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
-pushd docs-platform-automation/windows-automation
+pushd $SCRIPT_DIR/windows-automation
+
+OLD_PWD=$OLDPWD
 
 # Generate variables file from Concourse task inputs
 VARS_FILE="variables.pkrvars.hcl"
@@ -210,18 +213,18 @@ echo "Starting Windows stemcell creation..."
 ./build.sh -f "$VARS_FILE" "${JUMPER_ARGS[@]}"
 
 # Copy logs to output
-mkdir -p ../../logs
-cp -r logs/* ../../logs/ 2>/dev/null || true
+mkdir -p $OLD_PWD/logs
+cp -r logs/* $OLD_PWD/logs 2>/dev/null || true
 
 # Copy stemcell file to output
 echo "Looking for generated stemcell file..."
 STEMCELL_FILE=$(find . -name "bosh-stemcell-*-vsphere-esxi-*-go_agent.tgz" -type f 2>/dev/null | head -1)
 if [ -n "$STEMCELL_FILE" ]; then
   echo "Found stemcell file: $STEMCELL_FILE"
-  mkdir -p ../../stemcell
-  cp "$STEMCELL_FILE" ../../stemcell/
-  echo "Stemcell file copied to output: ../../stemcell/$(basename "$STEMCELL_FILE")"
-  ls -lh ../../stemcell
+  mkdir -p $OLD_PWD/stemcell
+  cp "$STEMCELL_FILE" $OLD_PWD/stemcell
+  echo "Stemcell file copied to output: $OLD_PWD/stemcell/$(basename "$STEMCELL_FILE")"
+  ls -lh $OLD_PWD/stemcell
 else
   echo "WARNING: Stemcell file not found. Expected pattern: bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz"
   echo "Searching for any .tgz files:"

@@ -1,8 +1,9 @@
 site
 .idea/
 .DS_Store
-windows-automation/logs/*.log
-windows-automation/http/Autounattend.processed.xml
-windows-automation/*.iso
-windows-automation/variables.pkrvars.hcl
-windows-automation/variables.pkr.hcl
+tasks/windows-automation/logs/*.log
+tasks/windows-automation/http/Autounattend.processed.xml
+tasks/windows-automation/*.iso
+tasks/windows-automation/variables.pkrvars.hcl
+tasks/windows-automation/variables.pkr.hcl
+*.iso

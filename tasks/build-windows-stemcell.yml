@@ -1,8 +1,8 @@
 ---
 platform: linux
 inputs:
-- name: docs-platform-automation
-- name: windows-iso
+  - name: platform-automation-tasks
+  - name: windows-iso
   optional: true
 outputs:
 - name: logs
@@ -15,4 +15,4 @@ image_resource:
     password: ((concourse-team/dev_image_registry.password))
     tag: testing
 run:
-  path: docs-platform-automation/ci/tasks/build-windows-stemcell/task.sh
+  path: platform-automation-tasks/tasks/build-windows-stemcell.sh
