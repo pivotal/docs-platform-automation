@@ -429,7 +429,7 @@ resources:
   check_every: 4h
   icon: language-go
   source:
-    repository: ((concourse-team/dev_image_registry.build_image_url))/builders/jammy-buildpackless-tiny-builder
+    repository: ((concourse-team/dev_image_registry.url))/internal-images-pa/builder-jammy-buildpackless-tiny
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
@@ -1817,7 +1817,7 @@ jobs:
     - get: version
       resource: #@ "version-" + version.number
       params:
-        bump: final
+        bump: patch
     - get: rc-image-s3-vsphere
       passed: [ bump-previous-versions-trigger ]
       params:
