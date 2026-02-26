@@ -547,10 +547,9 @@ jobs:
         globs:
         - '*linux'
     - get: stembuild-cli
-      trigger: true
       params:
         globs:
-        - 'stembuild-windows-*-linux*'
+        - 'stembuild-linux*'
     - get: om-release
       trigger: true
       params:
