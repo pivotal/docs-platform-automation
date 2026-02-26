@@ -15,6 +15,10 @@ CLEANUP_BUILD_MODE=""
 CLEANUP_VARS_FILE=""
 CLEANUP_ENABLED=false
 
+jumper_ip=""
+jumper_user=""
+jumper_password=""
+
 # Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -277,7 +281,7 @@ upload_iso_to_datastore() {
         local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
         local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
         local datastore=$(grep -E "^vcenter_datastore\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-        
+        local datacenter=$(grep -E "^vcenter_datacenter\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
         # Remove quotes
         vcenter_server=$(echo "$vcenter_server" | sed 's/^"//;s/"$//')
         vcenter_user=$(echo "$vcenter_user" | sed 's/^"//;s/"$//')
@@ -1607,25 +1611,9 @@ post_build_provisioning() {
         log_info "Windows updates disabled (enable_windows_updates=false)"
     fi
     
-    # Step 4: Eject CD-ROM
-    log_info "Step 4: Ejecting CD-ROM..."
-    "$scripts_dir/eject-cdrom.sh" "$vm_name" || {
-        log_warn "CD-ROM ejection failed (non-critical)"
-    }
     
-    # Step 5: Final cleanup
-    if [[ -f "$scripts_dir/06-final-cleanup.ps1" ]]; then
-        log_info "Step 5: Running final cleanup..."
-        local cleanup_log="$SCRIPT_DIR/logs/final-cleanup-$(date +%Y%m%d-%H%M%S).log"
-        mkdir -p "$(dirname "$cleanup_log")"
-        "$scripts_dir/run-powershell-via-govc.sh" "$vm_name" "$scripts_dir/06-final-cleanup.ps1" "$windows_username" "$windows_password" > "$cleanup_log" 2>&1 || {
-            log_error "Final cleanup failed"
-            return 1
-        }
-    fi
-    
-    # Step 6: Run stembuild construct
-    log_info "Step 6: Running stembuild construct..."
+    # Run stembuild construct
+    log_info "Step 4: Running stembuild construct..."
     if [[ -z "$patch_version" ]]; then
         log_error "patch_version is required for stembuild"
         return 1
@@ -1640,25 +1628,38 @@ post_build_provisioning() {
         return 1
     fi
     
+    local datacenter=$(grep -E "^vcenter_datacenter\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
     local construct_log="$SCRIPT_DIR/logs/stembuild-construct-$(date +%Y%m%d-%H%M%S).log"
-    mkdir -p "$(dirname "$construct_log")"
-    "$scripts_dir/run-stembuild-construct.sh" "$vm_name" "$patch_version" "$stembuild_binary" "$construct_log" || {
-        log_error "stembuild construct failed"
-        return 1
-    }
+    if [[ -n $jumper_ip ]] && [[ -n $jumper_user ]] && [[ -n $jumper_password ]]; then
+        if sshpass "$jumper_password" scp $scripts_dir/run-stembuild-construct.sh $(which stembuild) LGPO.zip $jumper_user@$jumper_ip:~/ ;then
+           sshpass "$jumper_password" ssh $jumper_user@$jumper_ip "bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\"  \"$windows_username\" \"$windows_password\" \"$stembuild_binary\" \"$datacenter\"" || {
+            log_error "stembuild construct failed"
+            return 1
+           }
+        fi 
+    else   
+        mkdir -p "$(dirname "$construct_log")"
+        "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || {
+            log_error "stembuild construct failed"
+            return 1
+        }
+    fi
+
     
-    # Step 7: Run stembuild package
-    log_info "Step 7: Running stembuild package..."
+    # : Run stembuild package
+    log_info "Step 5: Running stembuild package..."
     local package_log="$SCRIPT_DIR/logs/stembuild-package-$(date +%Y%m%d-%H%M%S).log"
     mkdir -p "$(dirname "$package_log")"
     
     # Find VM inventory path
-    local vm_inventory_path=$(govc find vm -name "$vm_name" 2>/dev/null | head -n1)
-    if [[ -z "$vm_inventory_path" ]]; then
+    local vm_path=$(govc find vm -name "$vm_name" 2>/dev/null | head -n1)
+    if [[ -z "$vm_path" ]]; then
         log_error "VM not found: $vm_name"
         return 1
     fi
-    
+
+    vm_inventory_path="$datacenter/$vm_path"
+
     # Stop VM before packaging (required by stembuild)
     log_info "Stopping VM before packaging..."
     govc vm.power -s "$vm_name" || {
@@ -1674,7 +1675,7 @@ post_build_provisioning() {
     local shutdown_timeout=300
     local elapsed=0
     while [[ $elapsed -lt $shutdown_timeout ]]; do
-        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
         if [[ "$power_state" == "poweredOff" ]]; then
             log_success "VM powered off"
             break
@@ -1705,7 +1706,7 @@ post_build_provisioning() {
         log_info "Step 8: Creating template from VM..."
         
         # Verify VM is powered off (should be after stembuild package)
-        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
         if [[ "$power_state" != "poweredOff" ]]; then
             log_info "VM is not powered off, shutting down..."
             govc vm.power -s "$vm_name" || {
@@ -1723,7 +1724,7 @@ post_build_provisioning() {
             while [[ $elapsed -lt $shutdown_timeout ]]; do
                 sleep 5
                 elapsed=$((elapsed + 5))
-                power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+                power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
                 if [[ "$power_state" == "poweredOff" ]]; then
                     log_success "VM powered off"
                     break
@@ -1839,6 +1840,18 @@ main() {
             -h|--help)
                 usage
                 exit 0
+                ;;
+            --jumper-ip)
+                jumper_ip=$2
+                shift
+                ;;
+            --jumper-password)
+                jumper_password=$2
+                shift
+                ;;
+            --jumper_user)
+                jumper_user=$2
+                shift
                 ;;
             *)
                 log_error "Unknown option: $1"

@@ -10,7 +10,8 @@ VM_IP="${2:-}"
 VM_USER="${3:-}"
 VM_PASS="${4:-}"
 STEMBUILD_BINARY="${5:-}"
-LOG_FILE="${6:-}"
+DATACENTER="${6:-}"
+LOG_FILE="${7:-}"
 
 # Setup logging
 if [[ -n "$LOG_FILE" ]]; then
@@ -36,11 +37,13 @@ echo "Timestamp: $(date)"
 echo "=========================================="
 
 # Find VM inventory path using govc
-VM_INVENTORY_PATH=$(govc find vm -name "$VM_NAME" 2>/dev/null | head -n1)
+VM_PATH=$(govc find vm -name "$VM_NAME" 2>/dev/null | head -n1)
 if [[ -z "$VM_INVENTORY_PATH" ]]; then
     echo "Error: VM not found in vCenter: $VM_NAME"
     exit 1
 fi
+
+VM_INVENTORY_PATH="/$DATACENTER/$VM_PATH"
 
 echo "VM Inventory Path: $VM_INVENTORY_PATH"
 

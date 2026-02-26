@@ -18,7 +18,7 @@ if ! command -v stembuild &> /dev/null; then
   exit 1
 fi
 
-cd docs-platform-automation/windows-automation
+pushd docs-platform-automation/windows-automation
 
 # Generate variables file from Concourse task inputs
 VARS_FILE="variables.pkrvars.hcl"
@@ -183,29 +183,42 @@ if [ -n "${NO_PROXY:-}" ]; then
   export NO_PROXY="${NO_PROXY}"
 fi
 
+declare -a JUMPER_ARGS=()
+
+if [[ -n "$JUMPER_HOST" && -n "$JUMPER_USER" && -n "$JUMPER_PASSWORD" ]]; then
+    JUMPER_ARGS+=(
+        "--jumper-ip" "$JUMPER_HOST"
+        "--jumper-user" "$JUMPER_USER"
+        "--jumper-password" "$JUMPER_PASSWORD"
+    )
+    log_info "Jumper flags added to execution."
+fi
+
 # Initialize Packer plugins
 echo "Initializing Packer plugins..."
 packer init windows-vm.pkr.hcl
 
 # Run build script
 echo "Starting Windows stemcell creation..."
-./build.sh -f "$VARS_FILE"
+./build.sh -f "$VARS_FILE" "${JUMPER_ARGS[@]}"
 
 # Copy logs to output
-mkdir -p ../logs
-cp -r logs/* ../logs/ 2>/dev/null || true
+mkdir -p ../../logs
+cp -r logs/* ../../logs/ 2>/dev/null || true
 
 # Copy stemcell file to output
 echo "Looking for generated stemcell file..."
 STEMCELL_FILE=$(find . -name "bosh-stemcell-*-vsphere-esxi-*-go_agent.tgz" -type f 2>/dev/null | head -1)
 if [ -n "$STEMCELL_FILE" ]; then
   echo "Found stemcell file: $STEMCELL_FILE"
-  mkdir -p ../stemcell
-  cp "$STEMCELL_FILE" ../stemcell/
-  echo "Stemcell file copied to output: ../stemcell/$(basename "$STEMCELL_FILE")"
-  ls -lh ../stemcell/
+  mkdir -p ../../stemcell
+  cp "$STEMCELL_FILE" ../../stemcell/
+  echo "Stemcell file copied to output: ../../stemcell/$(basename "$STEMCELL_FILE")"
+  ls -lh ../../stemcell
 else
   echo "WARNING: Stemcell file not found. Expected pattern: bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz"
   echo "Searching for any .tgz files:"
   find . -name "*.tgz" -type f 2>/dev/null || echo "No .tgz files found"
 fi
+
+popd

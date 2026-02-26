@@ -152,6 +152,9 @@ jobs:
       # Build Options
       ENABLE_WINDOWS_UPDATES: "true"
       LOG_LEVEL: "INFO"
+      JUMPER_HOST: ""
+      JUMPER_USER: ""
+      JUMPER_PASSWORD: ""
     outputs:
     - name: logs
 ```
@@ -208,6 +211,9 @@ jobs:
       # Build Options
       ENABLE_WINDOWS_UPDATES: "true"
       LOG_LEVEL: "DEBUG"
+      JUMPER_HOST: ""
+      JUMPER_USER: ""
+      JUMPER_PASSWORD: ""
     outputs:
     - name: logs
 ```
@@ -256,6 +262,9 @@ jobs:
       # Build Options
       ENABLE_WINDOWS_UPDATES: "true"
       LOG_LEVEL: "INFO"
+      JUMPER_HOST: ""
+      JUMPER_USER: ""
+      JUMPER_PASSWORD: ""
     outputs:
     - name: logs
 ```
@@ -316,6 +325,9 @@ jobs:
       # Build Options
       ENABLE_WINDOWS_UPDATES: "true"
       LOG_LEVEL: "INFO"
+      JUMPER_HOST: ""
+      JUMPER_USER: ""
+      JUMPER_PASSWORD: ""
     outputs:
     - name: logs
 ```
@@ -367,6 +379,9 @@ jobs:
       # Build Options
       ENABLE_WINDOWS_UPDATES: "true"
       LOG_LEVEL: "INFO"
+      JUMPER_HOST: ""
+      JUMPER_USER: ""
+      JUMPER_PASSWORD: ""
     outputs:
     - name: logs
 ```
