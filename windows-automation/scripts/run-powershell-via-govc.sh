@@ -110,16 +110,18 @@ ENV_SETUP=""
 if [[ -n "$ENV_VARS_TO_PASS" ]]; then
     for var in $ENV_VARS_TO_PASS; do
         if [[ -n "${!var:-}" ]]; then
-            # Escape single quotes by doubling them using Python to avoid bash parser issues
+            # IMPORTANT: Escape single quotes by doubling them so PowerShell treats them as literals
             escaped_value=$(python3 -c "import sys; print(sys.stdin.read().replace(\"'\", \"''\"))" <<< "${!var}")
-            # Build PowerShell environment variable assignment - one per line
+
             if [[ -n "$ENV_SETUP" ]]; then
                 ENV_SETUP="${ENV_SETUP}"$'\n'
             fi
-            ENV_SETUP="${ENV_SETUP}\$env:${var}=\"${escaped_value}\""
+
+            # FIX: Wrap the value in SINGLE QUOTES for PowerShell
+            ENV_SETUP="${ENV_SETUP}\$env:${var}='${escaped_value}'"
         fi
     done
-    # Add a blank line after environment setup for clean separation
+
     if [[ -n "$ENV_SETUP" ]]; then
         ENV_SETUP="${ENV_SETUP}"$'\n'
     fi

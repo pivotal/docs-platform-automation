@@ -212,7 +212,7 @@ variable "windows_version" {
   default     = "2019"
   validation {
     condition     = contains(["2019", "2022", "2025"], var.windows_version)
-    error_message = "windows_version must be '2019', '2022', or '2025'"
+    error_message = "Windows_version must be '2019', '2022', or '2025'."
   }
 }
 
@@ -471,13 +471,9 @@ source "vsphere-clone" "windows-template" {
 build {
   name = "windows-vm-build"
 
-  # Conditionally select source based on build mode
-  dynamic "sources" {
-    for_each = local.is_template_mode ? ["template"] : ["iso"]
-    content {
-      source = sources.value == "template" ? "source.vsphere-clone.windows-template" : "source.vsphere-iso.windows"
-    }
-  }
+  sources = [
+    local.is_template_mode ? "source.vsphere-clone.windows-template" : "source.vsphere-iso.windows"
+  ]
 
   # Minimal provisioner to signal Packer that build is complete
   # This allows Packer to exit immediately without waiting for shutdown

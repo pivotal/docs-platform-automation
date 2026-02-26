@@ -46,6 +46,8 @@ RUN chmod +x \
     /usr/bin/winfs-injector
 
 # Install Packer
+ENV CHECKPOINT_DISABLE=1
+ENV PACKER_PLUGIN_PATH=/root/.packer.d/plugins
 ENV PACKER_VERSION=1.10.0
 RUN wget -q https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
     && unzip packer_${PACKER_VERSION}_linux_amd64.zip \

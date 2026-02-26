@@ -64,10 +64,13 @@ if ($env:GATEWAY) {
     $gateway = ""
 }
 
+$dnsServers = @()
 if ($env:DNS_SERVERS) {
-    $dnsServers = $env:DNS_SERVERS -split "," | ForEach-Object { $_.Trim() }
-} else {
-    $dnsServers = @()
+    try {
+        $dnsServers = Invoke-Expression $env:DNS_SERVERS
+    } catch {
+        Write-Warning "Failed to parse DNS_SERVERS: $_"
+    }
 }
 
 Write-Log "Network Configuration:"
@@ -163,7 +166,7 @@ if ($dnsServers.Count -gt 0) {
     Set-DnsClientServerAddress -InterfaceAlias $adapterName -ResetServerAddresses -ErrorAction SilentlyContinue
     
     # Wait a moment for reset to take effect
-    Start-Sleep -Seconds 1
+    Start-Sleep -Seconds 2
     
     # Set IPv4 DNS servers explicitly
     Write-Log "  Setting IPv4 DNS servers..."

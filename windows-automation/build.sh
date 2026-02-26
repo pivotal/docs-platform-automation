@@ -88,12 +88,7 @@ cleanup_on_failure() {
     # Stop Packer process
     if [[ -n "$CLEANUP_PACKER_PID" ]] && kill -0 "$CLEANUP_PACKER_PID" 2>/dev/null; then
         log_warn "Stopping Packer process (PID: $CLEANUP_PACKER_PID)..."
-        kill "$CLEANUP_PACKER_PID" 2>/dev/null || true
-        sleep 2
-        if kill -0 "$CLEANUP_PACKER_PID" 2>/dev/null; then
-            log_warn "Force killing Packer process..."
-            kill -9 "$CLEANUP_PACKER_PID" 2>/dev/null || true
-        fi
+        pkill -9 "$CLEANUP_PACKER_PID" 2>/dev/null || true
     fi
     
     # Shutdown and delete VM
@@ -103,7 +98,7 @@ cleanup_on_failure() {
         # Check if VM exists
         if govc vm.info "$CLEANUP_VM_NAME" >/dev/null 2>&1; then
             # Get power state
-            local power_state=$(govc vm.info -json "$CLEANUP_VM_NAME" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
+            local power_state=$(govc vm.info -json "$CLEANUP_VM_NAME" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
             
             # Shutdown VM if powered on
             if [[ "$power_state" != "poweredOff" ]]; then
@@ -112,18 +107,6 @@ cleanup_on_failure() {
                     log_warn "Graceful shutdown failed, forcing power off..."
                     govc vm.power -off "$CLEANUP_VM_NAME" >/dev/null 2>&1 || true
                 }
-                
-                # Wait for shutdown
-                local shutdown_timeout=60
-                local elapsed=0
-                while [[ $elapsed -lt $shutdown_timeout ]]; do
-                    sleep 2
-                    elapsed=$((elapsed + 2))
-                    power_state=$(govc vm.info -json "$CLEANUP_VM_NAME" 2>/dev/null | jq -r '.VirtualMachines[0].Runtime.PowerState' 2>/dev/null || echo "unknown")
-                    if [[ "$power_state" == "poweredOff" ]]; then
-                        break
-                    fi
-                done
             fi
             
             # Delete VM
@@ -1412,13 +1395,13 @@ build_vm() {
     
     # Wait for Windows installation and first boot to complete before starting post-build provisioning
     # Packer boot commands include <wait120> for installation start and <wait60> for first boot
-    # But actual installation takes 10-30 minutes, so we need to wait longer
+    # But actual installation takes 7-30 minutes, so we need to wait longer
     # We'll wait for the boot sequence to complete before attempting password change
     log_info "Waiting for Windows installation and first boot to complete..."
-    log_info "Boot sequence includes: installation (~10-30 min) + first boot (~1-2 min)"
-    log_info "Waiting 10 minutes to ensure installation and first boot are complete..."
+    log_info "Boot sequence includes: installation (~7-30 min) + first boot (~1-2 min)"
+    log_info "Waiting 7 minutes to ensure installation and first boot are complete..."
     log_info "This ensures the password change screen is ready before we attempt to handle it"
-    sleep 600  # 10 minutes - allows Windows installation and first boot to complete
+    sleep 420  # 7 minutes - allows Windows installation and first boot to complete
     
     # Detect build mode (iso or template)
     # If template_path is provided and no ISO is configured, use template mode
@@ -1589,7 +1572,7 @@ post_build_provisioning() {
     local static_ip=$(grep -E "^static_ip\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
     local subnet_mask=$(grep -E "^subnet_mask\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
     local gateway=$(grep -E "^gateway\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local dns_servers=$(grep -E "^dns_servers\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\[\(.*\)\].*/\1/' | sed 's/"//g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+    local dns_servers=$(sed -n 's/.*dns_servers *= *\[\(.*\)\]/(\1)/p' "$vars_file" | sed 's/ //g')
     
     # Export environment variables for PowerShell script
     export STATIC_IP="$static_ip"
@@ -1935,7 +1918,12 @@ main() {
         local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
         local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
         local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-        
+        local iso=$(grep -E "^iso_path\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+        if [[ -n $iso ]]; then 
+            build_mode="iso"
+        else 
+            build_mode="template"
+        fi
         if [[ -n "$vm_name_base" ]] && [[ -n "$vcenter_server" ]]; then
             # Generate timestamp in same format as Packer: regex_replace(timestamp(), "[- TZ:]", "")
             # This removes dashes, spaces, T, Z, and colons from ISO 8601 timestamp

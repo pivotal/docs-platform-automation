@@ -24,11 +24,19 @@
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <!-- Image installation - Using NAME to explicitly select Server Core (per tech doc) -->
             <!-- Using /IMAGE/NAME is more reliable than /IMAGE/INDEX as it explicitly names the edition -->
-            <!-- Windows Server 2019 ISO image names:
+            <!-- Windows Server ISO image names:
                  Windows Server 2019 SERVERSTANDARD - Desktop Experience (WITH UI)
                  Windows Server 2019 SERVERDATACENTER - Desktop Experience (WITH UI)
                  Windows Server 2019 SERVERSTANDARDCORE - Server Core (NO UI) ✅
                  Windows Server 2019 SERVERDATACENTERCORE - Server Core (NO UI)
+                 Windows Server 2022 SERVERSTANDARD - Desktop Experience (WITH UI)
+                 Windows Server 2022 SERVERDATACENTER - Desktop Experience (WITH UI)
+                 Windows Server 2022 SERVERSTANDARDCORE - Server Core (NO UI) ✅
+                 Windows Server 2022 SERVERDATACENTERCORE - Server Core (NO UI)
+                 Windows Server 2025 SERVERSTANDARD - Desktop Experience (WITH UI)
+                 Windows Server 2025 SERVERDATACENTER - Desktop Experience (WITH UI)
+                 Windows Server 2025 SERVERSTANDARDCORE - Server Core (NO UI) ✅
+                 Windows Server 2025 SERVERDATACENTERCORE - Server Core (NO UI)
             -->
             <!-- Tech doc requires Server Core (no UI) - using explicit name -->
             <!-- InstallTo removed - Windows Setup will automatically select partition after creating it -->
@@ -91,13 +99,13 @@
                     <!-- If it doesn't match, Windows will apply to the first available adapter -->
                     <Identifier>Ethernet</Identifier>
                     <UnicastIpAddresses>
-                        <IpAddress wcm:action="add" wcm:keyValue="1">192.168.122.100/24</IpAddress>
+                        <IpAddress wcm:action="add" wcm:keyValue="1">192.168.121.100/24</IpAddress>
                     </UnicastIpAddresses>
                     <Routes>
                         <Route wcm:action="add">
                             <Identifier>1</Identifier>
                             <Prefix>0.0.0.0/0</Prefix>
-                            <NextHopAddress>192.168.122.1</NextHopAddress>
+                            <NextHopAddress>192.168.121.1</NextHopAddress>
                         </Route>
                     </Routes>
                 </Interface>
@@ -112,7 +120,8 @@
                     <!-- Identifier must match the TCPIP component above -->
                     <Identifier>Ethernet</Identifier>
                     <DNSServerSearchOrder>
-                        <IpAddress wcm:action="add" wcm:keyValue="1">192.168.111.155</IpAddress>
+                        <IpAddress wcm:action="add" wcm:keyValue="1">192.19.189.10</IpAddress>
+                        <IpAddress wcm:action="add" wcm:keyValue="2">192.168.110.10</IpAddress>
                     </DNSServerSearchOrder>
                 </Interface>
             </Interfaces>
