@@ -328,7 +328,7 @@ init_packer() {
         log_error "Failed to change to script directory: $SCRIPT_DIR"
         exit 1
     }
-    
+
     if packer init windows-vm.pkr.hcl; then
         log_success "Packer plugins initialized"
     else
@@ -1922,10 +1922,14 @@ main() {
     local init_only=false
     local validate_only=false
     local overwrite_iso=false
-    
+    local skip_packer_init=false
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
+            --skip-packer-init)
+                skip_packer_init=true
+                shift
+                ;;
             -v|--vars-file)
                 vars_file="$2"
                 shift 2
@@ -1980,8 +1984,10 @@ main() {
     # Check prerequisites
     check_prerequisites
     
-    # Initialize Packer
-    init_packer
+    if [[ $skip_packer_init == false ]]; then
+        # Initialize Packer
+        init_packer
+    fi
     
     if [[ "$init_only" == true ]]; then
         log_success "Initialization complete"

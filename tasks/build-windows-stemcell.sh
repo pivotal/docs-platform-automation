@@ -20,7 +20,7 @@ fi
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 pushd $SCRIPT_DIR/windows-automation
-
+export PACKER_PLUGIN_PATH=/root/.packer.d/plugins
 OLD_PWD=$OLDPWD
 
 # Generate variables file from Concourse task inputs
@@ -210,7 +210,7 @@ packer init windows-vm.pkr.hcl
 
 # Run build script
 echo "Starting Windows stemcell creation..."
-./build.sh -f "$VARS_FILE" "${JUMPER_ARGS[@]}"
+./build.sh -f "$VARS_FILE" "${JUMPER_ARGS[@]}" --skip-packer-init
 
 # Copy logs to output
 mkdir -p $OLD_PWD/logs
