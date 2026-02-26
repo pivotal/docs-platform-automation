@@ -1,8 +1,8 @@
 ---
 platform: linux
 inputs:
-  - name: platform-automation-tasks
-  - name: windows-iso
+- name: platform-automation-tasks
+- name: windows-iso
   optional: true
 outputs:
 - name: logs
