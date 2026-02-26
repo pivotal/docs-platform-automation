@@ -206,7 +206,7 @@ fi
 
 # Run build script
 echo "Starting Windows stemcell creation..."
-./build.sh -f "$VARS_FILE" "${JUMPER_ARGS[@]}" --skip-packer-init
+./build.sh -v "$VARS_FILE" "${JUMPER_ARGS[@]}" --skip-packer-init
 
 # Copy logs to output
 mkdir -p $OLD_PWD/logs
