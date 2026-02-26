@@ -1695,7 +1695,7 @@ post_build_provisioning() {
     }
     
     # Find generated stemcell file
-    local stemcell_file=$(ls -t bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz 2>/dev/null | head -n1)
+    local stemcell_file=$(ls -t bosh-stemcell-*-vsphere-esxi-*-go_agent.tgz 2>/dev/null | head -n1)
     if [[ -n "$stemcell_file" ]]; then
         log_success "Stemcell created: $stemcell_file"
     fi

@@ -197,7 +197,7 @@ cp -r logs/* ../logs/ 2>/dev/null || true
 
 # Copy stemcell file to output
 echo "Looking for generated stemcell file..."
-STEMCELL_FILE=$(find . -name "bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz" -type f 2>/dev/null | head -1)
+STEMCELL_FILE=$(find . -name "bosh-stemcell-*-vsphere-esxi-*-go_agent.tgz" -type f 2>/dev/null | head -1)
 if [ -n "$STEMCELL_FILE" ]; then
   echo "Found stemcell file: $STEMCELL_FILE"
   mkdir -p ../stemcell

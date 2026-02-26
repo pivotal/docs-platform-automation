@@ -53,21 +53,37 @@ Write-Log "Downloads completed"
 # Install updates
 Write-Log "Installing updates..."
 $UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
-foreach ($Update in $SearchResult.Updates) {
-    if ($Update.IsDownloaded) {
-        $UpdatesToInstall.Add($Update) | Out-Null
+# Accept EULAs first
+foreach ($Update in $UpdatesToInstall) {
+    if (-not $Update.EulaAccepted) {
+        Write-Log "Accepting EULA for: $($Update.Title)"
+        $Update.AcceptEula()
     }
 }
 
+# Install updates
+Write-Log "Installing updates..."
 $Installer = $UpdateSession.CreateUpdateInstaller()
 $Installer.Updates = $UpdatesToInstall
 $InstallResult = $Installer.Install()
 
-Write-Log "Installation result: $($InstallResult.ResultCode)"
-Write-Log "Reboot required: $($InstallResult.RebootRequired)"
+# Detailed Logging: Loop through each update to see which one failed
+for ($i = 0; $i -lt $UpdatesToInstall.Count; $i++) {
+    $status = $InstallResult.GetUpdateResult($i).ResultCode
+    $title = $UpdatesToInstall.Item($i).Title
+    Write-Log "Update: $title - Result Code: $status"
+}
 
-if ($InstallResult.ResultCode -ne 2) {
-    Write-Log "Installation may have issues"
+# Flexible Exit Logic
+if ($InstallResult.ResultCode -eq 2 -or $InstallResult.ResultCode -eq 3) {
+    if ($InstallResult.RebootRequired) {
+        Write-Log "Installation complete, but REBOOT IS REQUIRED."
+        exit 0 # Or use a specific exit code like 3010 to tell govc a reboot is needed
+    }
+    Write-Log "Updates finished (Result: $($InstallResult.ResultCode))"
+    exit 0
+} else {
+    Write-Log "Installation failed with Result Code: $($InstallResult.ResultCode)"
     exit 1
 }
 

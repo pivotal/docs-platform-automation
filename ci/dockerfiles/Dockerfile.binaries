@@ -22,8 +22,8 @@ RUN chmod +x /tmp/stembuild && mv /tmp/stembuild /usr/bin/stembuild
 # Microsoft Download Center: https://www.microsoft.com/en-us/download/details.aspx?id=55319
 # Stembuild looks for LGPO.exe in the same directory as the stembuild binary
 RUN mkdir -p /tmp/lgpo && \
+    cp docs-platform-automation/windows-automation/LGPO.zip /tmp/lgpo/LGPO.zip  && \
     cd /tmp/lgpo && \
-    wget -q "https://download.microsoft.com/download/8/5/C/85C25433-A1B0-4FFA-9429-7E147E8315F4/LGPO.zip" -O LGPO.zip && \
     unzip -q LGPO.zip && \
     # LGPO.zip contains LGPO.exe - copy it to /usr/bin/ alongside stembuild
     # Stembuild will use LGPO.exe during the construct process on the Windows VM
@@ -60,7 +60,7 @@ RUN mkdir -p /root/.packer.d/plugins \
     && cd /root/.packer.d/plugins \
     && wget -q https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v1.4.0/packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip \
     && unzip packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip \
-    && chmod +x packer-plugin-vsphere \
+    && chmod +x packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64 \
     && rm -f packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip
 
 # Verify Packer installation
