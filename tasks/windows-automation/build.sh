@@ -3,7 +3,7 @@
 # Supports two modes: build from ISO or clone from template
 
 set -euo pipefail
-
+set -x
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
