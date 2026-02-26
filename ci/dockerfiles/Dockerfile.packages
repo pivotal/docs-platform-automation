@@ -20,6 +20,7 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     ssh \
     unzip \
     zip \
+    wget \
   && true
 # netcat for `bosh ssh` -- the why is explained here: https://github.com/cloudfoundry/bosh-cli/issues/374
 
