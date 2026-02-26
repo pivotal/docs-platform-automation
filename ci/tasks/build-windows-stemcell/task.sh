@@ -99,7 +99,7 @@ fi
 cat >> "$VARS_FILE" <<EOF
 
 # VM Configuration
-vm_name         = "${VM_NAME:-windows-base-vm}"
+vm_name         = "windows-base-vm"
 vm_cpu_count    = ${VM_CPU_COUNT:-8}
 vm_memory_mb    = ${VM_MEMORY_MB:-16384}
 vm_disk_size_gb = ${VM_DISK_SIZE_GB:-100}
@@ -168,9 +168,16 @@ EOF
 fi
 
 echo "Generated variables file: $VARS_FILE"
-echo "---"
+echo "=========================================="
+echo "Variables parsed from file (for build.sh):"
+echo "=========================================="
 cat "$VARS_FILE"
 echo "---"
+echo "Base VM name: windows-base-vm"
+TARGET_VM_TS=$(date -u +%Y%m%d%H%M%S 2>/dev/null || date +%Y%m%d%H%M%S)
+echo "Target VM name: windows-target-vm-${TARGET_VM_TS}"
+echo "All arguments passed to build.sh: ./build.sh -f $VARS_FILE ${JUMPER_ARGS[*]}"
+echo "=========================================="
 
 # Set HTTP_PROXY, HTTPS_PROXY, NO_PROXY for Packer and govc
 if [ -n "${HTTP_PROXY:-}" ]; then
@@ -185,13 +192,13 @@ fi
 
 declare -a JUMPER_ARGS=()
 
-if [[ -n "$JUMPER_HOST" && -n "$JUMPER_USER" && -n "$JUMPER_PASSWORD" ]]; then
+if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}" ]]; then
     JUMPER_ARGS+=(
         "--jumper-ip" "$JUMPER_HOST"
         "--jumper-user" "$JUMPER_USER"
         "--jumper-password" "$JUMPER_PASSWORD"
     )
-    log_info "Jumper flags added to execution."
+    echo "Jumper flags added to execution (--jumper-ip, --jumper-user, --jumper-password)."
 fi
 
 # Initialize Packer plugins

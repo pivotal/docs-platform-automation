@@ -38,12 +38,17 @@ echo "=========================================="
 
 # Find VM inventory path using govc
 VM_PATH=$(govc find vm -name "$VM_NAME" 2>/dev/null | head -n1)
-if [[ -z "$VM_INVENTORY_PATH" ]]; then
+if [[ -z "$VM_PATH" ]]; then
     echo "Error: VM not found in vCenter: $VM_NAME"
     exit 1
 fi
 
-VM_INVENTORY_PATH="/$DATACENTER/$VM_PATH"
+# govc find returns path like /datacenter/vm/folder/vmname; use as-is if absolute
+if [[ "$VM_PATH" == /* ]]; then
+    VM_INVENTORY_PATH="$VM_PATH"
+else
+    VM_INVENTORY_PATH="/$DATACENTER/$VM_PATH"
+fi
 
 echo "VM Inventory Path: $VM_INVENTORY_PATH"
 

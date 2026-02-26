@@ -154,6 +154,94 @@ check_prerequisites() {
     log_success "All prerequisites met"
 }
 
+# Display variables parsed from vars file and build context (base VM, target VM, args)
+display_build_variables() {
+    local vars_file="${1:-}"
+    local base_vm_name="${2:-}"
+    local target_vm_name="${3:-}"
+    log_info "=========================================="
+    log_info "Variables parsed from file and build context"
+    log_info "=========================================="
+    if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
+        log_info "Contents of variables file ($vars_file):"
+        while IFS= read -r line; do
+            # Redact password values when displaying
+            if [[ "$line" =~ password.*= ]]; then
+                log_info "  ${line%%=*}=***REDACTED***"
+            else
+                log_info "  $line"
+            fi
+        done < "$vars_file"
+    fi
+    log_info "Base VM name: $base_vm_name"
+    log_info "Target VM name: $target_vm_name"
+    log_info "All arguments passed to build.sh: $*"
+    log_info "=========================================="
+}
+
+# Clone current VM (base) to windows-target-vm-{timestamp}; power off base first.
+# Caller must have GOVC_* set. Outputs the new VM name to stdout for capture.
+clone_current_vm_to_target() {
+    local base_vm_name="${1:?}"
+    local timestamp=$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")
+    local target_vm_name="windows-target-vm-${timestamp}"
+
+    log_info "Base VM (after updates): $base_vm_name"
+    log_info "Target VM (clone for stembuild): $target_vm_name"
+
+    if ! govc vm.info "$base_vm_name" >/dev/null 2>&1; then
+        log_error "VM not found: $base_vm_name"
+        return 1
+    fi
+
+    # Power off base VM before cloning
+    log_info "Powering off base VM before clone..."
+    local power_state=$(govc vm.info -json "$base_vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
+    if [[ "$power_state" != "poweredOff" ]]; then
+        govc vm.power -s "$base_vm_name" >/dev/null 2>&1 || {
+            log_warn "Graceful shutdown failed, forcing power off..."
+            govc vm.power -off "$base_vm_name" || { log_error "Failed to power off base VM"; return 1; }
+        }
+        log_info "Waiting for base VM to power off..."
+        local wait=0
+        while [[ $wait -lt 120 ]]; do
+            power_state=$(govc vm.info -json "$base_vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
+            [[ "$power_state" == "poweredOff" ]] && break
+            sleep 5
+            wait=$((wait + 5))
+        done
+        if [[ "$power_state" != "poweredOff" ]]; then
+            log_error "Base VM did not power off within timeout"
+            return 1
+        fi
+    fi
+    log_success "Base VM powered off"
+
+    log_info "Cloning $base_vm_name to $target_vm_name..."
+    if ! govc vm.clone -vm "$base_vm_name" "$target_vm_name"; then
+        log_error "Clone failed"
+        return 1
+    fi
+    log_success "Clone created: $target_vm_name"
+
+    local vm_wait=0
+    while [[ $vm_wait -lt 300 ]]; do
+        if govc vm.info "$target_vm_name" >/dev/null 2>&1; then
+            break
+        fi
+        sleep 5
+        vm_wait=$((vm_wait + 5))
+    done
+    if ! govc vm.info "$target_vm_name" >/dev/null 2>&1; then
+        log_error "Target VM not found after clone: $target_vm_name"
+        return 1
+    fi
+
+    # Output new VM name to stdout so caller can capture
+    printf '%s' "$target_vm_name"
+    return 0
+}
+
 # Setup proxy environment variables
 setup_proxy_environment() {
     local vars_file="${1:-}"
@@ -1163,6 +1251,12 @@ build_vm() {
     log_info "Starting Packer build process..."
     log_info "Log level: $log_level"
     
+    # Display variables and VM names before proceeding
+    local vm_name_base=$(grep -E "^vm_name\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local timestamp="${PKR_VAR_build_timestamp:-$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")}"
+    local vm_name_final="${vm_name_base:-vm}-${timestamp}"
+    display_build_variables "$vars_file" "${vm_name_base:-}" "$vm_name_final" "(Packer will create VM: $vm_name_final)"
+    
     # Create logs directory
     mkdir -p logs
     
@@ -1610,7 +1704,13 @@ post_build_provisioning() {
     else
         log_info "Windows updates disabled (enable_windows_updates=false)"
     fi
-    
+
+    # Step 3.5: Clone current VM to windows-target-vm-{timestamp}; stembuild construct/package run on the clone
+    log_info "Step 3.5: Cloning VM for stembuild (power off base, clone to windows-target-vm-{timestamp})..."
+    local target_vm_name
+    target_vm_name=$(clone_current_vm_to_target "$vm_name") || return 1
+    log_info "Using clone '$target_vm_name' for stembuild construct and package"
+    vm_name="$target_vm_name"
     
     # Run stembuild construct
     log_info "Step 4: Running stembuild construct..."
@@ -1631,12 +1731,21 @@ post_build_provisioning() {
     local datacenter=$(grep -E "^vcenter_datacenter\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
     local construct_log="$SCRIPT_DIR/logs/stembuild-construct-$(date +%Y%m%d-%H%M%S).log"
     if [[ -n $jumper_ip ]] && [[ -n $jumper_user ]] && [[ -n $jumper_password ]]; then
-        if sshpass "$jumper_password" scp $scripts_dir/run-stembuild-construct.sh $(which stembuild) LGPO.zip $jumper_user@$jumper_ip:~/ ;then
-           sshpass "$jumper_password" ssh $jumper_user@$jumper_ip "bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\"  \"$windows_username\" \"$windows_password\" \"$stembuild_binary\" \"$datacenter\"" || {
-            log_error "stembuild construct failed"
+        local stembuild_remote="~/stembuild"
+        if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$scripts_dir/run-stembuild-construct.sh" "$(which stembuild)" LGPO.zip "$jumper_user@$jumper_ip:~/"; then
+            log_error "Failed to copy run-stembuild-construct.sh, stembuild, and LGPO.zip to jumper"
             return 1
-           }
-        fi 
+        fi
+        # Export GOVC_* on remote so run-stembuild-construct.sh can connect to vCenter
+        if sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" \
+            "export GOVC_URL='$GOVC_URL' GOVC_USERNAME='$GOVC_USERNAME' GOVC_PASSWORD='$GOVC_PASSWORD' GOVC_INSECURE='${GOVC_INSECURE:-}'; \
+             chmod +x ~/run-stembuild-construct.sh ~/stembuild; \
+             bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\""; then
+            log_success "stembuild construct completed on jumper"
+        else
+            log_error "stembuild construct failed on jumper"
+            return 1
+        fi
     else   
         mkdir -p "$(dirname "$construct_log")"
         "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || {
@@ -1843,15 +1952,15 @@ main() {
                 ;;
             --jumper-ip)
                 jumper_ip=$2
-                shift
+                shift 2
                 ;;
             --jumper-password)
                 jumper_password=$2
-                shift
+                shift 2
                 ;;
-            --jumper_user)
+            --jumper-user)
                 jumper_user=$2
-                shift
+                shift 2
                 ;;
             *)
                 log_error "Unknown option: $1"
