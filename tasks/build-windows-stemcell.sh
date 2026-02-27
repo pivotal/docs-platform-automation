@@ -204,20 +204,48 @@ if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}
 fi
 
 
-if ! grep -q "machine github.com" ~/.netrc; then
-    echo "Adding GitHub credentials to .netrc..."
-    cat <<EOF >> ~/.netrc
-machine github.com
-login git
-password ${PACKER_GITHUB_API_TOKEN}
-EOF
-else
-    echo "GitHub credentials already exist in .netrc. Skipping append."
-fi
+# Below lines are added to sideload vsphere plugin to avoid packer init
 
-chmod 600 ~/.netrc
+# 1. Configuration
+VERSION="1.4.2"
+PLUGIN_NAME="vsphere"
+SOURCE="github.com/hashicorp/vsphere"
 
-packer init windows-vm.pkr.hcl
+# 2. Auto-Detect OS and Architecture
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m)
+[ "$ARCH" = "x86_64" ] && ARCH="amd64"
+[ "$ARCH" = "aarch64" ] && ARCH="arm64"
+
+# 3. Define Filenames
+BINARY_NAME="packer-plugin-${PLUGIN_NAME}_v${VERSION}_x5.0_${OS}_${ARCH}"
+ZIP_NAME="${BINARY_NAME}.zip"
+SUMS_NAME="packer-plugin-${PLUGIN_NAME}_v${VERSION}_SHA256SUMS"
+
+# 4. Download Binary and Checksum
+echo "--- Downloading v${VERSION} for ${OS}/${ARCH} ---"
+curl -L -O "https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v${VERSION}/${ZIP_NAME}"
+curl -L -O "https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v${VERSION}/${SUMS_NAME}"
+
+# 5. Extract Binary
+echo "--- Extracting ---"
+unzip -o "$ZIP_NAME"
+# Ensure the binary is executable
+chmod +x "$BINARY_NAME"
+
+# 6. Official Packer Installation
+# This command validates the binary against the SUMS file and 
+# places it in ~/.packer.d/plugins (or ~/.config/packer/plugins) 
+# with the required individual _SHA256SUM file.
+echo "--- Registering Plugin with Packer ---"
+packer plugins install --path "./${BINARY_NAME}" "$SOURCE"
+
+# 7. Cleanup
+rm "$ZIP_NAME" "$SUMS_NAME" "$BINARY_NAME"
+
+echo "--- Success! Running Packer Init ---"
+PACKER_LOG=1 packer init windows-vm.pkr.hcl
+
 
 # Build args: pass --debug when DEBUG_MODE is true (e.g. from Concourse task params)
 BUILD_ARGS=()
