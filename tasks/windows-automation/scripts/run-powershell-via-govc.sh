@@ -223,7 +223,7 @@ if [[ -z "${USE_GUEST_RUN:-}" ]]; then
     # Wait for PowerShell to exit and get exit code in one call (-X wait, -x output exit time and code).
     EXIT_RAW=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -X -x 2>/dev/null)
     EXIT_CODE=$(echo "$EXIT_RAW" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$EXIT_CODE" ]] && EXIT_CODE=$(echo "$EXIT_RAW" | awk -v pid="$PID_PS" '$1==pid {print $2; exit}')
+    [[ -z "$EXIT_CODE" ]] && EXIT_CODE=$(echo "$EXIT_RAW" | awk -v pid="$PID_PS" '$2==pid {print $5; exit}')
     EXIT_CODE=${EXIT_CODE:-0}
     OUTPUT=$(govc guest.download "${GOVC_OPTS[@]}" "$OUT_PATH" - 2>/dev/null) || OUTPUT=""
 

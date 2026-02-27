@@ -1696,10 +1696,10 @@ post_build_provisioning() {
             pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
             if [[ -n "$pid" ]]; then
                 local raw
-                raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null)
+                raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
                 local code
                 code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-                [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
+                [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
                 if [[ "${code:-1}" == "0" ]]; then
                     guest_ready=1
         log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing with guest.run for PowerShell steps."

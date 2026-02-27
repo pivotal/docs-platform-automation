@@ -35,7 +35,7 @@ wait_for_vm_ready() {
         raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
         local code
         code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-        [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
+        [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
         if [[ "${code:-1}" == "0" ]]; then
             echo "VM is ready"
             return 0
@@ -56,7 +56,7 @@ guest_ps_run_exit() {
     raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
     local code
     code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
+    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
     echo "${code:-0}"
 }
 
@@ -73,7 +73,7 @@ guest_ps_run_capture() {
     raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
     local code
     code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
+    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
     GUEST_PS_EXIT=${code:-0}
     govc guest.download "${GOVC_OPTS[@]}" "$out_path" - 2>/dev/null || true
     local pid_del
