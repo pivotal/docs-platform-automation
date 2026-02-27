@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Windows Updates Automation Loop
-# Usage: run-windows-updates-loop.sh <vm-name> <username> <password> [max-iterations]
+# Uses govc guest.start (or guest.run when USE_GUEST_RUN=1). guest.run uses /bin/bash when guest not detected as Windows.
 #
-# Uses govc guest.start (or guest.run when USE_GUEST_RUN=1 after Tools are ready).
-# When the guest is not detected as Windows, guest.run uses /bin/bash and fails with "File /bin/bash was not found".
+# Usage: run-windows-updates-loop.sh <vm-name> <username> <password> [max-iterations]
 
 VM_NAME="${1:-}"
 USERNAME="${2:-Administrator}"
 PASSWORD="${3:-}"
 MAX_ITER="${4:-10}"
+
+[[ "${DEBUG_MODE:-}" == "true" ]] && set -x
 
 if [[ -z "$VM_NAME" ]] || [[ -z "$PASSWORD" ]]; then
     echo "Usage: $0 <vm-name> <username> <password> [max-iterations]"
@@ -34,8 +34,9 @@ wait_for_vm_ready() {
         local raw
         raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
         local code
-        code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-        [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
+        # govc guest.ps -x outputs a table: UID PID STIME XTIME XCODE CMD (not JSON)
+        code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
+        [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
         if [[ "${code:-1}" == "0" ]]; then
             echo "VM is ready"
             return 0
@@ -55,8 +56,9 @@ guest_ps_run_exit() {
     local raw
     raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
     local code
-    code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
+    # govc guest.ps -x outputs a table: UID PID STIME XTIME XCODE CMD (not JSON)
+    code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
+    [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
     echo "${code:-0}"
 }
 
@@ -72,8 +74,9 @@ guest_ps_run_capture() {
     local raw
     raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
     local code
-    code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
+    # govc guest.ps -x outputs a table: UID PID STIME XTIME XCODE CMD (not JSON)
+    code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
+    [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
     GUEST_PS_EXIT=${code:-0}
     govc guest.download "${GOVC_OPTS[@]}" "$out_path" - 2>/dev/null || true
     local pid_del
@@ -144,6 +147,7 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     INSTALL_EXIT=$(guest_ps_run_exit "& { & 'C:\\Windows\\Temp\\install-windows-updates.ps1'; exit \$LASTEXITCODE }")
 
     if [[ "$INSTALL_EXIT" == "3010" ]]; then
+        # 3010 = Windows Update "reboot required" success; we reboot and continue the loop
         echo "Reboot required. Restarting VM..."
         govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || {
             echo "Failed to shutdown VM gracefully, forcing power off..."

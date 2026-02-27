@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Handle password change screen using govc vm.keystrokes
-# This runs after Windows installation completes and VM reboots
-# Usage: handle-password-change-keystrokes.sh <vm-name> <password> [log-file]
+# Handle password change screen using govc vm.keystrokes (guest ops need Tools + login, so we inject keystrokes instead).
+# Runs after Windows install and first boot. Usage: handle-password-change-keystrokes.sh <vm-name> <password> [log-file]
 
 VM_NAME="${1:-}"
 PASSWORD="${2:-}"
@@ -11,6 +10,8 @@ LOG_FILE="${3:-}"
 if [[ -n "$LOG_FILE" ]]; then
     exec > >(tee -a "$LOG_FILE") 2>&1
 fi
+
+[[ "${DEBUG_MODE:-}" == "true" ]] && set -x
 
 if [[ -z "$VM_NAME" ]] || [[ -z "$PASSWORD" ]]; then
     echo "Usage: $0 <vm-name> <password> [log-file]"

@@ -10,6 +10,8 @@ if [[ -n "$LOG_FILE" ]]; then
     exec > >(tee -a "$LOG_FILE") 2>&1
 fi
 
+[[ "${DEBUG_MODE:-}" == "true" ]] && set -x
+
 if [[ -z "$VM_NAME" ]]; then
     echo "ERROR: VM name is required"
     echo "Usage: $0 <vm-name> [log-file]"
@@ -62,9 +64,8 @@ echo "✓ Mount command executed successfully"
 echo "Step 4: Waiting for mount to complete..."
 sleep 10
 
-# Verify mount using PowerShell via govc guest.start (or guest.run when guest is detected as Windows).
-# When the guest is not detected as Windows, guest.run uses /bin/bash and fails.
-# Note: This requires VMware Tools to be installed, so it may not work on first mount
+# Verify mount using PowerShell via guest.start (guest.run uses /bin/bash when guest not yet Windows).
+# First mount may not have Tools yet, so verification can fail; mount can still succeed.
 echo "Step 5: Verifying mount status..."
 if [[ -n "${GOVC_USERNAME:-}" ]] && [[ -n "${GOVC_PASSWORD:-}" ]]; then
     GOVC_OPTS=(-vm "$VM_NAME" -l "${GOVC_USERNAME}:${GOVC_PASSWORD}")

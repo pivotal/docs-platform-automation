@@ -26,7 +26,7 @@ append_var() {
     echo "${key} = \"${value}\"" >> "$VARS_FILE"
 }
 
-# Build NO_PROXY value: user's value (if any) plus implicit "github.com,github.com:443" so GitHub bypasses proxy.
+# Build NO_PROXY: user value (if any) + "github.com,github.com:443" so plugin download can bypass proxy.
 no_proxy_with_github() {
     local user="${1:-}"
     user="${user#"${user%%[![:space:]]*}"}"
@@ -165,11 +165,11 @@ declare -a JUMPER_ARGS=()
 echo "All arguments passed to build.sh: ./build.sh -v $VARS_FILE ${BUILD_ARGS[*]} ${JUMPER_ARGS[*]}"
 echo "=========================================="
 
-# Set NO_PROXY before curl/packer init so GitHub bypasses proxy (user value + implicit github.com,github.com:443).
+# Set NO_PROXY before curl/packer init so GitHub bypasses proxy (user value + github.com,github.com:443).
 export NO_PROXY="$(no_proxy_with_github "${NO_PROXY:-}")"
 
-# ---- Packer vsphere plugin (run before HTTP_PROXY/HTTPS_PROXY are set so plugin download uses direct connection or NO_PROXY) ----
-# HTTP_PROXY and HTTPS_PROXY are exported only after this block (below).
+# ---- Packer vsphere plugin ----
+# HTTP_PROXY/HTTPS_PROXY are set only after this block so plugin download is direct or uses NO_PROXY.
 VERSION="1.4.2"
 PLUGIN_NAME="vsphere"
 SOURCE="github.com/hashicorp/vsphere"
@@ -193,7 +193,7 @@ rm -f "$ZIP_NAME" "$SUMS_NAME" "$BINARY_NAME"
 echo "--- Success! Running Packer Init ---"
 PACKER_LOG=1 packer init windows-vm.pkr.hcl
 
-# Set HTTP_PROXY/HTTPS_PROXY only after packer init (for Packer build and govc). NO_PROXY already set above.
+# Set HTTP_PROXY/HTTPS_PROXY after packer init (for Packer build and govc). NO_PROXY already set above.
 [[ -n "${HTTP_PROXY:-}" ]] && export HTTP_PROXY="${HTTP_PROXY}"
 [[ -n "${HTTPS_PROXY:-}" ]] && export HTTPS_PROXY="${HTTPS_PROXY}"
 

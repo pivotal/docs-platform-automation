@@ -59,6 +59,7 @@ run_script() {
 }
 
 # Get variable value from vars file (HCL-style key = "value" or key = value). Outputs value to stdout.
+# Avoids a full HCL parser; good enough for our vars file shape.
 get_var() {
     local vars_file="$1" key="$2"
     [[ -z "$vars_file" ]] || [[ ! -f "$vars_file" ]] && return 0
@@ -1694,8 +1695,8 @@ post_build_provisioning() {
         }
         sleep 30
 
-        # Step 1.7: Wait for VMware Tools guest operations to be ready (poll up to 10 min, every 30s).
-        # Run a simple PowerShell one-liner via guest.start until it succeeds; then we continue using guest.start for all PowerShell steps.
+        # Step 1.7: Poll until guest ops work (keystrokes only start the installer; it runs in background).
+        # Once a PowerShell one-liner succeeds, we set USE_GUEST_RUN so later steps can use guest.run.
         log_info "Step 1.7: Waiting for VMware Tools guest operations (poll up to 10 min, every 30s)..."
         local guest_ready=0
         local wait_elapsed=0
@@ -1710,8 +1711,9 @@ post_build_provisioning() {
                 local raw
                 raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
                 local code
-                code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-                [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
+                # govc guest.ps -x outputs a table: UID PID STIME XTIME XCODE CMD (not JSON)
+                code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
+                [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
                 if [[ "${code:-1}" == "0" ]]; then
                     guest_ready=1
                     log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing with guest.run for PowerShell steps."

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Run PowerShell script on VM using govc guest.start or guest.run.
-# When VMware Tools are ready and the guest is detected as Windows, guest.run uses cmd.exe and can run PowerShell.
-# When the guest is not yet detected as Windows (e.g. Tools still installing), guest.run uses /bin/bash and fails.
-# guest.start runs the program directly and works as soon as guest operations are available.
-# This is a generic script that can execute any PowerShell script on a VM
+#
+# Why not only guest.run? When the guest is not yet detected as Windows (e.g. Tools still installing),
+# guest.run uses /bin/bash and fails. guest.start runs the program directly and works as soon as guest ops are available.
+# When USE_GUEST_RUN=1 we try guest.run first and fall back to guest.start if we see "bin/bash" / "not found".
+#
 # Usage: run-powershell-via-govc.sh <vm-name> <script-path> <username> <password> [log-file] [env-vars]
 #
 # Parameters:
@@ -51,6 +52,8 @@ if [[ -n "$LOG_FILE" ]]; then
         LOG_FILE=""
     }
 fi
+
+[[ "${DEBUG_MODE:-}" == "true" ]] && set -x
 
 if [[ -z "$VM_NAME" ]] || [[ -z "$SCRIPT_PATH" ]] || [[ -z "$GUEST_PASSWORD" ]] || ! command -v govc >/dev/null 2>&1; then
     echo "Usage: $0 <vm-name> <script-path> <username> <password> [log-file] [env-vars]"
@@ -113,14 +116,12 @@ ENV_SETUP=""
 if [[ -n "$ENV_VARS_TO_PASS" ]]; then
     for var in $ENV_VARS_TO_PASS; do
         if [[ -n "${!var:-}" ]]; then
-            # IMPORTANT: Escape single quotes by doubling them so PowerShell treats them as literals
+            # Escape single quotes by doubling so PowerShell treats '' as literal quote
             escaped_value=$(python3 -c "import sys; print(sys.stdin.read().replace(\"'\", \"''\"))" <<< "${!var}")
 
             if [[ -n "$ENV_SETUP" ]]; then
                 ENV_SETUP="${ENV_SETUP}"$'\n'
             fi
-
-            # FIX: Wrap the value in SINGLE QUOTES for PowerShell
             ENV_SETUP="${ENV_SETUP}\$env:${var}='${escaped_value}'"
         fi
     done
@@ -198,7 +199,7 @@ if [[ -n "${USE_GUEST_RUN:-}" ]]; then
         "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-File" "$VM_SCRIPT_PATH" 2>&1) || true
     EXIT_CODE=$?
     if echo "$OUTPUT" | grep -qi "bin/bash\|not found"; then
-        # Guest not detected as Windows; guest.run used /bin/bash and failed. Fall back to guest.start.
+        # guest.run used /bin/bash because guest not detected as Windows; fall back to guest.start
         echo "guest.run failed (guest not detected as Windows), falling back to guest.start" >&2
         USE_GUEST_RUN=""
     fi
@@ -221,9 +222,11 @@ if [[ -z "${USE_GUEST_RUN:-}" ]]; then
     }
 
     # Wait for PowerShell to exit and get exit code in one call (-X wait, -x output exit time and code).
+    # Second call to guest.ps -x can miss the process after it is reaped, so we do one -X -x and parse.
     EXIT_RAW=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -X -x 2>/dev/null)
-    EXIT_CODE=$(echo "$EXIT_RAW" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$EXIT_CODE" ]] && EXIT_CODE=$(echo "$EXIT_RAW" | awk -v pid="$PID_PS" '$2==pid {print $5; exit}')
+    # govc guest.ps -x outputs a table: UID PID STIME XTIME XCODE CMD (not JSON)
+    EXIT_CODE=$(echo "$EXIT_RAW" | awk -v p="$PID_PS" 'NR>1 && $2+0==p+0 {print $5; exit}')
+    [[ -z "$EXIT_CODE" ]] && EXIT_CODE=$(echo "$EXIT_RAW" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
     EXIT_CODE=${EXIT_CODE:-0}
     OUTPUT=$(govc guest.download "${GOVC_OPTS[@]}" "$OUT_PATH" - 2>/dev/null) || OUTPUT=""
 
@@ -239,8 +242,7 @@ else
     govc guest.run "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$VM_SCRIPT_PATH\"" >/dev/null 2>&1 || true
 fi
 
-# Filter CLIXML output (same as test-backslash-escape.sh)
-# CLIXML is PowerShell's XML serialization format - filter it but keep actual output
+# Filter CLIXML: PowerShell sometimes wraps errors in XML; strip those lines so we show real output.
 FILTERED_OUTPUT=$(echo "$OUTPUT" | grep -v "^#< CLIXML$" | grep -v "^<Objs" | grep -v "^</Objs>" | grep -v "^<Obj" | grep -v "^<.*>$" | grep -v "^#<" || echo "$OUTPUT")
 
 # Trim whitespace from output

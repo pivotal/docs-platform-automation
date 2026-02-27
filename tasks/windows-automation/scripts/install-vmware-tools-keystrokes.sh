@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Install VMware Tools using govc vm.keystrokes
-# This runs after password change and login
+# Install VMware Tools using govc vm.keystrokes (no guest.run/guest.start — Tools not installed yet).
+# We send keystrokes to run setup64.exe; the installer then runs in the guest. Script exits after sending keys.
 # Usage: install-vmware-tools-keystrokes.sh <vm-name> [log-file]
 
 VM_NAME="${1:-}"
@@ -10,6 +10,8 @@ LOG_FILE="${2:-}"
 if [[ -n "$LOG_FILE" ]]; then
     exec > >(tee -a "$LOG_FILE") 2>&1
 fi
+
+[[ "${DEBUG_MODE:-}" == "true" ]] && set -x
 
 if [[ -z "$VM_NAME" ]]; then
     echo "Usage: $0 <vm-name> [log-file]"
