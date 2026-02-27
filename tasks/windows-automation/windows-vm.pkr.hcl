@@ -22,6 +22,11 @@ variable "vcenter_server" {
   description = "vCenter Server FQDN or IP"
 }
 
+variable "patch_version" {
+  type        = string
+  description = "vCenter Server FQDN or IP"
+}
+
 variable "vcenter_username" {
   type        = string
   description = "vCenter username"
