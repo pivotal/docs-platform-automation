@@ -2,8 +2,8 @@
 # Windows Updates Automation Loop
 # Usage: run-windows-updates-loop.sh <vm-name> <username> <password> [max-iterations]
 #
-# Uses govc guest.start (not guest.run) so Windows guests work with standard VMware Tools.
-# guest.run uses /bin/bash and fails with "File /bin/bash was not found".
+# Uses govc guest.start (or guest.run when USE_GUEST_RUN=1 after Tools are ready).
+# When the guest is not detected as Windows, guest.run uses /bin/bash and fails with "File /bin/bash was not found".
 
 VM_NAME="${1:-}"
 USERNAME="${2:-Administrator}"
@@ -31,9 +31,11 @@ wait_for_vm_ready() {
         if [[ -z "$pid" ]]; then
             continue
         fi
-        govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X >/dev/null 2>&1
+        local raw
+        raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
         local code
-        code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x 2>/dev/null | awk -v p="$pid" '$1==p {print $2; exit}')
+        code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+        [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
         if [[ "${code:-1}" == "0" ]]; then
             echo "VM is ready"
             return 0
@@ -44,15 +46,17 @@ wait_for_vm_ready() {
 }
 
 # Run a PowerShell -Command on guest via guest.start; return exit code. Output is discarded.
+# Use -X -x in one call so we wait and get exit code without a second query (avoids race with reaped process).
 guest_ps_run_exit() {
     local cmd="$1"
     local pid
-    pid=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-Command" "$cmd" 2>/dev/null) || { echo "1"; return; }
+    pid=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$cmd" 2>/dev/null) || { echo "1"; return; }
     [[ -z "$pid" ]] && { echo "1"; return; }
-    govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X >/dev/null 2>&1
+    local raw
+    raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
     local code
-    code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x -json 2>/dev/null | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$code" ]] && code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x 2>/dev/null | awk -v p="$pid" '$1==p {print $2; exit}')
+    code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
     echo "${code:-0}"
 }
 
@@ -63,12 +67,13 @@ guest_ps_run_capture() {
     out_path=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || { echo ""; GUEST_PS_EXIT=1; return 1; }
     local run_cmd="& { $cmd *>&1 } | Out-File -FilePath '$out_path' -Encoding utf8"
     local pid
-    pid=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-Command" "$run_cmd" 2>/dev/null) || { GUEST_PS_EXIT=1; return 1; }
+    pid=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$run_cmd" 2>/dev/null) || { GUEST_PS_EXIT=1; return 1; }
     [[ -z "$pid" ]] && { GUEST_PS_EXIT=1; return 1; }
-    govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X >/dev/null 2>&1
+    local raw
+    raw=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X -x 2>/dev/null)
     local code
-    code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x -json 2>/dev/null | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-    [[ -z "$code" ]] && code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x 2>/dev/null | awk -v p="$pid" '$1==p {print $2; exit}')
+    code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+    [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
     GUEST_PS_EXIT=${code:-0}
     govc guest.download "${GOVC_OPTS[@]}" "$out_path" - 2>/dev/null || true
     local pid_del

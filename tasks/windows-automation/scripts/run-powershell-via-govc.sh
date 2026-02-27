@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Run PowerShell script on VM using govc guest.start (not guest.run).
-# guest.run uses /bin/bash on the guest and fails on Windows (ServerFaultCode: File /bin/bash was not found).
-# guest.start runs the program directly and works with standard VMware Tools.
+# Run PowerShell script on VM using govc guest.start or guest.run.
+# When VMware Tools are ready and the guest is detected as Windows, guest.run uses cmd.exe and can run PowerShell.
+# When the guest is not yet detected as Windows (e.g. Tools still installing), guest.run uses /bin/bash and fails.
+# guest.start runs the program directly and works as soon as guest operations are available.
 # This is a generic script that can execute any PowerShell script on a VM
 # Usage: run-powershell-via-govc.sh <vm-name> <script-path> <username> <password> [log-file] [env-vars]
 #
@@ -170,7 +171,7 @@ if [[ -n "$LOG_FILE" ]]; then
 fi
 
 echo "=========================================="
-echo "Running PowerShell script via govc guest.start"
+echo "Running PowerShell script (guest.run when USE_GUEST_RUN=1, else guest.start)"
 echo "VM: $VM_NAME"
 echo "Script: $SCRIPT_PATH"
 echo "Guest User: $GUEST_USERNAME"
@@ -186,38 +187,57 @@ if ! govc vm.info "$VM_NAME" >/dev/null 2>&1; then
     exit 1
 fi
 
-# guest.run always uses /bin/bash on the guest with standard VMware Tools -> fails on Windows.
-# Use guest.start: create temp file for output, start PowerShell, wait, download output, then cleanup.
 GOVC_OPTS=(-vm "$VM_NAME" -l "${GUEST_USERNAME}:${GUEST_PASSWORD}")
-OUT_PATH=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || {
-    echo "ERROR: Failed to create temp file on guest for script output" >&2
-    exit 1
-}
+OUTPUT=""
+EXIT_CODE=0
 
-# Run PowerShell: execute script and redirect all output to temp file
-PS_COMMAND="& { & '$VM_SCRIPT_PATH' *>&1 } | Out-File -FilePath '$OUT_PATH' -Encoding utf8"
-PID_PS=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" \
-    "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$PS_COMMAND" 2>/dev/null) || {
-    echo "ERROR: Failed to start PowerShell on guest" >&2
-    exit 1
-}
-
-govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -X >/dev/null 2>&1
-# Parse exit code from guest.ps -x (JSON or table). If unparseable, treat as failure (1) to avoid false success.
-EXIT_CODE=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -x -json 2>/dev/null | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-if [[ -z "$EXIT_CODE" ]]; then
-    EXIT_CODE=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -x 2>/dev/null | awk -v pid="$PID_PS" '$1==pid {print $2; exit}')
+if [[ -n "${USE_GUEST_RUN:-}" ]]; then
+    # Use guest.run (uses cmd.exe on Windows when guest is detected; uses /bin/bash otherwise).
+    echo "Running PowerShell script via govc guest.run" >&2
+    OUTPUT=$(govc guest.run "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" \
+        "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-File" "$VM_SCRIPT_PATH" 2>&1) || true
+    EXIT_CODE=$?
+    if echo "$OUTPUT" | grep -qi "bin/bash\|not found"; then
+        # Guest not detected as Windows; guest.run used /bin/bash and failed. Fall back to guest.start.
+        echo "guest.run failed (guest not detected as Windows), falling back to guest.start" >&2
+        USE_GUEST_RUN=""
+    fi
 fi
-# Default to 0 when parsing fails so we don't introduce false failures; output is still shown for debugging.
-EXIT_CODE=${EXIT_CODE:-0}
-OUTPUT=$(govc guest.download "${GOVC_OPTS[@]}" "$OUT_PATH" - 2>/dev/null) || OUTPUT=""
 
-# Clean up script and output file on VM using guest.start (avoid guest.run)
-echo "Cleaning up script file on VM..." >&2
-PID_DEL1=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$VM_SCRIPT_PATH\"" 2>/dev/null) || true
-[[ -n "$PID_DEL1" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL1" -X >/dev/null 2>&1 || true
-PID_DEL2=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$OUT_PATH\"" 2>/dev/null) || true
-[[ -n "$PID_DEL2" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL2" -X >/dev/null 2>&1 || true
+if [[ -z "${USE_GUEST_RUN:-}" ]]; then
+    # Use guest.start: create temp file for output, start PowerShell, wait, download output, then cleanup.
+    echo "Running PowerShell script via govc guest.start" >&2
+    OUT_PATH=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || {
+        echo "ERROR: Failed to create temp file on guest for script output" >&2
+        exit 1
+    }
+
+    # Run PowerShell: execute script and redirect all output to temp file
+    PS_COMMAND="& { & '$VM_SCRIPT_PATH' *>&1 } | Out-File -FilePath '$OUT_PATH' -Encoding utf8"
+    PID_PS=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" \
+        "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$PS_COMMAND" 2>/dev/null) || {
+        echo "ERROR: Failed to start PowerShell on guest" >&2
+        exit 1
+    }
+
+    # Wait for PowerShell to exit and get exit code in one call (-X wait, -x output exit time and code).
+    EXIT_RAW=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -X -x 2>/dev/null)
+    EXIT_CODE=$(echo "$EXIT_RAW" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+    [[ -z "$EXIT_CODE" ]] && EXIT_CODE=$(echo "$EXIT_RAW" | awk -v pid="$PID_PS" '$1==pid {print $2; exit}')
+    EXIT_CODE=${EXIT_CODE:-0}
+    OUTPUT=$(govc guest.download "${GOVC_OPTS[@]}" "$OUT_PATH" - 2>/dev/null) || OUTPUT=""
+
+    # Clean up script and output file on VM
+    echo "Cleaning up script and output file on VM..." >&2
+    PID_DEL1=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$VM_SCRIPT_PATH\"" 2>/dev/null) || true
+    [[ -n "$PID_DEL1" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL1" -X >/dev/null 2>&1 || true
+    PID_DEL2=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$OUT_PATH\"" 2>/dev/null) || true
+    [[ -n "$PID_DEL2" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL2" -X >/dev/null 2>&1 || true
+else
+    # Clean up script file only (guest.run path; no output file was used)
+    echo "Cleaning up script file on VM..." >&2
+    govc guest.run "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$VM_SCRIPT_PATH\"" >/dev/null 2>&1 || true
+fi
 
 # Filter CLIXML output (same as test-backslash-escape.sh)
 # CLIXML is PowerShell's XML serialization format - filter it but keep actual output

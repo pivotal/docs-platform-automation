@@ -20,7 +20,6 @@ fi
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 pushd $SCRIPT_DIR/windows-automation
-export PACKER_GITHUB_API_TOKEN=${PACKER_GITHUB_API_TOKEN}
 OLD_PWD=${OLDPWD}
 
 # Generate variables file from Concourse task inputs
@@ -204,7 +203,7 @@ if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}
     echo "Jumper flags added to execution (--jumper-ip, --jumper-user, --jumper-password)."
 fi
 
-packer init windows-vm.pkr.hcl
+PACKER_GITHUB_API_TOKEN=${PACKER_GITHUB_API_TOKEN} packer init windows-vm.pkr.hcl
 
 # Build args: pass --debug when DEBUG_MODE is true (e.g. from Concourse task params)
 BUILD_ARGS=()

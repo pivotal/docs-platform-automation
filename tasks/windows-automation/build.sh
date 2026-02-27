@@ -1681,6 +1681,40 @@ post_build_provisioning() {
             return 1
         }
         sleep 30
+
+        # Step 1.7: Wait for VMware Tools guest operations to be ready (poll up to 10 min, every 30s).
+        # Run a simple PowerShell one-liner via guest.start until it succeeds; then we continue using guest.start for all PowerShell steps.
+        log_info "Step 1.7: Waiting for VMware Tools guest operations (poll up to 10 min, every 30s)..."
+        local guest_ready=0
+        local wait_elapsed=0
+        local wait_timeout=600
+        local wait_interval=30
+        local govc_guest_opts=(-vm "$vm_name" -l "${windows_username}:${windows_password}")
+        local ps_exe="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        while [[ $wait_elapsed -lt $wait_timeout ]]; do
+            local pid
+            pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
+            if [[ -n "$pid" ]]; then
+                local raw
+                raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null)
+                local code
+                code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+                [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$1==p {print $2; exit}')
+                if [[ "${code:-1}" == "0" ]]; then
+                    guest_ready=1
+        log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing with guest.run for PowerShell steps."
+                    break
+                fi
+            fi
+            log_info "Guest PowerShell not ready yet, waiting ${wait_interval}s (elapsed ${wait_elapsed}s / ${wait_timeout}s)..."
+            sleep $wait_interval
+            wait_elapsed=$((wait_elapsed + wait_interval))
+        done
+        if [[ $guest_ready -ne 1 ]]; then
+            log_error "VMware Tools guest operations did not become ready within ${wait_timeout}s"
+            return 1
+        fi
+        export USE_GUEST_RUN=1
     else
         log_info "Step 1: Skipping password change and VMware Tools (template mode)"
         sleep 10

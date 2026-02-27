@@ -62,7 +62,8 @@ echo "✓ Mount command executed successfully"
 echo "Step 4: Waiting for mount to complete..."
 sleep 10
 
-# Verify mount using PowerShell via govc guest.start (guest.run uses /bin/bash and fails on Windows)
+# Verify mount using PowerShell via govc guest.start (or guest.run when guest is detected as Windows).
+# When the guest is not detected as Windows, guest.run uses /bin/bash and fails.
 # Note: This requires VMware Tools to be installed, so it may not work on first mount
 echo "Step 5: Verifying mount status..."
 if [[ -n "${GOVC_USERNAME:-}" ]] && [[ -n "${GOVC_PASSWORD:-}" ]]; then
@@ -72,7 +73,7 @@ if [[ -n "${GOVC_USERNAME:-}" ]] && [[ -n "${GOVC_PASSWORD:-}" ]]; then
     OUT_PATH=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || true
     if [[ -n "$OUT_PATH" ]]; then
         RUN_CMD="& { $VERIFY_CMD *>&1 } | Out-File -FilePath '$OUT_PATH' -Encoding utf8"
-        PID_PS=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-NoProfile" "-Command" "$RUN_CMD" 2>/dev/null) || true
+        PID_PS=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$RUN_CMD" 2>/dev/null) || true
         if [[ -n "$PID_PS" ]]; then
             govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -X >/dev/null 2>&1
             VERIFY_OUTPUT=$(govc guest.download "${GOVC_OPTS[@]}" "$OUT_PATH" - 2>/dev/null) || VERIFY_OUTPUT="VERIFY_FAILED"
