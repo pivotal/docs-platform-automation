@@ -203,11 +203,21 @@ if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}
     echo "Jumper flags added to execution (--jumper-ip, --jumper-user, --jumper-password)."
 fi
 
-# Use https github for this call only
-GIT_CONFIG_COUNT=1 \
-GIT_CONFIG_KEY_0="url.https://github.com/.insteadOf" \
-GIT_CONFIG_VALUE_0="git@github.com:" \
-PACKER_GITHUB_API_TOKEN=${PACKER_GITHUB_API_TOKEN} packer init windows-vm.pkr.hcl
+
+if ! grep -q "machine github.com" ~/.netrc; then
+    echo "Adding GitHub credentials to .netrc..."
+    cat <<EOF >> ~/.netrc
+machine github.com
+login git
+password ${PACKER_GITHUB_API_TOKEN}
+EOF
+else
+    echo "GitHub credentials already exist in .netrc. Skipping append."
+fi
+
+chmod 600 ~/.netrc
+
+packer init windows-vm.pkr.hcl
 
 # Build args: pass --debug when DEBUG_MODE is true (e.g. from Concourse task params)
 BUILD_ARGS=()
