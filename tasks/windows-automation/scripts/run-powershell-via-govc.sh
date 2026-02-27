@@ -215,8 +215,9 @@ if [[ -z "${USE_GUEST_RUN:-}" ]]; then
         exit 1
     }
 
-    # Run PowerShell: execute script and redirect all output to temp file
-    PS_COMMAND="& { & '$VM_SCRIPT_PATH' *>&1 } | Out-File -FilePath '$OUT_PATH' -Encoding utf8"
+    # Run PowerShell: execute script, capture its exit code, write output to temp file, then exit with that code.
+    # (If we used "script | Out-File", the process exit code would be Out-File's 0 and we'd lose the script's exit code.)
+    PS_COMMAND="& { \$out = ( & { & '$VM_SCRIPT_PATH' *>&1 } ); \$code = \$LASTEXITCODE; \$out | Out-File -FilePath '$OUT_PATH' -Encoding utf8; exit \$code }"
     PID_PS=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" \
         "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$PS_COMMAND" 2>/dev/null) || {
         echo "ERROR: Failed to start PowerShell on guest" >&2

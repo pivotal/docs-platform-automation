@@ -63,11 +63,13 @@ guest_ps_run_exit() {
 }
 
 # Run PowerShell -Command and capture output to a guest temp file; output is printed to stdout, exit code is in global GUEST_PS_EXIT (or last line).
+# We must run the command, capture its exit code, write output to file, then exit with that code - otherwise a pipeline (cmd | Out-File)
+# would make the process exit 0 (Out-File) and we'd lose 3010 (reboot required) and other script exit codes.
 guest_ps_run_capture() {
     local cmd="$1"
     local out_path
     out_path=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || { echo ""; GUEST_PS_EXIT=1; return 1; }
-    local run_cmd="& { $cmd *>&1 } | Out-File -FilePath '$out_path' -Encoding utf8"
+    local run_cmd="& { \$out = ( & { $cmd } 2>&1 ); \$code = \$LASTEXITCODE; \$out | Out-File -FilePath '$out_path' -Encoding utf8; exit \$code }"
     local pid
     pid=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$run_cmd" 2>/dev/null) || { GUEST_PS_EXIT=1; return 1; }
     [[ -z "$pid" ]] && { GUEST_PS_EXIT=1; return 1; }
@@ -148,7 +150,27 @@ while [[ $iteration -lt $MAX_ITER ]]; do
 
     if [[ "$INSTALL_EXIT" == "3010" ]]; then
         # 3010 = Windows Update "reboot required" success; we reboot and continue the loop
-        echo "Reboot required. Restarting VM..."
+        echo "Reboot required (exit 3010). Restarting VM..."
+        govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || {
+            echo "Failed to shutdown VM gracefully, forcing power off..."
+            govc vm.power -off "$VM_NAME" >/dev/null 2>&1
+        }
+        echo "Waiting for VM to shutdown..."
+        sleep 30
+        echo "Powering on VM..."
+        govc vm.power -on "$VM_NAME" >/dev/null 2>&1
+        echo "Waiting for VM to boot..."
+        if ! wait_for_vm_ready; then
+            exit 1
+        fi
+        sleep 30
+        continue
+    fi
+
+    # Fallback: script may have exited 3010 but process reported 0 (e.g. pipeline swallowed exit code).
+    # If output contains REBOOT_REQUIRED, treat as success and reboot.
+    if echo "${INSTALL_OUTPUT:-}" | grep -qi "REBOOT_REQUIRED"; then
+        echo "Reboot required (found REBOOT_REQUIRED in output; exit code was $INSTALL_EXIT). Restarting VM..."
         govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || {
             echo "Failed to shutdown VM gracefully, forcing power off..."
             govc vm.power -off "$VM_NAME" >/dev/null 2>&1
