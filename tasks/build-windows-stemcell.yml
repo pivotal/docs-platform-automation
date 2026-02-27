@@ -7,6 +7,9 @@ inputs:
 outputs:
 - name: logs
 - name: stemcell
+params:
+  # Set to "true" to enable set -x for build.sh and all child scripts (or pass from pipeline task params)
+  DEBUG_MODE: "false"
 image_resource:
   type: registry-image
   source:

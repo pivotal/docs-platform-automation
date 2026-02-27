@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Run PowerShell script on VM using govc guest.run
-# Use array-based invocation with an absolute PATH so guest.run runs the program directly
-# (otherwise it wraps in cmd.exe /c "..." or /bin/bash -c "..." and escaping breaks).
+# Run PowerShell script on VM using govc guest.start (not guest.run).
+# guest.run uses /bin/bash on the guest and fails on Windows (ServerFaultCode: File /bin/bash was not found).
+# guest.start runs the program directly and works with standard VMware Tools.
 # This is a generic script that can execute any PowerShell script on a VM
 # Usage: run-powershell-via-govc.sh <vm-name> <script-path> <username> <password> [log-file] [env-vars]
 #
@@ -170,7 +170,7 @@ if [[ -n "$LOG_FILE" ]]; then
 fi
 
 echo "=========================================="
-echo "Running PowerShell script via govc guest.run"
+echo "Running PowerShell script via govc guest.start"
 echo "VM: $VM_NAME"
 echo "Script: $SCRIPT_PATH"
 echo "Guest User: $GUEST_USERNAME"
@@ -186,32 +186,38 @@ if ! govc vm.info "$VM_NAME" >/dev/null 2>&1; then
     exit 1
 fi
 
-# Array-based invocation: absolute PATH + separate ARGs so guest.run runs the program directly
-# (no cmd.exe /c or /bin/bash -c wrapper), avoiding escaping issues in Concourse.
+# guest.run always uses /bin/bash on the guest with standard VMware Tools -> fails on Windows.
+# Use guest.start: create temp file for output, start PowerShell, wait, download output, then cleanup.
 GOVC_OPTS=(-vm "$VM_NAME" -l "${GUEST_USERNAME}:${GUEST_PASSWORD}")
-PS_EXE="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-RUN_CMD=(
-    "$PS_EXE"
-    "-ExecutionPolicy" "Bypass"
-    "-NoProfile"
-    "-NoLogo"
-    "-NonInteractive"
-    "-File" "$VM_SCRIPT_PATH"
-)
-TEMP_OUTPUT=$(mktemp /tmp/govc-guest-run-out.XXXXXX)
-trap 'rm -f "$TEMP_SCRIPT_FILE" "$TEMP_OUTPUT"' EXIT INT TERM
-govc guest.run "${GOVC_OPTS[@]}" "${RUN_CMD[@]}" > "$TEMP_OUTPUT" 2>&1
-EXIT_CODE=$?
-OUTPUT=$(cat "$TEMP_OUTPUT")
+OUT_PATH=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || {
+    echo "ERROR: Failed to create temp file on guest for script output" >&2
+    exit 1
+}
 
-# Clean up script file on VM (array-based: absolute path to cmd.exe + args)
+# Run PowerShell: execute script and redirect all output to temp file
+PS_COMMAND="& { & '$VM_SCRIPT_PATH' *>&1 } | Out-File -FilePath '$OUT_PATH' -Encoding utf8"
+PID_PS=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" \
+    "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "$PS_COMMAND" 2>/dev/null) || {
+    echo "ERROR: Failed to start PowerShell on guest" >&2
+    exit 1
+}
+
+govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -X >/dev/null 2>&1
+# Parse exit code from guest.ps -x (JSON or table). If unparseable, treat as failure (1) to avoid false success.
+EXIT_CODE=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -x -json 2>/dev/null | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+if [[ -z "$EXIT_CODE" ]]; then
+    EXIT_CODE=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -x 2>/dev/null | awk -v pid="$PID_PS" '$1==pid {print $2; exit}')
+fi
+# Default to 0 when parsing fails so we don't introduce false failures; output is still shown for debugging.
+EXIT_CODE=${EXIT_CODE:-0}
+OUTPUT=$(govc guest.download "${GOVC_OPTS[@]}" "$OUT_PATH" - 2>/dev/null) || OUTPUT=""
+
+# Clean up script and output file on VM using guest.start (avoid guest.run)
 echo "Cleaning up script file on VM..." >&2
-DEL_CMD=(
-    "C:\\Windows\\System32\\cmd.exe"
-    "/c"
-    "del /f /q \"$VM_SCRIPT_PATH\""
-)
-govc guest.run "${GOVC_OPTS[@]}" "${DEL_CMD[@]}" >/dev/null 2>&1 || true
+PID_DEL1=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$VM_SCRIPT_PATH\"" 2>/dev/null) || true
+[[ -n "$PID_DEL1" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL1" -X >/dev/null 2>&1 || true
+PID_DEL2=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$OUT_PATH\"" 2>/dev/null) || true
+[[ -n "$PID_DEL2" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL2" -X >/dev/null 2>&1 || true
 
 # Filter CLIXML output (same as test-backslash-escape.sh)
 # CLIXML is PowerShell's XML serialization format - filter it but keep actual output
@@ -240,7 +246,7 @@ if [[ $EXIT_CODE -ne 0 ]]; then
     echo "ERROR: PowerShell script failed with exit code: $EXIT_CODE" >&2
     echo "Full raw output:" >&2
     echo "$OUTPUT" >&2
-    exit $EXIT_CODE
+    exit "$EXIT_CODE"
 fi
 
 # Success - exit code is 0

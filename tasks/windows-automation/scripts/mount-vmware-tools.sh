@@ -62,19 +62,28 @@ echo "✓ Mount command executed successfully"
 echo "Step 4: Waiting for mount to complete..."
 sleep 10
 
-# Verify mount using PowerShell via govc guest.run (array-based; if guest credentials are available)
+# Verify mount using PowerShell via govc guest.start (guest.run uses /bin/bash and fails on Windows)
 # Note: This requires VMware Tools to be installed, so it may not work on first mount
 echo "Step 5: Verifying mount status..."
 if [[ -n "${GOVC_USERNAME:-}" ]] && [[ -n "${GOVC_PASSWORD:-}" ]]; then
     GOVC_OPTS=(-vm "$VM_NAME" -l "${GOVC_USERNAME}:${GOVC_PASSWORD}")
     PS_EXE="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-    VERIFY_CMD=(
-        "$PS_EXE"
-        "-NoProfile"
-        "-Command"
-        "if (Test-Path 'D:\\setup64.exe') { Write-Host 'SUCCESS: D:\\setup64.exe found' } else { Write-Host 'WARNING: D:\\setup64.exe not found yet' }"
-    )
-    VERIFY_OUTPUT=$(govc guest.run "${GOVC_OPTS[@]}" "${VERIFY_CMD[@]}" 2>&1 || echo "VERIFY_FAILED")
+    VERIFY_CMD="if (Test-Path 'D:\\setup64.exe') { Write-Host 'SUCCESS: D:\\setup64.exe found' } else { Write-Host 'WARNING: D:\\setup64.exe not found yet' }"
+    OUT_PATH=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || true
+    if [[ -n "$OUT_PATH" ]]; then
+        RUN_CMD="& { $VERIFY_CMD *>&1 } | Out-File -FilePath '$OUT_PATH' -Encoding utf8"
+        PID_PS=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-NoProfile" "-Command" "$RUN_CMD" 2>/dev/null) || true
+        if [[ -n "$PID_PS" ]]; then
+            govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_PS" -X >/dev/null 2>&1
+            VERIFY_OUTPUT=$(govc guest.download "${GOVC_OPTS[@]}" "$OUT_PATH" - 2>/dev/null) || VERIFY_OUTPUT="VERIFY_FAILED"
+            PID_DEL=$(govc guest.start "${GOVC_OPTS[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "del /f /q \"$OUT_PATH\"" 2>/dev/null) || true
+            [[ -n "$PID_DEL" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL" -X >/dev/null 2>&1 || true
+        else
+            VERIFY_OUTPUT="VERIFY_FAILED"
+        fi
+    else
+        VERIFY_OUTPUT="VERIFY_FAILED"
+    fi
 
     if [[ "$VERIFY_OUTPUT" == *"SUCCESS"* ]]; then
         echo "✓ Verification: VMware Tools ISO is mounted (D:\setup64.exe found)"

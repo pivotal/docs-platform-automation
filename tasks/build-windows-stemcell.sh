@@ -179,7 +179,7 @@ echo "---"
 echo "Base VM name: windows-base-vm"
 TARGET_VM_TS=$(date -u +%Y%m%d%H%M%S 2>/dev/null || date +%Y%m%d%H%M%S)
 echo "Target VM name: windows-target-vm-${TARGET_VM_TS}"
-echo "All arguments passed to build.sh: ./build.sh -f $VARS_FILE ${JUMPER_ARGS[*]}"
+echo "All arguments passed to build.sh: ./build.sh -v $VARS_FILE ${BUILD_ARGS[*]} ${JUMPER_ARGS[*]}"
 echo "=========================================="
 
 # Set HTTP_PROXY, HTTPS_PROXY, NO_PROXY for Packer and govc
@@ -206,9 +206,16 @@ fi
 
 packer init windows-vm.pkr.hcl
 
+# Build args: pass --debug when DEBUG_MODE is true (e.g. from Concourse task params)
+BUILD_ARGS=()
+if [[ "${DEBUG_MODE:-}" == "true" ]]; then
+    BUILD_ARGS+=(--debug)
+    echo "DEBUG_MODE=true: enabling set -x for build.sh and all scripts it calls"
+fi
+
 # Run build script
 echo "Starting Windows stemcell creation..."
-./build.sh -v "$VARS_FILE" "${JUMPER_ARGS[@]}"
+./build.sh -v "$VARS_FILE" "${BUILD_ARGS[@]}" "${JUMPER_ARGS[@]}"
 
 # Copy logs to output
 mkdir -p $OLD_PWD/logs

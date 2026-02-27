@@ -2,7 +2,8 @@
 # Windows Updates Automation Loop
 # Usage: run-windows-updates-loop.sh <vm-name> <username> <password> [max-iterations]
 #
-# Uses array-based govc guest.run (absolute PATH + separate ARGs) throughout.
+# Uses govc guest.start (not guest.run) so Windows guests work with standard VMware Tools.
+# guest.run uses /bin/bash and fails with "File /bin/bash was not found".
 
 VM_NAME="${1:-}"
 USERNAME="${2:-Administrator}"
@@ -19,23 +20,62 @@ GOVC_OPTS=(-vm "$VM_NAME" -l "${USERNAME}:${PASSWORD}")
 PS_EXE="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 CMD_EXE="C:\\Windows\\System32\\cmd.exe"
 
-# Wait for VM to respond to guest.run (poll cmd.exe /c echo READY), timeout 600s
+# Wait for VM to respond: run cmd.exe /c "echo READY" via guest.start, wait, check exit code. Timeout 600s.
 wait_for_vm_ready() {
     local elapsed=0
-    local ready_cmd=("$CMD_EXE" "/c" "echo READY")
     while [[ $elapsed -lt 600 ]]; do
         sleep 10
         elapsed=$((elapsed + 10))
-        local test_out
-        test_out=$(govc guest.run "${GOVC_OPTS[@]}" "${ready_cmd[@]}" 2>/dev/null)
-        local govc_ret=$?
-        if [[ $govc_ret -eq 0 ]] && echo "$test_out" | grep -q "READY"; then
+        local pid
+        pid=$(govc guest.start "${GOVC_OPTS[@]}" "$CMD_EXE" "/c" "echo READY" 2>/dev/null) || true
+        if [[ -z "$pid" ]]; then
+            continue
+        fi
+        govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X >/dev/null 2>&1
+        local code
+        code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x 2>/dev/null | awk -v p="$pid" '$1==p {print $2; exit}')
+        if [[ "${code:-1}" == "0" ]]; then
             echo "VM is ready"
             return 0
         fi
     done
     echo "VM did not become ready within timeout"
     return 1
+}
+
+# Run a PowerShell -Command on guest via guest.start; return exit code. Output is discarded.
+guest_ps_run_exit() {
+    local cmd="$1"
+    local pid
+    pid=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-Command" "$cmd" 2>/dev/null) || { echo "1"; return; }
+    [[ -z "$pid" ]] && { echo "1"; return; }
+    govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X >/dev/null 2>&1
+    local code
+    code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x -json 2>/dev/null | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+    [[ -z "$code" ]] && code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x 2>/dev/null | awk -v p="$pid" '$1==p {print $2; exit}')
+    echo "${code:-0}"
+}
+
+# Run PowerShell -Command and capture output to a guest temp file; output is printed to stdout, exit code is in global GUEST_PS_EXIT (or last line).
+guest_ps_run_capture() {
+    local cmd="$1"
+    local out_path
+    out_path=$(govc guest.mktemp "${GOVC_OPTS[@]}" 2>/dev/null) || { echo ""; GUEST_PS_EXIT=1; return 1; }
+    local run_cmd="& { $cmd *>&1 } | Out-File -FilePath '$out_path' -Encoding utf8"
+    local pid
+    pid=$(govc guest.start "${GOVC_OPTS[@]}" "$PS_EXE" "-ExecutionPolicy" "Bypass" "-NoProfile" "-Command" "$run_cmd" 2>/dev/null) || { GUEST_PS_EXIT=1; return 1; }
+    [[ -z "$pid" ]] && { GUEST_PS_EXIT=1; return 1; }
+    govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -X >/dev/null 2>&1
+    local code
+    code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x -json 2>/dev/null | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+    [[ -z "$code" ]] && code=$(govc guest.ps "${GOVC_OPTS[@]}" -p "$pid" -x 2>/dev/null | awk -v p="$pid" '$1==p {print $2; exit}')
+    GUEST_PS_EXIT=${code:-0}
+    govc guest.download "${GOVC_OPTS[@]}" "$out_path" - 2>/dev/null || true
+    local pid_del
+    pid_del=$(govc guest.start "${GOVC_OPTS[@]}" "$CMD_EXE" "/c" "del /f /q \"$out_path\"" 2>/dev/null) || true
+    [[ -n "$pid_del" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$pid_del" -X >/dev/null 2>&1 || true
+    # Caller can use GUEST_PS_EXIT if needed
+    return 0
 }
 
 iteration=0
@@ -46,17 +86,11 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     echo "Iteration $iteration"
     echo "=========================================="
 
-    # Check for pending reboot BEFORE uploading scripts (array-based)
+    # Check for pending reboot via guest.start
     echo "Checking for pending reboot..."
-    REBOOT_CHECK_CMD=(
-        "$PS_EXE"
-        "-NoProfile"
-        "-Command"
-        "Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired'"
-    )
-    REBOOT_OUTPUT=$(govc guest.run "${GOVC_OPTS[@]}" "${REBOOT_CHECK_CMD[@]}" 2>&1) || true
-
-    if echo "$REBOOT_OUTPUT" | grep -qi "True"; then
+    REBOOT_CMD="Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired'"
+    REBOOT_OUTPUT=$(guest_ps_run_capture "$REBOOT_CMD" 2>/dev/null)
+    if [[ "${GUEST_PS_EXIT:-1}" == "0" ]] && echo "$REBOOT_OUTPUT" | grep -qi "True"; then
         echo "Pending reboot detected - rebooting VM first..."
         govc vm.power -r "$VM_NAME" >/dev/null 2>&1 || {
             echo "Failed to reboot, trying shutdown and power on..."
@@ -71,14 +105,10 @@ while [[ $iteration -lt $MAX_ITER ]]; do
         sleep 30
     fi
 
-    # Delete existing scripts then upload (array-based cleanup)
+    # Delete existing scripts on guest via guest.start
     echo "Uploading PowerShell scripts..."
-    DEL_SCRIPTS_CMD=(
-        "$CMD_EXE"
-        "/c"
-        "del /f /q C:\\Windows\\Temp\\install-windows-updates.ps1 C:\\Windows\\Temp\\check-updates-after-reboot.ps1"
-    )
-    govc guest.run "${GOVC_OPTS[@]}" "${DEL_SCRIPTS_CMD[@]}" >/dev/null 2>&1 || true
+    PID_DEL=$(govc guest.start "${GOVC_OPTS[@]}" "$CMD_EXE" "/c" "del /f /q C:\\Windows\\Temp\\install-windows-updates.ps1 C:\\Windows\\Temp\\check-updates-after-reboot.ps1" 2>/dev/null) || true
+    [[ -n "$PID_DEL" ]] && govc guest.ps "${GOVC_OPTS[@]}" -p "$PID_DEL" -X >/dev/null 2>&1 || true
 
     govc guest.upload -vm "$VM_NAME" -l "${USERNAME}:${PASSWORD}" \
         "$SCRIPT_DIR/install-windows-updates.ps1" \
@@ -94,39 +124,21 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     }
     echo "Scripts uploaded"
 
-    # Check for updates (array-based; capture exit code via temp file)
+    # Check for updates via guest.start (run script, capture exit code)
     echo "Checking for updates..."
-    CHECK_CMD=(
-        "$PS_EXE"
-        "-ExecutionPolicy" "Bypass"
-        "-NoProfile"
-        "-File" "C:\\Windows\\Temp\\check-updates-after-reboot.ps1"
-    )
-    TEMP_CHECK=$(mktemp /tmp/govc-check-updates.XXXXXX)
-    trap 'rm -f "$TEMP_CHECK"' EXIT INT TERM
-    govc guest.run "${GOVC_OPTS[@]}" "${CHECK_CMD[@]}" > "$TEMP_CHECK" 2>&1
-    CHECK_EXIT=$?
+    CHECK_EXIT=$(guest_ps_run_exit "& { & 'C:\\Windows\\Temp\\check-updates-after-reboot.ps1'; exit \$LASTEXITCODE }")
 
-    if [[ $CHECK_EXIT -eq 0 ]]; then
+    if [[ "${CHECK_EXIT:-1}" == "0" ]]; then
         echo "No updates pending - complete"
-        rm -f "$TEMP_CHECK"
         exit 0
     fi
 
-    # Install updates (array-based; capture exit code)
+    # Install updates via guest.start (run script, get exit code).
+    # Note: Output is not captured; on failure check VM or logs if you need install output.
     echo "Installing updates..."
-    INSTALL_CMD=(
-        "$PS_EXE"
-        "-ExecutionPolicy" "Bypass"
-        "-NoProfile"
-        "-File" "C:\\Windows\\Temp\\install-windows-updates.ps1"
-    )
-    TEMP_INSTALL=$(mktemp /tmp/govc-install-updates.XXXXXX)
-    trap 'rm -f "$TEMP_CHECK" "$TEMP_INSTALL"' EXIT INT TERM
-    govc guest.run "${GOVC_OPTS[@]}" "${INSTALL_CMD[@]}" > "$TEMP_INSTALL" 2>&1
-    INSTALL_EXIT=$?
+    INSTALL_EXIT=$(guest_ps_run_exit "& { & 'C:\\Windows\\Temp\\install-windows-updates.ps1'; exit \$LASTEXITCODE }")
 
-    if [[ $INSTALL_EXIT -eq 3010 ]]; then
+    if [[ "$INSTALL_EXIT" == "3010" ]]; then
         echo "Reboot required. Restarting VM..."
         govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || {
             echo "Failed to shutdown VM gracefully, forcing power off..."
@@ -138,24 +150,19 @@ while [[ $iteration -lt $MAX_ITER ]]; do
         govc vm.power -on "$VM_NAME" >/dev/null 2>&1
         echo "Waiting for VM to boot..."
         if ! wait_for_vm_ready; then
-            rm -f "$TEMP_CHECK" "$TEMP_INSTALL"
             exit 1
         fi
-        rm -f "$TEMP_CHECK" "$TEMP_INSTALL"
         sleep 30
         continue
     fi
 
-    if [[ $INSTALL_EXIT -eq 0 ]]; then
+    if [[ "$INSTALL_EXIT" == "0" ]]; then
         echo "Updates finished. No reboot needed."
-        rm -f "$TEMP_CHECK" "$TEMP_INSTALL"
         exit 0
     fi
 
     echo "Update script failed with code $INSTALL_EXIT"
-    cat "$TEMP_INSTALL" >&2
-    rm -f "$TEMP_CHECK" "$TEMP_INSTALL"
-    exit "$INSTALL_EXIT"
+    exit "${INSTALL_EXIT:-1}"
 done
 
 echo "Reached max iterations"

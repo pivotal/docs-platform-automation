@@ -3,7 +3,6 @@
 # Supports two modes: build from ISO or clone from template
 
 set -euo pipefail
-set -x
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -47,6 +46,15 @@ log_error() {
 log_debug() {
     if [[ "${LOG_LEVEL:-INFO}" == "DEBUG" ]]; then
         echo -e "${BLUE}[DEBUG]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
+    fi
+}
+
+# Run a script; when DEBUG_MODE is true, run with bash -x for trace output
+run_script() {
+    if [[ "${DEBUG_MODE:-}" == "true" ]]; then
+        bash -x "$@"
+    else
+        "$@"
     fi
 }
 
@@ -1635,7 +1643,7 @@ post_build_provisioning() {
         
         local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$password_change_log")"
-        "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
+        run_script "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
             log_error "Password change failed"
             return 1
         }
@@ -1646,7 +1654,7 @@ post_build_provisioning() {
         mkdir -p "$(dirname "$tools_mount_log")"
         export GOVC_USERNAME="$vcenter_user"
         export GOVC_PASSWORD="$vcenter_pass"
-        "$scripts_dir/mount-vmware-tools.sh" "$vm_name" "$tools_mount_log" || {
+        run_script "$scripts_dir/mount-vmware-tools.sh" "$vm_name" "$tools_mount_log" || {
             log_error "VMware Tools mount failed"
             return 1
         }
@@ -1654,7 +1662,7 @@ post_build_provisioning() {
         log_info "Step 1.6: Installing VMware Tools..."
         local tools_install_log="$SCRIPT_DIR/logs/vmware-tools-install-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$tools_install_log")"
-        "$scripts_dir/install-vmware-tools-keystrokes.sh" "$vm_name" "$tools_install_log" || {
+        run_script "$scripts_dir/install-vmware-tools-keystrokes.sh" "$vm_name" "$tools_install_log" || {
             log_error "VMware Tools installation failed"
             return 1
         }
@@ -1683,7 +1691,7 @@ post_build_provisioning() {
     mkdir -p "$(dirname "$network_log")"
     log_info "Network configuration log: $network_log"
     
-    "$scripts_dir/run-powershell-via-govc.sh" "$vm_name" "$scripts_dir/configure-network-manual.ps1" "$windows_username" "$windows_password" "$network_log" || {
+    run_script "$scripts_dir/run-powershell-via-govc.sh" "$vm_name" "$scripts_dir/configure-network-manual.ps1" "$windows_username" "$windows_password" "$network_log" || {
         log_error "Network configuration failed - check log: $network_log"
         return 1
     }
@@ -1697,7 +1705,7 @@ post_build_provisioning() {
         mkdir -p "$(dirname "$updates_log")"
         log_info "Windows updates log: $updates_log"
         
-        "$scripts_dir/run-windows-updates-loop.sh" "$vm_name" "$windows_username" "$windows_password" 10 > "$updates_log" 2>&1 || {
+        run_script "$scripts_dir/run-windows-updates-loop.sh" "$vm_name" "$windows_username" "$windows_password" 10 > "$updates_log" 2>&1 || {
             log_error "Windows updates installation failed - check log: $updates_log"
             return 1
         }
@@ -1748,7 +1756,7 @@ post_build_provisioning() {
         fi
     else   
         mkdir -p "$(dirname "$construct_log")"
-        "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || {
+        run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || {
             log_error "stembuild construct failed"
             return 1
         }
@@ -1799,7 +1807,7 @@ post_build_provisioning() {
     fi
     
     # Run package
-    "$SCRIPT_DIR/package-stemcell.sh" -n "$vm_name" -P "$patch_version" -i "$vm_inventory_path" > "$package_log" 2>&1 || {
+    run_script "$SCRIPT_DIR/package-stemcell.sh" -n "$vm_name" -P "$patch_version" -i "$vm_inventory_path" > "$package_log" 2>&1 || {
         log_error "stembuild package failed"
         return 1
     }
@@ -1884,6 +1892,7 @@ OPTIONS:
     -l, --log-level LEVEL   Logging level: DEBUG, INFO, WARN, ERROR (default: INFO)
     -i, --init-only         Only initialize Packer plugins
     -c, --validate-only     Only validate Packer configuration
+    --debug                 Enable set -x (trace) for this script and all scripts it calls
     --overwrite             Force upload ISO even if it already exists on datastore
     -h, --help              Show this help message
 
@@ -1905,6 +1914,7 @@ EXAMPLES:
 
 ENVIRONMENT VARIABLES:
     LOG_LEVEL               Set default log level (DEBUG, INFO, WARN, ERROR)
+    DEBUG_MODE              If "true", same as --debug (set -x for this script and child scripts)
 
 NOTES:
     - Copy variables.pkrvars.hcl.example to variables.pkrvars.hcl and configure it
@@ -1923,11 +1933,16 @@ main() {
     local validate_only=false
     local overwrite_iso=false
     local skip_packer_init=false
+    local debug_mode=false
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
             --skip-packer-init)
                 skip_packer_init=true
+                shift
+                ;;
+            --debug)
+                debug_mode=true
                 shift
                 ;;
             -v|--vars-file)
@@ -1980,7 +1995,13 @@ main() {
     echo "  Windows Stemcell Creation Script"
     echo "=========================================="
     echo ""
-    
+
+    # Enable trace (set -x) for this script and export DEBUG_MODE so run_script uses bash -x for child scripts
+    if [[ "$debug_mode" == true ]] || [[ "${DEBUG_MODE:-}" == "true" ]]; then
+        set -x
+        export DEBUG_MODE=true
+    fi
+
     # Check prerequisites
     check_prerequisites
     
