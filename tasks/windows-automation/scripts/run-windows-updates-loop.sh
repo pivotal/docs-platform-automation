@@ -90,16 +90,22 @@ guest_ps_run_capture() {
 
 iteration=0
 
+# Flow: each iteration we (1) if reboot pending, reboot and continue (2) check for updates; if none, exit 0 (3) install updates;
+# if exit 3010 or output contains REBOOT_REQUIRED, reboot and continue (4) if exit 0, done; else fail. Repeat until no updates or max iterations.
 while [[ $iteration -lt $MAX_ITER ]]; do
     iteration=$((iteration + 1))
     echo "=========================================="
     echo "Iteration $iteration"
     echo "=========================================="
 
-    # Check for pending reboot via guest.start
+    # Check for pending reboot via guest.start (run in current shell so GUEST_PS_EXIT is set)
     echo "Checking for pending reboot..."
     REBOOT_CMD="Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired'"
-    REBOOT_OUTPUT=$(guest_ps_run_capture "$REBOOT_CMD" 2>/dev/null)
+    local reboot_output_file
+    reboot_output_file=$(mktemp)
+    guest_ps_run_capture "$REBOOT_CMD" > "$reboot_output_file" 2>/dev/null
+    REBOOT_OUTPUT=$(cat "$reboot_output_file" 2>/dev/null)
+    rm -f "$reboot_output_file"
     if [[ "${GUEST_PS_EXIT:-1}" == "0" ]] && echo "$REBOOT_OUTPUT" | grep -qi "True"; then
         echo "Pending reboot detected - rebooting VM first..."
         govc vm.power -r "$VM_NAME" >/dev/null 2>&1 || {
@@ -144,9 +150,15 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     fi
 
     # Install updates via guest.start; capture output so we can print it on failure (Concourse has no log file access).
+    # Run guest_ps_run_capture in the current shell (not in a subshell) so GUEST_PS_EXIT is set correctly (3010 = reboot required).
+    # If we used INSTALL_OUTPUT=$(guest_ps_run_capture ...), GUEST_PS_EXIT would be set only in the subshell and lost.
     echo "Installing updates..."
-    INSTALL_OUTPUT=$(guest_ps_run_capture "& { & 'C:\\Windows\\Temp\\install-windows-updates.ps1'; exit \$LASTEXITCODE }")
+    local install_output_file
+    install_output_file=$(mktemp)
+    guest_ps_run_capture "& { & 'C:\\Windows\\Temp\\install-windows-updates.ps1'; exit \$LASTEXITCODE }" > "$install_output_file" 2>/dev/null
     INSTALL_EXIT="${GUEST_PS_EXIT:-1}"
+    INSTALL_OUTPUT=$(cat "$install_output_file" 2>/dev/null)
+    rm -f "$install_output_file"
 
     if [[ "$INSTALL_EXIT" == "3010" ]]; then
         # 3010 = Windows Update "reboot required" success; we reboot and continue the loop
