@@ -163,14 +163,12 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     if [[ "$INSTALL_EXIT" == "3010" ]]; then
         # 3010 = Windows Update "reboot required" success; we reboot and continue the loop
         echo "Reboot required (exit 3010). Restarting VM..."
-        govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || {
-            echo "Failed to shutdown VM gracefully, forcing power off..."
-            govc vm.power -off "$VM_NAME" >/dev/null 2>&1
+        govc vm.power -r "$VM_NAME" >/dev/null 2>&1 || {
+            echo "Reboot failed, trying shutdown then power on..."
+            govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || govc vm.power -off "$VM_NAME" >/dev/null 2>&1
+            sleep 30
+            govc vm.power -on "$VM_NAME" >/dev/null 2>&1
         }
-        echo "Waiting for VM to shutdown..."
-        sleep 30
-        echo "Powering on VM..."
-        govc vm.power -on "$VM_NAME" >/dev/null 2>&1
         echo "Waiting for VM to boot..."
         if ! wait_for_vm_ready; then
             exit 1
@@ -183,14 +181,12 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     # If output contains REBOOT_REQUIRED, treat as success and reboot.
     if echo "${INSTALL_OUTPUT:-}" | grep -qi "REBOOT_REQUIRED"; then
         echo "Reboot required (found REBOOT_REQUIRED in output; exit code was $INSTALL_EXIT). Restarting VM..."
-        govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || {
-            echo "Failed to shutdown VM gracefully, forcing power off..."
-            govc vm.power -off "$VM_NAME" >/dev/null 2>&1
+        govc vm.power -r "$VM_NAME" >/dev/null 2>&1 || {
+            echo "Reboot failed, trying shutdown then power on..."
+            govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || govc vm.power -off "$VM_NAME" >/dev/null 2>&1
+            sleep 30
+            govc vm.power -on "$VM_NAME" >/dev/null 2>&1
         }
-        echo "Waiting for VM to shutdown..."
-        sleep 30
-        echo "Powering on VM..."
-        govc vm.power -on "$VM_NAME" >/dev/null 2>&1
         echo "Waiting for VM to boot..."
         if ! wait_for_vm_ready; then
             exit 1
