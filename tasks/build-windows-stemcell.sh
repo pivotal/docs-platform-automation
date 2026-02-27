@@ -1,29 +1,74 @@
 #!/usr/bin/env bash
+# Concourse entrypoint: generate vars file from task inputs, install Packer vsphere plugin, run build.sh.
+# Invoked by build-windows-stemcell.yml. All required inputs come from Concourse params/inputs.
 
-set -eux
+set -euo pipefail
 
-# Verify required tools
-if ! command -v packer &> /dev/null; then
-  echo "ERROR: Packer not found"
-  exit 1
-fi
-
-if ! command -v govc &> /dev/null; then
-  echo "ERROR: govc not found"
-  exit 1
-fi
-
-if ! command -v stembuild &> /dev/null; then
-  echo "ERROR: stembuild not found"
-  exit 1
-fi
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+WINDOWS_DIR="${SCRIPT_DIR}/windows-automation"
+VARS_FILE_NAME="variables.pkrvars.hcl"
 
-pushd "$SCRIPT_DIR"/windows-automation
-OLD_PWD=${OLDPWD}
+# ---- Required tools ----
+require_cmd() {
+    if ! command -v "$1" &> /dev/null; then
+        echo "ERROR: $1 not found"
+        exit 1
+    fi
+}
+require_cmd packer
+require_cmd govc
+require_cmd stembuild
 
-# Generate variables file from Concourse task inputs
-VARS_FILE="variables.pkrvars.hcl"
+# ---- Helpers for vars file ----
+# Append a single line to the vars file (key = "value").
+append_var() {
+    local key="$1" value="$2"
+    echo "${key} = \"${value}\"" >> "$VARS_FILE"
+}
+
+# Build NO_PROXY value: user's value (if any) plus implicit "github.com,github.com:443" so GitHub bypasses proxy.
+no_proxy_with_github() {
+    local user="${1:-}"
+    user="${user#"${user%%[![:space:]]*}"}"
+    user="${user%"${user##*[![:space:]]}"}"
+    user="${user%,}"
+    user="${user#,}"
+    if [[ -n "$user" ]]; then
+        echo "${user},github.com,github.com:443"
+    else
+        echo "github.com,github.com:443"
+    fi
+}
+
+# Resolve ISO/template source and set BUILD_SOURCE_LINE for the heredoc below.
+resolve_build_source() {
+    if [[ -n "${TEMPLATE_PATH:-}" ]]; then
+        BUILD_SOURCE_LINE="# Template Mode: Clone from existing template
+template_path = \"${TEMPLATE_PATH}\""
+        echo "Using template mode: ${TEMPLATE_PATH}"
+    elif [[ -n "${ISO_PATH_LOCAL:-}" ]]; then
+        BUILD_SOURCE_LINE="# ISO Mode: Upload local ISO file
+iso_path_local = \"${ISO_PATH_LOCAL}\""
+        echo "Using ISO mode (local): ${ISO_PATH_LOCAL}"
+    elif [[ -d "${SCRIPT_DIR}/windows-iso" ]] && [[ -n "$(find "${SCRIPT_DIR}/windows-iso" -name '*.iso' -type f 2>/dev/null | head -1)" ]]; then
+        ISO_FILE=$(find "${SCRIPT_DIR}/windows-iso" -name '*.iso' -type f 2>/dev/null | head -1)
+        BUILD_SOURCE_LINE="# ISO Mode: Upload local ISO file from windows-iso input
+iso_path_local = \"${ISO_FILE}\""
+        echo "Using ISO mode (windows-iso input): ${ISO_FILE}"
+    elif [[ -n "${ISO_PATH:-}" ]]; then
+        BUILD_SOURCE_LINE="# ISO Mode: Use ISO from datastore
+iso_path = \"${ISO_PATH}\""
+        echo "Using ISO mode (datastore): ${ISO_PATH}"
+    else
+        echo "ERROR: Either TEMPLATE_PATH, ISO_PATH_LOCAL, ISO_PATH, or windows-iso input must be provided"
+        exit 1
+    fi
+}
+
+# ---- Generate variables file ----
+pushd "$WINDOWS_DIR"
+VARS_FILE="$VARS_FILE_NAME"
+OLD_PWD="${OLDPWD}"
 
 cat > "$VARS_FILE" <<EOF
 # Generated from Concourse task inputs
@@ -36,67 +81,33 @@ windows_version = "${WINDOWS_VERSION:-2019}"
 
 EOF
 
-# Proxy Configuration (Optional)
-if [ -n "${HTTP_PROXY:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-http_proxy     = "${HTTP_PROXY}"
-EOF
-fi
-
-if [ -n "${HTTPS_PROXY:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-https_proxy    = "${HTTPS_PROXY}"
-EOF
-fi
-
-if [ -n "${NO_PROXY:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-no_proxy       = "${NO_PROXY}"
-EOF
-fi
+# Proxy (optional); NO_PROXY always includes github.com,github.com:443 so plugin download can bypass proxy when env has proxy set
+[[ -n "${HTTP_PROXY:-}" ]] && append_var "http_proxy" "${HTTP_PROXY}"
+[[ -n "${HTTPS_PROXY:-}" ]] && append_var "https_proxy" "${HTTPS_PROXY}"
+[[ -n "${NO_PROXY:-}" ]] && append_var "no_proxy" "$(no_proxy_with_github "${NO_PROXY:-}")"
 
 cat >> "$VARS_FILE" <<EOF
 
 # vSphere Infrastructure
 vcenter_datacenter    = "${VCENTER_DATACENTER}"
 EOF
-
-if [ -n "${VCENTER_CLUSTER:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-vcenter_cluster       = "${VCENTER_CLUSTER}"
-EOF
+if [[ -n "${VCENTER_CLUSTER:-}" ]]; then
+    append_var "vcenter_cluster" "${VCENTER_CLUSTER}"
 else
-  cat >> "$VARS_FILE" <<EOF
-vcenter_cluster       = ""
-EOF
+    echo 'vcenter_cluster       = ""' >> "$VARS_FILE"
 fi
-
-if [ -n "${VCENTER_HOST:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-vcenter_host          = "${VCENTER_HOST}"
-EOF
+if [[ -n "${VCENTER_HOST:-}" ]]; then
+    append_var "vcenter_host" "${VCENTER_HOST}"
 else
-  cat >> "$VARS_FILE" <<EOF
-vcenter_host          = ""
-EOF
+    echo 'vcenter_host          = ""' >> "$VARS_FILE"
 fi
-
 cat >> "$VARS_FILE" <<EOF
 vcenter_datastore     = "${VCENTER_DATASTORE}"
 vcenter_network       = "${VCENTER_NETWORK}"
 EOF
 
-if [ -n "${VCENTER_FOLDER:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-vcenter_folder        = "${VCENTER_FOLDER}"
-EOF
-fi
-
-if [ -n "${VCENTER_RESOURCE_POOL:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-vcenter_resource_pool = "${VCENTER_RESOURCE_POOL}"
-EOF
-fi
+[[ -n "${VCENTER_FOLDER:-}" ]] && append_var "vcenter_folder" "${VCENTER_FOLDER}"
+[[ -n "${VCENTER_RESOURCE_POOL:-}" ]] && append_var "vcenter_resource_pool" "${VCENTER_RESOURCE_POOL}"
 
 cat >> "$VARS_FILE" <<EOF
 
@@ -109,36 +120,8 @@ vm_disk_size_gb = ${VM_DISK_SIZE_GB:-100}
 # Build Mode Configuration
 EOF
 
-# Build Mode: ISO or Template
-if [ -n "${TEMPLATE_PATH:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-# Template Mode: Clone from existing template
-template_path = "${TEMPLATE_PATH}"
-EOF
-  echo "Using template mode: ${TEMPLATE_PATH}"
-elif [ -n "${ISO_PATH_LOCAL:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-# ISO Mode: Upload local ISO file
-iso_path_local = "${ISO_PATH_LOCAL}"
-EOF
-  echo "Using ISO mode (local): ${ISO_PATH_LOCAL}"
-elif [ -d "../windows-iso" ] && [ -n "$(find ../windows-iso -name '*.iso' -type f 2>/dev/null | head -1)" ]; then
-  ISO_FILE=$(find ../windows-iso -name '*.iso' -type f 2>/dev/null | head -1)
-  cat >> "$VARS_FILE" <<EOF
-# ISO Mode: Upload local ISO file from windows-iso input
-iso_path_local = "${ISO_FILE}"
-EOF
-  echo "Using ISO mode (windows-iso input): ${ISO_FILE}"
-elif [ -n "${ISO_PATH:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-# ISO Mode: Use ISO from datastore
-iso_path = "${ISO_PATH}"
-EOF
-  echo "Using ISO mode (datastore): ${ISO_PATH}"
-else
-  echo "ERROR: Either TEMPLATE_PATH, ISO_PATH_LOCAL, ISO_PATH, or windows-iso input must be provided"
-  exit 1
-fi
+resolve_build_source
+echo "$BUILD_SOURCE_LINE" >> "$VARS_FILE"
 
 cat >> "$VARS_FILE" <<EOF
 
@@ -160,13 +143,10 @@ enable_windows_updates = ${ENABLE_WINDOWS_UPDATES:-true}
 log_level              = "${LOG_LEVEL:-INFO}"
 EOF
 
-# Optional: Template name (for final template after stemcell)
-if [ -n "${TEMPLATE_NAME:-}" ]; then
-  cat >> "$VARS_FILE" <<EOF
-
-# Template Configuration
-template_name = "${TEMPLATE_NAME}"
-EOF
+if [[ -n "${TEMPLATE_NAME:-}" ]]; then
+    echo "" >> "$VARS_FILE"
+    echo "# Template Configuration" >> "$VARS_FILE"
+    append_var "template_name" "${TEMPLATE_NAME}"
 fi
 
 echo "Generated variables file: $VARS_FILE"
@@ -178,103 +158,63 @@ echo "---"
 echo "Base VM name: windows-base-vm"
 TARGET_VM_TS=$(date -u +%Y%m%d%H%M%S 2>/dev/null || date +%Y%m%d%H%M%S)
 echo "Target VM name: windows-target-vm-${TARGET_VM_TS}"
+declare -a BUILD_ARGS=()
+[[ "${DEBUG_MODE:-}" == "true" ]] && BUILD_ARGS+=(--debug) && echo "DEBUG_MODE=true: enabling set -x for build.sh and all scripts it calls"
+declare -a JUMPER_ARGS=()
+[[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}" ]] && JUMPER_ARGS+=(--jumper-ip "$JUMPER_HOST" --jumper-user "$JUMPER_USER" --jumper-password "$JUMPER_PASSWORD") && echo "Jumper flags added."
 echo "All arguments passed to build.sh: ./build.sh -v $VARS_FILE ${BUILD_ARGS[*]} ${JUMPER_ARGS[*]}"
 echo "=========================================="
 
-# Set HTTP_PROXY, HTTPS_PROXY, NO_PROXY for Packer and govc
-if [ -n "${HTTP_PROXY:-}" ]; then
-  export HTTP_PROXY="${HTTP_PROXY}"
-fi
-if [ -n "${HTTPS_PROXY:-}" ]; then
-  export HTTPS_PROXY="${HTTPS_PROXY}"
-fi
-if [ -n "${NO_PROXY:-}" ]; then
-  export NO_PROXY="${NO_PROXY}"
-fi
+# Set NO_PROXY before curl/packer init so GitHub bypasses proxy (user value + implicit github.com,github.com:443).
+export NO_PROXY="$(no_proxy_with_github "${NO_PROXY:-}")"
 
-declare -a JUMPER_ARGS=()
-
-if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}" ]]; then
-    JUMPER_ARGS+=(
-        "--jumper-ip" "$JUMPER_HOST"
-        "--jumper-user" "$JUMPER_USER"
-        "--jumper-password" "$JUMPER_PASSWORD"
-    )
-    echo "Jumper flags added to execution (--jumper-ip, --jumper-user, --jumper-password)."
-fi
-
-
-# Below lines are added to sideload vsphere plugin to avoid packer init
-
-# 1. Configuration
+# ---- Packer vsphere plugin (run before HTTP_PROXY/HTTPS_PROXY are set so plugin download uses direct connection or NO_PROXY) ----
+# HTTP_PROXY and HTTPS_PROXY are exported only after this block (below).
 VERSION="1.4.2"
 PLUGIN_NAME="vsphere"
 SOURCE="github.com/hashicorp/vsphere"
-
-# 2. Auto-Detect OS and Architecture
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
-[ "$ARCH" = "x86_64" ] && ARCH="amd64"
-[ "$ARCH" = "aarch64" ] && ARCH="arm64"
-
-# 3. Define Filenames
+[[ "$ARCH" == "x86_64" ]] && ARCH="amd64"
+[[ "$ARCH" == "aarch64" ]] && ARCH="arm64"
 BINARY_NAME="packer-plugin-${PLUGIN_NAME}_v${VERSION}_x5.0_${OS}_${ARCH}"
 ZIP_NAME="${BINARY_NAME}.zip"
 SUMS_NAME="packer-plugin-${PLUGIN_NAME}_v${VERSION}_SHA256SUMS"
 
-# 4. Download Binary and Checksum
 echo "--- Downloading v${VERSION} for ${OS}/${ARCH} ---"
 curl -L -O "https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v${VERSION}/${ZIP_NAME}"
 curl -L -O "https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v${VERSION}/${SUMS_NAME}"
-
-# 5. Extract Binary
 echo "--- Extracting ---"
 unzip -o "$ZIP_NAME"
-# Ensure the binary is executable
 chmod +x "$BINARY_NAME"
-
-# 6. Official Packer Installation
-# This command validates the binary against the SUMS file and 
-# places it in ~/.packer.d/plugins (or ~/.config/packer/plugins) 
-# with the required individual _SHA256SUM file.
 echo "--- Registering Plugin with Packer ---"
 packer plugins install --path "./${BINARY_NAME}" "$SOURCE"
-
-# 7. Cleanup
-rm "$ZIP_NAME" "$SUMS_NAME" "$BINARY_NAME"
-
+rm -f "$ZIP_NAME" "$SUMS_NAME" "$BINARY_NAME"
 echo "--- Success! Running Packer Init ---"
 PACKER_LOG=1 packer init windows-vm.pkr.hcl
 
+# Set HTTP_PROXY/HTTPS_PROXY only after packer init (for Packer build and govc). NO_PROXY already set above.
+[[ -n "${HTTP_PROXY:-}" ]] && export HTTP_PROXY="${HTTP_PROXY}"
+[[ -n "${HTTPS_PROXY:-}" ]] && export HTTPS_PROXY="${HTTPS_PROXY}"
 
-# Build args: pass --debug when DEBUG_MODE is true (e.g. from Concourse task params)
-BUILD_ARGS=()
-if [[ "${DEBUG_MODE:-}" == "true" ]]; then
-    BUILD_ARGS+=(--debug)
-    echo "DEBUG_MODE=true: enabling set -x for build.sh and all scripts it calls"
-fi
-
-# Run build script
+# ---- Run build ----
 echo "Starting Windows stemcell creation..."
 ./build.sh -v "$VARS_FILE" "${BUILD_ARGS[@]}" "${JUMPER_ARGS[@]}"
 
-# Copy logs to output
-mkdir -p "$OLD_PWD"/logs
-cp -r logs/* "$OLD_PWD"/logs 2>/dev/null || true
-
-# Copy stemcell file to output
+# ---- Copy outputs ----
+mkdir -p "$OLD_PWD/logs"
+cp -r logs/* "$OLD_PWD/logs" 2>/dev/null || true
 echo "Looking for generated stemcell file..."
 STEMCELL_FILE=$(find . -name "bosh-stemcell-*-vsphere-esxi-*-go_agent.tgz" -type f 2>/dev/null | head -1)
-if [ -n "$STEMCELL_FILE" ]; then
-  echo "Found stemcell file: $STEMCELL_FILE"
-  mkdir -p "$OLD_PWD"/stemcell
-  cp "$STEMCELL_FILE" "$OLD_PWD"/stemcell
-  echo "Stemcell file copied to output: $OLD_PWD/stemcell/$(basename "$STEMCELL_FILE")"
-  ls -lh "$OLD_PWD"/stemcell
+if [[ -n "$STEMCELL_FILE" ]]; then
+    echo "Found stemcell file: $STEMCELL_FILE"
+    mkdir -p "$OLD_PWD/stemcell"
+    cp "$STEMCELL_FILE" "$OLD_PWD/stemcell"
+    echo "Stemcell file copied to output: $OLD_PWD/stemcell/$(basename "$STEMCELL_FILE")"
+    ls -lh "$OLD_PWD/stemcell"
 else
-  echo "WARNING: Stemcell file not found. Expected pattern: bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz"
-  echo "Searching for any .tgz files:"
-  find . -name "*.tgz" -type f 2>/dev/null || echo "No .tgz files found"
+    echo "WARNING: Stemcell file not found. Expected pattern: bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz"
+    find . -name "*.tgz" -type f 2>/dev/null || echo "No .tgz files found"
 fi
 
 popd

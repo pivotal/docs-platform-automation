@@ -58,6 +58,13 @@ run_script() {
     fi
 }
 
+# Get variable value from vars file (HCL-style key = "value" or key = value). Outputs value to stdout.
+get_var() {
+    local vars_file="$1" key="$2"
+    [[ -z "$vars_file" ]] || [[ ! -f "$vars_file" ]] && return 0
+    grep -E "^${key}\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//'
+}
+
 # Cleanup function for error handling
 cleanup_on_failure() {
     local exit_code=${1:-1}
@@ -1649,6 +1656,11 @@ post_build_provisioning() {
     fi
     
     local scripts_dir="$SCRIPT_DIR/scripts"
+    # Scripts used in this workflow (all under scripts/):
+    #   handle-password-change-keystrokes.sh, mount-vmware-tools.sh, install-vmware-tools-keystrokes.sh,
+    #   run-powershell-via-govc.sh, configure-network-manual.ps1, run-windows-updates-loop.sh,
+    #   install-windows-updates.ps1, check-updates-after-reboot.ps1, run-stembuild-construct.sh.
+    # package-stemcell.sh lives in SCRIPT_DIR (windows-automation/).
     
     # Step 1: Password change and VMware Tools (ISO mode only)
     if [[ "$build_mode" == "iso" ]]; then
@@ -1702,7 +1714,7 @@ post_build_provisioning() {
                 [[ -z "$code" ]] && code=$(echo "$raw" | awk -v p="$pid" '$2==p {print $5; exit}')
                 if [[ "${code:-1}" == "0" ]]; then
                     guest_ready=1
-        log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing with guest.run for PowerShell steps."
+                    log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing with guest.run for PowerShell steps."
                     break
                 fi
             fi
@@ -1723,9 +1735,9 @@ post_build_provisioning() {
     # Step 2: Configure network
     log_info "Step 2: Configuring network..."
     
-    local static_ip=$(grep -E "^static_ip\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local subnet_mask=$(grep -E "^subnet_mask\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local gateway=$(grep -E "^gateway\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local static_ip=$(get_var "$vars_file" "static_ip")
+    local subnet_mask=$(get_var "$vars_file" "subnet_mask")
+    local gateway=$(get_var "$vars_file" "gateway")
     local dns_servers=$(sed -n 's/.*dns_servers *= *\[\(.*\)\]/(\1)/p' "$vars_file" | sed 's/ //g')
     
     # Export environment variables for PowerShell script
@@ -1746,7 +1758,7 @@ post_build_provisioning() {
     
     # Step 3: Install Windows updates
     log_info "Step 3: Installing Windows updates..."
-    local enable_updates=$(grep -E "^enable_windows_updates\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+    local enable_updates=$(get_var "$vars_file" "enable_windows_updates")
     
     if [[ "$enable_updates" == "true" ]]; then
         local updates_log="$SCRIPT_DIR/logs/windows-updates-$(date +%Y%m%d-%H%M%S).log"
