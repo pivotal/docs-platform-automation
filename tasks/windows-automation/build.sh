@@ -3,9 +3,19 @@
 # Supports two modes: build from ISO or clone from template
 
 set -euo pipefail
-# Script directory
+# Script directory (must be set first so sourced libs can use it)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
+
+# Common VM power helpers (shutdown, wait poweredOff, reboot via shutdown+powerOn)
+VM_POWER_UTILS="$SCRIPT_DIR/scripts/vm-power-utils.sh"
+[[ -f "$VM_POWER_UTILS" ]] || { echo "ERROR: vm-power-utils.sh not found: $VM_POWER_UTILS" >&2; exit 1; }
+source "$VM_POWER_UTILS"
+
+# Common logging and run_script
+COMMON_SH="$SCRIPT_DIR/scripts/common.sh"
+[[ -f "$COMMON_SH" ]] || { echo "ERROR: common.sh not found: $COMMON_SH" >&2; exit 1; }
+source "$COMMON_SH"
 
 # Global variables for cleanup
 CLEANUP_VM_NAME=""
@@ -17,46 +27,6 @@ CLEANUP_ENABLED=false
 jumper_ip=""
 jumper_user=""
 jumper_password=""
-
-# Color codes for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Logging functions
-# All logging goes to stderr so it doesn't interfere with function return values
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
-
-log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
-
-log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
-
-log_debug() {
-    if [[ "${LOG_LEVEL:-INFO}" == "DEBUG" ]]; then
-        echo -e "${BLUE}[DEBUG]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-    fi
-}
-
-# Run a script; when DEBUG_MODE is true, run with bash -x for trace output
-run_script() {
-    if [[ "${DEBUG_MODE:-}" == "true" ]]; then
-        bash -x "$@"
-    else
-        "$@"
-    fi
-}
 
 # Get variable value from vars file (HCL-style key = "value" or key = value). Outputs value to stdout.
 # Avoids a full HCL parser; good enough for our vars file shape.
@@ -116,20 +86,16 @@ cleanup_on_failure() {
         log_warn "Cleaning up VM: $CLEANUP_VM_NAME"
         
         # Check if VM exists
-        if govc vm.info "$CLEANUP_VM_NAME" >/dev/null 2>&1; then
-            # Get power state
-            local power_state=$(govc vm.info -json "$CLEANUP_VM_NAME" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
-            
-            # Shutdown VM if powered on
-            if [[ "$power_state" != "poweredOff" ]]; then
+        if vm_exists "$CLEANUP_VM_NAME"; then
+            # Power-off sequence only (no destroy here); destroy is a separate step below.
+            if [[ "$(get_vm_power_state "$CLEANUP_VM_NAME")" != "poweredOff" ]]; then
                 log_warn "Shutting down VM..."
-                govc vm.power -s "$CLEANUP_VM_NAME" >/dev/null 2>&1 || {
-                    log_warn "Graceful shutdown failed, forcing power off..."
-                    govc vm.power -off "$CLEANUP_VM_NAME" >/dev/null 2>&1 || true
-                }
+                if ! vm_power_off "$CLEANUP_VM_NAME" 120 0; then
+                    log_warn "VM did not power off within 120s; attempting delete anyway"
+                fi
             fi
             
-            # Delete VM
+            # Delete VM (separate from power-off)
             log_warn "Deleting VM..."
             govc vm.destroy "$CLEANUP_VM_NAME" >/dev/null 2>&1 || {
                 log_warn "Failed to delete VM (may require manual cleanup)"
@@ -207,35 +173,20 @@ clone_current_vm_to_target() {
     log_info "Base VM (after updates): $base_vm_name"
     log_info "Target VM (clone for stembuild): $target_vm_name"
 
-    if ! govc vm.info "$base_vm_name" >/dev/null 2>&1; then
+    if ! vm_exists "$base_vm_name"; then
         log_error "VM not found: $base_vm_name"
         return 1
     fi
 
     # Power off base VM before cloning
     log_info "Powering off base VM before clone..."
-    local power_state=$(govc vm.info -json "$base_vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
-    if [[ "$power_state" != "poweredOff" ]]; then
-        govc vm.power -s "$base_vm_name" >/dev/null 2>&1 || {
-            log_warn "Graceful shutdown failed, forcing power off..."
-            govc vm.power -off "$base_vm_name" || { log_error "Failed to power off base VM"; return 1; }
-        }
-        log_info "Waiting for base VM to power off..."
-        local wait=0
-        while [[ $wait -lt 120 ]]; do
-            power_state=$(govc vm.info -json "$base_vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
-            [[ "$power_state" == "poweredOff" ]] && break
-            sleep 5
-            wait=$((wait + 5))
-        done
-        if [[ "$power_state" != "poweredOff" ]]; then
-            log_error "Base VM did not power off within timeout"
-            return 1
-        fi
+    if ! vm_power_off "$base_vm_name" 120 1; then
+        log_error "Base VM did not power off within timeout"
+        return 1
     fi
     log_success "Base VM powered off"
 
-    # Specify datastore when multiple exist (govc: default datastore resolves to multiple instances)
+    # Specify datastore when multiple exist
     local clone_opts=(-vm "$base_vm_name")
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
         local datastore
@@ -256,13 +207,13 @@ clone_current_vm_to_target() {
 
     local vm_wait=0
     while [[ $vm_wait -lt 300 ]]; do
-        if govc vm.info "$target_vm_name" >/dev/null 2>&1; then
+        if vm_exists "$target_vm_name"; then
             break
         fi
         sleep 5
         vm_wait=$((vm_wait + 5))
     done
-    if ! govc vm.info "$target_vm_name" >/dev/null 2>&1; then
+    if ! vm_exists "$target_vm_name"; then
         log_error "Target VM not found after clone: $target_vm_name"
         return 1
     fi
@@ -1487,7 +1438,7 @@ build_vm() {
     local vm_wait_timeout=300  # 5 minutes
     local vm_elapsed=0
     while [[ $vm_elapsed -lt $vm_wait_timeout ]]; do
-        if govc vm.info "$vm_name_final" >/dev/null 2>&1; then
+        if vm_exists "$vm_name_final"; then
             log_success "VM found: $vm_name_final"
             break
         fi
@@ -1657,7 +1608,7 @@ post_build_provisioning() {
     fi
     
     # Verify VM exists
-    if ! govc vm.info "$vm_name" >/dev/null 2>&1; then
+    if ! vm_exists "$vm_name"; then
         log_error "VM not found: $vm_name"
         return 1
     fi
@@ -1714,7 +1665,6 @@ post_build_provisioning() {
         sleep 30
 
         # Step 1.7: Poll until guest ops work (keystrokes only start the installer; it runs in background).
-        # Once a PowerShell one-liner succeeds, we set USE_GUEST_RUN so later steps can use guest.run.
         log_info "Step 1.7: Waiting for VMware Tools guest operations (poll up to 10 min, every 30s)..."
         local guest_ready=0
         local wait_elapsed=0
@@ -1734,7 +1684,7 @@ post_build_provisioning() {
                 [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
                 if [[ "${code:-1}" == "0" ]]; then
                     guest_ready=1
-                    log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing with guest.run for PowerShell steps."
+                    log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing."
                     break
                 fi
             fi
@@ -1746,7 +1696,6 @@ post_build_provisioning() {
             log_error "VMware Tools guest operations did not become ready within ${wait_timeout}s"
             return 1
         fi
-        export USE_GUEST_RUN=1
     else
         log_info "Step 1: Skipping password change and VMware Tools (template mode)"
         sleep 10
@@ -1871,32 +1820,11 @@ post_build_provisioning() {
 
     # Stop VM before packaging (required by stembuild)
     log_info "Stopping VM before packaging..."
-    govc vm.power -s "$vm_name" || {
-        log_warn "Graceful shutdown failed, forcing power off..."
-        govc vm.power -off "$vm_name" || {
-            log_error "Failed to power off VM"
-            return 1
-        }
-    }
-    
-    # Wait for VM to power off
-    log_info "Waiting for VM to power off..."
-    local shutdown_timeout=300
-    local elapsed=0
-    while [[ $elapsed -lt $shutdown_timeout ]]; do
-        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
-        if [[ "$power_state" == "poweredOff" ]]; then
-            log_success "VM powered off"
-            break
-        fi
-        sleep 5
-        elapsed=$((elapsed + 5))
-    done
-    
-    if [[ $elapsed -ge $shutdown_timeout ]]; then
+    if ! vm_power_off "$vm_name" 300 1; then
         log_error "VM did not power off within timeout"
         return 1
     fi
+    log_success "VM powered off"
     
     # Run package
     run_script "$SCRIPT_DIR/package-stemcell.sh" -n "$vm_name" -P "$patch_version" -i "$vm_inventory_path" > "$package_log" 2>&1 || {
@@ -1919,35 +1847,13 @@ post_build_provisioning() {
         log_info "Step 8: Creating template from VM..."
         
         # Verify VM is powered off (should be after stembuild package)
-        local power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
-        if [[ "$power_state" != "poweredOff" ]]; then
+        if [[ "$(get_vm_power_state "$vm_name")" != "poweredOff" ]]; then
             log_info "VM is not powered off, shutting down..."
-            govc vm.power -s "$vm_name" || {
-                log_warn "Graceful shutdown failed, forcing power off..."
-                govc vm.power -off "$vm_name" || {
-                    log_error "Failed to power off VM"
-                    return 1
-                }
-            }
-            
-            # Wait for VM to power off
-            log_info "Waiting for VM to power off..."
-            local shutdown_timeout=300
-            local elapsed=0
-            while [[ $elapsed -lt $shutdown_timeout ]]; do
-                sleep 5
-                elapsed=$((elapsed + 5))
-                power_state=$(govc vm.info -json "$vm_name" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
-                if [[ "$power_state" == "poweredOff" ]]; then
-                    log_success "VM powered off"
-                    break
-                fi
-            done
-            
-            if [[ $elapsed -ge $shutdown_timeout ]]; then
+            if ! vm_power_off "$vm_name" 300 1; then
                 log_error "VM did not power off within timeout"
                 return 1
             fi
+            log_success "VM powered off"
         else
             log_info "VM is already powered off (from stembuild package)"
         fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Uses govc guest.start (or guest.run when USE_GUEST_RUN=1). guest.run uses /bin/bash when guest not detected as Windows.
+# Uses govc guest.start for all guest operations (no guest.run).
 #
 # Usage: run-windows-updates-loop.sh <vm-name> <username> <password> [max-iterations]
 
@@ -15,7 +15,12 @@ if [[ -z "$VM_NAME" ]] || [[ -z "$PASSWORD" ]]; then
     exit 1
 fi
 
+# Script directory (must be set before sourcing libs; path is where this script lives)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VM_POWER_UTILS="$SCRIPT_DIR/vm-power-utils.sh"
+[[ -f "$VM_POWER_UTILS" ]] || { echo "ERROR: vm-power-utils.sh not found: $VM_POWER_UTILS" >&2; exit 1; }
+source "$VM_POWER_UTILS"
+
 GOVC_OPTS=(-vm "$VM_NAME" -l "${USERNAME}:${PASSWORD}")
 PS_EXE="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 CMD_EXE="C:\\Windows\\System32\\cmd.exe"
@@ -43,6 +48,34 @@ wait_for_vm_ready() {
         fi
     done
     echo "VM did not become ready within timeout"
+    return 1
+}
+
+# After a reboot, wait until the system is ready for the next commands (guest ops + settle + PowerShell responsive).
+# Uses wait_for_vm_ready(), then a settle sleep, then retries a simple PowerShell command until it succeeds.
+wait_for_system_ready_after_reboot() {
+    local settle_sec="${REBOOT_SETTLE_SECONDS:-60}"
+    echo "Waiting for VM to boot (guest ops)..."
+    if ! wait_for_vm_ready; then
+        return 1
+    fi
+    echo "Guest ops responsive; waiting ${settle_sec}s for system to settle after reboot..."
+    sleep "$settle_sec"
+    # Ensure PowerShell is responsive (Windows may still be "Configuring updates" for a while)
+    local probe_attempts=0
+    local max_probes=12
+    while [[ $probe_attempts -lt $max_probes ]]; do
+        probe_attempts=$((probe_attempts + 1))
+        local probe_exit
+        probe_exit=$(guest_ps_run_exit "Get-Date | Out-Null; exit 0")
+        if [[ "${probe_exit:-1}" == "0" ]]; then
+            echo "System ready (PowerShell responsive after ${probe_attempts} probe(s))."
+            return 0
+        fi
+        echo "PowerShell not ready yet, waiting 30s before retry ($probe_attempts/$max_probes)..."
+        sleep 30
+    done
+    echo "System did not become ready within probe timeout"
     return 1
 }
 
@@ -107,18 +140,12 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     REBOOT_OUTPUT=$(cat "$reboot_output_file" 2>/dev/null)
     rm -f "$reboot_output_file"
     if [[ "${GUEST_PS_EXIT:-1}" == "0" ]] && echo "$REBOOT_OUTPUT" | grep -qi "True"; then
-        echo "Pending reboot detected - rebooting VM first..."
-        govc vm.power -r "$VM_NAME" >/dev/null 2>&1 || {
-            echo "Failed to reboot, trying shutdown and power on..."
-            govc vm.power -s "$VM_NAME" >/dev/null 2>&1
-            sleep 30
-            govc vm.power -on "$VM_NAME" >/dev/null 2>&1
-        }
+        echo "Pending reboot detected - rebooting VM first (shutdown then power on)..."
+        vm_reboot_shutdown_poweron "$VM_NAME" 120 || exit 1
         echo "Waiting for VM to boot after reboot..."
-        if ! wait_for_vm_ready; then
+        if ! wait_for_system_ready_after_reboot; then
             exit 1
         fi
-        sleep 30
     fi
 
     # Delete existing scripts on guest via guest.start
@@ -162,36 +189,24 @@ while [[ $iteration -lt $MAX_ITER ]]; do
 
     if [[ "$INSTALL_EXIT" == "3010" ]]; then
         # 3010 = Windows Update "reboot required" success; we reboot and continue the loop
-        echo "Reboot required (exit 3010). Restarting VM..."
-        govc vm.power -r "$VM_NAME" >/dev/null 2>&1 || {
-            echo "Reboot failed, trying shutdown then power on..."
-            govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || govc vm.power -off "$VM_NAME" >/dev/null 2>&1
-            sleep 30
-            govc vm.power -on "$VM_NAME" >/dev/null 2>&1
-        }
+        echo "Reboot required (exit 3010). Restarting VM (shutdown then power on)..."
+        vm_reboot_shutdown_poweron "$VM_NAME" 120 || exit 1
         echo "Waiting for VM to boot..."
-        if ! wait_for_vm_ready; then
+        if ! wait_for_system_ready_after_reboot; then
             exit 1
         fi
-        sleep 30
         continue
     fi
 
     # Fallback: script may have exited 3010 but process reported 0 (e.g. pipeline swallowed exit code).
     # If output contains REBOOT_REQUIRED, treat as success and reboot.
     if echo "${INSTALL_OUTPUT:-}" | grep -qi "REBOOT_REQUIRED"; then
-        echo "Reboot required (found REBOOT_REQUIRED in output; exit code was $INSTALL_EXIT). Restarting VM..."
-        govc vm.power -r "$VM_NAME" >/dev/null 2>&1 || {
-            echo "Reboot failed, trying shutdown then power on..."
-            govc vm.power -s "$VM_NAME" >/dev/null 2>&1 || govc vm.power -off "$VM_NAME" >/dev/null 2>&1
-            sleep 30
-            govc vm.power -on "$VM_NAME" >/dev/null 2>&1
-        }
+        echo "Reboot required (found REBOOT_REQUIRED in output; exit code was $INSTALL_EXIT). Restarting VM (shutdown then power on)..."
+        vm_reboot_shutdown_poweron "$VM_NAME" 120 || exit 1
         echo "Waiting for VM to boot..."
-        if ! wait_for_vm_ready; then
+        if ! wait_for_system_ready_after_reboot; then
             exit 1
         fi
-        sleep 30
         continue
     fi
 

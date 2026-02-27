@@ -23,6 +23,12 @@ if ! command -v govc >/dev/null 2>&1; then
     exit 1
 fi
 
+# Script directory (must be set before sourcing libs; path is where this script lives)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VM_POWER_UTILS="$SCRIPT_DIR/vm-power-utils.sh"
+[[ -f "$VM_POWER_UTILS" ]] || { echo "ERROR: vm-power-utils.sh not found: $VM_POWER_UTILS" >&2; exit 1; }
+source "$VM_POWER_UTILS"
+
 echo "=========================================="
 echo "Mounting VMware Tools ISO"
 echo "VM Name: $VM_NAME"
@@ -31,7 +37,7 @@ echo "=========================================="
 
 # Verify VM exists before attempting mount
 echo "Step 1: Verifying VM exists..."
-if ! govc vm.info "$VM_NAME" >/dev/null 2>&1; then
+if ! vm_exists "$VM_NAME"; then
     echo "ERROR: VM not found: $VM_NAME"
     echo "Available VMs (first 10):"
     govc ls / -t VirtualMachine 2>/dev/null | head -10 || echo "Could not list VMs"
@@ -41,7 +47,7 @@ echo "✓ VM found: $VM_NAME"
 
 # Get VM power state
 echo "Step 2: Checking VM power state..."
-VM_POWER_STATE=$(govc vm.info "$VM_NAME" 2>/dev/null | grep -i "powered" | head -1 || echo "")
+VM_POWER_STATE=$(get_vm_power_state "$VM_NAME")
 echo "VM Power State: $VM_POWER_STATE"
 
 # Mount VMware Tools ISO using govc (without specifying ISO path)

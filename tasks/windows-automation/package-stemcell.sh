@@ -5,32 +5,18 @@
 
 set -euo pipefail
 
-# Script directory
+# Script directory (must be set first so sourced libs can use it)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Color codes for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Common VM power helpers
+VM_POWER_UTILS="$SCRIPT_DIR/scripts/vm-power-utils.sh"
+[[ -f "$VM_POWER_UTILS" ]] || { echo "ERROR: vm-power-utils.sh not found: $VM_POWER_UTILS" >&2; exit 1; }
+source "$VM_POWER_UTILS"
 
-# Logging functions
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
-
-log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
-
-log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $(date '+%Y-%m-%d %H:%M:%S') - $*" >&2
-}
+# Common logging
+COMMON_SH="$SCRIPT_DIR/scripts/common.sh"
+[[ -f "$COMMON_SH" ]] || { echo "ERROR: common.sh not found: $COMMON_SH" >&2; exit 1; }
+source "$COMMON_SH"
 
 # Print usage
 usage() {
@@ -249,45 +235,19 @@ find_vm_inventory_path() {
 # Stop the VM
 stop_vm() {
     log_info "Stopping VM: $VM_NAME"
-    
-    # Check current power state
-    local power_state=$(govc vm.info -json "$VM_NAME" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
+    local power_state
+    power_state=$(get_vm_power_state "$VM_NAME")
     log_info "Current VM power state: $power_state"
-    
     if [[ "$power_state" == "poweredOff" ]]; then
         log_info "VM is already powered off"
         return 0
     fi
-    
-    # Gracefully shutdown the VM
     log_info "Attempting graceful shutdown..."
-    govc vm.power -s "$VM_NAME" || {
-        log_warn "Graceful shutdown failed, forcing power off..."
-        govc vm.power -off "$VM_NAME" || {
-            log_error "Failed to power off VM"
-            exit 1
-        }
-    }
-    
-    # Wait for VM to power off
-    log_info "Waiting for VM to power off..."
-    local timeout=300  # 5 minutes
-    local elapsed=0
-    while [[ $elapsed -lt $timeout ]]; do
-        sleep 5
-        elapsed=$((elapsed + 5))
-        power_state=$(govc vm.info -json "$VM_NAME" 2>/dev/null | jq -r '..virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown")
-        if [[ "$power_state" == "poweredOff" ]]; then
-            log_success "VM powered off successfully"
-            return 0
-        fi
-        if [[ $((elapsed % 30)) -eq 0 ]]; then
-            log_info "Still waiting for VM to power off... (${elapsed}s elapsed)"
-        fi
-    done
-    
-    log_error "VM did not power off within ${timeout}s timeout"
-    exit 1
+    if ! vm_power_off "$VM_NAME" 300 1; then
+        log_error "VM did not power off within timeout"
+        exit 1
+    fi
+    log_success "VM powered off successfully"
 }
 
 # Package the stemcell using stembuild
