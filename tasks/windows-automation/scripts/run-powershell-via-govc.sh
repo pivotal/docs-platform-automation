@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Run PowerShell script on VM using govc guest.run
+# Use array-based invocation with an absolute PATH so guest.run runs the program directly
+# (otherwise it wraps in cmd.exe /c "..." or /bin/bash -c "..." and escaping breaks).
 # This is a generic script that can execute any PowerShell script on a VM
 # Usage: run-powershell-via-govc.sh <vm-name> <script-path> <username> <password> [log-file] [env-vars]
 #
@@ -88,7 +90,7 @@ else
     # Exclude common system variables and internal bash variables
     EXCLUDE_PATTERNS="^(PATH|HOME|USER|SHELL|PWD|OLDPWD|SHLVL|_|BASH_|PS1|PS2|PS3|PS4|HIST|TERM|LANG|LC_|TMPDIR|TEMP|TMP|DISPLAY|SSH_|GOVC_|PKR_VAR_|PKR_|PACKER_)"
     
-    while IFS='=' read -r var_name var_value; do
+    while IFS='=' read -r var_name _var_value; do
         # Skip if variable name contains '=' (invalid format)
         if [[ "$var_name" == *"="* ]]; then
             continue
@@ -144,7 +146,7 @@ FULL_SCRIPT="${ENV_SETUP}${SCRIPT_CONTENT}"
 
 # Create temporary script file on host
 TEMP_SCRIPT_FILE=$(mktemp /tmp/powershell-script-XXXXXX.ps1)
-trap "rm -f '$TEMP_SCRIPT_FILE'" EXIT INT TERM
+trap 'rm -f "$TEMP_SCRIPT_FILE"' EXIT INT TERM
 
 # Write script to temporary file
 printf '%s' "$FULL_SCRIPT" > "$TEMP_SCRIPT_FILE" || {
@@ -161,9 +163,6 @@ govc guest.upload -vm "$VM_NAME" -l "${GUEST_USERNAME}:${GUEST_PASSWORD}" "$TEMP
     echo "ERROR: Failed to upload script to VM" >&2
     exit 1
 }
-
-# Build PowerShell command to execute the script file
-POWERSHELL_CMD="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass -NoProfile -NoLogo -NonInteractive -File \"$VM_SCRIPT_PATH\""
 
 # Setup logging
 if [[ -n "$LOG_FILE" ]]; then
@@ -187,13 +186,32 @@ if ! govc vm.info "$VM_NAME" >/dev/null 2>&1; then
     exit 1
 fi
 
-# Run via govc guest.run
-OUTPUT=$(govc guest.run -vm "$VM_NAME" -l "${GUEST_USERNAME}:${GUEST_PASSWORD}" "$POWERSHELL_CMD" 2>&1)
+# Array-based invocation: absolute PATH + separate ARGs so guest.run runs the program directly
+# (no cmd.exe /c or /bin/bash -c wrapper), avoiding escaping issues in Concourse.
+GOVC_OPTS=(-vm "$VM_NAME" -l "${GUEST_USERNAME}:${GUEST_PASSWORD}")
+PS_EXE="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+RUN_CMD=(
+    "$PS_EXE"
+    "-ExecutionPolicy" "Bypass"
+    "-NoProfile"
+    "-NoLogo"
+    "-NonInteractive"
+    "-File" "$VM_SCRIPT_PATH"
+)
+TEMP_OUTPUT=$(mktemp /tmp/govc-guest-run-out.XXXXXX)
+trap 'rm -f "$TEMP_SCRIPT_FILE" "$TEMP_OUTPUT"' EXIT INT TERM
+govc guest.run "${GOVC_OPTS[@]}" "${RUN_CMD[@]}" > "$TEMP_OUTPUT" 2>&1
 EXIT_CODE=$?
+OUTPUT=$(cat "$TEMP_OUTPUT")
 
-# Clean up script file on VM
+# Clean up script file on VM (array-based: absolute path to cmd.exe + args)
 echo "Cleaning up script file on VM..." >&2
-govc guest.run -vm "$VM_NAME" -l "${GUEST_USERNAME}:${GUEST_PASSWORD}" "cmd.exe /c del /f /q \"$VM_SCRIPT_PATH\"" >/dev/null 2>&1 || true
+DEL_CMD=(
+    "C:\\Windows\\System32\\cmd.exe"
+    "/c"
+    "del /f /q \"$VM_SCRIPT_PATH\""
+)
+govc guest.run "${GOVC_OPTS[@]}" "${DEL_CMD[@]}" >/dev/null 2>&1 || true
 
 # Filter CLIXML output (same as test-backslash-escape.sh)
 # CLIXML is PowerShell's XML serialization format - filter it but keep actual output

@@ -62,18 +62,20 @@ echo "✓ Mount command executed successfully"
 echo "Step 4: Waiting for mount to complete..."
 sleep 10
 
-# Verify mount using PowerShell via govc guest.run (if guest credentials are available)
+# Verify mount using PowerShell via govc guest.run (array-based; if guest credentials are available)
 # Note: This requires VMware Tools to be installed, so it may not work on first mount
-# We'll try it but don't fail if it doesn't work
 echo "Step 5: Verifying mount status..."
 if [[ -n "${GOVC_USERNAME:-}" ]] && [[ -n "${GOVC_PASSWORD:-}" ]]; then
-    # Try to check if D: drive exists and has setup64.exe
-    # This requires guest authentication and VMware Tools
-    VERIFY_CMD='powershell.exe -Command "if (Test-Path \"D:\setup64.exe\") { Write-Host \"SUCCESS: D:\setup64.exe found\" } else { Write-Host \"WARNING: D:\setup64.exe not found yet\" }"'
-    
-    # Try to run verification (may fail if VMware Tools not installed yet)
-    VERIFY_OUTPUT=$(govc guest.run -vm "$VM_NAME" -l "${GOVC_USERNAME}:${GOVC_PASSWORD}" "$VERIFY_CMD" 2>&1 || echo "VERIFY_FAILED")
-    
+    GOVC_OPTS=(-vm "$VM_NAME" -l "${GOVC_USERNAME}:${GOVC_PASSWORD}")
+    PS_EXE="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    VERIFY_CMD=(
+        "$PS_EXE"
+        "-NoProfile"
+        "-Command"
+        "if (Test-Path 'D:\\setup64.exe') { Write-Host 'SUCCESS: D:\\setup64.exe found' } else { Write-Host 'WARNING: D:\\setup64.exe not found yet' }"
+    )
+    VERIFY_OUTPUT=$(govc guest.run "${GOVC_OPTS[@]}" "${VERIFY_CMD[@]}" 2>&1 || echo "VERIFY_FAILED")
+
     if [[ "$VERIFY_OUTPUT" == *"SUCCESS"* ]]; then
         echo "✓ Verification: VMware Tools ISO is mounted (D:\setup64.exe found)"
     elif [[ "$VERIFY_OUTPUT" == *"VERIFY_FAILED"* ]]; then

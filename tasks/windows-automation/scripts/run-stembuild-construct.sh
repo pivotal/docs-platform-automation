@@ -20,7 +20,7 @@ fi
 
 # Validation
 if [[ -z "$VM_NAME" ]] || [[ -z "$VM_IP" ]] || [[ -z "$VM_USER" ]] || [[ -z "$VM_PASS" ]] || [[ -z "$STEMBUILD_BINARY" ]]; then
-    echo "Usage: $0 <vm-name> <vm-ip> <vm-username> <vm-password> <stembuild-binary> [log-file]"
+    echo "Usage: $0 <vm-name> <vm-ip> <vm-username> <vm-password> <stembuild-binary> [datacenter] [log-file]"
     exit 1
 fi
 
@@ -52,28 +52,25 @@ fi
 
 echo "VM Inventory Path: $VM_INVENTORY_PATH"
 
-# Build stembuild construct command
-# Note: Using env vars for vCenter credentials to keep the command call cleaner
-CONSTRUCT_CMD="$STEMBUILD_BINARY construct \
-    -vm-ip \"$VM_IP\" \
-    -vm-username \"$VM_USER\" \
-    -vm-password \"$VM_PASS\" \
-    -vcenter-url \"$GOVC_URL\" \
-    -vcenter-username \"$GOVC_USERNAME\" \
-    -vcenter-password \"$GOVC_PASSWORD\" \
-    -vm-inventory-path \"$VM_INVENTORY_PATH\""
-
-# Add CA Certs if the environment variable is provided
+# Array-based invocation (no eval): build args and run stembuild construct
+CONSTRUCT_ARGS=(
+    -vm-ip "$VM_IP"
+    -vm-username "$VM_USER"
+    -vm-password "$VM_PASS"
+    -vcenter-url "$GOVC_URL"
+    -vcenter-username "$GOVC_USERNAME"
+    -vcenter-password "$GOVC_PASSWORD"
+    -vm-inventory-path "$VM_INVENTORY_PATH"
+)
 if [[ -n "${VCENTER_CA_CERTS:-}" ]] && [[ -f "${VCENTER_CA_CERTS}" ]]; then
-    CONSTRUCT_CMD="$CONSTRUCT_CMD -vcenter-ca-certs \"$VCENTER_CA_CERTS\""
+    CONSTRUCT_ARGS+=( -vcenter-ca-certs "$VCENTER_CA_CERTS" )
 fi
 
 echo "Executing stembuild construct..."
 echo "This process involves running preparation scripts on the guest VM."
 echo ""
 
-# Execute
-eval "$CONSTRUCT_CMD"
+"$STEMBUILD_BINARY" construct "${CONSTRUCT_ARGS[@]}"
 
 echo ""
 echo "=========================================="
