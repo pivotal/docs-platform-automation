@@ -20,8 +20,8 @@ fi
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 pushd $SCRIPT_DIR/windows-automation
-export PACKER_GITHUB_API_TOKEN=$PACKER_GITHUB_API_TOKEN
-OLD_PWD=$OLDPWD
+export PACKER_GITHUB_API_TOKEN=${PACKER_GITHUB_API_TOKEN}
+OLD_PWD=${OLDPWD}
 
 # Generate variables file from Concourse task inputs
 VARS_FILE="variables.pkrvars.hcl"
@@ -203,6 +203,8 @@ if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}
     )
     echo "Jumper flags added to execution (--jumper-ip, --jumper-user, --jumper-password)."
 fi
+
+packer init windows-vm.pkr.hcl
 
 # Run build script
 echo "Starting Windows stemcell creation..."
