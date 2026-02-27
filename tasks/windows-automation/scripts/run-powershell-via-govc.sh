@@ -114,6 +114,8 @@ fi
 # Put each assignment on its own line for better PowerShell parsing
 ENV_SETUP=""
 if [[ -n "$ENV_VARS_TO_PASS" ]]; then
+    ENV_SETUP="# Environment variables injected by run-powershell-via-govc.sh (prepended before script content)"
+    ENV_SETUP="${ENV_SETUP}"$'\n'
     for var in $ENV_VARS_TO_PASS; do
         if [[ -n "${!var:-}" ]]; then
             # Escape single quotes by doubling so PowerShell treats '' as literal quote

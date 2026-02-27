@@ -1,7 +1,45 @@
 # Configure Network with Static IP and DNS Servers
 # Simplified version for reliability
+# Normalizes env values that may contain shell escaping (e.g. '\''value'\'' from bash/govc)
 
 $ErrorActionPreference = "Stop"
+
+# Normalize env value: strip whitespace, surrounding quotes, and common shell-escape artifacts (\')
+function Get-NormalizedEnvValue {
+    param([string]$RawValue)
+    if ([string]::IsNullOrWhiteSpace($RawValue)) { return "" }
+    $v = $RawValue.Trim()
+    # Remove surrounding single quotes (possibly multiple from '\''value'\'')
+    $v = $v.Trim("'")
+    # Remove leading \' and trailing ' from bash escape artifact
+    $v = $v -replace "^\\'+", ""
+    $v = $v -replace "'+$", ""
+    $v = $v.Trim("'").Trim()
+    return $v
+}
+
+# Parse DNS_SERVERS string into array of IP addresses.
+# Accepts: "(\"1.2.3.4\",\"5.6.7.8\")" or "1.2.3.4,5.6.7.8" or "(1.2.3.4,5.6.7.8)"
+function Get-DnsServersArray {
+    param([string]$RawValue)
+    $normalized = Get-NormalizedEnvValue $RawValue
+    if ([string]::IsNullOrWhiteSpace($normalized)) { return @() }
+    # Try Invoke-Expression for PowerShell array syntax
+    try {
+        $parsed = Invoke-Expression $normalized
+        if ($parsed -is [array]) {
+            return @($parsed | ForEach-Object { $_.ToString().Trim() } | Where-Object { $_ })
+        }
+        if ($parsed) {
+            return @($parsed.ToString().Trim())
+        }
+    } catch {
+        # Fallback: split by comma, trim quotes and spaces from each
+        $parts = $normalized -replace '^[\(\"]+|[\)\"]+$', '' -split ',' | ForEach-Object { $_.Trim().Trim('"').Trim() } | Where-Object { $_ }
+        return @($parts)
+    }
+    return @()
+}
 
 # Setup log file on VM
 $LogFile = "$env:TEMP\network-config-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
@@ -15,12 +53,13 @@ try {
     $LogFile = $null
 }
 
-# Simple logging function
+# Simple logging function - write to pipeline (stdout) so guest.start capture gets it; also append to log file on VM
 function Write-Log {
     param([string]$Message)
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logMessage = "[$timestamp] $Message"
-    [Console]::Out.WriteLine($logMessage)
+    # Write to stdout so run-powershell-via-govc.sh guest.start path captures output (*>&1 | Out-File)
+    Write-Output $logMessage
     if ($LogFile) {
         try {
             Add-Content -Path $LogFile -Value $logMessage -Encoding UTF8 -ErrorAction SilentlyContinue
@@ -43,34 +82,19 @@ if ($LogFile) {
 Write-Log "=========================================="
 Write-Log ""
 
-# Get network configuration from environment variables
-# The run-powershell-via-govc.sh script controls which variables are passed via PS_ENV_VARS
-# This script simply reads the standard network configuration variables
-if ($env:STATIC_IP) {
-    $staticIP = $env:STATIC_IP
-} else {
-    $staticIP = ""
-}
+# Get network configuration from environment variables (normalized to handle shell escaping)
+$staticIP = Get-NormalizedEnvValue $env:STATIC_IP
 
-if ($env:SUBNET_MASK) {
-    $subnetMask = $env:SUBNET_MASK
-} else {
+$subnetMask = Get-NormalizedEnvValue $env:SUBNET_MASK
+if ([string]::IsNullOrWhiteSpace($subnetMask)) {
     $subnetMask = "255.255.255.0"
 }
 
-if ($env:GATEWAY) {
-    $gateway = $env:GATEWAY
-} else {
-    $gateway = ""
-}
+$gateway = Get-NormalizedEnvValue $env:GATEWAY
 
 $dnsServers = @()
 if ($env:DNS_SERVERS) {
-    try {
-        $dnsServers = Invoke-Expression $env:DNS_SERVERS
-    } catch {
-        Write-Warning "Failed to parse DNS_SERVERS: $_"
-    }
+    $dnsServers = Get-DnsServersArray $env:DNS_SERVERS
 }
 
 Write-Log "Network Configuration:"

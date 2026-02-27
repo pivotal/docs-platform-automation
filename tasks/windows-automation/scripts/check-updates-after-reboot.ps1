@@ -1,13 +1,13 @@
 # Check for Pending Updates After Reboot
 $ErrorActionPreference = "Stop"
 
-# Logging
+# Logging - write to stdout so output is captured in Concourse
 $LogFile = "$env:TEMP\check-updates-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
 function Write-Log {
     param([string]$Message)
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logMessage = "[$timestamp] $Message"
-    Write-Host $logMessage
+    Write-Output $logMessage
     try {
         Add-Content -Path $LogFile -Value $logMessage -Encoding UTF8 -ErrorAction SilentlyContinue
     } catch {}

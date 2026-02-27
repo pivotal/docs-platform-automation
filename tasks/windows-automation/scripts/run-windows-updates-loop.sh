@@ -141,10 +141,10 @@ while [[ $iteration -lt $MAX_ITER ]]; do
         exit 0
     fi
 
-    # Install updates via guest.start (run script, get exit code).
-    # Note: Output is not captured; on failure check VM or logs if you need install output.
+    # Install updates via guest.start; capture output so we can print it on failure (Concourse has no log file access).
     echo "Installing updates..."
-    INSTALL_EXIT=$(guest_ps_run_exit "& { & 'C:\\Windows\\Temp\\install-windows-updates.ps1'; exit \$LASTEXITCODE }")
+    INSTALL_OUTPUT=$(guest_ps_run_capture "& { & 'C:\\Windows\\Temp\\install-windows-updates.ps1'; exit \$LASTEXITCODE }")
+    INSTALL_EXIT="${GUEST_PS_EXIT:-1}"
 
     if [[ "$INSTALL_EXIT" == "3010" ]]; then
         # 3010 = Windows Update "reboot required" success; we reboot and continue the loop
@@ -170,7 +170,14 @@ while [[ $iteration -lt $MAX_ITER ]]; do
         exit 0
     fi
 
-    echo "Update script failed with code $INSTALL_EXIT"
+    echo "ERROR: Windows Update install failed with exit code $INSTALL_EXIT"
+    echo "--- Captured script output (so you see it in Concourse) ---"
+    if [[ -n "$INSTALL_OUTPUT" ]]; then
+        echo "$INSTALL_OUTPUT"
+    else
+        echo "(no output captured)"
+    fi
+    echo "--- End of script output ---"
     exit "${INSTALL_EXIT:-1}"
 done
 

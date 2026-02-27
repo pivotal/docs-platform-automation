@@ -1600,11 +1600,17 @@ build_vm() {
         log_error "Exit code: $provisioning_exit_code"
         log_error "Build mode: $build_mode"
         log_error "VM name: $vm_name_final"
-        log_error "Check logs in: $SCRIPT_DIR/logs/"
-        log_error "Recent log files:"
-        ls -t "$SCRIPT_DIR/logs/"*.log 2>/dev/null | head -5 | while IFS= read -r logfile; do
-            log_error "  - $logfile"
-        done || log_error "  (No log files found)"
+        log_error "Recent log files (tail below so Concourse shows content):"
+        local log_count=0
+        while IFS= read -r logfile; do
+            [[ $log_count -ge 2 ]] && break
+            log_error "--- Last 200 lines of $logfile ---"
+            tail -200 "$logfile" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+            log_count=$((log_count + 1))
+        done < <(ls -t "$SCRIPT_DIR/logs/"*.log 2>/dev/null | head -2)
+        if [[ $log_count -eq 0 ]]; then
+            log_error "  (No log files found in $SCRIPT_DIR/logs/)"
+        fi
         log_error "=========================================="
         # Cleanup will be handled by trap
         exit 1
@@ -1671,7 +1677,11 @@ post_build_provisioning() {
         local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$password_change_log")"
         run_script "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
-            log_error "Password change failed"
+            log_error "Password change failed."
+            if [[ -f "$password_change_log" ]]; then
+                log_error "--- Last 100 lines of password-change log ---"
+                tail -100 "$password_change_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+            fi
             return 1
         }
         
@@ -1682,7 +1692,11 @@ post_build_provisioning() {
         export GOVC_USERNAME="$vcenter_user"
         export GOVC_PASSWORD="$vcenter_pass"
         run_script "$scripts_dir/mount-vmware-tools.sh" "$vm_name" "$tools_mount_log" || {
-            log_error "VMware Tools mount failed"
+            log_error "VMware Tools mount failed."
+            if [[ -f "$tools_mount_log" ]]; then
+                log_error "--- Last 100 lines of vmware-tools-mount log ---"
+                tail -100 "$tools_mount_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+            fi
             return 1
         }
         
@@ -1690,7 +1704,11 @@ post_build_provisioning() {
         local tools_install_log="$SCRIPT_DIR/logs/vmware-tools-install-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$tools_install_log")"
         run_script "$scripts_dir/install-vmware-tools-keystrokes.sh" "$vm_name" "$tools_install_log" || {
-            log_error "VMware Tools installation failed"
+            log_error "VMware Tools installation failed."
+            if [[ -f "$tools_install_log" ]]; then
+                log_error "--- Last 100 lines of vmware-tools-install log ---"
+                tail -100 "$tools_install_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+            fi
             return 1
         }
         sleep 30
@@ -1754,7 +1772,11 @@ post_build_provisioning() {
     log_info "Network configuration log: $network_log"
     
     run_script "$scripts_dir/run-powershell-via-govc.sh" "$vm_name" "$scripts_dir/configure-network-manual.ps1" "$windows_username" "$windows_password" "$network_log" || {
-        log_error "Network configuration failed - check log: $network_log"
+        log_error "Network configuration failed."
+        if [[ -f "$network_log" ]]; then
+            log_error "--- Last 200 lines of network config log ($network_log) ---"
+            tail -200 "$network_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+        fi
         return 1
     }
     
@@ -1768,7 +1790,11 @@ post_build_provisioning() {
         log_info "Windows updates log: $updates_log"
         
         run_script "$scripts_dir/run-windows-updates-loop.sh" "$vm_name" "$windows_username" "$windows_password" 10 > "$updates_log" 2>&1 || {
-            log_error "Windows updates installation failed - check log: $updates_log"
+            log_error "Windows updates installation failed."
+            if [[ -f "$updates_log" ]]; then
+                log_error "--- Last 300 lines of windows-updates log ($updates_log) ---"
+                tail -300 "$updates_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+            fi
             return 1
         }
     else
@@ -1813,13 +1839,17 @@ post_build_provisioning() {
              bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\""; then
             log_success "stembuild construct completed on jumper"
         else
-            log_error "stembuild construct failed on jumper"
+            log_error "stembuild construct failed on jumper (log is on jumper host, not here)"
             return 1
         fi
     else   
         mkdir -p "$(dirname "$construct_log")"
         run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || {
-            log_error "stembuild construct failed"
+            log_error "stembuild construct failed."
+            if [[ -f "$construct_log" ]]; then
+                log_error "--- Last 200 lines of stembuild-construct log ---"
+                tail -200 "$construct_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+            fi
             return 1
         }
     fi
@@ -1870,7 +1900,11 @@ post_build_provisioning() {
     
     # Run package
     run_script "$SCRIPT_DIR/package-stemcell.sh" -n "$vm_name" -P "$patch_version" -i "$vm_inventory_path" > "$package_log" 2>&1 || {
-        log_error "stembuild package failed"
+        log_error "stembuild package failed."
+        if [[ -f "$package_log" ]]; then
+            log_error "--- Last 200 lines of stembuild-package log ---"
+            tail -200 "$package_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+        fi
         return 1
     }
     
