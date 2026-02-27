@@ -20,10 +20,7 @@ fi
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 pushd $SCRIPT_DIR/windows-automation
-export PACKER_PLUGIN_PATH=/root/.packer.d/plugins
-
-mkdir -p ${PACKER_PLUGIN_PATH}/github.com/hashicorp/vsphere
-mv $PACKER_PLUGIN_PATH/packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64 $PACKER_PLUGIN_PATH/github.com/hashicorp/vsphere/packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64
+export PACKER_GITHUB_API_TOKEN=$PACKER_GITHUB_API_TOKEN
 OLD_PWD=$OLDPWD
 
 # Generate variables file from Concourse task inputs
@@ -209,7 +206,7 @@ fi
 
 # Run build script
 echo "Starting Windows stemcell creation..."
-./build.sh -v "$VARS_FILE" "${JUMPER_ARGS[@]}" --skip-packer-init
+./build.sh -v "$VARS_FILE" "${JUMPER_ARGS[@]}"
 
 # Copy logs to output
 mkdir -p $OLD_PWD/logs
