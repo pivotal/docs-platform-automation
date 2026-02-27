@@ -19,7 +19,7 @@ if ! command -v stembuild &> /dev/null; then
 fi
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
-pushd $SCRIPT_DIR/windows-automation
+pushd "$SCRIPT_DIR"/windows-automation
 OLD_PWD=${OLDPWD}
 
 # Generate variables file from Concourse task inputs
@@ -203,6 +203,10 @@ if [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}
     echo "Jumper flags added to execution (--jumper-ip, --jumper-user, --jumper-password)."
 fi
 
+# Use https github for this call only
+GIT_CONFIG_COUNT=1 \
+GIT_CONFIG_KEY_0="url.https://github.com/.insteadOf" \
+GIT_CONFIG_VALUE_0="git@github.com:" \
 PACKER_GITHUB_API_TOKEN=${PACKER_GITHUB_API_TOKEN} packer init windows-vm.pkr.hcl
 
 # Build args: pass --debug when DEBUG_MODE is true (e.g. from Concourse task params)
@@ -217,18 +221,18 @@ echo "Starting Windows stemcell creation..."
 ./build.sh -v "$VARS_FILE" "${BUILD_ARGS[@]}" "${JUMPER_ARGS[@]}"
 
 # Copy logs to output
-mkdir -p $OLD_PWD/logs
-cp -r logs/* $OLD_PWD/logs 2>/dev/null || true
+mkdir -p "$OLD_PWD"/logs
+cp -r logs/* "$OLD_PWD"/logs 2>/dev/null || true
 
 # Copy stemcell file to output
 echo "Looking for generated stemcell file..."
 STEMCELL_FILE=$(find . -name "bosh-stemcell-*-vsphere-esxi-*-go_agent.tgz" -type f 2>/dev/null | head -1)
 if [ -n "$STEMCELL_FILE" ]; then
   echo "Found stemcell file: $STEMCELL_FILE"
-  mkdir -p $OLD_PWD/stemcell
-  cp "$STEMCELL_FILE" $OLD_PWD/stemcell
+  mkdir -p "$OLD_PWD"/stemcell
+  cp "$STEMCELL_FILE" "$OLD_PWD"/stemcell
   echo "Stemcell file copied to output: $OLD_PWD/stemcell/$(basename "$STEMCELL_FILE")"
-  ls -lh $OLD_PWD/stemcell
+  ls -lh "$OLD_PWD"/stemcell
 else
   echo "WARNING: Stemcell file not found. Expected pattern: bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz"
   echo "Searching for any .tgz files:"
