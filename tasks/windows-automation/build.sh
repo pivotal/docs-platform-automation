@@ -189,8 +189,10 @@ display_build_variables() {
 
 # Clone current VM (base) to windows-target-vm-{timestamp}; power off base first.
 # Caller must have GOVC_* set. Outputs the new VM name to stdout for capture.
+# Optional second arg: vars_file to read vcenter_datastore (required when default datastore resolves to multiple)
 clone_current_vm_to_target() {
     local base_vm_name="${1:?}"
+    local vars_file="${2:-}"
     local timestamp=$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")
     local target_vm_name="windows-target-vm-${timestamp}"
 
@@ -225,8 +227,20 @@ clone_current_vm_to_target() {
     fi
     log_success "Base VM powered off"
 
+    # Specify datastore when multiple exist (govc: default datastore resolves to multiple instances)
+    local clone_opts=(-vm "$base_vm_name")
+    if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
+        local datastore
+        datastore=$(grep -E "^vcenter_datastore\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+        if [[ -n "$datastore" ]]; then
+            clone_opts+=(-ds "$datastore")
+            log_info "Using datastore for clone: $datastore"
+        fi
+    fi
+    clone_opts+=("$target_vm_name")
+
     log_info "Cloning $base_vm_name to $target_vm_name..."
-    if ! govc vm.clone -vm "$base_vm_name" "$target_vm_name"; then
+    if ! govc vm.clone "${clone_opts[@]}"; then
         log_error "Clone failed"
         return 1
     fi
@@ -1716,7 +1730,7 @@ post_build_provisioning() {
     # Step 3.5: Clone current VM to windows-target-vm-{timestamp}; stembuild construct/package run on the clone
     log_info "Step 3.5: Cloning VM for stembuild (power off base, clone to windows-target-vm-{timestamp})..."
     local target_vm_name
-    target_vm_name=$(clone_current_vm_to_target "$vm_name") || return 1
+    target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || return 1
     log_info "Using clone '$target_vm_name' for stembuild construct and package"
     vm_name="$target_vm_name"
     
