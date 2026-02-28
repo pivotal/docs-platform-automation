@@ -1623,7 +1623,7 @@ post_build_provisioning() {
     # Step 1: Password change and VMware Tools (ISO mode only). Wait 10 min, run password change once,
     # install VMware Tools once, then poll for guest ops; fail immediately on auth error.
     if [[ "$build_mode" == "iso" ]]; then
-        local wait_before_password_change="${WAIT_BEFORE_PASSWORD_CHANGE_SECONDS:-600}"
+        local wait_before_password_change="${WAIT_BEFORE_PASSWORD_CHANGE_SECONDS:-60}"
         log_info "Step 1: Waiting ${wait_before_password_change}s before password change..."
         sleep "$wait_before_password_change"
 
