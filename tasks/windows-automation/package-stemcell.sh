@@ -257,42 +257,30 @@ package_stemcell() {
     log_info "VM Inventory Path: $VM_INVENTORY_PATH"
     log_info "Patch Version: $PATCH_VERSION"
     log_info "Stembuild Binary: $STEMBUILD_BINARY"
-    
-    # Build stembuild package command
-    # According to the documentation, we need to handle special characters in passwords
-    # by using environment variables GOVC_USERNAME and GOVC_PASSWORD
-    
-    local package_cmd="$STEMBUILD_BINARY package"
-    package_cmd="$package_cmd -vcenter-url \"$GOVC_URL\""
-    package_cmd="$package_cmd -vcenter-username \"$GOVC_USERNAME\""
-    package_cmd="$package_cmd -vcenter-password \"$GOVC_PASSWORD\""
-    package_cmd="$package_cmd -patch-version \"$PATCH_VERSION\""
-    package_cmd="$package_cmd -vm-inventory-path \"$VM_INVENTORY_PATH\""
-    
-    if [[ -n "$VCENTER_CA_CERTS" ]]; then
-        if [[ ! -f "$VCENTER_CA_CERTS" ]]; then
-            log_error "CA certificates file not found: $VCENTER_CA_CERTS"
-            exit 1
-        fi
-        package_cmd="$package_cmd -vcenter-ca-certs \"$VCENTER_CA_CERTS\""
+
+    # Build stembuild package command (array-based to avoid eval and quoting issues)
+    local package_args=(
+        -vcenter-url "$GOVC_URL"
+        -vcenter-username "$GOVC_USERNAME"
+        -vcenter-password "$GOVC_PASSWORD"
+        -patch-version "$PATCH_VERSION"
+        -vm-inventory-path "$VM_INVENTORY_PATH"
+    )
+    if [[ -n "$VCENTER_CA_CERTS" ]] && [[ -f "$VCENTER_CA_CERTS" ]]; then
+        package_args+=(-vcenter-ca-certs "$VCENTER_CA_CERTS")
         log_info "Using custom CA certificates: $VCENTER_CA_CERTS"
     fi
-    
+
     log_info "Running stembuild package command..."
     log_info "This may take up to 30 minutes to complete..."
-    
-    # Execute the command
-    # Note: The documentation recommends using environment variables for passwords with special characters
-    # We've already set GOVC_USERNAME and GOVC_PASSWORD above
-    eval "$package_cmd"
-    local exit_code=$?
-    
-    if [[ $exit_code -ne 0 ]]; then
+
+    if ! "$STEMBUILD_BINARY" package "${package_args[@]}"; then
+        local exit_code=$?
         log_error "stembuild package failed with exit code: $exit_code"
         log_error "Check the error messages above for details"
         exit $exit_code
     fi
-    
+
     log_success "Stemcell packaging completed successfully"
     
     # Find the generated stemcell file

@@ -1872,14 +1872,16 @@ post_build_provisioning() {
     local package_log="$SCRIPT_DIR/logs/stembuild-package-$(date +%Y%m%d-%H%M%S).log"
     mkdir -p "$(dirname "$package_log")"
     
-    # Find VM inventory path
+    # Find VM inventory path; always use datacenter prefix (e.g. /Datacenter/vm/...)
     local vm_path=$(govc find vm -name "$vm_name" 2>/dev/null | head -n1)
     if [[ -z "$vm_path" ]]; then
         log_error "VM not found: $vm_name"
         return 1
     fi
-
-    vm_inventory_path="$datacenter/$vm_path"
+    local vm_inventory_path
+    local vm_path_stripped="${vm_path#/}"
+    vm_path_stripped="${vm_path_stripped#$datacenter/}"
+    vm_inventory_path="/$datacenter/$vm_path_stripped"
 
     # Stop VM before packaging (required by stembuild)
     log_info "Stopping VM before packaging..."
@@ -1889,8 +1891,11 @@ post_build_provisioning() {
     fi
     log_success "VM powered off"
     
-    # Run package
-    run_script "$SCRIPT_DIR/package-stemcell.sh" -n "$vm_name" -P "$patch_version" -i "$vm_inventory_path" > "$package_log" 2>&1 || {
+    # Run package (pass vCenter options so package script has what it needs)
+    local package_args=(-n "$vm_name" -P "$patch_version" -i "$vm_inventory_path")
+    [[ "$vcenter_insecure" == "true" ]] && package_args+=(-I)
+    [[ -n "${VCENTER_CA_CERTS:-}" ]] && [[ -f "${VCENTER_CA_CERTS}" ]] && package_args+=(-c "$VCENTER_CA_CERTS")
+    run_script "$SCRIPT_DIR/package-stemcell.sh" "${package_args[@]}" > "$package_log" 2>&1 || {
         log_error "stembuild package failed."
         if [[ -f "$package_log" ]]; then
             log_error "--- Last 200 lines of stembuild-package log ---"
