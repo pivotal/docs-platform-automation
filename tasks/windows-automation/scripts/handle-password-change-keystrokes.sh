@@ -1,10 +1,23 @@
 #!/usr/bin/env bash
 # Handle password change screen using govc vm.keystrokes (guest ops need Tools + login, so we inject keystrokes instead).
 # Runs after Windows install and first boot. Usage: handle-password-change-keystrokes.sh <vm-name> <password> [log-file]
+#
+# Reliability: Keystrokes depend on screen state, focus, and timing. For slow or busy VMs, increase sleeps via env:
+#   KEYSTROKE_WAIT_INITIAL=30  (default 25) - wait before sending ANY keys (let password/login screen appear)
+#   KEYSTROKE_SLEEP_SHORT=2    (default 2) - after single key/type
+#   KEYSTROKE_SLEEP_MEDIUM=5   (default 4) - after Ctrl+Alt+Del or dialog action
+#   KEYSTROKE_SLEEP_LONG=6     (default 5) - after login or confirm
+# Assumes US keyboard and default focus order (OK focused, then password field, Tab to confirm, etc.).
 
 VM_NAME="${1:-}"
 PASSWORD="${2:-}"
 LOG_FILE="${3:-}"
+
+# Configurable sleeps for slow/busy VMs (seconds). Defaults are conservative to avoid timing failures.
+KEYSTROKE_WAIT_INITIAL="${KEYSTROKE_WAIT_INITIAL:-25}"
+KEYSTROKE_SLEEP_SHORT="${KEYSTROKE_SLEEP_SHORT:-2}"
+KEYSTROKE_SLEEP_MEDIUM="${KEYSTROKE_SLEEP_MEDIUM:-4}"
+KEYSTROKE_SLEEP_LONG="${KEYSTROKE_SLEEP_LONG:-5}"
 
 # Setup logging
 if [[ -n "$LOG_FILE" ]]; then
@@ -28,6 +41,11 @@ echo "Handling password change for VM: $VM_NAME"
 echo "Timestamp: $(date)"
 echo "=========================================="
 
+# Wait for the password change / login screen to be ready before sending any keystrokes.
+# Without this, keys can be lost or applied to the wrong window (e.g. still at boot).
+echo "Waiting ${KEYSTROKE_WAIT_INITIAL}s for password/login screen to be ready..."
+sleep "$KEYSTROKE_WAIT_INITIAL"
+
 # Step 0: Send Ctrl+Alt+Del to unlock/login screen
 # This is required because VM provisioning is done and we need to unlock the screen
 echo "Step 0: Sending Ctrl+Alt+Del to unlock login screen..."
@@ -35,7 +53,7 @@ govc vm.keystrokes -vm "$VM_NAME" -lc=true -la=true -c=0x4c || {
     echo "Error: Failed to send Ctrl+Alt+Del"
     exit 1
 }
-sleep 2
+sleep "$KEYSTROKE_SLEEP_MEDIUM"
 echo "Ctrl+Alt+Del sent successfully"
 
 # Step 1: Handle the OK/Cancel dialog for password reset
@@ -45,7 +63,7 @@ govc vm.keystrokes -vm "$VM_NAME" -c=KEY_ENTER || {
     echo "Error: Failed to handle OK/Cancel dialog"
     exit 1
 }
-sleep 2
+sleep "$KEYSTROKE_SLEEP_MEDIUM"
 echo "OK/Cancel dialog handled"
 
 # Step 2: Handle the password entry screen
@@ -60,7 +78,7 @@ govc vm.keystrokes -vm "$VM_NAME" -s="$PASSWORD" || {
     echo "Error: Failed to type password in first field"
     exit 1
 }
-sleep 1
+sleep "$KEYSTROKE_SLEEP_SHORT"
 
 # Tab to confirm password field
 echo "Moving to confirm password field..."
@@ -68,7 +86,7 @@ govc vm.keystrokes -vm "$VM_NAME" -c=KEY_TAB || {
     echo "Error: Failed to tab to confirm password field"
     exit 1
 }
-sleep 1
+sleep "$KEYSTROKE_SLEEP_SHORT"
 
 # Type password in confirm field
 echo "Typing password in confirm field..."
@@ -76,7 +94,7 @@ govc vm.keystrokes -vm "$VM_NAME" -s="$PASSWORD" || {
     echo "Error: Failed to type password in confirm field"
     exit 1
 }
-sleep 1
+sleep "$KEYSTROKE_SLEEP_SHORT"
 
 # Press Enter to confirm
 echo "Confirming password change..."
@@ -84,7 +102,7 @@ govc vm.keystrokes -vm "$VM_NAME" -c=KEY_ENTER || {
     echo "Error: Failed to confirm password change"
     exit 1
 }
-sleep 3
+sleep "$KEYSTROKE_SLEEP_LONG"
 
 # Step 3: Handle login screen (if it appears after password change)
 echo "Step 3: Handling login screen (if needed)..."
@@ -92,7 +110,7 @@ echo "Step 3: Handling login screen (if needed)..."
 govc vm.keystrokes -vm "$VM_NAME" -lc=true -la=true -c=0x4c || {
     echo "Warning: Failed to send Ctrl+Alt+Del for login (may not be needed)"
 }
-sleep 2
+sleep "$KEYSTROKE_SLEEP_MEDIUM"
 
 # Type password to login
 echo "Typing password to login..."
@@ -100,7 +118,7 @@ govc vm.keystrokes -vm "$VM_NAME" -s="$PASSWORD" || {
     echo "Error: Failed to type password for login"
     exit 1
 }
-sleep 1
+sleep "$KEYSTROKE_SLEEP_SHORT"
 
 # Press Enter to login
 echo "Pressing Enter to login..."
@@ -108,7 +126,7 @@ govc vm.keystrokes -vm "$VM_NAME" -c=KEY_ENTER || {
     echo "Error: Failed to press Enter for login"
     exit 1
 }
-sleep 3
+sleep "$KEYSTROKE_SLEEP_LONG"
 
 echo "=========================================="
 echo "Password change and login completed successfully"

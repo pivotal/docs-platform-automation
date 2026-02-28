@@ -1620,11 +1620,14 @@ post_build_provisioning() {
     #   install-windows-updates.ps1, check-updates-after-reboot.ps1, run-stembuild-construct.sh.
     # package-stemcell.sh lives in SCRIPT_DIR (windows-automation/).
     
-    # Step 1: Password change and VMware Tools (ISO mode only)
+    # Step 1: Password change and VMware Tools (ISO mode only). Wait 10 min, run password change once,
+    # install VMware Tools once, then poll for guest ops; fail immediately on auth error.
     if [[ "$build_mode" == "iso" ]]; then
+        local wait_before_password_change="${WAIT_BEFORE_PASSWORD_CHANGE_SECONDS:-600}"
+        log_info "Step 1: Waiting ${wait_before_password_change}s before password change..."
+        sleep "$wait_before_password_change"
+
         log_info "Step 1: Handling password change (ISO mode)..."
-        sleep 30
-        
         local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$password_change_log")"
         run_script "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
@@ -1635,7 +1638,7 @@ post_build_provisioning() {
             fi
             return 1
         }
-        
+
         log_info "Step 1.5: Mounting VMware Tools ISO..."
         sleep 10
         local tools_mount_log="$SCRIPT_DIR/logs/vmware-tools-mount-$(date +%Y%m%d-%H%M%S).log"
@@ -1650,7 +1653,7 @@ post_build_provisioning() {
             fi
             return 1
         }
-        
+
         log_info "Step 1.6: Installing VMware Tools..."
         local tools_install_log="$SCRIPT_DIR/logs/vmware-tools-install-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$tools_install_log")"
@@ -1664,36 +1667,85 @@ post_build_provisioning() {
         }
         sleep 30
 
-        # Step 1.7: Poll until guest ops work (keystrokes only start the installer; it runs in background).
-        log_info "Step 1.7: Waiting for VMware Tools guest operations (poll up to 10 min, every 30s)..."
+        # Step 1.7: Poll until guest ops work. Fail immediately on auth error; otherwise keep waiting.
+        # Capture govc errors so we can report why verification failed (auth vs Tools/PowerShell).
+        log_info "Step 1.7: Checking password change: waiting for VMware Tools guest operations (poll up to 10 min, every 30s). Failing immediately on auth error..."
         local guest_ready=0
         local wait_elapsed=0
         local wait_timeout=600
         local wait_interval=30
         local govc_guest_opts=(-vm "$vm_name" -l "${windows_username}:${windows_password}")
         local ps_exe="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        local last_start_stderr=""
+        local last_ps_exit_code=""
+        local tmp_stderr
+        tmp_stderr=$(mktemp 2>/dev/null) || tmp_stderr=""
         while [[ $wait_elapsed -lt $wait_timeout ]]; do
+            last_start_stderr=""
+            last_ps_exit_code=""
             local pid
-            pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
+            if [[ -n "$tmp_stderr" ]]; then
+                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>"$tmp_stderr") || true
+                last_start_stderr=$(cat "$tmp_stderr" 2>/dev/null)
+            else
+                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
+            fi
             if [[ -n "$pid" ]]; then
                 local raw
                 raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
                 local code
-                # govc guest.ps -x outputs a table: UID PID STIME XTIME XCODE CMD (not JSON)
                 code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
                 [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+                last_ps_exit_code="${code:-}"
                 if [[ "${code:-1}" == "0" ]]; then
                     guest_ready=1
-                    log_info "VMware Tools guest operations are ready after ${wait_elapsed}s; continuing."
+                    log_success "Password change verified: guest operations ready after ${wait_elapsed}s."
                     break
+                fi
+            else
+                # No PID: check for auth error and fail immediately.
+                if [[ -n "$last_start_stderr" ]]; then
+                    local err_lower
+                    err_lower=$(echo "$last_start_stderr" | tr '[:upper:]' '[:lower:]')
+                    if echo "$err_lower" | grep -qE 'auth|login|credential|permission denied|access denied|invalid.*password|logon|unauthorized|supplied credentials|authenticate'; then
+                        log_error "Password change check failed: authentication error (fail immediately). Wrong password or user not logged in."
+                        log_error "Govc error: $last_start_stderr"
+                        rm -f "$tmp_stderr" 2>/dev/null || true
+                        return 1
+                    fi
                 fi
             fi
             log_info "Guest PowerShell not ready yet, waiting ${wait_interval}s (elapsed ${wait_elapsed}s / ${wait_timeout}s)..."
             sleep $wait_interval
             wait_elapsed=$((wait_elapsed + wait_interval))
         done
+        rm -f "$tmp_stderr" 2>/dev/null || true
+
         if [[ $guest_ready -ne 1 ]]; then
-            log_error "VMware Tools guest operations did not become ready within ${wait_timeout}s"
+            # Classify failure for clearer diagnostics.
+            local reason="unknown"
+            local detail=""
+            if [[ -n "$last_ps_exit_code" && "$last_ps_exit_code" != "0" ]]; then
+                reason="powershell_error"
+                detail="Guest process ran but PowerShell exited with code ${last_ps_exit_code} (Tools may be running but command or login state failed)."
+            elif [[ -n "$last_start_stderr" ]]; then
+                local err_lower
+                err_lower=$(echo "$last_start_stderr" | tr '[:upper:]' '[:lower:]')
+                if echo "$err_lower" | grep -qE 'auth|login|credential|permission denied|access denied|invalid.*password|logon|unauthorized|supplied credentials|authenticate'; then
+                    reason="auth_error"
+                    detail="Authentication failed: wrong password or user not logged in. Govc error: $last_start_stderr"
+                elif echo "$err_lower" | grep -qE 'tools|guest oper|not available|not running|not installed|timeout|connection|no route'; then
+                    reason="tools_not_ready"
+                    detail="VMware Tools not ready or guest operations unavailable. Govc error: $last_start_stderr"
+                else
+                    reason="guest_error"
+                    detail="Guest start failed. Govc error: $last_start_stderr"
+                fi
+            else
+                detail="No guest process started and no govc error captured (guest.start returned no PID within ${wait_timeout}s)."
+            fi
+            log_error "Password change check failed after ${wait_timeout}s."
+            log_error "Failure reason: $reason — $detail"
             return 1
         fi
     else
@@ -1878,6 +1930,28 @@ post_build_provisioning() {
         log_success "Template created: $final_template_name"
     fi
     
+    # Step 9: Cleanup target VM at the end if we did not convert it to template
+    # (ISO mode with no template requested, or template mode where the clone was only used for stembuild)
+    create_template=false
+    if [[ "$build_mode" == "iso" ]] && ([[ -n "$template_path" ]] || [[ -n "$template_name" ]]); then
+        create_template=true
+    fi
+    if [[ "$create_template" != "true" ]]; then
+        log_info "Step 9: Cleaning up target VM..."
+        if vm_exists "$vm_name"; then
+            if [[ "$(get_vm_power_state "$vm_name")" != "poweredOff" ]]; then
+                log_info "Shutting down target VM before cleanup..."
+                vm_power_off "$vm_name" 120 0 || true
+            fi
+            log_info "Deleting target VM: $vm_name"
+            govc vm.destroy "$vm_name" >/dev/null 2>&1 || {
+                log_warn "Failed to delete target VM (may require manual cleanup): $vm_name"
+            }
+            log_success "Target VM cleaned up"
+        else
+            log_info "Target VM not found (already deleted or not created)"
+        fi
+    fi
     log_success "Stemcell creation completed successfully"
     return 0
 }
