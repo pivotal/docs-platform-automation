@@ -134,7 +134,6 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     # Check for pending reboot via guest.start (run in current shell so GUEST_PS_EXIT is set)
     echo "Checking for pending reboot..."
     REBOOT_CMD="Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired'"
-    local reboot_output_file
     reboot_output_file=$(mktemp)
     guest_ps_run_capture "$REBOOT_CMD" > "$reboot_output_file" 2>/dev/null
     REBOOT_OUTPUT=$(cat "$reboot_output_file" 2>/dev/null)
@@ -180,7 +179,6 @@ while [[ $iteration -lt $MAX_ITER ]]; do
     # Run guest_ps_run_capture in the current shell (not in a subshell) so GUEST_PS_EXIT is set correctly (3010 = reboot required).
     # If we used INSTALL_OUTPUT=$(guest_ps_run_capture ...), GUEST_PS_EXIT would be set only in the subshell and lost.
     echo "Installing updates..."
-    local install_output_file
     install_output_file=$(mktemp)
     guest_ps_run_capture "& { & 'C:\\Windows\\Temp\\install-windows-updates.ps1'; exit \$LASTEXITCODE }" > "$install_output_file" 2>/dev/null
     INSTALL_EXIT="${GUEST_PS_EXIT:-1}"

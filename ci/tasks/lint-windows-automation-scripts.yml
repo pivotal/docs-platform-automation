@@ -1,0 +1,24 @@
+---
+# Lint Windows automation shell scripts (shellcheck).
+# Fails on error-level issues (e.g. SC3043 local outside function).
+platform: linux
+inputs:
+  - name: docs-platform-automation
+outputs: []
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/library/ubuntu
+    tag: jammy
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+run:
+  path: bash
+  args:
+    - -c
+    - |
+      set -eu
+      apt-get update -qq
+      apt-get install -y -qq shellcheck
+      cd docs-platform-automation/tasks/windows-automation
+      ./scripts/lint-shell-scripts.sh

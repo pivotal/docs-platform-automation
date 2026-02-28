@@ -9,6 +9,7 @@ groups:
   - build-packages-image
   - bump-version-to-major
   - check-for-secrets-in-tasks
+  - lint-windows-automation-scripts
   #@ for/end deployment in data.values.deployments:
   - #@ deployment.env_name + "-delete-infrastructure"
   #@ for/end deployment in deployments_without_gcp:
@@ -496,6 +497,13 @@ jobs:
   - put: packages-image
     params: { image: image/image.tar }
 
+- name: lint-windows-automation-scripts
+  plan:
+  - get: docs-platform-automation
+    trigger: true
+  - task: lint-shell-scripts
+    file: docs-platform-automation/ci/tasks/lint-windows-automation-scripts.yml
+
 - name: download-and-test-om
   plan:
   - get: daily
@@ -556,6 +564,8 @@ jobs:
         globs:
         - 'om-linux-amd64-*[^.tar.gz]'
     - get: docs-platform-automation
+      passed:
+      - lint-windows-automation-scripts
       trigger: false
     - get: packages-image
       trigger: true
