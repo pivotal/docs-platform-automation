@@ -137,6 +137,17 @@ See `variables.pkrvars.hcl.example` for a complete example with all available op
 - **Logs:** `logs/` directory with detailed logs for each step
 - **Template:** Created in vCenter (ISO mode only, if configured)
 
+## Stembuild construct on jumper
+
+When you pass `--jumper-ip`, `--jumper-user`, and `--jumper-password`, **stembuild construct** runs on the jumper host instead of locally. The build script:
+
+- Copies `run-stembuild-construct.sh`, `stembuild`, `govc`, and `LGPO.zip` to the jumper.
+- Exports **GOVC_URL**, **GOVC_USERNAME**, **GOVC_PASSWORD**, **GOVC_INSECURE** (and optionally **VCENTER_CA_CERTS**) on the jumper so the construct script can talk to vCenter.
+- **Captures all jumper session output** to a local log file: `logs/stembuild-construct-<timestamp>.log`.
+- On failure, prints the **last 200 lines** of that log so you see the stembuild/govc errors without logging into the jumper.
+
+To use a custom vCenter CA certificate on the jumper, set **VCENTER_CA_CERTS** to the path of your CA file before running the build; the file will be copied to the jumper as `~/vcenter-ca-certs.pem` and used by `run-stembuild-construct.sh`.
+
 ## Govc keystroke reliability
 
 Password change and VMware Tools install use **govc vm.keystrokes** because guest operations (guest.start, file copy) require VMware Tools and a logged-in session. Keystrokes are inherently best-effort: they depend on screen state, focus, and timing.

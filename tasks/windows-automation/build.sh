@@ -1827,24 +1827,35 @@ post_build_provisioning() {
     
     local datacenter=$(grep -E "^vcenter_datacenter\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
     local construct_log="$SCRIPT_DIR/logs/stembuild-construct-$(date +%Y%m%d-%H%M%S).log"
+    mkdir -p "$(dirname "$construct_log")"
     if [[ -n $jumper_ip ]] && [[ -n $jumper_user ]] && [[ -n $jumper_password ]]; then
-        local stembuild_remote="~/stembuild"
+        # Path on remote must match where we scp the binary: user@jumper:~/ → $HOME/stembuild
+        local stembuild_remote="\$HOME/stembuild"
         if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$scripts_dir/run-stembuild-construct.sh" "$(which stembuild)" "$(which govc)" LGPO.zip "$jumper_user@$jumper_ip:~/"; then
             log_error "Failed to copy run-stembuild-construct.sh, stembuild, govc, and LGPO.zip to jumper"
             return 1
         fi
-        # Export GOVC_* and PATH on remote so run-stembuild-construct.sh can connect to vCenter and use govc
-        if sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" \
-            "export PATH=\"\$HOME:\$PATH\" GOVC_URL='$GOVC_URL' GOVC_USERNAME='$GOVC_USERNAME' GOVC_PASSWORD='$GOVC_PASSWORD' GOVC_INSECURE='${GOVC_INSECURE:-}'; \
-             chmod +x ~/run-stembuild-construct.sh ~/stembuild ~/govc; \
-             bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\""; then
-            log_success "stembuild construct completed on jumper"
-        else
-            log_error "stembuild construct failed on jumper (log is on jumper host, not here)"
+        # Optional: copy vCenter CA cert to jumper if construct needs it
+        local vcenter_ca_remote=""
+        if [[ -n "${VCENTER_CA_CERTS:-}" ]] && [[ -f "${VCENTER_CA_CERTS}" ]]; then
+            if sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$VCENTER_CA_CERTS" "$jumper_user@$jumper_ip:~/vcenter-ca-certs.pem"; then
+                vcenter_ca_remote="\$HOME/vcenter-ca-certs.pem"
+            fi
+        fi
+        # Export GOVC_* and PATH on remote; capture all output to local log so we can show it on failure.
+        local export_vars="PATH=\"\$HOME:\$PATH\" GOVC_URL=\"$GOVC_URL\" GOVC_USERNAME=\"$GOVC_USERNAME\" GOVC_PASSWORD=\"$GOVC_PASSWORD\" GOVC_INSECURE=\"${GOVC_INSECURE:-}\""
+        [[ -n "$vcenter_ca_remote" ]] && export_vars="$export_vars VCENTER_CA_CERTS=\"$vcenter_ca_remote\""
+        sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" \
+            "export $export_vars; chmod +x ~/run-stembuild-construct.sh ~/stembuild ~/govc 2>/dev/null; bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\"" 2>&1 | tee "$construct_log"
+        if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+            log_error "stembuild construct failed on jumper. Last 200 lines of log (captured from jumper session):"
+            if [[ -f "$construct_log" ]]; then
+                tail -200 "$construct_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
+            fi
             return 1
         fi
-    else   
-        mkdir -p "$(dirname "$construct_log")"
+        log_success "stembuild construct completed on jumper"
+    else
         run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || {
             log_error "stembuild construct failed."
             if [[ -f "$construct_log" ]]; then
