@@ -213,14 +213,26 @@ while [[ $iteration -lt $MAX_ITER ]]; do
         exit 0
     fi
 
-    echo "ERROR: Windows Update install failed with exit code $INSTALL_EXIT"
-    echo "--- Captured script output (so you see it in Concourse) ---"
+    # Non-success exit: reboot and retry if we have iterations left (up to MAX_ITER total)
+    echo "Windows Update install returned exit code $INSTALL_EXIT (not success)."
+    echo "--- Captured script output ---"
     if [[ -n "$INSTALL_OUTPUT" ]]; then
         echo "$INSTALL_OUTPUT"
     else
         echo "(no output captured)"
     fi
     echo "--- End of script output ---"
+    if [[ $iteration -lt $MAX_ITER ]]; then
+        echo "Rebooting and retrying (iteration $iteration/$MAX_ITER)..."
+        vm_reboot_shutdown_poweron "$VM_NAME" 120 || exit 1
+        echo "Waiting for VM to boot after reboot..."
+        if ! wait_for_system_ready_after_reboot; then
+            exit 1
+        fi
+        continue
+    fi
+
+    echo "ERROR: Windows Update install failed with exit code $INSTALL_EXIT after $MAX_ITER iterations"
     exit "${INSTALL_EXIT:-1}"
 done
 
