@@ -19,6 +19,7 @@ source "$COMMON_SH"
 
 # Global variables for cleanup
 CLEANUP_VM_NAME=""
+CLEANUP_TARGET_VM_NAME=""
 CLEANUP_PACKER_PID=""
 CLEANUP_BUILD_MODE=""
 CLEANUP_VARS_FILE=""
@@ -102,6 +103,23 @@ cleanup_on_failure() {
             }
         else
             log_info "VM not found (may have been deleted already)"
+        fi
+    fi
+
+    # Also clean up target VM (clone used for stembuild) if it was created and is different from base VM
+    if [[ -n "$CLEANUP_TARGET_VM_NAME" ]] && [[ "$CLEANUP_TARGET_VM_NAME" != "$CLEANUP_VM_NAME" ]]; then
+        log_warn "Cleaning up target VM (clone): $CLEANUP_TARGET_VM_NAME"
+        if vm_exists "$CLEANUP_TARGET_VM_NAME"; then
+            if [[ "$(get_vm_power_state "$CLEANUP_TARGET_VM_NAME")" != "poweredOff" ]]; then
+                log_warn "Shutting down target VM..."
+                vm_power_off "$CLEANUP_TARGET_VM_NAME" 120 0 || true
+            fi
+            log_warn "Deleting target VM..."
+            govc vm.destroy "$CLEANUP_TARGET_VM_NAME" >/dev/null 2>&1 || {
+                log_warn "Failed to delete target VM (may require manual cleanup): $CLEANUP_TARGET_VM_NAME"
+            }
+        else
+            log_info "Target VM not found (may have been deleted already)"
         fi
     fi
     
@@ -1806,9 +1824,78 @@ post_build_provisioning() {
     log_info "Step 3.5: Cloning VM for stembuild (power off base, clone to windows-target-vm-{timestamp})..."
     local target_vm_name
     target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || return 1
+    # Trim whitespace and stray quotes (e.g. from Concourse log interleaving with stdout)
+    target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
     log_info "Using clone '$target_vm_name' for stembuild construct and package"
     vm_name="$target_vm_name"
-    
+    CLEANUP_TARGET_VM_NAME="$target_vm_name"
+
+    # Step 3.6: Ensure target VM is powered on and wait for guest to boot (guest ops ready)
+    log_info "Step 3.6: Waiting for target VM to boot and guest operations ready..."
+    local power_state
+    power_state=$(get_vm_power_state "$vm_name")
+    if [[ "$power_state" != "poweredOn" ]]; then
+        log_info "Powering on target VM: $vm_name"
+        govc vm.power -on "$vm_name" >/dev/null 2>&1 || { log_error "Failed to power on $vm_name"; return 1; }
+        local power_wait=0
+        while [[ $power_wait -lt 120 ]]; do
+            power_state=$(get_vm_power_state "$vm_name")
+            if [[ "$power_state" == "poweredOn" ]]; then
+                log_success "Target VM powered on after ${power_wait}s"
+                break
+            fi
+            sleep 5
+            power_wait=$((power_wait + 5))
+        done
+        if [[ "$power_state" != "poweredOn" ]]; then
+            log_error "Target VM did not reach poweredOn within 120s (state: $power_state)"
+            return 1
+        fi
+    else
+        log_info "Target VM already powered on"
+    fi
+    # Wait for VMware Tools and guest ops (same pattern as Step 1.7)
+    log_info "Waiting for guest operations on target VM (poll up to 10 min, every 30s)..."
+    local guest_ready=0
+    local wait_elapsed=0
+    local wait_timeout=600
+    local wait_interval=30
+    local govc_guest_opts=(-vm "$vm_name" -l "${windows_username}:${windows_password}")
+    local ps_exe="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    local last_start_stderr=""
+    local tmp_stderr
+    tmp_stderr=$(mktemp 2>/dev/null) || tmp_stderr=""
+    while [[ $wait_elapsed -lt $wait_timeout ]]; do
+        last_start_stderr=""
+        local pid
+        if [[ -n "$tmp_stderr" ]]; then
+            pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>"$tmp_stderr") || true
+            last_start_stderr=$(cat "$tmp_stderr" 2>/dev/null)
+        else
+            pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
+        fi
+        if [[ -n "$pid" ]]; then
+            local raw
+            raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
+            local code
+            code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
+            [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+            if [[ "${code:-1}" == "0" ]]; then
+                guest_ready=1
+                log_success "Target VM guest operations ready after ${wait_elapsed}s."
+                break
+            fi
+        fi
+        log_info "Guest not ready yet, waiting ${wait_interval}s (elapsed ${wait_elapsed}s / ${wait_timeout}s)..."
+        sleep $wait_interval
+        wait_elapsed=$((wait_elapsed + wait_interval))
+    done
+    rm -f "$tmp_stderr" 2>/dev/null || true
+    if [[ $guest_ready -ne 1 ]]; then
+        log_error "Target VM guest operations did not become ready within ${wait_timeout}s. Govc error: ${last_start_stderr:-none}"
+        return 1
+    fi
+
     # Run stembuild construct
     log_info "Step 4: Running stembuild construct..."
     if [[ -z "$patch_version" ]]; then

@@ -14,6 +14,9 @@ STEMBUILD_BINARY="${5:-}"
 DATACENTER="${6:-}"
 LOG_FILE="${7:-}"
 
+# Trim VM name (stray quotes/newlines can appear when stdout is captured in CI)
+VM_NAME=$(printf '%s' "$VM_NAME" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
+
 # Setup logging
 if [[ -n "$LOG_FILE" ]]; then
     exec > >(tee -a "$LOG_FILE") 2>&1
