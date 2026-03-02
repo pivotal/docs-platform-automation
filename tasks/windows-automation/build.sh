@@ -1845,8 +1845,9 @@ post_build_provisioning() {
         # Export GOVC_* and PATH on remote; capture all output to local log so we can show it on failure.
         local export_vars="PATH=\"\$HOME:\$PATH\" GOVC_URL=\"$GOVC_URL\" GOVC_USERNAME=\"$GOVC_USERNAME\" GOVC_PASSWORD=\"$GOVC_PASSWORD\" GOVC_INSECURE=\"${GOVC_INSECURE:-}\""
         [[ -n "$vcenter_ca_remote" ]] && export_vars="$export_vars VCENTER_CA_CERTS=\"$vcenter_ca_remote\""
+        log_info "Starting stembuild construct on jumper via SSH ($jumper_user@$jumper_ip); output below..."
         sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" \
-            "export $export_vars; chmod +x ~/run-stembuild-construct.sh ~/stembuild ~/govc 2>/dev/null; bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\"" 2>&1 | tee "$construct_log"
+            "echo '--- SSH session started on jumper, running stembuild construct ---'; export $export_vars; chmod +x ~/run-stembuild-construct.sh ~/stembuild ~/govc; bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\"" 2>&1 | tee "$construct_log"
         if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
             log_error "stembuild construct failed on jumper. Last 200 lines of log (captured from jumper session):"
             if [[ -f "$construct_log" ]]; then
@@ -1873,7 +1874,17 @@ post_build_provisioning() {
     mkdir -p "$(dirname "$package_log")"
     
     # Find VM inventory path; always use datacenter prefix (e.g. /Datacenter/vm/...)
-    local vm_path=$(govc find vm -name "$vm_name" 2>/dev/null | head -n1)
+    # Use -dc to scope find to this datacenter (avoids "matches N objects" from /datacenter/...)
+    local vm_path=""
+    if [[ -n "$datacenter" ]]; then
+        vm_path=$(govc find / -type m -name "$vm_name" -dc "$datacenter" 2>/dev/null | head -n1)
+    fi
+    if [[ -z "$vm_path" ]]; then
+        vm_path=$(govc find / -type m -name "$vm_name" 2>/dev/null | head -n1)
+    fi
+    if [[ -z "$vm_path" ]]; then
+        vm_path=$(govc find vm -name "$vm_name" 2>/dev/null | head -n1)
+    fi
     if [[ -z "$vm_path" ]]; then
         log_error "VM not found: $vm_name"
         return 1

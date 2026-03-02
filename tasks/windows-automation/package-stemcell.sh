@@ -218,8 +218,17 @@ find_vm_inventory_path() {
         return 0
     fi
     
-    # Use govc to find the VM
-    local vm_path=$(govc find vm -name "$VM_NAME" 2>/dev/null | head -n1)
+    # Use govc to find the VM (-dc scopes to datacenter and avoids "matches N objects" from /dc/...)
+    local vm_path=""
+    if [[ -n "${GOVC_DATACENTER:-}" ]]; then
+        vm_path=$(govc find / -type m -name "$VM_NAME" -dc "$GOVC_DATACENTER" 2>/dev/null | head -n1)
+    fi
+    if [[ -z "$vm_path" ]]; then
+        vm_path=$(govc find / -type m -name "$VM_NAME" 2>/dev/null | head -n1)
+    fi
+    if [[ -z "$vm_path" ]]; then
+        vm_path=$(govc find vm -name "$VM_NAME" 2>/dev/null | head -n1)
+    fi
     
     if [[ -z "$vm_path" ]]; then
         log_error "VM not found: $VM_NAME"
