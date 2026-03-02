@@ -217,7 +217,7 @@ clone_current_vm_to_target() {
     clone_opts+=("$target_vm_name")
 
     log_info "Cloning $base_vm_name to $target_vm_name..."
-    if ! govc vm.clone "${clone_opts[@]}"; then
+    if ! govc vm.clone "${clone_opts[@]}" 1>&2; then
         log_error "Clone failed"
         return 1
     fi
