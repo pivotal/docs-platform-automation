@@ -60,19 +60,25 @@ cleanup_on_failure() {
         return 0
     fi
     
+    local cleanup_mode="${CLEANUP_BUILD_MODE:-<not set>}"
     log_warn "=========================================="
     log_warn "Cleanup triggered due to failure"
     log_warn "Exit code: $exit_code"
-    log_warn "Build mode: $CLEANUP_BUILD_MODE"
+    log_warn "Build mode: $cleanup_mode"
     log_warn "VM name: $CLEANUP_VM_NAME"
+    [[ -n "$CLEANUP_TARGET_VM_NAME" ]] && log_warn "Target VM (clone): $CLEANUP_TARGET_VM_NAME"
     log_warn "=========================================="
     
-    # Template mode: Always cleanup (stop and delete VM)
-    # ISO mode: Only cleanup on failure
+    # Template mode: cleanup created VM (stop and delete)
+    # Existing_base mode: cleanup only the clone (CLEANUP_TARGET_VM_NAME); never touch user's base VM
+    # ISO mode: cleanup base VM and optionally target VM
     if [[ "$CLEANUP_BUILD_MODE" == "template" ]]; then
-        log_warn "Template mode: Always cleaning up VM (stop and delete)"
+        log_warn "Template mode: Cleaning up VM (stop and delete)"
+    elif [[ "$CLEANUP_BUILD_MODE" == "existing_base" ]]; then
+        log_warn "Existing_base mode: Cleaning up target VM (clone) only; base VM is left unchanged"
+        # Fall through to use same cleanup logic; CLEANUP_VM_NAME is empty so only CLEANUP_TARGET_VM_NAME will be cleaned
     elif [[ "$CLEANUP_BUILD_MODE" != "iso" ]]; then
-        log_info "Skipping cleanup (unknown build mode: $CLEANUP_BUILD_MODE)"
+        log_info "Skipping cleanup (unknown build mode: $cleanup_mode)"
         return 0
     fi
     
@@ -1354,14 +1360,13 @@ build_vm() {
         exit 1
     fi
     
-    # Extract datastore name and file path for verification (ISO mode only)
-    if [[ "$build_mode" == "iso" ]]; then
-        local iso_datastore=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[\([^]]*\)\].*/\1/')
-        local iso_file=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[[^]]*\]\///')
-        log_info "ISO Datastore: $iso_datastore"
-        log_info "ISO File Path: $iso_file"
-        log_info "Full ISO Path: ${PKR_VAR_iso_path}"
-    fi
+    # Extract datastore name and file path for verification (build_vm is only called for ISO mode)
+    local iso_datastore iso_file
+    iso_datastore=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[\([^]]*\)\].*/\1/')
+    iso_file=$(echo "${PKR_VAR_iso_path}" | sed 's/^\[[^]]*\]\///')
+    log_info "ISO Datastore: $iso_datastore"
+    log_info "ISO File Path: $iso_file"
+    log_info "Full ISO Path: ${PKR_VAR_iso_path}"
     
     # Verify ISO is accessible on datastore before Packer tries to use it
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
@@ -1440,7 +1445,7 @@ build_vm() {
         log_warn "Timestamp not found in PKR_VAR_build_timestamp - generated new one: $timestamp"
     fi
     
-    local vm_name_final="${vm_name_base}-${timestamp}"
+    local vm_name_final="${vm_name_base:-windows-base-vm}-${timestamp}"
     log_info "VM name for post-build provisioning: $vm_name_final"
     
     # Run Packer build in background to prevent shutdown wait from blocking
@@ -1627,6 +1632,12 @@ build_vm() {
 
 # Post-build provisioning: configure VM and create stemcell.
 # build_mode: iso | template | existing_base (same three as main).
+#
+# Flow summary:
+# - Template and existing_base: target VM (windows-target-vm-{timestamp}) is ready at entry. Steps run on that VM:
+#   Step 2 network config -> Step 3 Windows updates -> Step 3.6 guest wait -> stembuild construct -> package.
+# - ISO: base VM at entry -> Step 1 password change + VMware Tools -> Step 2 network + Step 3 updates on base ->
+#   Step 3.5 clone to target (windows-target-vm-{timestamp}) -> Step 3.6 guest wait on target -> stembuild -> package.
 post_build_provisioning() {
     local vars_file="${1:-}"
     local vm_name="${2:-}"
@@ -1637,14 +1648,16 @@ post_build_provisioning() {
         log_error "post_build_provisioning: Missing required parameters"
         return 1
     fi
+
+    # true when target VM is already the one we work on (template/existing_base). false for ISO (we start on base VM, clone to target later).
+    local target_ready_mode=false
+    [[ "$build_mode" == "template" ]] || [[ "$build_mode" == "existing_base" ]] && target_ready_mode=true
     
-    # vm_name is the target VM for all following steps (network config, updates, stembuild construct, package).
-    # Template mode: target VM = VM created from template (Packer). Existing_base mode: target VM = govc vm.clone result. ISO mode: base VM first, then target = clone.
     log_info "Starting post-build provisioning for VM: $vm_name (mode: $build_mode)"
     
-    # Extract variables from vars file
+    # Extract variables from vars file (get_var always returns 0; empty if key missing)
     local vcenter_server vcenter_user vcenter_pass vcenter_insecure
-    local windows_username windows_password patch_version template_path template_name vcenter_folder keep_base_vm
+    local windows_username windows_password patch_version template_path template_name vcenter_folder keep_base_vm datacenter
     vcenter_server=$(get_var "$vars_file" "vcenter_server")
     vcenter_user=$(get_var "$vars_file" "vcenter_username")
     vcenter_pass=$(get_var "$vars_file" "vcenter_password")
@@ -1656,6 +1669,7 @@ post_build_provisioning() {
     template_name=$(get_var "$vars_file" "template_name")
     vcenter_folder=$(get_var "$vars_file" "vcenter_folder")
     keep_base_vm=$(get_var "$vars_file" "keep_base_vm")
+    datacenter=$(trim_var "$(get_var "$vars_file" "vcenter_datacenter")")
     
     # Track base VM name for ISO mode cleanup (only clone in ISO mode; base_vm_name is the VM before clone)
     local base_vm_name="$vm_name"
@@ -1665,6 +1679,20 @@ post_build_provisioning() {
         windows_username="Administrator"
     fi
     
+    # Early validation: required for govc and guest operations
+    if [[ -z "${vcenter_server:-}" ]] || [[ -z "${vcenter_user:-}" ]] || [[ -z "${vcenter_pass:-}" ]]; then
+        log_error "post_build_provisioning: vcenter_server, vcenter_username, and vcenter_password must be set in vars file"
+        return 1
+    fi
+    if [[ -z "${windows_password:-}" ]]; then
+        log_error "post_build_provisioning: windows_password must be set in vars file (required for guest operations)"
+        return 1
+    fi
+    if [[ -z "${patch_version:-}" ]]; then
+        log_error "post_build_provisioning: patch_version must be set in vars file (required for stembuild)"
+        return 1
+    fi
+
     # Set govc environment
     export GOVC_URL="$vcenter_server"
     export GOVC_USERNAME="$vcenter_user"
@@ -1703,7 +1731,42 @@ post_build_provisioning() {
         return 1
     }
 
-    # Step 1: Password change and VMware Tools (ISO mode only). Skip for template and existing_base.
+    # Helper: wait for guest operations on a VM (VM must be powered on). Returns 0 when ready, 1 on timeout.
+    # Used by template/existing_base before Step 2 and by ISO after clone (Step 3.6).
+    wait_for_vm_guest_ready() {
+        local vname="${1:?}"
+        local timeout_sec="${2:-600}"
+        local wait_interval=30
+        local wait_elapsed=0
+        local govc_guest_opts=(-vm "$vname" -l "${windows_username}:${windows_password}")
+        local ps_exe="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        local tmp_stderr
+        tmp_stderr=$(mktemp 2>/dev/null) || tmp_stderr=""
+        while [[ $wait_elapsed -lt $timeout_sec ]]; do
+            local pid
+            if [[ -n "$tmp_stderr" ]]; then
+                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>"$tmp_stderr") || true
+            else
+                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
+            fi
+            if [[ -n "$pid" ]]; then
+                local raw code
+                raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
+                code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
+                [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+                if [[ "${code:-1}" == "0" ]]; then
+                    rm -f "$tmp_stderr" 2>/dev/null || true
+                    return 0
+                fi
+            fi
+            sleep $wait_interval
+            wait_elapsed=$((wait_elapsed + wait_interval))
+        done
+        rm -f "$tmp_stderr" 2>/dev/null || true
+        return 1
+    }
+
+    # Step 1: Password change and VMware Tools (ISO mode only). Skip for template/existing_base (target already has Tools).
     if [[ "$build_mode" == "iso" ]]; then
         local wait_before_password_change="${WAIT_BEFORE_PASSWORD_CHANGE_SECONDS:-60}"
         log_info "Step 1: Waiting ${wait_before_password_change}s before password change..."
@@ -1837,16 +1900,43 @@ post_build_provisioning() {
             log_error "Failure reason: $reason — $detail"
             return 1
         fi
-    elif [[ "$build_mode" == "existing_base" ]]; then
-        log_info "Step 1: Skipping password change and VMware Tools (existing_base mode: clone already has Tools)"
-        sleep 5
     else
-        log_info "Step 1: Skipping password change and VMware Tools (template mode)"
+        # target_ready_mode: template or existing_base; target VM already has Tools
+        log_info "Step 1: Skipping password change and VMware Tools (template/existing_base: target already has Tools)"
         sleep 10
     fi
-    
-    # Step 2: Configure network on target VM (template/existing_base: vm_name is target; ISO: on base VM only, target gets no network step).
-    log_info "Step 2: Configuring network..."
+
+    # Template/existing_base only: wait for guest operations before Step 2 (guest.upload needs agent contactable).
+    if [[ "$target_ready_mode" == "true" ]]; then
+        log_info "Waiting for VM to be powered on and guest operations agent ready (template/existing_base)..."
+        local power_state
+        power_state=$(get_vm_power_state "$vm_name")
+        if [[ "$power_state" != "poweredOn" ]]; then
+            log_info "Powering on VM: $vm_name"
+            govc vm.power -on "$vm_name" >/dev/null 2>&1 || { log_error "Failed to power on $vm_name"; return 1; }
+            local power_wait=0
+            while [[ $power_wait -lt 120 ]]; do
+                power_state=$(get_vm_power_state "$vm_name")
+                [[ "$power_state" == "poweredOn" ]] && break
+                sleep 5
+                power_wait=$((power_wait + 5))
+            done
+            [[ "$power_state" != "poweredOn" ]] && { log_error "VM did not reach poweredOn within 120s"; return 1; }
+        fi
+        log_info "Waiting for guest operations agent (poll up to 10 min)..."
+        if ! wait_for_vm_guest_ready "$vm_name" 600; then
+            log_error "Guest operations agent could not be contacted within 600s. Ensure VMware Tools is running and the VM has finished booting."
+            return 1
+        fi
+        log_success "Guest operations agent ready."
+    fi
+
+    # Step 2: Configure network. (template/existing_base: vm_name is target; ISO: on base VM, target gets no network.)
+    if [[ "$target_ready_mode" == "true" ]]; then
+        log_info "Step 2: Configuring network on target VM ($vm_name)..."
+    else
+        log_info "Step 2: Configuring network on base VM ($vm_name) (ISO mode; target will be created in Step 3.5)..."
+    fi
     
     local static_ip=$(get_var "$vars_file" "static_ip")
     local subnet_mask=$(get_var "$vars_file" "subnet_mask")
@@ -1873,8 +1963,12 @@ post_build_provisioning() {
         return 1
     }
     
-    # Step 3: Install Windows updates on target VM (template/existing_base: vm_name is target; ISO: on base VM only, target gets no updates step).
-    log_info "Step 3: Installing Windows updates..."
+    # Step 3: Install Windows updates. (template/existing_base: on target; ISO: on base VM, target gets no updates.)
+    if [[ "$target_ready_mode" == "true" ]]; then
+        log_info "Step 3: Installing Windows updates on target VM ($vm_name)..."
+    else
+        log_info "Step 3: Installing Windows updates on base VM ($vm_name) (ISO mode)..."
+    fi
     local enable_updates=$(get_var "$vars_file" "enable_windows_updates")
     
     if [[ "$enable_updates" == "true" ]]; then
@@ -1894,55 +1988,20 @@ post_build_provisioning() {
         log_info "Windows updates disabled (enable_windows_updates=false)"
     fi
 
-    # Step 3.5: Only in ISO mode—clone base VM to target VM (windows-target-vm-{timestamp}). Template mode: target = VM from template (no clone). Existing_base: target = govc clone (already done in main).
+    # Step 3.5: ISO only — clone base VM to target (windows-target-vm-{timestamp}). Template/existing_base: target already set in main, no clone.
     if [[ "$build_mode" == "iso" ]]; then
         log_info "Step 3.5: Cloning base VM to target VM (windows-target-vm-{timestamp}) for stembuild..."
         local target_vm_name
         target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || return 1
         target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
-        log_info "Target VM: $target_vm_name (stembuild construct and package run on target; no network/updates on target)"
+        log_info "Target VM: $target_vm_name (stembuild and package on target; network/updates were on base)"
         vm_name="$target_vm_name"
         CLEANUP_TARGET_VM_NAME="$target_vm_name"
     else
-        log_info "Step 3.5: No clone (template mode: target VM = VM from template; existing_base: target VM = govc clone)"
+        log_info "Step 3.5: No clone (template/existing_base: target VM already set)"
     fi
 
-    # Helper: wait for guest operations on a VM (VM must already be powered on). Returns 0 when ready, 1 on timeout.
-    wait_for_vm_guest_ready() {
-        local vname="${1:?}"
-        local timeout_sec="${2:-600}"
-        local wait_interval=30
-        local wait_elapsed=0
-        local govc_guest_opts=(-vm "$vname" -l "${windows_username}:${windows_password}")
-        local ps_exe="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-        local tmp_stderr
-        tmp_stderr=$(mktemp 2>/dev/null) || tmp_stderr=""
-        while [[ $wait_elapsed -lt $timeout_sec ]]; do
-            local pid
-            if [[ -n "$tmp_stderr" ]]; then
-                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>"$tmp_stderr") || true
-            else
-                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
-            fi
-            if [[ -n "$pid" ]]; then
-                local raw code
-                raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
-                code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
-                [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-                if [[ "${code:-1}" == "0" ]]; then
-                    rm -f "$tmp_stderr" 2>/dev/null || true
-                    return 0
-                fi
-            fi
-            sleep $wait_interval
-            wait_elapsed=$((wait_elapsed + wait_interval))
-        done
-        rm -f "$tmp_stderr" 2>/dev/null || true
-        return 1
-    }
-
-    # Step 3.6: Ensure VM is powered on and wait for guest to boot (guest ops ready).
-    # In ISO mode this is the target VM (clone); we do not run network config or updates on it.
+    # Step 3.6: Ensure target VM is powered on and guest ops ready. From here on all modes run stembuild construct and package on this VM.
     log_info "Step 3.6: Waiting for VM to boot and guest operations ready..."
     local power_state
     power_state=$(get_vm_power_state "$vm_name")
@@ -1988,7 +2047,7 @@ post_build_provisioning() {
         log_error "stembuild not found in PATH"
         return 1
     fi
-    local datacenter=$(grep -E "^vcenter_datacenter\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+    # datacenter already set in initial extraction above
     mkdir -p "$SCRIPT_DIR/logs"
 
     while [[ $attempt -le $max_attempts ]]; do
@@ -1996,10 +2055,16 @@ post_build_provisioning() {
         local construct_log="$SCRIPT_DIR/logs/stembuild-construct-$(date +%Y%m%d-%H%M%S)-attempt${attempt}.log"
         construct_rc=0
 
-        if [[ -n $jumper_ip ]] && [[ -n $jumper_user ]] && [[ -n $jumper_password ]]; then
+        if [[ -n "${jumper_ip:-}" ]] && [[ -n "${jumper_user:-}" ]] && [[ -n "${jumper_password:-}" ]]; then
         # Path on remote must match where we scp the binary: user@jumper:~/ → $HOME/stembuild
+        local lgpo_zip="${LGPO_ZIP:-$SCRIPT_DIR/LGPO.zip}"
+        [[ -f "$lgpo_zip" ]] || lgpo_zip="LGPO.zip"
+        if [[ ! -f "$lgpo_zip" ]]; then
+            log_error "LGPO.zip not found (looked for $SCRIPT_DIR/LGPO.zip and ./LGPO.zip). Set LGPO_ZIP or place LGPO.zip in script directory for jumper mode."
+            return 1
+        fi
         local stembuild_remote="\$HOME/stembuild"
-        if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$scripts_dir/run-stembuild-construct.sh" "$(which stembuild)" "$(which govc)" LGPO.zip "$jumper_user@$jumper_ip:~/"; then
+        if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$scripts_dir/run-stembuild-construct.sh" "$(which stembuild)" "$(which govc)" "$lgpo_zip" "$jumper_user@$jumper_ip:~/"; then
             log_error "Failed to copy run-stembuild-construct.sh, stembuild, govc, and LGPO.zip to jumper"
             return 1
         fi
@@ -2026,7 +2091,7 @@ post_build_provisioning() {
             log_success "stembuild construct completed on jumper"
         fi
     else
-        run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || construct_rc=$?
+        run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" "$static_ip" "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || construct_rc=$?
         if [[ $construct_rc -ne 0 ]]; then
             log_error "stembuild construct failed (attempt $attempt)."
             if [[ -f "$construct_log" ]]; then
@@ -2411,6 +2476,8 @@ main() {
         fi
         CLEANUP_VM_NAME=""
         CLEANUP_TARGET_VM_NAME=""
+        CLEANUP_VARS_FILE="$vars_file"
+        CLEANUP_BUILD_MODE="existing_base"
         CLEANUP_ENABLED=true
         trap 'cleanup_on_failure $?' ERR EXIT
         local target_vm_name
@@ -2437,11 +2504,9 @@ main() {
             template_inventory_path=$(find_vm_inventory_path "$template_path_early" "$tpl_dc") || template_inventory_path="$template_path_early"
             [[ "$template_inventory_path" != "$template_path_early" ]] && log_info "Template path: $template_inventory_path"
         fi
-        local vm_name_base_early timestamp_early vm_name_final
-        vm_name_base_early=$(trim_var "$(get_var "$vars_file" "vm_name")")
-        vm_name_base_early="${vm_name_base_early:-windows-base-vm}"
+        local timestamp_early vm_name_final
         timestamp_early=$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")
-        vm_name_final="${vm_name_base_early}-${timestamp_early}"
+        vm_name_final="windows-target-vm-${timestamp_early}"
         local clone_opts=(-vm "$template_inventory_path" -on=true)
         local tpl_dc tpl_ds tpl_folder
         tpl_dc=$(trim_var "$(get_var "$vars_file" "vcenter_datacenter")")
@@ -2466,6 +2531,8 @@ main() {
         fi
         CLEANUP_VM_NAME="$vm_name_final"
         CLEANUP_TARGET_VM_NAME=""
+        CLEANUP_VARS_FILE="$vars_file"
+        CLEANUP_BUILD_MODE="template"
         CLEANUP_ENABLED=true
         trap 'cleanup_on_failure $?' ERR EXIT
         post_build_provisioning "$vars_file" "$vm_name_final" "template" "$log_level"
