@@ -199,11 +199,15 @@
                 <!-- Tools ISO is mounted via provisioner, not at boot time, to avoid boot order issues -->
             </FirstLogonCommands>
             
-            <!-- OOBE settings - skip all prompts -->
+            <!-- OOBE settings - hide prompts for 2019/2022/2025. Use Microsoft element names (e.g. HideLocalAccountScreen not HideLocalAdministrationPage). -->
+            <!-- SkipMachineOOBE/SkipUserOOBE are deprecated in 2022/2025 and cause "component or setting specified" error. -->
             <OOBE>
                 <HideEULAPage>true</HideEULAPage>
-                <SkipMachineOOBE>true</SkipMachineOOBE>
-                <SkipUserOOBE>true</SkipUserOOBE>
+                <HideLocalAccountScreen>true</HideLocalAccountScreen>
+                <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+                <ProtectYourPC>3</ProtectYourPC>
             </OOBE>
         </component>
     </settings>
