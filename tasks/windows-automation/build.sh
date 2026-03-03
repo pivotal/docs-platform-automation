@@ -47,6 +47,7 @@ CLEANUP_PACKER_PID=""
 CLEANUP_BUILD_MODE=""
 CLEANUP_VARS_FILE=""
 CLEANUP_ENABLED=false
+CLEANUP_ALREADY_RAN=false
 
 jumper_ip=""
 jumper_user=""
@@ -59,7 +60,12 @@ cleanup_on_failure() {
     if [[ "$CLEANUP_ENABLED" != "true" ]]; then
         return 0
     fi
-    
+    # Run actual cleanup only once (e.g. if both ERR and EXIT fire)
+    if [[ "${CLEANUP_ALREADY_RAN:-false}" == "true" ]]; then
+        return 0
+    fi
+    CLEANUP_ALREADY_RAN=true
+
     local cleanup_mode="${CLEANUP_BUILD_MODE:-<not set>}"
     log_warn "=========================================="
     log_warn "Cleanup triggered due to failure"
@@ -1475,10 +1481,10 @@ build_vm() {
     CLEANUP_VM_NAME="$vm_name_final"
     CLEANUP_BUILD_MODE="$build_mode"
     CLEANUP_VARS_FILE="$vars_file"
+    CLEANUP_ALREADY_RAN=false
     CLEANUP_ENABLED=true
     
-    # Set trap for ERR and EXIT signals
-    trap 'cleanup_on_failure $?' ERR
+    # Single EXIT trap: run cleanup only on non-zero exit when cleanup is enabled
     trap 'exit_code=$?; if [[ $exit_code -ne 0 ]] && [[ "$CLEANUP_ENABLED" == "true" ]]; then cleanup_on_failure $exit_code; fi' EXIT
     
     # Wait for Packer to create VM in vSphere (VM creation is fast, but boot sequence takes minutes)
@@ -1577,9 +1583,8 @@ build_vm() {
     post_build_provisioning "$vars_file" "$vm_name_final" "$build_mode" "$log_level"
     local provisioning_exit_code=$?
     
-    # Cleanup is handled inside post_build_provisioning (Step 9). Disable trap on success.
+    # Disable cleanup on success (trap still runs but will no-op when exit_code is 0)
     CLEANUP_ENABLED=false
-    trap - ERR EXIT
     
     # After template is created, stop Packer process (it's waiting for shutdown timeout)
     # Packer has a 2-hour shutdown timeout, but we've completed all provisioning
@@ -2056,16 +2061,27 @@ post_build_provisioning() {
         construct_rc=0
 
         if [[ -n "${jumper_ip:-}" ]] && [[ -n "${jumper_user:-}" ]] && [[ -n "${jumper_password:-}" ]]; then
-        # Path on remote must match where we scp the binary: user@jumper:~/ → $HOME/stembuild
+        # Copy all scripts and binaries required for remote execution. run-stembuild-construct.sh sources govc-vm-utils.sh from same directory.
         local lgpo_zip="${LGPO_ZIP:-$SCRIPT_DIR/LGPO.zip}"
         [[ -f "$lgpo_zip" ]] || lgpo_zip="LGPO.zip"
         if [[ ! -f "$lgpo_zip" ]]; then
             log_error "LGPO.zip not found (looked for $SCRIPT_DIR/LGPO.zip and ./LGPO.zip). Set LGPO_ZIP or place LGPO.zip in script directory for jumper mode."
             return 1
         fi
+        [[ -f "$scripts_dir/govc-vm-utils.sh" ]] || { log_error "govc-vm-utils.sh not found at $scripts_dir/govc-vm-utils.sh (required for jumper)"; return 1; }
+        local stembuild_bin govc_bin
+        stembuild_bin=$(which stembuild 2>/dev/null) || { log_error "stembuild not in PATH for jumper copy"; return 1; }
+        govc_bin=$(which govc 2>/dev/null) || { log_error "govc not in PATH for jumper copy"; return 1; }
         local stembuild_remote="\$HOME/stembuild"
-        if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$scripts_dir/run-stembuild-construct.sh" "$(which stembuild)" "$(which govc)" "$lgpo_zip" "$jumper_user@$jumper_ip:~/"; then
-            log_error "Failed to copy run-stembuild-construct.sh, stembuild, govc, and LGPO.zip to jumper"
+        log_info "Copying required scripts and binaries to jumper: run-stembuild-construct.sh, govc-vm-utils.sh, stembuild, govc, LGPO.zip"
+        if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no \
+            "$scripts_dir/run-stembuild-construct.sh" \
+            "$scripts_dir/govc-vm-utils.sh" \
+            "$stembuild_bin" \
+            "$govc_bin" \
+            "$lgpo_zip" \
+            "$jumper_user@$jumper_ip:~/"; then
+            log_error "Failed to copy required files to jumper (run-stembuild-construct.sh, govc-vm-utils.sh, stembuild, govc, LGPO.zip)"
             return 1
         fi
         # Optional: copy vCenter CA cert to jumper if construct needs it
@@ -2478,15 +2494,16 @@ main() {
         CLEANUP_TARGET_VM_NAME=""
         CLEANUP_VARS_FILE="$vars_file"
         CLEANUP_BUILD_MODE="existing_base"
+        CLEANUP_ALREADY_RAN=false
         CLEANUP_ENABLED=true
-        trap 'cleanup_on_failure $?' ERR EXIT
+        trap 'exit_code=$?; if [[ $exit_code -ne 0 ]] && [[ "$CLEANUP_ENABLED" == "true" ]]; then cleanup_on_failure $exit_code; fi' EXIT
         local target_vm_name
-        target_vm_name=$(clone_current_vm_to_target "$existing_base_vm_name" "$vars_file") || exit 1
+        # Power off existing base VM before clone (third arg true); clone_current_vm_to_target will power off then clone.
+        target_vm_name=$(clone_current_vm_to_target "$existing_base_vm_name" "$vars_file" "true") || exit 1
         target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
         CLEANUP_TARGET_VM_NAME="$target_vm_name"
         post_build_provisioning "$vars_file" "$target_vm_name" "existing_base" "$log_level"
         CLEANUP_ENABLED=false
-        trap - ERR EXIT
         log_success "Done (existing_base mode)"
         exit 0
     fi
@@ -2533,11 +2550,11 @@ main() {
         CLEANUP_TARGET_VM_NAME=""
         CLEANUP_VARS_FILE="$vars_file"
         CLEANUP_BUILD_MODE="template"
+        CLEANUP_ALREADY_RAN=false
         CLEANUP_ENABLED=true
-        trap 'cleanup_on_failure $?' ERR EXIT
+        trap 'exit_code=$?; if [[ $exit_code -ne 0 ]] && [[ "$CLEANUP_ENABLED" == "true" ]]; then cleanup_on_failure $exit_code; fi' EXIT
         post_build_provisioning "$vars_file" "$vm_name_final" "template" "$log_level"
         CLEANUP_ENABLED=false
-        trap - ERR EXIT
         log_success "Done (template mode)"
         exit 0
     fi
