@@ -41,7 +41,14 @@ no_proxy_with_github() {
 }
 
 # Resolve ISO/template source and set BUILD_SOURCE_LINE for the heredoc below.
+# If EXISTING_BASE_VM_NAME is set, use existing-base mode (no Packer; clone VM -> network -> stembuild).
 resolve_build_source() {
+    if [[ -n "${EXISTING_BASE_VM_NAME:-}" ]]; then
+        BUILD_SOURCE_LINE="# Existing base VM mode: clone this VM, configure network on clone, then stembuild construct + package
+existing_base_vm_name = \"${EXISTING_BASE_VM_NAME}\""
+        echo "Using existing base VM mode: ${EXISTING_BASE_VM_NAME}"
+        return
+    fi
     if [[ -n "${TEMPLATE_PATH:-}" ]]; then
         BUILD_SOURCE_LINE="# Template Mode: Clone from existing template
 template_path = \"${TEMPLATE_PATH}\""
@@ -60,7 +67,7 @@ iso_path_local = \"${ISO_FILE}\""
 iso_path = \"${ISO_PATH}\""
         echo "Using ISO mode (datastore): ${ISO_PATH}"
     else
-        echo "ERROR: Either TEMPLATE_PATH, ISO_PATH_LOCAL, ISO_PATH, or windows-iso input must be provided"
+        echo "ERROR: Either EXISTING_BASE_VM_NAME, TEMPLATE_PATH, ISO_PATH_LOCAL, ISO_PATH, or windows-iso input must be provided"
         exit 1
     fi
 }
@@ -140,6 +147,7 @@ patch_version = "${PATCH_VERSION}"
 
 # Build Options
 enable_windows_updates = ${ENABLE_WINDOWS_UPDATES:-true}
+keep_base_vm           = ${KEEP_BASE_VM:-false}
 log_level              = "${LOG_LEVEL:-INFO}"
 EOF
 

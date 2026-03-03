@@ -616,10 +616,21 @@ upload_iso_to_datastore() {
 # ISO injection method removed - using floppy_content method instead
 
 # Validate ISO configuration
+# Skips ISO validation when template_path or existing_base_vm_name is set (one of template_path, existing_base_vm_name, or ISO must be provided).
 validate_iso_config() {
     local vars_file="${1:-}"
     local overwrite_flag="${2:-false}"
     
+    if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
+        local template_path_val existing_base_val
+        template_path_val=$(get_var "$vars_file" "template_path")
+        existing_base_val=$(get_var "$vars_file" "existing_base_vm_name")
+        if [[ -n "$template_path_val" ]] || [[ -n "$existing_base_val" ]]; then
+            log_info "Template path or existing base VM provided; skipping ISO validation"
+            return 0
+        fi
+    fi
+
     log_info "Validating ISO configuration..."
     
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
@@ -645,10 +656,10 @@ validate_iso_config() {
         # 3. Only iso_path_local: Error (need destination)
         
         if [[ -z "$iso_local" ]] && [[ -z "$iso_path" ]]; then
-            log_error "ISO configuration missing!"
-            log_error "You must provide:"
-            log_error "  - iso_path (datastore path - ISO already on datastore, or destination for upload)"
-            log_error "  - iso_path_local (optional, local file to upload to iso_path destination)"
+            log_error "Build source missing: provide exactly one of the following:"
+            log_error "  - template_path (clone from existing template)"
+            log_error "  - existing_base_vm_name (clone from existing VM, then stembuild)"
+            log_error "  - iso_path (with optional iso_path_local) for ISO install"
             exit 1
         fi
         
@@ -1527,18 +1538,9 @@ build_vm() {
     post_build_provisioning "$vars_file" "$vm_name_final" "$build_mode" "$log_level"
     local provisioning_exit_code=$?
     
-    # Template mode: Always cleanup (stop and delete VM) regardless of success/failure
-    if [[ "$build_mode" == "template" ]]; then
-        log_info "Template mode: Cleaning up VM (always delete after build)..."
-        CLEANUP_ENABLED=true  # Keep cleanup enabled for template mode
-        cleanup_on_failure 0  # Force cleanup even on success
-        CLEANUP_ENABLED=false
-        trap - ERR EXIT
-    else
-        # ISO mode: Disable cleanup trap on success (VM should be kept as template or stemcell)
-        CLEANUP_ENABLED=false
-        trap - ERR EXIT
-    fi
+    # Cleanup is handled inside post_build_provisioning (Step 9). Disable trap on success.
+    CLEANUP_ENABLED=false
+    trap - ERR EXIT
     
     # After template is created, stop Packer process (it's waiting for shutdown timeout)
     # Packer has a 2-hour shutdown timeout, but we've completed all provisioning
@@ -1590,11 +1592,11 @@ build_vm() {
 }
 
 # Post-build provisioning: configure VM and create stemcell
-# Mode: "iso" (full build) or "template" (clone from template)
+# Mode: "iso" (full build), "template" (clone from template), or "existing_base" (clone from existing VM, network + stembuild only)
 post_build_provisioning() {
     local vars_file="${1:-}"
     local vm_name="${2:-}"
-    local build_mode="${3:-iso}"  # "iso" or "template"
+    local build_mode="${3:-iso}"  # "iso" | "template" | "existing_base"
     local log_level="${4:-INFO}"
     
     if [[ -z "$vars_file" ]] || [[ -z "$vm_name" ]]; then
@@ -1606,7 +1608,7 @@ post_build_provisioning() {
     
     # Extract variables from vars file
     local vcenter_server vcenter_user vcenter_pass vcenter_insecure
-    local windows_username windows_password patch_version template_path template_name
+    local windows_username windows_password patch_version template_path template_name vcenter_folder keep_base_vm
     vcenter_server=$(get_var "$vars_file" "vcenter_server")
     vcenter_user=$(get_var "$vars_file" "vcenter_username")
     vcenter_pass=$(get_var "$vars_file" "vcenter_password")
@@ -1616,6 +1618,11 @@ post_build_provisioning() {
     patch_version=$(get_var "$vars_file" "patch_version")
     template_path=$(get_var "$vars_file" "template_path")
     template_name=$(get_var "$vars_file" "template_name")
+    vcenter_folder=$(get_var "$vars_file" "vcenter_folder")
+    keep_base_vm=$(get_var "$vars_file" "keep_base_vm")
+    
+    # Track base VM name for ISO mode cleanup (only clone in ISO mode; base_vm_name is the VM before clone)
+    local base_vm_name="$vm_name"
     
     # Default username to Administrator if not specified
     if [[ -z "$windows_username" ]]; then
@@ -1660,8 +1667,7 @@ post_build_provisioning() {
         return 1
     }
 
-    # Step 1: Password change and VMware Tools (ISO mode only). Wait 10 min, run password change once,
-    # install VMware Tools once, then poll for guest ops; fail immediately on auth error.
+    # Step 1: Password change and VMware Tools (ISO mode only). Skip for template and existing_base.
     if [[ "$build_mode" == "iso" ]]; then
         local wait_before_password_change="${WAIT_BEFORE_PASSWORD_CHANGE_SECONDS:-60}"
         log_info "Step 1: Waiting ${wait_before_password_change}s before password change..."
@@ -1795,12 +1801,16 @@ post_build_provisioning() {
             log_error "Failure reason: $reason — $detail"
             return 1
         fi
+    elif [[ "$build_mode" == "existing_base" ]]; then
+        log_info "Step 1: Skipping password change and VMware Tools (existing_base mode: clone already has Tools)"
+        sleep 5
     else
         log_info "Step 1: Skipping password change and VMware Tools (template mode)"
         sleep 10
     fi
     
-    # Step 2: Configure network
+    # Step 2: Configure network (on base VM in ISO mode; on single VM in template/existing_base mode).
+    # In ISO mode we do not run network config on the target VM—only on the base before clone.
     log_info "Step 2: Configuring network..."
     
     local static_ip=$(get_var "$vars_file" "static_ip")
@@ -1828,7 +1838,8 @@ post_build_provisioning() {
         return 1
     }
     
-    # Step 3: Install Windows updates
+    # Step 3: Install Windows updates (on base VM in ISO mode; on single VM in template/existing_base).
+    # In ISO mode we do not run updates on the target VM—only on the base before clone.
     log_info "Step 3: Installing Windows updates..."
     local enable_updates=$(get_var "$vars_file" "enable_windows_updates")
     
@@ -1849,15 +1860,19 @@ post_build_provisioning() {
         log_info "Windows updates disabled (enable_windows_updates=false)"
     fi
 
-    # Step 3.5: Clone current VM to windows-target-vm-{timestamp}; stembuild construct/package run on the clone
-    log_info "Step 3.5: Cloning VM for stembuild (power off base, clone to windows-target-vm-{timestamp})..."
-    local target_vm_name
-    target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || return 1
-    # Trim whitespace and stray quotes (e.g. from Concourse log interleaving with stdout)
-    target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
-    log_info "Using clone '$target_vm_name' for stembuild construct and package"
-    vm_name="$target_vm_name"
-    CLEANUP_TARGET_VM_NAME="$target_vm_name"
+    # Step 3.5: Clone base VM to windows-target-vm-{timestamp} only in ISO mode. Template mode and existing_base use single VM (no clone here).
+    # After clone, target VM only gets Step 3.6 (wait guest), Step 4 (construct), Step 5 (package)—no network config or updates on target.
+    if [[ "$build_mode" == "iso" ]]; then
+        log_info "Step 3.5: Cloning base VM for stembuild (power off base, clone to windows-target-vm-{timestamp})..."
+        local target_vm_name
+        target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || return 1
+        target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
+        log_info "Using clone '$target_vm_name' for stembuild construct and package"
+        vm_name="$target_vm_name"
+        CLEANUP_TARGET_VM_NAME="$target_vm_name"
+    else
+        log_info "Step 3.5: Skipping clone (template/existing_base mode: using same VM for stembuild)"
+    fi
 
     # Helper: wait for guest operations on a VM (VM must already be powered on). Returns 0 when ready, 1 on timeout.
     wait_for_vm_guest_ready() {
@@ -1893,8 +1908,9 @@ post_build_provisioning() {
         return 1
     }
 
-    # Step 3.6: Ensure target VM is powered on and wait for guest to boot (guest ops ready)
-    log_info "Step 3.6: Waiting for target VM to boot and guest operations ready..."
+    # Step 3.6: Ensure VM is powered on and wait for guest to boot (guest ops ready).
+    # In ISO mode this is the target VM (clone); we do not run network config or updates on it.
+    log_info "Step 3.6: Waiting for VM to boot and guest operations ready..."
     local power_state
     power_state=$(get_vm_power_state "$vm_name")
     if [[ "$power_state" != "poweredOn" ]]; then
@@ -2047,11 +2063,13 @@ post_build_provisioning() {
         log_success "Stemcell created: $stemcell_file"
     fi
     
-    # Step 8: Create template if template_path or template_name is provided (ISO mode only)
+    # Step 8: Create template from VM only in ISO mode when template_name (or template_path) is provided.
+    # Template mode: we do not create a new template; we only use the template to create a VM, then clean it up.
+    # Existing_base mode: we do not create a template. vcenter_folder is optional; template_name takes precedence.
     if [[ "$build_mode" == "iso" ]] && ([[ -n "$template_path" ]] || [[ -n "$template_name" ]]); then
-        log_info "Step 8: Creating template from VM..."
-        
-        # Verify VM is powered off (should be after stembuild package)
+        log_info "Step 8: Creating template from VM (ISO mode; template_name/template_path set)..."
+
+        # Ensure VM is powered off (should be after stembuild package)
         if [[ "$(get_vm_power_state "$vm_name")" != "poweredOff" ]]; then
             log_info "VM is not powered off, shutting down..."
             if ! vm_power_off "$vm_name" 300 1; then
@@ -2062,7 +2080,32 @@ post_build_provisioning() {
         else
             log_info "VM is already powered off (from stembuild package)"
         fi
-        
+
+        # Detach ISO from CD-ROM before templatizing (govc device.cdrom.eject requires VM powered on)
+        log_info "Detaching CD-ROM/ISO from VM before creating template..."
+        govc vm.power -on "$vm_name" >/dev/null 2>&1 || true
+        local power_wait=0
+        while [[ $power_wait -lt 60 ]]; do
+            [[ "$(get_vm_power_state "$vm_name")" == "poweredOn" ]] && break
+            sleep 5
+            power_wait=$((power_wait + 5))
+        done
+        if [[ "$(get_vm_power_state "$vm_name")" == "poweredOn" ]]; then
+            govc device.cdrom.eject -vm "$vm_name" 2>/dev/null || log_warn "CD-ROM eject failed or no CD-ROM (non-fatal)"
+            vm_power_off "$vm_name" 120 1 >/dev/null 2>&1 || true
+            power_wait=0
+            while [[ $power_wait -lt 120 ]]; do
+                [[ "$(get_vm_power_state "$vm_name")" == "poweredOff" ]] && break
+                sleep 5
+                power_wait=$((power_wait + 5))
+            done
+        fi
+        log_info "VM powered off, ready for template conversion."
+
+        # Resolve inventory path before markastemplate (find may not return templates in some setups)
+        local vm_path
+        vm_path=$(find_vm_inventory_path "$vm_name" "$datacenter") || true
+
         # Convert to template
         log_info "Converting VM to template..."
         local final_template_name="${template_name:-${vm_name}-template}"
@@ -2070,41 +2113,90 @@ post_build_provisioning() {
             log_error "Template conversion failed"
             return 1
         }
-        
-        # Rename template if custom name provided
-        if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]]; then
+
+        # Rename template if custom name provided (govc object.rename PATH NEW_NAME; vm.rename does not exist)
+        if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]] && [[ -n "$vm_path" ]]; then
             log_info "Renaming template to: $template_name"
-            govc vm.rename -vm "$vm_name" "$template_name" || {
-                log_warn "Template rename failed (non-critical)"
-            }
+            if [[ -n "$datacenter" ]]; then
+                govc object.rename -dc "$datacenter" "$vm_path" "$template_name" || {
+                    log_warn "Template rename failed (non-critical)"
+                }
+            else
+                govc object.rename "$vm_path" "$template_name" || {
+                    log_warn "Template rename failed (non-critical)"
+                }
+            fi
+            final_template_name="$template_name"
+        elif [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]] && [[ -z "$vm_path" ]]; then
+            log_warn "Could not resolve VM path for rename (non-critical)"
             final_template_name="$template_name"
         fi
-        
+
+        # If vcenter_folder is set, move template to that folder; otherwise it stays in same folder as VM
+        if [[ -n "$vcenter_folder" ]] && [[ -n "$vm_path" ]]; then
+            local template_current_path
+            if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]]; then
+                template_current_path="${vm_path%/*}/$template_name"
+            else
+                template_current_path="$vm_path"
+            fi
+            log_info "Moving template to folder: $vcenter_folder"
+            if [[ -n "$datacenter" ]]; then
+                govc object.mv -dc "$datacenter" "$template_current_path" "$vcenter_folder" || {
+                    log_warn "Template move to $vcenter_folder failed (non-critical)"
+                }
+            else
+                govc object.mv "$template_current_path" "$vcenter_folder" || {
+                    log_warn "Template move to $vcenter_folder failed (non-critical)"
+                }
+            fi
+        fi
+
         log_success "Template created: $final_template_name"
     fi
     
-    # Step 9: Cleanup target VM at the end if we did not convert it to template
-    # (ISO mode with no template requested, or template mode where the clone was only used for stembuild)
-    create_template=false
+    # Step 9: Cleanup
+    # create_template = we converted the stembuild VM to a template (only in ISO mode when template_name/template_path set). Do not delete it.
+    # When template_name is set in ISO mode it takes precedence: VM is marked as template, so we do not delete it; keep_base_vm only affects base VM.
+    local create_template=false
     if [[ "$build_mode" == "iso" ]] && ([[ -n "$template_path" ]] || [[ -n "$template_name" ]]); then
         create_template=true
     fi
+
+    # On all modes (ISO, template, existing_base): delete the VM we used for stembuild unless we converted it to a template
     if [[ "$create_template" != "true" ]]; then
-        log_info "Step 9: Cleaning up target VM..."
+        log_info "Step 9: Cleaning up VM (not converted to template): $vm_name"
         if vm_exists "$vm_name"; then
             if [[ "$(get_vm_power_state "$vm_name")" != "poweredOff" ]]; then
-                log_info "Shutting down target VM before cleanup..."
+                log_info "Shutting down before cleanup..."
                 vm_power_off "$vm_name" 120 0 || true
             fi
-            log_info "Deleting target VM: $vm_name"
+            log_info "Deleting VM: $vm_name"
             govc vm.destroy "$vm_name" >/dev/null 2>&1 || {
-                log_warn "Failed to delete target VM (may require manual cleanup): $vm_name"
+                log_warn "Failed to delete VM (may require manual cleanup): $vm_name"
             }
-            log_success "Target VM cleaned up"
+            log_success "VM cleaned up"
         else
-            log_info "Target VM not found (already deleted or not created)"
+            log_info "VM not found (already deleted or not created)"
         fi
     fi
+
+    # ISO mode only: delete base VM if KEEP_BASE_VM is not true. keep_base_vm has no effect in template or existing_base mode (we never touch the user's base/source VM).
+    if [[ "$build_mode" == "iso" ]] && [[ -n "$base_vm_name" ]] && [[ "$base_vm_name" != "$vm_name" ]] && [[ "${keep_base_vm}" != "true" ]]; then
+        log_info "Step 9 (ISO mode): Cleaning up base VM (keep_base_vm=false): $base_vm_name"
+        if vm_exists "$base_vm_name"; then
+            if [[ "$(get_vm_power_state "$base_vm_name")" != "poweredOff" ]]; then
+                vm_power_off "$base_vm_name" 120 0 || true
+            fi
+            govc vm.destroy "$base_vm_name" >/dev/null 2>&1 || {
+                log_warn "Failed to delete base VM (may require manual cleanup): $base_vm_name"
+            }
+            log_success "Base VM cleaned up"
+        fi
+    elif [[ "$build_mode" == "iso" ]] && [[ "${keep_base_vm}" == "true" ]]; then
+        log_info "Step 9 (ISO mode): Keeping base VM (keep_base_vm=true)"
+    fi
+
     log_success "Stemcell creation completed successfully"
     return 0
 }
@@ -2248,6 +2340,43 @@ main() {
     if [[ -z "$vars_file" ]] && [[ -f "variables.pkrvars.hcl" ]]; then
         vars_file="variables.pkrvars.hcl"
         log_info "Using default variables file: $vars_file"
+    fi
+    
+    # --- Existing base VM mode: clone provided VM, configure network on clone, then stembuild construct + package (no Packer) ---
+    local existing_base_vm_name
+    existing_base_vm_name=$(get_var "$vars_file" "existing_base_vm_name")
+    if [[ -n "$existing_base_vm_name" ]] && [[ -f "$vars_file" ]]; then
+        log_info "Existing base VM mode: existing_base_vm_name='$existing_base_vm_name' (skip Packer, clone VM -> network -> stembuild)"
+        setup_proxy_environment "$vars_file"
+        # Set GOVC from vars so clone_current_vm_to_target and post_build_provisioning can use govc
+        local vcenter_server vcenter_user vcenter_pass vcenter_insecure
+        vcenter_server=$(get_var "$vars_file" "vcenter_server")
+        vcenter_user=$(get_var "$vars_file" "vcenter_username")
+        vcenter_pass=$(get_var "$vars_file" "vcenter_password")
+        vcenter_insecure=$(get_var "$vars_file" "vcenter_insecure_connection")
+        export GOVC_URL="$vcenter_server"
+        export GOVC_USERNAME="$vcenter_user"
+        export GOVC_PASSWORD="$vcenter_pass"
+        [[ "$vcenter_insecure" == "true" ]] && export GOVC_INSECURE=true
+        if ! vm_exists "$existing_base_vm_name"; then
+            log_error "Existing base VM not found: $existing_base_vm_name"
+            exit 1
+        fi
+        CLEANUP_VM_NAME=""
+        CLEANUP_TARGET_VM_NAME=""
+        CLEANUP_ENABLED=true
+        trap 'cleanup_on_failure $?' ERR EXIT
+        log_info "Cloning existing VM to windows-target-vm-{timestamp}..."
+        local target_vm_name
+        target_vm_name=$(clone_current_vm_to_target "$existing_base_vm_name" "$vars_file") || exit 1
+        target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
+        CLEANUP_TARGET_VM_NAME="$target_vm_name"
+        log_info "Starting provisioning on clone (network -> stembuild construct -> package)..."
+        post_build_provisioning "$vars_file" "$target_vm_name" "existing_base" "$log_level"
+        CLEANUP_ENABLED=false
+        trap - ERR EXIT
+        log_success "All done (existing base VM mode)!"
+        exit 0
     fi
     
     # Process Autounattend.xml template with sed (before Packer runs)

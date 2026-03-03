@@ -3,7 +3,7 @@
 # Source from scripts that need to resolve a VM name to an inventory path.
 
 # Usage: find_vm_inventory_path <vm_name> [datacenter]
-# Outputs absolute path (e.g. /dc/vm/folder/vmname) to stdout; return 1 if not found.
+# Outputs absolute path (e.g. /tanzu-dc01/vm/windows-base-vm-20260303072233 or /dc/vm/folder/vmname) to stdout; return 1 if not found.
 # If output starts with "govc:", it is an error line (do not use as path).
 find_vm_inventory_path() {
     local vm_name="${1:?}" datacenter="${2:-}" path=""
