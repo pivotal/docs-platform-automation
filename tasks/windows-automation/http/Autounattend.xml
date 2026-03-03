@@ -59,6 +59,8 @@
                 <AcceptEula>true</AcceptEula>
                 <FullName>Administrator</FullName>
                 <Organization>VMware</Organization>
+                <!-- Generic KMS key for 2022/2025 (injected by process_autounattend_template); omitted for 2019 -->
+{{.ProductKeyXML}}
             </UserData>
         </component>
     </settings>
@@ -199,15 +201,14 @@
                 <!-- Tools ISO is mounted via provisioner, not at boot time, to avoid boot order issues -->
             </FirstLogonCommands>
             
-            <!-- OOBE settings - hide prompts for 2019/2022/2025. Use Microsoft element names (e.g. HideLocalAccountScreen not HideLocalAdministrationPage). -->
-            <!-- SkipMachineOOBE/SkipUserOOBE are deprecated in 2022/2025 and cause "component or setting specified" error. -->
+            <!-- OOBE settings - hide prompts for 2019/2022/2025. Use Microsoft element names. -->
+            <!-- SkipMachineOOBE/SkipUserOOBE deprecated in 2022/2025. ProtectYourPC can cause "unspecified setting" on Windows Server (client Express-settings page). -->
             <OOBE>
                 <HideEULAPage>true</HideEULAPage>
                 <HideLocalAccountScreen>true</HideLocalAccountScreen>
                 <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
                 <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-                <ProtectYourPC>3</ProtectYourPC>
             </OOBE>
         </component>
     </settings>

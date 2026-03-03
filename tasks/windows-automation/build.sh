@@ -1257,6 +1257,48 @@ SCONFIG_BLOCK_EOF
     rm -f "$temp_file"
     local temp_file="$temp_file2"
     
+    # ProductKeyXML: for 2022/2025 inject Generic KMS key (GVLK) in windowsPE UserData so product key is not missing; for 2019 omit
+    local product_key_file=$(mktemp)
+    local temp_file3=$(mktemp)
+    if [[ "$windows_version" == "2022" ]]; then
+        # Windows Server 2022 Standard GVLK (Microsoft KMS client activation keys)
+        cat >> "$product_key_file" << 'PRODUCTKEY_EOF'
+                <ProductKey>
+                    <Key>VDYBN-27WPP-V4HQT-9VMD4-VMK7H</Key>
+                    <WillShowUI>Never</WillShowUI>
+                </ProductKey>
+PRODUCTKEY_EOF
+        awk -v pkfile="$product_key_file" '
+            /\{\{\.ProductKeyXML\}\}/ { while ((getline line < pkfile) > 0) print line; close(pkfile); next }
+            { print }
+        ' "$temp_file" > "$temp_file3"
+        log_info "Added Generic KMS key (GVLK) for Windows Server 2022 Standard in windowsPE"
+    elif [[ "$windows_version" == "2025" ]]; then
+        # Windows Server 2025 Standard GVLK (Microsoft KMS client activation keys)
+        cat >> "$product_key_file" << 'PRODUCTKEY_EOF'
+                <ProductKey>
+                    <Key>TVRH6-WHNXV-R9WG3-9XRFY-MY832</Key>
+                    <WillShowUI>Never</WillShowUI>
+                </ProductKey>
+PRODUCTKEY_EOF
+        awk -v pkfile="$product_key_file" '
+            /\{\{\.ProductKeyXML\}\}/ { while ((getline line < pkfile) > 0) print line; close(pkfile); next }
+            { print }
+        ' "$temp_file" > "$temp_file3"
+        log_info "Added Generic KMS key (GVLK) for Windows Server 2025 Standard in windowsPE"
+    else
+        # 2019: remove placeholder line (2019 does not require product key in answer file for this scenario)
+        awk '/\{\{\.ProductKeyXML\}\}/ { next }; { print }' "$temp_file" > "$temp_file3"
+    fi
+    rm -f "$product_key_file"
+    if [[ ! -f "$temp_file3" ]] || [[ ! -s "$temp_file3" ]]; then
+        log_error "Failed to process ProductKeyXML"
+        rm -f "$temp_file" "$temp_file3"
+        return 1
+    fi
+    rm -f "$temp_file"
+    temp_file="$temp_file3"
+    
     # Handle DNSServer2_XML separately - if empty, remove the placeholder line entirely
     if [[ -n "$dns_server2_xml" ]]; then
         # DNSServer2 is provided - replace placeholder with XML
@@ -1307,7 +1349,8 @@ SCONFIG_BLOCK_EOF
        ! grep -q "{{\.DNSServer1}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null; then
+       ! grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.ProductKeyXML}}" "$processed_file" 2>/dev/null; then
         log_info "All template variables replaced successfully"
     else
         log_error "Template variables were not replaced!"
@@ -1323,6 +1366,7 @@ SCONFIG_BLOCK_EOF
         if grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.DNSServer2_XML}} still present"; fi
         if grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null; then log_error "  - {{.WindowsImageName}} still present"; fi
         if grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null; then log_error "  - {{.FirstLogonCommandsSConfigBlock}} still present"; fi
+        if grep -q "{{\.ProductKeyXML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.ProductKeyXML}} still present"; fi
         return 1
     fi
     
