@@ -1454,10 +1454,11 @@ build_vm() {
     log_info "Packer started with PID: $packer_pid"
     log_info "Packer logs: $log_file"
     
-    # Detect build mode before setting up cleanup
-    local template_path=$(grep -E "^template_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
-    local iso_path=$(grep -E "^iso_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
-    local iso_path_local=$(grep -E "^iso_path_local\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    # Detect build mode before setting up cleanup (use get_var for portable parsing)
+    local template_path iso_path iso_path_local
+    template_path=$(trim_var "$(get_var "$vars_file" "template_path")")
+    iso_path=$(trim_var "$(get_var "$vars_file" "iso_path")")
+    iso_path_local=$(trim_var "$(get_var "$vars_file" "iso_path_local")")
     
     local build_mode="iso"
     if [[ -n "$template_path" ]] && [[ -z "$iso_path" ]] && [[ -z "$iso_path_local" ]] && [[ -z "${PKR_VAR_iso_path:-}" ]] && [[ -z "${PKR_VAR_iso_path_local:-}" ]]; then
@@ -1549,9 +1550,11 @@ build_vm() {
     # If template_path is provided and no ISO is configured, use template mode
     # Otherwise, use ISO mode (template_path can still be used to create template after stemcell)
     local build_mode="iso"
-    local template_path=$(grep -E "^template_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
-    local iso_path=$(grep -E "^iso_path\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
-    local iso_path_local=$(grep -E "^iso_path_local\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "")
+    local template_path iso_path iso_path_local template_name_early
+    template_path=$(trim_var "$(get_var "$vars_file" "template_path")")
+    iso_path=$(trim_var "$(get_var "$vars_file" "iso_path")")
+    iso_path_local=$(trim_var "$(get_var "$vars_file" "iso_path_local")")
+    template_name_early=$(trim_var "$(get_var "$vars_file" "template_name")")
     
     if [[ -n "$template_path" ]] && [[ -z "$iso_path" ]] && [[ -z "$iso_path_local" ]] && [[ -z "${PKR_VAR_iso_path:-}" ]] && [[ -z "${PKR_VAR_iso_path_local:-}" ]]; then
         build_mode="template"
@@ -1559,7 +1562,7 @@ build_vm() {
     else
         build_mode="iso"
         log_info "ISO mode detected: will build from ISO"
-        if [[ -n "$template_path" ]] || [[ -n "$(grep -E "^template_name\s*=" "$vars_file" 2>/dev/null)" ]]; then
+        if [[ -n "$template_path" ]] || [[ -n "$template_name_early" ]]; then
             log_info "Template will be created after stemcell packaging"
         fi
     fi
