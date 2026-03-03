@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Create Windows stemcell from ISO or template using Packer and stembuild
-# Supports two modes: build from ISO or clone from template
+# Create Windows stemcell from ISO or template using Packer and stembuild.
+# Supports two modes: build from ISO or clone from template.
+# Convention: read vars file with get_var (vars-file-utils.sh); find VMs with govc helpers where used.
 
 set -euo pipefail
 # Script directory (must be set first so sourced libs can use it)
@@ -17,6 +18,15 @@ COMMON_SH="$SCRIPT_DIR/scripts/common.sh"
 [[ -f "$COMMON_SH" ]] || { echo "ERROR: common.sh not found: $COMMON_SH" >&2; exit 1; }
 source "$COMMON_SH"
 
+# Vars file parsing (get_var <file> <key>)
+VARS_UTILS="$SCRIPT_DIR/scripts/vars-file-utils.sh"
+[[ -f "$VARS_UTILS" ]] || { echo "ERROR: vars-file-utils.sh not found: $VARS_UTILS" >&2; exit 1; }
+source "$VARS_UTILS"
+
+GOVC_VM_UTILS="$SCRIPT_DIR/scripts/govc-vm-utils.sh"
+[[ -f "$GOVC_VM_UTILS" ]] || { echo "ERROR: govc-vm-utils.sh not found: $GOVC_VM_UTILS" >&2; exit 1; }
+source "$GOVC_VM_UTILS"
+
 # Global variables for cleanup
 CLEANUP_VM_NAME=""
 CLEANUP_TARGET_VM_NAME=""
@@ -28,14 +38,6 @@ CLEANUP_ENABLED=false
 jumper_ip=""
 jumper_user=""
 jumper_password=""
-
-# Get variable value from vars file (HCL-style key = "value" or key = value). Outputs value to stdout.
-# Avoids a full HCL parser; good enough for our vars file shape.
-get_var() {
-    local vars_file="$1" key="$2"
-    [[ -z "$vars_file" ]] || [[ ! -f "$vars_file" ]] && return 0
-    grep -E "^${key}\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//'
-}
 
 # Cleanup function for error handling
 cleanup_on_failure() {
@@ -63,10 +65,11 @@ cleanup_on_failure() {
     
     # Extract vCenter credentials for cleanup
     if [[ -n "$CLEANUP_VARS_FILE" ]] && [[ -f "$CLEANUP_VARS_FILE" ]]; then
-        local vcenter_server=$(grep -E "^vcenter_server\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        local vcenter_user=$(grep -E "^vcenter_username\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$CLEANUP_VARS_FILE" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
+        local vcenter_server vcenter_user vcenter_pass vcenter_insecure
+        vcenter_server=$(get_var "$CLEANUP_VARS_FILE" "vcenter_server")
+        vcenter_user=$(get_var "$CLEANUP_VARS_FILE" "vcenter_username")
+        vcenter_pass=$(get_var "$CLEANUP_VARS_FILE" "vcenter_password")
+        vcenter_insecure=$(get_var "$CLEANUP_VARS_FILE" "vcenter_insecure_connection")
         
         export GOVC_URL="$vcenter_server"
         export GOVC_USERNAME="$vcenter_user"
@@ -208,7 +211,7 @@ clone_current_vm_to_target() {
     local clone_opts=(-vm "$base_vm_name")
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
         local datastore
-        datastore=$(grep -E "^vcenter_datastore\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+        datastore=$(get_var "$vars_file" "vcenter_datastore")
         if [[ -n "$datastore" ]]; then
             clone_opts+=(-ds "$datastore")
             log_info "Using datastore for clone: $datastore"
@@ -1602,15 +1605,17 @@ post_build_provisioning() {
     log_info "Starting post-build provisioning for VM: $vm_name (mode: $build_mode)"
     
     # Extract variables from vars file
-    local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-    local windows_username=$(grep -E "^windows_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local windows_password=$(grep -E "^windows_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local patch_version=$(grep -E "^patch_version\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local template_path=$(grep -E "^template_path\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local template_name=$(grep -E "^template_name\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
+    local vcenter_server vcenter_user vcenter_pass vcenter_insecure
+    local windows_username windows_password patch_version template_path template_name
+    vcenter_server=$(get_var "$vars_file" "vcenter_server")
+    vcenter_user=$(get_var "$vars_file" "vcenter_username")
+    vcenter_pass=$(get_var "$vars_file" "vcenter_password")
+    vcenter_insecure=$(get_var "$vars_file" "vcenter_insecure_connection")
+    windows_username=$(get_var "$vars_file" "windows_username")
+    windows_password=$(get_var "$vars_file" "windows_password")
+    patch_version=$(get_var "$vars_file" "patch_version")
+    template_path=$(get_var "$vars_file" "template_path")
+    template_name=$(get_var "$vars_file" "template_name")
     
     # Default username to Administrator if not specified
     if [[ -z "$windows_username" ]]; then
@@ -1637,7 +1642,24 @@ post_build_provisioning() {
     #   run-powershell-via-govc.sh, configure-network-manual.ps1, run-windows-updates-loop.sh,
     #   install-windows-updates.ps1, check-updates-after-reboot.ps1, run-stembuild-construct.sh.
     # package-stemcell.sh lives in SCRIPT_DIR (windows-automation/).
-    
+
+    # Poll govc vm.info guest block until guestOperationsReady and toolsRunningStatus indicate Tools are ready.
+    # Uses solid state from vSphere (no guest.start); use after Tools install. Reboot/wait logic unchanged.
+    wait_for_vm_tools_ready() {
+        local vname="${1:?}" timeout_sec="${2:-600}" interval=30 elapsed=0
+        while [[ $elapsed -lt $timeout_sec ]]; do
+            local ready status
+            ready=$(govc vm.info -json "$vname" 2>/dev/null | jq -r '.virtualMachines[0].guest.guestOperationsReady // false')
+            status=$(govc vm.info -json "$vname" 2>/dev/null | jq -r '.virtualMachines[0].guest.toolsRunningStatus // empty')
+            if [[ "$ready" == "true" ]] && [[ "$status" == "guestToolsRunning" ]]; then
+                return 0
+            fi
+            sleep $interval
+            elapsed=$((elapsed + interval))
+        done
+        return 1
+    }
+
     # Step 1: Password change and VMware Tools (ISO mode only). Wait 10 min, run password change once,
     # install VMware Tools once, then poll for guest ops; fail immediately on auth error.
     if [[ "$build_mode" == "iso" ]]; then
@@ -1683,7 +1705,14 @@ post_build_provisioning() {
             fi
             return 1
         }
-        sleep 30
+
+        # Step 1.6b: Poll vm.info guest block for tools installation success (solid state, no guest.start).
+        log_info "Step 1.6b: Waiting for VMware Tools to report ready (guestOperationsReady + toolsRunningStatus, poll up to 10 min)..."
+        if ! wait_for_vm_tools_ready "$vm_name" 600; then
+            log_error "VMware Tools did not report ready within 600s (govc vm.info guest block)."
+            return 1
+        fi
+        log_success "VMware Tools ready (guestOperationsReady=true, toolsRunningStatus=guestToolsRunning)."
 
         # Step 1.7: Poll until guest ops work. Fail immediately on auth error; otherwise keep waiting.
         # Capture govc errors so we can report why verification failed (auth vs Tools/PowerShell).
@@ -1830,6 +1859,40 @@ post_build_provisioning() {
     vm_name="$target_vm_name"
     CLEANUP_TARGET_VM_NAME="$target_vm_name"
 
+    # Helper: wait for guest operations on a VM (VM must already be powered on). Returns 0 when ready, 1 on timeout.
+    wait_for_vm_guest_ready() {
+        local vname="${1:?}"
+        local timeout_sec="${2:-600}"
+        local wait_interval=30
+        local wait_elapsed=0
+        local govc_guest_opts=(-vm "$vname" -l "${windows_username}:${windows_password}")
+        local ps_exe="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        local tmp_stderr
+        tmp_stderr=$(mktemp 2>/dev/null) || tmp_stderr=""
+        while [[ $wait_elapsed -lt $timeout_sec ]]; do
+            local pid
+            if [[ -n "$tmp_stderr" ]]; then
+                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>"$tmp_stderr") || true
+            else
+                pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
+            fi
+            if [[ -n "$pid" ]]; then
+                local raw code
+                raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
+                code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
+                [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
+                if [[ "${code:-1}" == "0" ]]; then
+                    rm -f "$tmp_stderr" 2>/dev/null || true
+                    return 0
+                fi
+            fi
+            sleep $wait_interval
+            wait_elapsed=$((wait_elapsed + wait_interval))
+        done
+        rm -f "$tmp_stderr" 2>/dev/null || true
+        return 1
+    }
+
     # Step 3.6: Ensure target VM is powered on and wait for guest to boot (guest ops ready)
     log_info "Step 3.6: Waiting for target VM to boot and guest operations ready..."
     local power_state
@@ -1854,56 +1917,21 @@ post_build_provisioning() {
     else
         log_info "Target VM already powered on"
     fi
-    # Wait for VMware Tools and guest ops (same pattern as Step 1.7)
     log_info "Waiting for guest operations on target VM (poll up to 10 min, every 30s)..."
-    local guest_ready=0
-    local wait_elapsed=0
-    local wait_timeout=600
-    local wait_interval=30
-    local govc_guest_opts=(-vm "$vm_name" -l "${windows_username}:${windows_password}")
-    local ps_exe="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-    local last_start_stderr=""
-    local tmp_stderr
-    tmp_stderr=$(mktemp 2>/dev/null) || tmp_stderr=""
-    while [[ $wait_elapsed -lt $wait_timeout ]]; do
-        last_start_stderr=""
-        local pid
-        if [[ -n "$tmp_stderr" ]]; then
-            pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>"$tmp_stderr") || true
-            last_start_stderr=$(cat "$tmp_stderr" 2>/dev/null)
-        else
-            pid=$(govc guest.start "${govc_guest_opts[@]}" "$ps_exe" "-ExecutionPolicy" "Bypass" "-NoProfile" "-NoLogo" "-NonInteractive" "-Command" "exit 0" 2>/dev/null) || true
-        fi
-        if [[ -n "$pid" ]]; then
-            local raw
-            raw=$(govc guest.ps "${govc_guest_opts[@]}" -p "$pid" -X -x 2>/dev/null) || true
-            local code
-            code=$(echo "$raw" | awk -v p="$pid" 'NR>1 && $2+0==p+0 {print $5; exit}')
-            [[ -z "$code" ]] && code=$(echo "$raw" | grep -o '"exitCode":[0-9]*' | head -1 | sed 's/"exitCode"://')
-            if [[ "${code:-1}" == "0" ]]; then
-                guest_ready=1
-                log_success "Target VM guest operations ready after ${wait_elapsed}s."
-                break
-            fi
-        fi
-        log_info "Guest not ready yet, waiting ${wait_interval}s (elapsed ${wait_elapsed}s / ${wait_timeout}s)..."
-        sleep $wait_interval
-        wait_elapsed=$((wait_elapsed + wait_interval))
-    done
-    rm -f "$tmp_stderr" 2>/dev/null || true
-    if [[ $guest_ready -ne 1 ]]; then
-        log_error "Target VM guest operations did not become ready within ${wait_timeout}s. Govc error: ${last_start_stderr:-none}"
+    if ! wait_for_vm_guest_ready "$vm_name" 600; then
+        log_error "Target VM guest operations did not become ready within 600s."
         return 1
     fi
+    log_success "Target VM guest operations ready."
 
-    # Run stembuild construct
-    log_info "Step 4: Running stembuild construct..."
+    # Run stembuild construct (with retry: on failure, restart target VM and try again)
+    local max_attempts="${STEMBUILD_CONSTRUCT_MAX_ATTEMPTS:-2}"
+    local attempt=1
+    local construct_rc=0
     if [[ -z "$patch_version" ]]; then
         log_error "patch_version is required for stembuild"
         return 1
     fi
-    
-    # Find stembuild binary
     local stembuild_binary=""
     if command -v stembuild &> /dev/null; then
         stembuild_binary=$(command -v stembuild)
@@ -1911,11 +1939,15 @@ post_build_provisioning() {
         log_error "stembuild not found in PATH"
         return 1
     fi
-    
     local datacenter=$(grep -E "^vcenter_datacenter\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-    local construct_log="$SCRIPT_DIR/logs/stembuild-construct-$(date +%Y%m%d-%H%M%S).log"
-    mkdir -p "$(dirname "$construct_log")"
-    if [[ -n $jumper_ip ]] && [[ -n $jumper_user ]] && [[ -n $jumper_password ]]; then
+    mkdir -p "$SCRIPT_DIR/logs"
+
+    while [[ $attempt -le $max_attempts ]]; do
+        log_info "Step 4: Running stembuild construct (attempt $attempt of $max_attempts)..."
+        local construct_log="$SCRIPT_DIR/logs/stembuild-construct-$(date +%Y%m%d-%H%M%S)-attempt${attempt}.log"
+        construct_rc=0
+
+        if [[ -n $jumper_ip ]] && [[ -n $jumper_user ]] && [[ -n $jumper_password ]]; then
         # Path on remote must match where we scp the binary: user@jumper:~/ → $HOME/stembuild
         local stembuild_remote="\$HOME/stembuild"
         if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$scripts_dir/run-stembuild-construct.sh" "$(which stembuild)" "$(which govc)" LGPO.zip "$jumper_user@$jumper_ip:~/"; then
@@ -1936,23 +1968,47 @@ post_build_provisioning() {
         sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" \
             "echo '--- SSH session started on jumper, running stembuild construct ---'; export $export_vars; chmod +x ~/run-stembuild-construct.sh ~/stembuild ~/govc; bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\"" 2>&1 | tee "$construct_log"
         if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
-            log_error "stembuild construct failed on jumper. Last 200 lines of log (captured from jumper session):"
+            construct_rc=1
+            log_error "stembuild construct failed on jumper (attempt $attempt). Last 200 lines of log:"
             if [[ -f "$construct_log" ]]; then
                 tail -200 "$construct_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
             fi
-            return 1
+        else
+            log_success "stembuild construct completed on jumper"
         fi
-        log_success "stembuild construct completed on jumper"
     else
-        run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || {
-            log_error "stembuild construct failed."
+        run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" $static_ip  "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || construct_rc=$?
+        if [[ $construct_rc -ne 0 ]]; then
+            log_error "stembuild construct failed (attempt $attempt)."
             if [[ -f "$construct_log" ]]; then
                 log_error "--- Last 200 lines of stembuild-construct log ---"
                 tail -200 "$construct_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
             fi
-            return 1
-        }
+        else
+            log_success "stembuild construct completed"
+        fi
     fi
+
+        if [[ $construct_rc -eq 0 ]]; then
+            break
+        fi
+        if [[ $attempt -ge $max_attempts ]]; then
+            log_error "stembuild construct failed after $max_attempts attempt(s)."
+            return 1
+        fi
+        log_warn "Restarting target VM and retrying stembuild construct (attempt $((attempt + 1)) of $max_attempts)..."
+        if ! vm_reboot_shutdown_poweron "$vm_name" 120; then
+            log_error "Failed to restart target VM (power off/on)."
+            return 1
+        fi
+        log_info "Waiting for guest to be ready after restart (poll up to 10 min)..."
+        if ! wait_for_vm_guest_ready "$vm_name" 600; then
+            log_error "Target VM guest operations did not become ready after restart."
+            return 1
+        fi
+        log_success "Target VM ready after restart, retrying stembuild construct."
+        attempt=$((attempt + 1))
+    done
 
     
     # : Run stembuild package
@@ -1960,26 +2016,9 @@ post_build_provisioning() {
     local package_log="$SCRIPT_DIR/logs/stembuild-package-$(date +%Y%m%d-%H%M%S).log"
     mkdir -p "$(dirname "$package_log")"
     
-    # Find VM inventory path; always use datacenter prefix (e.g. /Datacenter/vm/...)
-    # Use -dc to scope find to this datacenter (avoids "matches N objects" from /datacenter/...)
-    local vm_path=""
-    if [[ -n "$datacenter" ]]; then
-        vm_path=$(govc find / -type m -name "$vm_name" -dc "$datacenter" 2>/dev/null | head -n1)
-    fi
-    if [[ -z "$vm_path" ]]; then
-        vm_path=$(govc find / -type m -name "$vm_name" 2>/dev/null | head -n1)
-    fi
-    if [[ -z "$vm_path" ]]; then
-        vm_path=$(govc find vm -name "$vm_name" 2>/dev/null | head -n1)
-    fi
-    if [[ -z "$vm_path" ]]; then
-        log_error "VM not found: $vm_name"
-        return 1
-    fi
+    # Resolve VM to inventory path for stembuild package
     local vm_inventory_path
-    local vm_path_stripped="${vm_path#/}"
-    vm_path_stripped="${vm_path_stripped#$datacenter/}"
-    vm_inventory_path="/$datacenter/$vm_path_stripped"
+    vm_inventory_path=$(find_vm_inventory_path "$vm_name" "$datacenter") || return 1
 
     # Stop VM before packaging (required by stembuild)
     log_info "Stopping VM before packaging..."

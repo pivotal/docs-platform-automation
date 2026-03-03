@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# Run stembuild construct on VM
-# This script automates the construction of the BOSH stemcell
+# Run stembuild construct on a Windows VM. Requires GOVC_* and govc in PATH.
 
 set -euo pipefail
 set -x
 
-# Required Arguments
 VM_NAME="${1:-}"
 VM_IP="${2:-}"
 VM_USER="${3:-}"
@@ -14,92 +12,41 @@ STEMBUILD_BINARY="${5:-}"
 DATACENTER="${6:-}"
 LOG_FILE="${7:-}"
 
-# Trim VM name (stray quotes/newlines can appear when stdout is captured in CI)
+# Normalize VM name (CI may capture stray quotes/newlines)
 VM_NAME=$(printf '%s' "$VM_NAME" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
 
-# Setup logging
-if [[ -n "$LOG_FILE" ]]; then
-    exec > >(tee -a "$LOG_FILE") 2>&1
-fi
+[[ -n "$LOG_FILE" ]] && exec > >(tee -a "$LOG_FILE") 2>&1
 
-# Validation
-if [[ -z "$VM_NAME" ]] || [[ -z "$VM_IP" ]] || [[ -z "$VM_USER" ]] || [[ -z "$VM_PASS" ]] || [[ -z "$STEMBUILD_BINARY" ]]; then
+# --- Validate required args and env ---
+missing=""
+[[ -z "$VM_NAME" ]] && missing="vm-name"
+[[ -z "$VM_IP" ]] && missing="$missing vm-ip"
+[[ -z "$VM_USER" ]] && missing="$missing vm-username"
+[[ -z "$VM_PASS" ]] && missing="$missing vm-password"
+[[ -z "$STEMBUILD_BINARY" ]] && missing="$missing stembuild-binary"
+if [[ -n "$missing" ]]; then
     echo "Usage: $0 <vm-name> <vm-ip> <vm-username> <vm-password> <stembuild-binary> [datacenter] [log-file]"
     exit 1
 fi
 
-if ! command -v govc >/dev/null 2>&1; then
-    echo "Error: govc command not found. Ensure PATH includes the directory containing govc (e.g. export PATH=\"\$HOME:\$PATH\" if govc is in \$HOME)."
+command -v govc >/dev/null 2>&1 || { echo "Error: govc not in PATH." >&2; exit 1; }
+[[ -n "${GOVC_URL:-}" ]] && [[ -n "${GOVC_USERNAME:-}" ]] && [[ -n "${GOVC_PASSWORD:-}" ]] || {
+    echo "Error: GOVC_URL, GOVC_USERNAME, GOVC_PASSWORD must be set." >&2
     exit 1
-fi
-GOVC_CMD=$(command -v govc)
-echo "Using govc: $GOVC_CMD"
+}
 
-if [[ -z "${GOVC_URL:-}" ]] || [[ -z "${GOVC_USERNAME:-}" ]] || [[ -z "${GOVC_PASSWORD:-}" ]]; then
-    echo "Error: GOVC_URL, GOVC_USERNAME, and GOVC_PASSWORD must be set (export them before running this script)."
-    echo "govc find will not work without vCenter connection."
-    exit 1
-fi
-echo "GOVC_* are set (vCenter: ${GOVC_URL})"
+govc about >/dev/null 2>&1 || { echo "Error: govc cannot reach vCenter. Check GOVC_* and network." >&2; exit 1; }
 
-# Verify govc can run and connect to vCenter (catches PATH/connection issues early)
-echo "Checking govc connection to vCenter..."
-govc_about_rc=0
-govc_about_out=$(govc about 2>&1) || govc_about_rc=$?
-echo "$govc_about_out"
-if [[ $govc_about_rc -ne 0 ]]; then
-    echo "Error: govc about failed (exit $govc_about_rc). Check GOVC_* and network connectivity to vCenter."
-    exit 1
-fi
+# --- Resolve VM inventory path ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=govc-vm-utils.sh
+source "$SCRIPT_DIR/govc-vm-utils.sh"
+VM_INVENTORY_PATH=$(find_vm_inventory_path "$VM_NAME" "$DATACENTER") || exit 1
 
-echo "=========================================="
-echo "Running stembuild construct"
-echo "VM Name: $VM_NAME"
-echo "VM IP:   $VM_IP"
-echo "Timestamp: $(date)"
-echo "=========================================="
+echo "=== stembuild construct ==="
+echo "VM: $VM_NAME | IP: $VM_IP | $(date)"
 
-# Find VM inventory path using govc (use -dc to scope to datacenter and avoid "matches N objects" from /dc/...)
-VM_PATH=""
-if [[ -n "$DATACENTER" ]]; then
-    # -dc scopes the search to this datacenter; / as root works (user-confirmed)
-    VM_PATH=$(govc find / -type m -name "$VM_NAME" -dc "$DATACENTER" 2>&1 | head -n1)
-    # If govc printed an error line (e.g. "govc: ..."), clear VM_PATH so we don't use it
-    if [[ -n "$VM_PATH" ]] && [[ "$VM_PATH" == govc:* ]]; then
-        echo "govc find stderr: $VM_PATH"
-        VM_PATH=""
-    fi
-fi
-if [[ -z "$VM_PATH" ]]; then
-    VM_PATH=$(govc find / -type m -name "$VM_NAME" 2>&1 | head -n1)
-    if [[ -n "$VM_PATH" ]] && [[ "$VM_PATH" == govc:* ]]; then
-        echo "govc find stderr: $VM_PATH"
-        VM_PATH=""
-    fi
-fi
-if [[ -z "$VM_PATH" ]]; then
-    VM_PATH=$(govc find vm -name "$VM_NAME" 2>&1 | head -n1)
-    if [[ -n "$VM_PATH" ]] && [[ "$VM_PATH" == govc:* ]]; then
-        echo "govc find stderr: $VM_PATH"
-        VM_PATH=""
-    fi
-fi
-if [[ -z "$VM_PATH" ]]; then
-    echo "Error: VM not found in vCenter: $VM_NAME"
-    echo "Tip: Set GOVC_DATACENTER to your datacenter (e.g. $DATACENTER) or ensure GOVC_URL points to the right vCenter."
-    exit 1
-fi
-
-# govc find returns path like /datacenter/vm/folder/vmname; use as-is if absolute
-if [[ "$VM_PATH" == /* ]]; then
-    VM_INVENTORY_PATH="$VM_PATH"
-else
-    VM_INVENTORY_PATH="/$DATACENTER/$VM_PATH"
-fi
-
-echo "VM Inventory Path: $VM_INVENTORY_PATH"
-
-# Array-based invocation (no eval): build args and run stembuild construct
+# --- Run stembuild construct ---
 CONSTRUCT_ARGS=(
     -vm-ip "$VM_IP"
     -vm-username "$VM_USER"
@@ -109,18 +56,7 @@ CONSTRUCT_ARGS=(
     -vcenter-password "$GOVC_PASSWORD"
     -vm-inventory-path "$VM_INVENTORY_PATH"
 )
-if [[ -n "${VCENTER_CA_CERTS:-}" ]] && [[ -f "${VCENTER_CA_CERTS}" ]]; then
-    CONSTRUCT_ARGS+=( -vcenter-ca-certs "$VCENTER_CA_CERTS" )
-fi
-
-echo "Executing stembuild construct..."
-echo "This process involves running preparation scripts on the guest VM."
-echo ""
+[[ -n "${VCENTER_CA_CERTS:-}" ]] && [[ -f "${VCENTER_CA_CERTS}" ]] && CONSTRUCT_ARGS+=( -vcenter-ca-certs "$VCENTER_CA_CERTS" )
 
 "$STEMBUILD_BINARY" construct "${CONSTRUCT_ARGS[@]}"
-
-echo ""
-echo "=========================================="
-echo "stembuild construct completed successfully"
-echo "Timestamp: $(date)"
-echo "=========================================="
+echo "=== stembuild construct completed ==="
