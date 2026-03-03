@@ -8,6 +8,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/vars-file-utils.sh"
 
+# Common test helpers (same pattern as build.sh sourcing scripts)
+TEST_UTILS="$SCRIPT_DIR/test-utils.sh"
+[[ -f "$TEST_UTILS" ]] || { echo "ERROR: test-utils.sh not found: $TEST_UTILS" >&2; exit 1; }
+source "$TEST_UTILS"
+
 # Match build.sh definition
 trim_var() { printf '%s' "${1:-}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
 
@@ -30,31 +35,6 @@ echo "---"
 
 pass=0
 fail=0
-
-assert_equals() {
-    local name="$1" expected="$2" actual="$3"
-    if [[ "$actual" == "$expected" ]]; then
-        echo "PASS: $name"
-        ((pass++)) || true
-        return 0
-    fi
-    echo "FAIL: $name (expected '${expected}', got '${actual}')"
-    ((fail++)) || true
-    return 1
-}
-
-assert_exit0() {
-    local name="$1"
-    shift
-    if "$@" >/dev/null 2>&1; then
-        echo "PASS: $name (get_var returned 0)"
-        ((pass++)) || true
-        return 0
-    fi
-    echo "FAIL: $name (get_var returned non-zero)"
-    ((fail++)) || true
-    return 1
-}
 
 echo "=== trim_var only ==="
 assert_equals "trim empty"    "" "$(trim_var "")"
@@ -176,6 +156,4 @@ assert_equals "template_name set with vcenter_folder empty" "my-template" "$tnam
 assert_equals "vcenter_folder empty when template_name set" "" "$vf_i3"
 
 echo ""
-echo "---"
-echo "Result: $pass passed, $fail failed"
-[[ $fail -eq 0 ]]
+print_test_results

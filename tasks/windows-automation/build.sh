@@ -1225,6 +1225,38 @@ print \$prefix;
         return 1
     fi
     
+    # FirstLogonCommandsSConfigBlock: for 2022/2025 inject "Disable SConfig Auto-launch" so SConfig does not block automation; for 2019 omit
+    local temp_file2=$(mktemp)
+    local sconfig_block_file=$(mktemp)
+    if [[ "$windows_version" == "2022" ]] || [[ "$windows_version" == "2025" ]]; then
+        cat >> "$sconfig_block_file" << 'SCONFIG_BLOCK_EOF'
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd /c reg add "HKCU\Software\Microsoft\ServerConfig" /v "AutoLaunch" /t REG_DWORD /d 0 /f</CommandLine>
+                    <Description>Disable SConfig Auto-launch</Description>
+                    <Order>1</Order>
+                </SynchronousCommand>
+SCONFIG_BLOCK_EOF
+        awk -v blockfile="$sconfig_block_file" '
+            /\{\{\.FirstLogonCommandsSConfigBlock\}\}/ {
+                while ((getline line < blockfile) > 0) print line
+                close(blockfile)
+                next
+            }
+            { print }
+        ' "$temp_file" > "$temp_file2"
+        log_info "Added FirstLogonCommands entry to disable SConfig auto-launch (Windows $windows_version)"
+    else
+        awk '/\{\{\.FirstLogonCommandsSConfigBlock\}\}/ { next }; { print }' "$temp_file" > "$temp_file2"
+    fi
+    rm -f "$sconfig_block_file"
+    if [[ ! -f "$temp_file2" ]] || [[ ! -s "$temp_file2" ]]; then
+        log_error "Failed to process FirstLogonCommandsSConfigBlock"
+        rm -f "$temp_file" "$temp_file2"
+        return 1
+    fi
+    rm -f "$temp_file"
+    local temp_file="$temp_file2"
+    
     # Handle DNSServer2_XML separately - if empty, remove the placeholder line entirely
     if [[ -n "$dns_server2_xml" ]]; then
         # DNSServer2 is provided - replace placeholder with XML
@@ -1274,7 +1306,8 @@ print \$prefix;
        ! grep -q "{{\.Gateway}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.DNSServer1}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null; then
+       ! grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null; then
         log_info "All template variables replaced successfully"
     else
         log_error "Template variables were not replaced!"
@@ -1289,6 +1322,7 @@ print \$prefix;
         if grep -q "{{\.DNSServer1}}" "$processed_file" 2>/dev/null; then log_error "  - {{.DNSServer1}} still present"; fi
         if grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.DNSServer2_XML}} still present"; fi
         if grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null; then log_error "  - {{.WindowsImageName}} still present"; fi
+        if grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null; then log_error "  - {{.FirstLogonCommandsSConfigBlock}} still present"; fi
         return 1
     fi
     
@@ -2498,7 +2532,7 @@ main() {
         CLEANUP_ENABLED=true
         trap 'exit_code=$?; if [[ $exit_code -ne 0 ]] && [[ "$CLEANUP_ENABLED" == "true" ]]; then cleanup_on_failure $exit_code; fi' EXIT
         local target_vm_name
-        # Power off existing base VM before clone (third arg true); clone_current_vm_to_target will power off then clone.
+         # Power off existing base VM before clone (third arg true); clone_current_vm_to_target will power off then clone.
         target_vm_name=$(clone_current_vm_to_target "$existing_base_vm_name" "$vars_file" "true") || exit 1
         target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
         CLEANUP_TARGET_VM_NAME="$target_vm_name"
@@ -2611,5 +2645,7 @@ main() {
     log_success "Done (ISO mode)"
 }
 
-# Run main function
-main "$@"
+# Run main function (skip when sourced for unit tests, e.g. test-autounattend-processing.sh)
+if [[ -z "${AUTOUNATTEND_TEST:-}" ]]; then
+    main "$@"
+fi

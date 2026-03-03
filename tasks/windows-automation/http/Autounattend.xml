@@ -171,25 +171,27 @@
             <!-- Network is configured in specialize pass (before first boot) -->
             <!-- VMware Tools will be mounted and installed AFTER first restart via Packer provisioners -->
             <!-- This avoids interference with Windows installation and password reset -->
+            <!-- For 2022/2025: SConfig auto-launch is disabled via {{.FirstLogonCommandsSConfigBlock}} so automation is not blocked -->
             <FirstLogonCommands>
+{{.FirstLogonCommandsSConfigBlock}}
                 <!-- WinRM setup - Network is already configured in specialize pass, so WinRM can work -->
                 <SynchronousCommand wcm:action="add">
-                    <Order>1</Order>
+                    <Order>2</Order>
                     <CommandLine>winrm quickconfig -q -force</CommandLine>
                     <Description>Enable WinRM</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <Order>2</Order>
+                    <Order>3</Order>
                     <CommandLine>winrm set winrm/config/service/auth @{Basic="true"}</CommandLine>
                     <Description>Configure WinRM Authentication</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <Order>3</Order>
+                    <Order>4</Order>
                     <CommandLine>winrm set winrm/config/service @{AllowUnencrypted="true"}</CommandLine>
                     <Description>Allow Unencrypted WinRM</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <Order>4</Order>
+                    <Order>5</Order>
                     <CommandLine>netsh advfirewall firewall add rule name="WinRM" dir=in action=allow protocol=TCP localport=5985</CommandLine>
                     <Description>Open WinRM Firewall Port</Description>
                 </SynchronousCommand>
