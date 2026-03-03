@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Create Windows stemcell from ISO or template using Packer and stembuild.
-# Supports two modes: build from ISO or clone from template.
-# Convention: read vars file with get_var (vars-file-utils.sh); find VMs with govc helpers where used.
+# Create Windows stemcell. Three modes (one per run, preference order):
+#   ISO:          Packer from ISO -> base VM -> network/updates -> clone to target -> stembuild on target.
+#   template:    govc clone from template -> target VM -> network/updates -> stembuild (no Packer).
+#   existing_base: govc clone from existing VM -> target VM -> network/updates -> stembuild (no Packer).
+# Convention: read vars with get_var (vars-file-utils.sh); find VMs with govc helpers.
 
 set -euo pipefail
 # Script directory (must be set first so sourced libs can use it)
@@ -26,6 +28,17 @@ source "$VARS_UTILS"
 GOVC_VM_UTILS="$SCRIPT_DIR/scripts/govc-vm-utils.sh"
 [[ -f "$GOVC_VM_UTILS" ]] || { echo "ERROR: govc-vm-utils.sh not found: $GOVC_VM_UTILS" >&2; exit 1; }
 source "$GOVC_VM_UTILS"
+
+# Helpers for mode branches: trim var value; export GOVC_* from vars file
+trim_var() { printf '%s' "${1:-}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+export_govc_from_vars() {
+    local vf="${1:?}"
+    export GOVC_URL="$(get_var "$vf" "vcenter_server")"
+    export GOVC_USERNAME="$(get_var "$vf" "vcenter_username")"
+    export GOVC_PASSWORD="$(get_var "$vf" "vcenter_password")"
+    local inc; inc=$(get_var "$vf" "vcenter_insecure_connection")
+    [[ "$inc" == "true" ]] && export GOVC_INSECURE=true
+}
 
 # Global variables for cleanup
 CLEANUP_VM_NAME=""
@@ -182,33 +195,54 @@ display_build_variables() {
     log_info "=========================================="
 }
 
-# Clone current VM (base) to windows-target-vm-{timestamp}; power off base first.
+# Clone base VM to windows-target-vm-{timestamp}. Used in ISO mode (base = Packer VM) and existing_base mode (base = user's VM).
+# ISO mode: base_vm_name = Packer-created VM (e.g. windows-base-vm-{timestamp}); we power it off, then clone to target. Unchanged.
+# existing_base mode: base_vm_name = user's VM name; we resolve to inventory path and clone so -vm is unambiguous.
 # Caller must have GOVC_* set. Outputs the new VM name to stdout for capture.
-# Optional second arg: vars_file to read vcenter_datastore (required when default datastore resolves to multiple)
+# Optional second arg: vars_file for vcenter_datastore, vcenter_datacenter. Third arg: power_off_before_clone (default true; use false for template).
 clone_current_vm_to_target() {
     local base_vm_name="${1:?}"
     local vars_file="${2:-}"
+    local power_off_before_clone="${3:-true}"   # true for ISO base VM and existing_base VM; false only when cloning from template elsewhere
     local timestamp=$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")
     local target_vm_name="windows-target-vm-${timestamp}"
 
-    log_info "Base VM (after updates): $base_vm_name"
+    log_info "Base VM (to clone): $base_vm_name"
     log_info "Target VM (clone for stembuild): $target_vm_name"
 
+    # For govc vm.clone -vm: use inventory path when base_vm_name is a name (not already a path). Path is unambiguous; fall back to name if resolution fails.
+    local vm_to_clone="$base_vm_name"
+    local datacenter=""
+    if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
+        datacenter=$(get_var "$vars_file" "vcenter_datacenter")
+        datacenter=$(printf '%s' "${datacenter:-}" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    fi
+    if [[ "$base_vm_name" != /* ]]; then
+        local resolved_path
+        resolved_path=$(find_vm_inventory_path "$base_vm_name" "$datacenter") || true
+        if [[ -n "$resolved_path" ]]; then
+            vm_to_clone="$resolved_path"
+            log_info "Using inventory path for clone: $vm_to_clone"
+        fi
+    fi
+
     if ! vm_exists "$base_vm_name"; then
-        log_error "VM not found: $base_vm_name"
+        log_error "VM/template not found: $base_vm_name"
         return 1
     fi
 
-    # Power off base VM before cloning
-    log_info "Powering off base VM before clone..."
-    if ! vm_power_off "$base_vm_name" 120 1; then
-        log_error "Base VM did not power off within timeout"
-        return 1
+    # Power off base VM before cloning (skip when cloning from template)
+    if [[ "$power_off_before_clone" == "true" ]]; then
+        log_info "Powering off base VM before clone..."
+        if ! vm_power_off "$base_vm_name" 120 1; then
+            log_error "Base VM did not power off within timeout"
+            return 1
+        fi
+        log_success "Base VM powered off"
     fi
-    log_success "Base VM powered off"
 
     # Specify datastore when multiple exist
-    local clone_opts=(-vm "$base_vm_name")
+    local clone_opts=(-vm "$vm_to_clone")
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
         local datastore
         datastore=$(get_var "$vars_file" "vcenter_datastore")
@@ -219,7 +253,7 @@ clone_current_vm_to_target() {
     fi
     clone_opts+=("$target_vm_name")
 
-    log_info "Cloning $base_vm_name to $target_vm_name..."
+    log_info "Cloning to $target_vm_name (govc vm.clone -vm ...)..."
     if ! govc vm.clone "${clone_opts[@]}" 1>&2; then
         log_error "Clone failed"
         return 1
@@ -1591,8 +1625,8 @@ build_vm() {
     fi
 }
 
-# Post-build provisioning: configure VM and create stemcell
-# Mode: "iso" (full build), "template" (clone from template), or "existing_base" (clone from existing VM, network + stembuild only)
+# Post-build provisioning: configure VM and create stemcell.
+# build_mode: iso | template | existing_base (same three as main).
 post_build_provisioning() {
     local vars_file="${1:-}"
     local vm_name="${2:-}"
@@ -1604,6 +1638,8 @@ post_build_provisioning() {
         return 1
     fi
     
+    # vm_name is the target VM for all following steps (network config, updates, stembuild construct, package).
+    # Template mode: target VM = VM created from template (Packer). Existing_base mode: target VM = govc vm.clone result. ISO mode: base VM first, then target = clone.
     log_info "Starting post-build provisioning for VM: $vm_name (mode: $build_mode)"
     
     # Extract variables from vars file
@@ -1809,8 +1845,7 @@ post_build_provisioning() {
         sleep 10
     fi
     
-    # Step 2: Configure network (on base VM in ISO mode; on single VM in template/existing_base mode).
-    # In ISO mode we do not run network config on the target VM—only on the base before clone.
+    # Step 2: Configure network on target VM (template/existing_base: vm_name is target; ISO: on base VM only, target gets no network step).
     log_info "Step 2: Configuring network..."
     
     local static_ip=$(get_var "$vars_file" "static_ip")
@@ -1838,8 +1873,7 @@ post_build_provisioning() {
         return 1
     }
     
-    # Step 3: Install Windows updates (on base VM in ISO mode; on single VM in template/existing_base).
-    # In ISO mode we do not run updates on the target VM—only on the base before clone.
+    # Step 3: Install Windows updates on target VM (template/existing_base: vm_name is target; ISO: on base VM only, target gets no updates step).
     log_info "Step 3: Installing Windows updates..."
     local enable_updates=$(get_var "$vars_file" "enable_windows_updates")
     
@@ -1860,18 +1894,17 @@ post_build_provisioning() {
         log_info "Windows updates disabled (enable_windows_updates=false)"
     fi
 
-    # Step 3.5: Clone base VM to windows-target-vm-{timestamp} only in ISO mode. Template mode and existing_base use single VM (no clone here).
-    # After clone, target VM only gets Step 3.6 (wait guest), Step 4 (construct), Step 5 (package)—no network config or updates on target.
+    # Step 3.5: Only in ISO mode—clone base VM to target VM (windows-target-vm-{timestamp}). Template mode: target = VM from template (no clone). Existing_base: target = govc clone (already done in main).
     if [[ "$build_mode" == "iso" ]]; then
-        log_info "Step 3.5: Cloning base VM for stembuild (power off base, clone to windows-target-vm-{timestamp})..."
+        log_info "Step 3.5: Cloning base VM to target VM (windows-target-vm-{timestamp}) for stembuild..."
         local target_vm_name
         target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || return 1
         target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
-        log_info "Using clone '$target_vm_name' for stembuild construct and package"
+        log_info "Target VM: $target_vm_name (stembuild construct and package run on target; no network/updates on target)"
         vm_name="$target_vm_name"
         CLEANUP_TARGET_VM_NAME="$target_vm_name"
     else
-        log_info "Step 3.5: Skipping clone (template/existing_base mode: using same VM for stembuild)"
+        log_info "Step 3.5: No clone (template mode: target VM = VM from template; existing_base: target VM = govc clone)"
     fi
 
     # Helper: wait for guest operations on a VM (VM must already be powered on). Returns 0 when ready, 1 on timeout.
@@ -2341,23 +2374,32 @@ main() {
         vars_file="variables.pkrvars.hcl"
         log_info "Using default variables file: $vars_file"
     fi
-    
-    # --- Existing base VM mode: clone provided VM, configure network on clone, then stembuild construct + package (no Packer) ---
-    local existing_base_vm_name
-    existing_base_vm_name=$(get_var "$vars_file" "existing_base_vm_name")
-    if [[ -n "$existing_base_vm_name" ]] && [[ -f "$vars_file" ]]; then
-        log_info "Existing base VM mode: existing_base_vm_name='$existing_base_vm_name' (skip Packer, clone VM -> network -> stembuild)"
-        setup_proxy_environment "$vars_file"
-        # Set GOVC from vars so clone_current_vm_to_target and post_build_provisioning can use govc
-        local vcenter_server vcenter_user vcenter_pass vcenter_insecure
-        vcenter_server=$(get_var "$vars_file" "vcenter_server")
-        vcenter_user=$(get_var "$vars_file" "vcenter_username")
-        vcenter_pass=$(get_var "$vars_file" "vcenter_password")
-        vcenter_insecure=$(get_var "$vars_file" "vcenter_insecure_connection")
-        export GOVC_URL="$vcenter_server"
-        export GOVC_USERNAME="$vcenter_user"
-        export GOVC_PASSWORD="$vcenter_pass"
-        [[ "$vcenter_insecure" == "true" ]] && export GOVC_INSECURE=true
+
+    # --- Detect mode: one of iso | template | existing_base (preference order) ---
+    [[ -f "$vars_file" ]] || { log_error "Vars file not found: $vars_file"; exit 1; }
+    local iso_path_val iso_path_local_val template_path_early existing_base_vm_name build_source_mode
+    iso_path_val=$(trim_var "$(get_var "$vars_file" "iso_path")")
+    iso_path_local_val=$(trim_var "$(get_var "$vars_file" "iso_path_local")")
+    template_path_early=$(trim_var "$(get_var "$vars_file" "template_path")")
+    existing_base_vm_name=$(trim_var "$(get_var "$vars_file" "existing_base_vm_name")")
+    if [[ -n "$iso_path_val" ]] || [[ -n "$iso_path_local_val" ]]; then
+        build_source_mode="iso"
+    elif [[ -n "$template_path_early" ]]; then
+        build_source_mode="template"
+    elif [[ -n "$existing_base_vm_name" ]]; then
+        build_source_mode="existing_base"
+    else
+        log_error "Build source missing: set one of iso_path/iso_path_local, template_path, or existing_base_vm_name (preference: ISO > template > existing_base)"
+        exit 1
+    fi
+    log_info "Mode: $build_source_mode"
+
+    # Proxy must be set before any govc command (all branches and cleanup_on_failure use govc).
+    setup_proxy_environment "$vars_file"
+
+    # === BRANCH: existing_base ===
+    if [[ "$build_source_mode" == "existing_base" ]]; then
+        export_govc_from_vars "$vars_file"
         if ! vm_exists "$existing_base_vm_name"; then
             log_error "Existing base VM not found: $existing_base_vm_name"
             exit 1
@@ -2366,85 +2408,99 @@ main() {
         CLEANUP_TARGET_VM_NAME=""
         CLEANUP_ENABLED=true
         trap 'cleanup_on_failure $?' ERR EXIT
-        log_info "Cloning existing VM to windows-target-vm-{timestamp}..."
         local target_vm_name
         target_vm_name=$(clone_current_vm_to_target "$existing_base_vm_name" "$vars_file") || exit 1
         target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
         CLEANUP_TARGET_VM_NAME="$target_vm_name"
-        log_info "Starting provisioning on clone (network -> stembuild construct -> package)..."
         post_build_provisioning "$vars_file" "$target_vm_name" "existing_base" "$log_level"
         CLEANUP_ENABLED=false
         trap - ERR EXIT
-        log_success "All done (existing base VM mode)!"
+        log_success "Done (existing_base mode)"
         exit 0
     fi
-    
-    # Process Autounattend.xml template with sed (before Packer runs)
+
+    # === BRANCH: template ===
+    if [[ "$build_source_mode" == "template" ]]; then
+        if [[ "$validate_only" == true ]]; then
+            log_success "Validation complete (template mode)"
+            exit 0
+        fi
+        export_govc_from_vars "$vars_file"
+        local template_inventory_path="$template_path_early"
+        if [[ -n "$template_path_early" ]] && [[ "$template_path_early" != /* ]]; then
+            local tpl_dc; tpl_dc=$(trim_var "$(get_var "$vars_file" "vcenter_datacenter")")
+            template_inventory_path=$(find_vm_inventory_path "$template_path_early" "$tpl_dc") || template_inventory_path="$template_path_early"
+            [[ "$template_inventory_path" != "$template_path_early" ]] && log_info "Template path: $template_inventory_path"
+        fi
+        local vm_name_base_early timestamp_early vm_name_final
+        vm_name_base_early=$(trim_var "$(get_var "$vars_file" "vm_name")")
+        vm_name_base_early="${vm_name_base_early:-windows-base-vm}"
+        timestamp_early=$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")
+        vm_name_final="${vm_name_base_early}-${timestamp_early}"
+        local clone_opts=(-vm "$template_inventory_path" -on=true)
+        local tpl_dc tpl_ds tpl_folder
+        tpl_dc=$(trim_var "$(get_var "$vars_file" "vcenter_datacenter")")
+        tpl_ds=$(trim_var "$(get_var "$vars_file" "vcenter_datastore")")
+        tpl_folder=$(trim_var "$(get_var "$vars_file" "vcenter_folder")")
+        [[ -n "$tpl_dc" ]] && clone_opts+=(-dc "$tpl_dc")
+        [[ -n "$tpl_ds" ]] && clone_opts+=(-ds "$tpl_ds")
+        [[ -n "$tpl_folder" ]] && clone_opts+=(-folder "$tpl_folder")
+        if ! govc vm.clone "${clone_opts[@]}" "$vm_name_final" 1>&2; then
+            log_error "govc vm.clone from template failed"
+            exit 1
+        fi
+        local vm_wait_t=0
+        while [[ $vm_wait_t -lt 300 ]]; do
+            vm_exists "$vm_name_final" && break
+            sleep 5
+            vm_wait_t=$((vm_wait_t + 5))
+        done
+        if ! vm_exists "$vm_name_final"; then
+            log_error "Target VM not found after clone: $vm_name_final"
+            exit 1
+        fi
+        CLEANUP_VM_NAME="$vm_name_final"
+        CLEANUP_TARGET_VM_NAME=""
+        CLEANUP_ENABLED=true
+        trap 'cleanup_on_failure $?' ERR EXIT
+        post_build_provisioning "$vars_file" "$vm_name_final" "template" "$log_level"
+        CLEANUP_ENABLED=false
+        trap - ERR EXIT
+        log_success "Done (template mode)"
+        exit 0
+    fi
+
+    # === BRANCH: ISO (Packer + post-build provisioning) ===
+    if [[ "$build_source_mode" != "iso" ]]; then
+        log_error "Unexpected mode: $build_source_mode"
+        exit 1
+    fi
+    # Autounattend: ISO only
     if ! process_autounattend_template "$vars_file"; then
         log_error "Failed to process Autounattend.xml template"
         exit 1
     fi
-    
-    # Verify processed file exists and is readable
     local processed_file="$SCRIPT_DIR/http/Autounattend.processed.xml"
-    if [[ ! -f "$processed_file" ]]; then
-        log_error "Processed Autounattend.xml file not found: $processed_file"
-        log_error "Template processing may have failed"
+    [[ -f "$processed_file" ]] && [[ -r "$processed_file" ]] || {
+        log_error "Processed Autounattend.xml not found or not readable: $processed_file"
         exit 1
-    fi
-    if [[ ! -r "$processed_file" ]]; then
-        log_error "Processed Autounattend.xml file is not readable: $processed_file"
-        exit 1
-    fi
-    log_info "Verified processed Autounattend.xml exists: $processed_file"
-    
-    # Set up proxy environment variables BEFORE any govc operations
-    # This must be done before validate_iso_config which uses govc for ISO upload/verification
-    setup_proxy_environment "$vars_file"
-    
-    # Verify proxy is set (for debugging)
-    if [[ -n "${HTTPS_PROXY:-}" ]]; then
-        log_info "Proxy will be used for govc operations"
-        log_debug "HTTPS_PROXY=${HTTPS_PROXY}"
-    else
-        log_info "No proxy configured - direct connection to vCenter"
-    fi
-    
-    # Validate and upload ISO if needed
-    # This will upload local ISO to datastore and set PKR_VAR_iso_path
+    }
+
     validate_iso_config "$vars_file" "$overwrite_iso"
     
-    # Validate Packer configuration
     validate_packer "$vars_file"
-    
-    # Extract VM name and vCenter credentials for pre-boot VMware Tools mounting
-    # Generate full VM name with timestamp (same format as Packer uses)
+
+    # ISO: set VM timestamp for Packer (vm_name_final = vm_name_base-timestamp is set in build_vm)
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
-        local vm_name_base=$(grep -E "^vm_name\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        local vcenter_server=$(grep -E "^vcenter_server\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        local vcenter_user=$(grep -E "^vcenter_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        local vcenter_pass=$(grep -E "^vcenter_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        local vcenter_insecure=$(grep -E "^vcenter_insecure_connection\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-        local iso=$(grep -E "^iso_path\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-        if [[ -n $iso ]]; then 
-            build_mode="iso"
-        else 
-            build_mode="template"
-        fi
+        local vm_name_base vcenter_server
+        vm_name_base=$(trim_var "$(get_var "$vars_file" "vm_name")")
+        vcenter_server=$(get_var "$vars_file" "vcenter_server")
         if [[ -n "$vm_name_base" ]] && [[ -n "$vcenter_server" ]]; then
-            # Generate timestamp in same format as Packer: regex_replace(timestamp(), "[- TZ:]", "")
-            # This removes dashes, spaces, T, Z, and colons from ISO 8601 timestamp
-            # We generate it once here and pass it to Packer to ensure consistency
             local timestamp=$(date -u +"%Y%m%d%H%M%S" 2>/dev/null || date +"%Y%m%d%H%M%S" 2>/dev/null || echo "")
-            local vm_name_final="${vm_name_base}-${timestamp}"
-            
-            # Export timestamp to Packer so it uses the same value
             export PKR_VAR_build_timestamp="$timestamp"
-            log_info "Generated build timestamp: $timestamp"
-            log_info "Passing timestamp to Packer via PKR_VAR_build_timestamp"
         fi
     fi
-    
+
     if [[ "$validate_only" == true ]]; then
         # Clean up processed Autounattend.xml
         if [[ -f "$SCRIPT_DIR/http/Autounattend.processed.xml" ]]; then
@@ -2463,7 +2519,7 @@ main() {
         rm -f "$SCRIPT_DIR/http/Autounattend.processed.xml"
     fi
     
-    log_success "All done!"
+    log_success "Done (ISO mode)"
 }
 
 # Run main function
