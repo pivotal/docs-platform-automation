@@ -657,8 +657,8 @@ validate_iso_config() {
     
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
         local template_path_val existing_base_val
-        template_path_val=$(get_var "$vars_file" "template_path")
-        existing_base_val=$(get_var "$vars_file" "existing_base_vm_name")
+        template_path_val=$(trim_var "$(get_var "$vars_file" "template_path")")
+        existing_base_val=$(trim_var "$(get_var "$vars_file" "existing_base_vm_name")")
         if [[ -n "$template_path_val" ]] || [[ -n "$existing_base_val" ]]; then
             log_info "Template path or existing base VM provided; skipping ISO validation"
             return 0
@@ -668,14 +668,10 @@ validate_iso_config() {
     log_info "Validating ISO configuration..."
     
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
-        # Check if at least one ISO path is configured
-        # Extract value, handling quoted strings and stopping at comments
-        local iso_local=$(grep -E "^iso_path_local\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-        local iso_path=$(grep -E "^iso_path\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1)
-        
-        # Remove quotes if present (after extracting)
-        iso_local=$(echo "$iso_local" | sed 's/^"//;s/"$//')
-        iso_path=$(echo "$iso_path" | sed 's/^"//;s/"$//')
+        # Check if at least one ISO path is configured (use get_var + trim_var for consistency with build mode)
+        local iso_local iso_path
+        iso_local=$(trim_var "$(get_var "$vars_file" "iso_path_local")")
+        iso_path=$(trim_var "$(get_var "$vars_file" "iso_path")")
         
         # Variable to store uploaded ISO path (if upload happens)
         local datastore_iso_path=""
@@ -689,6 +685,7 @@ validate_iso_config() {
         # 2. Both provided: Upload iso_path_local to iso_path destination
         # 3. Only iso_path_local: Error (need destination)
         
+        # Not set = empty after trim; only fail when both ISO paths are not set (mode already chose ISO, so one should be set)
         if [[ -z "$iso_local" ]] && [[ -z "$iso_path" ]]; then
             log_error "Build source missing: provide exactly one of the following:"
             log_error "  - template_path (clone from existing template)"
@@ -698,7 +695,7 @@ validate_iso_config() {
         fi
         
         # Case 1: Only iso_path_local provided (without iso_path) - ERROR
-        if [[ -n "$iso_local" ]] && [[ "$iso_local" != '""' ]] && [[ -z "$iso_path" ]] || [[ "$iso_path" == '""' ]]; then
+        if [[ -n "$iso_local" ]] && [[ -z "$iso_path" ]]; then
             log_error "iso_path_local provided but iso_path (destination) is missing!"
             log_error "When uploading a local ISO, you must specify iso_path as the destination"
             log_error "Example: iso_path = \"[datastore1]/ISOs/windows-server-2019.iso\""
@@ -706,7 +703,7 @@ validate_iso_config() {
         fi
         
         # Case 2: Both iso_path_local and iso_path provided - Upload iso_path_local to iso_path
-        if [[ -n "$iso_local" ]] && [[ "$iso_local" != '""' ]] && [[ -n "$iso_path" ]] && [[ "$iso_path" != '""' ]]; then
+        if [[ -n "$iso_local" ]] && [[ -n "$iso_path" ]]; then
             # Resolve relative paths relative to script directory (windows-automation folder)
             local resolved_iso_path="$iso_local"
             if [[ "$iso_local" != /* ]]; then
@@ -2382,6 +2379,11 @@ main() {
     iso_path_local_val=$(trim_var "$(get_var "$vars_file" "iso_path_local")")
     template_path_early=$(trim_var "$(get_var "$vars_file" "template_path")")
     existing_base_vm_name=$(trim_var "$(get_var "$vars_file" "existing_base_vm_name")")
+    # Treat empty-like values as unset (e.g. '' or "" so missing keys / empty values do not force ISO)
+    [[ "$iso_path_val" == "''" ]] || [[ "$iso_path_val" == '""' ]] && iso_path_val=""
+    [[ "$iso_path_local_val" == "''" ]] || [[ "$iso_path_local_val" == '""' ]] && iso_path_local_val=""
+    [[ "$template_path_early" == "''" ]] || [[ "$template_path_early" == '""' ]] && template_path_early=""
+    [[ "$existing_base_vm_name" == "''" ]] || [[ "$existing_base_vm_name" == '""' ]] && existing_base_vm_name=""
     if [[ -n "$iso_path_val" ]] || [[ -n "$iso_path_local_val" ]]; then
         build_source_mode="iso"
     elif [[ -n "$template_path_early" ]]; then

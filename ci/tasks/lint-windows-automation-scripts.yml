@@ -1,5 +1,5 @@
 ---
-# Lint Windows automation shell scripts (shellcheck).
+# Lint Windows automation shell scripts (shellcheck) and run get_var/trim_var unit tests.
 # Fails on error-level issues (e.g. SC3043 local outside function).
 platform: linux
 inputs:
@@ -22,3 +22,8 @@ run:
       apt-get install -y -qq shellcheck
       cd docs-platform-automation/tasks/windows-automation
       ./scripts/lint-shell-scripts.sh
+      echo ""
+      echo "Running get_var/trim_var and mode-detection unit tests..."
+      # Minimal vars file for CI (template_path set so mode is template; tests use own temp files for ISO/template cases)
+      printf '%s\n' 'template_path = "/dc/vm/Tpl"' > /tmp/ci-vars.pkrvars.hcl
+      ./scripts/test-get-var-trim.sh /tmp/ci-vars.pkrvars.hcl
