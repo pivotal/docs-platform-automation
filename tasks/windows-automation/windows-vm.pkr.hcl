@@ -24,7 +24,7 @@ variable "vcenter_server" {
 
 variable "patch_version" {
   type        = string
-  description = "vCenter Server FQDN or IP"
+  description = "Patch version for the stemcell (e.g. from stembuild)"
 }
 
 variable "vcenter_username" {
@@ -221,6 +221,12 @@ variable "windows_version" {
   }
 }
 
+variable "guest_os_type" {
+  type        = string
+  description = "vSphere guest OS identifier (set by build.sh from windows_version; exact VMware ID to avoid showing as 2016)"
+  default     = "windows2019srv_64Guest"
+}
+
   # Local variables
 locals {
   # Use provided timestamp if available, otherwise generate one
@@ -269,7 +275,7 @@ source "vsphere-iso" "windows" {
 
   # VM configuration
   vm_name         = local.vm_name_final
-  guest_os_type   = "windows9Server64Guest"
+  guest_os_type   = var.guest_os_type
   firmware        = "bios"
   CPUs            = var.vm_cpu_count
   cpu_cores       = 1
@@ -280,10 +286,9 @@ source "vsphere-iso" "windows" {
   # by the vsphere-iso builder. The "unable to retrieve stepping" error is
   # typically a vSphere/ESXi host CPU compatibility issue, not a Packer configuration issue.
 
-  # Controllers: SATA 0 for CD-ROM (Windows ISO), PVSCSI for system disk. Matches UI (SATA controller).
-  # Same layout for 2019, 2022, and 2025: SATA and PVSCSI have in-box signed drivers in all three.
-  # Two controllers ensure CD and disk are separate so "Where do you want to install" and edition selection work.
-  disk_controller_type = ["sata", "pvscsi"]
+  # Controllers: IDE for CD-ROM, Paravirtual (PVSCSI) for system disk. Disk on index 1.
+  # IDE + PVSCSI: CD on IDE so Setup sees the ISO; disk on PVSCSI (in-box drivers for 2019/2022/2025).
+  disk_controller_type = ["ide", "pvscsi"]
   storage {
     disk_size             = var.vm_disk_size_gb * 1024
     disk_thin_provisioned = true
@@ -316,8 +321,8 @@ source "vsphere-iso" "windows" {
     local.iso_path_final                    # [0] Windows OS ISO (for booting)
   ] : []
   
-  # CD-ROM type: SATA to match existing UI (SATA controller for optical)
-  cdrom_type = "sata"
+  # CD-ROM type: IDE (original working config)
+  cdrom_type = "ide"
   
   # Ensure CD-ROM is connected at boot
   # The vsphere-iso builder should handle this automatically, but we can verify
@@ -423,7 +428,7 @@ source "vsphere-iso" "windows" {
 
 # Build source for template mode (cloning from existing template)
 source "vsphere-clone" "windows-template" {
-  # vCenter connection
+  # vCenter connection  
   vcenter_server      = var.vcenter_server
   username            = var.vcenter_username
   password            = var.vcenter_password
