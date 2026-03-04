@@ -3,10 +3,14 @@
 # We send keystrokes to run setup64.exe; the installer then runs in the guest. Script exits after sending keys.
 # Usage: install-vmware-tools-keystrokes.sh <vm-name> [log-file]
 #
-# Reliability: Depends on console focus (e.g. cmd or desktop). If D: drive or setup doesn't run, increase sleeps:
+# Windows Server 2022+ defaults to PowerShell after login; cmd-style "d:" + setup64.exe can fail there.
+# From the focused PowerShell we type "cmd" + Enter to start a cmd sub-session in the same window, then d: and setup64.exe.
+#
+# Reliability: If D: drive or setup doesn't run, increase sleeps:
 #   KEYSTROKE_SLEEP_SHORT=2   (default 1)
 #   KEYSTROKE_SLEEP_MEDIUM=5  (default 3) - after "d:" and before typing setup command
 #   KEYSTROKE_WAIT_BEFORE=15  (default 10) - seconds to wait after first-boot wait before sending Tools install keystrokes
+#   KEYSTROKE_SLEEP_AFTER_CMD=3 (default 2) - seconds after opening cmd before typing d:
 
 VM_NAME="${1:-}"
 LOG_FILE="${2:-}"
@@ -14,6 +18,7 @@ LOG_FILE="${2:-}"
 # Configurable sleeps for slow/busy VMs (seconds)
 KEYSTROKE_SLEEP_SHORT="${KEYSTROKE_SLEEP_SHORT:-1}"
 KEYSTROKE_SLEEP_MEDIUM="${KEYSTROKE_SLEEP_MEDIUM:-3}"
+KEYSTROKE_SLEEP_AFTER_CMD="${KEYSTROKE_SLEEP_AFTER_CMD:-2}"
 KEYSTROKE_WAIT_BEFORE="${KEYSTROKE_WAIT_BEFORE:-10}"
 
 # Setup logging
@@ -41,7 +46,20 @@ echo "=========================================="
 echo "Waiting ${KEYSTROKE_WAIT_BEFORE} seconds after first-boot wait for system to be ready..."
 sleep "$KEYSTROKE_WAIT_BEFORE"
 
-echo "Step 1: Navigating to D: drive"
+echo "Step 0: Starting cmd from current shell (PowerShell or cmd) so d: and setup64.exe run in cmd"
+# In PowerShell (2022+ default) or cmd: type "cmd" + Enter to get a cmd prompt in the same window
+govc vm.keystrokes -vm "$VM_NAME" -s='cmd' || {
+    echo "Error: Failed to type 'cmd'"
+    exit 1
+}
+govc vm.keystrokes -vm "$VM_NAME" -c=KEY_ENTER || {
+    echo "Error: Failed to press Enter to launch cmd"
+    exit 1
+}
+echo "Waiting ${KEYSTROKE_SLEEP_AFTER_CMD}s for cmd window to open..."
+sleep "$KEYSTROKE_SLEEP_AFTER_CMD"
+
+echo "Step 1: Navigating to D: drive (in cmd)"
 # Navigate to D: drive
 govc vm.keystrokes -vm "$VM_NAME" -s='d:' || {
     echo "Error: Failed to type 'd:'"
