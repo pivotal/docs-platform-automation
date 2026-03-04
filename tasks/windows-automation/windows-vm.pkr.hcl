@@ -263,11 +263,12 @@ source "vsphere-iso" "windows" {
   # Note: Proxy configuration is handled via environment variables in build script
   # Set HTTP_PROXY, HTTPS_PROXY, NO_PROXY environment variables before running packer
 
-  # VM configuration (match working VM 2022test: guestId, PVSCSI disk, SATA CD, EFI firmware)
-  vm_name         = local.vm_name_final
-  guest_os_type   = var.guest_os_type
-  firmware        = "efi"
-  CPUs            = var.vm_cpu_count
+  # VM configuration (guestId, PVSCSI disk, SATA CD). EFI required so disk is visible in Setup (BIOS fails to list image).
+  vm_name            = local.vm_name_final
+  guest_os_type      = var.guest_os_type
+  firmware           = "efi"
+  force_bios_setup   = false
+  CPUs               = var.vm_cpu_count
   cpu_cores       = 1
   RAM             = var.vm_memory_mb
   RAM_reserve_all = false
@@ -323,8 +324,8 @@ source "vsphere-iso" "windows" {
 
   # Boot configuration - Boot from CD-ROM (Windows OS ISO) first, then disk
   boot_order = "cdrom,disk"
-  # Boot wait time - allows Windows Setup to initialize before boot commands
-  boot_wait  = "10s"
+  # Boot wait: EFI boot manager + "Press any key" need time; wait before sending first key
+  boot_wait  = "25s"
 
   # Autounattend.xml injection - FLOPPY METHOD
   # Windows Setup automatically searches for Autounattend.xml in this order:
@@ -348,10 +349,11 @@ source "vsphere-iso" "windows" {
   # 4. Installation type (Custom/Upgrade) - SECOND PROMPT
   # 5. Disk selection screen (select unallocated space, click Next)
   # 6. Installation proceeds
-  # Increased wait times to allow screens to fully load before navigation
+  # EFI: send SPACE immediately at start to bypass "Press any key to boot from CD" (use space not enter for EFI)
   boot_command = [
-    "<enter><wait>",      # Press Enter to start installation (initial "Press any key" screen)
-    "<wait90>",           # Wait for Setup to load, read Autounattend.xml, and enumerate CD/disk (timing for PVSCSI/SATA)
+    "<space><wait>",     # Bypass "Press any key" immediately (SPACE recommended for EFI)
+    "<space><wait>",     # Second space in case first was consumed by EFI menu
+    "<wait90>",          # Wait for Setup to load, read Autounattend.xml, and enumerate CD/disk (timing for PVSCSI/SATA)
     # Language selection screen - explicitly select English (US)
     # If language selection screen appears, we need to navigate to English (US)
     # Default might be Spanish Argentina or other locale, so we explicitly select English

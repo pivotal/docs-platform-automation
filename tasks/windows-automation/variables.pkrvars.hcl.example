@@ -49,6 +49,7 @@ iso_path_local = "/path/to/windows-server-2019.iso"  # e.g., "./windows-server-2
 # Windows Configuration
 windows_username = "Administrator"
 windows_password = "YourSecurePassword123!"
+# product_key = ""  # Optional: Windows product key (KMS or retail). If set, added to Autounattend; if empty, omitted.
 
 # Network Configuration (REQUIRED - Step 2 from documentation)
 # Network must be configured before Windows updates can be installed

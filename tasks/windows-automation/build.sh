@@ -1660,13 +1660,12 @@ build_vm() {
     
     # Wait for Windows installation and first boot to complete before starting post-build provisioning
     # Packer boot commands include <wait120> for installation start and <wait60> for first boot
-    # But actual installation takes 7-30 minutes, so we need to wait longer
-    # We'll wait for the boot sequence to complete before attempting password change
+    # Actual installation can take 7-30 minutes depending on version (2019/2022/2025); first boot adds 1-2 min
+    # We wait 10 minutes so the boot sequence is complete before attempting password change
     log_info "Waiting for Windows installation and first boot to complete..."
-    log_info "Boot sequence includes: installation (~7-30 min) + first boot (~1-2 min)"
-    log_info "Waiting 7 minutes to ensure installation and first boot are complete..."
+    log_info "Boot sequence: installation (~7-30 min) + first boot (~1-2 min); waiting 10 minutes"
     log_info "This ensures the password change screen is ready before we attempt to handle it"
-    sleep 420  # 7 minutes - allows Windows installation and first boot to complete
+    sleep 600  # 10 minutes - allows Windows installation and first boot (2019/2022/2025)
     
     # Detect build mode (iso or template)
     # If template_path is provided and no ISO is configured, use template mode
