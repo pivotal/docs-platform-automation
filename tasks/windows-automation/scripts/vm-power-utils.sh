@@ -7,16 +7,28 @@
 # Callers should set SCRIPT_DIR to the directory containing the *caller* script.
 # Optional: [[ -f "$SCRIPT_DIR/.../vm-power-utils.sh" ]] || { echo "ERROR: not found" >&2; exit 1; } before source.
 
-# Returns 0 if VM exists (govc vm.info succeeds), 1 otherwise.
+# Returns 0 if VM exists (govc vm.info succeeds and virtualMachines has at least one entry), 1 otherwise.
+# Handles govc returning 0 with virtualMachines: null or [] (treat as not found).
 vm_exists() {
     local vm="${1:?usage: vm_exists vm_name}"
+    local json
+    json=$(govc vm.info -json "$vm" 2>/dev/null) || return 1
+    local count
+    count=$(printf '%s' "$json" | jq -r 'if .virtualMachines == null then 0 elif (.virtualMachines | type) == "array" and (.virtualMachines | length) > 0 then 1 else 0 end' 2>/dev/null)
+    if [[ "$count" == "1" ]]; then
+        return 0
+    fi
+    if [[ "$count" == "0" ]]; then
+        return 1
+    fi
+    # jq failed or unavailable; fall back to govc exit code only
     govc vm.info "$vm" >/dev/null 2>&1
 }
 
-# Get VM power state (poweredOn, poweredOff, etc.). Output to stdout.
+# Get VM power state (poweredOn, poweredOff, etc.). Output to stdout. "unknown" when VM missing or null.
 get_vm_power_state() {
     local vm="${1:?usage: get_vm_power_state vm_name}"
-    govc vm.info -json "$vm" 2>/dev/null | jq -r '.virtualMachines[0].runtime.powerState' 2>/dev/null || echo "unknown"
+    govc vm.info -json "$vm" 2>/dev/null | jq -r '(.virtualMachines[0].runtime.powerState // "unknown")' 2>/dev/null || echo "unknown"
 }
 
 # Wait for VM to reach poweredOff. Returns 0 when poweredOff, 1 on timeout.

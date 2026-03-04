@@ -286,13 +286,12 @@ source "vsphere-iso" "windows" {
   # by the vsphere-iso builder. The "unable to retrieve stepping" error is
   # typically a vSphere/ESXi host CPU compatibility issue, not a Packer configuration issue.
 
-  # Controllers: IDE for CD-ROM, Paravirtual (PVSCSI) for system disk. Disk on index 1.
-  # IDE + PVSCSI: CD on IDE so Setup sees the ISO; disk on PVSCSI (in-box drivers for 2019/2022/2025).
-  disk_controller_type = ["ide", "pvscsi"]
+  # Controllers: only SCSI types (vSphere rejects "ide" as SCSI controller type). PVSCSI for disk; CD on SATA.
+  disk_controller_type = ["pvscsi"]
   storage {
     disk_size             = var.vm_disk_size_gb * 1024
     disk_thin_provisioned = true
-    disk_controller_index = 1
+    disk_controller_index = 0
   }
 
   # Network configuration
@@ -321,8 +320,8 @@ source "vsphere-iso" "windows" {
     local.iso_path_final                    # [0] Windows OS ISO (for booting)
   ] : []
   
-  # CD-ROM type: IDE (original working config)
-  cdrom_type = "ide"
+  # CD-ROM type: SATA (IDE is not a valid SCSI controller type on some vSphere; SATA works for CD)
+  cdrom_type = "sata"
   
   # Ensure CD-ROM is connected at boot
   # The vsphere-iso builder should handle this automatically, but we can verify
