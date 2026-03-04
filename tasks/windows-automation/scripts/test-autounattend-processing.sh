@@ -83,17 +83,7 @@ assert_exit1 "missing windows_username fails" run_process_expect_fail "$TMPDIR_V
 minimal_vars 2019 | grep -v "^windows_password" > "$TMPDIR_VARS/no_pass.hcl"
 assert_exit1 "missing windows_password fails" run_process_expect_fail "$TMPDIR_VARS/no_pass.hcl"
 
-minimal_vars 2019 | grep -v "^static_ip" > "$TMPDIR_VARS/no_static_ip.hcl"
-assert_exit1 "missing static_ip fails" run_process_expect_fail "$TMPDIR_VARS/no_static_ip.hcl"
-
-minimal_vars 2019 | grep -v "^subnet_mask" > "$TMPDIR_VARS/no_subnet_mask.hcl"
-assert_exit1 "missing subnet_mask fails" run_process_expect_fail "$TMPDIR_VARS/no_subnet_mask.hcl"
-
-minimal_vars 2019 | grep -v "^gateway" > "$TMPDIR_VARS/no_gateway.hcl"
-assert_exit1 "missing gateway fails" run_process_expect_fail "$TMPDIR_VARS/no_gateway.hcl"
-
-minimal_vars 2019 | grep -v "^dns_servers" > "$TMPDIR_VARS/no_dns.hcl"
-assert_exit1 "missing dns_servers fails" run_process_expect_fail "$TMPDIR_VARS/no_dns.hcl"
+# Network vars (static_ip, gateway, dns_servers) optional when template has no network placeholders
 
 echo "windows_username = \"u\"
 windows_password = \"p\"
@@ -135,16 +125,8 @@ run_processing "$TMPDIR_VARS/no_version.hcl" || { echo "FAIL: process with no wi
 assert_file_contains "default image is 2019" "$PROCESSED_FILE" "Windows Server 2019 SERVERSTANDARDCORE"
 
 echo ""
-echo "=== 4. DNS: single vs two servers ==="
-minimal_vars 2019 > "$TMPDIR_VARS/single_dns.hcl"
-run_processing "$TMPDIR_VARS/single_dns.hcl" || true
-# Single DNS: DNSServer2_XML placeholder line is removed, so no second DNS IP (keyValue="2" also appears in FirstLogonCommands)
-assert_file_not_contains "single DNS has no second DNS IP" "$PROCESSED_FILE" "192.168.1.11"
-
-minimal_vars_two_dns 2019 > "$TMPDIR_VARS/two_dns.hcl"
-run_processing "$TMPDIR_VARS/two_dns.hcl" || true
-assert_file_contains "two DNS has second IP" "$PROCESSED_FILE" "192.168.1.11"
-assert_file_contains "two DNS keyValue 2" "$PROCESSED_FILE" 'keyValue="2"'
+echo "=== 4. DNS: (skipped - network configured via script, not in unattend) ==="
+# Network (TCPIP/DNS) removed from templates; configured via PowerShell post-install.
 
 echo ""
 echo "=== 5. All placeholders replaced ==="
@@ -154,10 +136,6 @@ assert_no_placeholders "no {{.}} placeholders in output" "$PROCESSED_FILE"
 echo ""
 echo "=== 6. Required values present in output ==="
 assert_file_contains "Username in output" "$PROCESSED_FILE" "Administrator"
-assert_file_contains "StaticIP in output" "$PROCESSED_FILE" "192.168.1.100"
-assert_file_contains "Gateway in output" "$PROCESSED_FILE" "192.168.1.1"
-assert_file_contains "DNSServer1 in output" "$PROCESSED_FILE" "192.168.1.10"
-assert_file_contains "SubnetPrefix in output" "$PROCESSED_FILE" "/24"
 assert_file_contains "FirstLogonCommands WinRM" "$PROCESSED_FILE" "winrm quickconfig"
 assert_file_contains "Order 2 for WinRM" "$PROCESSED_FILE" "<Order>2</Order>"
 

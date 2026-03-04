@@ -1049,94 +1049,9 @@ process_autounattend_template() {
     
     log_info "Processing Autounattend.xml template..."
     
-    # Extract username, password, and network settings from variables file
+    # Extract username and password from variables file (network is configured via script, not in template)
     local username=$(grep -E "^windows_username\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
     local password=$(grep -E "^windows_password\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local static_ip=$(grep -E "^static_ip\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local subnet_mask=$(grep -E "^subnet_mask\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    local gateway=$(grep -E "^gateway\s*=" "$vars_file" | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//')
-    # Extract DNS servers - handle both "dns_servers" and "dnsserver" variable names
-    # Handle both array format: [value] or ["value"] and string format: "value"
-    # Extract the IP address(es) directly, not as array string
-    local dns_servers_line=$(grep -E "^(dns_servers|dnsserver)\s*=" "$vars_file" | sed 's/#.*$//' | head -1)
-    local dns_servers=""
-    if [[ -n "$dns_servers_line" ]]; then
-        # Check if it's an array format [value] or string format "value"
-        if echo "$dns_servers_line" | grep -q '\['; then
-            # Array format: [192.168.111.155] or ["192.168.111.155"]
-            if command -v perl >/dev/null 2>&1; then
-                dns_servers=$(echo "$dns_servers_line" | perl -pe 's/.*?=\s*\[([^\]]+)\].*/$1/' | sed 's/"//g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-            else
-                # Fallback: use sed with more specific pattern
-                dns_servers=$(echo "$dns_servers_line" | sed -n 's/.*=\s*\[\([^]]*\)\].*/\1/p' | sed 's/"//g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-            fi
-        else
-            # String format: "192.168.111.155" (single IP, not array)
-            dns_servers=$(echo "$dns_servers_line" | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-        fi
-    fi
-    local dns_server1=$(echo "$dns_servers" | cut -d',' -f1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-    # Extract DNS server 2 only if there's actually a comma (multiple servers)
-    local dns_server2=""
-    if echo "$dns_servers" | grep -q ','; then
-        dns_server2=$(echo "$dns_servers" | cut -d',' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-    fi
-    # Also ensure dns_server2 is different from dns_server1 (avoid duplicates)
-    if [[ "$dns_server2" == "$dns_server1" ]]; then
-        dns_server2=""
-    fi
-    
-    # Convert subnet mask to prefix length (CIDR notation)
-    # Example: 255.255.255.0 -> 24
-    local subnet_prefix=""
-    if [[ -n "$subnet_mask" ]]; then
-        # Use Python or Perl for reliable calculation
-        if command -v python3 >/dev/null 2>&1; then
-            subnet_prefix=$(python3 -c "
-import sys
-mask = '$subnet_mask'.split('.')
-prefix = 0
-for octet in mask:
-    octet_int = int(octet)
-    # Count bits set to 1
-    while octet_int > 0:
-        prefix += octet_int & 1
-        octet_int >>= 1
-print(prefix)
-")
-        elif command -v perl >/dev/null 2>&1; then
-            subnet_prefix=$(perl -e "
-my \$mask = '$subnet_mask';
-my @octets = split(/\./, \$mask);
-my \$prefix = 0;
-foreach my \$octet (@octets) {
-    my \$o = int(\$octet);
-    while (\$o > 0) {
-        \$prefix++ if (\$o & 1);
-        \$o >>= 1;
-    }
-}
-print \$prefix;
-")
-        else
-            # Fallback: common subnet masks
-            case "$subnet_mask" in
-                255.255.255.0) subnet_prefix="24" ;;
-                255.255.0.0) subnet_prefix="16" ;;
-                255.0.0.0) subnet_prefix="8" ;;
-                255.255.255.128) subnet_prefix="25" ;;
-                255.255.255.192) subnet_prefix="26" ;;
-                255.255.255.224) subnet_prefix="27" ;;
-                255.255.255.240) subnet_prefix="28" ;;
-                255.255.255.248) subnet_prefix="29" ;;
-                255.255.255.252) subnet_prefix="30" ;;
-                *)
-                    log_warn "Unknown subnet mask: $subnet_mask, defaulting to /24"
-                    subnet_prefix="24"
-                    ;;
-            esac
-        fi
-    fi
     
     if [[ -z "$username" ]]; then
         log_error "windows_username not found in $vars_file"
@@ -1148,22 +1063,10 @@ print \$prefix;
         return 1
     fi
     
-    if [[ -z "$static_ip" ]] || [[ -z "$subnet_mask" ]] || [[ -z "$gateway" ]] || [[ -z "$dns_server1" ]]; then
-        log_error "Network configuration incomplete in $vars_file"
-        log_error "Required: static_ip, subnet_mask, gateway, dns_servers"
-        return 1
-    fi
-    
     log_info "Extracted username: $username"
     log_info "Extracted password: ${password:0:3}*** (hidden)"
-    log_info "Extracted static_ip: $static_ip"
-    log_info "Extracted subnet_mask: $subnet_mask"
-    log_info "Calculated subnet_prefix: $subnet_prefix"
-    log_info "Extracted gateway: $gateway"
-    log_info "Extracted dns_server1: $dns_server1"
-    [[ -n "$dns_server2" ]] && log_info "Extracted dns_server2: $dns_server2"
     
-    # Get Windows version first (needed for image name and for version-specific template path)
+    # Get Windows version (needed for image name and version-specific template path)
     local windows_version=$(grep -E "^windows_version\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "2019")
     if [[ -z "$windows_version" ]]; then
         windows_version="2019"
@@ -1178,7 +1081,6 @@ print \$prefix;
         return 1
     fi
     log_info "Using version-specific Autounattend template: http-$windows_version/Autounattend.xml"
-    # Ensure http/ exists (it is not in git when empty; CI clone may not have it)
     mkdir -p "$(dirname "$processed_file")"
 
     # Determine Windows image name based on version
@@ -1209,55 +1111,15 @@ print \$prefix;
         log_error "Failed to escape password for sed"
         return 1
     }
-    local escaped_static_ip=$(echo "$static_ip" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
-        log_error "Failed to escape static_ip for sed"
-        return 1
-    }
-    local escaped_subnet_mask=$(echo "$subnet_mask" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
-        log_error "Failed to escape subnet_mask for sed"
-        return 1
-    }
-    local escaped_subnet_prefix=$(echo "$subnet_prefix" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
-        log_error "Failed to escape subnet_prefix for sed"
-        return 1
-    }
-    local escaped_gateway=$(echo "$gateway" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
-        log_error "Failed to escape gateway for sed"
-        return 1
-    }
-    local escaped_dns_servers=$(echo "$dns_servers" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
-        log_error "Failed to escape dns_servers for sed"
-        return 1
-    }
-    local escaped_dns_server1=$(echo "$dns_server1" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
-        log_error "Failed to escape dns_server1 for sed"
-        return 1
-    }
-    local escaped_dns_server2=$(echo "$dns_server2" | sed 's/[[\.*^$()+?{|]/\\&/g' 2>/dev/null || echo "")
     local escaped_windows_image_name=$(echo "$windows_image_name" | sed 's/[[\.*^$()+?{|]/\\&/g') || {
         log_error "Failed to escape windows_image_name for sed"
         return 1
     }
     
-    # Generate XML for optional DNSServer2
-    # If DNSServer2 is provided, include it; otherwise leave placeholder empty (will be removed)
-    local dns_server2_xml=""
-    if [[ -n "$dns_server2" ]] && [[ "$dns_server2" != "" ]]; then
-        dns_server2_xml="                        <IpAddress wcm:action=\"add\" wcm:keyValue=\"2\">$dns_server2</IpAddress>"
-    fi
-    
-    # Replace template variables with actual values
-    # Use '|' as sed delimiter to avoid conflicts with XML characters like '/' and '<'
-    # First, replace all variables except DNSServer2_XML
-    # All sed commands must succeed - if any fails, the script will exit due to set -euo pipefail
+    # Replace template variables (Username, Password, WindowsImageName; network not in template)
     local temp_file=$(mktemp)
     if ! sed -e "s|{{\.Username}}|$escaped_username|g" \
         -e "s|{{\.Password}}|$escaped_password|g" \
-        -e "s|{{\.StaticIP}}|$escaped_static_ip|g" \
-        -e "s|{{\.SubnetMask}}|$escaped_subnet_mask|g" \
-        -e "s|{{\.SubnetPrefix}}|$escaped_subnet_prefix|g" \
-        -e "s|{{\.Gateway}}|$escaped_gateway|g" \
-        -e "s|{{\.DNSServer1}}|$escaped_dns_server1|g" \
         -e "s|{{\.WindowsImageName}}|$escaped_windows_image_name|g" \
         "$template_file" > "$temp_file"; then
         log_error "sed command failed while processing Autounattend.xml template"
@@ -1370,25 +1232,12 @@ OOBE_BLOCK_EOF
     rm -f "$temp_file"
     temp_file="$temp_file4"
     
-    # Handle DNSServer2_XML separately - if empty, remove the placeholder line entirely
-    if [[ -n "$dns_server2_xml" ]]; then
-        # DNSServer2 is provided - replace placeholder with XML
-        # Use awk to handle the replacement more safely (avoids sed escaping issues)
-        if ! awk -v replacement="$dns_server2_xml" '{gsub(/\{\{\.DNSServer2_XML\}\}/, replacement); print}' "$temp_file" > "$processed_file"; then
-            log_error "awk command failed while processing DNSServer2_XML"
-            rm -f "$temp_file"
-            return 1
-        fi
-    else
-        # DNSServer2 is not provided - remove the placeholder line entirely
-        if ! sed "/{{\.DNSServer2_XML}}/d" "$temp_file" > "$processed_file"; then
-            log_error "sed command failed while removing DNSServer2_XML placeholder"
-            rm -f "$temp_file"
-            return 1
-        fi
-    fi
-    
-    # Clean up temp file
+    # Write final processed file (no DNSServer2_XML; templates do not use network placeholders)
+    cp "$temp_file" "$processed_file" || {
+        log_error "Failed to write processed Autounattend.xml"
+        rm -f "$temp_file"
+        return 1
+    }
     rm -f "$temp_file"
     
     if [[ ! -f "$processed_file" ]]; then
@@ -1410,15 +1259,9 @@ OOBE_BLOCK_EOF
     #     return 1
     # fi
     
-    # Verify replacements - all grep commands must succeed
+    # Verify no placeholders remain
     if ! grep -q "{{\.Password}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.Username}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.StaticIP}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.SubnetMask}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.SubnetPrefix}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.Gateway}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.DNSServer1}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.ProductKeyXML}}" "$processed_file" 2>/dev/null && \
@@ -1427,16 +1270,8 @@ OOBE_BLOCK_EOF
         log_info "All template variables replaced successfully"
     else
         log_error "Template variables were not replaced!"
-        log_error "Check that Autounattend.xml uses correct template variables"
-        # Show which variables are still present
         if grep -q "{{\.Password}}" "$processed_file" 2>/dev/null; then log_error "  - {{.Password}} still present"; fi
         if grep -q "{{\.Username}}" "$processed_file" 2>/dev/null; then log_error "  - {{.Username}} still present"; fi
-        if grep -q "{{\.StaticIP}}" "$processed_file" 2>/dev/null; then log_error "  - {{.StaticIP}} still present"; fi
-        if grep -q "{{\.SubnetMask}}" "$processed_file" 2>/dev/null; then log_error "  - {{.SubnetMask}} still present"; fi
-        if grep -q "{{\.SubnetPrefix}}" "$processed_file" 2>/dev/null; then log_error "  - {{.SubnetPrefix}} still present"; fi
-        if grep -q "{{\.Gateway}}" "$processed_file" 2>/dev/null; then log_error "  - {{.Gateway}} still present"; fi
-        if grep -q "{{\.DNSServer1}}" "$processed_file" 2>/dev/null; then log_error "  - {{.DNSServer1}} still present"; fi
-        if grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.DNSServer2_XML}} still present"; fi
         if grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null; then log_error "  - {{.WindowsImageName}} still present"; fi
         if grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null; then log_error "  - {{.FirstLogonCommandsSConfigBlock}} still present"; fi
         if grep -q "{{\.ProductKeyXML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.ProductKeyXML}} still present"; fi
