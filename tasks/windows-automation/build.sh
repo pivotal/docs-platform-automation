@@ -1163,21 +1163,21 @@ print \$prefix;
     log_info "Extracted dns_server1: $dns_server1"
     [[ -n "$dns_server2" ]] && log_info "Extracted dns_server2: $dns_server2"
     
-    # Source template file - use path relative to script directory
-    local template_file="$SCRIPT_DIR/http/Autounattend.xml"
-    local processed_file="$SCRIPT_DIR/http/Autounattend.processed.xml"
-    
-    if [[ ! -f "$template_file" ]]; then
-        log_error "Template file not found: $template_file"
-        log_error "Expected path relative to build script: $SCRIPT_DIR/http/Autounattend.xml"
-        return 1
-    fi
-    
-    # Get Windows version for image name
+    # Get Windows version first (needed for image name and for version-specific template path)
     local windows_version=$(grep -E "^windows_version\s*=" "$vars_file" 2>/dev/null | sed 's/#.*$//' | sed 's/.*=\s*"\([^"]*\)".*/\1/' | sed 's/.*=\s*\([^#]*\).*/\1/' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | head -1 | sed 's/^"//;s/"$//' || echo "2019")
     if [[ -z "$windows_version" ]]; then
         windows_version="2019"
     fi
+    
+    # Template: version-specific folder only (http-2019, http-2022, http-2025). No fallback.
+    local processed_file="$SCRIPT_DIR/http/Autounattend.processed.xml"
+    local template_file="$SCRIPT_DIR/http-$windows_version/Autounattend.xml"
+    if [[ ! -f "$template_file" ]]; then
+        log_error "Template file not found: $template_file"
+        log_error "Add http-$windows_version/Autounattend.xml for this windows_version."
+        return 1
+    fi
+    log_info "Using version-specific Autounattend template: http-$windows_version/Autounattend.xml"
     
     # Determine Windows image name based on version
     local windows_image_name=""
@@ -1263,12 +1263,29 @@ print \$prefix;
         return 1
     fi
     
+    # AutoLogonCountXML: 2022/2025 use <Count> (LogonCount is "unknown setting" and halts oobeSystem); 2019 uses <LogonCount>.
+    local ac_xml
+    if [[ "$windows_version" == "2019" ]]; then
+        ac_xml="<LogonCount>1</LogonCount>"
+    else
+        ac_xml="<Count>1</Count>"
+    fi
+    local temp_ac=$(mktemp)
+    if ! sed -e "s|{{\.AutoLogonCountXML}}|$ac_xml|g" "$temp_file" > "$temp_ac"; then
+        log_error "Failed to process AutoLogonCountXML"
+        rm -f "$temp_file" "$temp_ac"
+        return 1
+    fi
+    rm -f "$temp_file"
+    temp_file="$temp_ac"
+    log_info "Set AutoLogon count tag for Windows $windows_version (Count vs LogonCount)"
+
     # FirstLogonCommandsSConfigBlock: use Order 1 placeholder for all versions. SConfig is disabled post-first-login via govc (Step 1.8) for 2022/2025.
     local temp_file2=$(mktemp)
     local sconfig_block_file=$(mktemp)
-    # 2019 has no SConfig; 2022/2025 we disable in post-build to avoid answer file "component or setting does not exist" — inject same placeholder for all
+    # wcm:keyValue="1" helps XML parser distinguish commands (2022/2025).
     cat >> "$sconfig_block_file" << 'SCONFIG_BLOCK_EOF'
-                <SynchronousCommand wcm:action="add">
+                <SynchronousCommand wcm:action="add" wcm:keyValue="1">
                     <CommandLine>cmd /c exit 0</CommandLine>
                     <Description>FirstLogon placeholder (Order 1 required)</Description>
                     <Order>1</Order>
@@ -1318,6 +1335,38 @@ SCONFIG_BLOCK_EOF
     fi
     rm -f "$temp_file"
     temp_file="$temp_file3"
+    
+    # OOBEBlock: 2019 = SkipMachineOOBE/SkipUserOOBE (working combo). 2022/2025 = omit OOBE to avoid "could not process unattend answer file for oobeSystem pass".
+    local oobe_block_file=$(mktemp)
+    local temp_file4=$(mktemp)
+    if [[ "$windows_version" == "2019" ]]; then
+        cat >> "$oobe_block_file" << 'OOBE_BLOCK_EOF'
+            <OOBE>
+                <SkipMachineOOBE>true</SkipMachineOOBE>
+                <SkipUserOOBE>true</SkipUserOOBE>
+            </OOBE>
+OOBE_BLOCK_EOF
+        awk -v blockfile="$oobe_block_file" '
+            /\{\{\.OOBEBlock\}\}/ {
+                while ((getline line < blockfile) > 0) print line
+                close(blockfile)
+                next
+            }
+            { print }
+        ' "$temp_file" > "$temp_file4"
+        log_info "Added OOBE block (SkipMachineOOBE/SkipUserOOBE) for Windows 2019"
+    else
+        awk '/\{\{\.OOBEBlock\}\}/ { next }; { print }' "$temp_file" > "$temp_file4"
+        log_info "Omitted OOBE block for Windows $windows_version (avoids oobeSystem pass failure)"
+    fi
+    rm -f "$oobe_block_file"
+    if [[ ! -f "$temp_file4" ]] || [[ ! -s "$temp_file4" ]]; then
+        log_error "Failed to process OOBEBlock placeholder"
+        rm -f "$temp_file" "$temp_file4"
+        return 1
+    fi
+    rm -f "$temp_file"
+    temp_file="$temp_file4"
     
     # Handle DNSServer2_XML separately - if empty, remove the placeholder line entirely
     if [[ -n "$dns_server2_xml" ]]; then
@@ -1370,7 +1419,9 @@ SCONFIG_BLOCK_EOF
        ! grep -q "{{\.DNSServer2_XML}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null && \
        ! grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null && \
-       ! grep -q "{{\.ProductKeyXML}}" "$processed_file" 2>/dev/null; then
+       ! grep -q "{{\.ProductKeyXML}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.OOBEBlock}}" "$processed_file" 2>/dev/null && \
+       ! grep -q "{{\.AutoLogonCountXML}}" "$processed_file" 2>/dev/null; then
         log_info "All template variables replaced successfully"
     else
         log_error "Template variables were not replaced!"
@@ -1387,6 +1438,8 @@ SCONFIG_BLOCK_EOF
         if grep -q "{{\.WindowsImageName}}" "$processed_file" 2>/dev/null; then log_error "  - {{.WindowsImageName}} still present"; fi
         if grep -q "{{\.FirstLogonCommandsSConfigBlock}}" "$processed_file" 2>/dev/null; then log_error "  - {{.FirstLogonCommandsSConfigBlock}} still present"; fi
         if grep -q "{{\.ProductKeyXML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.ProductKeyXML}} still present"; fi
+        if grep -q "{{\.OOBEBlock}}" "$processed_file" 2>/dev/null; then log_error "  - {{.OOBEBlock}} still present"; fi
+        if grep -q "{{\.AutoLogonCountXML}}" "$processed_file" 2>/dev/null; then log_error "  - {{.AutoLogonCountXML}} still present"; fi
         return 1
     fi
     

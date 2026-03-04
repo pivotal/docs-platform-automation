@@ -111,18 +111,22 @@ minimal_vars 2019 > "$TMPDIR_VARS/v2019.hcl"
 run_processing "$TMPDIR_VARS/v2019.hcl" || { echo "FAIL: process 2019"; ((fail++)); }
 assert_file_contains "2019 image name" "$PROCESSED_FILE" "Windows Server 2019 SERVERSTANDARDCORE"
 assert_file_not_contains "2019 has no SConfig block" "$PROCESSED_FILE" "Disable SConfig Auto-launch"
-assert_file_contains "2019 has Order 1 placeholder" "$PROCESSED_FILE" "FirstLogon placeholder"
+assert_file_not_contains "2019 has no Order 1 placeholder (reference layout)" "$PROCESSED_FILE" "FirstLogon placeholder"
+assert_file_contains "2019 has direct Order 1 winrm" "$PROCESSED_FILE" "<Order>1</Order>"
+assert_file_contains "2019 has OOBE block" "$PROCESSED_FILE" "SkipMachineOOBE"
 
 minimal_vars 2022 > "$TMPDIR_VARS/v2022.hcl"
 run_processing "$TMPDIR_VARS/v2022.hcl" || { echo "FAIL: process 2022"; ((fail++)); }
 assert_file_contains "2022 image name" "$PROCESSED_FILE" "Windows Server 2022 SERVERSTANDARDCORE"
-assert_file_contains "2022 has SConfig block" "$PROCESSED_FILE" "Disable SConfig Auto-launch"
-assert_file_contains "2022 SConfig reg key" "$PROCESSED_FILE" "HKCU\\\\Software\\\\Microsoft\\\\ServerConfig"
+assert_file_contains "2022 has Order 1 placeholder" "$PROCESSED_FILE" "FirstLogon placeholder"
+assert_file_not_contains "2022 has no SkipMachineOOBE" "$PROCESSED_FILE" "SkipMachineOOBE"
+assert_file_contains "2022 has Hide* OOBE block" "$PROCESSED_FILE" "HideEULAPage"
 
 minimal_vars 2025 > "$TMPDIR_VARS/v2025.hcl"
 run_processing "$TMPDIR_VARS/v2025.hcl" || { echo "FAIL: process 2025"; ((fail++)); }
 assert_file_contains "2025 image name" "$PROCESSED_FILE" "Windows Server 2025 SERVERSTANDARDCORE"
-assert_file_contains "2025 has SConfig block" "$PROCESSED_FILE" "Disable SConfig Auto-launch"
+assert_file_contains "2025 has Order 1 placeholder" "$PROCESSED_FILE" "FirstLogon placeholder"
+assert_file_contains "2025 has Hide* OOBE block" "$PROCESSED_FILE" "HideEULAPage"
 
 echo ""
 echo "=== 3. Default windows_version (omit key) ==="
@@ -134,8 +138,8 @@ echo ""
 echo "=== 4. DNS: single vs two servers ==="
 minimal_vars 2019 > "$TMPDIR_VARS/single_dns.hcl"
 run_processing "$TMPDIR_VARS/single_dns.hcl" || true
-# Single DNS: DNSServer2_XML placeholder line is removed, so no keyValue="2"
-assert_file_not_contains "single DNS has no second IP line" "$PROCESSED_FILE" 'keyValue="2"'
+# Single DNS: DNSServer2_XML placeholder line is removed, so no second DNS IP (keyValue="2" also appears in FirstLogonCommands)
+assert_file_not_contains "single DNS has no second DNS IP" "$PROCESSED_FILE" "192.168.1.11"
 
 minimal_vars_two_dns 2019 > "$TMPDIR_VARS/two_dns.hcl"
 run_processing "$TMPDIR_VARS/two_dns.hcl" || true
@@ -158,10 +162,10 @@ assert_file_contains "FirstLogonCommands WinRM" "$PROCESSED_FILE" "winrm quickco
 assert_file_contains "Order 2 for WinRM" "$PROCESSED_FILE" "<Order>2</Order>"
 
 echo ""
-echo "=== 7. FirstLogonCommands order (2022: SConfig Order 1, WinRM Order 2) ==="
+echo "=== 7. FirstLogonCommands order (Order 1 placeholder, WinRM Order 2) ==="
 run_processing "$TMPDIR_VARS/v2022.hcl" || true
-assert_file_contains "SConfig Order 1" "$PROCESSED_FILE" "Disable SConfig Auto-launch"
-assert_file_contains "WinRM Order 2 after SConfig" "$PROCESSED_FILE" "<Order>2</Order>"
+assert_file_contains "Order 1 placeholder" "$PROCESSED_FILE" "FirstLogon placeholder"
+assert_file_contains "WinRM Order 2" "$PROCESSED_FILE" "<Order>2</Order>"
 
 echo ""
 echo "=== 8. ProductKey: omitted when product_key empty; injected when product_key set in vars ==="

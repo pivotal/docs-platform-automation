@@ -1,46 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Windows Server 2019: matches tested version at 3cfd665b42402b4bd69d0af63f8dd92b09c033df. No UserAccounts; LogonCount; OOBE HideEULAPage + Skip*; FirstLogonCommands Order 1-4 direct winrm/netsh (no placeholder). -->
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
     <settings pass="windowsPE">
-        <!-- Language and locale settings - MUST be in windowsPE pass -->
-        <!-- WillShowUI="Never" suppresses the language selection screen -->
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <SetupUILanguage>
                 <UILanguage>en-US</UILanguage>
             </SetupUILanguage>
-            <!-- InputLocale must use keyboard layout identifier format: LCID:KLID -->
-            <!-- 0409:00000409 = US English keyboard layout -->
             <InputLocale>0409:00000409</InputLocale>
             <UserLocale>en-US</UserLocale>
             <SystemLocale>en-US</SystemLocale>
         </component>
-        
-        <!-- Windows Setup configuration -->
-        <!-- Automatic disk configuration - Let Windows Setup handle partitioning automatically -->
-        <!-- Windows Setup will automatically detect disk, create partitions, and format -->
-        <!-- This avoids "could not prepare the selected partition" errors -->
-        <!-- Note: Windows may create System Reserved partition (100-500 MB) + OS partition -->
-        <!-- No DiskConfiguration section needed - Windows Setup handles everything -->
-        <!-- UI screens will be shown and navigated via boot commands -->
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <!-- Image installation - Using NAME to explicitly select Server Core (per tech doc) -->
-            <!-- Using /IMAGE/NAME is more reliable than /IMAGE/INDEX as it explicitly names the edition -->
-            <!-- Windows Server ISO image names:
-                 Windows Server 2019 SERVERSTANDARD - Desktop Experience (WITH UI)
-                 Windows Server 2019 SERVERDATACENTER - Desktop Experience (WITH UI)
-                 Windows Server 2019 SERVERSTANDARDCORE - Server Core (NO UI) ✅
-                 Windows Server 2019 SERVERDATACENTERCORE - Server Core (NO UI)
-                 Windows Server 2022 SERVERSTANDARD - Desktop Experience (WITH UI)
-                 Windows Server 2022 SERVERDATACENTER - Desktop Experience (WITH UI)
-                 Windows Server 2022 SERVERSTANDARDCORE - Server Core (NO UI) ✅
-                 Windows Server 2022 SERVERDATACENTERCORE - Server Core (NO UI)
-                 Windows Server 2025 SERVERSTANDARD - Desktop Experience (WITH UI)
-                 Windows Server 2025 SERVERDATACENTER - Desktop Experience (WITH UI)
-                 Windows Server 2025 SERVERSTANDARDCORE - Server Core (NO UI) ✅
-                 Windows Server 2025 SERVERDATACENTERCORE - Server Core (NO UI)
-            -->
-            <!-- Tech doc requires Server Core (no UI) - using explicit name -->
-            <!-- InstallTo removed - Windows Setup will automatically select partition after creating it -->
-            <!-- With automatic disk configuration, Windows creates partitions and auto-selects OS partition -->
             <ImageInstall>
                 <OSImage>
                     <InstallFrom>
@@ -49,27 +19,16 @@
                             <Value>{{.WindowsImageName}}</Value>
                         </MetaData>
                     </InstallFrom>
-                    <!-- InstallTo removed - Windows Setup auto-selects partition after automatic creation -->
-                    <!-- This avoids "could not prepare partition" errors by using Windows default behavior -->
                 </OSImage>
             </ImageInstall>
-            
-            <!-- User data -->
             <UserData>
                 <AcceptEula>true</AcceptEula>
                 <FullName>Administrator</FullName>
                 <Organization>VMware</Organization>
-                <!-- Generic KMS key for 2022/2025 (injected by process_autounattend_template); omitted for 2019 -->
-{{.ProductKeyXML}}
             </UserData>
         </component>
     </settings>
-    
     <settings pass="specialize">
-        <!-- Target language for installed OS - MUST be in specialize pass -->
-        <!-- This sets the language for the installed Windows, not just the setup UI -->
-        <!-- windowsPE pass sets setup UI language, specialize pass sets installed OS language -->
-        <!-- Regional settings: US time and currency format -->
         <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <InputLocale>0409:00000409</InputLocale>
             <SystemLocale>en-US</SystemLocale>
@@ -77,28 +36,16 @@
             <UILanguageFallback>en-US</UILanguageFallback>
             <UserLocale>en-US</UserLocale>
         </component>
-        
-        <!-- Computer name and timezone - MUST be in specialize pass per Microsoft docs -->
-        <!-- RunSynchronous is NOT valid in specialize pass for Microsoft-Windows-Shell-Setup -->
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <ComputerName>*</ComputerName>
             <TimeZone>UTC</TimeZone>
         </component>
-        
-        <!-- Network configuration - Configure static IP during specialize pass -->
-        <!-- This runs during installation, before first boot, so network is ready for WinRM -->
-        <!-- No PowerShell or network connectivity required - uses XML components -->
-        <!-- Identifier: "Ethernet" works for VMXNET 3 adapters in Windows Server 2019 -->
-        <!-- If adapter is named differently, Windows will match the first available adapter -->
         <component name="Microsoft-Windows-TCPIP" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <Interfaces>
                 <Interface wcm:action="add">
                     <Ipv4Settings>
                         <DhcpEnabled>false</DhcpEnabled>
                     </Ipv4Settings>
-                    <!-- Identifier: "Ethernet" is standard for VMXNET 3 adapters -->
-                    <!-- Windows Server 2019 typically names VMXNET 3 adapters as "Ethernet" or "Ethernet0" -->
-                    <!-- If it doesn't match, Windows will apply to the first available adapter -->
                     <Identifier>Ethernet</Identifier>
                     <UnicastIpAddresses>
                         <IpAddress wcm:action="add" wcm:keyValue="1">{{.StaticIP}}/{{.SubnetPrefix}}</IpAddress>
@@ -113,13 +60,9 @@
                 </Interface>
             </Interfaces>
         </component>
-        
-        <!-- DNS configuration -->
-        <!-- Identifier must match the TCPIP component above -->
         <component name="Microsoft-Windows-DNS-Client" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <Interfaces>
                 <Interface wcm:action="add">
-                    <!-- Identifier must match the TCPIP component above -->
                     <Identifier>Ethernet</Identifier>
                     <DNSServerSearchOrder>
                         <IpAddress wcm:action="add" wcm:keyValue="1">{{.DNSServer1}}</IpAddress>
@@ -128,13 +71,9 @@
                 </Interface>
             </Interfaces>
         </component>
-        
-        <!-- Remote Desktop -->
         <component name="Microsoft-Windows-TerminalServices-LocalSessionManager" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <fDenyTSConnections>false</fDenyTSConnections>
         </component>
-        
-        <!-- Firewall rules -->
         <component name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <FirewallGroups>
                 <FirewallGroup wcm:action="add" wcm:keyValue="RemoteDesktop">
@@ -150,16 +89,9 @@
             </FirewallGroups>
         </component>
     </settings>
-    
     <settings pass="oobeSystem">
-        <!-- Auto logon and first logon commands -->
-        <!-- ComputerName and TimeZone MUST be in specialize pass, not oobeSystem -->
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <!-- AutoLogon configuration -->
             <AutoLogon>
-                <!-- Simplified AutoLogon structure - compatible with Windows Server 2019 -->
-                <!-- PlainText=true allows plain text password (no hashing required) -->
-                <!-- LogonCount=1 means auto-login only once, then disable (security best practice) -->
                 <Password>
                     <Value>{{.Password}}</Value>
                     <PlainText>true</PlainText>
@@ -168,44 +100,33 @@
                 <Username>{{.Username}}</Username>
                 <LogonCount>1</LogonCount>
             </AutoLogon>
-            
-            <!-- First logon commands - Setup WinRM -->
-            <!-- Network is configured in specialize pass (before first boot) -->
-            <!-- VMware Tools will be mounted and installed AFTER first restart via Packer provisioners -->
-            <!-- This avoids interference with Windows installation and password reset -->
-            <!-- {{.FirstLogonCommandsSConfigBlock}} = Order 1 placeholder. SConfig (2022/2025) is exited via keystrokes during password change and disabled for future logons in Step 1.8 (reg) after VMware Tools -->
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <SkipMachineOOBE>true</SkipMachineOOBE>
+                <SkipUserOOBE>true</SkipUserOOBE>
+            </OOBE>
             <FirstLogonCommands>
-{{.FirstLogonCommandsSConfigBlock}}
-                <!-- WinRM setup - Network is already configured in specialize pass, so WinRM can work -->
                 <SynchronousCommand wcm:action="add">
-                    <Order>2</Order>
+                    <Order>1</Order>
                     <CommandLine>winrm quickconfig -q -force</CommandLine>
                     <Description>Enable WinRM</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <Order>3</Order>
+                    <Order>2</Order>
                     <CommandLine>winrm set winrm/config/service/auth @{Basic="true"}</CommandLine>
                     <Description>Configure WinRM Authentication</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <Order>4</Order>
+                    <Order>3</Order>
                     <CommandLine>winrm set winrm/config/service @{AllowUnencrypted="true"}</CommandLine>
                     <Description>Allow Unencrypted WinRM</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <Order>5</Order>
+                    <Order>4</Order>
                     <CommandLine>netsh advfirewall firewall add rule name="WinRM" dir=in action=allow protocol=TCP localport=5985</CommandLine>
                     <Description>Open WinRM Firewall Port</Description>
                 </SynchronousCommand>
-                <!-- VMware Tools installation is handled by Packer provisioners after WinRM is available -->
-                <!-- Tools ISO is mounted via provisioner, not at boot time, to avoid boot order issues -->
             </FirstLogonCommands>
-            
-            <!-- OOBE: only settings that exist on Windows Server 2019/2022/2025 (client-only settings cause "component or setting does not exist"). -->
-            <OOBE>
-                <HideEULAPage>true</HideEULAPage>
-                <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
-            </OOBE>
         </component>
     </settings>
 </unattend>
