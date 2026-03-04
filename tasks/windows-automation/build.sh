@@ -1263,29 +1263,26 @@ print \$prefix;
         return 1
     fi
     
-    # FirstLogonCommandsSConfigBlock: for 2022/2025 inject "Disable SConfig Auto-launch" so SConfig does not block automation; for 2019 omit
+    # FirstLogonCommandsSConfigBlock: use Order 1 placeholder for all versions. SConfig is disabled post-first-login via govc (Step 1.8) for 2022/2025.
     local temp_file2=$(mktemp)
     local sconfig_block_file=$(mktemp)
-    if [[ "$windows_version" == "2022" ]] || [[ "$windows_version" == "2025" ]]; then
-        cat >> "$sconfig_block_file" << 'SCONFIG_BLOCK_EOF'
+    # 2019 has no SConfig; 2022/2025 we disable in post-build to avoid answer file "component or setting does not exist" — inject same placeholder for all
+    cat >> "$sconfig_block_file" << 'SCONFIG_BLOCK_EOF'
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd /c reg add "HKCU\Software\Microsoft\ServerConfig" /v "AutoLaunch" /t REG_DWORD /d 0 /f</CommandLine>
-                    <Description>Disable SConfig Auto-launch</Description>
+                    <CommandLine>cmd /c exit 0</CommandLine>
+                    <Description>FirstLogon placeholder (Order 1 required)</Description>
                     <Order>1</Order>
                 </SynchronousCommand>
 SCONFIG_BLOCK_EOF
-        awk -v blockfile="$sconfig_block_file" '
-            /\{\{\.FirstLogonCommandsSConfigBlock\}\}/ {
-                while ((getline line < blockfile) > 0) print line
-                close(blockfile)
-                next
-            }
-            { print }
-        ' "$temp_file" > "$temp_file2"
-        log_info "Added FirstLogonCommands entry to disable SConfig auto-launch (Windows $windows_version)"
-    else
-        awk '/\{\{\.FirstLogonCommandsSConfigBlock\}\}/ { next }; { print }' "$temp_file" > "$temp_file2"
-    fi
+    awk -v blockfile="$sconfig_block_file" '
+        /\{\{\.FirstLogonCommandsSConfigBlock\}\}/ {
+            while ((getline line < blockfile) > 0) print line
+            close(blockfile)
+            next
+        }
+        { print }
+    ' "$temp_file" > "$temp_file2"
+    log_info "Added FirstLogonCommands Order 1 placeholder (SConfig disabled post-first-login for 2022/2025)"
     rm -f "$sconfig_block_file"
     if [[ ! -f "$temp_file2" ]] || [[ ! -s "$temp_file2" ]]; then
         log_error "Failed to process FirstLogonCommandsSConfigBlock"
@@ -1906,7 +1903,10 @@ post_build_provisioning() {
         log_info "Step 1: Handling password change (ISO mode)..."
         local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
         mkdir -p "$(dirname "$password_change_log")"
-        run_script "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" || {
+        local pwd_win_ver
+        pwd_win_ver=$(trim_var "$(get_var "$vars_file" "windows_version")")
+        [[ -z "$pwd_win_ver" ]] && pwd_win_ver="2019"
+        run_script "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" "$pwd_win_ver" || {
             log_error "Password change failed."
             if [[ -f "$password_change_log" ]]; then
                 log_error "--- Last 100 lines of password-change log ---"
@@ -2060,6 +2060,25 @@ post_build_provisioning() {
             return 1
         fi
         log_success "Guest operations agent ready."
+    fi
+
+    # Step 1.8: Disable SConfig auto-launch for all future logons (2022/2025 only). Requires VMware Tools/guest ops.
+    # Keystrokes during password change only dismiss SConfig once; this registry key stops it from launching on every sign-in.
+    local sconfig_win_ver
+    sconfig_win_ver=$(trim_var "$(get_var "$vars_file" "windows_version")")
+    [[ -z "$sconfig_win_ver" ]] && sconfig_win_ver="2019"
+    if [[ "$sconfig_win_ver" == "2022" ]] || [[ "$sconfig_win_ver" == "2025" ]]; then
+        log_info "Step 1.8: Disabling SConfig auto-launch for future logons (Windows $sconfig_win_ver)..."
+        local govc_guest_opts=(-vm "$vm_name" -l "${windows_username}:${windows_password}")
+        local sconfig_pid
+        sconfig_pid=$(govc guest.start "${govc_guest_opts[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "reg add HKCU\\Software\\Microsoft\\ServerConfig /v AutoLaunch /t REG_DWORD /d 0 /f" 2>/dev/null) || true
+        if [[ -n "$sconfig_pid" ]]; then
+            govc guest.ps "${govc_guest_opts[@]}" -p "$sconfig_pid" -X >/dev/null 2>&1 || true
+            log_success "SConfig auto-launch disabled (persists across reboots)."
+        else
+            log_error "Failed to run reg add for SConfig disable (guest.start returned no PID)."
+            return 1
+        fi
     fi
 
     # Step 2: Configure network. (template/existing_base: vm_name is target; ISO: on base VM, target gets no network.)

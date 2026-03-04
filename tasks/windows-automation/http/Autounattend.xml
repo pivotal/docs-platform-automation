@@ -173,7 +173,7 @@
             <!-- Network is configured in specialize pass (before first boot) -->
             <!-- VMware Tools will be mounted and installed AFTER first restart via Packer provisioners -->
             <!-- This avoids interference with Windows installation and password reset -->
-            <!-- For 2022/2025: SConfig auto-launch is disabled via {{.FirstLogonCommandsSConfigBlock}} so automation is not blocked -->
+            <!-- {{.FirstLogonCommandsSConfigBlock}} = Order 1 placeholder. SConfig (2022/2025) is exited via keystrokes during password change and disabled for future logons in Step 1.8 (reg) after VMware Tools -->
             <FirstLogonCommands>
 {{.FirstLogonCommandsSConfigBlock}}
                 <!-- WinRM setup - Network is already configured in specialize pass, so WinRM can work -->
@@ -201,14 +201,10 @@
                 <!-- Tools ISO is mounted via provisioner, not at boot time, to avoid boot order issues -->
             </FirstLogonCommands>
             
-            <!-- OOBE settings - hide prompts for 2019/2022/2025. Use Microsoft element names. -->
-            <!-- SkipMachineOOBE/SkipUserOOBE deprecated in 2022/2025. ProtectYourPC can cause "unspecified setting" on Windows Server (client Express-settings page). -->
+            <!-- OOBE: only settings that exist on Windows Server 2019/2022/2025 (client-only settings cause "component or setting does not exist"). -->
             <OOBE>
                 <HideEULAPage>true</HideEULAPage>
-                <HideLocalAccountScreen>true</HideLocalAccountScreen>
                 <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
-                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
-                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
             </OOBE>
         </component>
     </settings>

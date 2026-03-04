@@ -111,6 +111,7 @@ minimal_vars 2019 > "$TMPDIR_VARS/v2019.hcl"
 run_processing "$TMPDIR_VARS/v2019.hcl" || { echo "FAIL: process 2019"; ((fail++)); }
 assert_file_contains "2019 image name" "$PROCESSED_FILE" "Windows Server 2019 SERVERSTANDARDCORE"
 assert_file_not_contains "2019 has no SConfig block" "$PROCESSED_FILE" "Disable SConfig Auto-launch"
+assert_file_contains "2019 has Order 1 placeholder" "$PROCESSED_FILE" "FirstLogon placeholder"
 
 minimal_vars 2022 > "$TMPDIR_VARS/v2022.hcl"
 run_processing "$TMPDIR_VARS/v2022.hcl" || { echo "FAIL: process 2022"; ((fail++)); }
