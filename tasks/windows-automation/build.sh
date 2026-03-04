@@ -74,8 +74,15 @@ get_guest_os_type_from_vsphere() {
     line=$(govc vm.option.info "${govc_args[@]}" 2>/dev/null | grep -i "Windows Server" | grep -i "$windows_version" | grep -iE "64|64-bit" | head -1)
     [[ -z "$line" ]] && line=$(govc vm.option.info "${govc_args[@]}" 2>/dev/null | grep -i "Windows Server" | grep -i "$windows_version" | head -1)
     if [[ -n "$line" ]]; then
+        # govc may print "id fullName" or "fullName id"; VMware ids look like windows2019srv_64Guest
         id=$(echo "$line" | awk '{ print $1 }')
-        [[ -n "$id" ]] && printf '%s' "$id"
+        if [[ -z "$id" ]] || [[ ! "$id" =~ [gG]uest ]] || [[ ! "$id" =~ [wW]indows ]]; then
+            id=$(echo "$line" | awk '{ print $NF }')
+        fi
+        # Only return if it looks like a valid vSphere guest OS identifier (avoid passing "Windows" etc.)
+        if [[ -n "$id" ]] && [[ "$id" =~ [gG]uest ]] && [[ "$id" =~ [wW]indows ]]; then
+            printf '%s' "$id"
+        fi
     fi
     return 0
 }
@@ -92,7 +99,8 @@ set_packer_guest_os_type() {
     win_ver=$(trim_var "$(get_var "$vars_file" "windows_version")")
     win_ver="${win_ver:-2019}"
     guest_id=$(get_guest_os_type_from_vsphere "$vars_file" "$win_ver")
-    if [[ -z "$guest_id" ]]; then
+    # Use vSphere result only if it looks like a valid VMware guest OS id (e.g. windows2019srv_64Guest)
+    if [[ -z "$guest_id" ]] || [[ ! "$guest_id" =~ [gG]uest ]] || [[ ! "$guest_id" =~ [wW]indows ]]; then
         case "$win_ver" in
             2019) guest_id="windows2019srv_64Guest";;
             2022) guest_id="windows2019srvNext_64Guest";;
@@ -110,6 +118,7 @@ set_packer_guest_os_type() {
 CLEANUP_VM_NAME=""
 CLEANUP_TARGET_VM_NAME=""
 CLEANUP_PACKER_PID=""
+CLEANUP_PACKER_LOG_FILE=""
 CLEANUP_BUILD_MODE=""
 CLEANUP_VARS_FILE=""
 CLEANUP_ENABLED=false
@@ -131,6 +140,17 @@ cleanup_on_failure() {
         return 0
     fi
     CLEANUP_ALREADY_RAN=true
+
+    # Print Packer log on failure so CI captures it (exit_code is from the trap)
+    if [[ "${exit_code:-1}" -ne 0 ]] && [[ -n "${CLEANUP_PACKER_LOG_FILE:-}" ]] && [[ -f "${CLEANUP_PACKER_LOG_FILE}" ]]; then
+        log_error "=========================================="
+        log_error "PACKER BUILD LOG (last 1000 lines, exit code: ${exit_code:-1})"
+        log_error "=========================================="
+        tail -1000 "$CLEANUP_PACKER_LOG_FILE" 2>/dev/null | while IFS= read -r line; do
+            log_error "  $line"
+        done || log_error "  (Could not read log)"
+        log_error "=========================================="
+    fi
 
     local cleanup_mode="${CLEANUP_BUILD_MODE:-<not set>}"
     log_warn "=========================================="
@@ -1047,12 +1067,15 @@ validate_packer() {
         exit 1
     }
     
-    # guest_os_type is set once in main (set_packer_guest_os_type) and used by validate + build
+    # guest_os_type is set once in main (set_packer_guest_os_type); pass explicitly so var-file cannot override
     local validate_cmd="packer validate"
     
     if [[ -n "$vars_file" ]]; then
         validate_cmd="$validate_cmd -var-file=$vars_file"
         log_info "Using variables file: $vars_file"
+    fi
+    if [[ -n "${PKR_VAR_guest_os_type:-}" ]]; then
+        validate_cmd="$validate_cmd -var=guest_os_type=${PKR_VAR_guest_os_type}"
     fi
     
     validate_cmd="$validate_cmd windows-vm.pkr.hcl"
@@ -1553,7 +1576,11 @@ build_vm() {
         fi
     fi
     
-    # guest_os_type set once in main (set_packer_guest_os_type); Packer uses PKR_VAR_guest_os_type as-is
+    # guest_os_type set once in main; pass explicitly so var-file cannot override (same as iso_path)
+    if [[ -n "${PKR_VAR_guest_os_type:-}" ]]; then
+        build_cmd="$build_cmd -var=guest_os_type=${PKR_VAR_guest_os_type}"
+    fi
+    
     # Add variables file if provided
     if [[ -n "$vars_file" ]]; then
         build_cmd="$build_cmd -var-file=$vars_file"
@@ -1622,8 +1649,13 @@ build_vm() {
         build_mode="template"
     fi
     
-    # Set up cleanup variables and trap for error handling
+    # Set up cleanup variables and trap for error handling (log path for printing on exit 1 in CI)
     CLEANUP_PACKER_PID="$packer_pid"
+    if [[ "$log_file" == /* ]]; then
+        CLEANUP_PACKER_LOG_FILE="$log_file"
+    else
+        CLEANUP_PACKER_LOG_FILE="${SCRIPT_DIR}/${log_file}"
+    fi
     CLEANUP_VM_NAME="$vm_name_final"
     CLEANUP_BUILD_MODE="$build_mode"
     CLEANUP_VARS_FILE="$vars_file"
@@ -1684,12 +1716,12 @@ build_vm() {
             log_error "Packer may have failed to create VM from ISO"
         fi
         log_error "Check Packer logs: $log_file"
-        log_error "Last 50 lines of Packer log:"
-        tail -50 "$log_file" 2>/dev/null | while IFS= read -r line; do
+        log_error "Packer log (last 500 lines):"
+        tail -500 "$log_file" 2>/dev/null | while IFS= read -r line; do
             log_error "  $line"
         done || log_error "  (Could not read log file)"
         log_error "=========================================="
-        # Cleanup will be handled by trap
+        # Cleanup trap will also print Packer log so CI captures it
         exit 1
     fi
     
