@@ -1144,7 +1144,7 @@ process_autounattend_template() {
     temp_file="$temp_ac"
     log_info "Set AutoLogon count tag for Windows $windows_version (Count vs LogonCount)"
 
-    # FirstLogonCommandsSConfigBlock: use Order 1 placeholder for all versions. SConfig is disabled post-first-login via govc (Step 1.8) for 2022/2025.
+    # FirstLogonCommandsSConfigBlock: use Order 1 placeholder for all versions. SConfig disabled via FirstLogonCommands (2022/2025 Set-SConfig -AutoLaunch $false) in unattend.
     local temp_file2=$(mktemp)
     local sconfig_block_file=$(mktemp)
     # wcm:keyValue="1" helps XML parser distinguish commands (2022/2025).
@@ -1163,7 +1163,7 @@ SCONFIG_BLOCK_EOF
         }
         { print }
     ' "$temp_file" > "$temp_file2"
-    log_info "Added FirstLogonCommands Order 1 placeholder (SConfig disabled post-first-login for 2022/2025)"
+    log_info "Added FirstLogonCommands Order 1 placeholder (2022/2025 use Set-SConfig in unattend)"
     rm -f "$sconfig_block_file"
     if [[ ! -f "$temp_file2" ]] || [[ ! -s "$temp_file2" ]]; then
         log_error "Failed to process FirstLogonCommandsSConfigBlock"
@@ -1784,26 +1784,12 @@ post_build_provisioning() {
         return 1
     }
 
-    # Step 1: Password change and VMware Tools (ISO mode only). Skip for template/existing_base (target already has Tools).
+    # Step 1: First-boot wait and VMware Tools (ISO mode only). Skip for template/existing_base (target already has Tools).
+    # Unattend sets UserAccounts/AdministratorPassword + AutoLogon so no password-change screen; we wait for auto-login then mount/install Tools.
     if [[ "$build_mode" == "iso" ]]; then
-        local wait_before_password_change="${WAIT_BEFORE_PASSWORD_CHANGE_SECONDS:-60}"
-        log_info "Step 1: Waiting ${wait_before_password_change}s before password change..."
-        sleep "$wait_before_password_change"
-
-        log_info "Step 1: Handling password change (ISO mode)..."
-        local password_change_log="$SCRIPT_DIR/logs/password-change-$(date +%Y%m%d-%H%M%S).log"
-        mkdir -p "$(dirname "$password_change_log")"
-        local pwd_win_ver
-        pwd_win_ver=$(trim_var "$(get_var "$vars_file" "windows_version")")
-        [[ -z "$pwd_win_ver" ]] && pwd_win_ver="2019"
-        run_script "$scripts_dir/handle-password-change-keystrokes.sh" "$vm_name" "$windows_password" "$password_change_log" "$pwd_win_ver" || {
-            log_error "Password change failed."
-            if [[ -f "$password_change_log" ]]; then
-                log_error "--- Last 100 lines of password-change log ---"
-                tail -100 "$password_change_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
-            fi
-            return 1
-        }
+        local wait_before_tools="${WAIT_BEFORE_PASSWORD_CHANGE_SECONDS:-60}"
+        log_info "Step 1: Waiting ${wait_before_tools}s for first boot and auto-login before mounting Tools..."
+        sleep "$wait_before_tools"
 
         log_info "Step 1.5: Mounting VMware Tools ISO..."
         sleep 10
@@ -1841,8 +1827,7 @@ post_build_provisioning() {
         log_success "VMware Tools ready (guestOperationsReady=true, toolsRunningStatus=guestToolsRunning)."
 
         # Step 1.7: Poll until guest ops work. Fail immediately on auth error; otherwise keep waiting.
-        # Capture govc errors so we can report why verification failed (auth vs Tools/PowerShell).
-        log_info "Step 1.7: Checking password change: waiting for VMware Tools guest operations (poll up to 10 min, every 30s). Failing immediately on auth error..."
+        log_info "Step 1.7: Waiting for VMware Tools guest operations (poll up to 10 min, every 30s). Failing immediately on auth error..."
         local guest_ready=0
         local wait_elapsed=0
         local wait_timeout=600
@@ -1872,7 +1857,7 @@ post_build_provisioning() {
                 last_ps_exit_code="${code:-}"
                 if [[ "${code:-1}" == "0" ]]; then
                     guest_ready=1
-                    log_success "Password change verified: guest operations ready after ${wait_elapsed}s."
+                    log_success "Guest operations ready after ${wait_elapsed}s."
                     break
                 fi
             else
@@ -1881,7 +1866,7 @@ post_build_provisioning() {
                     local err_lower
                     err_lower=$(echo "$last_start_stderr" | tr '[:upper:]' '[:lower:]')
                     if echo "$err_lower" | grep -qE 'auth|login|credential|permission denied|access denied|invalid.*password|logon|unauthorized|supplied credentials|authenticate'; then
-                        log_error "Password change check failed: authentication error (fail immediately). Wrong password or user not logged in."
+                        log_error "Guest operations check failed: authentication error (fail immediately). Wrong password or user not logged in."
                         log_error "Govc error: $last_start_stderr"
                         rm -f "$tmp_stderr" 2>/dev/null || true
                         return 1
@@ -1917,13 +1902,13 @@ post_build_provisioning() {
             else
                 detail="No guest process started and no govc error captured (guest.start returned no PID within ${wait_timeout}s)."
             fi
-            log_error "Password change check failed after ${wait_timeout}s."
+            log_error "Guest operations check failed after ${wait_timeout}s."
             log_error "Failure reason: $reason — $detail"
             return 1
         fi
     else
         # target_ready_mode: template or existing_base; target VM already has Tools
-        log_info "Step 1: Skipping password change and VMware Tools (template/existing_base: target already has Tools)"
+        log_info "Step 1: Skipping first-boot wait and VMware Tools (template/existing_base: target already has Tools)"
         sleep 10
     fi
 
@@ -1950,25 +1935,6 @@ post_build_provisioning() {
             return 1
         fi
         log_success "Guest operations agent ready."
-    fi
-
-    # Step 1.8: Disable SConfig auto-launch for all future logons (2022/2025 only). Requires VMware Tools/guest ops.
-    # Keystrokes during password change only dismiss SConfig once; this registry key stops it from launching on every sign-in.
-    local sconfig_win_ver
-    sconfig_win_ver=$(trim_var "$(get_var "$vars_file" "windows_version")")
-    [[ -z "$sconfig_win_ver" ]] && sconfig_win_ver="2019"
-    if [[ "$sconfig_win_ver" == "2022" ]] || [[ "$sconfig_win_ver" == "2025" ]]; then
-        log_info "Step 1.8: Disabling SConfig auto-launch for future logons (Windows $sconfig_win_ver)..."
-        local govc_guest_opts=(-vm "$vm_name" -l "${windows_username}:${windows_password}")
-        local sconfig_pid
-        sconfig_pid=$(govc guest.start "${govc_guest_opts[@]}" "C:\\Windows\\System32\\cmd.exe" "/c" "reg add HKCU\\Software\\Microsoft\\ServerConfig /v AutoLaunch /t REG_DWORD /d 0 /f" 2>/dev/null) || true
-        if [[ -n "$sconfig_pid" ]]; then
-            govc guest.ps "${govc_guest_opts[@]}" -p "$sconfig_pid" -X >/dev/null 2>&1 || true
-            log_success "SConfig auto-launch disabled (persists across reboots)."
-        else
-            log_error "Failed to run reg add for SConfig disable (guest.start returned no PID)."
-            return 1
-        fi
     fi
 
     # Step 2: Configure network. (template/existing_base: vm_name is target; ISO: on base VM, target gets no network.)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Windows Server 2019: matches tested version at 3cfd665b42402b4bd69d0af63f8dd92b09c033df. No UserAccounts; LogonCount; OOBE HideEULAPage + Skip*; FirstLogonCommands Order 1-4 direct winrm/netsh (no placeholder). -->
+<!-- Windows Server 2019: LogonCount; OOBE HideEULAPage + Skip*; UserAccounts/AdministratorPassword to skip password-change screen; FirstLogonCommands Order 1-4 direct winrm/netsh (no placeholder). -->
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
     <settings pass="windowsPE">
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -61,6 +61,12 @@
     </settings>
     <settings pass="oobeSystem">
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value>{{.Password}}</Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+            </UserAccounts>
             <AutoLogon>
                 <Password>
                     <Value>{{.Password}}</Value>
