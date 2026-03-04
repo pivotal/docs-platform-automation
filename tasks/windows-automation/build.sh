@@ -40,53 +40,6 @@ export_govc_from_vars() {
     [[ "$inc" == "true" ]] && export GOVC_INSECURE=true
 }
 
-# Query vSphere for guest OS type matching windows_version (2019/2022/2025). Uses govc vm.option.info.
-# Returns the guest OS identifier (e.g. windows2022srvNext_64Guest) or empty string if query fails.
-# Caller should fall back to hardcoded defaults when this returns empty.
-get_guest_os_type_from_vsphere() {
-    local vars_file="${1:?}"
-    local windows_version="${2:-2019}"
-    [[ -f "$vars_file" ]] || return 1
-    export_govc_from_vars "$vars_file"
-    local dc cluster host
-    dc=$(trim_var "$(get_var "$vars_file" "vcenter_datacenter")")
-    cluster=$(trim_var "$(get_var "$vars_file" "vcenter_cluster")")
-    host=$(trim_var "$(get_var "$vars_file" "vcenter_host")")
-    [[ -n "$dc" ]] || return 1
-    export GOVC_DATACENTER="$dc"
-    local govc_args=(-dc "$dc")
-    if [[ -n "$cluster" ]]; then
-        govc_args+=(-cluster "$cluster")
-    elif [[ -n "$host" ]]; then
-        govc_args+=(-host "$host")
-    else
-        return 1
-    fi
-    local pattern
-    case "$windows_version" in
-        2025) pattern="Windows Server 2025";;
-        2022) pattern="Windows Server 2022";;
-        2019) pattern="Windows Server 2019";;
-        *)    pattern="Windows Server 2019";;
-    esac
-    local line id
-    # Prefer 64-bit when both 32 and 64 are listed (match line with 64 or fullName like "(64-bit)")
-    line=$(govc vm.option.info "${govc_args[@]}" 2>/dev/null | grep -i "Windows Server" | grep -i "$windows_version" | grep -iE "64|64-bit" | head -1)
-    [[ -z "$line" ]] && line=$(govc vm.option.info "${govc_args[@]}" 2>/dev/null | grep -i "Windows Server" | grep -i "$windows_version" | head -1)
-    if [[ -n "$line" ]]; then
-        # govc may print "id fullName" or "fullName id"; VMware ids look like windows2019srv_64Guest
-        id=$(echo "$line" | awk '{ print $1 }')
-        if [[ -z "$id" ]] || [[ ! "$id" =~ [gG]uest ]] || [[ ! "$id" =~ [wW]indows ]]; then
-            id=$(echo "$line" | awk '{ print $NF }')
-        fi
-        # Only return if it looks like a valid vSphere guest OS identifier (avoid passing "Windows" etc.)
-        if [[ -n "$id" ]] && [[ "$id" =~ [gG]uest ]] && [[ "$id" =~ [wW]indows ]]; then
-            printf '%s' "$id"
-        fi
-    fi
-    return 0
-}
-
 # Set PKR_VAR_guest_os_type once from vars_file using static mapping (Windows Server 2019/2022/2025). Call before validate/build.
 # Static mapping: 2019 -> windows2019srv_64Guest, 2022 -> windows2019srvNext_64Guest, 2025 -> windows2022srvNext_64Guest.
 set_packer_guest_os_type() {

@@ -205,12 +205,6 @@ variable "build_timestamp" {
   default     = ""
 }
 
-variable "template_path" {
-  type        = string
-  description = "vCenter inventory path to source template (e.g., /Datacenter/vm/Templates/my-template). If provided, VM will be cloned from template instead of installing from ISO"
-  default     = ""
-}
-
 variable "windows_version" {
   type        = string
   description = "Windows Server version: '2019', '2022', or '2025' (default: '2019')"
@@ -233,10 +227,6 @@ locals {
   # This ensures build.sh and Packer use the same timestamp
   timestamp     = var.build_timestamp != "" ? var.build_timestamp : regex_replace(timestamp(), "[- TZ:]", "")
   vm_name_final = "${var.vm_name}-${local.timestamp}"
-  
-  # Build mode detection: template mode if template_path is provided and no ISO is configured
-  # ISO mode if ISO is configured (template_path can still be used to create template after stemcell)
-  is_template_mode = var.template_path != "" && var.iso_path == "" && var.iso_path_local == ""
   
   # ISO paths - vsphere-iso builder requires datastore paths only
   # Format: [datastore-name]/path/to/file.iso
@@ -273,10 +263,10 @@ source "vsphere-iso" "windows" {
   # Note: Proxy configuration is handled via environment variables in build script
   # Set HTTP_PROXY, HTTPS_PROXY, NO_PROXY environment variables before running packer
 
-  # VM configuration
+  # VM configuration (match working VM 2022test: guestId, PVSCSI disk, SATA CD, EFI firmware)
   vm_name         = local.vm_name_final
   guest_os_type   = var.guest_os_type
-  firmware        = "bios"
+  firmware        = "efi"
   CPUs            = var.vm_cpu_count
   cpu_cores       = 1
   RAM             = var.vm_memory_mb
@@ -286,7 +276,7 @@ source "vsphere-iso" "windows" {
   # by the vsphere-iso builder. The "unable to retrieve stepping" error is
   # typically a vSphere/ESXi host CPU compatibility issue, not a Packer configuration issue.
 
-  # Controllers: only SCSI types (vSphere rejects "ide" as SCSI controller type). PVSCSI for disk; CD on SATA.
+  # Controllers: PVSCSI for disk, SATA for CD (both work in UI; add boot_command waits so disk is enumerated before selection).
   disk_controller_type = ["pvscsi"]
   storage {
     disk_size             = var.vm_disk_size_gb * 1024
@@ -361,7 +351,7 @@ source "vsphere-iso" "windows" {
   # Increased wait times to allow screens to fully load before navigation
   boot_command = [
     "<enter><wait>",      # Press Enter to start installation (initial "Press any key" screen)
-    "<wait60>",           # Wait for Windows Setup to load and detect Autounattend.xml (increased to 60s to ensure Autounattend.xml is read)
+    "<wait90>",           # Wait for Setup to load, read Autounattend.xml, and enumerate CD/disk (timing for PVSCSI/SATA)
     # Language selection screen - explicitly select English (US)
     # If language selection screen appears, we need to navigate to English (US)
     # Default might be Spanish Argentina or other locale, so we explicitly select English
@@ -379,12 +369,10 @@ source "vsphere-iso" "windows" {
     "<space><wait>",      # Check "I accept the license terms"
     "<tab><tab><wait>",   # Tab to "Next" button
     "<enter><wait>",      # Press Enter/Next to accept license
-    "<wait20>",           # Wait for installation type screen (SECOND PROMPT - Custom/Upgrade) (increased from 10s)
+    "<wait20>",           # Wait for installation type screen (SECOND PROMPT - Custom/Upgrade)
     "<enter><wait>",      # Press Enter to select "Custom" installation (default selection)
-    "<wait20>",           # Wait for disk selection screen (increased from 10s)
-    # Navigate disk selection - with DiskConfiguration, disk should be formatted
-    # If "Windows cannot install on this drive" appears, we need to format it
-    # Try: Select disk, click "Format" or "New" to create partition
+    "<wait60>",           # Wait for disk selection screen - give PVSCSI/SATA time to enumerate (avoids "no images available")
+    # Navigate disk selection once disk is visible
     "<down><wait>",       # Select unallocated space or Disk 0
     "<tab><tab><tab><wait>", # Tab to "Format" or "New" button (if needed)
     "<enter><wait>",      # Press Enter to format/create partition (if format button)
@@ -425,72 +413,17 @@ source "vsphere-iso" "windows" {
   convert_to_template = false  # We'll convert via govc in build.sh
 }
 
-# Build source for template mode (cloning from existing template)
-source "vsphere-clone" "windows-template" {
-  # vCenter connection  
-  vcenter_server      = var.vcenter_server
-  username            = var.vcenter_username
-  password            = var.vcenter_password
-  insecure_connection = var.vcenter_insecure_connection
-
-  # Template configuration
-  template      = var.template_path
-  vm_name       = local.vm_name_final
-  datacenter    = var.vcenter_datacenter
-  datastore     = var.vcenter_datastore
-  folder        = var.vcenter_folder != "" ? var.vcenter_folder : null
-  cluster       = var.vcenter_cluster != "" ? var.vcenter_cluster : null
-  host          = var.vcenter_host != "" ? var.vcenter_host : null
-  resource_pool = var.vcenter_resource_pool != "" ? var.vcenter_resource_pool : null
-
-  # VM configuration (can override template settings)
-  CPUs            = var.vm_cpu_count
-  cpu_cores       = 1
-  RAM             = var.vm_memory_mb
-  RAM_reserve_all = false
-
-  # Disk configuration
-  disk {
-    disk_size             = var.vm_disk_size_gb * 1024
-    disk_thin_provisioned = true
-  }
-
-  # Network configuration
-  network_adapters {
-    network      = var.vcenter_network
-    network_card = "vmxnet3"
-  }
-
-  # Communicator configuration - DISABLED
-  # All provisioners are shell-local and use govc (not WinRM)
-  communicator = "none"
-
-  # Shutdown configuration
-  # We handle shutdown via govc in build.sh post-build provisioning
-  shutdown_timeout = "2h"
-
-  # VM cleanup - DISABLED
-  # We handle shutdown and deletion via govc in build.sh
-  # Template mode: Always delete VM after build (success or failure)
-  convert_to_template = false
-}
-
-# Build steps
-# Conditionally use ISO or template source based on template_path variable
+# Build steps - ISO only (template-mode cloning is done by build.sh via govc vm.clone)
 build {
   name = "windows-vm-build"
 
-  sources = [
-    local.is_template_mode ? "source.vsphere-clone.windows-template" : "source.vsphere-iso.windows"
-  ]
+  sources = ["source.vsphere-iso.windows"]
 
   # Minimal provisioner to signal Packer that build is complete
-  # This allows Packer to exit immediately without waiting for shutdown
   # VM remains running, and build.sh handles all post-build provisioning
   provisioner "shell-local" {
     inline = [
-      "echo 'Packer build complete - VM remains running'",
-      "echo 'Build mode: ${local.is_template_mode ? "template" : "iso"}'"
+      "echo 'Packer build complete - VM remains running'"
     ]
   }
 }
