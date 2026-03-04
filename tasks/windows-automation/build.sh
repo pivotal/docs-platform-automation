@@ -1034,7 +1034,7 @@ validate_packer() {
         validate_cmd="$validate_cmd -var=guest_os_type=${PKR_VAR_guest_os_type}"
     fi
     if [[ -n "${PKR_VAR_disk_controller_type:-}" ]]; then
-        validate_cmd="$validate_cmd -var=disk_controller_type=${PKR_VAR_disk_controller_type}"
+        validate_cmd="$validate_cmd -var=disk_controller_type='${PKR_VAR_disk_controller_type}'"
     fi
     
     validate_cmd="$validate_cmd windows-vm.pkr.hcl"
@@ -1412,7 +1412,7 @@ build_vm() {
         build_cmd="$build_cmd -var=guest_os_type=${PKR_VAR_guest_os_type}"
     fi
     if [[ -n "${PKR_VAR_disk_controller_type:-}" ]]; then
-        build_cmd="$build_cmd -var=disk_controller_type=${PKR_VAR_disk_controller_type}"
+        build_cmd="$build_cmd -var=disk_controller_type='${PKR_VAR_disk_controller_type}'"
     fi
     
     # Add variables file if provided
@@ -1562,10 +1562,10 @@ build_vm() {
     # Wait for Windows installation and first boot to complete before starting post-build provisioning
     # Packer boot commands include <wait120> for installation start and <wait60> for first boot
     # Actual installation can take 7-30 minutes depending on version (2019/2022/2025); first boot adds 1-2 min
-    # We wait 10 minutes so the boot sequence is complete before attempting password change
+    # We wait 10 minutes so the boot sequence is complete before Step 1 (mount/install VMware Tools).
     log_info "Waiting for Windows installation and first boot to complete..."
     log_info "Boot sequence: installation (~7-30 min) + first boot (~1-2 min); waiting 10 minutes"
-    log_info "This ensures the password change screen is ready before we attempt to handle it"
+    log_info "Then Step 1 will wait for auto-login and mount/install VMware Tools."
     sleep 600  # 10 minutes - allows Windows installation and first boot (2019/2022/2025)
     
     # Sanity check: VM must still be powered on after install wait (if off, boot/install likely failed silently)
@@ -1668,7 +1668,7 @@ build_vm() {
 # Flow summary:
 # - Template and existing_base: target VM (windows-target-vm-{timestamp}) is ready at entry. Steps run on that VM:
 #   Step 2 network config -> Step 3 Windows updates -> Step 3.6 guest wait -> stembuild construct -> package.
-# - ISO: base VM at entry -> Step 1 password change + VMware Tools -> Step 2 network + Step 3 updates on base ->
+# - ISO: base VM at entry -> Step 1 first-boot wait + VMware Tools (mount/install) -> Step 2 network + Step 3 updates on base ->
 #   Step 3.5 clone to target (windows-target-vm-{timestamp}) -> Step 3.6 guest wait on target -> stembuild -> package.
 post_build_provisioning() {
     local vars_file="${1:-}"
@@ -1741,8 +1741,8 @@ post_build_provisioning() {
     
     local scripts_dir="$SCRIPT_DIR/scripts"
     # Scripts used in this workflow (all under scripts/):
-    #   handle-password-change-keystrokes.sh, mount-vmware-tools.sh, install-vmware-tools-keystrokes.sh,
-    #   run-powershell-via-govc.sh, configure-network-manual.ps1, run-windows-updates-loop.sh,
+    #   mount-vmware-tools.sh, install-vmware-tools-keystrokes.sh, run-powershell-via-govc.sh,
+    #   configure-network-manual.ps1, run-windows-updates-loop.sh,
     #   install-windows-updates.ps1, check-updates-after-reboot.ps1, run-stembuild-construct.sh.
     # package-stemcell.sh lives in SCRIPT_DIR (windows-automation/).
 

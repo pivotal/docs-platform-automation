@@ -6,7 +6,7 @@
 # Reliability: Depends on console focus (e.g. cmd or desktop). If D: drive or setup doesn't run, increase sleeps:
 #   KEYSTROKE_SLEEP_SHORT=2   (default 1)
 #   KEYSTROKE_SLEEP_MEDIUM=5  (default 3) - after "d:" and before typing setup command
-#   KEYSTROKE_WAIT_BEFORE=15  (default 10) - seconds to wait after password change before typing
+#   KEYSTROKE_WAIT_BEFORE=15  (default 10) - seconds to wait after first-boot wait before sending Tools install keystrokes
 
 VM_NAME="${1:-}"
 LOG_FILE="${2:-}"
@@ -38,7 +38,7 @@ echo "Installing VMware Tools on VM: $VM_NAME"
 echo "Timestamp: $(date)"
 echo "=========================================="
 
-echo "Waiting ${KEYSTROKE_WAIT_BEFORE} seconds after password change for system to be ready..."
+echo "Waiting ${KEYSTROKE_WAIT_BEFORE} seconds after first-boot wait for system to be ready..."
 sleep "$KEYSTROKE_WAIT_BEFORE"
 
 echo "Step 1: Navigating to D: drive"

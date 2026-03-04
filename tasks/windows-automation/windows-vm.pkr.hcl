@@ -227,8 +227,16 @@ variable "disk_controller_type" {
   default     = ["pvscsi"]
 }
 
+variable "keep_base_vm" {
+  type        = string
+  description = "If 'true', do not delete the base VM after clone (ISO mode). Used by build.sh; set in vars file. Packer does not use this; it is passed through for post-build scripting."
+  default     = null
+}
+
   # Local variables
 locals {
+  # Resolve disk controller for builder (vsphere-iso may not accept var reference directly in some versions)
+  disk_controller_type = var.disk_controller_type
   # Use provided timestamp if available, otherwise generate one
   # This ensures build.sh and Packer use the same timestamp
   timestamp     = var.build_timestamp != "" ? var.build_timestamp : regex_replace(timestamp(), "[- TZ:]", "")
@@ -284,7 +292,7 @@ source "vsphere-iso" "windows" {
   # typically a vSphere/ESXi host CPU compatibility issue, not a Packer configuration issue.
 
   # Controllers: 2019 = LSI Logic SAS (in-box driver, avoids "no disk found"); 2022/2025 = PVSCSI. SATA for CD. Set by build.sh from windows_version.
-  disk_controller_type = var.disk_controller_type
+  disk_controller_type = local.disk_controller_type
   storage {
     disk_size             = var.vm_disk_size_gb * 1024
     disk_thin_provisioned = true
@@ -392,8 +400,8 @@ source "vsphere-iso" "windows" {
     "<tab><tab><wait>",   # Tab to "Next" button
     "<enter><wait>",      # Press Enter/Next to proceed with installation
     "<wait120>",          # Wait for installation to proceed (disk formatting and file copying)
-    # After installation, Windows will reboot automatically
-    # Password change is handled post-build in build.sh via govc keystrokes
+    # After installation, Windows will reboot automatically; unattend sets UserAccounts + AutoLogon (no password-change screen)
+    # Post-build in build.sh: wait for first boot, then mount/install VMware Tools, then network + updates
     "<wait60>"            # Wait for Windows to boot after installation (first boot after reboot)
   ]
 
@@ -410,7 +418,7 @@ source "vsphere-iso" "windows" {
   # Shutdown configuration - DISABLED
   # We handle shutdown via govc in build.sh post-build provisioning
   # Setting a very long shutdown timeout so Packer doesn't try to shutdown before post-build completes
-  # Post-build provisioning can take 20-30 minutes (installation wait + password change + Tools + updates)
+  # Post-build provisioning can take 20-30 minutes (installation wait + first-boot wait + Tools + updates)
   # We set timeout to 2 hours to ensure Packer doesn't interfere
   # Note: Packer will timeout on shutdown, but that's expected - build.sh handles shutdown
   shutdown_timeout = "2h"

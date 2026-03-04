@@ -14,7 +14,7 @@ Creates a new VM from a Windows Server 2019 ISO, installs Windows, configures ne
 
 ### Build from Template
 
-Clones an existing template VM, configures network, installs updates, and creates a stemcell. Skips password change and VMware Tools installation.
+Clones an existing template VM, configures network, installs updates, and creates a stemcell. Skips first-boot wait and VMware Tools installation.
 
 ```bash
 ./build.sh -f variables.pkrvars.hcl
@@ -115,7 +115,7 @@ See `variables.pkrvars.hcl.example` for a complete example with all available op
    - Uploads ISO to datastore (if `iso_path_local` is used)
    - Creates VM from ISO
    - Installs Windows Server 2019
-   - Handles password change
+   - Waits for first boot and auto-login (unattend sets UserAccounts + AutoLogon; no password-change screen), then mounts/installs VMware Tools
    - Installs VMware Tools
    - Configures network (static IP and DNS)
    - Installs Windows updates
@@ -148,35 +148,28 @@ When you pass `--jumper-ip`, `--jumper-user`, and `--jumper-password`, **stembui
 
 To use a custom vCenter CA certificate on the jumper, set **VCENTER_CA_CERTS** to the path of your CA file before running the build; the file will be copied to the jumper as `~/vcenter-ca-certs.pem` and used by `run-stembuild-construct.sh`.
 
-## Govc keystroke reliability
+## Govc keystroke reliability (VMware Tools install)
 
-Password change and VMware Tools install use **govc vm.keystrokes** because guest operations (guest.start, file copy) require VMware Tools and a logged-in session. Keystrokes are inherently best-effort: they depend on screen state, focus, and timing.
+Only **VMware Tools install** uses **govc vm.keystrokes** (unattend handles auto-login; no password-change step). Keystrokes depend on screen state, focus, and timing.
 
 **To improve reliability:**
 
 1. **Use a consistent Windows image** – Same Server edition and update level reduces UI differences.
 2. **Tune delays** – For slow or busy VMs, set these **environment variables** before running the build (or in Concourse task params):
-   - **Password change** (`handle-password-change-keystrokes.sh`):
-     - `KEYSTROKE_WAIT_INITIAL=30` (default **25**) – **wait before sending any keys** so the password/login screen is visible (most important for timing)
-     - `KEYSTROKE_SLEEP_SHORT=3` (default 2) – after single key/type
-     - `KEYSTROKE_SLEEP_MEDIUM=6` (default 4) – after Ctrl+Alt+Del or dialog
-     - `KEYSTROKE_SLEEP_LONG=8` (default 5) – after login/confirm
    - **VMware Tools** (`install-vmware-tools-keystrokes.sh`):
-     - `KEYSTROKE_WAIT_BEFORE=20` (default 10) – seconds after password change before typing
+     - `KEYSTROKE_WAIT_BEFORE=20` (default 10) – seconds after first-boot wait before sending Tools install keystrokes
      - `KEYSTROKE_SLEEP_SHORT=2`, `KEYSTROKE_SLEEP_MEDIUM=5`
-3. **Assumptions** – Scripts assume US keyboard and default focus order (e.g. OK button focused, then password field, Tab to confirm). Non‑US layouts or different dialogs may need script changes.
+3. **Assumptions** – Script assumes US keyboard and that the desktop or console is ready (e.g. after auto-login). Non‑US layouts may need script changes.
 
-4. **Step 1 flow** – Before password change the script waits **10 minutes** (configurable via `WAIT_BEFORE_PASSWORD_CHANGE_SECONDS`, default 600). Password change runs **once**, then VMware Tools (mount + install) once, then we poll for guest ops. If the guest-ops check returns an **auth error**, the build **fails immediately**; otherwise we keep polling until ready or timeout.
+4. **Step 1 flow** – After the global 10-minute install wait, the script waits **WAIT_BEFORE_PASSWORD_CHANGE_SECONDS** (default 60) for first boot/auto-login, then mounts VMware Tools ISO and runs the Tools install keystrokes once, then polls for guest ops. If the guest-ops check returns an **auth error**, the build **fails immediately**; otherwise we keep polling until ready or timeout.
 
-5. **Retries** – Password change is not retried; it runs once. Set `WAIT_BEFORE_PASSWORD_CHANGE_SECONDS` (default 600) to change the initial wait before password change.
-
-6. **Why verification failed** – If the guest-ops check times out (or fails with auth), the build logs a **failure reason** and the raw govc error:
+5. **Why verification failed** – If the guest-ops check times out (or fails with auth), the build logs a **failure reason** and the raw govc error:
    - **auth_error** – Authentication failed (wrong password or user not logged in). **Build fails immediately** when this is detected during the poll; no further waiting.
    - **tools_not_ready** – VMware Tools not ready or guest operations unavailable. Wait longer or check Tools install.
    - **powershell_error** – Guest process started but PowerShell exited non-zero (e.g. login state or command failed).
    - **guest_error** – Other guest.start failure (govc error message is printed).
 
-**Alternatives:** Once VMware Tools is installed and the user is logged in, all further steps use **guest.start** (PowerShell) and do not rely on keystrokes. Template mode skips password change and Tools install entirely.
+**Alternatives:** Once VMware Tools is installed and the user is logged in, all further steps use **guest.start** (PowerShell) and do not rely on keystrokes. Template mode skips first-boot wait and Tools install entirely.
 
 ## Requirements
 
