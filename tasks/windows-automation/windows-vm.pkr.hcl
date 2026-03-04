@@ -221,6 +221,12 @@ variable "guest_os_type" {
   default     = "windows2019srv_64Guest"
 }
 
+variable "disk_controller_type" {
+  type        = list(string)
+  description = "Disk controller type: 2019 uses lsilogic_sas (in-box driver); 2022/2025 use pvscsi. Set by build.sh from windows_version."
+  default     = ["pvscsi"]
+}
+
   # Local variables
 locals {
   # Use provided timestamp if available, otherwise generate one
@@ -277,8 +283,8 @@ source "vsphere-iso" "windows" {
   # by the vsphere-iso builder. The "unable to retrieve stepping" error is
   # typically a vSphere/ESXi host CPU compatibility issue, not a Packer configuration issue.
 
-  # Controllers: PVSCSI for disk, SATA for CD (both work in UI; add boot_command waits so disk is enumerated before selection).
-  disk_controller_type = ["pvscsi"]
+  # Controllers: 2019 = LSI Logic SAS (in-box driver, avoids "no disk found"); 2022/2025 = PVSCSI. SATA for CD. Set by build.sh from windows_version.
+  disk_controller_type = var.disk_controller_type
   storage {
     disk_size             = var.vm_disk_size_gb * 1024
     disk_thin_provisioned = true
@@ -355,7 +361,7 @@ source "vsphere-iso" "windows" {
     "<enter><wait><enter><wait>",  # Boot loader: select first entry and continue (two Enters for tolerance)
     "<wait10>",                     # Wait for "Press any key to boot from CD or DVD" to appear
     "<space><wait><space><wait><space><wait>",  # Press any key to boot from CD (SPACE for EFI; three for tolerance)
-    "<wait90>",                    # Wait for Setup to load, read Autounattend.xml, and enumerate CD/disk (timing for PVSCSI/SATA)
+    "<wait90>",                    # Wait for Setup to load, read Autounattend.xml, and enumerate CD/disk (timing for disk controller + SATA CD)
     # Language selection screen - explicitly select English (US)
     # If language selection screen appears, we need to navigate to English (US)
     # Default might be Spanish Argentina or other locale, so we explicitly select English
@@ -375,7 +381,7 @@ source "vsphere-iso" "windows" {
     "<enter><wait>",      # Press Enter/Next to accept license
     "<wait20>",           # Wait for installation type screen (SECOND PROMPT - Custom/Upgrade)
     "<enter><wait>",      # Press Enter to select "Custom" installation (default selection)
-    "<wait60>",           # Wait for disk selection screen - give PVSCSI/SATA time to enumerate (avoids "no images available")
+    "<wait60>",           # Wait for disk selection screen - give disk controller + SATA time to enumerate (avoids "no images available")
     # Navigate disk selection once disk is visible
     "<down><wait>",       # Select unallocated space or Disk 0
     "<tab><tab><tab><wait>", # Tab to "Format" or "New" button (if needed)

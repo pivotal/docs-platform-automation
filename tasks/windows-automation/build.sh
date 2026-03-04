@@ -60,6 +60,14 @@ set_packer_guest_os_type() {
     esac
     log_info "Guest OS type for Packer: $guest_id (windows_version=$win_ver)"
     export PKR_VAR_guest_os_type="$guest_id"
+    # Disk controller: 2019 needs LSI Logic SAS (in-box driver; PVSCSI not in-box -> "no disk found"). 2022/2025 use PVSCSI.
+    if [[ "$win_ver" == "2019" ]]; then
+        export PKR_VAR_disk_controller_type='["lsilogic_sas"]'
+        log_info "Disk controller for Packer: lsilogic_sas (Windows 2019 in-box driver)"
+    else
+        export PKR_VAR_disk_controller_type='["pvscsi"]'
+        log_info "Disk controller for Packer: pvscsi (Windows $win_ver)"
+    fi
 }
 
 # Global variables for cleanup
@@ -1025,6 +1033,9 @@ validate_packer() {
     if [[ -n "${PKR_VAR_guest_os_type:-}" ]]; then
         validate_cmd="$validate_cmd -var=guest_os_type=${PKR_VAR_guest_os_type}"
     fi
+    if [[ -n "${PKR_VAR_disk_controller_type:-}" ]]; then
+        validate_cmd="$validate_cmd -var=disk_controller_type=${PKR_VAR_disk_controller_type}"
+    fi
     
     validate_cmd="$validate_cmd windows-vm.pkr.hcl"
     
@@ -1396,9 +1407,12 @@ build_vm() {
         fi
     fi
     
-    # guest_os_type set once in main; pass explicitly so var-file cannot override (same as iso_path)
+    # guest_os_type and disk_controller_type set once in main; pass explicitly so var-file cannot override
     if [[ -n "${PKR_VAR_guest_os_type:-}" ]]; then
         build_cmd="$build_cmd -var=guest_os_type=${PKR_VAR_guest_os_type}"
+    fi
+    if [[ -n "${PKR_VAR_disk_controller_type:-}" ]]; then
+        build_cmd="$build_cmd -var=disk_controller_type=${PKR_VAR_disk_controller_type}"
     fi
     
     # Add variables file if provided
