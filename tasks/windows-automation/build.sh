@@ -1667,6 +1667,22 @@ build_vm() {
     log_info "This ensures the password change screen is ready before we attempt to handle it"
     sleep 600  # 10 minutes - allows Windows installation and first boot (2019/2022/2025)
     
+    # Sanity check: VM must still be powered on after install wait (if off, boot/install likely failed silently)
+    local power_state
+    power_state=$(get_vm_power_state "$vm_name_final" 2>/dev/null || echo "unknown")
+    if [[ "$power_state" != "poweredOn" ]]; then
+        log_error "=========================================="
+        log_error "VM NOT POWERED ON AFTER INSTALL WAIT"
+        log_error "=========================================="
+        log_error "VM: $vm_name_final  Power state: ${power_state:-unknown}"
+        log_error "The VM may have shut down or never booted into Windows."
+        log_error "Possible causes: boot loader / 'Press any key' screen was missed (timing), or install failed."
+        log_error "Try increasing boot_wait or the wait before Space in windows-vm.pkr.hcl boot_command."
+        log_error "=========================================="
+        exit 1
+    fi
+    log_info "VM is powered on; proceeding with post-build provisioning..."
+    
     # Detect build mode (iso or template)
     # If template_path is provided and no ISO is configured, use template mode
     # Otherwise, use ISO mode (template_path can still be used to create template after stemcell)

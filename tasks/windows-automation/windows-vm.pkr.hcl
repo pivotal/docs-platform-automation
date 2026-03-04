@@ -349,11 +349,13 @@ source "vsphere-iso" "windows" {
   # 4. Installation type (Custom/Upgrade) - SECOND PROMPT
   # 5. Disk selection screen (select unallocated space, click Next)
   # 6. Installation proceeds
-  # EFI: send SPACE immediately at start to bypass "Press any key to boot from CD" (use space not enter for EFI)
+  # EFI boot sequence: (1) Boot loader – select first entry and continue, (2) "Press any key" – press key to boot from CD
+  # Extra key presses improve tolerance to timing variance; if install fails silently, increase boot_wait or the <wait10> below.
   boot_command = [
-    "<space><wait>",     # Bypass "Press any key" immediately (SPACE recommended for EFI)
-    "<space><wait>",     # Second space in case first was consumed by EFI menu
-    "<wait90>",          # Wait for Setup to load, read Autounattend.xml, and enumerate CD/disk (timing for PVSCSI/SATA)
+    "<enter><wait><enter><wait>",  # Boot loader: select first entry and continue (two Enters for tolerance)
+    "<wait10>",                     # Wait for "Press any key to boot from CD or DVD" to appear
+    "<space><wait><space><wait><space><wait>",  # Press any key to boot from CD (SPACE for EFI; three for tolerance)
+    "<wait90>",                    # Wait for Setup to load, read Autounattend.xml, and enumerate CD/disk (timing for PVSCSI/SATA)
     # Language selection screen - explicitly select English (US)
     # If language selection screen appears, we need to navigate to English (US)
     # Default might be Spanish Argentina or other locale, so we explicitly select English
