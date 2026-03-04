@@ -280,14 +280,14 @@ source "vsphere-iso" "windows" {
   # by the vsphere-iso builder. The "unable to retrieve stepping" error is
   # typically a vSphere/ESXi host CPU compatibility issue, not a Packer configuration issue.
 
-  # Disk configuration - Paravirtual SCSI (pvscsi) for Windows Server 2019/2022/2025
-  # PVSCSI has in-box signed drivers in all supported Windows Server versions and avoids
-  # "no signed media drivers found" errors during 2022 install (common with lsilogic-sas).
-  disk_controller_type = ["pvscsi"]
+  # Controllers: SATA 0 for CD-ROM (Windows ISO), PVSCSI for system disk. Matches UI (SATA controller).
+  # Same layout for 2019, 2022, and 2025: SATA and PVSCSI have in-box signed drivers in all three.
+  # Two controllers ensure CD and disk are separate so "Where do you want to install" and edition selection work.
+  disk_controller_type = ["sata", "pvscsi"]
   storage {
     disk_size             = var.vm_disk_size_gb * 1024
     disk_thin_provisioned = true
-    disk_controller_index = 0
+    disk_controller_index = 1
   }
 
   # Network configuration
@@ -316,9 +316,8 @@ source "vsphere-iso" "windows" {
     local.iso_path_final                    # [0] Windows OS ISO (for booting)
   ] : []
   
-  # CD-ROM type: "ide" for BIOS firmware, "sata" for UEFI firmware
-  # Windows Server 2019 with BIOS firmware uses IDE CD-ROM
-  cdrom_type = "ide"
+  # CD-ROM type: SATA to match existing UI (SATA controller for optical)
+  cdrom_type = "sata"
   
   # Ensure CD-ROM is connected at boot
   # The vsphere-iso builder should handle this automatically, but we can verify
