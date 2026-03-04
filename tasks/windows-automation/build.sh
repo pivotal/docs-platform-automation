@@ -1178,7 +1178,9 @@ print \$prefix;
         return 1
     fi
     log_info "Using version-specific Autounattend template: http-$windows_version/Autounattend.xml"
-    
+    # Ensure http/ exists (it is not in git when empty; CI clone may not have it)
+    mkdir -p "$(dirname "$processed_file")"
+
     # Determine Windows image name based on version
     local windows_image_name=""
     case "$windows_version" in
