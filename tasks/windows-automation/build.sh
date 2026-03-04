@@ -1295,42 +1295,27 @@ SCONFIG_BLOCK_EOF
     rm -f "$temp_file"
     local temp_file="$temp_file2"
     
-    # ProductKeyXML: for 2022/2025 inject Generic KMS key (GVLK) in windowsPE UserData so product key is not missing; for 2019 omit
-    local product_key_file=$(mktemp)
+    # ProductKeyXML: if product_key is set in vars file, inject ProductKey block; otherwise remove placeholder
+    local product_key
+    product_key=$(trim_var "$(get_var "$vars_file" "product_key")")
     local temp_file3=$(mktemp)
-    if [[ "$windows_version" == "2022" ]]; then
-        # Windows Server 2022 Standard GVLK (Microsoft KMS client activation keys)
-        cat >> "$product_key_file" << 'PRODUCTKEY_EOF'
-                <ProductKey>
-                    <Key>VDYBN-27WPP-V4HQT-9VMD4-VMK7H</Key>
-                    <WillShowUI>Never</WillShowUI>
-                </ProductKey>
-PRODUCTKEY_EOF
-        awk -v pkfile="$product_key_file" '
-            /\{\{\.ProductKeyXML\}\}/ { while ((getline line < pkfile) > 0) print line; close(pkfile); next }
+    if [[ -n "$product_key" ]]; then
+        awk -v key="$product_key" '
+            /\{\{\.ProductKeyXML\}\}/ {
+                print "                <ProductKey>"
+                print "                    <Key>" key "</Key>"
+                print "                    <WillShowUI>Never</WillShowUI>"
+                print "                </ProductKey>"
+                next
+            }
             { print }
         ' "$temp_file" > "$temp_file3"
-        log_info "Added Generic KMS key (GVLK) for Windows Server 2022 Standard in windowsPE"
-    elif [[ "$windows_version" == "2025" ]]; then
-        # Windows Server 2025 Standard GVLK (Microsoft KMS client activation keys)
-        cat >> "$product_key_file" << 'PRODUCTKEY_EOF'
-                <ProductKey>
-                    <Key>TVRH6-WHNXV-R9WG3-9XRFY-MY832</Key>
-                    <WillShowUI>Never</WillShowUI>
-                </ProductKey>
-PRODUCTKEY_EOF
-        awk -v pkfile="$product_key_file" '
-            /\{\{\.ProductKeyXML\}\}/ { while ((getline line < pkfile) > 0) print line; close(pkfile); next }
-            { print }
-        ' "$temp_file" > "$temp_file3"
-        log_info "Added Generic KMS key (GVLK) for Windows Server 2025 Standard in windowsPE"
+        log_info "Added ProductKey from vars file (product_key) in windowsPE"
     else
-        # 2019: remove placeholder line (2019 does not require product key in answer file for this scenario)
         awk '/\{\{\.ProductKeyXML\}\}/ { next }; { print }' "$temp_file" > "$temp_file3"
     fi
-    rm -f "$product_key_file"
     if [[ ! -f "$temp_file3" ]] || [[ ! -s "$temp_file3" ]]; then
-        log_error "Failed to process ProductKeyXML"
+        log_error "Failed to process ProductKeyXML placeholder"
         rm -f "$temp_file" "$temp_file3"
         return 1
     fi

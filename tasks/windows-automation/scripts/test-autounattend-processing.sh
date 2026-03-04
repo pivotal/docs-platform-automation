@@ -163,22 +163,25 @@ assert_file_contains "SConfig Order 1" "$PROCESSED_FILE" "Disable SConfig Auto-l
 assert_file_contains "WinRM Order 2 after SConfig" "$PROCESSED_FILE" "<Order>2</Order>"
 
 echo ""
-echo "=== 8. ProductKey (KMS GVLK) in windowsPE for 2022/2025 ==="
+echo "=== 8. ProductKey: omitted when product_key empty; injected when product_key set in vars ==="
 run_processing "$TMPDIR_VARS/v2019.hcl" || true
-assert_file_not_contains "2019 has no ProductKey" "$PROCESSED_FILE" "<ProductKey>"
-assert_file_not_contains "2019 has no 2022 key" "$PROCESSED_FILE" "VDYBN-27WPP-V4HQT-9VMD4-VMK7H"
-assert_file_not_contains "2019 has no 2025 key" "$PROCESSED_FILE" "TVRH6-WHNXV-R9WG3-9XRFY-MY832"
+assert_file_not_contains "2019 no product_key: no ProductKey" "$PROCESSED_FILE" "<ProductKey>"
 assert_file_not_contains "2019 no ProductKeyXML placeholder" "$PROCESSED_FILE" "ProductKeyXML"
 run_processing "$TMPDIR_VARS/v2022.hcl" || true
-assert_file_contains "2022 has ProductKey" "$PROCESSED_FILE" "<ProductKey>"
-assert_file_contains "2022 KMS key" "$PROCESSED_FILE" "VDYBN-27WPP-V4HQT-9VMD4-VMK7H"
-assert_file_contains "2022 ProductKey WillShowUI Never" "$PROCESSED_FILE" "WillShowUI>Never</WillShowUI>"
+assert_file_not_contains "2022 no product_key: no ProductKey" "$PROCESSED_FILE" "<ProductKey>"
 assert_file_not_contains "2022 no ProductKeyXML placeholder" "$PROCESSED_FILE" "ProductKeyXML"
 run_processing "$TMPDIR_VARS/v2025.hcl" || true
-assert_file_contains "2025 has ProductKey" "$PROCESSED_FILE" "<ProductKey>"
-assert_file_contains "2025 KMS key" "$PROCESSED_FILE" "TVRH6-WHNXV-R9WG3-9XRFY-MY832"
-assert_file_contains "2025 ProductKey WillShowUI Never" "$PROCESSED_FILE" "WillShowUI>Never</WillShowUI>"
+assert_file_not_contains "2025 no product_key: no ProductKey" "$PROCESSED_FILE" "<ProductKey>"
 assert_file_not_contains "2025 no ProductKeyXML placeholder" "$PROCESSED_FILE" "ProductKeyXML"
+
+# When product_key is set in vars file, ProductKey block is added
+minimal_vars 2022 > "$TMPDIR_VARS/v2022_with_key.hcl"
+echo 'product_key = "VDYBN-27WPP-V4HQT-9VMD4-VMK7H"' >> "$TMPDIR_VARS/v2022_with_key.hcl"
+run_processing "$TMPDIR_VARS/v2022_with_key.hcl" || true
+assert_file_contains "2022 with product_key: has ProductKey block" "$PROCESSED_FILE" "<ProductKey>"
+assert_file_contains "2022 with product_key: key value" "$PROCESSED_FILE" "VDYBN-27WPP-V4HQT-9VMD4-VMK7H"
+assert_file_contains "2022 with product_key: WillShowUI Never" "$PROCESSED_FILE" "WillShowUI>Never</WillShowUI>"
+assert_file_not_contains "2022 with product_key: no placeholder" "$PROCESSED_FILE" "ProductKeyXML"
 
 echo ""
 print_test_results

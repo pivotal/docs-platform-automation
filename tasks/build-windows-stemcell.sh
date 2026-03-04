@@ -135,6 +135,14 @@ cat >> "$VARS_FILE" <<EOF
 # Windows Configuration
 windows_username = "${WINDOWS_USERNAME:-Administrator}"
 windows_password = "${WINDOWS_PASSWORD}"
+EOF
+
+# Optional: Windows product key (if set, injected into Autounattend.xml; if empty, no ProductKey in answer file)
+if [[ -n "${PRODUCT_KEY:-}" ]]; then
+    append_var "product_key" "${PRODUCT_KEY}"
+fi
+
+cat >> "$VARS_FILE" <<EOF
 
 # Network Configuration
 static_ip    = "${STATIC_IP}"
