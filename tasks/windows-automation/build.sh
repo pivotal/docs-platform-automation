@@ -87,7 +87,8 @@ get_guest_os_type_from_vsphere() {
     return 0
 }
 
-# Set PKR_VAR_guest_os_type once from vars_file (vSphere API or static fallback). Call before validate/build.
+# Set PKR_VAR_guest_os_type once from vars_file using static mapping (Windows Server 2019/2022/2025). Call before validate/build.
+# Static mapping: 2019 -> windows2019srv_64Guest, 2022 -> windows2019srvNext_64Guest, 2025 -> windows2022srvNext_64Guest.
 set_packer_guest_os_type() {
     local vars_file="${1:-}"
     if [[ -z "$vars_file" ]] || [[ ! -f "$vars_file" ]]; then
@@ -98,19 +99,13 @@ set_packer_guest_os_type() {
     local win_ver guest_id
     win_ver=$(trim_var "$(get_var "$vars_file" "windows_version")")
     win_ver="${win_ver:-2019}"
-    guest_id=$(get_guest_os_type_from_vsphere "$vars_file" "$win_ver")
-    # Use vSphere result only if it looks like a valid VMware guest OS id (e.g. windows2019srv_64Guest)
-    if [[ -z "$guest_id" ]] || [[ ! "$guest_id" =~ [gG]uest ]] || [[ ! "$guest_id" =~ [wW]indows ]]; then
-        case "$win_ver" in
-            2019) guest_id="windows2019srv_64Guest";;
-            2022) guest_id="windows2019srvNext_64Guest";;
-            2025) guest_id="windows2022srvNext_64Guest";;
-            *)    guest_id="windows2019srv_64Guest";;
-        esac
-        log_info "Guest OS type for Packer: $guest_id (windows_version=$win_ver, fallback)"
-    else
-        log_info "Guest OS type for Packer: $guest_id (windows_version=$win_ver, from vSphere)"
-    fi
+    case "$win_ver" in
+        2019) guest_id="windows2019srv_64Guest";;
+        2022) guest_id="windows2019srvNext_64Guest";;
+        2025) guest_id="windows2022srvNext_64Guest";;
+        *)    guest_id="windows2019srv_64Guest";;
+    esac
+    log_info "Guest OS type for Packer: $guest_id (windows_version=$win_ver)"
     export PKR_VAR_guest_os_type="$guest_id"
 }
 
