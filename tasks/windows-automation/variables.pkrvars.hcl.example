@@ -1,0 +1,67 @@
+# Example variables file for Windows VM build
+# Copy this file to variables.pkrvars.hcl and fill in your values
+# Or use environment variables with PKR_VAR_ prefix
+
+# vCenter Configuration
+vcenter_server              = "vcenter.example.com"
+vcenter_username            = "administrator@vsphere.local"
+vcenter_password            = "your-password"
+vcenter_insecure_connection = true
+
+# Proxy Configuration (Optional - for accessing vCenter through HTTP/HTTPS proxy)
+# If your environment requires a proxy to access vCenter, configure these:
+http_proxy     = ""  # e.g., "http://http://10.144.36.207"
+https_proxy    = ""  # e.g., "http://proxy.example.com:8080" (usually same as http_proxy)
+no_proxy       = "localhost,127.0.0.1,.local"  # Hosts that should bypass proxy
+
+# vSphere Infrastructure
+vcenter_datacenter    = "Datacenter"
+vcenter_cluster       = "Cluster1"  # Leave empty if using host
+vcenter_host          = ""           # Leave empty if using cluster
+vcenter_datastore     = "datastore1"
+vcenter_network       = "VM Network"
+vcenter_folder        = "/Datacenter/vm/WindowsVMs"  # Optional
+vcenter_resource_pool = ""  # Optional
+
+# VM Configuration
+vm_name         = "windows-base-vm"  # Temporary VM name during build (will have timestamp appended)
+vm_cpu_count    = 8
+vm_memory_mb    = 16384  # 16 GB
+vm_disk_size_gb = 100
+
+# Template Configuration
+# Template name for the final template (after VM is converted)
+# If not provided, will be automatically derived from ISO filename
+# Example: "windows-server-2019.iso" -> "windows-server-2019-template"
+template_name   = ""  # Optional: Custom template name (e.g., "my-windows-template")
+                   # If empty, template name will be derived from ISO filename
+
+# ISO Configuration
+# Option 1: Local ISO path (Packer will upload automatically)
+iso_path_local = "/path/to/windows-server-2019.iso"  # e.g., "./windows-server-2019.iso" or "/Users/username/Downloads/windows-server-2019.iso"
+
+# Option 2: ISO already on datastore (use this if ISO is already uploaded)
+# iso_path = "[datastore1]/ISOs/windows-server-2019.iso"
+
+# Note: Use either iso_path_local OR iso_path, not both
+# If iso_path_local is set, it takes precedence and Packer will upload it
+
+# Windows Configuration
+windows_username = "Administrator"
+windows_password = "YourSecurePassword123!"
+# product_key = ""  # Optional: Windows product key (KMS or retail). If set, added to Autounattend; if empty, omitted.
+
+# Network Configuration (REQUIRED - Step 2 from documentation)
+# Network must be configured before Windows updates can be installed
+static_ip    = "192.168.1.100"  # REQUIRED: Static IP address
+subnet_mask  = "255.255.255.0"  # REQUIRED: Subnet mask
+gateway      = "192.168.1.1"    # REQUIRED: Default gateway
+dns_servers  = ["8.8.8.8", "8.8.4.4"]  # REQUIRED: DNS servers (at least one)
+
+# VMware Tools Configuration
+vmware_tools_mode = "upload"  # "upload" or "attach"
+vmware_tools_path = ""        # Required if mode is "attach"
+
+# Build Options
+enable_windows_updates = true
+log_level              = "INFO"  # DEBUG, INFO, WARN, ERROR

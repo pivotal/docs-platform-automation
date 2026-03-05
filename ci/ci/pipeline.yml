@@ -9,6 +9,7 @@ groups:
   - build-packages-image
   - bump-version-to-major
   - check-for-secrets-in-tasks
+  - lint-windows-automation-scripts
   #@ for/end deployment in data.values.deployments:
   - #@ deployment.env_name + "-delete-infrastructure"
   #@ for/end deployment in deployments_without_gcp:
@@ -327,6 +328,12 @@ resources:
     access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
     repository: winfs-injector
+- name: stembuild-cli
+  type: github-release
+  source:
+    access_token: ((platform-automation/main/om.access_token))
+    owner: cloudfoundry
+    repository: bosh-windows-stemcell-builder
 - name: isolation-segment-replicator
   type: github-release
   source:
@@ -521,6 +528,13 @@ jobs:
   - put: packages-image
     params: { image: image/image.tar }
 
+- name: lint-windows-automation-scripts
+  plan:
+  - get: docs-platform-automation
+    trigger: true
+  - task: lint-shell-scripts
+    file: docs-platform-automation/ci/tasks/lint-windows-automation-scripts.yml
+
 - name: download-and-test-om
   plan:
   - get: daily
@@ -572,12 +586,18 @@ jobs:
       params:
         globs:
         - '*linux'
+    - get: stembuild-cli
+      params:
+        globs:
+        - 'stembuild-linux*'
     - get: om-release
       trigger: true
       params:
         globs:
         - 'om-linux-amd64-*[^.tar.gz]'
     - get: docs-platform-automation
+      passed:
+      - lint-windows-automation-scripts
       trigger: false
     - get: packages-image
       trigger: true
@@ -612,6 +632,7 @@ jobs:
         - name: winfs-injector
         - name: govc-cli
         - name: credhub-cli
+        - name: stembuild-cli
         - name: docs-platform-automation
         - name: packages-image-oci
       outputs:

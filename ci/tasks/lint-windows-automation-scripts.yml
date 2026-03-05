@@ -1,0 +1,32 @@
+---
+# Lint Windows automation shell scripts (shellcheck) and run all unit tests (get_var/trim_var, Autounattend).
+# Fails on error-level issues (e.g. SC3043 local outside function).
+platform: linux
+inputs:
+  - name: docs-platform-automation
+outputs: []
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.url))/library/ubuntu
+    tag: jammy
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+run:
+  path: bash
+  args:
+    - -c
+    - |
+      set -eu
+      apt-get update -qq
+      apt-get install -y -qq shellcheck
+      cd docs-platform-automation/tasks/windows-automation
+      ./scripts/lint-shell-scripts.sh
+      echo ""
+      echo "Running get_var/trim_var and mode-detection unit tests..."
+      # Minimal vars file for CI (template_path set so mode is template; tests use own temp files for ISO/template cases)
+      printf '%s\n' 'template_path = "/dc/vm/Tpl"' > /tmp/ci-vars.pkrvars.hcl
+      ./scripts/test-get-var-trim.sh /tmp/ci-vars.pkrvars.hcl
+      echo ""
+      echo "Running Autounattend processing unit tests..."
+      ./scripts/test-autounattend-processing.sh
