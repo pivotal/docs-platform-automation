@@ -165,8 +165,9 @@ sanitize_jumper_remote_dirname() {
 }
 
 # Resolve stembuild binary for the given Windows version (2019, 2022, 2025).
-# CI/build pipelines may produce stembuild-2019, stembuild-2022, stembuild-2025; use the one matching windows_version.
-# Search order: STEMBUILD_BIN_DIR/stembuild-{ver}, SCRIPT_DIR/stembuild-{ver}, PATH stembuild-{ver}, then PATH stembuild.
+# Requires the version-specific binary (stembuild-2019, stembuild-2022, stembuild-2025). No fallback to generic "stembuild".
+# Search order: STEMBUILD_BIN_DIR (optional env var, not set by this script), SCRIPT_DIR, then PATH.
+# Dockerfile.binaries installs stembuild-2019 in /usr/bin (on PATH).
 # Outputs the absolute path to the binary to stdout; returns 0 if found, 1 otherwise.
 resolve_stembuild_for_version() {
     local ver="${1:-2019}"
@@ -180,10 +181,6 @@ resolve_stembuild_for_version() {
     done
     if command -v "stembuild-${ver}" &>/dev/null; then
         command -v "stembuild-${ver}"
-        return 0
-    fi
-    if command -v stembuild &>/dev/null; then
-        command -v stembuild
         return 0
     fi
     return 1
@@ -2362,18 +2359,15 @@ post_build_provisioning() {
         report_build_failure "stembuild construct"
         return 1
     fi
-    # Prefer version-specific binary (stembuild-2019, stembuild-2022, stembuild-2025) from STEMBUILD_BIN_DIR, SCRIPT_DIR, or PATH; else stembuild.
+    # Require version-specific binary (stembuild-2019, stembuild-2022, stembuild-2025). Fail if not found; no generic fallback.
     local stembuild_binary=""
-    if stembuild_binary=$(resolve_stembuild_for_version "$windows_version") && [[ -n "$stembuild_binary" ]]; then
-        log_info "Using stembuild binary for Windows $windows_version: $stembuild_binary"
-    elif command -v stembuild &>/dev/null; then
-        stembuild_binary=$(command -v stembuild)
-        log_info "Using stembuild from PATH: $stembuild_binary"
-    else
-        log_error "stembuild not found (looked for stembuild-$windows_version and stembuild in STEMBUILD_BIN_DIR, SCRIPT_DIR, PATH)"
+    if ! stembuild_binary=$(resolve_stembuild_for_version "$windows_version") || [[ -z "$stembuild_binary" ]]; then
+        log_error "stembuild-$windows_version not found. Required for windows_version=$windows_version."
+        log_error "Searched: STEMBUILD_BIN_DIR, SCRIPT_DIR, PATH. Dockerfile.binaries installs stembuild-2019 in /usr/bin."
         report_build_failure "stembuild construct"
         return 1
     fi
+    log_info "Using stembuild binary for Windows $windows_version: $stembuild_binary"
     # datacenter already set in initial extraction above
     mkdir -p "$SCRIPT_DIR/logs"
     # Track jumper remote dir so we can clean it up after construct (pass or fail)

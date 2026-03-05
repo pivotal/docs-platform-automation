@@ -175,6 +175,6 @@ Only **VMware Tools install** uses **govc vm.keystrokes** (unattend handles auto
 
 - Packer 1.7.0+
 - govc (VMware vSphere CLI)
-- **stembuild binary** – For 2019/2022/2025 you can use a single `stembuild` in PATH, or version-specific binaries named `stembuild-2019`, `stembuild-2022`, `stembuild-2025`. The script picks the one matching `windows_version` from your vars file. Set **STEMBUILD_BIN_DIR** to the directory containing those binaries, or place them in the script directory; otherwise the script looks in PATH.
+- **stembuild binary** – Version-specific binaries named `stembuild-2019`, `stembuild-2022`, `stembuild-2025`. The script uses the one matching `windows_version` from your vars file and fails if not found. Optional: set env **STEMBUILD_BIN_DIR** to the directory containing those binaries; otherwise the script looks in SCRIPT_DIR and PATH (Dockerfile.binaries puts stembuild-2019 in /usr/bin).
 - Access to vCenter with appropriate permissions
 - Windows Server 2019/2022/2025 ISO (for ISO mode) or existing template (for template mode)

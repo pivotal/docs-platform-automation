@@ -16,6 +16,8 @@ RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
 # stembuild is a binary file (not a tarball), copy and install as stembuild-2019
 RUN chmod +x /tmp/stembuild-2019 && mv /tmp/stembuild-2019 /usr/bin/stembuild-2019
+# build.sh uses STEMBUILD_BIN_DIR to find stembuild-2019 (and future stembuild-2022, stembuild-2025)
+ENV STEMBUILD_BIN_DIR=/usr/bin
 
 # Download LGPO (Local Group Policy Object Utility) from Microsoft
 # LGPO is required by stembuild and must be in the same directory as stembuild binary
