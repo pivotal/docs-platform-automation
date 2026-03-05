@@ -6,6 +6,9 @@
 # Convention: read vars with get_var (vars-file-utils.sh); find VMs with govc helpers.
 
 set -euo pipefail
+# -e: exit on first failing command. -u: treat unset vars as error. -o pipefail: pipeline fails if any stage fails.
+# We do not use -x (trace) by default: it would log every command and can expose secrets (e.g. passwords in args/env).
+# Explicit error checks (e.g. "cmd || { log_error ...; return 1; }") remain where we need custom error messages or cleanup before exit.
 # Script directory (must be set first so sourced libs can use it)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -62,8 +65,8 @@ set_packer_guest_os_type() {
     export PKR_VAR_guest_os_type="$guest_id"
     # Disk controller: 2019 needs LSI Logic SAS (in-box driver; PVSCSI not in-box -> "no disk found"). 2022/2025 use PVSCSI.
     if [[ "$win_ver" == "2019" ]]; then
-        export PKR_VAR_disk_controller_type='["lsilogic_sas"]'
-        log_info "Disk controller for Packer: lsilogic_sas (Windows 2019 in-box driver)"
+        export PKR_VAR_disk_controller_type='["lsilogic-sas"]'
+        log_info "Disk controller for Packer: lsilogic-sas (Windows 2019 in-box driver)"
     else
         export PKR_VAR_disk_controller_type='["pvscsi"]'
         log_info "Disk controller for Packer: pvscsi (Windows $win_ver)"
@@ -425,7 +428,10 @@ check_jumper_auth() {
     return 0
 }
 
-# Display variables parsed from vars file and build context (base VM, target VM, args)
+# Keys in vars file that must never be logged (credentials, secrets).
+SENSITIVE_VARS_KEYS="vcenter_password|vcenter_username|windows_password|windows_username|proxy_password|proxy_username|jumper_password"
+
+# Display variables parsed from vars file and build context (base VM, target VM, args). Sensitive keys are never logged.
 display_build_variables() {
     local vars_file="${1:-}"
     local base_vm_name="${2:-}"
@@ -434,11 +440,16 @@ display_build_variables() {
     log_info "Variables parsed from file and build context"
     log_info "=========================================="
     if [[ -n "$vars_file" ]] && [[ -f "$vars_file" ]]; then
-        log_info "Contents of variables file ($vars_file):"
+        log_info "Variables file: $vars_file (sensitive keys redacted)"
         while IFS= read -r line; do
-            # Redact password values when displaying
-            if [[ "$line" =~ password.*= ]]; then
-                log_info "  ${line%%=*}=***REDACTED***"
+            # Skip empty and comment lines
+            [[ -z "${line// /}" ]] && continue
+            [[ "$line" =~ ^[[:space:]]*# ]] && { log_info "  $line"; continue; }
+            # Redact: key (part before first =) matches any sensitive key
+            local key="${line%%=*}"
+            key=$(printf '%s' "$key" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+            if echo "$key" | grep -qE "^($SENSITIVE_VARS_KEYS)$"; then
+                log_info "  ${key}=***REDACTED***"
             else
                 log_info "  $line"
             fi

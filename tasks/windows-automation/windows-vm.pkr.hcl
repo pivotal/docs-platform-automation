@@ -223,7 +223,7 @@ variable "guest_os_type" {
 
 variable "disk_controller_type" {
   type        = list(string)
-  description = "Disk controller type: 2019 uses lsilogic_sas (in-box driver); 2022/2025 use pvscsi. Set by build.sh from windows_version."
+  description = "Disk controller type: 2019 uses lsilogic-sas (in-box driver); 2022/2025 use pvscsi. Set by build.sh from windows_version."
   default     = ["pvscsi"]
 }
 
@@ -291,7 +291,7 @@ source "vsphere-iso" "windows" {
   # by the vsphere-iso builder. The "unable to retrieve stepping" error is
   # typically a vSphere/ESXi host CPU compatibility issue, not a Packer configuration issue.
 
-  # Controllers: 2019 = LSI Logic SAS (in-box driver, avoids "no disk found"); 2022/2025 = PVSCSI. SATA for CD. Set by build.sh from windows_version.
+  # Controllers: 2019 = lsilogic-sas (in-box driver, avoids "no disk found"); 2022/2025 = pvscsi. SATA for CD. Set by build.sh from windows_version.
   disk_controller_type = local.disk_controller_type
   storage {
     disk_size             = var.vm_disk_size_gb * 1024
