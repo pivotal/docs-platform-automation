@@ -172,7 +172,7 @@ sanitize_jumper_remote_dirname() {
 resolve_stembuild_for_version() {
     local ver="${1:-2019}"
     local dir
-    for dir in "${STEMBUILD_BIN_DIR:-}" "$SCRIPT_DIR" ""; do
+    for dir in "${STEMBUILD_BIN_DIR:-}" "$SCRIPT_DIR"; do
         [[ -z "$dir" ]] && continue
         if [[ -x "$dir/stembuild-${ver}" ]]; then
             echo "$(cd "$dir" && pwd)/stembuild-${ver}"
@@ -184,6 +184,21 @@ resolve_stembuild_for_version() {
         return 0
     fi
     return 1
+}
+
+# Validate that the stembuild binary for vars file's windows_version is available. Records error in VALIDATION_ERRORS; caller prints report.
+# Call during main validation so we fail before Packer/construct instead of during stembuild construct.
+check_stembuild_for_version() {
+    local vf="${1:-}"
+    [[ -n "$vf" ]] && [[ -f "$vf" ]] || return 0
+    local windows_version
+    windows_version=$(trim_var "$(get_var "$vf" "windows_version")")
+    [[ -z "$windows_version" ]] && windows_version="2019"
+    if ! resolve_stembuild_for_version "$windows_version" &>/dev/null; then
+        add_validation_error "Stembuild" "stembuild-$windows_version not found (required for windows_version=$windows_version). Set STEMBUILD_BIN_DIR or install stembuild-$windows_version. Searched: STEMBUILD_BIN_DIR, SCRIPT_DIR, PATH."
+        return 1
+    fi
+    return 0
 }
 
 # Print build summary report to console (success or failure). Uses BUILD_REPORT_* globals.
@@ -2847,6 +2862,7 @@ main() {
     if [[ "$build_source_mode" == "iso" ]]; then
         check_iso_present_for_iso_mode "$vars_file" || true
     fi
+    check_stembuild_for_version "$vars_file" || true
     check_jumper_auth || true
     if [[ ${#VALIDATION_ERRORS[@]} -gt 0 ]]; then
         print_validation_report

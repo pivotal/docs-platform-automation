@@ -7,6 +7,7 @@ set -euo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 WINDOWS_DIR="${SCRIPT_DIR}/windows-automation"
 VARS_FILE_NAME="variables.pkrvars.hcl"
+STEMBUILD_BIN_DIR=/usr/bin
 
 # ---- Required tools ----
 require_cmd() {
