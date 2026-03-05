@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run stembuild construct on a Windows VM. Requires GOVC_* and govc in PATH.
+# Run stembuild construct on a Windows VM. Requires GOVC_*. govc and stembuild: use passed path if given, else from PATH.
 
 set -euo pipefail
 set -x
@@ -11,25 +11,35 @@ VM_PASS="${4:-}"
 STEMBUILD_BINARY="${5:-}"
 DATACENTER="${6:-}"
 LOG_FILE="${7:-}"
+GOVC_BINARY="${8:-}"
 
 # Normalize VM name (CI may capture stray quotes/newlines)
 VM_NAME=$(printf '%s' "$VM_NAME" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
 
 [[ -n "$LOG_FILE" ]] && exec > >(tee -a "$LOG_FILE") 2>&1
 
-# --- Validate required args and env ---
+# --- Resolve govc: use passed path or govc from PATH ---
+if [[ -n "$GOVC_BINARY" ]]; then
+    export PATH="$(dirname "$GOVC_BINARY"):$PATH"
+fi
+command -v govc >/dev/null 2>&1 || { echo "Error: govc not found (set GOVC_BINARY or ensure govc in PATH)." >&2; exit 1; }
+
+# --- Resolve stembuild: use passed path or stembuild from PATH ---
+if [[ -z "$STEMBUILD_BINARY" ]]; then
+    STEMBUILD_BINARY=$(command -v stembuild 2>/dev/null) || true
+    [[ -n "$STEMBUILD_BINARY" ]] || { echo "Error: stembuild not found (pass stembuild path or ensure stembuild in PATH)." >&2; exit 1; }
+fi
+
+# --- Validate required args ---
 missing=""
 [[ -z "$VM_NAME" ]] && missing="vm-name"
 [[ -z "$VM_IP" ]] && missing="$missing vm-ip"
 [[ -z "$VM_USER" ]] && missing="$missing vm-username"
 [[ -z "$VM_PASS" ]] && missing="$missing vm-password"
-[[ -z "$STEMBUILD_BINARY" ]] && missing="$missing stembuild-binary"
 if [[ -n "$missing" ]]; then
-    echo "Usage: $0 <vm-name> <vm-ip> <vm-username> <vm-password> <stembuild-binary> [datacenter] [log-file]"
+    echo "Usage: $0 <vm-name> <vm-ip> <vm-username> <vm-password> [stembuild-binary] [datacenter] [log-file] [govc-binary]"
     exit 1
 fi
-
-command -v govc >/dev/null 2>&1 || { echo "Error: govc not in PATH." >&2; exit 1; }
 [[ -n "${GOVC_URL:-}" ]] && [[ -n "${GOVC_USERNAME:-}" ]] && [[ -n "${GOVC_PASSWORD:-}" ]] || {
     echo "Error: GOVC_URL, GOVC_USERNAME, GOVC_PASSWORD must be set." >&2
     exit 1

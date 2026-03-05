@@ -70,6 +70,47 @@ set_packer_guest_os_type() {
     fi
 }
 
+# Validation errors collected during check_* (format: "Name<TAB>Reason"). Do not exit on first failure; run all validations then print comprehensive report.
+VALIDATION_ERRORS=()
+readonly _VALIDATION_SEP=$'\t'
+
+# Append a validation failure (validation_name and reason). Report printed at end of validation phase.
+add_validation_error() {
+    local name="${1:-Unknown validation}"
+    local reason="${2:-No reason given}"
+    VALIDATION_ERRORS+=("${name}${_VALIDATION_SEP}${reason}")
+}
+
+# Print comprehensive validation failure report and exit 1. Call after running all validations when VALIDATION_ERRORS is non-empty.
+print_validation_report() {
+    echo ""
+    echo "=========================================="
+    echo "  VALIDATION FAILED"
+    echo "=========================================="
+    echo "  The following validation(s) failed. Fix the issues and re-run."
+    echo ""
+    local i=1 entry name reason
+    for entry in "${VALIDATION_ERRORS[@]}"; do
+        name="${entry%%$_VALIDATION_SEP*}"
+        reason="${entry#*$_VALIDATION_SEP}"
+        echo "  $i. $name"
+        echo "     Reason: $reason"
+        echo ""
+        i=$((i + 1))
+    done
+    echo "=========================================="
+    echo ""
+    exit 1
+}
+
+# Set build report to failed with step name and print summary. Call before "return 1" from post_build_provisioning to avoid duplicate code.
+report_build_failure() {
+    local step_name="${1:-unknown step}"
+    BUILD_REPORT_STATUS="failed"
+    BUILD_REPORT_FAILED_STEP="$step_name"
+    print_build_summary
+}
+
 # Global variables for cleanup
 CLEANUP_VM_NAME=""
 CLEANUP_TARGET_VM_NAME=""
@@ -79,6 +120,142 @@ CLEANUP_BUILD_MODE=""
 CLEANUP_VARS_FILE=""
 CLEANUP_ENABLED=false
 CLEANUP_ALREADY_RAN=false
+
+# Build summary report (set during post_build_provisioning; printed on success and failure)
+BUILD_REPORT_STATUS=""           # "success" | "failed"
+BUILD_REPORT_MODE=""             # "iso" | "template" | "existing_base"
+BUILD_REPORT_BASE_VM=""          # Base VM name (ISO: Packer VM; template/existing_base: N/A or source name)
+BUILD_REPORT_TARGET_VM=""        # Target VM name (VM used for stembuild / final VM)
+BUILD_REPORT_FAILED_STEP=""      # Canonical step name (e.g. "stembuild construct") for customer-facing report
+BUILD_REPORT_TEMPLATE_NAME=""    # Template name (ISO mode when template created)
+BUILD_REPORT_TEMPLATE_FULL_PATH="" # Full inventory path of template (ISO + template creation)
+BUILD_REPORT_BASE_VM_INVENTORY_PATH="" # Full inventory path of base VM when keep_base_vm=true (ISO mode)
+BUILD_REPORT_CLEANUP_TARGET=""   # "yes" | "no" | "n/a" (target VM deleted or not)
+BUILD_REPORT_CLEANUP_BASE=""     # "yes" | "no" | "kept" | "n/a" (base VM deleted, kept, or not applicable)
+
+# Ordered step names for report (customer-facing; no step numbers). Sequential 1-10.
+BUILD_REPORT_STEP_NAMES=(
+    "Create Base VM"
+    "First-boot & VMware Tools"
+    "Network configuration"
+    "Windows updates"
+    "Clone to target"
+    "Guest operations ready"
+    "stembuild construct"
+    "stembuild package"
+    "Create template"
+    "Cleanup"
+)
+
+# Sanitize VM name for use as jumper remote directory name: only [a-zA-Z0-9_.-], collapse/trim hyphens, max 80 chars.
+# Ensures valid directory name on Linux (avoids / \ : * ? " < > | and control chars).
+sanitize_jumper_remote_dirname() {
+    local name="${1:-}"
+    local maxlen="${2:-80}"
+    [[ -z "$name" ]] && echo "stembuild-construct" && return 0
+    local safe
+    safe=$(printf '%s' "$name" | tr -d '\r\n\t' | sed 's/[^a-zA-Z0-9_.-]/-/g' | sed 's/-\+/-/g' | sed 's/^-//;s/-$//')
+    safe="${safe:0:$maxlen}"
+    safe=$(echo "$safe" | sed 's/^-//;s/-$//')
+    [[ -z "$safe" ]] && safe="stembuild-construct"
+    echo "$safe"
+}
+
+# Print build summary report to console (success or failure). Uses BUILD_REPORT_* globals.
+# Shows each step by name with tick (✓), cross (✗), or dash (—) for success, failed, or skipped.
+#
+# Report variations by mode and status:
+# --- ISO mode, SUCCESS ---
+#   Mode: iso | Base VM name: <name> | Target VM name: <name>
+#   Steps: Create Base VM ✓, First-boot & VMware Tools ✓, Network ✓, Windows updates ✓, Clone to target ✓,
+#          Guest operations ready ✓, stembuild construct ✓, stembuild package ✓,
+#          Create template ✓ or — (N/A), Cleanup ✓
+#   If template created: Template name, Template full path
+#   If keep_base_vm: Base VM inventory path (kept)
+#   Target VM cleaned up: yes | Base VM: yes | kept | n/a (converted to template)
+# --- ISO mode, FAILED ---
+#   Status: FAILED | Failed at: <step name>
+#   Steps: ✓ for completed, ✗ for failed step, — (skipped) for subsequent steps (or "no steps run" if failure before any step)
+# --- Template mode, SUCCESS ---
+#   Mode: template | Base VM name: n/a | Target VM name: <name>
+#   Steps: Create Base VM — (N/A), First-boot — (N/A), Network ✓, Windows updates ✓, Clone to target — (N/A),
+#          Guest operations ready ✓, stembuild construct ✓, stembuild package ✓, Create template — (N/A), Cleanup ✓
+#   Target VM cleaned up: yes | Base VM: n/a
+# --- Template mode, FAILED ---
+#   Same failure format as ISO (Failed at: <step>; ✓/✗/—)
+# --- Existing_base mode, SUCCESS ---
+#   Mode: existing_base | Base VM name: n/a | Target VM name: <name>
+#   Steps: same as template (first three and Create template — N/A; rest ✓)
+#   Target VM cleaned up: yes | Base VM: n/a
+# --- Existing_base mode, FAILED ---
+#   Same failure format as ISO
+print_build_summary() {
+    echo ""
+    echo "=========================================="
+    echo "  BUILD SUMMARY REPORT"
+    echo "=========================================="
+    echo "  Mode:               ${BUILD_REPORT_MODE:-n/a}"
+    echo "  Base VM name:       ${BUILD_REPORT_BASE_VM:-n/a}"
+    echo "  Target VM name:     ${BUILD_REPORT_TARGET_VM:-n/a}"
+    echo ""
+    if [[ "$BUILD_REPORT_STATUS" == "success" ]]; then
+        echo "  Status: SUCCESS"
+        echo ""
+        echo "  Steps run:"
+        local idx=0 mode="${BUILD_REPORT_MODE:-}"
+        for (( idx=0; idx<${#BUILD_REPORT_STEP_NAMES[@]}; idx++ )); do
+            local step_name="${BUILD_REPORT_STEP_NAMES[idx]}"
+            if [[ "$step_name" == "Create Base VM" ]]; then
+                [[ "$mode" == "iso" ]] && echo "    ✓ $step_name" || echo "    — $step_name (N/A)"
+            elif [[ "$step_name" == "First-boot & VMware Tools" ]]; then
+                [[ "$mode" == "iso" ]] && echo "    ✓ $step_name" || echo "    — $step_name (N/A)"
+            elif [[ "$step_name" == "Clone to target" ]]; then
+                [[ "$mode" == "iso" ]] && echo "    ✓ $step_name" || echo "    — $step_name (N/A)"
+            elif [[ "$step_name" == "Create template" ]]; then
+                [[ -n "${BUILD_REPORT_TEMPLATE_NAME:-}" ]] && echo "    ✓ $step_name" || echo "    — $step_name (N/A)"
+            else
+                echo "    ✓ $step_name"
+            fi
+        done
+        if [[ -n "${BUILD_REPORT_TEMPLATE_NAME:-}" ]]; then
+            echo ""
+            echo "  Template name:      $BUILD_REPORT_TEMPLATE_NAME"
+            echo "  Template full path: ${BUILD_REPORT_TEMPLATE_FULL_PATH:-n/a}"
+        fi
+        if [[ -n "${BUILD_REPORT_BASE_VM_INVENTORY_PATH:-}" ]]; then
+            echo ""
+            echo "  Base VM inventory path (kept): ${BUILD_REPORT_BASE_VM_INVENTORY_PATH}"
+        fi
+        echo ""
+        echo "  Target VM cleaned up: ${BUILD_REPORT_CLEANUP_TARGET:-n/a}"
+        echo "  Base VM:              ${BUILD_REPORT_CLEANUP_BASE:-n/a}"
+    else
+        echo "  Status: FAILED"
+        if [[ -n "${BUILD_REPORT_FAILED_STEP:-}" ]]; then
+            echo "  Failed at:          ${BUILD_REPORT_FAILED_STEP}"
+        fi
+        echo ""
+        echo "  Steps run:"
+        local idx=0 found_failed=0
+        for (( idx=0; idx<${#BUILD_REPORT_STEP_NAMES[@]}; idx++ )); do
+            local step_name="${BUILD_REPORT_STEP_NAMES[idx]}"
+            if [[ "$step_name" == "${BUILD_REPORT_FAILED_STEP:-}" ]]; then
+                echo "    ✗ $step_name"
+                found_failed=1
+            elif [[ $found_failed -eq 1 ]]; then
+                echo "    — $step_name (skipped)"
+            else
+                echo "    ✓ $step_name"
+            fi
+        done
+        # Validation or pre-step failure (no step name match): show all as skipped
+        if [[ $found_failed -eq 0 ]] && [[ -n "${BUILD_REPORT_FAILED_STEP:-}" ]]; then
+            echo "    — (no steps run; failure: ${BUILD_REPORT_FAILED_STEP})"
+        fi
+    fi
+    echo "=========================================="
+    echo ""
+}
 
 jumper_ip=""
 jumper_user=""
@@ -196,32 +373,56 @@ cleanup_on_failure() {
     log_warn "Cleanup completed"
 }
 
-# Check prerequisites
+# Check prerequisites. Records errors in VALIDATION_ERRORS instead of exiting; caller prints report and exits.
 check_prerequisites() {
     log_info "Checking prerequisites..."
-    
     local missing_tools=()
-    
     # Check for Packer
     if ! command -v packer &> /dev/null; then
         missing_tools+=("packer")
     else
-        local packer_version=$(packer version | head -n1)
+        local packer_version
+        packer_version=$(packer version | head -n1)
         log_info "Found: $packer_version"
     fi
-    
     # Check for jq (for parsing JSON)
     if ! command -v jq &> /dev/null; then
         log_warn "jq not found (optional, used for parsing manifests)"
     fi
-    
     if [[ ${#missing_tools[@]} -gt 0 ]]; then
         log_error "Missing required tools: ${missing_tools[*]}"
-        log_error "Please install the missing tools and try again"
-        exit 1
+        add_validation_error "Prerequisites" "Missing required tools: ${missing_tools[*]}. Please install and try again."
+        return 1
     fi
-    
     log_success "All prerequisites met"
+    return 0
+}
+
+# If jumper is configured, validate config and SSH auth. Records errors in VALIDATION_ERRORS instead of exiting; caller prints report and exits.
+check_jumper_auth() {
+    # Jumper not configured: skip
+    if [[ -z "${jumper_ip:-}" ]] && [[ -z "${jumper_user:-}" ]] && [[ -z "${jumper_password:-}" ]]; then
+        return 0
+    fi
+    # Partial config: require all three
+    if [[ -z "${jumper_ip:-}" ]] || [[ -z "${jumper_user:-}" ]] || [[ -z "${jumper_password:-}" ]]; then
+        log_error "Jumper partially configured: set all of --jumper-ip, --jumper-user, --jumper-password (or omit all to run locally)."
+        add_validation_error "Jumper configuration" "Set all of --jumper-ip, --jumper-user, --jumper-password (or omit all to run locally)."
+        return 1
+    fi
+    if ! command -v sshpass &>/dev/null; then
+        log_error "sshpass is required for jumper mode but not found. Install sshpass or run without jumper."
+        add_validation_error "Jumper" "sshpass is required for jumper mode but not found. Install sshpass or run without jumper."
+        return 1
+    fi
+    log_info "Validating jumper authentication ($jumper_user@$jumper_ip)..."
+    if ! sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 "$jumper_user@$jumper_ip" "exit 0"; then
+        log_error "Jumper authentication failed: cannot SSH to $jumper_user@$jumper_ip."
+        add_validation_error "Jumper authentication" "Cannot SSH to $jumper_user@$jumper_ip. Check jumper_ip, jumper_user, jumper_password and network."
+        return 1
+    fi
+    log_success "Jumper authentication validated."
+    return 0
 }
 
 # Display variables parsed from vars file and build context (base VM, target VM, args)
@@ -702,6 +903,36 @@ upload_iso_to_datastore() {
 }
 
 # ISO injection method removed - using floppy_content method instead
+
+# Lightweight check for validation report: in ISO mode, ISO must be present (at least one of iso_path/iso_path_local set; if iso_path_local set, file must exist). Adds to VALIDATION_ERRORS.
+check_iso_present_for_iso_mode() {
+    local vars_file="${1:-}"
+    if [[ -z "$vars_file" ]] || [[ ! -f "$vars_file" ]]; then
+        return 0
+    fi
+    local iso_local iso_path
+    iso_local=$(trim_var "$(get_var "$vars_file" "iso_path_local")")
+    iso_path=$(trim_var "$(get_var "$vars_file" "iso_path")")
+    [[ "$iso_path" == "''" ]] || [[ "$iso_path" == '""' ]] && iso_path=""
+    [[ "$iso_local" == "''" ]] || [[ "$iso_local" == '""' ]] && iso_local=""
+    if [[ -z "$iso_local" ]] && [[ -z "$iso_path" ]]; then
+        add_validation_error "ISO (ISO mode)" "iso_path or iso_path_local must be set for ISO mode."
+        return 1
+    fi
+    if [[ -n "$iso_local" ]]; then
+        local resolved_iso_path="$iso_local"
+        if [[ "$iso_local" != /* ]]; then
+            local clean_path="${iso_local#./}"
+            resolved_iso_path="$SCRIPT_DIR/$clean_path"
+            resolved_iso_path=$(echo "$resolved_iso_path" | sed 's|//|/|g')
+        fi
+        if [[ ! -f "$resolved_iso_path" ]]; then
+            add_validation_error "ISO (ISO mode)" "Local ISO file not found: $resolved_iso_path"
+            return 1
+        fi
+    fi
+    return 0
+}
 
 # Validate ISO configuration
 # Skips ISO validation when template_path or existing_base_vm_name is set (one of template_path, existing_base_vm_name, or ISO must be provided).
@@ -1678,6 +1909,7 @@ post_build_provisioning() {
     
     if [[ -z "$vars_file" ]] || [[ -z "$vm_name" ]]; then
         log_error "post_build_provisioning: Missing required parameters"
+        report_build_failure "Validation: Missing parameters"
         return 1
     fi
 
@@ -1705,6 +1937,22 @@ post_build_provisioning() {
     
     # Track base VM name for ISO mode cleanup (only clone in ISO mode; base_vm_name is the VM before clone)
     local base_vm_name="$vm_name"
+
+    # Build summary report (for console at end)
+    BUILD_REPORT_MODE="$build_mode"
+    if [[ "$build_mode" == "iso" ]]; then
+        BUILD_REPORT_BASE_VM="$base_vm_name"
+    else
+        BUILD_REPORT_BASE_VM="n/a"
+    fi
+    BUILD_REPORT_TARGET_VM="$vm_name"
+    BUILD_REPORT_STATUS=""
+    BUILD_REPORT_FAILED_STEP=""
+    BUILD_REPORT_TEMPLATE_NAME=""
+    BUILD_REPORT_TEMPLATE_FULL_PATH=""
+    BUILD_REPORT_BASE_VM_INVENTORY_PATH=""
+    BUILD_REPORT_CLEANUP_TARGET=""
+    BUILD_REPORT_CLEANUP_BASE=""
     
     # Default username to Administrator if not specified
     if [[ -z "$windows_username" ]]; then
@@ -1714,14 +1962,17 @@ post_build_provisioning() {
     # Early validation: required for govc and guest operations
     if [[ -z "${vcenter_server:-}" ]] || [[ -z "${vcenter_user:-}" ]] || [[ -z "${vcenter_pass:-}" ]]; then
         log_error "post_build_provisioning: vcenter_server, vcenter_username, and vcenter_password must be set in vars file"
+        report_build_failure "Validation: vCenter credentials"
         return 1
     fi
     if [[ -z "${windows_password:-}" ]]; then
         log_error "post_build_provisioning: windows_password must be set in vars file (required for guest operations)"
+        report_build_failure "Validation: windows_password"
         return 1
     fi
     if [[ -z "${patch_version:-}" ]]; then
         log_error "post_build_provisioning: patch_version must be set in vars file (required for stembuild)"
+        report_build_failure "Validation: patch_version"
         return 1
     fi
 
@@ -1736,6 +1987,7 @@ post_build_provisioning() {
     # Verify VM exists
     if ! vm_exists "$vm_name"; then
         log_error "VM not found: $vm_name"
+        report_build_failure "Create Base VM"
         return 1
     fi
     
@@ -1817,6 +2069,7 @@ post_build_provisioning() {
                 log_error "--- Last 100 lines of vmware-tools-mount log ---"
                 tail -100 "$tools_mount_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
             fi
+            report_build_failure "First-boot & VMware Tools"
             return 1
         }
 
@@ -1829,6 +2082,7 @@ post_build_provisioning() {
                 log_error "--- Last 100 lines of vmware-tools-install log ---"
                 tail -100 "$tools_install_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
             fi
+            report_build_failure "First-boot & VMware Tools"
             return 1
         }
 
@@ -1836,6 +2090,7 @@ post_build_provisioning() {
         log_info "Step 1.6b: Waiting for VMware Tools to report ready (guestOperationsReady + toolsRunningStatus, poll up to 10 min)..."
         if ! wait_for_vm_tools_ready "$vm_name" 600; then
             log_error "VMware Tools did not report ready within 600s (govc vm.info guest block)."
+            report_build_failure "First-boot & VMware Tools"
             return 1
         fi
         log_success "VMware Tools ready (guestOperationsReady=true, toolsRunningStatus=guestToolsRunning)."
@@ -1883,6 +2138,7 @@ post_build_provisioning() {
                         log_error "Guest operations check failed: authentication error (fail immediately). Wrong password or user not logged in."
                         log_error "Govc error: $last_start_stderr"
                         rm -f "$tmp_stderr" 2>/dev/null || true
+                        report_build_failure "First-boot & VMware Tools"
                         return 1
                     fi
                 fi
@@ -1918,6 +2174,7 @@ post_build_provisioning() {
             fi
             log_error "Guest operations check failed after ${wait_timeout}s."
             log_error "Failure reason: $reason — $detail"
+            report_build_failure "First-boot & VMware Tools"
             return 1
         fi
     else
@@ -1933,7 +2190,7 @@ post_build_provisioning() {
         power_state=$(get_vm_power_state "$vm_name")
         if [[ "$power_state" != "poweredOn" ]]; then
             log_info "Powering on VM: $vm_name"
-            govc vm.power -on "$vm_name" >/dev/null 2>&1 || { log_error "Failed to power on $vm_name"; return 1; }
+            govc vm.power -on "$vm_name" >/dev/null 2>&1 || { log_error "Failed to power on $vm_name"; report_build_failure "Guest operations ready"; return 1; }
             local power_wait=0
             while [[ $power_wait -lt 120 ]]; do
                 power_state=$(get_vm_power_state "$vm_name")
@@ -1941,11 +2198,12 @@ post_build_provisioning() {
                 sleep 5
                 power_wait=$((power_wait + 5))
             done
-            [[ "$power_state" != "poweredOn" ]] && { log_error "VM did not reach poweredOn within 120s"; return 1; }
+            [[ "$power_state" != "poweredOn" ]] && { log_error "VM did not reach poweredOn within 120s"; report_build_failure "Guest operations ready"; return 1; }
         fi
         log_info "Waiting for guest operations agent (poll up to 10 min)..."
         if ! wait_for_vm_guest_ready "$vm_name" 600; then
             log_error "Guest operations agent could not be contacted within 600s. Ensure VMware Tools is running and the VM has finished booting."
+            report_build_failure "Guest operations ready"
             return 1
         fi
         log_success "Guest operations agent ready."
@@ -1980,6 +2238,7 @@ post_build_provisioning() {
             log_error "--- Last 200 lines of network config log ($network_log) ---"
             tail -200 "$network_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
         fi
+        report_build_failure "Network configuration"
         return 1
     }
     
@@ -2002,7 +2261,8 @@ post_build_provisioning() {
                 log_error "--- Last 300 lines of windows-updates log ($updates_log) ---"
                 tail -300 "$updates_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
             fi
-            return 1
+            report_build_failure "Windows updates"
+        return 1
         }
     else
         log_info "Windows updates disabled (enable_windows_updates=false)"
@@ -2012,10 +2272,11 @@ post_build_provisioning() {
     if [[ "$build_mode" == "iso" ]]; then
         log_info "Step 3.5: Cloning base VM to target VM (windows-target-vm-{timestamp}) for stembuild..."
         local target_vm_name
-        target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || return 1
+        target_vm_name=$(clone_current_vm_to_target "$vm_name" "$vars_file") || { report_build_failure "Clone to target"; return 1; }
         target_vm_name=$(printf '%s' "$target_vm_name" | tr -d '\r\n' | sed -e 's/^[[:space:]"'\'']*//' -e 's/[[:space:]"'\'']*$//')
         log_info "Target VM: $target_vm_name (stembuild and package on target; network/updates were on base)"
         vm_name="$target_vm_name"
+        BUILD_REPORT_TARGET_VM="$target_vm_name"
         CLEANUP_TARGET_VM_NAME="$target_vm_name"
     else
         log_info "Step 3.5: No clone (template/existing_base: target VM already set)"
@@ -2027,7 +2288,7 @@ post_build_provisioning() {
     power_state=$(get_vm_power_state "$vm_name")
     if [[ "$power_state" != "poweredOn" ]]; then
         log_info "Powering on target VM: $vm_name"
-        govc vm.power -on "$vm_name" >/dev/null 2>&1 || { log_error "Failed to power on $vm_name"; return 1; }
+        govc vm.power -on "$vm_name" >/dev/null 2>&1 || { log_error "Failed to power on $vm_name"; report_build_failure "Guest operations ready"; return 1; }
         local power_wait=0
         while [[ $power_wait -lt 120 ]]; do
             power_state=$(get_vm_power_state "$vm_name")
@@ -2040,6 +2301,7 @@ post_build_provisioning() {
         done
         if [[ "$power_state" != "poweredOn" ]]; then
             log_error "Target VM did not reach poweredOn within 120s (state: $power_state)"
+            report_build_failure "Guest operations ready"
             return 1
         fi
     else
@@ -2048,6 +2310,7 @@ post_build_provisioning() {
     log_info "Waiting for guest operations on target VM (poll up to 10 min, every 30s)..."
     if ! wait_for_vm_guest_ready "$vm_name" 600; then
         log_error "Target VM guest operations did not become ready within 600s."
+        report_build_failure "Guest operations ready"
         return 1
     fi
     log_success "Target VM guest operations ready."
@@ -2058,6 +2321,7 @@ post_build_provisioning() {
     local construct_rc=0
     if [[ -z "$patch_version" ]]; then
         log_error "patch_version is required for stembuild"
+        report_build_failure "stembuild construct"
         return 1
     fi
     local stembuild_binary=""
@@ -2065,10 +2329,13 @@ post_build_provisioning() {
         stembuild_binary=$(command -v stembuild)
     else
         log_error "stembuild not found in PATH"
+        report_build_failure "stembuild construct"
         return 1
     fi
     # datacenter already set in initial extraction above
     mkdir -p "$SCRIPT_DIR/logs"
+    # Track jumper remote dir so we can clean it up after construct (pass or fail)
+    local jumper_remote_dir_used=""
 
     while [[ $attempt -le $max_attempts ]]; do
         log_info "Step 4: Running stembuild construct (attempt $attempt of $max_attempts)..."
@@ -2076,42 +2343,57 @@ post_build_provisioning() {
         construct_rc=0
 
         if [[ -n "${jumper_ip:-}" ]] && [[ -n "${jumper_user:-}" ]] && [[ -n "${jumper_password:-}" ]]; then
-        # Copy all scripts and binaries required for remote execution. run-stembuild-construct.sh sources govc-vm-utils.sh from same directory.
+        # All files for construct are copied to /tmp/<safe_vmname>/ on jumper; script is run from that dir (cd there, then bash run-stembuild-construct.sh).
+        # Files copied: run-stembuild-construct.sh, govc-vm-utils.sh, stembuild, govc, LGPO.zip; optionally vcenter-ca-certs.pem.
         local lgpo_zip="${LGPO_ZIP:-$SCRIPT_DIR/LGPO.zip}"
         [[ -f "$lgpo_zip" ]] || lgpo_zip="LGPO.zip"
         if [[ ! -f "$lgpo_zip" ]]; then
             log_error "LGPO.zip not found (looked for $SCRIPT_DIR/LGPO.zip and ./LGPO.zip). Set LGPO_ZIP or place LGPO.zip in script directory for jumper mode."
+            report_build_failure "stembuild construct"
             return 1
         fi
-        [[ -f "$scripts_dir/govc-vm-utils.sh" ]] || { log_error "govc-vm-utils.sh not found at $scripts_dir/govc-vm-utils.sh (required for jumper)"; return 1; }
+        [[ -f "$scripts_dir/govc-vm-utils.sh" ]] || { log_error "govc-vm-utils.sh not found at $scripts_dir/govc-vm-utils.sh (required for jumper)"; report_build_failure "stembuild construct"; return 1; }
         local stembuild_bin govc_bin
-        stembuild_bin=$(which stembuild 2>/dev/null) || { log_error "stembuild not in PATH for jumper copy"; return 1; }
-        govc_bin=$(which govc 2>/dev/null) || { log_error "govc not in PATH for jumper copy"; return 1; }
-        local stembuild_remote="\$HOME/stembuild"
-        log_info "Copying required scripts and binaries to jumper: run-stembuild-construct.sh, govc-vm-utils.sh, stembuild, govc, LGPO.zip"
+        stembuild_bin=$(which stembuild 2>/dev/null) || { log_error "stembuild not in PATH for jumper copy"; report_build_failure "stembuild construct"; return 1; }
+        govc_bin=$(which govc 2>/dev/null) || { log_error "govc not in PATH for jumper copy"; report_build_failure "stembuild construct"; return 1; }
+        # Per-VM remote dir: /tmp/<sanitized_target_vm_name>. vm_name here is the target VM (set in Step 3.5). Use valid dirname only.
+        local safe_vmname
+        safe_vmname=$(sanitize_jumper_remote_dirname "$vm_name" 80)
+        local remote_dir="/tmp/$safe_vmname"
+        jumper_remote_dir_used="$remote_dir"
+        local stembuild_remote="$remote_dir/stembuild"
+        local govc_remote="$remote_dir/govc"
+        log_info "Creating $remote_dir on jumper and copying scripts/binaries (run-stembuild-construct.sh, govc-vm-utils.sh, stembuild, govc, LGPO.zip)"
+        if ! sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" "mkdir -p '$remote_dir'"; then
+            log_error "Failed to create $remote_dir on jumper"
+            report_build_failure "stembuild construct"
+            return 1
+        fi
         if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no \
             "$scripts_dir/run-stembuild-construct.sh" \
             "$scripts_dir/govc-vm-utils.sh" \
             "$stembuild_bin" \
             "$govc_bin" \
             "$lgpo_zip" \
-            "$jumper_user@$jumper_ip:~/"; then
-            log_error "Failed to copy required files to jumper (run-stembuild-construct.sh, govc-vm-utils.sh, stembuild, govc, LGPO.zip)"
+            "$jumper_user@$jumper_ip:$remote_dir/"; then
+            log_error "Failed to copy required files to jumper $remote_dir"
+            sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" "rm -rf $remote_dir" 2>/dev/null || true
+            report_build_failure "stembuild construct"
             return 1
         fi
         # Optional: copy vCenter CA cert to jumper if construct needs it
         local vcenter_ca_remote=""
         if [[ -n "${VCENTER_CA_CERTS:-}" ]] && [[ -f "${VCENTER_CA_CERTS}" ]]; then
-            if sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$VCENTER_CA_CERTS" "$jumper_user@$jumper_ip:~/vcenter-ca-certs.pem"; then
-                vcenter_ca_remote="\$HOME/vcenter-ca-certs.pem"
+            if sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no "$VCENTER_CA_CERTS" "$jumper_user@$jumper_ip:$remote_dir/vcenter-ca-certs.pem"; then
+                vcenter_ca_remote="$remote_dir/vcenter-ca-certs.pem"
             fi
         fi
-        # Export GOVC_* and PATH on remote; capture all output to local log so we can show it on failure.
-        local export_vars="PATH=\"\$HOME:\$PATH\" GOVC_URL=\"$GOVC_URL\" GOVC_USERNAME=\"$GOVC_USERNAME\" GOVC_PASSWORD=\"$GOVC_PASSWORD\" GOVC_INSECURE=\"${GOVC_INSECURE:-}\""
+        # Export GOVC_* and PATH on remote. Run from temp dir (cd there) so CWD is that dir and all files (scripts, binaries, LGPO.zip) are in place.
+        local export_vars="PATH=\"$remote_dir:\$PATH\" GOVC_URL=\"$GOVC_URL\" GOVC_USERNAME=\"$GOVC_USERNAME\" GOVC_PASSWORD=\"$GOVC_PASSWORD\" GOVC_INSECURE=\"${GOVC_INSECURE:-}\""
         [[ -n "$vcenter_ca_remote" ]] && export_vars="$export_vars VCENTER_CA_CERTS=\"$vcenter_ca_remote\""
-        log_info "Starting stembuild construct on jumper via SSH ($jumper_user@$jumper_ip); output below..."
+        log_info "Starting stembuild construct on jumper via SSH ($jumper_user@$jumper_ip); running from $remote_dir..."
         sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" \
-            "echo '--- SSH session started on jumper, running stembuild construct ---'; export $export_vars; chmod +x ~/run-stembuild-construct.sh ~/stembuild ~/govc; bash ~/run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\"" 2>&1 | tee "$construct_log"
+            "echo '--- SSH session started on jumper, running stembuild construct from $remote_dir ---'; cd '$remote_dir' && export $export_vars && chmod +x run-stembuild-construct.sh stembuild govc && bash run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\" \"\" \"$govc_remote\"" 2>&1 | tee "$construct_log"
         if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
             construct_rc=1
             log_error "stembuild construct failed on jumper (attempt $attempt). Last 200 lines of log:"
@@ -2120,6 +2402,16 @@ post_build_provisioning() {
             fi
         else
             log_success "stembuild construct completed on jumper"
+        fi
+        # Clean up /tmp/<vmname> on jumper after construct (pass or fail). Do not fail pipeline if cleanup fails (e.g. connection dropped); continue to next step.
+        if [[ -n "$jumper_remote_dir_used" ]]; then
+            log_info "Cleaning up jumper remote dir: $jumper_remote_dir_used"
+            if sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" "rm -rf $jumper_remote_dir_used" 2>/dev/null; then
+                log_info "Jumper remote dir removed: $jumper_remote_dir_used"
+            else
+                log_warn "Failed to remove jumper remote dir (continuing anyway): $jumper_remote_dir_used"
+            fi
+            jumper_remote_dir_used=""
         fi
     else
         run_script "$scripts_dir/run-stembuild-construct.sh" "$vm_name" "$static_ip" "$windows_username" "$windows_password" "$stembuild_binary" "$datacenter" "$construct_log" || construct_rc=$?
@@ -2139,16 +2431,19 @@ post_build_provisioning() {
         fi
         if [[ $attempt -ge $max_attempts ]]; then
             log_error "stembuild construct failed after $max_attempts attempt(s)."
+            report_build_failure "stembuild construct"
             return 1
         fi
         log_warn "Restarting target VM and retrying stembuild construct (attempt $((attempt + 1)) of $max_attempts)..."
         if ! vm_reboot_shutdown_poweron "$vm_name" 120; then
             log_error "Failed to restart target VM (power off/on)."
+            report_build_failure "stembuild construct"
             return 1
         fi
         log_info "Waiting for guest to be ready after restart (poll up to 10 min)..."
         if ! wait_for_vm_guest_ready "$vm_name" 600; then
             log_error "Target VM guest operations did not become ready after restart."
+            report_build_failure "stembuild construct"
             return 1
         fi
         log_success "Target VM ready after restart, retrying stembuild construct."
@@ -2163,12 +2458,13 @@ post_build_provisioning() {
     
     # Resolve VM to inventory path for stembuild package
     local vm_inventory_path
-    vm_inventory_path=$(find_vm_inventory_path "$vm_name" "$datacenter") || return 1
+    vm_inventory_path=$(find_vm_inventory_path "$vm_name" "$datacenter") || { report_build_failure "stembuild package"; return 1; }
 
     # Stop VM before packaging (required by stembuild)
     log_info "Stopping VM before packaging..."
     if ! vm_power_off "$vm_name" 300 1; then
         log_error "VM did not power off within timeout"
+        report_build_failure "stembuild package"
         return 1
     fi
     log_success "VM powered off"
@@ -2183,6 +2479,7 @@ post_build_provisioning() {
             log_error "--- Last 200 lines of stembuild-package log ---"
             tail -200 "$package_log" 2>/dev/null | while IFS= read -r line; do log_error "  $line"; done
         fi
+        report_build_failure "stembuild package"
         return 1
     }
     
@@ -2192,59 +2489,62 @@ post_build_provisioning() {
         log_success "Stemcell created: $stemcell_file"
     fi
     
-    # Step 8: Create template from VM only in ISO mode when template_name (or template_path) is provided.
-    # Template mode: we do not create a new template; we only use the template to create a VM, then clean it up.
-    # Existing_base mode: we do not create a template. vcenter_folder is optional; template_name takes precedence.
+    # Step 6: Create template from base VM (ISO mode only) when template_name (or template_path) is provided.
+    # We create the template from the base VM (Packer VM with network + updates), not from the target VM (stembuild clone).
+    # Template/existing_base mode: we do not create a new template here.
     if [[ "$build_mode" == "iso" ]] && ([[ -n "$template_path" ]] || [[ -n "$template_name" ]]); then
-        log_info "Step 8: Creating template from VM (ISO mode; template_name/template_path set)..."
+        log_info "Step 6: Creating template from base VM (ISO mode; template_name/template_path set)..."
+        local template_vm="$base_vm_name"
 
-        # Ensure VM is powered off (should be after stembuild package)
-        if [[ "$(get_vm_power_state "$vm_name")" != "poweredOff" ]]; then
-            log_info "VM is not powered off, shutting down..."
-            if ! vm_power_off "$vm_name" 300 1; then
-                log_error "VM did not power off within timeout"
+        # Ensure base VM is powered off (may still be on after clone)
+        if [[ "$(get_vm_power_state "$template_vm")" != "poweredOff" ]]; then
+            log_info "Base VM is not powered off, shutting down..."
+            if ! vm_power_off "$template_vm" 300 1; then
+                log_error "Base VM did not power off within timeout"
+                report_build_failure "Create template"
                 return 1
             fi
-            log_success "VM powered off"
+            log_success "Base VM powered off"
         else
-            log_info "VM is already powered off (from stembuild package)"
+            log_info "Base VM is already powered off"
         fi
 
-        # Detach ISO from CD-ROM before templatizing (govc device.cdrom.eject requires VM powered on)
-        log_info "Detaching CD-ROM/ISO from VM before creating template..."
-        govc vm.power -on "$vm_name" >/dev/null 2>&1 || true
+        # Detach ISO from CD-ROM before templatizing (Step 6; govc device.cdrom.eject requires VM powered on)
+        log_info "Detaching CD-ROM/ISO from base VM before creating template..."
+        govc vm.power -on "$template_vm" >/dev/null 2>&1 || true
         local power_wait=0
         while [[ $power_wait -lt 60 ]]; do
-            [[ "$(get_vm_power_state "$vm_name")" == "poweredOn" ]] && break
+            [[ "$(get_vm_power_state "$template_vm")" == "poweredOn" ]] && break
             sleep 5
             power_wait=$((power_wait + 5))
         done
-        if [[ "$(get_vm_power_state "$vm_name")" == "poweredOn" ]]; then
-            govc device.cdrom.eject -vm "$vm_name" 2>/dev/null || log_warn "CD-ROM eject failed or no CD-ROM (non-fatal)"
-            vm_power_off "$vm_name" 120 1 >/dev/null 2>&1 || true
+        if [[ "$(get_vm_power_state "$template_vm")" == "poweredOn" ]]; then
+            govc device.cdrom.eject -vm "$template_vm" 2>/dev/null || log_warn "CD-ROM eject failed or no CD-ROM (non-fatal)"
+            vm_power_off "$template_vm" 120 1 >/dev/null 2>&1 || true
             power_wait=0
             while [[ $power_wait -lt 120 ]]; do
-                [[ "$(get_vm_power_state "$vm_name")" == "poweredOff" ]] && break
+                [[ "$(get_vm_power_state "$template_vm")" == "poweredOff" ]] && break
                 sleep 5
                 power_wait=$((power_wait + 5))
             done
         fi
-        log_info "VM powered off, ready for template conversion."
+        log_info "Base VM powered off, ready for template conversion."
 
         # Resolve inventory path before markastemplate (find may not return templates in some setups)
         local vm_path
-        vm_path=$(find_vm_inventory_path "$vm_name" "$datacenter") || true
+        vm_path=$(find_vm_inventory_path "$template_vm" "$datacenter") || true
 
-        # Convert to template
-        log_info "Converting VM to template..."
-        local final_template_name="${template_name:-${vm_name}-template}"
-        govc vm.markastemplate "$vm_name" || {
+        # Convert base VM to template
+        log_info "Converting base VM to template..."
+        local final_template_name="${template_name:-${template_vm}-template}"
+        govc vm.markastemplate "$template_vm" || {
             log_error "Template conversion failed"
+            report_build_failure "Create template"
             return 1
         }
 
         # Rename template if custom name provided (govc object.rename PATH NEW_NAME; vm.rename does not exist)
-        if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]] && [[ -n "$vm_path" ]]; then
+        if [[ -n "$template_name" ]] && [[ "$template_name" != "${template_vm}-template" ]] && [[ -n "$vm_path" ]]; then
             log_info "Renaming template to: $template_name"
             if [[ -n "$datacenter" ]]; then
                 govc object.rename -dc "$datacenter" "$vm_path" "$template_name" || {
@@ -2256,7 +2556,7 @@ post_build_provisioning() {
                 }
             fi
             final_template_name="$template_name"
-        elif [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]] && [[ -z "$vm_path" ]]; then
+        elif [[ -n "$template_name" ]] && [[ "$template_name" != "${template_vm}-template" ]] && [[ -z "$vm_path" ]]; then
             log_warn "Could not resolve VM path for rename (non-critical)"
             final_template_name="$template_name"
         fi
@@ -2264,7 +2564,7 @@ post_build_provisioning() {
         # If vcenter_folder is set, move template to that folder; otherwise it stays in same folder as VM
         if [[ -n "$vcenter_folder" ]] && [[ -n "$vm_path" ]]; then
             local template_current_path
-            if [[ -n "$template_name" ]] && [[ "$template_name" != "${vm_name}-template" ]]; then
+            if [[ -n "$template_name" ]] && [[ "$template_name" != "${template_vm}-template" ]]; then
                 template_current_path="${vm_path%/*}/$template_name"
             else
                 template_current_path="$vm_path"
@@ -2282,50 +2582,71 @@ post_build_provisioning() {
         fi
 
         log_success "Template created: $final_template_name"
+        BUILD_REPORT_TEMPLATE_NAME="$final_template_name"
+        # Resolve full inventory path for report (after rename/move)
+        BUILD_REPORT_TEMPLATE_FULL_PATH=$(find_vm_inventory_path "$final_template_name" "$datacenter" 2>/dev/null) || true
+        if [[ -z "$BUILD_REPORT_TEMPLATE_FULL_PATH" ]] && [[ -n "$vcenter_folder" ]]; then
+            BUILD_REPORT_TEMPLATE_FULL_PATH="${vcenter_folder}/${final_template_name}"
+        fi
+        [[ -z "$BUILD_REPORT_TEMPLATE_FULL_PATH" ]] && BUILD_REPORT_TEMPLATE_FULL_PATH="(path not resolved)"
     fi
     
-    # Step 9: Cleanup
-    # create_template = we converted the stembuild VM to a template (only in ISO mode when template_name/template_path set). Do not delete it.
-    # When template_name is set in ISO mode it takes precedence: VM is marked as template, so we do not delete it; keep_base_vm only affects base VM.
+    # Step 7: Cleanup
+    # create_template = we converted the base VM to a template (ISO mode; template_name/template_path set). Target VM is always deleted; base is not deleted when it became the template.
     local create_template=false
     if [[ "$build_mode" == "iso" ]] && ([[ -n "$template_path" ]] || [[ -n "$template_name" ]]); then
         create_template=true
     fi
 
-    # On all modes (ISO, template, existing_base): delete the VM we used for stembuild unless we converted it to a template
-    if [[ "$create_template" != "true" ]]; then
-        log_info "Step 9: Cleaning up VM (not converted to template): $vm_name"
-        if vm_exists "$vm_name"; then
-            if [[ "$(get_vm_power_state "$vm_name")" != "poweredOff" ]]; then
-                log_info "Shutting down before cleanup..."
-                vm_power_off "$vm_name" 120 0 || true
-            fi
-            log_info "Deleting VM: $vm_name"
-            govc vm.destroy "$vm_name" >/dev/null 2>&1 || {
-                log_warn "Failed to delete VM (may require manual cleanup): $vm_name"
-            }
-            log_success "VM cleaned up"
+    # On all modes: delete the target VM (the one we used for stembuild). In ISO+template we created template from base, so target is still deleted.
+    log_info "Step 7: Cleaning up target VM (stembuild VM): $vm_name"
+    BUILD_REPORT_CLEANUP_TARGET="yes"
+    if vm_exists "$vm_name"; then
+        if [[ "$(get_vm_power_state "$vm_name")" != "poweredOff" ]]; then
+            log_info "Shutting down before cleanup..."
+            vm_power_off "$vm_name" 120 0 || true
+        fi
+        log_info "Deleting VM: $vm_name"
+        govc vm.destroy "$vm_name" >/dev/null 2>&1 || {
+            log_warn "Failed to delete VM (may require manual cleanup): $vm_name"
+            BUILD_REPORT_CLEANUP_TARGET="no (destroy failed)"
+        }
+        log_success "Target VM cleaned up"
+    else
+        log_info "Target VM not found (already deleted or not created)"
+        BUILD_REPORT_CLEANUP_TARGET="no (not found)"
+    fi
+
+    # ISO mode only: base VM. When create_template we converted base to template (do not delete). Otherwise delete base if keep_base_vm != true.
+    if [[ "$build_mode" == "iso" ]] && [[ -n "$base_vm_name" ]] && [[ "$base_vm_name" != "$vm_name" ]]; then
+        if [[ "$create_template" == "true" ]]; then
+            log_info "Step 7 (ISO mode): Base VM was converted to template (not deleting)."
+            BUILD_REPORT_CLEANUP_BASE="n/a (converted to template)"
+        elif [[ "${keep_base_vm}" == "true" ]]; then
+            log_info "Step 7 (ISO mode): Keeping base VM (keep_base_vm=true)"
+            BUILD_REPORT_CLEANUP_BASE="kept"
+            BUILD_REPORT_BASE_VM_INVENTORY_PATH=$(find_vm_inventory_path "$base_vm_name" "$datacenter" 2>/dev/null) || true
+            [[ -z "$BUILD_REPORT_BASE_VM_INVENTORY_PATH" ]] && BUILD_REPORT_BASE_VM_INVENTORY_PATH="(path not resolved)"
         else
-            log_info "VM not found (already deleted or not created)"
-        fi
-    fi
-
-    # ISO mode only: delete base VM if KEEP_BASE_VM is not true. keep_base_vm has no effect in template or existing_base mode (we never touch the user's base/source VM).
-    if [[ "$build_mode" == "iso" ]] && [[ -n "$base_vm_name" ]] && [[ "$base_vm_name" != "$vm_name" ]] && [[ "${keep_base_vm}" != "true" ]]; then
-        log_info "Step 9 (ISO mode): Cleaning up base VM (keep_base_vm=false): $base_vm_name"
-        if vm_exists "$base_vm_name"; then
-            if [[ "$(get_vm_power_state "$base_vm_name")" != "poweredOff" ]]; then
-                vm_power_off "$base_vm_name" 120 0 || true
+            log_info "Step 7 (ISO mode): Cleaning up base VM (keep_base_vm=false): $base_vm_name"
+            BUILD_REPORT_CLEANUP_BASE="yes"
+            if vm_exists "$base_vm_name"; then
+                if [[ "$(get_vm_power_state "$base_vm_name")" != "poweredOff" ]]; then
+                    vm_power_off "$base_vm_name" 120 0 || true
+                fi
+                govc vm.destroy "$base_vm_name" >/dev/null 2>&1 || {
+                    log_warn "Failed to delete base VM (may require manual cleanup): $base_vm_name"
+                    BUILD_REPORT_CLEANUP_BASE="no (destroy failed)"
+                }
+                log_success "Base VM cleaned up"
             fi
-            govc vm.destroy "$base_vm_name" >/dev/null 2>&1 || {
-                log_warn "Failed to delete base VM (may require manual cleanup): $base_vm_name"
-            }
-            log_success "Base VM cleaned up"
         fi
-    elif [[ "$build_mode" == "iso" ]] && [[ "${keep_base_vm}" == "true" ]]; then
-        log_info "Step 9 (ISO mode): Keeping base VM (keep_base_vm=true)"
+    else
+        BUILD_REPORT_CLEANUP_BASE="n/a"
     fi
 
+    BUILD_REPORT_STATUS="success"
+    print_build_summary
     log_success "Stemcell creation completed successfully"
     return 0
 }
@@ -2452,20 +2773,7 @@ main() {
         export DEBUG_MODE=true
     fi
 
-    # Check prerequisites
-    check_prerequisites
-    
-    if [[ $skip_packer_init == false ]]; then
-        # Initialize Packer
-        init_packer
-    fi
-    
-    if [[ "$init_only" == true ]]; then
-        log_success "Initialization complete"
-        exit 0
-    fi
-    
-    # Use default variables file if not specified
+    # Use default variables file if not specified (needed for mode detection and ISO/jumper validation)
     if [[ -z "$vars_file" ]] && [[ -f "variables.pkrvars.hcl" ]]; then
         vars_file="variables.pkrvars.hcl"
         log_info "Using default variables file: $vars_file"
@@ -2494,6 +2802,27 @@ main() {
         exit 1
     fi
     log_info "Mode: $build_source_mode"
+
+    # Run all validations; collect errors and print comprehensive report before exiting.
+    VALIDATION_ERRORS=()
+    check_prerequisites || true
+    if [[ "$build_source_mode" == "iso" ]]; then
+        check_iso_present_for_iso_mode "$vars_file" || true
+    fi
+    check_jumper_auth || true
+    if [[ ${#VALIDATION_ERRORS[@]} -gt 0 ]]; then
+        print_validation_report
+    fi
+
+    if [[ $skip_packer_init == false ]]; then
+        # Initialize Packer
+        init_packer
+    fi
+    
+    if [[ "$init_only" == true ]]; then
+        log_success "Initialization complete"
+        exit 0
+    fi
 
     # Proxy must be set before any govc command (all branches and cleanup_on_failure use govc).
     setup_proxy_environment "$vars_file"
