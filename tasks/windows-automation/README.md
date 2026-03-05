@@ -141,7 +141,7 @@ See `variables.pkrvars.hcl.example` for a complete example with all available op
 
 When you pass `--jumper-ip`, `--jumper-user`, and `--jumper-password`, **stembuild construct** runs on the jumper host instead of locally. The build script:
 
-- Copies `run-stembuild-construct.sh`, `stembuild`, `govc`, and `LGPO.zip` to the jumper.
+- Copies `run-stembuild-construct.sh`, the stembuild binary for your `windows_version` (e.g. `stembuild-2019`), `govc`, and `LGPO.zip` to the jumper.
 - Exports **GOVC_URL**, **GOVC_USERNAME**, **GOVC_PASSWORD**, **GOVC_INSECURE** (and optionally **VCENTER_CA_CERTS**) on the jumper so the construct script can talk to vCenter.
 - **Captures all jumper session output** to a local log file: `logs/stembuild-construct-<timestamp>.log`.
 - On failure, prints the **last 200 lines** of that log so you see the stembuild/govc errors without logging into the jumper.
@@ -175,6 +175,6 @@ Only **VMware Tools install** uses **govc vm.keystrokes** (unattend handles auto
 
 - Packer 1.7.0+
 - govc (VMware vSphere CLI)
-- stembuild binary
+- **stembuild binary** – For 2019/2022/2025 you can use a single `stembuild` in PATH, or version-specific binaries named `stembuild-2019`, `stembuild-2022`, `stembuild-2025`. The script picks the one matching `windows_version` from your vars file. Set **STEMBUILD_BIN_DIR** to the directory containing those binaries, or place them in the script directory; otherwise the script looks in PATH.
 - Access to vCenter with appropriate permissions
-- Windows Server 2019 ISO (for ISO mode) or existing template (for template mode)
+- Windows Server 2019/2022/2025 ISO (for ISO mode) or existing template (for template mode)

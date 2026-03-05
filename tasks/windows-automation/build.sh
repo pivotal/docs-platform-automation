@@ -164,6 +164,31 @@ sanitize_jumper_remote_dirname() {
     echo "$safe"
 }
 
+# Resolve stembuild binary for the given Windows version (2019, 2022, 2025).
+# CI/build pipelines may produce stembuild-2019, stembuild-2022, stembuild-2025; use the one matching windows_version.
+# Search order: STEMBUILD_BIN_DIR/stembuild-{ver}, SCRIPT_DIR/stembuild-{ver}, PATH stembuild-{ver}, then PATH stembuild.
+# Outputs the absolute path to the binary to stdout; returns 0 if found, 1 otherwise.
+resolve_stembuild_for_version() {
+    local ver="${1:-2019}"
+    local dir
+    for dir in "${STEMBUILD_BIN_DIR:-}" "$SCRIPT_DIR" ""; do
+        [[ -z "$dir" ]] && continue
+        if [[ -x "$dir/stembuild-${ver}" ]]; then
+            echo "$(cd "$dir" && pwd)/stembuild-${ver}"
+            return 0
+        fi
+    done
+    if command -v "stembuild-${ver}" &>/dev/null; then
+        command -v "stembuild-${ver}"
+        return 0
+    fi
+    if command -v stembuild &>/dev/null; then
+        command -v stembuild
+        return 0
+    fi
+    return 1
+}
+
 # Print build summary report to console (success or failure). Uses BUILD_REPORT_* globals.
 # Shows each step by name with tick (✓), cross (✗), or dash (—) for success, failed, or skipped.
 #
@@ -1932,7 +1957,7 @@ post_build_provisioning() {
     
     # Extract variables from vars file (get_var always returns 0; empty if key missing)
     local vcenter_server vcenter_user vcenter_pass vcenter_insecure
-    local windows_username windows_password patch_version template_path template_name vcenter_folder keep_base_vm datacenter
+    local windows_username windows_password patch_version template_path template_name vcenter_folder keep_base_vm datacenter windows_version
     vcenter_server=$(get_var "$vars_file" "vcenter_server")
     vcenter_user=$(get_var "$vars_file" "vcenter_username")
     vcenter_pass=$(get_var "$vars_file" "vcenter_password")
@@ -1945,6 +1970,8 @@ post_build_provisioning() {
     vcenter_folder=$(get_var "$vars_file" "vcenter_folder")
     keep_base_vm=$(get_var "$vars_file" "keep_base_vm")
     datacenter=$(trim_var "$(get_var "$vars_file" "vcenter_datacenter")")
+    windows_version=$(trim_var "$(get_var "$vars_file" "windows_version")")
+    [[ -z "$windows_version" ]] && windows_version="2019"
     
     # Track base VM name for ISO mode cleanup (only clone in ISO mode; base_vm_name is the VM before clone)
     local base_vm_name="$vm_name"
@@ -2335,11 +2362,15 @@ post_build_provisioning() {
         report_build_failure "stembuild construct"
         return 1
     fi
+    # Prefer version-specific binary (stembuild-2019, stembuild-2022, stembuild-2025) from STEMBUILD_BIN_DIR, SCRIPT_DIR, or PATH; else stembuild.
     local stembuild_binary=""
-    if command -v stembuild &> /dev/null; then
+    if stembuild_binary=$(resolve_stembuild_for_version "$windows_version") && [[ -n "$stembuild_binary" ]]; then
+        log_info "Using stembuild binary for Windows $windows_version: $stembuild_binary"
+    elif command -v stembuild &>/dev/null; then
         stembuild_binary=$(command -v stembuild)
+        log_info "Using stembuild from PATH: $stembuild_binary"
     else
-        log_error "stembuild not found in PATH"
+        log_error "stembuild not found (looked for stembuild-$windows_version and stembuild in STEMBUILD_BIN_DIR, SCRIPT_DIR, PATH)"
         report_build_failure "stembuild construct"
         return 1
     fi
@@ -2364,17 +2395,19 @@ post_build_provisioning() {
             return 1
         fi
         [[ -f "$scripts_dir/govc-vm-utils.sh" ]] || { log_error "govc-vm-utils.sh not found at $scripts_dir/govc-vm-utils.sh (required for jumper)"; report_build_failure "stembuild construct"; return 1; }
-        local stembuild_bin govc_bin
-        stembuild_bin=$(which stembuild 2>/dev/null) || { log_error "stembuild not in PATH for jumper copy"; report_build_failure "stembuild construct"; return 1; }
+        local govc_bin
         govc_bin=$(which govc 2>/dev/null) || { log_error "govc not in PATH for jumper copy"; report_build_failure "stembuild construct"; return 1; }
         # Per-VM remote dir: /tmp/<sanitized_target_vm_name>. vm_name here is the target VM (set in Step 3.5). Use valid dirname only.
         local safe_vmname
         safe_vmname=$(sanitize_jumper_remote_dirname "$vm_name" 80)
         local remote_dir="/tmp/$safe_vmname"
         jumper_remote_dir_used="$remote_dir"
-        local stembuild_remote="$remote_dir/stembuild"
+        # Copy version-specific stembuild (e.g. stembuild-2019) to jumper; remote path preserves basename for run-stembuild-construct.sh.
+        local stembuild_basename stembuild_remote
+        stembuild_basename=$(basename "$stembuild_binary")
+        stembuild_remote="$remote_dir/$stembuild_basename"
         local govc_remote="$remote_dir/govc"
-        log_info "Creating $remote_dir on jumper and copying scripts/binaries (run-stembuild-construct.sh, govc-vm-utils.sh, stembuild, govc, LGPO.zip)"
+        log_info "Creating $remote_dir on jumper and copying scripts/binaries (run-stembuild-construct.sh, govc-vm-utils.sh, $stembuild_basename, govc, LGPO.zip)"
         if ! sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" "mkdir -p '$remote_dir'"; then
             log_error "Failed to create $remote_dir on jumper"
             report_build_failure "stembuild construct"
@@ -2383,7 +2416,7 @@ post_build_provisioning() {
         if ! sshpass -p "$jumper_password" scp -o StrictHostKeyChecking=no \
             "$scripts_dir/run-stembuild-construct.sh" \
             "$scripts_dir/govc-vm-utils.sh" \
-            "$stembuild_bin" \
+            "$stembuild_binary" \
             "$govc_bin" \
             "$lgpo_zip" \
             "$jumper_user@$jumper_ip:$remote_dir/"; then
@@ -2404,7 +2437,7 @@ post_build_provisioning() {
         [[ -n "$vcenter_ca_remote" ]] && export_vars="$export_vars VCENTER_CA_CERTS=\"$vcenter_ca_remote\""
         log_info "Starting stembuild construct on jumper via SSH ($jumper_user@$jumper_ip); running from $remote_dir..."
         sshpass -p "$jumper_password" ssh -o StrictHostKeyChecking=no "$jumper_user@$jumper_ip" \
-            "echo '--- SSH session started on jumper, running stembuild construct from $remote_dir ---'; cd '$remote_dir' && export $export_vars && chmod +x run-stembuild-construct.sh stembuild govc && bash run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\" \"\" \"$govc_remote\"" 2>&1 | tee "$construct_log"
+            "echo '--- SSH session started on jumper, running stembuild construct from $remote_dir ---'; cd '$remote_dir' && export $export_vars && chmod +x run-stembuild-construct.sh $stembuild_basename govc && bash run-stembuild-construct.sh \"$vm_name\" \"$static_ip\" \"$windows_username\" \"$windows_password\" \"$stembuild_remote\" \"$datacenter\" \"\" \"$govc_remote\"" 2>&1 | tee "$construct_log"
         if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
             construct_rc=1
             log_error "stembuild construct failed on jumper (attempt $attempt). Last 200 lines of log:"
@@ -2480,8 +2513,8 @@ post_build_provisioning() {
     fi
     log_success "VM powered off"
     
-    # Run package (pass vCenter options so package script has what it needs)
-    local package_args=(-n "$vm_name" -P "$patch_version" -i "$vm_inventory_path")
+    # Run package (pass vCenter options and version-specific stembuild binary path)
+    local package_args=(-n "$vm_name" -P "$patch_version" -i "$vm_inventory_path" -b "$stembuild_binary")
     [[ "$vcenter_insecure" == "true" ]] && package_args+=(-I)
     [[ -n "${VCENTER_CA_CERTS:-}" ]] && [[ -f "${VCENTER_CA_CERTS}" ]] && package_args+=(-c "$VCENTER_CA_CERTS")
     run_script "$SCRIPT_DIR/package-stemcell.sh" "${package_args[@]}" > "$package_log" 2>&1 || {

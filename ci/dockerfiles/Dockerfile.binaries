@@ -9,12 +9,13 @@ COPY om-cli/om /usr/bin/om
 COPY winfs-injector/winfs-injector-linux* /usr/bin/winfs-injector
 COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
-COPY stembuild-cli/stembuild-linux* /tmp/stembuild
+# stembuild 2019 binary: install as stembuild-2019 so build.sh can select by windows_version
+COPY stembuild-cli/stembuild-linux* /tmp/stembuild-2019
 
 RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
-# stembuild is a binary file (not a tarball), so just copy and make executable
-RUN chmod +x /tmp/stembuild && mv /tmp/stembuild /usr/bin/stembuild
+# stembuild is a binary file (not a tarball), copy and install as stembuild-2019
+RUN chmod +x /tmp/stembuild-2019 && mv /tmp/stembuild-2019 /usr/bin/stembuild-2019
 
 # Download LGPO (Local Group Policy Object Utility) from Microsoft
 # LGPO is required by stembuild and must be in the same directory as stembuild binary
@@ -42,7 +43,7 @@ RUN chmod +x \
     /usr/bin/govc \
     /usr/bin/iso-replicator \
     /usr/bin/om \
-    /usr/bin/stembuild \
+    /usr/bin/stembuild-2019 \
     /usr/bin/winfs-injector
 
 # Install Packer
@@ -66,8 +67,8 @@ RUN mkdir -p /root/.packer.d/plugins \
 # Verify Packer installation
 RUN packer version
 
-# Verify stembuild installation
-RUN stembuild version || echo "stembuild version check (may not support version flag)"
+# Verify stembuild-2019 installation (build.sh selects stembuild-2019/stembuild-2022/stembuild-2025 by windows_version)
+RUN stembuild-2019 version || echo "stembuild-2019 version check (may not support version flag)"
 
 # Verify LGPO is present
 RUN ls -la /usr/bin/LGPO.exe || echo "WARNING: LGPO.exe not found - stembuild construct may fail"

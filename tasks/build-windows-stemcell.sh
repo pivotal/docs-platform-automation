@@ -17,7 +17,11 @@ require_cmd() {
 }
 require_cmd packer
 require_cmd govc
-require_cmd stembuild
+# At least one stembuild binary must be present (stembuild-2019 from Dockerfile.binaries, or stembuild, or stembuild-2022/2025)
+if ! command -v stembuild &>/dev/null && ! command -v stembuild-2019 &>/dev/null && ! command -v stembuild-2022 &>/dev/null && ! command -v stembuild-2025 &>/dev/null; then
+    echo "ERROR: no stembuild binary found (looked for stembuild, stembuild-2019, stembuild-2022, stembuild-2025)"
+    exit 1
+fi
 
 # ---- Helpers for vars file ----
 # Append a single line to the vars file (key = "value").
@@ -167,9 +171,21 @@ fi
 
 echo "Generated variables file: $VARS_FILE"
 echo "=========================================="
-echo "Variables parsed from file (for build.sh):"
+echo "Variables parsed from file (for build.sh, sensitive keys redacted):"
 echo "=========================================="
-cat "$VARS_FILE"
+# Never print password/secret values to log
+SENSITIVE_KEYS="vcenter_password|vcenter_username|windows_password|windows_username|proxy_password|proxy_username|jumper_password"
+while IFS= read -r line; do
+    [[ -z "${line// /}" ]] && echo "$line" && continue
+    [[ "$line" =~ ^[[:space:]]*# ]] && echo "$line" && continue
+    key="${line%%=*}"
+    key=$(printf '%s' "$key" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    if echo "$key" | grep -qE "^($SENSITIVE_KEYS)$"; then
+        echo "  ${key} = \"***REDACTED***\""
+    else
+        echo "$line"
+    fi
+done < "$VARS_FILE"
 echo "---"
 echo "Base VM name: windows-base-vm"
 TARGET_VM_TS=$(date -u +%Y%m%d%H%M%S 2>/dev/null || date +%Y%m%d%H%M%S)
@@ -178,7 +194,12 @@ declare -a BUILD_ARGS=()
 [[ "${DEBUG_MODE:-}" == "true" ]] && BUILD_ARGS+=(--debug) && echo "DEBUG_MODE=true: enabling set -x for build.sh and all scripts it calls"
 declare -a JUMPER_ARGS=()
 [[ -n "${JUMPER_HOST:-}" && -n "${JUMPER_USER:-}" && -n "${JUMPER_PASSWORD:-}" ]] && JUMPER_ARGS+=(--jumper-ip "$JUMPER_HOST" --jumper-user "$JUMPER_USER" --jumper-password "$JUMPER_PASSWORD") && echo "Jumper flags added."
-echo "All arguments passed to build.sh: ./build.sh -v $VARS_FILE ${BUILD_ARGS[*]} ${JUMPER_ARGS[*]}"
+# Do not echo actual jumper password; show placeholder for args
+if [[ ${#JUMPER_ARGS[@]} -gt 0 ]]; then
+    echo "All arguments passed to build.sh: ./build.sh -v $VARS_FILE ${BUILD_ARGS[*]} --jumper-ip *** --jumper-user *** --jumper-password ***REDACTED***"
+else
+    echo "All arguments passed to build.sh: ./build.sh -v $VARS_FILE ${BUILD_ARGS[*]}"
+fi
 echo "=========================================="
 
 # Set NO_PROXY before curl/packer init so GitHub bypasses proxy (user value + github.com,github.com:443).
