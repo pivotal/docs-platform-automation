@@ -11,11 +11,13 @@ COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
 # stembuild 2019 binary: install as stembuild-2019 so build.sh can select by windows_version
 COPY stembuild-cli/stembuild-linux* /tmp/stembuild-2019
+COPY docs-platform-automation/stembuild-2022 /tmp/stembuild-2022
 
 RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
 # stembuild is a binary file (not a tarball), copy and install as stembuild-2019
 RUN chmod +x /tmp/stembuild-2019 && mv /tmp/stembuild-2019 /usr/bin/stembuild-2019
+RUN chmod +x /tmp/stembuild-2022 && mv /tmp/stembuild-2022 /usr/bin/stembuild-2022
 # build.sh uses STEMBUILD_BIN_DIR to find stembuild-2019 (and future stembuild-2022, stembuild-2025)
 
 # Download LGPO (Local Group Policy Object Utility) from Microsoft
