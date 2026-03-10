@@ -11,7 +11,7 @@ COPY govc-cli/*Linux* /tmp
 COPY credhub-cli/*linux* /tmp
 # stembuild 2019 binary: install as stembuild-2019 so build.sh can select by windows_version
 COPY stembuild-cli/stembuild-linux* /tmp/stembuild-2019
-COPY docs-platform-automation/stembuild-2022 /tmp/stembuild-2022
+COPY docs-platform-automation/stembuild-linux-2022 /tmp/stembuild-2022
 
 RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
 RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
