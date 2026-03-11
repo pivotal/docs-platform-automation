@@ -1375,6 +1375,50 @@ rather than storing it and using it in a different job.</p>
     REPLICATED_NAME: iso-1
 ```
 
+### <a id='replicate-uploaded-product'></a>replicate-uploaded-product
+
+This task uses the native Ops Manager API to stage a product as a replica via <code>om replicate-product</code>.
+The product must already be available in Ops Manager (uploaded); a tile file can optionally be provided instead of the config file input, but then the `REPLICA_SUFFIX` param is required.
+
+<p class="note"><strong>Requires Ops Manager 3.3 or greater.</strong>
+**Task**
+
+<%= partial "../tasks/replicate-uploaded-product" %>
+
+**Implementation**
+
+<%= partial "../tasks/replicate-uploaded-product-script" %>
+
+**Usage**
+
+With a product file (product name and version are read from the tile):
+
+```yaml
+- task: replicate-uploaded-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/replicate-uploaded-product.yml
+  input_mapping:
+    product: pas-windows
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    REPLICA_SUFFIX: iso-1
+```
+
+With a config file:
+
+```yaml
+- task: replicate-uploaded-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/replicate-uploaded-product.yml
+  input_mapping:
+    env: configuration
+    config: replicate-config
+  params:
+    ENV_FILE: foundations/config/env.yml
+    CONFIG_FILE: replicate-product.yml
+```
+
 ### <a id='revert-staged-changes'></a>revert-staged-changes
 
 Reverts all changes that are currently staged on the Tanzu Operations Manager.
