@@ -127,6 +127,31 @@ see [Stemcell Handling](./concepts/stemcell-handling.html).
     ENV_FILE: ((foundation))/env/env.yml
 ```
 
+### <a id='assign-kubernetes-distribution'></a>assign-kubernetes-distribution
+
+`assign-kubernetes-distribution` assigns a Kubernetes distribution to a staged Kubernetes product.
+This is required for Kubernetes-based products on Ops Manager 3.3+, analogous to how
+`assign-stemcell` assigns a stemcell to a BOSH-based product.
+
+**Task**
+
+<%= partial "tasks/assign-kubernetes-distribution" %>
+
+**Implementation**
+
+<%= partial "tasks/assign-kubernetes-distribution-script" %>
+
+**Usage**
+
+```yaml
+- task: assign-kubernetes-distribution
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-kubernetes-distribution.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    CONFIG_FILE: kubernetes-association/config.yml
+```
+
 ### <a id='assign-stemcell'></a>assign-stemcell
 
 `assign-stemcell` assigns a stemcell to a provided product.

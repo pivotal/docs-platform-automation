@@ -1,0 +1,9 @@
+<pre>
+<code>
+cat /var/version && echo ""
+set -eux
+om --env env/"${ENV_FILE}" assign-kubernetes-distribution \
+  --config config/"${CONFIG_FILE}"
+
+</code>
+</pre>
