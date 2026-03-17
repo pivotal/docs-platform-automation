@@ -334,6 +334,15 @@ resources:
     access_token: ((platform-automation/main/om.access_token))
     owner: cloudfoundry
     repository: bosh-windows-stemcell-builder
+    tag_filter: "^(2019.*)$"
+- name: stembuild-cli-2022
+  type: github-release
+  source:
+    github_api_url: https://github.gwd.broadcom.net/api/v3
+    owner: TNZ
+    repository: bosh-windows-stemcell-builder
+    access_token: ((concourse-team/gormt-pat))
+    tag_filter: "^(2022.*)$"
 - name: isolation-segment-replicator
   type: github-release
   source:
@@ -590,6 +599,10 @@ jobs:
       params:
         globs:
         - 'stembuild-linux*'
+    - get: stembuild-cli-2022
+      params:
+        globs:
+        - 'stembuild-linux*'
     - get: om-release
       trigger: true
       params:
@@ -633,6 +646,7 @@ jobs:
         - name: govc-cli
         - name: credhub-cli
         - name: stembuild-cli
+        - name: stembuild-cli-2022
         - name: docs-platform-automation
         - name: packages-image-oci
       outputs:
