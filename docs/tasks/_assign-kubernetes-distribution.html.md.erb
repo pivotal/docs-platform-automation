@@ -1,0 +1,30 @@
+<pre>
+<code>
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+- name: env # contains the env file with target OpsMan Information
+- name: config # contains the configuration file for assign-kubernetes-distribution command
+  # - Example config:
+  # ---
+  # product: kafka-on-k8s
+  # distribution: managed-k8s:1.0.0
+
+params:
+  ENV_FILE: env.yml
+  # - Required
+  # - Filepath of the env config YAML
+  # - The path is relative to root of the `env` input
+
+  CONFIG_FILE: config.yml
+  # - Required
+  # - Filepath of the assign-kubernetes-distribution config YAML
+  # - The path is relative to root of the `config` input
+
+run:
+  path: platform-automation-tasks/tasks/assign-kubernetes-distribution.sh
+
+</code>
+</pre>

@@ -5,6 +5,14 @@
   params:
     ENV_FILE: ((foundation))/env/env.yml
 # code_snippet assign-multi-stemcell-usage end
+# code_snippet assign-kubernetes-distribution-usage start yaml
+- task: assign-kubernetes-distribution
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/assign-kubernetes-distribution.yml
+  params:
+    ENV_FILE: ((foundation))/env/env.yml
+    CONFIG_FILE: kubernetes-association/config.yml
+# code_snippet assign-kubernetes-distribution-usage end
 # code_snippet assign-stemcell-usage start yaml
 - task: assign-stemcell
   image: platform-automation-image
