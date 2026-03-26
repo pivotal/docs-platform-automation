@@ -15,6 +15,12 @@ params:
   # - Filepath of the env config YAML
   # - The path is relative to root of the `env` input
 
+  RESUME_RECREATE: false
+  # - Optional
+  # - If true , will recreate all product vms(for vms > threshold days)
+  # - call director changes with threshold days = 0 to recreate all vms in the session 
+  # - works with OM > 3.3.0+
+  
   RECREATE: false
   # - Optional
   # - If true, will recreate all product VMs

@@ -10,6 +10,10 @@ if [ "${RECREATE}" == "true" ]; then
   flags+=("--recreate-vms")
 fi
 
+if [ "${RESUME_RECREATE}" == "true" ]; then
+  flags+=("--resume-recreate-vms")
+fi
+
 if [ "${IGNORE_WARNINGS}" == "true" ]; then
   flags+=("--ignore-warnings")
 fi
