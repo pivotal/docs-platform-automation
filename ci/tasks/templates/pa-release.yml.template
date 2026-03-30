@@ -15,3 +15,8 @@ end_of_support_date_mm/dd/yyyy: ${END_OF_SUPPORT_DATE}
 docs_link: https://docs.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.3/vmware-automation-toolkit/GUID-docs-release-notes.html#${VERSION}
 export_control_status: ENTITLEMENT_REQUIRED
 product_slug: platform-automation
+tile_new_config_added: False
+tile_new_config_release_notes_urls: []
+version_breaking_change: False
+version_breaking_change_documentation_urls: []
+version_known_issues: []
