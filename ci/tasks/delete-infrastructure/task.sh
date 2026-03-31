@@ -12,7 +12,7 @@ pushd "$deployment_path"
   git config --global user.email "$PLATFORM_AUTOMATION_EMAIL"
   git add terraform.tfstate
 
-  git commit -m "deleted infrastructure for $IAAS" || true
+  git commit -m "[skip-commit-ruleset] deleted infrastructure for $IAAS" || true
 popd
 }
 

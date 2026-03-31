@@ -17,7 +17,7 @@ run:
     git config --global user.name "platform-automation"
     git config --global user.email "platformautomation@groups.vmware.com"
     git add docs-platform-automation
-    git commit -m 'updated docs submodule ref' || true
+    git commit -m '[skip-commit-ruleset] updated docs submodule ref' || true
 inputs:
 - name: deployments
 - name: docs-platform-automation
