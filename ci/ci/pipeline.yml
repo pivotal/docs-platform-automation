@@ -963,7 +963,7 @@ jobs:
             params:
               GIT_AUTHOR_NAME: platform-automation-bot
               GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
-              COMMIT_MESSAGE: "create-vm update state file for ci-upgrade"
+              COMMIT_MESSAGE: "[skip-commit-ruleset] create-vm update state file for ci-upgrade"
               FILE_SOURCE_PATH: state.yml
               FILE_DESTINATION_PATH: ci-upgrade-epc/state.yml
             input_mapping:
@@ -1122,7 +1122,7 @@ jobs:
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
           GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
-          COMMIT_MESSAGE: "delete-vm update state file for ci-upgrade"
+          COMMIT_MESSAGE: "[skip-commit-ruleset] delete-vm update state file for ci-upgrade"
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: ci-upgrade/state.yml
         input_mapping:
@@ -1252,7 +1252,7 @@ jobs:
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
           GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
-          COMMIT_MESSAGE: #@ "create-vm update state file for " + env_name
+          COMMIT_MESSAGE: #@ "[skip-commit-ruleset] create-vm update state file for " + env_name
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
         input_mapping:
@@ -1338,7 +1338,7 @@ jobs:
         params:
           GIT_AUTHOR_NAME: platform-automation-bot
           GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
-          COMMIT_MESSAGE: #@ "delete-vm update state file for " + env_name
+          COMMIT_MESSAGE: #@ "[skip-commit-ruleset] delete-vm update state file for " + env_name
           FILE_SOURCE_PATH: state.yml
           FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
         input_mapping:
@@ -1428,7 +1428,7 @@ jobs:
           params:
             GIT_AUTHOR_NAME: platform-automation-bot
             GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
-            COMMIT_MESSAGE: #@ "delete-vm update state file for " + env_name
+            COMMIT_MESSAGE: #@ "[skip-commit-ruleset] delete-vm update state file for " + env_name
             FILE_SOURCE_PATH: state.yml
             FILE_DESTINATION_PATH: #@ env_name + "/state.yml"
           input_mapping:
@@ -1555,7 +1555,7 @@ jobs:
               params:
                 GIT_AUTHOR_NAME: platform-automation-bot
                 GIT_AUTHOR_EMAIL: ((platform-automation/main.platform-automation-email))
-                COMMIT_MESSAGE: delete-vm update state file for ci-upgrade-epc
+                COMMIT_MESSAGE: "[skip-commit-ruleset] delete-vm update state file for ci-upgrade-epc"
                 FILE_SOURCE_PATH: state.yml
                 FILE_DESTINATION_PATH:  ci-upgrade-epc/state.yml
               input_mapping:

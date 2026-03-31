@@ -64,7 +64,7 @@ run:
       git config --global user.name "platform-automation"
       git config --global user.email "platformautomation@groups.vmware.com"
       git add -A
-      git commit -m "Add release notes table" || true
+      git commit -m "[skip-commit-ruleset] Add release notes table" || true
       git pull -r
       git push
     popd 
@@ -79,7 +79,7 @@ run:
       cat /dev/null > ci/patch-notes/"$DOC_VERSION"-patch-notes.md
       if [[ -n $(git status --porcelain) ]]; then
         git add -A
-        git commit -m "remove documented release notes for $DOC_VERSION"
+        git commit -m "[skip-commit-ruleset] remove documented release notes for $DOC_VERSION"
         git pull -r
         git push
       fi

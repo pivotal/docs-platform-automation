@@ -27,7 +27,7 @@ skip-ssl-validation: true
 connect-timeout: 60
 EOL
     git add env.yml
-    git commit -m "updated terraform state for $DEPLOYMENT_NAME & updated env.yml" || true
+    git commit -m "[skip-commit-ruleset] updated terraform state for $DEPLOYMENT_NAME & updated env.yml" || true
   popd
 }
 

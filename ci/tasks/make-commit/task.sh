@@ -9,4 +9,4 @@ cp generated-state/state.yml "$path"/state.yml
 cd deployments-updated
 
 git add -A
-git commit -m "adding state file for $IAAS" || true
+git commit -m "[skip-commit-ruleset] adding state file for $IAAS" || true
