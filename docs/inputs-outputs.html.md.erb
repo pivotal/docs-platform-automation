@@ -13,7 +13,7 @@ This site requires you to log in.
 
 ## director config
 
-The config director sets the BOSH tile (director) on Tanzu Operations Manager.
+The director config sets the BOSH tile (director) on Tanzu Operations Manager.
 
 The `config` input for a director task expects to have a `director.yml` file.
 The configuration of the `director.yml` is IAAS specific for some properties; that is, networking.
@@ -22,7 +22,7 @@ There are two ways to build a director config.
 
 1. Using an already deployed Tanzu Operations Manager, you can extract the config using [staged-director-config](./tasks.html#staged-director-config).
 2. Deploying a new Tanzu Operations Manager requires more effort for a `director.yml`.
-   The configuration of director is variables, based on the features enabled.
+   The configuration of the director varies based on the features enabled.
    This `director.yml` is a very basic example for vSphere.
 
     ```yaml
@@ -306,17 +306,17 @@ The expected format for this errand config is:
 ## installation
 
 The file contains the information to restore a Tanzu Operations Manager VM.
-The `installation` input for a opsman VM task expects to have a `installation.zip` file.
+The `installation` input for an opsman VM task expects to have a `installation.zip` file.
 
 This file can be exported from a Tanzu Operations Manager VM using the [export-installation](./tasks.html#export-installation) task.
 This file can be imported to a Tanzu Operations Manager VM using the [import-installation](./tasks.html#import-installation) task.
 
 <p class="note important">
-This file cannot be manually created. It is a file that must be generated using the export function of Tanzu Operations Manager.</p>
+This file cannot be manually created. It must be generated using the export function of Tanzu Operations Manager.</p>
 
 ## Tanzu Operations Manager config
 
-The config for a Tanzu Operations Manager described IAAS specific information for creating the VM; that is, VM flavor (size) and IP addresses.
+The config for a Tanzu Operations Manager describes IAAS specific information for creating the VM; that is, VM flavor (size) and IP addresses.
 
 The `config` input for opsman task expects to have a `opsman.yml` file.
 The configuration of the `opsman.yml` is IAAS specific.
@@ -356,7 +356,7 @@ These required properties are adapted from the instructions outlined in
 
 <p class="note important">
 For authentication, you must either set <code>use_instance_profile: true</code>
-or provide a <code>secret_key_id</code> and <code>secret_access_key</code>.
+or provide a <code>access_key_id</code> and <code>secret_access_key</code>.
 You must remove key information if you're using an instance profile.
 Using an instance profile allows you to avoid interpolation
 because this file then contains no secrets.</p>
@@ -415,13 +415,13 @@ using the [download-product](./tasks.html#download-product) task.
 
 <%= partial "how-to-guides/opsman-config-tabs" %>
 
-The `p-automator` CLI includes the ability to extract the Tanzu Operations Manager VM configuration (GCP, AWS, Azure, and VSphere).
+The `p-automator` CLI includes the ability to extract the Tanzu Operations Manager VM configuration (GCP, AWS, Azure, and vSphere).
 This works for Tanzu Operations Managers that are already running. It is useful when [migrating to automation](./how-to-guides/upgrade-existing-opsman.html).
 
 Usage:
 
 1. Get the Platform Automation Toolkit image from the [Broadcom Support portal](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Platform%20Automation%20Toolkit).
-2. Import the image into `docker` to run the `p-automation` locally. See [Running commands locally](./how-to-guides/running-commands-locally.html).
+2. Import the image into `docker` to run the `p-automator` locally. See [Running commands locally](./how-to-guides/running-commands-locally.html).
 3. Create a [state file](./inputs-outputs.html#state]) that represents your current VM and IAAS.
 4. Invoke the `p-automator` CLI to get the configuration.
 
@@ -476,7 +476,7 @@ product-version-regex: ^2\.6\..*$
 ```
 
 <p class="note important">
-This file cannot be manually created. This file must retrieved from the Broadcom Support portal.</p>
+This file cannot be manually created. This file must be retrieved from the Broadcom Support portal.</p>
 
 ## product config
 
@@ -543,7 +543,7 @@ It must be in the original filename as that is used by Tanzu Operations Manager 
 The filename might look something like `bosh-stemcell-621.76-vsphere-esxi-ubuntu-xenial-go_agent.tgz`.
 
 <p class="note important">
-This file cannot be manually created. This file must retrieved from the Broadcom Support portal.</p>
+This file cannot be manually created. This file must be retrieved from the Broadcom Support portal.</p>
 
 Here's an example of how to pull the vSphere stemcell
 using the [download-product](./tasks.html#download-product) task.
