@@ -1,0 +1,220 @@
+# Configuring Proxy Authentication
+
+This guide explains how to configure proxy authentication for download-product tasks,
+including support for both Basic and SPNEGO (Kerberos) authentication methods.
+
+## Overview
+
+Platform Automation `download-product` task supports downloading products and stemcells through HTTP proxies with authentication.
+Two authentication methods are supported:
+
+- **Basic Authentication**: Standard username/password authentication
+- **SPNEGO Authentication**: Kerberos-based authentication using the SPNEGO protocol
+
+SPNEGO authentication is commonly used in enterprise environments with Active Directory or other Kerberos-based authentication systems.
+
+## Basic Proxy Authentication
+
+Basic authentication uses a simple username and password to authenticate with the proxy server.
+
+### Configuration
+
+Add the following parameters to your download configuration file:
+
+```yaml
+---
+# ... other download configuration ...
+
+proxy-url: http://proxy.example.com:8080
+proxy-username: username
+proxy-password: password
+proxy-auth-type: basic  # This is the default and can be omitted
+```
+
+### Example: Download Product with Basic Proxy Auth
+
+```yaml
+---
+pivnet-api-token: ((pivnet_token))
+pivnet-file-glob: "*.pivotal"
+pivnet-product-slug: elastic-runtime
+product-version: 2.10.0
+
+proxy-url: http://proxy.example.com:8080
+proxy-username: proxy-user
+proxy-password: ((proxy_password))
+```
+
+## SPNEGO (Kerberos) Proxy Authentication
+
+SPNEGO authentication uses Kerberos tickets to authenticate with the proxy server.
+This is the preferred method in environments with centralized authentication systems like Active Directory.
+
+### Prerequisites
+
+Before configuring SPNEGO authentication, ensure you have:
+
+1. **Kerberos Principal**: A valid Kerberos user principal (e.g., `user@REALM.COM`)
+2. **KDC Access**: Network access to your Kerberos Key Distribution Center (KDC)
+3. **Realm Information**: Your Kerberos realm name and KDC hostname/IP
+4. **Proxy Configuration**: The proxy server must support SPNEGO/Kerberos authentication
+
+### Configuration Files
+
+SPNEGO authentication requires two configuration files:
+
+1. **Download Configuration**: Contains proxy settings and credentials
+2. **Kerberos Configuration** (`krb5.conf`): Contains Kerberos realm and KDC settings
+
+### Step 1: Create krb5.conf
+
+Create a `krb5.conf` file in your configuration directory with your Kerberos settings:
+
+```ini
+[libdefaults]
+    default_realm = EXAMPLE.COM
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    forwardable = true
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+
+[realms]
+    EXAMPLE.COM = {
+        kdc = kdc.example.com:88
+        admin_server = kdc.example.com:749
+        default_domain = example.com
+    }
+
+[domain_realm]
+    .example.com = EXAMPLE.COM
+    example.com = EXAMPLE.COM
+
+[logging]
+    default = FILE:/var/log/krb5libs.log
+    kdc = FILE:/var/log/krb5kdc.log
+    admin_server = FILE:/var/log/kadmind.log
+```
+
+#### Configuration Parameters Explained
+
+- **default_realm**: Your Kerberos realm (usually uppercase domain name)
+- **kdc**: Hostname or IP address of your KDC server and port (default: 88)
+- **admin_server**: Hostname of the Kerberos admin server and port (default: 749)
+- **domain_realm**: Maps DNS domains to Kerberos realms
+- **forwardable**: Allows tickets to be forwarded (recommended: true)
+- **ticket_lifetime**: How long tickets are valid (default: 24h)
+
+### Step 2: Configure Download with SPNEGO
+
+Add the following parameters to your download configuration file:
+
+```yaml
+---
+pivnet-api-token: ((pivnet_token))
+pivnet-file-glob: "*.pivotal"
+pivnet-product-slug: elastic-runtime
+product-version: 2.10.0
+
+# SPNEGO Proxy Configuration
+proxy-url: http://proxy.example.com:8080
+proxy-username: user@EXAMPLE.COM
+proxy-password: ((kerberos_password))
+proxy-auth-type: spnego
+proxy-krb5-config: config/krb5.conf
+```
+
+#### Configuration Parameters
+
+- **proxy-url**: URL of your HTTP proxy server
+- **proxy-username**: Kerberos principal (must include realm, e.g., `user@REALM.COM`)
+- **proxy-password**: Password for the Kerberos principal
+- **proxy-auth-type**: Set to `spnego` for Kerberos authentication
+- **proxy-krb5-config**: Path to krb5.conf file (relative to the `config` input directory)
+
+### Step 3: Organize Configuration Files
+
+Your configuration directory structure should look like this:
+
+```
+config/
+├── download-config.yml
+└── krb5.conf
+```
+
+### Step 4: Run Download Task
+
+Use the download-product task with your configuration:
+
+```yaml
+- task: download-product
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/download-product.yml
+  input_mapping:
+    config: configuration
+  params:
+    CONFIG_FILE: download-config.yml
+    SOURCE: pivnet
+```
+
+## Complete Example: Pipeline with SPNEGO Proxy
+
+Here's a complete example of a Concourse pipeline job using SPNEGO proxy authentication:
+
+```yaml
+jobs:
+- name: download-product-with-spnego
+  plan:
+  - get: platform-automation-image
+    params: {unpack: true}
+  - get: platform-automation-tasks
+    params: {unpack: true}
+  - get: configuration
+  
+  - task: download-product
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    input_mapping:
+      config: configuration
+    params:
+      CONFIG_FILE: download-config.yml
+      SOURCE: pivnet
+    output_mapping:
+      downloaded-product: downloaded-product
+```
+
+With `configuration/download-config.yml`:
+
+```yaml
+---
+pivnet-api-token: ((pivnet_token))
+pivnet-file-glob: "srt-*.pivotal"
+pivnet-product-slug: elastic-runtime
+product-version-regex: ^2\.10\..*$
+
+proxy-url: http://proxy.corp.example.com:8080
+proxy-username: svc-automation@CORP.EXAMPLE.COM
+proxy-password: ((kerberos_password))
+proxy-auth-type: spnego
+proxy-krb5-config: config/krb5.conf
+```
+
+And `configuration/krb5.conf`:
+
+```ini
+[libdefaults]
+    default_realm = CORP.EXAMPLE.COM
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    forwardable = true
+
+[realms]
+    CORP.EXAMPLE.COM = {
+        kdc = kdc.corp.example.com:88
+        admin_server = kdc.corp.example.com:749
+    }
+
+[domain_realm]
+    .corp.example.com = CORP.EXAMPLE.COM
+    corp.example.com = CORP.EXAMPLE.COM
+```
