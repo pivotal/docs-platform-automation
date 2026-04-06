@@ -78,7 +78,10 @@ The `build-windows-stemcell` task is in the `docs-platform-automation` repositor
     # private_key: ((github-private-key))
 ```
 
-**Task location:** `ci/tasks/build-windows-stemcell/task.yml`
+**Task definitions:**
+
+- `ci/tasks/build-windows-stemcell/task.yml` — git input name **`docs-platform-automation`** (recommended with repo clone).
+- `tasks/build-windows-stemcell.yml` — git input name **`platform-automation-tasks`** (common when the tasks bundle is a separate resource or alias).
 
 ### From S3 (Alternative)
 

@@ -1,0 +1,30 @@
+<pre>
+<code>
+#!/usr/bin/env bash
+# Concourse entrypoint for build-windows-stemcell.
+set -euo pipefail
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+WINDOWS_DIR="${SCRIPT_DIR}/windows-automation"
+# Verifies packer, govc, and at least one stembuild binary (stembuild-2019, stembuild-2022, etc.)
+# Builds variables.pkrvars.hcl from Concourse params (vcenter_*, ISO_PATH or TEMPLATE_PATH, network, ...).
+# Downloads Packer vSphere plugin, runs: packer init windows-vm.pkr.hcl
+# Runs: ./build.sh -v variables.pkrvars.hcl [ --jumper-ip ... ]
+pushd "$WINDOWS_DIR"
+# ... generate VARS_FILE, packer init ...
+./build.sh -v "$VARS_FILE" "${BUILD_ARGS[@]}" "${JUMPER_ARGS[@]}"
+mkdir -p "$OLD_PWD/logs"
+cp -r logs/* "$OLD_PWD/logs" 2>/dev/null || true
+STEMCELL_FILE=$(find . -name "bosh-stemcell-*-vsphere-esxi-*-go_agent.tgz" -type f 2>/dev/null | head -1)
+if [[ -n "$STEMCELL_FILE" ]]; then
+  mkdir -p "$OLD_PWD/stemcell"
+  cp "$STEMCELL_FILE" "$OLD_PWD/stemcell"
+fi
+popd
+
+</code>
+</pre>
+
+<p class="note">
+The script runs from the <code>windows-automation</code> directory next to <code>build-windows-stemcell.sh</code>.
+It writes <code>variables.pkrvars.hcl</code>, initializes Packer, invokes <code>build.sh</code>, then copies <code>logs/</code> and the stemcell <code>.tgz</code> into the Concourse task output directories.
+</p>

@@ -623,6 +623,54 @@ product: cf
 stemcell: "97.190"
 ```
 
+## <a id='build-windows-stemcell'></a>build-windows-stemcell (Windows vSphere stemcell build)
+
+The [build-windows-stemcell](./tasks.html#build-windows-stemcell) task **builds** a BOSH Windows stemcell (`.tgz`) on vSphere using Packer and **stembuild**.
+It does not download a stemcell from the Broadcom Support portal.
+
+<p class="note">
+The Platform Automation container image for this task must include Packer, <code>govc</code>, and the correct <strong>stembuild</strong> binary for the Windows version you build (for example <code>stembuild-2019</code> or <code>stembuild-2022</code>).
+</p>
+
+### Task inputs
+
+| Input | Required | Description |
+|-------|----------|-------------|
+| `platform-automation-tasks` | Yes | Packaged Platform Automation tasks as a Concourse input. Must expose `tasks/build-windows-stemcell.sh` and the `tasks/windows-automation/` directory at the paths expected by the task YAML. |
+| `windows-iso` | No | Optional resource with a `.iso` file. Used when you upload an ISO from Concourse instead of referencing an ISO already on a datastore. |
+
+If your pipeline uses a different input name for the tasks volume, adjust the `file:` and `run.path` in your task definition so they resolve under that input. See the [task reference](./tasks.html#build-windows-stemcell).
+
+### Task outputs
+
+| Output | Description |
+|--------|-------------|
+| `stemcell/` | BOSH Windows stemcell: `bosh-stemcell-*-vsphere-esxi-windows*-go_agent.tgz`. Use as the `stemcell` input to [upload-stemcell](./tasks.html#upload-stemcell) (with `input_mapping` if your output name differs). |
+| `logs/` | Build and step logs from the automation. |
+
+Typical path for a follow-on task: `build-windows-stemcell/stemcell/*.tgz` when the task step is named `build-windows-stemcell`.
+
+### ISO on a vSphere datastore
+
+Set **`ISO_PATH`** to the path vSphere expects for the ISO file, usually **`[DATASTORE_NAME]/folder/file.iso`**. The bracketed name is the **datastore that holds the ISO**; it may differ from **`VCENTER_DATASTORE`** (where the VM disk is created). Do not set **`TEMPLATE_PATH`** or **`ISO_PATH_LOCAL`** if this is your only source.
+
+### Template mode
+
+Set **`TEMPLATE_PATH`** to the template inventory path (for example `/Datacenter/vm/Templates/windows-2019-base`). Omit **`ISO_PATH`**, **`ISO_PATH_LOCAL`**, and the **`windows-iso`** input. The task clones the template, provisions the clone, runs stembuild, then deletes the **clone** only; the **source template is not removed**.
+
+### Keep base VM (ISO mode only)
+
+Set **`KEEP_BASE_VM`** to the string **`true`** to keep the Packer-created **base** VM in vCenter after a clone is used for stembuild. Default is **`false`**. This applies to **ISO** mode, not template mode.
+
+### Params summary
+
+Concourse **`params`** supply vCenter credentials and placement, Windows credentials, **`PATCH_VERSION`**, **`WINDOWS_VERSION`** (2019 / 2022 / 2025), network values (**`STATIC_IP`**, **`SUBNET_MASK`**, **`GATEWAY`**, **`DNS_SERVERS`**), and one build source among **`ISO_PATH`**, **`ISO_PATH_LOCAL`**, **`TEMPLATE_PATH`**, or **`EXISTING_BASE_VM_NAME`**. Optional: proxy, **`TEMPLATE_NAME`**, jumper settings, **`PRODUCT_KEY`**, **`ENABLE_WINDOWS_UPDATES`**, **`LOG_LEVEL`**, **`DEBUG_MODE`**.
+
+For the full `inputs` / `outputs` / `params` block as YAML, see [build-windows-stemcell](./tasks.html#build-windows-stemcell).
+
+<p class="note important">
+Preserve the stemcell filename produced by this task when passing it to <a href="./tasks.html#upload-stemcell">upload-stemcell</a>; Tanzu Operations Manager uses the filename to determine OS and version.</p>
+
 ## telemetry
 
 The `config` input for the [collect-telemetry](./tasks.html#collect-telemetry) task

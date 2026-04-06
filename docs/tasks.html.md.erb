@@ -274,6 +274,94 @@ For example,
     OPSMAN_SSH_PRIVATE_KEY: ((opsman-ssh-private-key))
 ```
 
+### <a id='build-windows-stemcell'></a>build-windows-stemcell
+
+Builds a BOSH Windows stemcell (`.tgz`) on vSphere: either **ISO mode** (Packer installs Windows from an ISO) or **template mode** (clone an existing Windows template, then run stembuild on the clone).
+For datastore ISO paths, template mode, **keep base VM**, output directories, and the full **params** list, see [Task inputs and outputs — build-windows-stemcell](./inputs-outputs.html#build-windows-stemcell).
+
+<p class="note">
+This task targets vSphere only. It requires an image with Packer, <code>govc</code>, and a matching <strong>stembuild</strong> binary for <code>WINDOWS_VERSION</code>.
+</p>
+
+**Task**
+
+<%= partial "tasks/build-windows-stemcell" %>
+
+**Implementation**
+
+<%= partial "tasks/build-windows-stemcell-script" %>
+
+**Usage (ISO on vSphere datastore)**
+
+```yaml
+- task: build-windows-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/build-windows-stemcell.yml
+  params:
+    VCENTER_SERVER: ((vcenter-host))
+    VCENTER_USERNAME: ((vcenter-user))
+    VCENTER_PASSWORD: ((vcenter-password))
+    VCENTER_INSECURE_CONNECTION: "true"
+    VCENTER_DATACENTER: ((vcenter-datacenter))
+    VCENTER_DATASTORE: ((vm-datastore))
+    VCENTER_NETWORK: ((vm-network))
+    VCENTER_CLUSTER: ((vcenter-cluster))
+    ISO_PATH: '[iso-datastore]/ISOs/windows-server-2019.iso'
+    PATCH_VERSION: "2019.12.3"
+    WINDOWS_PASSWORD: ((windows-admin-password))
+    STATIC_IP: ((windows-static-ip))
+    SUBNET_MASK: "255.255.255.0"
+    GATEWAY: ((default-gateway))
+    DNS_SERVERS: "8.8.8.8,8.8.4.4"
+    KEEP_BASE_VM: "false"
+  outputs:
+  - name: logs
+  - name: stemcell
+```
+
+**Usage (template mode)**
+
+```yaml
+- task: build-windows-stemcell-from-template
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/build-windows-stemcell.yml
+  params:
+    VCENTER_SERVER: ((vcenter-host))
+    VCENTER_USERNAME: ((vcenter-user))
+    VCENTER_PASSWORD: ((vcenter-password))
+    VCENTER_INSECURE_CONNECTION: "true"
+    VCENTER_DATACENTER: ((vcenter-datacenter))
+    VCENTER_DATASTORE: ((vm-datastore))
+    VCENTER_NETWORK: ((vm-network))
+    VCENTER_CLUSTER: ((vcenter-cluster))
+    TEMPLATE_PATH: '/Datacenter/vm/Templates/windows-2019-base'
+    PATCH_VERSION: "2019.12.3"
+    WINDOWS_PASSWORD: ((windows-admin-password))
+    STATIC_IP: ((windows-static-ip))
+    SUBNET_MASK: "255.255.255.0"
+    GATEWAY: ((default-gateway))
+    DNS_SERVERS: "8.8.8.8,8.8.4.4"
+  outputs:
+  - name: logs
+  - name: stemcell
+```
+
+**Usage (upload stemcell to Tanzu Operations Manager)**
+
+```yaml
+- task: upload-windows-stemcell
+  image: platform-automation-image
+  file: platform-automation-tasks/tasks/upload-stemcell.yml
+  input_mapping:
+    stemcell: stemcell
+    env: configuration
+  params:
+    ENV_FILE: foundations/config/env.yml
+    FLOATING_STEMCELL: "true"
+```
+
+Ensure the preceding job passes the **`stemcell`** output from **build-windows-stemcell** into this task (for example with `passed:` and matching output/input names).
+
 ### <a id='check-pending-changes'></a>check-pending-changes
 
 Returns a table of the current state of your Tanzu Operations Manager
@@ -929,7 +1017,9 @@ This task will automatically download and inject the winfs for pas-windows.</p>
 This task cannot download the stemcell for pas-windows on vSphere.
 To build this stemcell manually, see
 <a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/6-0/tpcf/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows stemcell using stembuild</a>
-in the VMware <%= vars.tas_prod_name %> documentation.</p>
+in the VMware <%= vars.tas_prod_name %> documentation.
+To drive that build from a Concourse pipeline, use the <a href="#build-windows-stemcell">build-windows-stemcell</a> task;
+see <a href="./inputs-outputs.html#build-windows-stemcell">Task inputs and outputs — build-windows-stemcell</a>.</p>
 
 <p class="note">
 When the download product config only has the Broadcom Support portal credentials,

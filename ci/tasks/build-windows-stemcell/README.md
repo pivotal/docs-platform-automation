@@ -1,506 +1,284 @@
-# Build Windows Stemcell Task
+# Build Windows stemcell (Concourse task)
 
-This Concourse task automates the creation of Windows Server 2019 stemcells on vSphere using Packer and stembuild. The task generates a `variables.pkrvars.hcl` file from Concourse task parameters and runs the build process.
+This Concourse task builds a BOSH Windows stemcell (`.tgz`) on vSphere. It drives Packer (ISO mode) or clones an existing template (template mode), runs Windows configuration and updates, then uses **stembuild** to produce the stemcell artifact.
 
-## Overview
+Use this guide if you are **not** a platform-automation expert: it explains how to wire a pipeline, pick a build mode, and where artifacts land.
 
-The task supports two build modes:
-1. **ISO Mode**: Builds a new VM from a Windows Server 2019 ISO
-2. **Template Mode**: Clones an existing template VM (faster, skips installation)
+---
 
-## Required Parameters
+## What you need first
 
-### vCenter Configuration (MANDATORY)
-- `VCENTER_SERVER` - vCenter Server FQDN or IP
-- `VCENTER_USERNAME` - vCenter username
-- `VCENTER_PASSWORD` - vCenter password
-- `VCENTER_INSECURE_CONNECTION` - Allow insecure connections (default: `true`)
+1. **A Concourse team** you can `fly login` to, with a secrets store (e.g. Vault) for passwords.
+2. **A container image** that contains Packer, `govc`, and stembuild (e.g. `binaries-image` / platform-automation `testing` tag). See [RESOURCES.md](./RESOURCES.md).
+3. **This repository** as a git resource (branch that contains `tasks/build-windows-stemcell.sh` and `tasks/windows-automation/`).
+4. **vSphere details**: vCenter address, credentials, datacenter, datastore, network (port group), and either cluster or host.
+5. **A Windows admin password** and a **static IP** (with mask, gateway, DNS) reachable from the build network.
 
-### vSphere Infrastructure (MANDATORY)
-- `VCENTER_DATACENTER` - vCenter datacenter name
-- `VCENTER_DATASTORE` - vCenter datastore name
-- `VCENTER_NETWORK` - vCenter network/port group name
-- `VCENTER_CLUSTER` - vCenter cluster name (optional, leave empty if using host)
-- `VCENTER_HOST` - vCenter ESXi host name (optional, leave empty if using cluster)
-- `VCENTER_FOLDER` - vCenter folder path (optional)
-- `VCENTER_RESOURCE_POOL` - vCenter resource pool name (optional)
+---
 
-### VM Configuration (OPTIONAL - defaults shown)
-- `VM_NAME` - Temporary VM name during build (default: `windows-base-vm`)
-- `VM_CPU_COUNT` - Number of CPUs (default: `8`)
-- `VM_MEMORY_MB` - Memory in MB (default: `16384`)
-- `VM_DISK_SIZE_GB` - Disk size in GB (default: `100`)
+## Create a minimal pipeline (step by step)
 
-### Build Mode Configuration (MANDATORY - choose one)
+### Step 1: Define resources
 
-**ISO Mode:**
-- `ISO_PATH_LOCAL` - Local path to Windows Server 2019 ISO (Packer will upload)
-- `ISO_PATH` - Datastore path to Windows Server 2019 ISO (e.g., `[datastore1]/ISOs/file.iso`)
-- Or provide `windows-iso` input resource with ISO file
+- **`docs-platform-automation`** — `git` resource pointing at this repo (your fork or `pivotal/docs-platform-automation`).
+- **`binaries-image`** — `registry-image` for the task container (see [RESOURCES.md](./RESOURCES.md)).
 
-**Template Mode:**
-- `TEMPLATE_PATH` - vCenter inventory path to template (e.g., `/Datacenter/vm/Templates/windows-2019-template`)
+Optional:
 
-### Windows Configuration (MANDATORY)
-- `WINDOWS_USERNAME` - Windows administrator username (default: `Administrator`)
-- `WINDOWS_PASSWORD` - Windows administrator password
+- **`windows-iso`** — only if you want Concourse to **fetch** an ISO file; otherwise you can point at an ISO **already on the datastore** (see below).
 
-### Network Configuration (MANDATORY)
-- `STATIC_IP` - Static IP address
-- `SUBNET_MASK` - Subnet mask (e.g., `255.255.255.0`)
-- `GATEWAY` - Default gateway
-- `DNS_SERVERS` - DNS servers (comma-separated, e.g., `8.8.8.8,8.8.4.4`)
+### Step 2: Add a job that gets those resources
 
-### Stemcell Configuration (MANDATORY)
-- `PATCH_VERSION` - Patch version for stemcell (e.g., `2019.12.3` or `3`)
+Your job should `get: docs-platform-automation` and use `binaries-image` as the task image.
 
-## Optional Parameters
+### Step 3: Add the task and declare outputs
 
-- `TEMPLATE_NAME` - Final template name (optional, for creating template after stemcell in ISO mode)
-- `HTTP_PROXY` - HTTP proxy URL (optional)
-- `HTTPS_PROXY` - HTTPS proxy URL (optional)
-- `NO_PROXY` - Comma-separated list of hosts that should not use proxy (optional)
-- `ENABLE_WINDOWS_UPDATES` - Enable Windows updates installation (default: `true`)
-- `LOG_LEVEL` - Logging level: `DEBUG`, `INFO`, `WARN`, `ERROR` (default: `INFO`)
+Point `file:` at **one** of these (they are equivalent except for the git input name):
 
-## Inputs
+| Task file | Git input name |
+|-----------|----------------|
+| `docs-platform-automation/ci/tasks/build-windows-stemcell/task.yml` | `docs-platform-automation` |
+| `docs-platform-automation/tasks/build-windows-stemcell.yml` | `platform-automation-tasks` |
 
-- `docs-platform-automation` - Required. Contains the build scripts and Packer configuration
-- `windows-iso` - Optional. Contains the Windows Server 2019 ISO file (for ISO mode)
+Always declare **both** task outputs so later steps can consume them:
 
-## Outputs
+```yaml
+outputs:
+- name: logs
+- name: stemcell
+```
 
-- `logs` - Build logs and output files
+### Step 4: Pass `params`
 
-## Example Pipelines
+All vCenter, network, Windows, and mode settings are **Concourse task params** (see examples below). The task script turns them into `variables.pkrvars.hcl` and runs `build.sh`.
 
-### Example 1: ISO Mode with S3 Resource
+---
 
-Build from ISO stored in S3:
+## Choose how the VM is created (build mode)
+
+The task picks **one** source (first match wins in the script):
+
+| Priority | What you set | Meaning |
+|----------|----------------|--------|
+| 1 | `EXISTING_BASE_VM_NAME` | Clone an existing VM (advanced; not covered in detail here). |
+| 2 | `TEMPLATE_PATH` | **Template mode** — clone from a vSphere template (no ISO, no Packer install). |
+| 3 | `ISO_PATH_LOCAL` or `windows-iso` input | **ISO mode** — upload ISO from the task container into vSphere, then Packer installs Windows. |
+| 4 | `ISO_PATH` | **ISO mode** — use an ISO **already on a vSphere datastore** (no upload from Concourse). |
+
+Do **not** set `TEMPLATE_PATH` together with ISO variables unless you intend template mode; template wins over ISO when both appear in the generated vars file from the script’s ordering (template is checked first in `resolve_build_source`).
+
+---
+
+## 1) ISO already on vCenter (datastore path)
+
+Use this when the `.iso` is **already uploaded** to a datastore (Datastore Browser in vSphere shows it).
+
+**Set in params:**
+
+- `ISO_PATH` — datastore path string Packer/vSphere understands, usually:
+  - `[<datastore-name>]/<folder>/<file.iso>`
+- Example: `[iscsi-storage]/ISOs/windows-2022.iso`
+
+**Rules of thumb:**
+
+- The name in brackets **`[` `]`** is the **datastore name** (as shown in vSphere), not necessarily the same as `VCENTER_DATASTORE` (that names where the **VM disk** is placed).
+- Do **not** set `ISO_PATH_LOCAL` or `TEMPLATE_PATH` if you only want this mode.
+- Omit the `windows-iso` input if you are not uploading an ISO from Concourse.
+
+**Minimal params (in addition to vCenter / network / Windows / `PATCH_VERSION`):**
+
+```yaml
+params:
+  ISO_PATH: '[my-datastore]/ISOs/windows-server-2019.iso'
+  # ... VCENTER_*, STATIC_IP, SUBNET_MASK, GATEWAY, DNS_SERVERS, WINDOWS_PASSWORD, PATCH_VERSION, etc.
+```
+
+---
+
+## 2) Template mode
+
+Use this when you already have a **prepared Windows template** in vCenter (Tools installed, sysprep/generalization as you require). The task **clones** that template to a new VM, runs provisioning and stembuild on the clone, then **deletes only the clone**. Your **source template is not removed**.
+
+**Set in params:**
+
+- `TEMPLATE_PATH` — inventory path to the template, e.g. `/Datacenter/vm/Templates/my-windows-2019`
+  - You can use a path relative to the datacenter; the build may resolve it via `govc`.
+
+**Do not set** `ISO_PATH`, `ISO_PATH_LOCAL`, or rely on `windows-iso` for this mode.
+
+**Minimal params (in addition to vCenter / network / Windows / `PATCH_VERSION`):**
+
+```yaml
+params:
+  TEMPLATE_PATH: '/Datacenter/vm/Templates/windows-2019-base'
+  # ... VCENTER_*, STATIC_IP, SUBNET_MASK, GATEWAY, DNS_SERVERS, WINDOWS_PASSWORD, PATCH_VERSION, etc.
+```
+
+---
+
+## 3) Keep base VM (ISO mode only)
+
+After a successful **ISO** build, the automation normally **deletes the Packer-created base VM** once work moves to a cloned “target” VM for stembuild. If you want to **keep** that base VM in vCenter (for debugging or to convert it manually), set:
+
+```yaml
+params:
+  KEEP_BASE_VM: "true"
+```
+
+**Important:**
+
+- Applies to **ISO mode** when there is a separate base VM and clone. It **does not** apply to template mode in the same way (there is no Packer base VM).
+- Use the string **`true`** (the task writes `keep_base_vm = true` into the vars file).
+
+---
+
+## Output paths (where to find the stemcell and logs)
+
+After the task succeeds, Concourse exposes **named outputs** on the task step:
+
+| Output name | Contents |
+|-------------|----------|
+| **`stemcell/`** | The BOSH stemcell tarball. Exact filename follows the pattern `bosh-stemcell-*-vsphere-esxi-windows*-go_agent.tgz` (the middle part reflects Windows version, e.g. `windows2019`, `windows2022`). |
+| **`logs/`** | Copies of build logs from `tasks/windows-automation/logs/` (detailed step logs). |
+
+**Typical path inside a later step** (if the task is named `build-windows-stemcell`):
+
+- Stemcell file: `build-windows-stemcell/stemcell/bosh-stemcell-....tgz`
+- Logs: `build-windows-stemcell/logs/`
+
+Use the **`stemcell`** output as an input to a follow-on task (for example `upload-stemcell`) with `input_mapping` / `passed` as appropriate.
+
+---
+
+## Full example: ISO on datastore + outputs for upload
 
 ```yaml
 resources:
 - name: docs-platform-automation
   type: git
   source:
-    uri: https://github.com/pivotal/docs-platform-automation.git
+    uri: git@github.com:pivotal/docs-platform-automation.git
     branch: develop
-
-- name: windows-iso
-  type: s3
-  source:
-    bucket: my-windows-isos
-    regexp: windows-server-2019.*\.iso
-    access_key_id: ((s3-access-key))
-    secret_access_key: ((s3-secret-key))
+    private_key: ((git-private-key))
 
 - name: binaries-image
   type: registry-image
   source:
-    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
+    repository: ((dev_registry))/internalpcfplatformautomation/platform-automation
     tag: testing
-    username: ((concourse-team/dev_image_registry.username))
-    password: ((concourse-team/dev_image_registry.password))
+    username: ((dev_registry_username))
+    password: ((dev_registry_password))
 
 jobs:
 - name: build-windows-stemcell
   plan:
   - get: docs-platform-automation
-  - get: windows-iso
-    trigger: true
   - task: build-windows-stemcell
     image: binaries-image
     file: docs-platform-automation/ci/tasks/build-windows-stemcell/task.yml
     params:
-      # vCenter Configuration
       VCENTER_SERVER: ((vcenter-server))
-      VCENTER_USERNAME: ((vcenter-username))
+      VCENTER_USERNAME: ((vcenter-user))
       VCENTER_PASSWORD: ((vcenter-password))
       VCENTER_INSECURE_CONNECTION: "true"
-      
-      # vSphere Infrastructure
-      VCENTER_DATACENTER: ((vcenter-datacenter))
-      VCENTER_DATASTORE: ((vcenter-datastore))
-      VCENTER_NETWORK: ((vcenter-network))
+      VCENTER_DATACENTER: ((vcenter-dc))
+      VCENTER_DATASTORE: ((vm-datastore))
+      VCENTER_NETWORK: ((vm-network))
       VCENTER_CLUSTER: ((vcenter-cluster))
-      
-      # VM Configuration (using defaults)
-      # VM_NAME: "windows-base-vm"  # Optional
-      # VM_CPU_COUNT: "8"           # Optional
-      # VM_MEMORY_MB: "16384"       # Optional
-      # VM_DISK_SIZE_GB: "100"      # Optional
-      
-      # Build Mode: ISO from windows-iso input
-      ISO_PATH_LOCAL: "windows-iso/*.iso"
-      
-      # Stemcell Configuration
+      ISO_PATH: '[((iso-datastore))]/ISOs/windows-server-2019.iso'
       PATCH_VERSION: "2019.12.3"
-      
-      # Windows Configuration
       WINDOWS_USERNAME: "Administrator"
-      WINDOWS_PASSWORD: ((windows-password))
-      
-      # Network Configuration
-      STATIC_IP: ((static-ip))
-      SUBNET_MASK: ((subnet-mask))
-      GATEWAY: ((gateway))
-      DNS_SERVERS: ((dns-servers))
-      
-      # Optional: Create template after stemcell
-      TEMPLATE_NAME: "windows-2019-base-template"
-      
-      # Build Options
-      ENABLE_WINDOWS_UPDATES: "true"
-      LOG_LEVEL: "INFO"
-      JUMPER_HOST: ""
-      JUMPER_USER: ""
-      JUMPER_PASSWORD: ""
-    outputs:
-    - name: logs
-```
-
-### Example 2: ISO Mode with Datastore Path
-
-Build from ISO already uploaded to vSphere datastore:
-
-```yaml
-jobs:
-- name: build-windows-stemcell
-  plan:
-  - get: docs-platform-automation
-  - task: build-windows-stemcell
-    image: binaries-image
-    file: docs-platform-automation/ci/tasks/build-windows-stemcell/task.yml
-    params:
-      # vCenter Configuration
-      VCENTER_SERVER: ((vcenter-server))
-      VCENTER_USERNAME: ((vcenter-username))
-      VCENTER_PASSWORD: ((vcenter-password))
-      VCENTER_INSECURE_CONNECTION: "true"
-      
-      # vSphere Infrastructure
-      VCENTER_DATACENTER: ((vcenter-datacenter))
-      VCENTER_DATASTORE: ((vcenter-datastore))
-      VCENTER_NETWORK: ((vcenter-network))
-      VCENTER_CLUSTER: ((vcenter-cluster))
-      VCENTER_FOLDER: "/Datacenter/vm/WindowsVMs"
-      VCENTER_RESOURCE_POOL: "ResourcePool"
-      
-      # VM Configuration (custom values)
-      VM_NAME: "my-windows-vm"
-      VM_CPU_COUNT: "4"
-      VM_MEMORY_MB: "8192"
-      VM_DISK_SIZE_GB: "80"
-      
-      # Build Mode: ISO from datastore
-      ISO_PATH: "[datastore1]/ISOs/windows-server-2019.iso"
-      
-      # Stemcell Configuration
-      PATCH_VERSION: "3"
-      
-      # Windows Configuration
-      WINDOWS_USERNAME: "Administrator"
-      WINDOWS_PASSWORD: ((windows-password))
-      
-      # Network Configuration
-      STATIC_IP: "192.168.1.100"
+      WINDOWS_PASSWORD: ((windows-admin-password))
+      STATIC_IP: ((vm-static-ip))
       SUBNET_MASK: "255.255.255.0"
-      GATEWAY: "192.168.1.1"
+      GATEWAY: ((vm-gateway))
       DNS_SERVERS: "8.8.8.8,8.8.4.4"
-      
-      # Build Options
-      ENABLE_WINDOWS_UPDATES: "true"
-      LOG_LEVEL: "DEBUG"
-      JUMPER_HOST: ""
-      JUMPER_USER: ""
-      JUMPER_PASSWORD: ""
+      KEEP_BASE_VM: "false"
+      WINDOWS_VERSION: "2019"
     outputs:
     - name: logs
+    - name: stemcell
 ```
 
-### Example 3: Template Mode
+---
 
-Clone from existing template (faster, skips installation):
+## Full example: Template mode
 
 ```yaml
-jobs:
-- name: build-windows-stemcell-from-template
-  plan:
-  - get: docs-platform-automation
-  - task: build-windows-stemcell
+  - task: build-from-template
     image: binaries-image
     file: docs-platform-automation/ci/tasks/build-windows-stemcell/task.yml
     params:
-      # vCenter Configuration
       VCENTER_SERVER: ((vcenter-server))
-      VCENTER_USERNAME: ((vcenter-username))
+      VCENTER_USERNAME: ((vcenter-user))
       VCENTER_PASSWORD: ((vcenter-password))
       VCENTER_INSECURE_CONNECTION: "true"
-      
-      # vSphere Infrastructure
-      VCENTER_DATACENTER: ((vcenter-datacenter))
-      VCENTER_DATASTORE: ((vcenter-datastore))
-      VCENTER_NETWORK: ((vcenter-network))
+      VCENTER_DATACENTER: ((vcenter-dc))
+      VCENTER_DATASTORE: ((vm-datastore))
+      VCENTER_NETWORK: ((vm-network))
       VCENTER_CLUSTER: ((vcenter-cluster))
-      
-      # Build Mode: Template
-      TEMPLATE_PATH: "/Datacenter/vm/Templates/windows-2019-base-template"
-      
-      # Stemcell Configuration
+      TEMPLATE_PATH: '/Datacenter/vm/Templates/windows-2019-base'
       PATCH_VERSION: "2019.12.3"
-      
-      # Windows Configuration
       WINDOWS_USERNAME: "Administrator"
-      WINDOWS_PASSWORD: ((windows-password))
-      
-      # Network Configuration
-      STATIC_IP: ((static-ip))
-      SUBNET_MASK: ((subnet-mask))
-      GATEWAY: ((gateway))
-      DNS_SERVERS: ((dns-servers))
-      
-      # Build Options
-      ENABLE_WINDOWS_UPDATES: "true"
-      LOG_LEVEL: "INFO"
-      JUMPER_HOST: ""
-      JUMPER_USER: ""
-      JUMPER_PASSWORD: ""
+      WINDOWS_PASSWORD: ((windows-admin-password))
+      STATIC_IP: ((vm-static-ip))
+      SUBNET_MASK: "255.255.255.0"
+      GATEWAY: ((vm-gateway))
+      DNS_SERVERS: "8.8.8.8,8.8.4.4"
+      WINDOWS_VERSION: "2019"
     outputs:
     - name: logs
+    - name: stemcell
 ```
 
-**Note:** Template mode automatically:
-- Skips password change (assumes template already configured)
-- Skips VMware Tools installation (assumes already installed)
-- Always deletes VM after completion (success or failure)
+---
 
-### Example 4: With Proxy Configuration
+## Reference: common parameters
 
-Build with HTTP/HTTPS proxy:
+### vCenter (required)
 
-```yaml
-jobs:
-- name: build-windows-stemcell-with-proxy
-  plan:
-  - get: docs-platform-automation
-  - get: windows-iso
-    trigger: true
-  - task: build-windows-stemcell
-    image: binaries-image
-    file: docs-platform-automation/ci/tasks/build-windows-stemcell/task.yml
-    params:
-      # vCenter Configuration
-      VCENTER_SERVER: ((vcenter-server))
-      VCENTER_USERNAME: ((vcenter-username))
-      VCENTER_PASSWORD: ((vcenter-password))
-      VCENTER_INSECURE_CONNECTION: "true"
-      
-      # vSphere Infrastructure
-      VCENTER_DATACENTER: ((vcenter-datacenter))
-      VCENTER_DATASTORE: ((vcenter-datastore))
-      VCENTER_NETWORK: ((vcenter-network))
-      VCENTER_CLUSTER: ((vcenter-cluster))
-      
-      # Build Mode: ISO
-      ISO_PATH_LOCAL: "windows-iso/*.iso"
-      
-      # Stemcell Configuration
-      PATCH_VERSION: "2019.12.3"
-      
-      # Windows Configuration
-      WINDOWS_USERNAME: "Administrator"
-      WINDOWS_PASSWORD: ((windows-password))
-      
-      # Network Configuration
-      STATIC_IP: ((static-ip))
-      SUBNET_MASK: ((subnet-mask))
-      GATEWAY: ((gateway))
-      DNS_SERVERS: ((dns-servers))
-      
-      # Proxy Configuration
-      HTTP_PROXY: "http://proxy.example.com:8080"
-      HTTPS_PROXY: "http://proxy.example.com:8080"
-      NO_PROXY: "localhost,127.0.0.1,.local"
-      
-      # Build Options
-      ENABLE_WINDOWS_UPDATES: "true"
-      LOG_LEVEL: "INFO"
-      JUMPER_HOST: ""
-      JUMPER_USER: ""
-      JUMPER_PASSWORD: ""
-    outputs:
-    - name: logs
-```
+- `VCENTER_SERVER`, `VCENTER_USERNAME`, `VCENTER_PASSWORD`
+- `VCENTER_INSECURE_CONNECTION` — `"true"` or `"false"`
+- `VCENTER_DATACENTER`, `VCENTER_DATASTORE`, `VCENTER_NETWORK`
+- `VCENTER_CLUSTER` and/or `VCENTER_HOST` (one may be empty depending on your layout)
+- Optional: `VCENTER_FOLDER`, `VCENTER_RESOURCE_POOL`
 
-### Example 5: Using Host Instead of Cluster
+### Windows & stemcell (required)
 
-Build using specific ESXi host:
+- `WINDOWS_PASSWORD` — required for guest operations
+- `WINDOWS_USERNAME` — default `Administrator` if omitted
+- `PATCH_VERSION` — stembuild patch version (e.g. `2019.12.3` or `3`)
+- `WINDOWS_VERSION` — `2019`, `2022`, or `2025` (default `2019`); must match stembuild and templates
 
-```yaml
-jobs:
-- name: build-windows-stemcell-on-host
-  plan:
-  - get: docs-platform-automation
-  - get: windows-iso
-    trigger: true
-  - task: build-windows-stemcell
-    image: binaries-image
-    file: docs-platform-automation/ci/tasks/build-windows-stemcell/task.yml
-    params:
-      # vCenter Configuration
-      VCENTER_SERVER: ((vcenter-server))
-      VCENTER_USERNAME: ((vcenter-username))
-      VCENTER_PASSWORD: ((vcenter-password))
-      VCENTER_INSECURE_CONNECTION: "true"
-      
-      # vSphere Infrastructure (using host instead of cluster)
-      VCENTER_DATACENTER: ((vcenter-datacenter))
-      VCENTER_DATASTORE: ((vcenter-datastore))
-      VCENTER_NETWORK: ((vcenter-network))
-      VCENTER_CLUSTER: ""  # Empty when using host
-      VCENTER_HOST: "esxi-01.example.com"  # Specify host
-      
-      # Build Mode: ISO
-      ISO_PATH_LOCAL: "windows-iso/*.iso"
-      
-      # Stemcell Configuration
-      PATCH_VERSION: "2019.12.3"
-      
-      # Windows Configuration
-      WINDOWS_USERNAME: "Administrator"
-      WINDOWS_PASSWORD: ((windows-password))
-      
-      # Network Configuration
-      STATIC_IP: ((static-ip))
-      SUBNET_MASK: ((subnet-mask))
-      GATEWAY: ((gateway))
-      DNS_SERVERS: ((dns-servers))
-      
-      # Build Options
-      ENABLE_WINDOWS_UPDATES: "true"
-      LOG_LEVEL: "INFO"
-      JUMPER_HOST: ""
-      JUMPER_USER: ""
-      JUMPER_PASSWORD: ""
-    outputs:
-    - name: logs
-```
+### Network (required)
 
-### Example 6: Minimal Configuration (Using Defaults)
+- `STATIC_IP`, `SUBNET_MASK`, `GATEWAY`, `DNS_SERVERS` (comma-separated for multiple DNS servers)
 
-Minimal pipeline using all defaults:
+### Optional
 
-```yaml
-jobs:
-- name: build-windows-stemcell-minimal
-  plan:
-  - get: docs-platform-automation
-  - get: windows-iso
-    trigger: true
-  - task: build-windows-stemcell
-    image: binaries-image
-    file: docs-platform-automation/ci/tasks/build-windows-stemcell/task.yml
-    params:
-      # vCenter Configuration (MANDATORY)
-      VCENTER_SERVER: ((vcenter-server))
-      VCENTER_USERNAME: ((vcenter-username))
-      VCENTER_PASSWORD: ((vcenter-password))
-      VCENTER_INSECURE_CONNECTION: "true"
-      
-      # vSphere Infrastructure (MANDATORY)
-      VCENTER_DATACENTER: ((vcenter-datacenter))
-      VCENTER_DATASTORE: ((vcenter-datastore))
-      VCENTER_NETWORK: ((vcenter-network))
-      VCENTER_CLUSTER: ((vcenter-cluster))
-      
-      # Build Mode: ISO (MANDATORY)
-      ISO_PATH_LOCAL: "windows-iso/*.iso"
-      
-      # Stemcell Configuration (MANDATORY)
-      PATCH_VERSION: "2019.12.3"
-      
-      # Windows Configuration (MANDATORY)
-      WINDOWS_PASSWORD: ((windows-password))
-      # WINDOWS_USERNAME defaults to "Administrator"
-      
-      # Network Configuration (MANDATORY)
-      STATIC_IP: ((static-ip))
-      SUBNET_MASK: ((subnet-mask))
-      GATEWAY: ((gateway))
-      DNS_SERVERS: ((dns-servers))
-      
-      # VM Configuration uses defaults:
-      # VM_NAME: "windows-base-vm"
-      # VM_CPU_COUNT: "8"
-      # VM_MEMORY_MB: "16384"
-      # VM_DISK_SIZE_GB: "100"
-      
-      # Build Options use defaults:
-      # ENABLE_WINDOWS_UPDATES: "true"
-      # LOG_LEVEL: "INFO"
-    outputs:
-    - name: logs
-```
+- `TEMPLATE_NAME` — ISO mode: create/register a template after build (see `build.sh` behavior)
+- `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`
+- `ENABLE_WINDOWS_UPDATES` — default `true`
+- `LOG_LEVEL` — `DEBUG`, `INFO`, `WARN`, `ERROR`
+- `JUMPER_HOST`, `JUMPER_USER`, `JUMPER_PASSWORD` — run heavy steps via a jump host
+- `PRODUCT_KEY` — optional Windows product key for unattended setup
+- `DEBUG_MODE` — `"true"` enables shell trace in logs
 
-## Generated Variables File
+---
 
-The task automatically generates a `variables.pkrvars.hcl` file from the Concourse parameters. The generated file is displayed in the task output for debugging purposes.
+## Alternate task definition (zip / renamed git resource)
 
-Example generated file:
+If your pipeline uses the packaged tasks zip and input name `platform-automation-tasks`, use:
 
-```hcl
-# Generated from Concourse task inputs
-# vCenter Configuration
-vcenter_server              = "vcenter.example.com"
-vcenter_username            = "administrator@vsphere.local"
-vcenter_password            = "YourPassword"
-vcenter_insecure_connection = true
+`file: platform-automation-tasks/tasks/build-windows-stemcell.yml`
 
-# vSphere Infrastructure
-vcenter_datacenter    = "Datacenter"
-vcenter_cluster       = "Cluster"
-vcenter_host          = ""
-vcenter_datastore     = "datastore1"
-vcenter_network       = "VM Network"
+See [RESOURCES.md](./RESOURCES.md).
 
-# VM Configuration
-vm_name         = "windows-base-vm"
-vm_cpu_count    = 8
-vm_memory_mb    = 16384
-vm_disk_size_gb = 100
-
-# Build Mode Configuration
-iso_path_local = "windows-iso/windows-server-2019.iso"
-
-# Windows Configuration
-windows_username = "Administrator"
-windows_password = "YourPassword"
-
-# Network Configuration
-static_ip    = "192.168.1.100"
-subnet_mask  = "255.255.255.0"
-gateway      = "192.168.1.1"
-dns_servers  = ["8.8.8.8", "8.8.4.4"]
-
-# Stemcell Configuration
-patch_version = "2019.12.3"
-
-# Build Options
-enable_windows_updates = true
-log_level              = "INFO"
-```
-
-## Output
-
-- **Stemcell file:** `bosh-stemcell-*-vsphere-esxi-windows2019-go_agent.tgz` (created in task working directory)
-- **Logs:** Available in the `logs` output directory with detailed logs for each step
+---
 
 ## Notes
 
-1. **Template Mode**: When using `TEMPLATE_PATH`, the VM is always deleted after completion (success or failure). This is by design to keep the template clean.
-
-2. **ISO Mode**: The VM is kept after successful build (for template creation if configured). On failure, the VM is cleaned up automatically.
-
-3. **DNS Servers**: The `DNS_SERVERS` parameter accepts comma-separated values (e.g., `8.8.8.8,8.8.4.4`) and is automatically converted to HCL list format.
-
-4. **Image Requirements**: The task requires the `binaries-image` which includes Packer, govc, and stembuild. This image is built in the CI pipeline and published to the registry.
+1. **Image**: The task container must include Packer, `govc`, and the correct **stembuild** binary for `WINDOWS_VERSION` (e.g. `stembuild-2019`, `stembuild-2022`).
+2. **Datastore ISO path** is only for the **ISO file location**; VM disks still use `VCENTER_DATASTORE` unless your Packer/vars configuration says otherwise.
+3. **Template mode** deletes the **temporary clone**, not your template.
+4. **Keep base VM** retains the **Packer base VM** in ISO mode when a clone is used for stembuild; set `KEEP_BASE_VM: "true"` explicitly.
