@@ -1,0 +1,21 @@
+---
+# Same behavior as tasks/build-windows-stemcell.yml but uses the docs-platform-automation git input name.
+platform: linux
+inputs:
+- name: docs-platform-automation
+- name: windows-iso
+  optional: true
+outputs:
+- name: logs
+- name: stemcell
+params:
+  DEBUG_MODE: "false"
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+    tag: testing
+run:
+  path: docs-platform-automation/tasks/build-windows-stemcell.sh

@@ -1,0 +1,87 @@
+<pre>
+<code>
+---
+platform: linux
+
+inputs:
+- name: platform-automation-tasks
+  # Concourse input: packaged Platform Automation tasks (task script and windows-automation/)
+- name: windows-iso
+  optional: true
+  # Optional. Provide when using ISO upload mode (ISO on the task container / Concourse resource).
+  # Not required when ISO_PATH points at an ISO already on a vSphere datastore, or in template mode.
+
+outputs:
+- name: logs
+  # Build and step logs copied from the automation working directory.
+- name: stemcell
+  # BOSH Windows stemcell tarball: bosh-stemcell-*-vsphere-esxi-windows*-go_agent.tgz
+
+params:
+  DEBUG_MODE: "false"
+  # Optional. Set to "true" to enable shell trace (set -x) in build scripts.
+
+  # --- vCenter (required) ---
+  VCENTER_SERVER: ""
+  VCENTER_USERNAME: ""
+  VCENTER_PASSWORD: ""
+  VCENTER_INSECURE_CONNECTION: "true"
+  VCENTER_DATACENTER: ""
+  VCENTER_DATASTORE: ""
+  VCENTER_NETWORK: ""
+  # Use cluster or host as appropriate for your environment:
+  VCENTER_CLUSTER: ""
+  VCENTER_HOST: ""
+  # Optional:
+  # VCENTER_FOLDER: ""
+  # VCENTER_RESOURCE_POOL: ""
+
+  # --- Build mode (set one source; see Task inputs and outputs) ---
+  # ISO already on datastore (vCenter path):
+  # ISO_PATH: '[datastore-name]/path/to/windows.iso'
+  # ISO from task / windows-iso input (path relative to workspace or absolute in container):
+  # ISO_PATH_LOCAL: "windows-iso/*.iso"
+  # Template mode (no Packer install from ISO):
+  # TEMPLATE_PATH: '/Datacenter/vm/Templates/my-windows-template'
+  # Optional: existing VM mode (clone this VM; no Packer ISO install). Use instead of ISO or template when applicable.
+  # EXISTING_BASE_VM_NAME: ""
+
+  # --- Windows & stemcell (required) ---
+  WINDOWS_USERNAME: "Administrator"
+  WINDOWS_PASSWORD: ""
+  PATCH_VERSION: ""
+  # e.g. 2019.12.3 or a numeric patch segment required by stembuild
+  WINDOWS_VERSION: "2019"
+  # 2019 | 2022 | 2025 — must match stembuild binary and templates
+
+  # --- Network (required) ---
+  STATIC_IP: ""
+  SUBNET_MASK: ""
+  GATEWAY: ""
+  DNS_SERVERS: "8.8.8.8,8.8.4.4"
+  # Comma-separated list; converted to HCL list in generated vars
+
+  # --- Optional ---
+  # KEEP_BASE_VM: "false"
+  # ISO mode only: keep the Packer-created base VM after cloning to target (string "true" / "false")
+  # TEMPLATE_NAME: ""
+  # ISO mode: optional final template name after successful build
+  # PRODUCT_KEY: ""
+  # HTTP_PROXY: ""
+  # HTTPS_PROXY: ""
+  # NO_PROXY: ""
+  # ENABLE_WINDOWS_UPDATES: "true"
+  # LOG_LEVEL: "INFO"
+  # JUMPER_HOST: ""
+  # JUMPER_USER: ""
+  # JUMPER_PASSWORD: ""
+
+run:
+  path: platform-automation-tasks/tasks/build-windows-stemcell.sh
+
+</code>
+</pre>
+
+<p class="note">
+The Concourse input name for the tasks volume is arbitrary. If you name it something other than <code>platform-automation-tasks</code>, set <code>file:</code> and <code>run.path</code> so they are prefixed with your input name (for example <code>my-tasks/tasks/build-windows-stemcell.sh</code>). The paths under that input must match the Platform Automation tasks layout.
+</p>

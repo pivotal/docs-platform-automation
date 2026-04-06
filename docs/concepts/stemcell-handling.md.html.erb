@@ -24,6 +24,10 @@ Tanzu Operations Manager. These tasks, in order, are:
 - [upload-stemcell](../tasks.html#upload-stemcell)
 - [assign-stemcell](../tasks.html#assign-stemcell)
 
+For **Windows stemcells on vSphere**, `download-product` may not be able to retrieve the stemcell artifact.
+Use [build-windows-stemcell](../tasks.html#build-windows-stemcell) to build the `.tgz` on vSphere, then [upload-stemcell](../tasks.html#upload-stemcell).
+See [Task inputs and outputs — build-windows-stemcell](../inputs-outputs.html#build-windows-stemcell).
+
 Follow these steps:
 
 1. `download-product`: Create a `config.yml` for this task using the [example provided](../inputs-outputs.html#download-product-config).
