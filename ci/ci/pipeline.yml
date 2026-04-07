@@ -82,20 +82,20 @@ resources:
   source:
     api_token: ((platform-automation/main.pivnet_token))
     product_slug: ops-manager
-    product_version: 2\.[0-9]+\.[0-9]+$
+    product_version: 3\.[0-9]+\.[0-9]+$
     sort_by: semver
-- name: opsman-image-2.9.42
+- name: opsman-image-3.1.0
   type: pivnet
   source:
     api_token: ((platform-automation/main.pivnet_token))
     product_slug: ops-manager
-    product_version: 2\.9\.42$
-- name: opsman-image-2.9.x
+    product_version: 3\.1\.0$
+- name: opsman-image-3.1.x
   type: pivnet
   source:
     api_token: ((platform-automation/main.pivnet_token))
     product_slug: ops-manager
-    product_version: 2\.9\.[0-9]+$
+    product_version: 3\.1\.[0-9]+$
     sort_by: semver
 - name: packages-image
   type: registry-image
@@ -445,8 +445,7 @@ resources:
   check_every: 4h
   icon: language-go
   source:
-    repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
-    tag: 0.0.210
+    repository: ((concourse-team/dev_image_registry.url))/internal-images-pa/builder-jammy-buildpackless-tiny
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
@@ -535,6 +534,8 @@ jobs:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
       IMAGE_ARG_base_image: base-image/image.tar
   - put: packages-image
+    get_params:
+     format: oci
     params: { image: image/image.tar }
 
 - name: lint-windows-automation-scripts
@@ -914,19 +915,13 @@ jobs:
       tags: [platform-automation]
       passed:
       - build-binaries-image-combined
-    - get: opsman-image-2.9.42
+    - get: opsman-image-3.1.0
       tags: [platform-automation]
       params:
         globs:
         - '*.ova'
-    - get: opsman-image-2.9.x
+    - get: opsman-image-3.1.x
       tags: [platform-automation]
-      params:
-        globs:
-        - '*.ova'
-    - get: opsman-image
-      tags: [platform-automation]
-      trigger: true
       params:
         globs:
         - '*.ova'
@@ -937,7 +932,6 @@ jobs:
     input_mapping:
       config: deployments
       tasks: platform-automation-tasks
-      vars: deployments
     output_mapping:
       tasks: platform-automation-tasks
     params:
@@ -947,7 +941,7 @@ jobs:
       tags: [platform-automation]
       file: docs-platform-automation/tasks/create-vm.yml
       input_mapping:
-        image: opsman-image-2.9.42
+        image: opsman-image-3.1.0
         state: deployments
         config: deployments
         vars: deployments
@@ -975,6 +969,15 @@ jobs:
             params:
               rebase: true
               repository: repository-commit
+  - task: wait-for-opsman
+    tags:
+      - platform-automation
+    image: platform-automation-image
+    config:
+      platform: linux
+      run:
+        path: sleep
+        args: [ "300" ]
   - task: configure-authentication
     tags: [platform-automation]
     file: platform-automation-tasks/tasks/configure-authentication.yml
@@ -1024,7 +1027,7 @@ jobs:
     tags: [platform-automation]
     file: platform-automation-tasks/tasks/upgrade-opsman.yml
     input_mapping:
-      image: opsman-image-2.9.x
+      image: opsman-image-3.1.x
       config: deployments
       vars: deployments
       env: deployments
@@ -1047,52 +1050,6 @@ jobs:
     tags: [platform-automation]
     file: platform-automation-tasks/tasks/export-installation.yml
     image: platform-automation-image
-    input_mapping:
-      env: deployments
-    params:
-      ENV_FILE: ci-upgrade-epc/env.yml
-  - task: upgrade-opsman-minor
-    tags: [platform-automation]
-    file: platform-automation-tasks/tasks/upgrade-opsman.yml
-    image: platform-automation-image
-    input_mapping:
-      image: opsman-image
-      state: deployments
-      config: deployments
-      vars: deployments
-      env: deployments
-    params:
-      STATE_FILE: ci-upgrade-epc/state.yml
-      OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
-      ENV_FILE: ci-upgrade-epc/env.yml
-  - task: apply-director-changes
-    tags: [platform-automation]
-    file: platform-automation-tasks/tasks/apply-director-changes.yml
-    image: platform-automation-image
-    attempts: 5
-    input_mapping:
-      env: deployments
-    params:
-      ENV_FILE: ci-upgrade-epc/env.yml
-  - task: upgrade-opsman
-    tags: [platform-automation]
-    file: platform-automation-tasks/tasks/upgrade-opsman.yml
-    image: platform-automation-image
-    input_mapping:
-      image: opsman-image
-      state: deployments
-      config: deployments
-      vars: deployments
-      env: deployments
-    params:
-      STATE_FILE: ci-upgrade-epc/state.yml
-      OPSMAN_CONFIG_FILE: ci-upgrade-epc/ops-manager.yml
-      ENV_FILE: ci-upgrade-epc/env.yml
-  - task: apply-director-changes
-    tags: [platform-automation]
-    file: platform-automation-tasks/tasks/apply-director-changes.yml
-    image: platform-automation-image
-    attempts: 5
     input_mapping:
       env: deployments
     params:
