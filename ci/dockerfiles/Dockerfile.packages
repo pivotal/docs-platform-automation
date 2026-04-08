@@ -16,6 +16,7 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     python3-dev \
     python3-setuptools \
     python3-pip \
+    python3-venv \
     rsync \
     ssh \
     unzip \
@@ -26,6 +27,9 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     libxml2-utils \
   && true
 # netcat for `bosh ssh` -- the why is explained here: https://github.com/cloudfoundry/bosh-cli/issues/374
+
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # gcloud
 RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
