@@ -1475,12 +1475,10 @@ jobs:
       input_mapping:
         config: deployments
         tasks: platform-automation-tasks
-        vars: deployments
       output_mapping:
         tasks: platform-automation-tasks
       params:
         CONFIG_PATHS: config/ci-upgrade-epc/director.yml config/ci-upgrade-epc/ops-manager.yml config/ci-upgrade-epc/auth.yml
-        VARS_PATHS: vars/ci-upgrade-epc/terraform-vars.yml
     - try:
         task: delete-installation
         tags: [platform-automation]
