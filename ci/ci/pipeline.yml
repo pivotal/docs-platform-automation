@@ -632,7 +632,7 @@ jobs:
         type: registry-image
         source:
           repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
-          tag: 0.14.0
+          tag: 0.14.13
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
       params:
@@ -665,7 +665,7 @@ jobs:
         type: registry-image
         source:
           repository: ((concourse-team/dev_image_registry.url))/concourse/oci-build-task
-          tag: 0.14.0
+          tag: 0.14.13
           username: ((concourse-team/dev_image_registry.username))
           password: ((concourse-team/dev_image_registry.password))
       params:

@@ -1,7 +1,7 @@
 ARG base_image
 FROM ${base_image}
 
-RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils
+RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils python3-pip
 
 RUN wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
     tar --xz -xvf shellcheck-stable.linux.x86_64.tar.xz && \
@@ -75,6 +75,12 @@ RUN apt -y update
 # install gcloud and azure
 RUN apt -y install --no-install-recommends google-cloud-sdk apt-transport-https azure-cli
 
+# Fix GHSA-x744-4wpc-v9h2, GHSA-4c29-8rgm-jvjj, GHSA-4vrq-3vrq-g6gg: Upgrade docker to a secure version
+RUN pip3 install --upgrade docker>=7.1.0
+
+
+# Upgrade all packages
+RUN apt-get upgrade -y
 
 RUN git config --global user.name "platform-automation"
 RUN git config --global user.email "platformautomation@groups.vmware.com"
