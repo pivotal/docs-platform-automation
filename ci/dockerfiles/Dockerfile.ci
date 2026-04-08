@@ -75,7 +75,7 @@ RUN apt -y update
 # install gcloud and azure
 RUN apt -y install --no-install-recommends google-cloud-sdk apt-transport-https azure-cli
 
-# Fix GHSA-x744-4wpc-v9h2: Upgrade docker to a secure version
+# Fix GHSA-x744-4wpc-v9h2, GHSA-4c29-8rgm-jvjj, GHSA-4vrq-3vrq-g6gg: Upgrade docker to a secure version
 RUN pip3 install --upgrade docker>=7.1.0
 
 
