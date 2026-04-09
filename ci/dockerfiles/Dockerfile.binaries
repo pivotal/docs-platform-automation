@@ -63,10 +63,10 @@ RUN wget -q https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PAC
 # Create Packer plugin directory and install vsphere plugin
 RUN mkdir -p /root/.packer.d/plugins \
     && cd /root/.packer.d/plugins \
-    && wget -q https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v1.4.0/packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip \
-    && unzip packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip \
-    && chmod +x packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64 \
-    && rm -f packer-plugin-vsphere_v1.4.0_x5.0_linux_amd64.zip
+    && wget -q https://github.com/vmware/packer-plugin-vsphere/releases/download/v2.1.2/packer-plugin-vsphere_v2.1.2_x5.0_linux_amd64.zip \
+    && unzip packer-plugin-vsphere_v2.1.2_x5.0_linux_amd64.zip \
+    && chmod +x packer-plugin-vsphere_v2.1.2_x5.0_linux_amd64 \
+    && rm -f packer-plugin-vsphere_v2.1.2_x5.0_linux_amd64.zip
 
 # Verify Packer installation
 RUN packer version

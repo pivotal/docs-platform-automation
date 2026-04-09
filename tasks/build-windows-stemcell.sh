@@ -208,9 +208,9 @@ export NO_PROXY="$(no_proxy_with_github "${NO_PROXY:-}")"
 
 # ---- Packer vsphere plugin ----
 # HTTP_PROXY/HTTPS_PROXY are set only after this block so plugin download is direct or uses NO_PROXY.
-VERSION="1.4.2"
+VERSION="2.1.2"
 PLUGIN_NAME="vsphere"
-SOURCE="github.com/hashicorp/vsphere"
+SOURCE="github.com/vmware/vsphere"
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 [[ "$ARCH" == "x86_64" ]] && ARCH="amd64"
@@ -220,8 +220,8 @@ ZIP_NAME="${BINARY_NAME}.zip"
 SUMS_NAME="packer-plugin-${PLUGIN_NAME}_v${VERSION}_SHA256SUMS"
 
 echo "--- Downloading v${VERSION} for ${OS}/${ARCH} ---"
-curl -L -O "https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v${VERSION}/${ZIP_NAME}"
-curl -L -O "https://github.com/hashicorp/packer-plugin-vsphere/releases/download/v${VERSION}/${SUMS_NAME}"
+curl -L -O "https://github.com/vmware/packer-plugin-vsphere/releases/download/v${VERSION}/${ZIP_NAME}"
+curl -L -O "https://github.com/vmware/packer-plugin-vsphere/releases/download/v${VERSION}/${SUMS_NAME}"
 echo "--- Extracting ---"
 unzip -o "$ZIP_NAME"
 chmod +x "$BINARY_NAME"
