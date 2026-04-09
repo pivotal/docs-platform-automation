@@ -445,7 +445,8 @@ resources:
   check_every: 4h
   icon: language-go
   source:
-    repository: ((concourse-team/dev_image_registry.url))/internal-images-pa/builder-jammy-buildpackless-tiny
+    repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
+    tag: 0.0.234
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
