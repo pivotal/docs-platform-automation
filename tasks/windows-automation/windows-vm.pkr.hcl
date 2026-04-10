@@ -10,9 +10,8 @@ packer {
   required_version = ">= 1.7.0"
   required_plugins {
     vsphere = {
-      source  = "github.com/hashicorp/vsphere"
-      # v2.x bundles OpenTelemetry SDK with GHSA-9h8m-3fm2-qjrq; stay on 1.x until upstream ships a fixed 2.x.
-      version = ">= 1.4.0, < 2.0.0"
+      source  = "github.com/vmware/vsphere"
+      version = ">= 2.1.2"
     }
   }
 }
