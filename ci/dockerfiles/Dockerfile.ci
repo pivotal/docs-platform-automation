@@ -1,13 +1,7 @@
 ARG base_image
 FROM ${base_image}
 
-RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils python3-pip python3-venv
-
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# setuptools: GHSA-r9hx-vwmv-q579, GHSA-5rjg-fvgr-3xxf; use venv pip only (no --break-system-packages).
-RUN pip3 install --upgrade "setuptools>=78.1.1,<82"
+RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils python3-pip
 
 RUN wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
     tar --xz -xvf shellcheck-stable.linux.x86_64.tar.xz && \
@@ -68,8 +62,8 @@ RUN apt install -y awscli
 RUN wget https://github.com/vmware/govmomi/releases/latest/download/govc_Linux_x86_64.tar.gz && \
     tar xvfz govc_Linux_x86_64.tar.gz -C  /usr/local/bin govc
 
-# openstack (venv install avoids apt python3-setuptools / stale setuptools on disk for scanners)
-RUN pip3 install python-openstackclient
+# openstack
+RUN apt install -y python3-openstackclient
 
 # add keys for gcloud and azure
 RUN mkdir -p /etc/apt/keyrings
