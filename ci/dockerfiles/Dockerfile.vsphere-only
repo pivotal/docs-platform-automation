@@ -2,7 +2,7 @@ ARG base_image
 FROM ${base_image}
 
 # remove azure cli
-RUN pip3 install "setuptools>=78.1.1,<82" pip-autoremove
+RUN pip3 install pip-autoremove
 RUN pip-autoremove -y azure-cli
 
 # remove AWS CLI
@@ -12,7 +12,7 @@ RUN pip-autoremove -y awscli
 RUN pip-autoremove -y python-openstackclient
 
 # remove pip
-RUN pip3 uninstall -y pip-autoremove setuptools pip
+RUN pip3 uninstall -y pip-autoremove pip
 
 # remove gcloud CLI
 RUN rm -Rf /usr/local/bin/gcloud
