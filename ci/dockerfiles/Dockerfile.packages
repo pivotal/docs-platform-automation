@@ -14,7 +14,6 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     netcat-openbsd \
     python3 \
     python3-dev \
-    python3-setuptools \
     python3-pip \
     python3-venv \
     rsync \
@@ -30,6 +29,10 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
 
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
+
+# setuptools: GHSA-r9hx-vwmv-q579 (ReDoS), GHSA-5rjg-fvgr-3xxf (path traversal); pin before other pip installs.
+# Omit apt python3-setuptools so scanners do not see a stale dist-packages copy; venv pip supplies setuptools.
+RUN pip3 install --upgrade "setuptools>=78.1.1,<82"
 
 # gcloud
 RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
@@ -48,9 +51,6 @@ RUN aws --version
 # openstack
 RUN pip3 install python-openstackclient
 RUN openstack --version
-
-# Fix CVE-2022-40897 (GHSA-r9hx-vwmv-q579), CVE-2024-6345, and CVE-2025-47273; <82 retains pkg_resources for pip-autoremove (removed in setuptools 82+)
-RUN pip3 install --upgrade "setuptools>=78.1.1,<82"
 
 # Fix CVE-2022-40898 (GHSA-qwmp-2cf2-g9g6): Upgrade wheel to a secure version (>=0.38.1)
 RUN pip3 install --upgrade wheel>=0.38.1
