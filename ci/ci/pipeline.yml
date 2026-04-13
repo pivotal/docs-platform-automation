@@ -1168,6 +1168,11 @@ jobs:
       OM_PASSWORD: ((platform-automation/main/opsman-login.password))
       OM_USERNAME: ((platform-automation/main/opsman-login.username))
       PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
+#@ if paving_dir == "azure":
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+      TF_VAR_client_secret: ""
+#@ end
     ensure:
       put: deployments
       tags: #@ tags
@@ -1405,6 +1410,11 @@ jobs:
         IAAS: #@ paving_dir
         DEPLOYMENT_NAME: #@ env_name
         PLATFORM_AUTOMATION_EMAIL: ((platform-automation/main.platform-automation-email))
+#@ if paving_dir == "azure":
+        TF_IN_AUTOMATION: "true"
+        TF_INPUT: "false"
+        TF_VAR_client_secret: ""
+#@ end
       ensure:
         put: deployments
         tags: #@ tags
