@@ -1,6 +1,9 @@
+# syntax=docker/dockerfile:1.4
 ARG base_image
 
 FROM ${base_image}
+
+ARG PIP_INDEX_URL_BASE=""
 
 # Install necessary binary
 USER root
@@ -33,31 +36,28 @@ ENV PATH /root/google-cloud-sdk/bin:$PATH
 RUN ln -s /root/google-cloud-sdk/bin/* /usr/local/bin/
 RUN gcloud --version
 
-# azure
-RUN pip3 install azure-cli
-RUN az --version
+# Python CLIs + CVE-pinned upgrades.
+# wheel: CVE-2022-40898. cryptography: CVE-2023-50782.
+# azure-core: CVE-2026-21226. docker: GHSA-x744-4wpc-v9h2 et al.
+RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
+    --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
+    if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "$PIP_INDEX_URL_BASE" ]; then \
+        export PIP_INDEX_URL="https://$(cat /run/secrets/artifactory_user):$(cat /run/secrets/artifactory_pass)@${PIP_INDEX_URL_BASE}"; \
+        echo "pip: using internal index"; \
+    else \
+        echo "pip: using default public index"; \
+    fi && \
+    pip3 install \
+        azure-cli \
+        awscli \
+        python-openstackclient && \
+    pip3 install --upgrade \
+        "wheel>=0.38.1" \
+        "cryptography>=42.0.0" \
+        "azure-core>=1.38.0" \
+        "docker>=7.1.0"
 
-# aws
-RUN pip3 install awscli
-RUN aws --version
-
-# openstack
-RUN pip3 install python-openstackclient
-RUN openstack --version
-
-# Fix CVE-2022-40898 (GHSA-qwmp-2cf2-g9g6): Upgrade wheel to a secure version (>=0.38.1)
-RUN pip3 install --upgrade wheel>=0.38.1
-
-# Fix CVE-2023-50782: Upgrade cryptography to a secure version (>=42.0.0)
-# CVE-2023-50782: Bleichenbacher timing oracle attack in cryptography < 42.0.0
-RUN pip3 install --upgrade cryptography>=42.0.0
-
-# Fix CVE-2026-21226 (GHSA-jm66-cg57-jjv5): Upgrade azure-core to fix deserialization vulnerability
-# azure-core is exercised when om vm-lifecycle shells out to az CLI for Azure IaaS operations
-RUN pip3 install --upgrade azure-core>=1.38.0
-
-# Fix GHSA-x744-4wpc-v9h2, GHSA-4c29-8rgm-jvjj, GHSA-4vrq-3vrq-g6gg: Upgrade docker to a secure version
-RUN pip3 install --upgrade docker>=7.1.0
+RUN az --version && aws --version && openstack --version
 
 # Upgrade all packages
 RUN apt-get upgrade -y
