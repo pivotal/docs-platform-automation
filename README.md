@@ -25,3 +25,4 @@ and
 There is a separate [Maintainers' Guide](MAINTAINERS_GUIDE.md)
 intended for personnel allocated to maintenance
 of the Platform Automation Toolkit.
+
