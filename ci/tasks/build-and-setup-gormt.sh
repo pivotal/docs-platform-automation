@@ -11,6 +11,7 @@ EMAIL="${RMT_EMAIL}"
 SFTP_HOST="${SFTP_HOST}"
 SFTP_USERNAME="${SFTP_USERNAME}"
 SFTP_PASSWORD="${SFTP_PASSWORD}"
+GITHUB_PAT="${GITHUB_PAT}"
 
 # Store current directory
 PWD_DIR=$(pwd)
@@ -60,6 +61,8 @@ sftp:
   host: "${SFTP_HOST}"
   username: "${SFTP_USERNAME}"
   password: "${SFTP_PASSWORD}"
+github:
+  token: "${GITHUB_PAT}"
 EOF
 
   cp rmt.yml "${OUTPUT_DIR}"/
