@@ -22,6 +22,11 @@ cp "$deployment_path"/terraform.tfstate "$terraform_path"
 cp "$deployment_path"/terraform.tfvars "$terraform_path"
 
 if [[ "$IAAS" == "azure" ]]; then
+  if ! python3 -c "import cryptography" 2>/dev/null; then
+    (apt-get update -qq && apt-get install -y -qq python3-cryptography openssl) 2>/dev/null || \
+    (apk add --no-cache python3 py3-cryptography openssl 2>/dev/null) || \
+    pip3 install --user --quiet cryptography
+  fi
   eval "$(python3 "$PWD/docs-platform-automation/ci/scripts/azure-cert-to-pfx.py" --tfvars "$terraform_path/terraform.tfvars")"
 fi
 
