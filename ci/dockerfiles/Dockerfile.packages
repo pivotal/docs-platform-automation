@@ -33,9 +33,13 @@ ENV PATH /root/google-cloud-sdk/bin:$PATH
 RUN ln -s /root/google-cloud-sdk/bin/* /usr/local/bin/
 RUN gcloud --version
 
-# azure
-RUN pip3 install azure-cli
-RUN az --version
+# azure (Microsoft apt repo; pip/PyPI and files.pythonhosted.org are blocked in CI)
+RUN mkdir -p /etc/apt/keyrings \
+  && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc -o /etc/apt/keyrings/microsoft.asc \
+  && echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.asc] https://packages.microsoft.com/repos/azure-cli/ jammy main" > /etc/apt/sources.list.d/azure-cli.list \
+  && apt-get update \
+  && apt-get -y --no-install-recommends install apt-transport-https azure-cli \
+  && az --version
 
 # aws
 RUN pip3 install awscli
