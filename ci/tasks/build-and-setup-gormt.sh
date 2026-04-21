@@ -65,6 +65,8 @@ github:
   token: "${GITHUB_PAT}"
 EOF
 
+  cat rmt.yml
+
   cp rmt.yml "${OUTPUT_DIR}"/
 }
 
