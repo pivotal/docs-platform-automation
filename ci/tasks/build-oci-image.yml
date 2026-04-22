@@ -11,6 +11,8 @@ image_resource:
 inputs:
 - name: docs-platform-automation
 - name: base-image
+# Used by Dockerfile.ci (om binary). Dockerfile.packages ignores this input.
+- name: om-release
 outputs:
 - name: image
 params:

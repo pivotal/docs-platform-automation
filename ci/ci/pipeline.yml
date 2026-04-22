@@ -499,6 +499,8 @@ jobs:
   - get: daily
     trigger: true
   - get: docs-platform-automation
+  - get: om-release
+    trigger: true
   - get: golang-image
     trigger: true
     attempts: 3
@@ -524,6 +526,7 @@ jobs:
   - get: daily
     trigger: true
   - get: docs-platform-automation
+  - get: om-release
   - get: builder-jammy-buildpackless-tiny-image
     trigger: true
     attempts: 3

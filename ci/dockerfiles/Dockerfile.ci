@@ -42,10 +42,13 @@ RUN wget "https://github.com/sclevine/yj/releases/download/v4.0.0/yj-linux" -O y
 RUN chmod +x ./yj && \
     mv ./yj /usr/bin/yj
 
-# install om
-RUN wget $(curl -s https://api.github.com/repos/pivotal-cf/om/releases/latest | jq -r '.assets[] | select(.name? | match("om-linux-amd64-\\d+.\\d+.\\d+$")) | .browser_download_url') -O om
-RUN chmod +x ./om && \
-    mv ./om /usr/bin/om
+# install om from Concourse github-release input (om-release); avoids api.github.com in the build
+COPY om-release /tmp/om-release
+RUN set -eux; \
+    om="$(find /tmp/om-release -name 'om-linux-amd64-*' -type f | head -n1)"; \
+    test -n "$om"; \
+    cp "$om" /usr/bin/om && chmod +x /usr/bin/om; \
+    rm -rf /tmp/om-release
 
 # rspec
 RUN apt-get -y install ruby ruby-dev && \
