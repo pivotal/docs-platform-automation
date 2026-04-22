@@ -534,7 +534,7 @@ jobs:
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
       IMAGE_ARG_base_image: base-image/image.tar
-      BUILD_ARG_PIP_INDEX_URL_BASE: ((concourse-team/pip_index_url_base))
+      BUILD_ARG_PIP_INDEX_URL_BASE: ((concourse-team/pip_index_url_base.value))
       #! BuildKit secrets for pip auth (see Dockerfile.packages).
       BUILDKIT_SECRETTEXT_artifactory_user: ((concourse-team/dev_image_registry.username))
       BUILDKIT_SECRETTEXT_artifactory_pass: ((concourse-team/dev_image_registry.password))
@@ -676,7 +676,7 @@ jobs:
       params:
         DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.vsphere-only
         IMAGE_ARG_base_image: binaries-image-oci/image.tar
-        BUILD_ARG_PIP_INDEX_URL_BASE: ((concourse-team/pip_index_url_base))
+        BUILD_ARG_PIP_INDEX_URL_BASE: ((concourse-team/pip_index_url_base.value))
         BUILDKIT_SECRETTEXT_artifactory_user: ((concourse-team/dev_image_registry.username))
         BUILDKIT_SECRETTEXT_artifactory_pass: ((concourse-team/dev_image_registry.password))
       inputs:

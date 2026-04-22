@@ -41,7 +41,7 @@ RUN gcloud --version
 # azure-core: CVE-2026-21226. docker: GHSA-x744-4wpc-v9h2 et al.
 RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
-    if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "$PIP_INDEX_URL_BASE" ]; then \
+    if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "${PIP_INDEX_URL_BASE}" ]; then \
         export PIP_INDEX_URL="https://$(cat /run/secrets/artifactory_user):$(cat /run/secrets/artifactory_pass)@${PIP_INDEX_URL_BASE}"; \
         echo "pip: using internal index"; \
     else \
