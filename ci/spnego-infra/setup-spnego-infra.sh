@@ -64,10 +64,15 @@ docker run -d \
 echo "Waiting for KDC to initialize..."
 sleep 15
 
+HOST_IP=$(hostname -I | awk '{print $1}')
+
 # Create test principals
+# Both hostname and IP-based SPNs are needed because the proxy URL uses the IP address,
+# and Kerberos TGS requests must match the exact hostname/IP in the service principal.
 echo "Creating Kerberos principals..."
 timeout 30 docker exec spnego-kdc kadmin.local -q "addprinc -pw ${TEST_PASSWORD} ${TEST_USER}@${REALM}" || true
 timeout 30 docker exec spnego-kdc kadmin.local -q "addprinc -pw proxypass HTTP/proxy.test.local@${REALM}" || true
+timeout 30 docker exec spnego-kdc kadmin.local -q "addprinc -pw proxypass HTTP/${HOST_IP}@${REALM}" || true
 
 # Create Squid config
 echo "Creating Squid configuration..."
@@ -107,9 +112,6 @@ if curl -s --proxy http://localhost:${PROXY_PORT} --max-time 10 -I http://google
 else
     echo "WARNING: Proxy test failed"
 fi
-
-# Get IP for clients
-HOST_IP=$(hostname -I | awk '{print $1}')
 
 # Verify KDC port is accessible
 echo ""

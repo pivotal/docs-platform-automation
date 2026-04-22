@@ -1,7 +1,7 @@
 ARG base_image
 FROM ${base_image}
 
-RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils python3-pip
+RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils python3-pip openssl python3-cryptography
 
 RUN wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
     tar --xz -xvf shellcheck-stable.linux.x86_64.tar.xz && \

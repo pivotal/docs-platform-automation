@@ -18,6 +18,7 @@ params:
   SFTP_HOST: ((concourse-team/rmt.sftp_host))
   SFTP_USERNAME: ((concourse-team/rmt.sftp_username))
   SFTP_PASSWORD: ((concourse-team/rmt.sftp_password))
+  GITHUB_PAT: ((concourse-team/rmt.github_pat))
 run:
   path: sh
   args:
