@@ -2,9 +2,19 @@
 ARG base_image
 FROM ${base_image}
 
+USER root
+
 ARG PIP_INDEX_URL_BASE=""
 
 RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils python3-pip openssl python3-cryptography
+
+RUN set -eux; \
+    gover="$(curl -fsSL 'https://go.dev/VERSION?m=text' | head -n1 | tr -d '\r\n')"; \
+    test -n "$gover"; \
+    wget -q "https://go.dev/dl/${gover}.linux-amd64.tar.gz" -O /tmp/go.tgz; \
+    tar -C /usr/local -xzf /tmp/go.tgz; \
+    rm /tmp/go.tgz
+ENV PATH="/usr/local/go/bin:${PATH}"
 
 RUN wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
     tar --xz -xvf shellcheck-stable.linux.x86_64.tar.xz && \

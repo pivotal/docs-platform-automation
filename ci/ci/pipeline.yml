@@ -431,15 +431,6 @@ resources:
     - docs
     private_key: ((platform-automation/main/om.private_key))
     fetch_tags: false
-- name: golang-image
-  type: registry-image
-  check_every: 4h
-  icon: language-go
-  source:
-    repository: ((concourse-team/dev_image_registry.url))/golang
-    tag: latest
-    username: ((concourse-team/dev_image_registry.username))
-    password: ((concourse-team/dev_image_registry.password))
 - name: builder-jammy-buildpackless-tiny-image
   type: registry-image
   check_every: 4h
@@ -501,7 +492,7 @@ jobs:
   - get: docs-platform-automation
   - get: om-release
     trigger: true
-  - get: golang-image
+  - get: builder-jammy-buildpackless-tiny-image
     trigger: true
     attempts: 3
     params:
@@ -510,7 +501,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     input_mapping:
-      base-image: golang-image
+      base-image: builder-jammy-buildpackless-tiny-image
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
       IMAGE_ARG_base_image: base-image/image.tar
