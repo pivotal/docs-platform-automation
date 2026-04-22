@@ -5,10 +5,14 @@ This is the docs source for
 available from VMware Tanzu Network.
 
 The production docs are here:
-https://docs.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/index.html
+https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/platform-automation-toolkit-for-tanzu/5-4/vmware-automation-toolkit/docs-index.html
 
-There is a public staging copy here:
-https://docs-pcf-staging.tas.vmware.com/platform-automation/
+
+## DocWorks staging (5.5.0)
+
+The active branch for **5.5.0** documentation work in this repo is **`develop`**. DocWorks builds staged docs from `develop`. Staged release notes:
+
+https://author-techdocs2-prod.adobecqms.net/us/en/vmware-tanzu/platform/platform-automation-toolkit-for-tanzu/5-5/vmware-automation-toolkit/docs-release-notes.html
 
 
 # CI
