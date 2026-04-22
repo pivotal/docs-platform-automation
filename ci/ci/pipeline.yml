@@ -512,6 +512,9 @@ jobs:
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
       IMAGE_ARG_base_image: base-image/image.tar
+      BUILD_ARG_PIP_INDEX_URL_BASE: ((concourse-team/pip_index_url_base))
+      BUILDKIT_SECRETTEXT_artifactory_user: ((concourse-team/dev_image_registry.username))
+      BUILDKIT_SECRETTEXT_artifactory_pass: ((concourse-team/dev_image_registry.password))
   - put: ci-image
     params: { image: image/image.tar }
     get_params: { skip_download: true }
