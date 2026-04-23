@@ -431,13 +431,15 @@ resources:
     - docs
     private_key: ((platform-automation/main/om.private_key))
     fetch_tags: false
-- name: builder-jammy-buildpackless-tiny-image
+#! Dockerfile.ci / Dockerfile.packages run apt-get as root; buildpackless-tiny stacks hit
+#! E: ... /var/lib/apt/lists/partial ... Permission denied under oci-build-task (build #588).
+- name: builder-jammy-buildpackless-base-image
   type: registry-image
   check_every: 4h
   icon: language-go
   source:
-    repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-tiny
-    tag: 0.0.234
+    repository: ((concourse-team/dev_image_registry.url))/paketobuildpacks/builder-jammy-buildpackless-base
+    tag: latest
     username: ((concourse-team/dev_image_registry.username))
     password: ((concourse-team/dev_image_registry.password))
 - name: tvs-cli
@@ -492,7 +494,7 @@ jobs:
   - get: docs-platform-automation
   - get: om-release
     trigger: true
-  - get: builder-jammy-buildpackless-tiny-image
+  - get: builder-jammy-buildpackless-base-image
     trigger: true
     attempts: 3
     params:
@@ -501,7 +503,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     input_mapping:
-      base-image: builder-jammy-buildpackless-tiny-image
+      base-image: builder-jammy-buildpackless-base-image
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.ci
       IMAGE_ARG_base_image: base-image/image.tar
@@ -518,7 +520,7 @@ jobs:
     trigger: true
   - get: docs-platform-automation
   - get: om-release
-  - get: builder-jammy-buildpackless-tiny-image
+  - get: builder-jammy-buildpackless-base-image
     trigger: true
     attempts: 3
     params:
@@ -527,7 +529,7 @@ jobs:
     privileged: true
     file: docs-platform-automation/ci/tasks/build-oci-image.yml
     input_mapping:
-      base-image: builder-jammy-buildpackless-tiny-image
+      base-image: builder-jammy-buildpackless-base-image
     params:
       DOCKERFILE: docs-platform-automation/ci/dockerfiles/Dockerfile.packages
       IMAGE_ARG_base_image: base-image/image.tar

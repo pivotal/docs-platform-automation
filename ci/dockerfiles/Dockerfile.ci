@@ -6,7 +6,10 @@ USER root
 
 ARG PIP_INDEX_URL_BASE=""
 
-RUN apt-get -y update && apt-get -y install rsync build-essential bash zip unzip curl gettext jq git wget tar xz-utils python3-pip openssl python3-cryptography
+RUN apt-get -y update && apt-get -y install \
+    rsync build-essential bash ca-certificates zip unzip curl gettext jq git wget tar xz-utils \
+    python3-pip python3-dev python3-setuptools openssl python3-cryptography libxml2-utils \
+    gnupg lsb-release
 
 RUN set -eux; \
     gover="$(curl -fsSL 'https://go.dev/VERSION?m=text' | head -n1 | tr -d '\r\n')"; \
@@ -16,6 +19,8 @@ RUN set -eux; \
     rm /tmp/go.tgz
 ENV PATH="/usr/local/go/bin:${PATH}"
 
+# Below: upstreams ship official release archives (zip/tar.xz + static binaries), not first-party install.sh.
+# Syft uses Anchore's install.sh later in this file.
 RUN wget "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz" && \
     tar --xz -xvf shellcheck-stable.linux.x86_64.tar.xz && \
     cp shellcheck-stable/shellcheck /usr/bin/
@@ -68,9 +73,6 @@ RUN apt-get -y install ruby ruby-dev && \
 # uaac
 RUN gem install cf-uaac
 
-# used by `delete-terraformed-ops-manager`
-RUN apt install -y awscli
-
 # govc
 #RUN go install github.com/vmware/govmomi/govc@latest
 
@@ -78,22 +80,29 @@ RUN apt install -y awscli
 RUN wget https://github.com/vmware/govmomi/releases/latest/download/govc_Linux_x86_64.tar.gz && \
     tar xvfz govc_Linux_x86_64.tar.gz -C  /usr/local/bin govc
 
-# openstack
-RUN apt install -y python3-openstackclient
+# gcloud — official Linux installer (Google documented path; matches Dockerfile.packages)
+RUN curl https://sdk.cloud.google.com > /tmp/install-gcloud.sh && bash /tmp/install-gcloud.sh --disable-prompts && rm -f /tmp/install-gcloud.sh
+ENV PATH="/root/google-cloud-sdk/bin:${PATH}"
+RUN ln -s /root/google-cloud-sdk/bin/* /usr/local/bin/
+RUN gcloud --version
 
-# add keys for gcloud and azure
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg -o /etc/apt/keyrings/google-cloud-sdk.gpg
-RUN echo "deb [signed-by=/etc/apt/keyrings/google-cloud-sdk.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc -o /etc/apt/keyrings/microsoft.asc
-RUN echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.asc] https://packages.microsoft.com/repos/azure-cli/ jammy main" | tee /etc/apt/sources.list.d/azure-cli.list
-RUN apt -y update
+# AWS CLI v2 — official bundle installer (same model as gcloud install.sh; not distro awscli metapackage)
+# https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+RUN set -eux; \
+    curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip; \
+    unzip -q /tmp/awscliv2.zip -d /tmp; \
+    /tmp/aws/install -i /usr/local/aws-cli -b /usr/local/bin; \
+    rm -rf /tmp/awscliv2.zip /tmp/aws
 
-# install gcloud and azure
-RUN apt -y install --no-install-recommends google-cloud-sdk apt-transport-https azure-cli
+# Azure CLI — Microsoft-maintained script for Debian/Ubuntu (adds apt repo + installs azure-cli)
+# https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt
+RUN set -eux; \
+    export DEBIAN_FRONTEND=noninteractive; \
+    curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Fix GHSA-x744-4wpc-v9h2, GHSA-4c29-8rgm-jvjj, GHSA-4vrq-3vrq-g6gg: Upgrade docker to a secure version
 # Match Dockerfile.packages: internal PyPI when creds + base are set (blocked public PyPI in some networks).
+# OpenStack: pip install matches Dockerfile.packages; Azure comes from Microsoft's script above.
 RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
     if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "${PIP_INDEX_URL_BASE}" ]; then \
@@ -102,7 +111,12 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     else \
         echo "pip: using default public index"; \
     fi && \
-    pip3 install --upgrade "docker>=7.1.0"
+    pip3 install python-openstackclient && \
+    pip3 install --upgrade \
+        "wheel>=0.38.1" \
+        "cryptography>=42.0.0" \
+        "docker>=7.1.0"
+RUN az --version && aws --version && openstack --version
 
 
 # Upgrade all packages
