@@ -2,7 +2,7 @@
 
 This repository is the documentation source for
 [Platform Automation Toolkit](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Platform%20Automation%20Toolkit),
-available from VMware Tanzu Network.
+available from Broadcom Support.
 
 ## Contribute to this repo
 
