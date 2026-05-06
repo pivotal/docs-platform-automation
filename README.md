@@ -8,6 +8,8 @@ available from VMware Tanzu Network.
 
 **Use the `develop` branch** for new commits and pull requests unless the documentation release process directs you to a different branch.
 
+The `5.5` branch has been cut from `develop` for the 5.5 release. For the next major/minor release, continue making updates on `develop` as usual.
+
 Doc questions: tag **Kay ORiordan**.
 
 ## Published and staging sites
