@@ -23,6 +23,6 @@ deployments:
     tags: [ ]
     enable_timed_trigger: false
 versions:
-  - number: v5.4
-    regex: 5\.4\.[1-9]\d*
+  - number: v5.5
+    regex: 5\.5\.[1-9]\d*
     vsphere_image: true
