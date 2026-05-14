@@ -494,6 +494,9 @@ jobs:
   - get: docs-platform-automation
   - get: om-release
     trigger: true
+    params:
+        globs:
+        - 'om-linux-amd64-*[^.tar.gz]'
   - get: builder-jammy-buildpackless-base-image
     trigger: true
     attempts: 3
@@ -520,6 +523,9 @@ jobs:
     trigger: true
   - get: docs-platform-automation
   - get: om-release
+    params:
+        globs:
+        - 'om-linux-amd64-*[^.tar.gz]'
   - get: builder-jammy-buildpackless-base-image
     trigger: true
     attempts: 3
