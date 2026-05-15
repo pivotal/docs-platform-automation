@@ -1,0 +1,25 @@
+---
+# Black Duck Detect signature scan against the packaged release artifact.
+# Mirrors ci/tasks/scan-and-submit-sboms.yml so it slots into the same release
+# plan style and runs on the ci-image (Java + detect.sh baked in by Dockerfile.ci).
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
+    tag: testing
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+
+inputs:
+  - name: version
+  - name: packaged-product
+  - name: docs-platform-automation-with-docs
+
+params:
+  BLACKDUCK_URL:
+  BLACKDUCK_API_TOKEN:
+  BLACKDUCK_PROJECT_NAME:
+
+run:
+  path: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.sh

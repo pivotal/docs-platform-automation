@@ -73,6 +73,20 @@ RUN apt-get -y install ruby ruby-dev && \
 # uaac
 RUN gem install cf-uaac
 
+# Black Duck Detect: signature scanner used by blackduck-scan-* jobs.
+# Detect 9.x requires Java 17+; we pin a JAR version so scans are reproducible
+# and the image does not need to fetch detect.jar at task run time.
+RUN apt-get -y update && apt-get -y install openjdk-17-jre-headless && \
+    java -version
+ENV DETECT_VERSION=9.10.0
+ENV DETECT_JAR_PATH=/opt/blackduck/detect/detect.jar
+ENV BLACKDUCK_SCAN_HOME=/opt/blackduck
+RUN mkdir -p /opt/blackduck/detect && \
+    curl -fsSL "https://detect.blackduck.com/detect9.sh" -o /usr/local/bin/detect.sh && \
+    chmod +x /usr/local/bin/detect.sh && \
+    curl -fsSL "https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/detect/${DETECT_VERSION}/detect-${DETECT_VERSION}.jar" \
+      -o "${DETECT_JAR_PATH}"
+
 # govc
 #RUN go install github.com/vmware/govmomi/govc@latest
 

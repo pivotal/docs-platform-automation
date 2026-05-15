@@ -1,0 +1,36 @@
+---
+# Carry forward Black Duck policy-violation JUSTIFICATIONS (the "comment"
+# field on a BOM component, e.g. "Merely Aggregated") from the previous
+# release version onto the current version.
+#
+# Designed to run after blackduck-scan-* (so the current version has been
+# ingested by Black Duck) and before publish-release-*.
+#
+# Does NOT modify the `ignored` flag and does NOT touch components that have
+# no prior justification, so genuinely new findings still surface for review.
+#
+# See ci/tasks/blackduck-carry-forward-justifications.sh for parameter docs.
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
+    tag: testing
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+
+inputs:
+  - name: docs-platform-automation-with-docs
+
+params:
+  BLACKDUCK_URL:
+  BLACKDUCK_API_TOKEN:
+  BLACKDUCK_PROJECT_NAME:
+  BLACKDUCK_VERSION:
+  BLACKDUCK_PREVIOUS_VERSION:
+  BLACKDUCK_POLICY_CATEGORY: LICENSE
+  BLACKDUCK_MATCH_MODE: name-version
+  DRY_RUN: "false"
+
+run:
+  path: docs-platform-automation-with-docs/ci/tasks/blackduck-carry-forward-justifications.sh

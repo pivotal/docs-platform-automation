@@ -24,6 +24,7 @@ groups:
   jobs:
   - bump-minor
   - submit-release-sboms-v5.x
+  - blackduck-scan-v5.x
   - publish-release-minor
 - name: patch-bump
   jobs:
@@ -33,6 +34,8 @@ groups:
   - #@ "update-" + version.number
   #@ for/end version in data.values.versions:
   - #@ "submit-release-sboms-" + version.number
+  #@ for/end version in data.values.versions:
+  - #@ "blackduck-scan-" + version.number
   #@ for/end version in data.values.versions:
   - #@ "publish-release-" + version.number
   - empty-cve-patch-notes-file
@@ -1911,6 +1914,24 @@ jobs:
         packaged-product: #@ "rc-artifacts-s3-" + version.number
       params:
         TAGS: '["GA"]'
+- name: #@ "blackduck-scan-" + version.number
+  plan:
+    - in_parallel:
+      - get: #@ "rc-artifacts-s3-" + version.number
+        passed:
+        - #@ "submit-release-sboms-" + version.number
+        trigger: true
+      - get: docs-platform-automation-with-docs
+      - get: version
+        resource: #@ "version-" + version.number
+    - task: blackduck-scan
+      file: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.yml
+      input_mapping:
+        packaged-product: #@ "rc-artifacts-s3-" + version.number
+      params:
+        BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+        BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+        BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
 - name: #@ "publish-release-" + version.number
   plan:
     - in_parallel:
@@ -1919,7 +1940,7 @@ jobs:
       - get: docs-platform-automation
       - get: #@ "rc-artifacts-s3-" + version.number
         passed:
-        - #@ "submit-release-sboms-" + version.number
+        - #@ "blackduck-scan-" + version.number
         params:
           unpack: true
       - get: version
@@ -1972,6 +1993,25 @@ jobs:
       packaged-product: rc-artifacts-s3-v5
     params:
       TAGS: '["GA"]'
+
+- name: blackduck-scan-v5.x
+  plan:
+  - in_parallel:
+    - get: rc-artifacts-s3-v5
+      passed:
+      - submit-release-sboms-v5.x
+      trigger: true
+    - get: docs-platform-automation-with-docs
+    - get: version
+      resource: version-v5.x
+  - task: blackduck-scan
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.yml
+    input_mapping:
+      packaged-product: rc-artifacts-s3-v5
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
 
 - name: submit-sboms-rc
   plan:
@@ -2040,7 +2080,7 @@ jobs:
       - get: docs-platform-automation
       - get: rc-artifacts-s3-v5
         passed:
-          - submit-release-sboms-v5.x
+          - blackduck-scan-v5.x
         params:
           unpack: true
       - get: version
