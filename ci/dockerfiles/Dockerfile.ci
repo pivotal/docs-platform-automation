@@ -9,7 +9,7 @@ ARG PIP_INDEX_URL_BASE=""
 RUN apt-get -y update && apt-get -y install \
     rsync build-essential bash ca-certificates zip unzip curl gettext jq git wget tar xz-utils \
     python3-pip python3-dev python3-setuptools openssl python3-cryptography libxml2-utils \
-    gnupg lsb-release
+    gnupg lsb-release openssh-server openssh-client
 
 RUN set -eux; \
     gover="$(curl -fsSL 'https://go.dev/VERSION?m=text' | head -n1 | tr -d '\r\n')"; \
