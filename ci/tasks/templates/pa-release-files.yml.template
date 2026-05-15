@@ -8,3 +8,6 @@ files:
   - file: ../packaged-product/vsphere-platform-automation-image-${VERSION}.tar.gz
     description: Docker Image for Concourse Tasks on vSphere
     status: ${STATUS}
+  - file: ../osl/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_${VERSION}_GA.txt
+    description: OSL - ${VERSION}
+    status: ${STATUS}
