@@ -11,6 +11,9 @@ inputs:
   - name: release-created
   - name: docs-platform-automation
   - name: packaged-product
+  # OSL license file fetched from the release_candidate S3 bucket. Required
+  # so check-if-files-present.sh can verify the OSL file exists before upload.
+  - name: osl
 run:
   path: sh
   args:

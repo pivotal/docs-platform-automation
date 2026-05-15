@@ -11,6 +11,11 @@ inputs:
   - name: release-created
   - name: docs-platform-automation
   - name: packaged-product
+  # OSL license file fetched from the release_candidate S3 bucket via the
+  # `osl-{version}` Concourse resource. Mounted here so release-files-update
+  # can include `../osl/open_source_license_..._<version>_GA.txt` as the 4th
+  # release file. Path-mapped to `osl` via the job's input_mapping.
+  - name: osl
 run:
   path: sh
   args:
@@ -21,15 +26,19 @@ run:
       RELEASE_ID="$(cat release-created/id)"
       
       cd rmt-artifacts
+      # Expected file count was bumped from 3 -> 4 when the OSL license file
+      # (open_source_license_..._<version>_GA.txt) was added as the 4th file
+      # in pa-release-files.yml.template.
+      EXPECTED_FILES=4
       while true; do
         release=$(./rmt release-get --id ${RELEASE_ID} --output json)
         files_length=$(echo "$release" | jq '.Files | length')
 
-        if [ "$files_length" -eq 3 ]; then
+        if [ "$files_length" -eq "$EXPECTED_FILES" ]; then
         break
         fi
 
-        echo "Files length is not 3 yet. Waiting..."
+        echo "Files length is ${files_length}, expected ${EXPECTED_FILES}. Waiting..."
         sleep 30
       done
     

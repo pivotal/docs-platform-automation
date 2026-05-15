@@ -386,6 +386,15 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
     initial_version: 0.0.1-rc.1
     key: #@ "version-" + version.number
+- name: #@ "osl-" + version.number
+  type: s3-with-arn
+  source:
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
+    regexp: #@ "open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_(" + version.regex + ")_GA.txt"
+    region_name: ((platform-automation/main/s3_with_role.region_name))
 #@ end
 - name: rc-artifacts-s3-v5
   type: s3-with-arn
@@ -1924,6 +1933,7 @@ jobs:
           unpack: true
       - get: version
         resource: #@ "version-" + version.number
+      - get: #@ "osl-" + version.number
     - task: build-and-setup-gormt
       file: docs-platform-automation/ci/tasks/build-and-setup-gormt.yml
     - load_var: version-number
@@ -1945,12 +1955,14 @@ jobs:
       file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
       input_mapping:
         packaged-product: #@ "rc-artifacts-s3-" + version.number
+        osl: #@ "osl-" + version.number
       params:
         VERSION: ((.:version-number))
     - task: release-files-update
       file: docs-platform-automation/ci/tasks/release-files-update.yml
       input_mapping:
         packaged-product: #@ "rc-artifacts-s3-" + version.number
+        osl: #@ "osl-" + version.number
       params:
         VERSION: ((.:version-number))
 #@ end
@@ -2045,6 +2057,7 @@ jobs:
           unpack: true
       - get: version
         resource: version-v5.x
+      - get: osl
     - task: build-and-setup-gormt
       file: docs-platform-automation/ci/tasks/build-and-setup-gormt.yml
     - load_var: version-number
