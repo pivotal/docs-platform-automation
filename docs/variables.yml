@@ -22,6 +22,6 @@ template_variables:
   opsman_prod_name_full: Tanzu Operations Manager
   opsman_prod_name_short: Operations Manager
   opsman_prod_version: 3.2
-  tas_prod_name: Elastic Application Runtime
-  tas_prod_version: 10-3
+  ear_prod_name: Elastic Application Runtime
+  ear_prod_version: 10-4
   hub_prod_version: 10-3
