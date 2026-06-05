@@ -157,7 +157,7 @@
 - name: configure-director
   serial: true
   plan:
-    - aggregate:
+    - in_parallel:
       - get: platform-automation-image
         params:
           unpack: true
