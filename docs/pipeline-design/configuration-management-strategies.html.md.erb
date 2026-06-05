@@ -308,7 +308,7 @@ in the job, they will automatically be mapped to the inputs of the tasks in that
 - name: configure-director
   serial: true
   plan:
-    - aggregate:
+    - in_parallel:
       - get: platform-automation-image
         params:
           unpack: true
@@ -362,7 +362,7 @@ task. For a more detailed explanation see [Secrets Handling](../concepts/secrets
 - name: configure-director
   serial: true
   plan:
-    - aggregate:
+    - in_parallel:
       - get: platform-automation-image
         params:
           unpack: true
