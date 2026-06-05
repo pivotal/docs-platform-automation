@@ -64,7 +64,7 @@ you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` fil
     - name: download-upload-and-stage-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             params:
               globs: ["*image*.tgz"]
@@ -137,7 +137,7 @@ upload and stage the new product to Tanzu Operations Manager.
     - name: download-upload-and-stage-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             params:
               globs: ["*image*.tgz"]
@@ -444,7 +444,7 @@ to have a configure-product step.
     - name: download-upload-and-stage-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             resource: platform-automation
             params:
@@ -492,7 +492,7 @@ to have a configure-product step.
     - name: configure-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             passed: [download-upload-and-stage-tas]
             trigger: true
@@ -534,7 +534,7 @@ so that these changes will be applied by the Tanzu Operations Manager.
     - name: configure-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             trigger: true
             params:
@@ -566,7 +566,7 @@ so that these changes will be applied by the Tanzu Operations Manager.
     - name: apply-changes
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             params:
               globs: ["*image*.tgz"]
