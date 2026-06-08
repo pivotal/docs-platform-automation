@@ -20,10 +20,13 @@ groups:
   - test-image-dependency-stability
   - upgrade-opsman-epc
   - submit-sboms-rc
+  - blackduck-scan-rc
 - name: minor-bump
   jobs:
   - bump-minor
   - submit-release-sboms-v5.x
+  - blackduck-scan-v5.x
+  - generate-osl-v5.x
   - publish-release-minor
 - name: patch-bump
   jobs:
@@ -33,6 +36,10 @@ groups:
   - #@ "update-" + version.number
   #@ for/end version in data.values.versions:
   - #@ "submit-release-sboms-" + version.number
+  #@ for/end version in data.values.versions:
+  - #@ "blackduck-scan-" + version.number
+  #@ for/end version in data.values.versions:
+  - #@ "generate-osl-" + version.number
   #@ for/end version in data.values.versions:
   - #@ "publish-release-" + version.number
   - empty-cve-patch-notes-file
@@ -273,6 +280,21 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
     key: version-v5.x
     initial_version: 5.4.0
+# Tracks the last successfully published version in the v5.x minor release line.
+# Written by publish-release-minor after a successful publish.
+# Used as BLACKDUCK_PREVIOUS_VERSION in blackduck-scan-v5.x.
+# Seed this before the first run: aws s3 cp - s3://<bucket>/released-version-v5.x <<< "5.5.0"
+- name: released-version-v5.x
+  type: semver-with-arn
+  source:
+    driver: s3
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    assume_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+    key: released-version-v5.x
+    initial_version: 5.5.0
 - name: daily
   type: time
   source:
@@ -386,6 +408,22 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
     initial_version: 0.0.1-rc.1
     key: #@ "version-" + version.number
+# Tracks the last successfully published patch version for this minor line.
+# Written by publish-release-{version} after a successful publish.
+# Used as BLACKDUCK_PREVIOUS_VERSION in blackduck-scan-{version}.
+# initial_version comes from line_ga_version in deployments.yml (e.g. 5.5.0)
+# so Concourse seeds it correctly on first access without manual intervention.
+- name: #@ "released-version-" + version.number
+  type: semver-with-arn
+  source:
+    driver: s3
+    access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
+    secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
+    assume_role_arn: ((platform-automation/main/s3_with_role.role_arn))
+    bucket: ((platform-automation/main/s3_with_role.buckets.release_candidate))
+    region_name: ((platform-automation/main/s3_with_role.region_name))
+    initial_version: #@ version.line_ga_version
+    key: #@ "released-version-" + version.number
 - name: #@ "osl-" + version.number
   type: s3-with-arn
   source:
@@ -820,6 +858,9 @@ jobs:
     params:
       bump: major
 - name: bump-minor
+  # Serialised with publish-release-minor so a new RC image cannot overwrite
+  # in-flight v5.x artifacts before the current release finishes publishing.
+  serial_groups: [minor-release]
   plan:
   - in_parallel:
     - get: osl
@@ -859,10 +900,6 @@ jobs:
       repository: docs-platform-automation
       tag: version/version
       tag_prefix: v
-  - put: version
-    resource: version-v5.x
-    params:
-      bump: minor
   - put: version-ci
     resource: version
     params:
@@ -1900,10 +1937,29 @@ jobs:
   - put: #@ "rc-artifacts-s3-" + version.number
     params:
       file: packaged-product/artifacts-*.tar.gz
-  - put: #@ "version-" + version.number
-    params:
-      file: version/version
+  # version-{version} is written back to S3 only after publish-release-{version}
+  # succeeds, so the S3 value always reflects the last-published patch.
 - name: #@ "submit-release-sboms-" + version.number
+  plan:
+  - in_parallel:
+    - get: #@ "rc-artifacts-s3-" + version.number
+      passed:
+      - #@ "update-" + version.number
+      trigger: true
+    - get: docs-platform-automation-with-docs
+    - get: tvs-cli
+    - get: version
+      resource: #@ "version-" + version.number
+      params:
+        bump: patch
+  - task: submit-release-sbom
+    file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
+    input_mapping:
+      packaged-product: #@ "rc-artifacts-s3-" + version.number
+    params:
+      TAGS: '["GA"]'
+
+- name: #@ "blackduck-scan-" + version.number
   plan:
     - in_parallel:
       - get: #@ "rc-artifacts-s3-" + version.number
@@ -1911,60 +1967,137 @@ jobs:
         - #@ "update-" + version.number
         trigger: true
       - get: docs-platform-automation-with-docs
-      - get: tvs-cli
       - get: version
         resource: #@ "version-" + version.number
-    - task: submit-release-sbom
-      file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
+        params:
+          bump: patch
+      # Last published version — written by publish-release-{version}.
+      # Used as BLACKDUCK_PREVIOUS_VERSION for carry-forward justifications.
+      - get: released-version
+        resource: #@ "released-version-" + version.number
+    - task: blackduck-scan
+      file: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.yml
       input_mapping:
         packaged-product: #@ "rc-artifacts-s3-" + version.number
       params:
-        TAGS: '["GA"]'
-- name: #@ "publish-release-" + version.number
-  plan:
-    - in_parallel:
-      - get: rmt-assets
-        resource: gormt
-      - get: docs-platform-automation
-      - get: #@ "rc-artifacts-s3-" + version.number
-        passed:
-        - #@ "submit-release-sboms-" + version.number
-        params:
-          unpack: true
-      - get: version
-        resource: #@ "version-" + version.number
-      - get: #@ "osl-" + version.number
-    - task: build-and-setup-gormt
-      file: docs-platform-automation/ci/tasks/build-and-setup-gormt.yml
+        BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+        BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+        BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
     - load_var: version-number
       file: version/version
       reveal: true
-    - task: generate-rmt-release-manifest
-      file: docs-platform-automation/ci/tasks/generate-rmt-release-manifest.yml
-      input_mapping:
-        packaged-product: #@ "rc-artifacts-s3-" + version.number
+    - load_var: previous-version-number
+      file: released-version/version
+      reveal: true
+    - task: blackduck-carry-forward-justifications
+      file: docs-platform-automation-with-docs/ci/tasks/blackduck-carry-forward-justifications.yml
       params:
-        VERSION: ((.:version-number))
-        END_OF_SUPPORT_DATE: ((eos_date))
-        RELEASE_CONTACT: ((platform-automation/main/ci/release.release_contact))
-    - task: create-rmt-release
-      file: docs-platform-automation/ci/tasks/create-rmt-release.yml
+        BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+        BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+        BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+        BLACKDUCK_VERSION: ((.:version-number))
+        BLACKDUCK_PREVIOUS_VERSION: ((.:previous-version-number))
+    - task: blackduck-check-compliance
+      file: docs-platform-automation-with-docs/ci/tasks/blackduck-check-compliance.yml
       params:
-        VERSION: ((.:version-number))
-    - task: upload-files-to-rmt
-      file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
-      input_mapping:
-        packaged-product: #@ "rc-artifacts-s3-" + version.number
-        osl: #@ "osl-" + version.number
+        BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+        BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+        BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+        BLACKDUCK_VERSION: ((.:version-number))
+
+- name: #@ "generate-osl-" + version.number
+  plan:
+  - in_parallel:
+    - get: docs-platform-automation-with-docs
+    - get: #@ "rc-artifacts-s3-" + version.number
+      passed:
+      - #@ "blackduck-scan-" + version.number
+      trigger: true
+    - get: version
+      resource: #@ "version-" + version.number
       params:
-        VERSION: ((.:version-number))
-    - task: release-files-update
-      file: docs-platform-automation/ci/tasks/release-files-update.yml
-      input_mapping:
-        packaged-product: #@ "rc-artifacts-s3-" + version.number
-        osl: #@ "osl-" + version.number
+        bump: patch
+  - load_var: version-number
+    file: version/version
+    reveal: true
+  - task: generate-osl-report
+    file: docs-platform-automation-with-docs/ci/tasks/generate-osl-report.yml
+    params:
+      JENKINS_USER: ((platform-automation/main/jenkins.user))
+      JENKINS_API_TOKEN: ((platform-automation/main/jenkins.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      VERSION: ((.:version-number))
+  - put: #@ "osl-" + version.number
+    params:
+      file: generated-osl/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_*_GA.txt
+
+- name: #@ "publish-release-" + version.number
+  plan:
+  - in_parallel:
+    - get: rmt-assets
+      resource: gormt
+    - get: docs-platform-automation
+    - get: #@ "rc-artifacts-s3-" + version.number
+      passed:
+      - #@ "submit-release-sboms-" + version.number
+      - #@ "blackduck-scan-" + version.number
       params:
-        VERSION: ((.:version-number))
+        unpack: true
+    - get: version
+      resource: #@ "version-" + version.number
+      params:
+        bump: patch
+    - get: #@ "osl-" + version.number
+      passed:
+      - #@ "generate-osl-" + version.number
+  - task: build-and-setup-gormt
+    file: docs-platform-automation/ci/tasks/build-and-setup-gormt.yml
+  - load_var: version-number
+    file: version/version
+    reveal: true
+  - task: generate-rmt-release-manifest
+    file: docs-platform-automation/ci/tasks/generate-rmt-release-manifest.yml
+    input_mapping:
+      packaged-product: #@ "rc-artifacts-s3-" + version.number
+    params:
+      VERSION: ((.:version-number))
+      END_OF_SUPPORT_DATE: ((eos_date))
+      RELEASE_CONTACT: ((platform-automation/main/ci/release.release_contact))
+  - task: create-rmt-release
+    file: docs-platform-automation/ci/tasks/create-rmt-release.yml
+    params:
+      VERSION: ((.:version-number))
+  - task: upload-files-to-rmt
+    file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
+    input_mapping:
+      packaged-product: #@ "rc-artifacts-s3-" + version.number
+      osl: #@ "osl-" + version.number
+    params:
+      VERSION: ((.:version-number))
+  - task: release-files-update
+    file: docs-platform-automation/ci/tasks/release-files-update.yml
+    input_mapping:
+      packaged-product: #@ "rc-artifacts-s3-" + version.number
+      osl: #@ "osl-" + version.number
+    params:
+      VERSION: ((.:version-number))
+  # Record the just-published version so the next blackduck-scan-{version} can
+  # use it as BLACKDUCK_PREVIOUS_VERSION — written BEFORE bumping version-{version}.
+  - put: #@ "released-version-" + version.number
+    params:
+      file: version/version
+  # Keep the shared minor-line pointer current so blackduck-scan-v5.x always
+  # carries forward from the most recently published release (patch or GA).
+  # Without this, released-version-v5.x would stay at the last minor GA and
+  # miss all justifications added in subsequent patch releases.
+  - put: released-version-v5.x
+    params:
+      file: version/version
+  # Write the new patch version to S3 only after a successful publish so that
+  # update-{version} always starts from the last-published baseline.
+  - put: #@ "version-" + version.number
+    params:
+      file: version/version
 #@ end
 - name: submit-release-sboms-v5.x
   plan:
@@ -1978,6 +2111,7 @@ jobs:
       - get: tvs-cli
       - get: version
         resource: version-v5.x
+        passed: [bump-minor]
   - task: submit-release-sbom
     file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
     input_mapping:
@@ -1985,23 +2119,159 @@ jobs:
     params:
       TAGS: '["GA"]'
 
+- name: blackduck-scan-v5.x
+  plan:
+  - in_parallel:
+    - get: rc-artifacts-s3-v5
+      passed: [ bump-minor ]
+      trigger: true
+    - get: docs-platform-automation-with-docs
+    - get: version
+      resource: version-v5.x
+    # Last published version — written by publish-release-minor.
+    # Used as BLACKDUCK_PREVIOUS_VERSION for carry-forward justifications.
+    - get: released-version-v5.x
+  - task: blackduck-scan
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.yml
+    input_mapping:
+      packaged-product: rc-artifacts-s3-v5
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+  - load_var: version-number
+    file: version/version
+    reveal: true
+  - load_var: previous-version-number
+    file: released-version-v5.x/version
+    reveal: true
+  - task: blackduck-carry-forward-justifications
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-carry-forward-justifications.yml
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      BLACKDUCK_VERSION: ((.:version-number))
+      BLACKDUCK_PREVIOUS_VERSION: ((.:previous-version-number))
+  - task: blackduck-check-compliance
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-check-compliance.yml
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      BLACKDUCK_VERSION: ((.:version-number))
+
+- name: generate-osl-v5.x
+  plan:
+  - in_parallel:
+    - get: docs-platform-automation-with-docs
+    - get: rc-artifacts-s3-v5
+      passed: [ blackduck-scan-v5.x ]
+      trigger: true
+    - get: version
+      resource: version-v5.x
+      passed: [bump-minor]
+  - load_var: version-number
+    file: version/version
+    reveal: true
+  - task: generate-osl-report
+    file: docs-platform-automation-with-docs/ci/tasks/generate-osl-report.yml
+    params:
+      JENKINS_USER: ((platform-automation/main/jenkins.user))
+      JENKINS_API_TOKEN: ((platform-automation/main/jenkins.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      VERSION: ((.:version-number))
+  - put: osl
+    params:
+      file: generated-osl/open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_*_GA.txt
+
 - name: submit-sboms-rc
   plan:
-    - in_parallel:
-        steps:
-          - get: rc-artifacts-s3
-            trigger: true
-            passed:
-              - build-binaries-image-combined
-          - get: docs-platform-automation-with-docs
-          - get: tvs-cli
-          - get: version
-    - task: submit-sbom-rc
-      file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
-      input_mapping:
-        packaged-product: rc-artifacts-s3
+  - in_parallel:
+      steps:
+      - get: rc-artifacts-s3
+        trigger: true
+        passed:
+        - build-binaries-image-combined
+      - get: docs-platform-automation-with-docs
+      - get: tvs-cli
+      - get: version
+  - task: submit-sbom-rc
+    file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
+    input_mapping:
+      packaged-product: rc-artifacts-s3
+    params:
+      TAGS: '["DEV"]'
+
+- name: blackduck-scan-rc
+  plan:
+  - in_parallel:
+      steps:
+      - get: rc-artifacts-s3
+        trigger: true
+        passed:
+        - build-binaries-image-combined
+      - get: docs-platform-automation-with-docs
+      - get: version
+  - task: blackduck-scan
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.yml
+    input_mapping:
+      packaged-product: rc-artifacts-s3
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+  - load_var: version-number
+    file: version/version
+  - task: compute-previous-version
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
+          tag: testing
+          username: ((concourse-team/dev_image_registry.username))
+          password: ((concourse-team/dev_image_registry.password))
+      outputs:
+        - name: previous-version
       params:
-        TAGS: '["DEV"]'
+        CURRENT_VERSION: ((.:version-number))
+        FALLBACK_PREVIOUS_VERSION: ((platform-automation/main/blackduck.previous_version))
+      run:
+        path: bash
+        args:
+          - -c
+          - |
+            set -euo pipefail
+            major=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+            minor=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+            patch=$(echo "$CURRENT_VERSION" | cut -d. -f3)
+            if [ "$patch" -gt 1 ]; then
+              prev="${major}.${minor}.$((patch - 1))"
+            else
+              prev="$FALLBACK_PREVIOUS_VERSION"
+            fi
+            echo "Current version : $CURRENT_VERSION"
+            echo "Previous version: $prev"
+            echo -n "$prev" > previous-version/version
+  - load_var: previous-version-number
+    file: previous-version/version
+  - task: blackduck-carry-forward-justifications
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-carry-forward-justifications.yml
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      BLACKDUCK_VERSION: ((.:version-number))
+      BLACKDUCK_PREVIOUS_VERSION: ((.:previous-version-number))
+  - task: blackduck-check-compliance
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-check-compliance.yml
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      BLACKDUCK_VERSION: ((.:version-number))
 
 - name: empty-cve-patch-notes-file
   plan:
@@ -2045,6 +2315,7 @@ jobs:
       bump: #@ bump
 #@ end
 - name: publish-release-minor
+  serial_groups: [minor-release]
   plan:
     - in_parallel:
       - get: rmt-assets
@@ -2053,11 +2324,13 @@ jobs:
       - get: rc-artifacts-s3-v5
         passed:
           - submit-release-sboms-v5.x
+          - blackduck-scan-v5.x
         params:
           unpack: true
       - get: version
         resource: version-v5.x
       - get: osl
+        passed: [ generate-osl-v5.x ]
     - task: build-and-setup-gormt
       file: docs-platform-automation/ci/tasks/build-and-setup-gormt.yml
     - load_var: version-number
@@ -2087,6 +2360,17 @@ jobs:
         packaged-product: rc-artifacts-s3-v5
       params:
         VERSION: ((.:version-number))
+    # Record the just-published version so the next blackduck-scan-v5.x can
+    # use it as BLACKDUCK_PREVIOUS_VERSION — written BEFORE bumping version-v5.x.
+    - put: released-version-v5.x
+      params:
+        file: version/version
+    # Bump version-v5.x only after a successful publish so bump-minor always
+    # reads the correct current release version for the next minor.
+    - put: version
+      resource: version-v5.x
+      params:
+        bump: minor
 - name: bump-version-ci-patch
   plan:
     - get: version
