@@ -16,6 +16,8 @@ inputs:
 
 params:
   TAGS:
+  BLACKDUCK_PROJECT_URL:
+  GITHUB_BRANCH:
 
 run:
   path: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.sh

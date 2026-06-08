@@ -3,6 +3,8 @@ set -eux
 
 VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
+GITHUB_COMMIT="$(git -C docs-platform-automation-with-docs rev-parse HEAD)"
+ARTIFACT_URL="$(cat packaged-product/url)"
 
 # Remove RC suffix from RELEASE_LINE if TAGS is DEV
 if [ "$TAGS" = '["DEV"]' ]; then
@@ -31,6 +33,12 @@ build:
   version: $VERSION
   release-line: $RELEASE_LINE
   tags: $TAGS
+  artifactory-url: "$ARTIFACT_URL"
+  blackduck-url: "$BLACKDUCK_PROJECT_URL"
+  github-repos:
+    - url: "https://github.com/pivotal/docs-platform-automation"
+      branch: "$GITHUB_BRANCH"
+      commit: "$GITHUB_COMMIT"
   artifacts:
     - name: "platform-automation-task-image"
       version: $VERSION

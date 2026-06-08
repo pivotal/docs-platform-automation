@@ -1958,6 +1958,8 @@ jobs:
       packaged-product: #@ "rc-artifacts-s3-" + version.number
     params:
       TAGS: '["GA"]'
+      BLACKDUCK_PROJECT_URL: ((platform-automation/main/tvs.blackduck_project_url))
+      GITHUB_BRANCH: #@ version.number
 
 - name: #@ "blackduck-scan-" + version.number
   plan:
@@ -2118,6 +2120,8 @@ jobs:
       packaged-product: rc-artifacts-s3-v5
     params:
       TAGS: '["GA"]'
+      BLACKDUCK_PROJECT_URL: ((platform-automation/main/tvs.blackduck_project_url))
+      GITHUB_BRANCH: develop
 
 - name: blackduck-scan-v5.x
   plan:
@@ -2203,6 +2207,8 @@ jobs:
       packaged-product: rc-artifacts-s3
     params:
       TAGS: '["DEV"]'
+      BLACKDUCK_PROJECT_URL: ((platform-automation/main/tvs.blackduck_project_url))
+      GITHUB_BRANCH: develop
 
 - name: blackduck-scan-rc
   plan:
