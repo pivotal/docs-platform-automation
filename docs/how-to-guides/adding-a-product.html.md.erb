@@ -35,12 +35,12 @@ either by changing the example YAML or your pipeline.
 
 ## Download, upload, and stage product to Tanzu Operations Manager
 
-The instructions and example in the following add the [<%= vars.tas_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry) product.
+The instructions and example in the following add the [<%= vars.ear_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry) product.
 
 ### Download
 
 Before setting the pipeline, create a config file for [`download-product`](../tasks.html#download-product)
-to download <%= vars.tas_prod_name %> from the Broadcom Support portal.
+to download <%= vars.ear_prod_name %> from the Broadcom Support portal.
 
 Create a `download-tas.yml` file for the IaaS you are using.
 
@@ -64,7 +64,7 @@ you can add a new `download-upload-and-stage-tas` job in your `pipeline.yml` fil
     - name: download-upload-and-stage-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             params:
               globs: ["*image*.tgz"]
@@ -137,7 +137,7 @@ upload and stage the new product to Tanzu Operations Manager.
     - name: download-upload-and-stage-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             params:
               globs: ["*image*.tgz"]
@@ -213,7 +213,7 @@ see <a href="#config-template">Config template</a>.
 ### Pulling Configuration from Tanzu Operations Manager
 
 Configure the product _manually_ according to the product's installation instructions.
-Use the installation instructions in the [VMware <%= vars.tas_prod_name %> documentation](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/<%= vars.tas_prod_version %>/tpcf/toc-installing-index.html).
+Use the installation instructions in the [VMware <%= vars.ear_prod_name %> documentation](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/<%= vars.ear_prod_version %>/tpcf/toc-installing-index.html).
 
 After the product is fully configured, apply the changes (**Apply Changes**) in the Tanzu Operations Manager UI,
 and then continue this guide.
@@ -239,7 +239,7 @@ Most products will contain the following top-level keys:
 The command can be run directly using Docker:
 1. Download the image to our local workstation.
 1. Import the image into Docker.
-2. Run `staged-config` for the [<%= vars.tas_prod_name %>](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/<%= vars.tas_prod_version %>/tpcf/toc-installing-index.html) product.
+2. Run `staged-config` for the [<%= vars.ear_prod_name %>](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/<%= vars.ear_prod_version %>/tpcf/toc-installing-index.html) product.
 For more information, see [Running commands locally](./running-commands-locally.html).
 
 To pull the configuration from Tanzu Operations Manager:
@@ -272,7 +272,7 @@ To pull the configuration from Tanzu Operations Manager:
 
     `p-bosh` is the name of the director.
     As `cf` is the only other product on our Tanzu Operations Manager,
-    we can safely assume that this is the product name for [<%= vars.tas_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry).
+    we can safely assume that this is the product name for [<%= vars.ear_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry).
 
 4. Using the product name `cf`,
 extract the current configuration from Tanzu Operations Manager.
@@ -397,7 +397,7 @@ There should be no formatting or indentation in these files, only new lines.
 
 1. Repeat this process for all sensitive values in your `tas-config.yml`.
 
-1. If the configuration file doesn't have the `license_key` property, it must be added for TAS releases starting from version 10.2.0
+1. If the configuration file doesn't have the `license_key` property, it must be added for <%= vars.ear_prod_name %> releases starting from version 10.2.0
 
     ```yaml
     product-properties:
@@ -444,7 +444,7 @@ to have a configure-product step.
     - name: download-upload-and-stage-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             resource: platform-automation
             params:
@@ -492,7 +492,7 @@ to have a configure-product step.
     - name: configure-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             passed: [download-upload-and-stage-tas]
             trigger: true
@@ -524,7 +524,7 @@ to have a configure-product step.
             CONFIG_FILE: tas-config.yml
     ```
 
-    This new job will configure the <%= vars.tas_prod_name %> product
+    This new job will configure the <%= vars.ear_prod_name %> product
     with the config file we previously created.
 
 2. Add an `apply-changes` job
@@ -534,7 +534,7 @@ so that these changes will be applied by the Tanzu Operations Manager.
     - name: configure-tas
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             trigger: true
             params:
@@ -566,7 +566,7 @@ so that these changes will be applied by the Tanzu Operations Manager.
     - name: apply-changes
       serial: true
       plan:
-        - aggregate:
+        - in_parallel:
           - get: platform-automation-image
             params:
               globs: ["*image*.tgz"]
@@ -632,7 +632,7 @@ outlined in these examples is `config-template`.
 from a given tile or pivnet slug.
 
 This section assumes that you are adding
-[<%= vars.tas_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry),
+[<%= vars.ear_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry),
 as in the procedure above.
 
 #### Generate the config template directory
@@ -746,7 +746,7 @@ For more information on BOSH VM Extensions, see [Creating a director config file
 To use an ops file, add `-o`
 with the path to the ops file you want to use to your `interpolate` command.
 
-So, to enable TCP routing in <%= vars.tas_prod_name %>, add `-o features/tcp_routing-enable.yml`.
+So, to enable TCP routing in <%= vars.ear_prod_name %>, add `-o features/tcp_routing-enable.yml`.
 For the rest of this guide, the vars for this feature
 are referred to as `feature-vars.yml`.
 If you run your complete command, you should again get a list of any newly-required variables.
@@ -802,7 +802,7 @@ There are two recommended ways to support multiple foundation workflows:
 
 This section explains how to support multiple foundations using ops files.
 
-Starting with an incomplete [<%= vars.tas_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry) config from **vSphere** as an example:
+Starting with an incomplete [<%= vars.ear_prod_name %>](https://support.broadcom.com/group/ecx/productdownloads?subfamily=Tanzu%20Platform%20for%20Cloud%20Foundry) config from **vSphere** as an example:
 
 <%= partial "cf-partial-config" %>
 

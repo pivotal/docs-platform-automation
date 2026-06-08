@@ -2128,6 +2128,7 @@ jobs:
     - get: docs-platform-automation-with-docs
     - get: version
       resource: version-v5.x
+      passed: [bump-minor]
     # Last published version — written by publish-release-minor.
     # Used as BLACKDUCK_PREVIOUS_VERSION for carry-forward justifications.
     - get: released-version-v5.x
@@ -2244,15 +2245,17 @@ jobs:
           - -c
           - |
             set -euo pipefail
-            major=$(echo "$CURRENT_VERSION" | cut -d. -f1)
-            minor=$(echo "$CURRENT_VERSION" | cut -d. -f2)
-            patch=$(echo "$CURRENT_VERSION" | cut -d. -f3)
+            # Strip any pre-release suffix (e.g. "5.6.0-rc.123" → "5.6.0")
+            base_version=$(echo "$CURRENT_VERSION" | cut -d- -f1)
+            major=$(echo "$base_version" | cut -d. -f1)
+            minor=$(echo "$base_version" | cut -d. -f2)
+            patch=$(echo "$base_version" | cut -d. -f3)
             if [ "$patch" -gt 1 ]; then
               prev="${major}.${minor}.$((patch - 1))"
             else
               prev="$FALLBACK_PREVIOUS_VERSION"
             fi
-            echo "Current version : $CURRENT_VERSION"
+            echo "Current version : $CURRENT_VERSION (base: $base_version)"
             echo "Previous version: $prev"
             echo -n "$prev" > previous-version/version
   - load_var: previous-version-number

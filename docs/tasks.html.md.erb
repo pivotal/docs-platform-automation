@@ -1010,14 +1010,14 @@ but if you need to match from the beginning of the filename,
 that will have been replaced by the prefix described earlier.</p>
 
 <p class="note">
-<b>When specifying <%= vars.tas_prod_name %> Windows add-on:</b>
+<b>When specifying <%= vars.ear_prod_name %> Windows add-on:</b>
 This task will automatically download and inject the winfs for pas-windows.</p>
 
 <p class="note caution">
 This task cannot download the stemcell for pas-windows on vSphere.
 To build this stemcell manually, see
 <a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-platform-for-cloud-foundry/6-0/tpcf/create-vsphere-stemcell-automatically.html">Creating a vSphere Windows stemcell using stembuild</a>
-in the VMware <%= vars.tas_prod_name %> documentation.
+in the VMware <%= vars.ear_prod_name %> documentation.
 To drive that build from a Concourse pipeline, use the <a href="#build-windows-stemcell">build-windows-stemcell</a> task;
 see <a href="./inputs-outputs.html#build-windows-stemcell">Task inputs and outputs — build-windows-stemcell</a>.</p>
 
