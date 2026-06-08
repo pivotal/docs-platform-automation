@@ -9,15 +9,15 @@ image_resource:
     password: ((concourse-team/dev_image_registry.password))
 
 inputs:
-  - name: version
-  - name: packaged-product
-  - name: tvs-cli
   - name: docs-platform-automation-with-docs
 
 params:
-  TAGS:
-  BLACKDUCK_PROJECT_URL:
-  GITHUB_BRANCH:
+  BLACKDUCK_URL:
+  BLACKDUCK_API_TOKEN:
+  BLACKDUCK_PROJECT_NAME:
+  BLACKDUCK_VERSION:
 
 run:
-  path: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.sh
+  path: python3
+  args:
+    - docs-platform-automation-with-docs/ci/scripts/blackduck-check-compliance.py

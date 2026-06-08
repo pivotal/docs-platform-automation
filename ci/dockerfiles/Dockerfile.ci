@@ -73,6 +73,20 @@ RUN apt-get -y install ruby ruby-dev && \
 # uaac
 RUN gem install cf-uaac
 
+# Black Duck Detect requires Java 17+ for current 9.x line
+RUN apt-get -y update && apt-get -y install openjdk-17-jre-headless && \
+    java -version
+
+# Pin Detect launcher script + JAR for reproducible scans
+ENV DETECT_VERSION=9.10.0
+ENV DETECT_JAR_PATH=/opt/blackduck/detect/detect.jar
+ENV BLACKDUCK_SCAN_HOME=/opt/blackduck
+RUN mkdir -p /opt/blackduck/detect && \
+    curl -fsSL "https://detect.blackduck.com/detect9.sh" -o /usr/local/bin/detect.sh && \
+    chmod +x /usr/local/bin/detect.sh && \
+    curl -fsSL "https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/detect/${DETECT_VERSION}/detect-${DETECT_VERSION}.jar" \
+      -o "${DETECT_JAR_PATH}"
+
 # govc
 #RUN go install github.com/vmware/govmomi/govc@latest
 
@@ -115,7 +129,8 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     pip3 install --upgrade \
         "wheel>=0.38.1" \
         "cryptography>=42.0.0" \
-        "docker>=7.1.0"
+        "docker>=7.1.0" \
+        "requests>=2.31.0"
 RUN az --version && aws --version && openstack --version
 
 

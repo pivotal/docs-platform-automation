@@ -1,0 +1,43 @@
+---
+# Triggers the Jenkins "Generate Notices Report" job, waits for it to finish,
+# downloads the OSL notices artifact, and renames it to:
+#   open_source_license_Platform_Automation_Toolkit_for_VMware_Tanzu_<VERSION>_GA.txt
+#
+# The Concourse job that uses this task must follow it with:
+#   put: osl-<version>
+#   params:
+#     file: generated-osl/open_source_license_*.txt
+# so the file is pushed to the release_candidate S3 bucket and picked up by
+# the osl-<version> resource consumed in publish-release.
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
+    tag: testing
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
+
+inputs:
+  - name: docs-platform-automation-with-docs
+  - name: version
+
+outputs:
+  - name: generated-osl
+
+params:
+  JENKINS_URL: https://gtso-jenkins.devops.broadcom.net
+  JENKINS_USER:
+  JENKINS_API_TOKEN:
+  BLACKDUCK_PROJECT_NAME:
+  # VERSION is loaded from version/version via load_var in the calling job.
+  VERSION:
+  OUTPUT_DIR: generated-osl
+  # Tunable poll/timeout knobs (optional — defaults built into the script).
+  POLL_INTERVAL_SEC: "15"
+  MAX_WAIT_SEC: "3600"
+
+run:
+  path: python3
+  args:
+    - docs-platform-automation-with-docs/ci/scripts/generate-osl-report.py

@@ -11,13 +11,12 @@ image_resource:
 inputs:
   - name: version
   - name: packaged-product
-  - name: tvs-cli
   - name: docs-platform-automation-with-docs
 
 params:
-  TAGS:
-  BLACKDUCK_PROJECT_URL:
-  GITHUB_BRANCH:
+  BLACKDUCK_URL:
+  BLACKDUCK_API_TOKEN:
+  BLACKDUCK_PROJECT_NAME:
 
 run:
-  path: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.sh
+  path: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.sh
