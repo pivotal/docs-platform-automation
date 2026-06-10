@@ -78,11 +78,11 @@ RUN apt-get -y update && apt-get -y install openjdk-17-jre-headless && \
     java -version
 
 # Pin Detect launcher script + JAR for reproducible scans
-ENV DETECT_VERSION=9.10.0
+ENV DETECT_VERSION=10.0.0
 ENV DETECT_JAR_PATH=/opt/blackduck/detect/detect.jar
 ENV BLACKDUCK_SCAN_HOME=/opt/blackduck
 RUN mkdir -p /opt/blackduck/detect && \
-    curl -fsSL "https://detect.blackduck.com/detect9.sh" -o /usr/local/bin/detect.sh && \
+    curl -fsSL "https://detect.blackduck.com/detect10.sh" -o /usr/local/bin/detect.sh && \
     chmod +x /usr/local/bin/detect.sh && \
     curl -fsSL "https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/detect/${DETECT_VERSION}/detect-${DETECT_VERSION}.jar" \
       -o "${DETECT_JAR_PATH}"
