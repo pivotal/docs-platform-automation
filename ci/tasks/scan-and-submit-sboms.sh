@@ -40,24 +40,18 @@ build:
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
-      artifactory-url: "$ARTIFACT_URL/platform-automation-image"
+      artifactory-url-waived: true
+      github-repos-waived: true
       blackduck-url-waived: true
-      github-repos:
-        - url: "https://github.com/pivotal/docs-platform-automation"
-          branch: "$GITHUB_BRANCH"
-          commit: "$GITHUB_COMMIT"
     - name: "platform-automation-vsphere-image"
       version: "$VERSION"
       digest: $pa_vsphere_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-vsphere-image-sbom"
-      artifactory-url: "$ARTIFACT_URL/vsphere-platform-automation-image"
+      artifactory-url-waived: true
+      github-repos-waived: true
       blackduck-url-waived: true
-      github-repos:
-        - url: "https://github.com/pivotal/docs-platform-automation"
-          branch: "$GITHUB_BRANCH"
-          commit: "$GITHUB_COMMIT"
 MANIFEST
 
 chmod +x tvs-cli/tvs-linux-amd64

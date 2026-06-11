@@ -77,11 +77,17 @@ def get_crumb(jenkins_url, auth):
 def trigger_build(jenkins_url, auth, project_name, version):
     """POST buildWithParameters and return the queue item URL."""
     crumb_field, crumb_value = get_crumb(jenkins_url, auth)
-    headers = {}
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
     if crumb_field:
         headers[crumb_field] = crumb_value
+        logger.info("CSRF crumb obtained: %s=<redacted>", crumb_field)
+    else:
+        logger.info("No CSRF crumb — proceeding without it.")
 
-    params = {
+    # Parameters must be sent as form-encoded POST body, not URL query string.
+    # Using params= would append them to the URL and leave the body empty,
+    # which causes HTTP 500 on Jenkins instances with strict form parsing.
+    form_data = {
         "BlackDuck_Instance": "BD_VM",
         "Project_Name": project_name,
         "Version": version,
@@ -89,16 +95,24 @@ def trigger_build(jenkins_url, auth, project_name, version):
 
     url = f"{jenkins_url}{JENKINS_JOB_PATH}/buildWithParameters"
     logger.info("Triggering Jenkins job: %s", url)
-    logger.info("  Parameters: %s", params)
+    logger.info("  Parameters: %s", form_data)
 
-    r = requests.post(url, auth=auth, headers=headers, params=params, timeout=30)
+    r = requests.post(url, auth=auth, headers=headers, data=form_data, timeout=30)
     if r.status_code not in (200, 201):
-        logger.error("Failed to trigger build: HTTP %d — %s", r.status_code, r.text)
+        logger.error(
+            "Failed to trigger build: HTTP %d\nResponse headers: %s\nBody (first 500 chars): %s",
+            r.status_code,
+            dict(r.headers),
+            r.text[:500],
+        )
         sys.exit(1)
 
     queue_url = r.headers.get("Location", "").rstrip("/") + "/"
     if not queue_url or queue_url == "/":
-        logger.error("No Location header in response — cannot track build.")
+        logger.error(
+            "No Location header in trigger response. "
+            "Response headers: %s", dict(r.headers)
+        )
         sys.exit(1)
 
     logger.info("Build queued: %s", queue_url)
