@@ -4,7 +4,7 @@ set -eux
 VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 GITHUB_COMMIT="$(git -C docs-platform-automation-with-docs rev-parse HEAD)"
-ARTIFACT_URL="$(cat packaged-product/url)"
+ARTIFACT_URL="https://usw1.packages.broadcom.com/artifactory/tas-operability-docker-dev-local/platform-automation/"
 
 # Remove RC suffix from RELEASE_LINE if TAGS is DEV
 if [ "$TAGS" = '["DEV"]' ]; then
@@ -40,7 +40,7 @@ build:
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
-      artifactory-url: "$ARTIFACT_URL"
+      artifactory-url: "$ARTIFACT_URL/platform-automation-image"
       blackduck-url-waived: true
       github-repos:
         - url: "https://github.com/pivotal/docs-platform-automation"
@@ -52,7 +52,7 @@ build:
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-vsphere-image-sbom"
-      artifactory-url: "$ARTIFACT_URL"
+      artifactory-url: "$ARTIFACT_URL/vsphere-platform-automation-image"
       blackduck-url-waived: true
       github-repos:
         - url: "https://github.com/pivotal/docs-platform-automation"
