@@ -280,10 +280,10 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
     key: version-v5.x
     initial_version: 5.4.0
-# Tracks the last successfully published version in the v5.x minor release line.
-# Written by publish-release-minor after a successful publish.
-# Used as BLACKDUCK_PREVIOUS_VERSION in blackduck-scan-v5.x.
-# Seed this before the first run: aws s3 cp - s3://<bucket>/released-version-v5.x <<< "5.5.0"
+#! Tracks the last successfully published version in the v5.x minor release line.
+#! Written by publish-release-minor after a successful publish.
+#! Used as BLACKDUCK_PREVIOUS_VERSION in blackduck-scan-v5.x.
+#! Seed this before the first run: aws s3 cp - s3://<bucket>/released-version-v5.x <<< "5.5.0"
 - name: released-version-v5.x
   type: semver-with-arn
   source:
@@ -408,11 +408,11 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
     initial_version: 0.0.1-rc.1
     key: #@ "version-" + version.number
-# Tracks the last successfully published patch version for this minor line.
-# Written by publish-release-{version} after a successful publish.
-# Used as BLACKDUCK_PREVIOUS_VERSION in blackduck-scan-{version}.
-# initial_version comes from line_ga_version in deployments.yml (e.g. 5.5.0)
-# so Concourse seeds it correctly on first access without manual intervention.
+#! Tracks the last successfully published patch version for this minor line.
+#! Written by publish-release-{version} after a successful publish.
+#! Used as BLACKDUCK_PREVIOUS_VERSION in blackduck-scan-{version}.
+#! initial_version comes from line_ga_version in deployments.yml (e.g. 5.5.0)
+#! so Concourse seeds it correctly on first access without manual intervention.
 - name: #@ "released-version-" + version.number
   type: semver-with-arn
   source:
@@ -858,8 +858,8 @@ jobs:
     params:
       bump: major
 - name: bump-minor
-  # Serialised with publish-release-minor so a new RC image cannot overwrite
-  # in-flight v5.x artifacts before the current release finishes publishing.
+  #! Serialised with publish-release-minor so a new RC image cannot overwrite
+  #! in-flight v5.x artifacts before the current release finishes publishing.
   serial_groups: [minor-release]
   plan:
   - in_parallel:
@@ -1663,14 +1663,14 @@ jobs:
             - |
               set -eux
 
-              # IAASes
+              #! IAASes
               openstack --version
               govc version
               az --version
               gcloud --version
               aws --version
 
-              # vmware owned
+              #! vmware owned
               bosh --version
               credhub --version
               winfs-injector --help
@@ -1937,8 +1937,8 @@ jobs:
   - put: #@ "rc-artifacts-s3-" + version.number
     params:
       file: packaged-product/artifacts-*.tar.gz
-  # version-{version} is written back to S3 only after publish-release-{version}
-  # succeeds, so the S3 value always reflects the last-published patch.
+  #! version-{version} is written back to S3 only after publish-release-{version}
+  #! succeeds, so the S3 value always reflects the last-published patch.
 - name: #@ "submit-release-sboms-" + version.number
   plan:
   - in_parallel:
@@ -1973,8 +1973,8 @@ jobs:
         resource: #@ "version-" + version.number
         params:
           bump: patch
-      # Last published version — written by publish-release-{version}.
-      # Used as BLACKDUCK_PREVIOUS_VERSION for carry-forward justifications.
+      #! Last published version — written by publish-release-{version}.
+      #! Used as BLACKDUCK_PREVIOUS_VERSION for carry-forward justifications.
       - get: released-version
         resource: #@ "released-version-" + version.number
     - task: blackduck-scan
@@ -2083,20 +2083,20 @@ jobs:
       osl: #@ "osl-" + version.number
     params:
       VERSION: ((.:version-number))
-  # Record the just-published version so the next blackduck-scan-{version} can
-  # use it as BLACKDUCK_PREVIOUS_VERSION — written BEFORE bumping version-{version}.
+  #! Record the just-published version so the next blackduck-scan-{version} can
+  #! use it as BLACKDUCK_PREVIOUS_VERSION — written BEFORE bumping version-{version}.
   - put: #@ "released-version-" + version.number
     params:
       file: version/version
-  # Keep the shared minor-line pointer current so blackduck-scan-v5.x always
-  # carries forward from the most recently published release (patch or GA).
-  # Without this, released-version-v5.x would stay at the last minor GA and
-  # miss all justifications added in subsequent patch releases.
+  #! Keep the shared minor-line pointer current so blackduck-scan-v5.x always
+  #! carries forward from the most recently published release (patch or GA).
+  #! Without this, released-version-v5.x would stay at the last minor GA and
+  #! miss all justifications added in subsequent patch releases.
   - put: released-version-v5.x
     params:
       file: version/version
-  # Write the new patch version to S3 only after a successful publish so that
-  # update-{version} always starts from the last-published baseline.
+  #! Write the new patch version to S3 only after a successful publish so that
+  #! update-{version} always starts from the last-published baseline.
   - put: #@ "version-" + version.number
     params:
       file: version/version
@@ -2133,8 +2133,8 @@ jobs:
     - get: version
       resource: version-v5.x
       passed: [bump-minor]
-    # Last published version — written by publish-release-minor.
-    # Used as BLACKDUCK_PREVIOUS_VERSION for carry-forward justifications.
+    #! Last published version — written by publish-release-minor.
+    #! Used as BLACKDUCK_PREVIOUS_VERSION for carry-forward justifications.
     - get: released-version-v5.x
   - task: blackduck-scan
     file: docs-platform-automation-with-docs/ci/tasks/blackduck-scan.yml
@@ -2251,7 +2251,7 @@ jobs:
           - -c
           - |
             set -euo pipefail
-            # Strip any pre-release suffix (e.g. "5.6.0-rc.123" → "5.6.0")
+            #! Strip any pre-release suffix (e.g. "5.6.0-rc.123" → "5.6.0")
             base_version=$(echo "$CURRENT_VERSION" | cut -d- -f1)
             major=$(echo "$base_version" | cut -d. -f1)
             minor=$(echo "$base_version" | cut -d. -f2)
@@ -2369,13 +2369,13 @@ jobs:
         packaged-product: rc-artifacts-s3-v5
       params:
         VERSION: ((.:version-number))
-    # Record the just-published version so the next blackduck-scan-v5.x can
-    # use it as BLACKDUCK_PREVIOUS_VERSION — written BEFORE bumping version-v5.x.
+    #! Record the just-published version so the next blackduck-scan-v5.x can
+    #! use it as BLACKDUCK_PREVIOUS_VERSION — written BEFORE bumping version-v5.x.
     - put: released-version-v5.x
       params:
         file: version/version
-    # Bump version-v5.x only after a successful publish so bump-minor always
-    # reads the correct current release version for the next minor.
+    #! Bump version-v5.x only after a successful publish so bump-minor always
+    #! reads the correct current release version for the next minor.
     - put: version
       resource: version-v5.x
       params:

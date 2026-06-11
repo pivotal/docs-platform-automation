@@ -26,9 +26,9 @@ versions:
   - number: v5.5
     regex: 5\.5\.[1-9]\d*
     vsphere_image: true
-    # The GA release of this minor line (e.g. 5.5.0).
-    # Used as initial_version for released-version-{version} so the very first
-    # patch carry-forward (5.5.1) correctly compares against the minor GA rather
-    # than a stale value. Set this to the minor GA version when adding a new
-    # version line to deployments.yml.
+    #! The GA release of this minor line (e.g. 5.5.0).
+    #! Used as initial_version for released-version-{version} so the very first
+    #! patch carry-forward (5.5.1) correctly compares against the minor GA rather
+    #! than a stale value. Set this to the minor GA version when adding a new
+    #! version line to deployments.yml.
     line_ga_version: 5.5.0
