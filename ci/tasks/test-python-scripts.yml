@@ -5,10 +5,10 @@ inputs:
 image_resource:
   type: registry-image
   source:
-    repository: ((platform-automation/main/concourse.dev_image_url))
-    tag: latest
-    username: ((platform-automation/main/concourse.registry_username))
-    password: ((platform-automation/main/concourse.registry_password))
+    repository:  ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
+    tag: testing
+    username: ((concourse-team/dev_image_registry.username))
+    password: ((concourse-team/dev_image_registry.password))
 run:
   path: bash
   args:
