@@ -1999,13 +1999,6 @@ jobs:
         BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
         BLACKDUCK_VERSION: ((.:version-number))
         BLACKDUCK_PREVIOUS_VERSION: ((.:previous-version-number))
-    - task: blackduck-check-compliance
-      file: docs-platform-automation-with-docs/ci/tasks/blackduck-check-compliance.yml
-      params:
-        BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
-        BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
-        BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
-        BLACKDUCK_VERSION: ((.:version-number))
 
 - name: #@ "generate-osl-" + version.number
   plan:
@@ -2022,6 +2015,13 @@ jobs:
   - load_var: version-number
     file: version/version
     reveal: true
+  - task: blackduck-check-compliance
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-check-compliance.yml
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      BLACKDUCK_VERSION: ((.:version-number))
   - task: generate-osl-report
     file: docs-platform-automation-with-docs/ci/tasks/generate-osl-report.yml
     params:
@@ -2043,6 +2043,7 @@ jobs:
       passed:
       - #@ "submit-release-sboms-" + version.number
       - #@ "blackduck-scan-" + version.number
+      - #@ "generate-osl-" + version.number
       params:
         unpack: true
     - get: version
@@ -2158,13 +2159,6 @@ jobs:
       BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
       BLACKDUCK_VERSION: ((.:version-number))
       BLACKDUCK_PREVIOUS_VERSION: ((.:previous-version-number))
-  - task: blackduck-check-compliance
-    file: docs-platform-automation-with-docs/ci/tasks/blackduck-check-compliance.yml
-    params:
-      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
-      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
-      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
-      BLACKDUCK_VERSION: ((.:version-number))
 
 - name: generate-osl-v5.x
   plan:
@@ -2179,6 +2173,13 @@ jobs:
   - load_var: version-number
     file: version/version
     reveal: true
+  - task: blackduck-check-compliance
+    file: docs-platform-automation-with-docs/ci/tasks/blackduck-check-compliance.yml
+    params:
+      BLACKDUCK_URL: ((platform-automation/main/blackduck.url))
+      BLACKDUCK_API_TOKEN: ((platform-automation/main/blackduck.api_token))
+      BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
+      BLACKDUCK_VERSION: ((.:version-number))
   - task: generate-osl-report
     file: docs-platform-automation-with-docs/ci/tasks/generate-osl-report.yml
     params:
@@ -2334,6 +2335,7 @@ jobs:
         passed:
           - submit-release-sboms-v5.x
           - blackduck-scan-v5.x
+          - generate-osl-v5.x
         params:
           unpack: true
       - get: version

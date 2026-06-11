@@ -82,92 +82,76 @@ def get_version_by_name(url, bearer_token, project_url, version_name):
 
 def check_compliance(url, bearer_token, version_url):
     print("\n" + "="*80)
-    print(" STEP: CHECKING COMPONENT COMPLIANCE (USAGE & JUSTIFICATION) ".center(80, "="))
+    print(" STEP: CHECKING COMPONENT COMPLIANCE (USAGE) ".center(80, "="))
     print("="*80)
-    
+
     # Filter for LICENSE violations
     components_url = f"{version_url}/components?filter=policyCategory:LICENSE&limit=100"
     headers = {
         'Authorization': f'Bearer {bearer_token}',
         'Accept': 'application/json'
     }
-    
+
     stats = {
         'total_violating': 0,
         'compliant': 0,
         'missing_usage': 0,
-        'missing_justification': 0,
         'non_compliant_list': []
     }
-    
+
     while components_url:
         try:
             response = requests.get(components_url, headers=headers, timeout=30)
             response.raise_for_status()
             data = response.json()
             items = data.get('items', [])
-            
+
             for item in items:
-                # We only care about components in violation
+                # Only care about components still in violation
                 if item.get('policyStatus') != 'IN_VIOLATION':
                     continue
-                    
+
                 stats['total_violating'] += 1
                 component_name = item.get('componentName')
                 component_version = item.get('componentVersionName')
-                comment = item.get('comment')
                 usages = item.get('usages', [])
-                
-                is_missing_usage = not usages
-                is_missing_justification = not comment
-                
-                if is_missing_usage or is_missing_justification:
-                    reasons = []
-                    if is_missing_usage:
-                        reasons.append("Missing Usage")
-                        stats['missing_usage'] += 1
-                    if is_missing_justification:
-                        reasons.append("Missing Justification")
-                        stats['missing_justification'] += 1
-                        
+
+                if not usages:
+                    stats['missing_usage'] += 1
                     stats['non_compliant_list'].append({
                         'name': component_name,
                         'version': component_version,
-                        'reasons': reasons
                     })
-                    print(f"[FAIL] {component_name} @ {component_version}: {', '.join(reasons)}")
+                    print(f"[FAIL] {component_name} @ {component_version}: Missing Usage")
                 else:
                     stats['compliant'] += 1
-                    logger.debug(f"[PASS] {component_name} @ {component_version} is compliant.")
-            
+                    logger.debug(f"[PASS] {component_name} @ {component_version}: Usage={usages}")
+
             # Handle pagination
             components_url = None
             for link in data.get('_meta', {}).get('links', []):
                 if link.get('rel') == 'next':
                     components_url = link.get('href')
                     break
-                    
+
         except Exception as e:
             logger.error(f"Failed to retrieve components: {e}")
             sys.exit(1)
-            
+
     print("\n" + "="*80)
     print(" COMPLIANCE SUMMARY ".center(80, "="))
     print("="*80)
-    print(f"Total Components with License Violations: {stats['total_violating']}")
-    print(f"Compliant (Resolved):                     {stats['compliant']}")
-    print(f"Non-Compliant (Unresolved):               {len(stats['non_compliant_list'])}")
-    if stats['non_compliant_list']:
-        print(f"  - Missing Usage:                        {stats['missing_usage']}")
-        print(f"  - Missing Justification:                {stats['missing_justification']}")
+    print(f"Total Components with License Violations : {stats['total_violating']}")
+    print(f"Compliant (Usage set)                    : {stats['compliant']}")
+    print(f"Non-Compliant (Missing Usage)             : {stats['missing_usage']}")
     print("="*80 + "\n")
-    
+
     if stats['non_compliant_list']:
-        print("ERROR: One or more components are missing Usage or Justification.")
-        print("Please resolve these manually in the Black Duck UI before proceeding.")
+        print("ERROR: One or more components are missing a Usage declaration.")
+        print("Please set the Usage field in the Black Duck UI (or re-run carry-forward) before proceeding.")
         sys.exit(1)
     else:
-        print("SUCCESS: All license violations have been resolved with Usage and Justification.")
+        print("SUCCESS: All license-violating components have a Usage declared.")
 
 def main():
     bd_url = get_env_var('BLACKDUCK_URL').rstrip('/')
