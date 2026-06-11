@@ -41,7 +41,7 @@ build:
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
       artifactory-url: "$ARTIFACT_URL"
-      blackduck-url: "$BLACKDUCK_PROJECT_URL"
+      blackduck-url-waived: true
       github-repos:
         - url: "https://github.com/pivotal/docs-platform-automation"
           branch: "$GITHUB_BRANCH"
@@ -53,7 +53,7 @@ build:
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-vsphere-image-sbom"
       artifactory-url: "$ARTIFACT_URL"
-      blackduck-url: "$BLACKDUCK_PROJECT_URL"
+      blackduck-url-waived: true
       github-repos:
         - url: "https://github.com/pivotal/docs-platform-automation"
           branch: "$GITHUB_BRANCH"

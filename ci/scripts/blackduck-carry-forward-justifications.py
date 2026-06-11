@@ -81,8 +81,8 @@ def get_version_by_name(url, bearer_token, project_url, version_name):
         sys.exit(1)
 
 def get_previous_component_data(bearer_token, version_url):
-    logger.info(f"Retrieving component data from previous version {version_url}...")
-    components_url = f"{version_url}/components?limit=100"
+    logger.info(f"Retrieving LICENSE-violating component data from previous version {version_url}...")
+    components_url = f"{version_url}/components?filter=policyCategory:LICENSE&limit=100"
     headers = {
         'Authorization': f'Bearer {bearer_token}',
         'Accept': 'application/json'

@@ -30,7 +30,6 @@ groups:
   - publish-release-minor
 - name: patch-bump
   jobs:
-  - bump-test-image-dependency-stability
   - bump-previous-versions-trigger
   #@ for/end version in data.values.versions:
   - #@ "update-" + version.number
@@ -1837,41 +1836,6 @@ jobs:
       - #@ "run-tasks-in-" + deployment.env_name + "-job"
       - upgrade-opsman-epc
       - additional-task-testing
-- name: bump-test-image-dependency-stability
-  plan:
-  - in_parallel:
-    - get: docs-platform-automation
-    - get: binaries-image
-      resource: rc-image-s3
-      passed: [ bump-previous-versions-trigger ]
-      trigger: true
-      params:
-        unpack: true
-    - get: osl-validated-image-receipt-s3
-  - task: generate-stub-version
-    config:
-      image_resource:
-        type: registry-image
-        source:
-          repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/ci
-          tag: testing
-          username: ((concourse-team/dev_image_registry.username))
-          password: ((concourse-team/dev_image_registry.password))
-      platform: linux
-      outputs:
-      - name: version
-      run:
-        path: bash
-        args:
-        - -c
-        - |
-          set -eux
-          echo "test" > version/version
-  - task: generate-dpkg-list-for-osl
-    file: docs-platform-automation/ci/tasks/generate-dpkg-list-for-OSL.yml
-    image: binaries-image
-  - task: check-osl-reuse-validity
-    file: docs-platform-automation/ci/tasks/check-osl-reuse-validity.yml
 #@ for version in data.values.versions:
 - name: #@ "update-" + version.number
   serial_groups: [ bump ]
