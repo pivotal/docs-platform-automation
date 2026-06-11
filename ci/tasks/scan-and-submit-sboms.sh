@@ -4,7 +4,7 @@ set -eux
 VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 GITHUB_COMMIT="$(git -C docs-platform-automation-with-docs rev-parse HEAD)"
-ARTIFACT_URL="https://usw1.packages.broadcom.com/artifactory/tas-operability-docker-dev-local/platform-automation/"
+ARTIFACT_URL="https://usw1.packages.broadcom.com/artifactory/tas-operability-docker-dev-local/platform-automation"
 
 # Remove RC suffix from RELEASE_LINE if TAGS is DEV
 if [ "$TAGS" = '["DEV"]' ]; then
