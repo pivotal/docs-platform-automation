@@ -57,18 +57,23 @@ def get_env(name, default=None, required=True):
 # Jenkins helpers
 # ---------------------------------------------------------------------------
 
-def get_crumb(jenkins_url, auth):
-    """Return (crumb_field, crumb_value) or (None, None) when CSRF is disabled."""
+def get_crumb(session, jenkins_url):
+    """Return (crumb_field, crumb_value) or (None, None) when CSRF is disabled.
+    Must be called on the same session used to trigger the build so the session
+    cookie set here is carried forward — Jenkins ties the crumb to the session.
+    """
     try:
-        r = requests.get(
-            f"{jenkins_url}/crumbIssuer/api/json", auth=auth, timeout=30
+        r = session.get(
+            f"{jenkins_url}/crumbIssuer/api/json", timeout=30
         )
         if r.status_code == 404:
             logger.info("CSRF crumb issuer not found — assuming CSRF is disabled.")
             return None, None
         r.raise_for_status()
         data = r.json()
-        return data["crumbRequestField"], data["crumb"]
+        field = data["crumbRequestField"]
+        logger.info("CSRF crumb obtained: %s=<redacted>", field)
+        return field, data["crumb"]
     except Exception as exc:
         logger.warning("Could not fetch crumb (%s) — continuing without it.", exc)
         return None, None
@@ -76,17 +81,19 @@ def get_crumb(jenkins_url, auth):
 
 def trigger_build(jenkins_url, auth, project_name, version):
     """POST buildWithParameters and return the queue item URL."""
-    crumb_field, crumb_value = get_crumb(jenkins_url, auth)
+    # Use a persistent session so the JSESSIONID cookie from the crumb fetch
+    # is automatically included in the build trigger POST.  Jenkins validates
+    # the crumb against the session that issued it — without this the crumb
+    # appears invalid and Jenkins returns HTTP 500.
+    session = requests.Session()
+    session.auth = auth
+
+    crumb_field, crumb_value = get_crumb(session, jenkins_url)
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     if crumb_field:
         headers[crumb_field] = crumb_value
-        logger.info("CSRF crumb obtained: %s=<redacted>", crumb_field)
-    else:
-        logger.info("No CSRF crumb — proceeding without it.")
 
     # Parameters must be sent as form-encoded POST body, not URL query string.
-    # Using params= would append them to the URL and leave the body empty,
-    # which causes HTTP 500 on Jenkins instances with strict form parsing.
     form_data = {
         "BlackDuck_Instance": "BD_VM",
         "Project_Name": project_name,
@@ -97,7 +104,7 @@ def trigger_build(jenkins_url, auth, project_name, version):
     logger.info("Triggering Jenkins job: %s", url)
     logger.info("  Parameters: %s", form_data)
 
-    r = requests.post(url, auth=auth, headers=headers, data=form_data, timeout=30)
+    r = session.post(url, headers=headers, data=form_data, timeout=30)
     if r.status_code not in (200, 201):
         logger.error(
             "Failed to trigger build: HTTP %d\nResponse headers: %s\nBody (first 500 chars): %s",
