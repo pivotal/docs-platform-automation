@@ -42,7 +42,7 @@ build:
       bom-for-scanner: "platform-automation-image-sbom"
       blackduck-url: "$BLACKDUCK_PROJECT_URL"
       artifactory-url: "$ARTIFACT_URL"
-    github-repos:
+      github-repos:
         - url: "https://github.com/pivotal/docs-platform-automation"
         branch: "$GITHUB_BRANCH"
         commit: "$GITHUB_COMMIT"
