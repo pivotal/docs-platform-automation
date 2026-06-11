@@ -10,6 +10,7 @@ groups:
   - bump-version-to-major
   - check-for-secrets-in-tasks
   - lint-windows-automation-scripts
+  - test-python-scripts
   #@ for/end deployment in data.values.deployments:
   - #@ deployment.env_name + "-delete-infrastructure"
   #@ for/end deployment in deployments_without_gcp:
@@ -600,6 +601,13 @@ jobs:
     trigger: true
   - task: lint-shell-scripts
     file: docs-platform-automation/ci/tasks/lint-windows-automation-scripts.yml
+
+- name: test-python-scripts
+  plan:
+  - get: docs-platform-automation
+    trigger: true
+  - task: run-unit-tests
+    file: docs-platform-automation/ci/tasks/test-python-scripts.yml
 
 - name: download-and-test-om
   plan:

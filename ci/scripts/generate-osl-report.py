@@ -28,6 +28,7 @@ import logging
 import os
 import sys
 import time
+import urllib.parse
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -39,10 +40,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-JENKINS_JOB_PATH = (
-    "/job/Black%20Duck%20-%20End%20User%20Reports"
-    "/job/Generate%20Notices%20Report"
-)
+
+def build_job_url(jenkins_url, job_path):
+    """Construct a safe Jenkins job URL from a plain (unencoded) job path.
+
+    job_path should use '/' to separate folder and job segments, e.g.:
+      'Black Duck - End User Reports/Generate Notices Report'
+    Each segment is percent-encoded individually so spaces and special
+    characters are handled correctly without risk of double-encoding.
+    """
+    segments = [urllib.parse.quote(s, safe="") for s in job_path.strip("/").split("/")]
+    encoded = "/job/".join(segments)
+    return f"{jenkins_url}/job/{encoded}"
 
 
 def get_env(name, default=None, required=True):
@@ -57,54 +66,28 @@ def get_env(name, default=None, required=True):
 # Jenkins helpers
 # ---------------------------------------------------------------------------
 
-def get_crumb(session, jenkins_url):
-    """Return (crumb_field, crumb_value) or (None, None) when CSRF is disabled.
-    Must be called on the same session used to trigger the build so the session
-    cookie set here is carried forward — Jenkins ties the crumb to the session.
+def trigger_build(jenkins_url, job_path, auth, project_name, version):
+    """POST buildWithParameters and return the queue item URL.
+
+    Jenkins 2.96+ automatically bypasses CSRF checks when Basic Auth is used
+    with an API token (api tokens can't be forged via cross-site requests).
+    Fetching a crumb AND sending a session cookie introduces a conflict: Jenkins
+    may issue an anonymous JSESSIONID during the crumb GET which then overrides
+    the Basic Auth identity on the subsequent POST, making the request appear
+    anonymous (HTTP 500).  We therefore skip the crumb entirely and rely solely
+    on Basic Auth + API token.
     """
-    try:
-        r = session.get(
-            f"{jenkins_url}/crumbIssuer/api/json", timeout=30
-        )
-        if r.status_code == 404:
-            logger.info("CSRF crumb issuer not found — assuming CSRF is disabled.")
-            return None, None
-        r.raise_for_status()
-        data = r.json()
-        field = data["crumbRequestField"]
-        logger.info("CSRF crumb obtained: %s=<redacted>", field)
-        return field, data["crumb"]
-    except Exception as exc:
-        logger.warning("Could not fetch crumb (%s) — continuing without it.", exc)
-        return None, None
-
-
-def trigger_build(jenkins_url, auth, project_name, version):
-    """POST buildWithParameters and return the queue item URL."""
-    # Use a persistent session so the JSESSIONID cookie from the crumb fetch
-    # is automatically included in the build trigger POST.  Jenkins validates
-    # the crumb against the session that issued it — without this the crumb
-    # appears invalid and Jenkins returns HTTP 500.
-    session = requests.Session()
-    session.auth = auth
-
-    crumb_field, crumb_value = get_crumb(session, jenkins_url)
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    if crumb_field:
-        headers[crumb_field] = crumb_value
-
-    # Parameters must be sent as form-encoded POST body, not URL query string.
     form_data = {
         "BlackDuck_Instance": "BD_VM",
         "Project_Name": project_name,
         "Version": version,
     }
 
-    url = f"{jenkins_url}{JENKINS_JOB_PATH}/buildWithParameters"
+    url = f"{build_job_url(jenkins_url, job_path)}/buildWithParameters"
     logger.info("Triggering Jenkins job: %s", url)
     logger.info("  Parameters: %s", form_data)
 
-    r = session.post(url, headers=headers, data=form_data, timeout=30)
+    r = requests.post(url, auth=auth, data=form_data, timeout=30)
     if r.status_code not in (200, 201):
         logger.error(
             "Failed to trigger build: HTTP %d\nResponse headers: %s\nBody (first 500 chars): %s",
@@ -265,14 +248,21 @@ def main():
     jenkins_url = get_env("JENKINS_URL").rstrip("/")
     jenkins_user = get_env("JENKINS_USER")
     jenkins_api_token = get_env("JENKINS_API_TOKEN")
+    jenkins_job_path = get_env(
+        "JENKINS_JOB_PATH",
+        default="Black Duck - End User Reports/Generate Notices Report",
+        required=False,
+    )
     project_name = get_env("BLACKDUCK_PROJECT_NAME")
     version = get_env("VERSION")
     output_dir = get_env("OUTPUT_DIR", default="generated-osl", required=False)
     poll_interval = int(get_env("POLL_INTERVAL_SEC", default="15", required=False))
     max_wait = int(get_env("MAX_WAIT_SEC", default="3600", required=False))
 
+    job_url = build_job_url(jenkins_url, jenkins_job_path)
     print(f"Jenkins URL:    {jenkins_url}")
     print(f"Jenkins User:   {jenkins_user}")
+    print(f"Jenkins Job:    {job_url}")
     print(f"BD Project:     {project_name}")
     print(f"Version:        {version}")
     print(f"Output Dir:     {output_dir}")
@@ -281,7 +271,7 @@ def main():
 
     auth = HTTPBasicAuth(jenkins_user, jenkins_api_token)
 
-    queue_url = trigger_build(jenkins_url, auth, project_name, version)
+    queue_url = trigger_build(jenkins_url, jenkins_job_path, auth, project_name, version)
     build_url = wait_for_build_start(queue_url, auth, poll_interval)
     wait_for_build_completion(build_url, auth, poll_interval, max_wait)
     osl_path = download_osl_artifact(build_url, auth, version, output_dir)

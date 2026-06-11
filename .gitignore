@@ -7,3 +7,4 @@ tasks/windows-automation/*.iso
 tasks/windows-automation/variables.pkrvars.hcl
 tasks/windows-automation/variables.pkr.hcl
 *.iso
+**__pycache__

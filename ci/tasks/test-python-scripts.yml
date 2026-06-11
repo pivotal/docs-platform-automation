@@ -1,0 +1,25 @@
+---
+platform: linux
+inputs:
+  - name: docs-platform-automation
+image_resource:
+  type: registry-image
+  source:
+    repository: ((platform-automation/main/concourse.dev_image_url))
+    tag: latest
+    username: ((platform-automation/main/concourse.registry_username))
+    password: ((platform-automation/main/concourse.registry_password))
+run:
+  path: bash
+  args:
+    - -c
+    - |
+      set -euo pipefail
+      cd docs-platform-automation/ci/scripts/tests
+      echo "Running Python unit tests..."
+      if python3 -c "import pytest" 2>/dev/null; then
+        python3 -m pytest . -v --tb=short
+      else
+        python3 -m unittest discover -v .
+      fi
+      echo "All Python unit tests passed."

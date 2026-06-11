@@ -29,6 +29,8 @@ params:
   JENKINS_URL: https://gtso-jenkins.devops.broadcom.net
   JENKINS_USER:
   JENKINS_API_TOKEN:
+  # Plain (unencoded) path: folder/job — script encodes each segment safely.
+  JENKINS_JOB_PATH: "Black Duck - End User Reports/Generate Notices Report"
   BLACKDUCK_PROJECT_NAME:
   # VERSION is loaded from version/version via load_var in the calling job.
   VERSION:

@@ -130,7 +130,8 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
         "wheel>=0.38.1" \
         "cryptography>=42.0.0" \
         "docker>=7.1.0" \
-        "requests>=2.31.0"
+        "requests>=2.31.0" \
+        "pytest>=8.0.0"
 RUN az --version && aws --version && openstack --version
 
 
