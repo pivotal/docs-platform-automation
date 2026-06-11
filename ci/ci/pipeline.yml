@@ -1997,8 +1997,12 @@ jobs:
   - task: generate-osl-report
     file: docs-platform-automation-with-docs/ci/tasks/generate-osl-report.yml
     params:
+      JENKINS_URL: ((platform-automation/main/jenkins.url))
+      JENKINS_JOB_PATH: ((platform-automation/main/jenkins.job_path))
       JENKINS_USER: ((platform-automation/main/jenkins.user))
       JENKINS_API_TOKEN: ((platform-automation/main/jenkins.api_token))
+      JENKINS_BLACKDUCK_INSTANCE: ((platform-automation/main/jenkins.blackduck_instance))
+      JENKINS_OUTPUT_FILE: ((platform-automation/main/jenkins.output_file))
       BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
       VERSION: ((.:version-number))
   - put: #@ "osl-" + version.number
@@ -2155,8 +2159,12 @@ jobs:
   - task: generate-osl-report
     file: docs-platform-automation-with-docs/ci/tasks/generate-osl-report.yml
     params:
+      JENKINS_URL: ((platform-automation/main/jenkins.url))
+      JENKINS_JOB_PATH: ((platform-automation/main/jenkins.job_path))
       JENKINS_USER: ((platform-automation/main/jenkins.user))
       JENKINS_API_TOKEN: ((platform-automation/main/jenkins.api_token))
+      JENKINS_BLACKDUCK_INSTANCE: ((platform-automation/main/jenkins.blackduck_instance))
+      JENKINS_OUTPUT_FILE: ((platform-automation/main/jenkins.output_file))
       BLACKDUCK_PROJECT_NAME: ((platform-automation/main/blackduck.project_name))
       VERSION: ((.:version-number))
   - put: osl
