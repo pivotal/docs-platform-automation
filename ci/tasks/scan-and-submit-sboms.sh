@@ -30,34 +30,34 @@ cat << MANIFEST > manifest.yml
 kind: tvs.tanzu.broadcom.com/build@1.0.0
 build:
   component: "platform-automation"
-  version: $VERSION
-  release-line: $RELEASE_LINE
+  version: "$VERSION"
+  release-line: "$RELEASE_LINE"
   tags: $TAGS
   artifacts:
     - name: "platform-automation-task-image"
-      version: $VERSION
+      version: "$VERSION"
       digest: $pa_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
-      blackduck-url: "$BLACKDUCK_PROJECT_URL"
       artifactory-url: "$ARTIFACT_URL"
+      blackduck-url: "$BLACKDUCK_PROJECT_URL"
       github-repos:
         - url: "https://github.com/pivotal/docs-platform-automation"
-        branch: "$GITHUB_BRANCH"
-        commit: "$GITHUB_COMMIT"
+          branch: "$GITHUB_BRANCH"
+          commit: "$GITHUB_COMMIT"
     - name: "platform-automation-vsphere-image"
-      version: $VERSION
+      version: "$VERSION"
       digest: $pa_vsphere_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-vsphere-image-sbom"
-      blackduck-url: "$BLACKDUCK_PROJECT_URL"
       artifactory-url: "$ARTIFACT_URL"
+      blackduck-url: "$BLACKDUCK_PROJECT_URL"
       github-repos:
         - url: "https://github.com/pivotal/docs-platform-automation"
-        branch: "$GITHUB_BRANCH"
-        commit: "$GITHUB_COMMIT"
+          branch: "$GITHUB_BRANCH"
+          commit: "$GITHUB_COMMIT"
 MANIFEST
 
 chmod +x tvs-cli/tvs-linux-amd64
