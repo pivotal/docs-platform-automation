@@ -1,11 +1,8 @@
 FROM internalpcfplatformautomation/platform-automation:packages
 
-# remove azure cli
-RUN pip3 install pip-autoremove
-RUN pip-autoremove -y azure-cli
-
-# remove pip
-RUN pip3 uninstall -y pip-autoremove pip
+# remove azure cli and pip
+# pip-autoremove is incompatible with Python 3.12
+RUN pip3 uninstall -y azure-cli pip
 
 # remove gcloud CLI
 RUN rm -Rf /usr/local/bin/gcloud
