@@ -4,23 +4,10 @@ FROM ${base_image}
 
 ARG PIP_INDEX_URL_BASE=""
 
-# remove azure cli
-RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
-    --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
-    if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "${PIP_INDEX_URL_BASE}" ]; then \
-        export PIP_INDEX_URL="https://$(cat /run/secrets/artifactory_user):$(cat /run/secrets/artifactory_pass)@${PIP_INDEX_URL_BASE}"; \
-    fi && \
-    pip3 install pip-autoremove
-RUN pip-autoremove -y azure-cli
-
-# remove AWS CLI
-RUN pip-autoremove -y awscli
-
-# remove Openstack CLI
-RUN pip-autoremove -y python-openstackclient
-
-# remove pip
-RUN pip3 uninstall -y pip-autoremove pip
+# remove azure, aws, Openstack cli, and pip
+# pip-autoremove is incompatible with Python 3.12
+# pip uninstall is sufficient here — all Python dirs are wiped below anyway.
+RUN pip3 uninstall -y azure-cli awscli python-openstackclient pip
 
 # remove gcloud CLI
 RUN rm -Rf /usr/local/bin/gcloud
