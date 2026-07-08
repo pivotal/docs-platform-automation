@@ -161,6 +161,6 @@ RUN wget -O /usr/bin/leftovers "https://github.com/genevieve/leftovers/releases/
 RUN chmod +x /usr/bin/leftovers
 
 # install syft for scanning images
-RUN curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+RUN curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin v1.45.1
 
 ENV CGO_ENABLED=0

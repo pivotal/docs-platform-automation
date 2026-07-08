@@ -17,12 +17,12 @@ tar -xf packaged-product/artifacts*.tar.gz -C platform-automation-product
 
 mkdir -p platform-automation-image
 tar -xf platform-automation-product/platform-automation-image-$VERSION.tgz -C platform-automation-image
-syft platform-automation-image -o cyclonedx-json=platform-automation-image-sbom
+syft platform-automation-image -o cyclonedx-json@1.6=platform-automation-image-sbom
 pa_image_sha=$(sha1sum platform-automation-product/platform-automation-image-$VERSION.tgz | cut -d' ' -f1)
 
 mkdir -p vsphere-platform-automation-image
 tar -xf platform-automation-product/vsphere-platform-automation-image-$VERSION.tar.gz -C vsphere-platform-automation-image
-syft vsphere-platform-automation-image -o cyclonedx-json=platform-automation-vsphere-image-sbom
+syft vsphere-platform-automation-image -o cyclonedx-json@1.6=platform-automation-vsphere-image-sbom
 pa_vsphere_image_sha=$(sha1sum platform-automation-product/vsphere-platform-automation-image-$VERSION.tar.gz | cut -d' ' -f1)
 
 cat << MANIFEST > manifest.yml
