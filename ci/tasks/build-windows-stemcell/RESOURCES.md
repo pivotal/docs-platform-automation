@@ -7,7 +7,7 @@ This document explains where the platform automation image and tasks are publish
 ### binaries-image (Recommended)
 
 The `binaries-image` is built in the CI pipeline (`build-binaries-image-combined` job) and includes:
-- Packer 1.15.1 + vsphere plugin (added via `Dockerfile.binaries`)
+- Packer 1.15.4 + vsphere plugin (added via `Dockerfile.binaries`)
 - govc (VMware vSphere CLI)
 - om, bosh, bbr, credhub, and other CLI tools
 

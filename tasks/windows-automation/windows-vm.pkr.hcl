@@ -11,7 +11,7 @@ packer {
   required_plugins {
     vsphere = {
       source  = "github.com/vmware/vsphere"
-      version = ">= 2.1.2"
+      version = ">= 2.2.0"
     }
   }
 }
