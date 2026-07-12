@@ -19,7 +19,6 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     netcat-openbsd \
     python3 \
     python3-dev \
-    python3-setuptools \
     python3-pip \
     rsync \
     ssh \
@@ -53,6 +52,7 @@ RUN gcloud --version
 # Python CLIs + CVE-pinned upgrades.
 # wheel: CVE-2022-40898. cryptography: CVE-2023-50782.
 # azure-core: CVE-2026-21226. docker: GHSA-x744-4wpc-v9h2 et al.
+# setuptools: GHSA-5rjg-fvgr-3xxf (CVE-2025-47273, TASCVE-98021).
 RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
     if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "${PIP_INDEX_URL_BASE}" ]; then \
@@ -69,7 +69,8 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
         "wheel>=0.38.1" \
         "cryptography>=42.0.0" \
         "azure-core>=1.38.0" \
-        "docker>=7.1.0"
+        "docker>=7.1.0" \
+        "setuptools>=78.1.1,<82"
 
 RUN az --version && aws --version && openstack --version
 
