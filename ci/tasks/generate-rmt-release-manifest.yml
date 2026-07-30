@@ -22,6 +22,13 @@ run:
       export VERSION=${VERSION}
       export END_OF_SUPPORT_DATE_=$(date -d "$END_OF_SUPPORT_DATE" +"%m/%d/%Y")
 
+      DOC_VERSION=$(echo "$VERSION" | cut -f 1,2 -d '.' --output-delimiter='-')
+      export DOC_VERSION
+      case "$DOC_VERSION" in
+        [0-9]*-[0-9]*) ;;
+        *) echo "DOC_VERSION derivation failed for VERSION=$VERSION (got '$DOC_VERSION')" >&2; exit 1 ;;
+      esac
+
       INPUT_RELEASE_TEMPLATE_FILE=docs-platform-automation/ci/tasks/templates/pa-release.yml.template
       OUTPUT_RELEASE_FILE=rmt-release-config/pa-release-${VERSION}.yml
 
