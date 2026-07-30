@@ -6,6 +6,51 @@ These are the release notes for Platform Automation Toolkit for VMware Tanzu.
 Tanzu Platform for Cloud Foundry is now called Elastic Application Runtime.
 The first version of Elastic Application Runtime is 10.3.</p>
 
+## v5.5.4
+July 21, 2026
+
+| Name | version |
+|---|---|
+| aws-cli | 1.45.47 |
+| azure-cli | 2.88.0 |
+| bbr-cli | [1.9.79](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.79) |
+| bosh-cli | [v7.10.7](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.10.7) |
+| credhub | [2.9.58](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.58) |
+| gcloud-cli | 576.0.0 |
+| govc-cli | 0.55.1 |
+| om | [7.21.5](https://github.com/pivotal-cf/om/releases/tag/7.21.5) |
+| winfs-injector | [0.33.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.33.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.5.4" target="_blank">Download</a>
+
+### What's New
+
+- This release updates base image packages that address CVEs, including OpenSSH, wget, and time zone data.
+- This release includes an updated version of the OM CLI and other binaries.
+
+## v5.5.3
+July 21, 2026
+
+| Name | version |
+|---|---|
+| aws-cli | 1.45.40 |
+| azure-cli | 2.87.0 |
+| bbr-cli | [1.9.79](https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/tag/v1.9.79) |
+| bosh-cli | [v7.10.6](https://github.com/cloudfoundry/bosh-cli/releases/tag/v7.10.6) |
+| credhub | [2.9.58](https://github.com/cloudfoundry-incubator/credhub-cli/releases/tag/2.9.58) |
+| gcloud-cli | 575.0.0 |
+| govc-cli | 0.55.1 |
+| om | [7.21.4](https://github.com/pivotal-cf/om/releases/tag/7.21.4) |
+| winfs-injector | [0.33.0](https://github.com/pivotal-cf/winfs-injector/releases/tag/0.33.0) |
+
+The full Docker image-receipt: <a href="https://platform-automation-release-candidate.s3-us-west-2.amazonaws.com/image-receipt-5.5.3" target="_blank">Download</a>
+
+### What's New
+
+- In the task image, Python 3.12 replaces Python 3.10 as the default `python3`. The vSphere image does not include Python.
+- Packer is updated to 1.15.4.
+- This release includes updated binaries that address CVEs.
+
 ## v5.5.2
 June 16, 2026
 
