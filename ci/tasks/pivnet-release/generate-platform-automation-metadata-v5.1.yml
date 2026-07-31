@@ -20,13 +20,13 @@ run:
   - |
     set -eux
     VERSION="$(cat version/version)"
-    DOC_VERSION=$(echo "$VERSION" | cut -f 1,2 -d '.' --output-delimiter='.')
+    TECHDOCS_VERSION=$(echo "$VERSION" | cut -f 1,2 -d '.' --output-delimiter='-')
 
     cat >> metadata/metadata.yml <<EOF
     ---
     release:
       version: "$VERSION"
-      release_notes_url: "https://docs.pivotal.io/platform-automation/v${DOC_VERSION}/release-notes.html"
+      release_notes_url: "https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/platform-automation-toolkit-for-tanzu/${TECHDOCS_VERSION}/vmware-automation-toolkit/docs-release-notes.html"
       description: |
         Concourse Tasks and Image for installing and automating VMware Tanzu components.
         Semantically versioned.

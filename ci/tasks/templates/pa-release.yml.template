@@ -12,7 +12,7 @@ no_encryption_change: "Y"
 oct_request_id: "3608"
 published_date_mm/dd/yyyy: ""
 end_of_support_date_mm/dd/yyyy: ${END_OF_SUPPORT_DATE}
-docs_link: https://docs.vmware.com/en/Platform-Automation-Toolkit-for-VMware-Tanzu/5.3/vmware-automation-toolkit/GUID-docs-release-notes.html#${VERSION}
+docs_link: https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/platform-automation-toolkit-for-tanzu/${DOC_VERSION}/vmware-automation-toolkit/docs-release-notes.html
 export_control_status: ENTITLEMENT_REQUIRED
 product_slug: platform-automation
 tile_new_config_added: False
