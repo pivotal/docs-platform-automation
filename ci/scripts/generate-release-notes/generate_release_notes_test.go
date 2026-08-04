@@ -111,6 +111,43 @@ var _ = Describe("GenerateReleaseNotes", func() {
 			})
 		})
 
+		When("the patch notes are empty", func() {
+			assertRefusesToGenerate := func(emptyPatchNotesPaths ...string) {
+				args := []string{"--docs-dir", repo.dir}
+				for _, path := range emptyPatchNotesPaths {
+					args = append(args, "--patch-notes-path", path)
+				}
+				args = append(args, "--patch-versions", "1.0.1")
+
+				command := exec.Command(compiledPath, args...)
+				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+				Expect(err).NotTo(HaveOccurred())
+				Eventually(session).Should(gexec.Exit(1))
+				Expect(session.Err).To(gbytes.Say("all patch notes files are empty"))
+
+				By("not writing a heading-only section for the version")
+				notes, err := repo.readFileFrom("develop", "docs/release-notes.html.md.erb")
+				Expect(err).NotTo(HaveOccurred())
+				Expect(notes).To(Equal(stableReleaseNotes))
+			}
+
+			It("errors instead of writing a heading-only section", func() {
+				emptyPatchNotesFile, err := ioutil.TempFile("", "")
+				Expect(err).NotTo(HaveOccurred())
+
+				assertRefusesToGenerate(emptyPatchNotesFile.Name())
+			})
+
+			It("errors when both the cve and version-specific patch notes files are empty", func() {
+				emptyCveNotesFile, err := ioutil.TempFile("", "")
+				Expect(err).NotTo(HaveOccurred())
+				emptyVersionNotesFile, err := ioutil.TempFile("", "")
+				Expect(err).NotTo(HaveOccurred())
+
+				assertRefusesToGenerate(emptyCveNotesFile.Name(), emptyVersionNotesFile.Name())
+			})
+		})
+
 		It("adds the notes in the correct place based on semver", func() {
 			patchNotesFile, err := ioutil.TempFile("", "")
 			Expect(err).NotTo(HaveOccurred())
