@@ -624,9 +624,14 @@ jobs:
     file: docs-platform-automation/ci/tasks/test-and-build-om.yml
 
 - name: build-binaries-image-combined
+  #! version-bump is shared with every job that reads/writes the "version"
+  #! resource, so this job's get+put of version can't race with a manual
+  #! major/minor/patch bump (see incident: a patch bump to 5.5.5-rc.1 was
+  #! silently clobbered by the next build-binaries-image-combined run).
   serial_groups:
   - image
   - task
+  - version-bump
   plan:
   - in_parallel:
     - get: osl
@@ -860,6 +865,9 @@ jobs:
   - task: check-osl-reuse-validity
     file: docs-platform-automation/ci/tasks/check-osl-reuse-validity.yml
 - name: bump-version-to-major
+  #! Shared with every job that reads/writes the "version" resource so this
+  #! bump can't race with build-binaries-image-combined's own get+put of it.
+  serial_groups: [version-bump]
   plan:
   - put: version
     params:
@@ -867,7 +875,10 @@ jobs:
 - name: bump-minor
   #! Serialised with publish-release-minor so a new RC image cannot overwrite
   #! in-flight v5.x artifacts before the current release finishes publishing.
-  serial_groups: [minor-release]
+  #! version-bump is shared with every job that reads/writes the "version"
+  #! resource so this bump can't race with build-binaries-image-combined's
+  #! own get+put of it.
+  serial_groups: [minor-release, version-bump]
   plan:
   - in_parallel:
     - get: osl
@@ -2363,6 +2374,9 @@ jobs:
       params:
         bump: minor
 - name: bump-version-ci-patch
+  #! Shared with every job that reads/writes the "version" resource so this
+  #! bump can't race with build-binaries-image-combined's own get+put of it.
+  serial_groups: [version-bump]
   plan:
     - get: version
     - put: version
