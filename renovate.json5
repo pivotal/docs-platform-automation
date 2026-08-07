@@ -1,0 +1,93 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    ":semanticCommitsDisabled",
+  ],
+  baseBranches: ["develop"],
+  timezone: "America/Los_Angeles",
+  schedule: ["before 6am on monday"],
+  labels: ["dependencies"],
+  prConcurrentLimit: 5,
+  prHourlyLimit: 2,
+  rangeStrategy: "bump",
+
+  packageRules: [
+    // Group all patch-level bumps across ecosystems to cut PR noise
+    {
+      matchUpdateTypes: ["patch"],
+      groupName: "patch updates",
+      automerge: false,
+    },
+    // Low-risk internal tooling: group minor+patch (manual review, no automerge)
+    {
+      matchManagers: ["gomod"],
+      groupName: "go dependencies",
+      matchUpdateTypes: ["minor", "patch"],
+      automerge: false,
+    },
+    {
+      matchManagers: ["bundler"],
+      groupName: "ruby dependencies (secrets-verifier)",
+    },
+    // CLI/binary tools pulled via custom regex managers — group per pipeline concern
+    {
+      matchManagers: ["regex"],
+      matchPackageNames: ["hashicorp/packer", "vmware/packer-plugin-vsphere"],
+      groupName: "packer toolchain",
+    },
+    // Docker base images and Concourse resource images: group patch/digest updates
+    {
+      matchManagers: ["dockerfile", "regex"],
+      matchDatasources: ["docker"],
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      groupName: "container image updates",
+    },
+    // Major version bumps always get their own PR, never grouped, never automerged
+    {
+      matchUpdateTypes: ["major"],
+      groupName: null,
+      automerge: false,
+      labels: ["dependencies", "major-update"],
+    },
+  ],
+
+  customManagers: [
+    // Generic: any "# renovate: ..." annotated VERSION=/ENV FOO_VERSION= line in Dockerfiles or shell scripts
+    // (ci/dockerfiles/Dockerfile.ci intentionally excluded from this pass)
+    {
+      customType: "regex",
+      fileMatch: [
+        "^ci/dockerfiles/Dockerfile\\.binaries$",
+        "^tasks/build-windows-stemcell\\.sh$",
+      ],
+      matchStrings: [
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?( extractVersion=(?<extractVersion>.*?))?\\s*\\n\\s*(ENV\\s+)?[A-Z_]+_VERSION=[\"']?(?<currentValue>[\\w.-]+)[\"']?",
+      ],
+      versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+    },
+    // Concourse image_resource / registry-image resource tag pins (semver-shaped tags only)
+    {
+      customType: "regex",
+      fileMatch: [
+        "^ci/ci/pipeline\\.yml$",
+        "^ci/tasks/.*\\.yml$",
+        "^ci/python-mitigation-support/pipeline\\.yml$",
+        "^ci/osspi-tpe-ci/pipeline\\.yml$",
+      ],
+      matchStrings: [
+        "repository:\\s*(?<depName>[a-zA-Z0-9._/-]+)\\s*\\n\\s*tag:\\s*[\"']?(?<currentValue>\\d[\\w.-]*)[\"']?",
+      ],
+      datasourceTemplate: "docker",
+    },
+  ],
+
+  vulnerabilityAlerts: {
+    enabled: true,
+    labels: ["security"],
+  },
+
+  ignorePaths: [
+    "external/**",
+  ],
+}

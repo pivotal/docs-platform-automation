@@ -208,7 +208,8 @@ export NO_PROXY="$(no_proxy_with_github "${NO_PROXY:-}")"
 
 # ---- Packer vsphere plugin ----
 # HTTP_PROXY/HTTPS_PROXY are set only after this block so plugin download is direct or uses NO_PROXY.
-VERSION="2.1.2"
+# renovate: datasource=github-releases depName=vmware/packer-plugin-vsphere versioning=semver extractVersion=^v(?<version>.*)$
+VERSION="2.3.0"
 PLUGIN_NAME="vsphere"
 SOURCE="github.com/vmware/vsphere"
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
