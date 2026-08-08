@@ -43,6 +43,13 @@ RUN apt-get update && apt-get install -y software-properties-common && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 && \
     python3.12 -m ensurepip --upgrade
 
+# apt's python3-httplib2 (a launchpadlib/software-properties-common dependency,
+# unused after the PPA setup above) pins httplib2 to 0.20.2, vulnerable to a
+# decompression-bomb DoS: GHSA-j5g9-f88f-gfj3 (CVE-2026-59939). Drop the apt
+# package (its stale egg-info metadata is what scanners key on) and pin the
+# fixed version via pip alongside the other CVE-pinned upgrades.
+RUN apt-get remove -y python3-httplib2
+
 # gcloud
 RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
 ENV PATH /root/google-cloud-sdk/bin:$PATH
@@ -53,6 +60,8 @@ RUN gcloud --version
 # wheel: CVE-2022-40898. cryptography: CVE-2023-50782.
 # azure-core: CVE-2026-21226. docker: GHSA-x744-4wpc-v9h2 et al.
 # setuptools: GHSA-5rjg-fvgr-3xxf (CVE-2025-47273, TASCVE-98021).
+# pip: GHSA-wf93-45jw-7689 (CVE-2026-8643, TASCVE-121469).
+# httplib2: GHSA-j5g9-f88f-gfj3 (CVE-2026-59939).
 RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
     if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "${PIP_INDEX_URL_BASE}" ]; then \
@@ -61,6 +70,7 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     else \
         echo "pip: using default public index"; \
     fi && \
+    pip3 install --upgrade "pip>=26.1.2" && \
     pip3 install \
         azure-cli \
         awscli \
@@ -70,7 +80,8 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
         "cryptography>=42.0.0" \
         "azure-core>=1.38.0" \
         "docker>=7.1.0" \
-        "setuptools>=78.1.1,<82"
+        "setuptools>=78.1.1,<82" \
+        "httplib2>=0.32.0"
 
 RUN az --version && aws --version && openstack --version
 
