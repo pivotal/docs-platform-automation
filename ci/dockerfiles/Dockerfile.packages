@@ -53,6 +53,7 @@ RUN gcloud --version
 # wheel: CVE-2022-40898. cryptography: CVE-2023-50782.
 # azure-core: CVE-2026-21226. docker: GHSA-x744-4wpc-v9h2 et al.
 # setuptools: GHSA-5rjg-fvgr-3xxf (CVE-2025-47273, TASCVE-98021).
+# pip: GHSA-wf93-45jw-7689 (CVE-2026-8643, TASCVE-121469).
 RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
     if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "${PIP_INDEX_URL_BASE}" ]; then \
@@ -61,6 +62,7 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     else \
         echo "pip: using default public index"; \
     fi && \
+    pip3 install --upgrade "pip>=26.1.2" && \
     pip3 install \
         azure-cli \
         awscli \
