@@ -183,13 +183,26 @@ func (c *command) createReleaseNoteLines(version semver.Version) ([]string, erro
 			releaseTimeLine,
 		),
 	}
+
+	hasNotes := false
 	for _, patchNotesPath := range c.PatchNotesPath {
 		rawContents, err := ioutil.ReadFile(patchNotesPath)
 		contents := strings.TrimSuffix(string(rawContents), "\n")
 		if err != nil {
 			return nil, fmt.Errorf("could not read patch notes path: %s, %w", patchNotesPath, err)
 		}
+		if strings.TrimSpace(contents) != "" {
+			hasNotes = true
+		}
 		lines = append(lines, strings.Split(contents, "\n")...)
+	}
+
+	if !hasNotes {
+		return nil, fmt.Errorf(
+			"all patch notes files are empty (%s); populate them with release notes for v%s before generating release notes, otherwise a heading-only section would be committed and permanently skipped on future runs",
+			strings.Join(c.PatchNotesPath, ", "),
+			version.String(),
+		)
 	}
 
 	lines = append(lines, "")
