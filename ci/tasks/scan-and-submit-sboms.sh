@@ -5,9 +5,7 @@ VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 GITHUB_COMMIT="$(git -C docs-platform-automation-with-docs rev-parse HEAD)"
 GITHUB_REPO_URL="https://github.com/pivotal/docs-platform-automation"
-ARTIFACT_URL="https://usw1.packages.broadcom.com/artifactory/tas-operability-docker-dev-local/platform-automation"
 
-echo "Artifactory URL: $ARTIFACT_URL"
 echo "BlackDuck URL: $BLACKDUCK_PROJECT_URL"
 echo "GitHub repo: $GITHUB_REPO_URL"
 echo "GitHub branch: $GITHUB_BRANCH"
@@ -47,7 +45,7 @@ build:
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
-      artifactory-url: "$ARTIFACT_URL"
+      artifactory-url-waived: true
       blackduck-url: "$BLACKDUCK_PROJECT_URL"
       github-repos:
         - url: "$GITHUB_REPO_URL"
@@ -59,7 +57,7 @@ build:
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-vsphere-image-sbom"
-      artifactory-url: "$ARTIFACT_URL"
+      artifactory-url-waived: true
       blackduck-url: "$BLACKDUCK_PROJECT_URL"
       github-repos:
         - url: "$GITHUB_REPO_URL"
