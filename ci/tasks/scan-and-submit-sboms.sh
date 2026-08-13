@@ -4,7 +4,14 @@ set -eux
 VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 GITHUB_COMMIT="$(git -C docs-platform-automation-with-docs rev-parse HEAD)"
+GITHUB_REPO_URL="https://github.com/pivotal/docs-platform-automation"
 ARTIFACT_URL="https://usw1.packages.broadcom.com/artifactory/tas-operability-docker-dev-local/platform-automation"
+
+echo "Artifactory URL: $ARTIFACT_URL"
+echo "BlackDuck URL: $BLACKDUCK_PROJECT_URL"
+echo "GitHub repo: $GITHUB_REPO_URL"
+echo "GitHub branch: $GITHUB_BRANCH"
+echo "GitHub commit: $GITHUB_COMMIT"
 
 # Remove RC suffix from RELEASE_LINE if TAGS is DEV
 if [ "$TAGS" = '["DEV"]' ]; then
@@ -40,18 +47,24 @@ build:
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-image-sbom"
-      artifactory-url-waived: true
-      github-repos-waived: true
-      blackduck-url-waived: true
+      artifactory-url: "$ARTIFACT_URL"
+      blackduck-url: "$BLACKDUCK_PROJECT_URL"
+      github-repos:
+        - url: "$GITHUB_REPO_URL"
+          branch: "$GITHUB_BRANCH"
+          commit: "$GITHUB_COMMIT"
     - name: "platform-automation-vsphere-image"
       version: "$VERSION"
       digest: $pa_vsphere_image_sha
       kind: "ARCHIVE"
       detailed-kind: "oci image tarball"
       bom-for-scanner: "platform-automation-vsphere-image-sbom"
-      artifactory-url-waived: true
-      github-repos-waived: true
-      blackduck-url-waived: true
+      artifactory-url: "$ARTIFACT_URL"
+      blackduck-url: "$BLACKDUCK_PROJECT_URL"
+      github-repos:
+        - url: "$GITHUB_REPO_URL"
+          branch: "$GITHUB_BRANCH"
+          commit: "$GITHUB_COMMIT"
 MANIFEST
 
 chmod +x tvs-cli/tvs-linux-amd64
