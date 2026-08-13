@@ -6,6 +6,23 @@ RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
 GITHUB_COMMIT="$(git -C docs-platform-automation-with-docs rev-parse HEAD)"
 GITHUB_REPO_URL="https://github.com/pivotal/docs-platform-automation"
 
+BLACKDUCK_BEARER_TOKEN="$(curl -sf -X POST "${BLACKDUCK_URL}/api/tokens/authenticate" \
+  -H "Authorization: token ${BLACKDUCK_API_TOKEN}" \
+  -H "Accept: application/vnd.blackducksoftware.user-4+json" \
+  | jq -r '.bearerToken')"
+
+BLACKDUCK_PROJECT_HREF="$(curl -sf -G "${BLACKDUCK_URL}/api/projects" \
+  --data-urlencode "q=name:${BLACKDUCK_PROJECT_NAME}" \
+  -H "Authorization: Bearer ${BLACKDUCK_BEARER_TOKEN}" \
+  -H "Accept: application/json" \
+  | jq -r --arg name "$BLACKDUCK_PROJECT_NAME" '.items[] | select(.name == $name) | ._meta.href')"
+
+BLACKDUCK_PROJECT_URL="$(curl -sf -G "${BLACKDUCK_PROJECT_HREF}/versions" \
+  --data-urlencode "q=versionName:${VERSION}" \
+  -H "Authorization: Bearer ${BLACKDUCK_BEARER_TOKEN}" \
+  -H "Accept: application/json" \
+  | jq -r --arg name "$VERSION" '.items[] | select(.versionName == $name) | ._meta.href')"
+
 echo "BlackDuck URL: $BLACKDUCK_PROJECT_URL"
 echo "GitHub repo: $GITHUB_REPO_URL"
 echo "GitHub branch: $GITHUB_BRANCH"
