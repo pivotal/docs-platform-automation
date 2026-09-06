@@ -46,6 +46,16 @@ params:
   # - This is to provide an alternative to stemcell updates
   #   in order to manually rotate automatically-rotated certificates.
 
+  ALLOW_UNSAFE_DEPENDENCY_UPDATE: false
+  # - Optional
+  # - If true, allows apply-changes to proceed even when it would
+  #   update an optional dependency out of its declared safe order.
+
+  ALLOW_UNSAFE_DEPENDENCY_DELETION: false
+  # - Optional
+  # - If true, allows apply-changes to proceed even when it would
+  #   delete an optional dependency not marked as safe to delete.
+
   SELECTIVE_DEPLOY_PRODUCTS:
   # - Optional
   # - Comma separated list of products for apply changes.

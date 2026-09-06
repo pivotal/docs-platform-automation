@@ -18,6 +18,14 @@ if [ "${FORCE_LATEST_VARIABLES}" == "true" ]; then
   flags+=("--force_latest_variables")
 fi
 
+if [ "${ALLOW_UNSAFE_DEPENDENCY_UPDATE}" == "true" ]; then
+  flags+=("--allow-unsafe-dependency-update")
+fi
+
+if [ "${ALLOW_UNSAFE_DEPENDENCY_DELETION}" == "true" ]; then
+  flags+=("--allow-unsafe-dependency-deletion")
+fi
+
 if [ -n "${ERRAND_CONFIG_FILE}" ]; then
   flags+=("--config" "${ERRAND_CONFIG_FILE}")
 fi
