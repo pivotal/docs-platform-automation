@@ -46,6 +46,29 @@ params:
   # - This is to provide an alternative to stemcell updates
   #   in order to manually rotate automatically-rotated certificates.
 
+  ALLOW_UNSAFE_DEPENDENCY_UPDATE: false
+  # - Optional
+  # - If true, allows apply-changes to proceed even when it would
+  #   update an optional dependency out of its declared safe order.
+  # - Requires Ops Manager 11.0 or later and an om CLI build that
+  #   includes the --allow-unsafe-dependency-update flag.
+  #   - Against an older Ops Manager, om itself will refuse to
+  #     proceed with a clear "only available with Ops Manager 11.0
+  #     or later" error, rather than silently sending a field the
+  #     older Ops Manager wouldn't recognize.
+  #   - If the om CLI binary in this pipeline predates the flag
+  #     being added at all, setting this to true instead fails the
+  #     task with an "unknown flag" error from om's own CLI parser,
+  #     before any request is made.
+
+  ALLOW_UNSAFE_DEPENDENCY_DELETION: false
+  # - Optional
+  # - If true, allows apply-changes to proceed even when it would
+  #   delete an optional dependency not marked as safe to delete.
+  # - Same version requirements and failure modes as
+  #   ALLOW_UNSAFE_DEPENDENCY_UPDATE above: Ops Manager 11.0+ and an
+  #   om CLI build that includes --allow-unsafe-dependency-deletion.
+
   SELECTIVE_DEPLOY_PRODUCTS:
   # - Optional
   # - Comma separated list of products for apply changes.
