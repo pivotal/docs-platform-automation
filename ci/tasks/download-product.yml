@@ -35,7 +35,7 @@ run:
     cat > config/download-product.yml <<EOL
     ---
     pivnet-api-token: $OM_pivnet_token
-    pivnet-file-glob: "*.pivotal"
+    pivnet-file-glob: "healthwatch-2*.pivotal"
     pivnet-product-slug: p-healthwatch
     product-version: 2.3.5
     stemcell-iaas: google
