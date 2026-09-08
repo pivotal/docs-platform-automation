@@ -37,7 +37,7 @@ run:
     pivnet-api-token: $OM_pivnet_token
     pivnet-file-glob: "*.pivotal"
     pivnet-product-slug: p-healthwatch
-    product-version: 1.8.8
+    product-version: 2.3.5
     stemcell-iaas: google
 
     s3-access-key-id: minio
@@ -53,7 +53,7 @@ run:
       --vars-env OM
 
     test -e downloads-pivnet/\[p-healthwatch,*\]*.pivotal
-    test -e downloads-pivnet/\[stemcells-ubuntu-xenial,*\]*.tgz
+    test -e downloads-pivnet/\[stemcells-ubuntu-jammy,*\]*.tgz
 
     ls downloads-pivnet/
 
@@ -72,5 +72,5 @@ run:
 
 
     test -e downloads-s3/\[p-healthwatch,*\]*.pivotal
-    test -e downloads-s3/\[stemcells-ubuntu-xenial,*\]*.tgz
+    test -e downloads-s3/\[stemcells-ubuntu-jammy,*\]*.tgz
     pkill -9 minio

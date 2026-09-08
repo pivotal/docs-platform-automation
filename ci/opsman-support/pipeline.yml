@@ -1,7 +1,7 @@
 ---
 common-tags: &common-tags
   - platform-automation
-#@ opsman_versions = [ "2.10", "3.0", "3.1"]
+#@ opsman_versions = ["3.0", "3.1"]
 #@ pat_versions = ["5.2"]
 resource_types:
 - name: pivnet
@@ -64,13 +64,6 @@ resources:
       private: false
       regexp: #@ "^example-product-(" + opsman_version.replace('.', '\.') + ".*)\.pivotal$"
 #@ end
-  - name: stemcells-ubuntu-xenial
-    type: pivnet
-    source:
-      api_token: ((platform-automation/main.pivnet_token))
-      product_slug: stemcells-ubuntu-xenial
-      product_version: ^621\..*
-  
   - name: stemcells-ubuntu-jammy
     type: pivnet
     source:
@@ -86,18 +79,11 @@ jobs:
   serial_groups: ["install"]
   plan:
   - in_parallel:
-    - get: stemcells-ubuntu-xenial
-      params:
-        globs:
-          - '*vsphere*.tgz'
-      tags: *common-tags
-    #@ if opsman_version == "3.0" or opsman_version == "3.1":
     - get: stemcells-ubuntu-jammy
       params:
         globs:
           - '*vsphere*.tgz'
       tags: *common-tags
-    #@ end
     - get: #@ "example-product-" + opsman_version
       tags: *common-tags
     - get: #@ "opsman-image-" + opsman_version
@@ -239,9 +225,7 @@ jobs:
       product: #@ "example-product-" + opsman_version
       env: deployments
       config: deployments
-      #@ if opsman_version == "3.0" or opsman_version == "3.1":
       stemcell: stemcells-ubuntu-jammy
-      #@ end
     params:
       ENV_FILE: ci-support-epc/env.yml
       CONFIG_FILE: ci-support-epc/example-product.yml

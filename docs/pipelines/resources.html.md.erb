@@ -167,7 +167,7 @@ resources:
     bucket: ((s3_pivnet_products_bucket))
     region_name: ((s3_region_name))
     secret_access_key: ((s3_secret_access_key))
-    regexp: pks-stemcell/\[stemcells-ubuntu-xenial,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
+    regexp: pks-stemcell/\[stemcells-ubuntu-jammy,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
 
 - name: tas-product
   type: s3
@@ -185,7 +185,7 @@ resources:
     bucket: ((s3_pivnet_products_bucket))
     region_name: ((s3_region_name))
     secret_access_key: ((s3_secret_access_key))
-    regexp: tas-stemcell/\[stemcells-ubuntu-xenial,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
+    regexp: tas-stemcell/\[stemcells-ubuntu-jammy,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
 
 - name: healthwatch-product
   type: s3
@@ -221,7 +221,7 @@ resources:
     bucket: ((s3_pivnet_products_bucket))
     region_name: ((s3_region_name))
     secret_access_key: ((s3_secret_access_key))
-    regexp: healthwatch-stemcell/\[stemcells-ubuntu-xenial,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
+    regexp: healthwatch-stemcell/\[stemcells-ubuntu-jammy,(.*)\]light-bosh-stemcell-.*-google.*\.tgz
 
 - name: telemetry-product
   type: s3
