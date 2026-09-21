@@ -18,6 +18,21 @@ if [ "${FORCE_LATEST_VARIABLES}" == "true" ]; then
   flags+=("--force_latest_variables")
 fi
 
+# --allow-unsafe-dependency-update / --allow-unsafe-dependency-deletion
+# require Ops Manager 11.0+ and an om CLI build that includes these
+# flags. Against an older Ops Manager, om itself errors with "only
+# available with Ops Manager 11.0 or later" rather than silently
+# sending a field the older Ops Manager wouldn't recognize. Against
+# an om CLI build that predates these flags, this task instead fails
+# with an "unknown flag" error from om's own CLI parser.
+if [ "${ALLOW_UNSAFE_DEPENDENCY_UPDATE}" == "true" ]; then
+  flags+=("--allow-unsafe-dependency-update")
+fi
+
+if [ "${ALLOW_UNSAFE_DEPENDENCY_DELETION}" == "true" ]; then
+  flags+=("--allow-unsafe-dependency-deletion")
+fi
+
 if [ -n "${ERRAND_CONFIG_FILE}" ]; then
   flags+=("--config" "${ERRAND_CONFIG_FILE}")
 fi
