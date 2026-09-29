@@ -65,6 +65,7 @@ resources:
     username: ((concourse-team/dev_image_registry.username))
 - name: docs-platform-automation
   type: git
+  check_every: 60m
   source:
     branch: develop
     private_key: ((platform-automation/main/platform_automation_docs.private_key))
@@ -86,6 +87,7 @@ resources:
     sort_by: semver
 - name: opsman-image
   type: pivnet
+  check_every: 60m
   source:
     api_token: ((platform-automation/main.pivnet_token))
     product_slug: ops-manager
@@ -106,6 +108,7 @@ resources:
     sort_by: semver
 - name: packages-image
   type: registry-image
+  check_every: 60m
   source:
     password: ((concourse-team/dev_image_registry.password))
     repository: ((concourse-team/dev_image_registry.dev_url))/internalpcfplatformautomation/platform-automation
@@ -152,6 +155,7 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-image-s3
   type: s3-with-arn
+  check_every: 60m
   source:
     access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
     secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
@@ -161,6 +165,7 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-image-s3-vsphere
   type: s3-with-arn
+  check_every: 60m
   source:
     access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
     secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
@@ -186,6 +191,7 @@ resources:
     tag: develop
 - name: rc-tasks-s3
   type: s3-with-arn
+  check_every: 60m
   source:
     access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
     secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
@@ -213,6 +219,7 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: rc-artifacts-s3
   type: s3-with-arn
+  check_every: 60m
   source:
     access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
     secret_access_key: ((platform-automation/main/s3_with_role.secret_access_key))
@@ -297,6 +304,7 @@ resources:
     initial_version: 5.5.0
 - name: daily
   type: time
+  check_every: 60m
   source:
     interval: 24h
     location: America/Denver
@@ -304,6 +312,7 @@ resources:
     stop: 6:00 AM
 - name: nightly
   type: time
+  check_every: 60m
   source:
     interval: 24h
     location: America/Denver
@@ -322,30 +331,35 @@ resources:
     branch: low-privilege
 - name: govc-cli
   type: github-release
+  check_every: 60m
   source:
     access_token: ((platform-automation/main/om.access_token))
     owner: vmware
     repository: govmomi
 - name: credhub-cli
   type: github-release
+  check_every: 60m
   source:
     access_token: ((platform-automation/main/om.access_token))
     owner: cloudfoundry-incubator
     repository: credhub-cli
 - name: bbr-cli
   type: github-release
+  check_every: 60m
   source:
     access_token: ((platform-automation/main/om.access_token))
     owner: cloudfoundry-incubator
     repository: bosh-backup-and-restore
 - name: bosh-cli
   type: github-release
+  check_every: 60m
   source:
     access_token: ((platform-automation/main/om.access_token))
     owner: cloudfoundry
     repository: bosh-cli
 - name: winfs-injector
   type: github-release
+  check_every: 60m
   source:
     access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
@@ -367,6 +381,7 @@ resources:
     tag_filter: "^(2022.*)$"
 - name: isolation-segment-replicator
   type: github-release
+  check_every: 60m
   source:
     access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
@@ -436,6 +451,7 @@ resources:
 #@ end
 - name: rc-artifacts-s3-v5
   type: s3-with-arn
+  check_every: 60m
   source:
     access_key_id: ((platform-automation/main/s3_with_role.access_key_id))
     aws_role_arn: ((platform-automation/main/s3_with_role.role_arn))
@@ -454,6 +470,7 @@ resources:
     region_name: ((platform-automation/main/s3_with_role.region_name))
 - name: om-release
   type: github-release
+  check_every: 60m
   source:
     access_token: ((platform-automation/main/om.access_token))
     owner: pivotal-cf
