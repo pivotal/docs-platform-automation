@@ -50,6 +50,12 @@
       automerge: false,
       labels: ["dependencies", "major-update"],
     },
+    // Private Broadcom registry is not reachable from hosted Renovate
+    {
+      matchDatasources: ["docker"],
+      matchPackageNames: ["tas-operability-docker-virtual.usw1.packages.broadcom.com/**"],
+      enabled: false,
+    },
   ],
 
   customManagers: [
