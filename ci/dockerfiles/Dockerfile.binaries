@@ -53,6 +53,7 @@ RUN chmod +x \
 # Install Packer
 ENV CHECKPOINT_DISABLE=1
 ENV PACKER_PLUGIN_PATH=/root/.packer.d/plugins
+# renovate: datasource=github-releases depName=hashicorp/packer versioning=semver
 ENV PACKER_VERSION=1.16.0
 RUN wget -q https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
     && unzip -o packer_${PACKER_VERSION}_linux_amd64.zip \
@@ -61,12 +62,14 @@ RUN wget -q https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PAC
     && rm -f packer_${PACKER_VERSION}_linux_amd64.zip
 
 # Create Packer plugin directory and install vsphere plugin
+# renovate: datasource=github-releases depName=vmware/packer-plugin-vsphere versioning=semver extractVersion=^v(?<version>.*)$
+ENV PACKER_PLUGIN_VSPHERE_VERSION=2.3.0
 RUN mkdir -p /root/.packer.d/plugins \
     && cd /root/.packer.d/plugins \
-    && wget -q https://github.com/vmware/packer-plugin-vsphere/releases/download/v2.3.0/packer-plugin-vsphere_v2.3.0_x5.0_linux_amd64.zip \
-    && unzip packer-plugin-vsphere_v2.3.0_x5.0_linux_amd64.zip \
-    && chmod +x packer-plugin-vsphere_v2.3.0_x5.0_linux_amd64 \
-    && rm -f packer-plugin-vsphere_v2.3.0_x5.0_linux_amd64.zip
+    && wget -q https://github.com/vmware/packer-plugin-vsphere/releases/download/v${PACKER_PLUGIN_VSPHERE_VERSION}/packer-plugin-vsphere_v${PACKER_PLUGIN_VSPHERE_VERSION}_x5.0_linux_amd64.zip \
+    && unzip packer-plugin-vsphere_v${PACKER_PLUGIN_VSPHERE_VERSION}_x5.0_linux_amd64.zip \
+    && chmod +x packer-plugin-vsphere_v${PACKER_PLUGIN_VSPHERE_VERSION}_x5.0_linux_amd64 \
+    && rm -f packer-plugin-vsphere_v${PACKER_PLUGIN_VSPHERE_VERSION}_x5.0_linux_amd64.zip
 
 # Verify Packer installation
 RUN packer version
