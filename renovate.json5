@@ -55,7 +55,8 @@
       matchDatasources: ["docker"],
       matchPackageNames: [
         "tas-operability-docker-virtual.usw1.packages.broadcom.com/**",
-        "devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/gitlab-resource",
+        "devtools-docker.artifactory.eng.vmware.com/**",
+        "harbor-repo.vmware.com/**",
       ],
       enabled: false,
     },
