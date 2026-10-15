@@ -6,8 +6,9 @@ available from Broadcom Support.
 
 ## Contribute to this repo
 
-Use the `develop` branch** for 5.6.
-Use the `v5.5` branch for 5.5.
+- Use the `develop` branch for 5.6.
+
+- Use the `v5.5` branch for 5.5.
 
 ## Published and staging sites
 
