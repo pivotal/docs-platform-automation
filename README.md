@@ -6,9 +6,9 @@ available from Broadcom Support.
 
 ## Contribute to this repo
 
-**Use the `develop` branch** for new commits and pull requests unless the documentation release process directs you to a different branch.
+**Use the `develop` branch** for new commits and pull requests for the next release, 5.6, unless the documentation release process directs you to a different branch.
 
-The `5.5` branch has been cut from `develop` for the 5.5 release. For the next major/minor release, continue making updates on `develop` as usual.
+Use the `v5.5` branch for 5.5.x patch releases.
 
 Doc questions: tag **Kay ORiordan**.
 
