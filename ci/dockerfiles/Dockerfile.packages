@@ -54,6 +54,9 @@ RUN gcloud --version
 # azure-core: CVE-2026-21226. docker: GHSA-x744-4wpc-v9h2 et al.
 # setuptools: GHSA-5rjg-fvgr-3xxf (CVE-2025-47273, TASCVE-98021).
 # pip: GHSA-wf93-45jw-7689 (CVE-2026-8643, TASCVE-121469).
+# pyjwt: fixed in 2.14.0 (GHSA-r6x4-923q-g947, GHSA-p4g4-x82p-q773, GHSA-9j54-fg26-wv3r,
+#   GHSA-ffc3-869f-jxw9, GHSA-w2cx-738m-mc7w, GHSA-9v7f-9g4p-ffgj; TASCVE-141747,
+#   TASCVE-141757, TASCVE-141781, TASCVE-141792, TASCVE-141843, TASCVE-141862).
 RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
     --mount=type=secret,id=artifactory_pass,dst=/run/secrets/artifactory_pass \
     if [ -s /run/secrets/artifactory_user ] && [ -s /run/secrets/artifactory_pass ] && [ -n "${PIP_INDEX_URL_BASE}" ]; then \
@@ -72,6 +75,7 @@ RUN --mount=type=secret,id=artifactory_user,dst=/run/secrets/artifactory_user \
         "cryptography>=42.0.0" \
         "azure-core>=1.38.0" \
         "docker>=7.1.0" \
+        "pyjwt>=2.14.0" \
         "setuptools>=78.1.1,<82"
 
 RUN az --version && aws --version && openstack --version
