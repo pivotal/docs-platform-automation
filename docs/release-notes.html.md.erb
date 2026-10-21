@@ -26,6 +26,8 @@ The full Docker image-receipt: <a href="https://platform-automation-release-cand
 ### What's New
 
 - This release includes updated binaries that address CVEs.
+- Breaking change in om 7.22: `om bosh-env` now always shell-quotes its output. The POSIX and PowerShell renderers wrap every environment variable value in single quotes, for example `export BOSH_CLIENT='abc'`. Before, only multi-line values were quoted. Using `eval "$(om bosh-env)"` or `iex` is not affected. Scripts that parse the raw text output, for example with `grep` or `cut`, now receive the surrounding quotes. Use `eval` or `iex` instead, or strip the quotes and unescape any embedded quote sequences.
+- Breaking change in om 7.22: `om config-template` now rejects tile metadata that contains path-traversal characters. If the product name, product version, a job name, or a property or option name contains `..`, `/`, `\`, or `:`, generation fails. The error message is `path traversal detected in tile metadata`. Before, generation succeeded and could write files outside the `--output-directory`. To fix the error, remove those characters from the field named in the message in the tile's `metadata.yml`, or contact the tile author. You cannot turn this validation off.
 
 ## v5.5.6
 September 15, 2026
