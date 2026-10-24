@@ -10,12 +10,31 @@ inputs:
   - name: rmt-release-config
 outputs:
   - name: release-created
+params:
+  VERSION:
+  # Set to true only for an exception release, i.e. one that has to bypass the
+  # release train. `rmt release-create --exception` registers the release
+  # against the "exception" train instead of the one derived from its GA date.
+  # Agree it with your TPM first.
+  # See https://github.gwd.broadcom.net/TNZ/gormt?tab=readme-ov-file#--exception-flag
+  EXCEPTION: false
 run:
   path: sh
   args:
     - -exc
     - |
       cd rmt-artifacts
-      ./rmt release-create --release-file ../rmt-release-config/pa-release-${VERSION}.yml | tee rmt.stdout
+
+      # Accept the usual spellings of a boolean rather than gormt's own
+      # "any non-blank value" convention, so that EXCEPTION=false doesn't
+      # silently publish an exception release.
+      exception_flag=""
+      case "$(echo "${EXCEPTION:-}" | tr '[:upper:]' '[:lower:]')" in
+        ""|false|no|0) ;;
+        true|yes|1) exception_flag="--exception" ;;
+        *) echo "EXCEPTION must be true or false (got '${EXCEPTION}')" >&2; exit 1 ;;
+      esac
+
+      ./rmt release-create --release-file ../rmt-release-config/pa-release-${VERSION}.yml ${exception_flag} | tee rmt.stdout
       release_id=$(tail -n 1 rmt.stdout | awk -F"'" '{print $2}')
       echo "${release_id}" > ../release-created/id

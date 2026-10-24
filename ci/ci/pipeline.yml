@@ -2076,6 +2076,10 @@ jobs:
     file: docs-platform-automation/ci/tasks/create-rmt-release.yml
     params:
       VERSION: ((.:version-number))
+      #! true publishes this release outside the release train
+      #! (`rmt release-create --exception`). Set with
+      #! `EXCEPTION=true ci/scripts/update-ci.sh`, and set it back afterwards.
+      EXCEPTION: ((exception))
   - task: upload-files-to-rmt
     file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
     input_mapping:
@@ -2373,6 +2377,10 @@ jobs:
       file: docs-platform-automation/ci/tasks/create-rmt-release.yml
       params:
         VERSION: ((.:version-number))
+        #! true publishes this release outside the release train
+        #! (`rmt release-create --exception`). Set with
+        #! `EXCEPTION=true ci/scripts/update-ci.sh`, and set it back afterwards.
+        EXCEPTION: ((exception))
     - task: upload-files-to-rmt
       file: docs-platform-automation/ci/tasks/upload-files-to-rmt.yml
       input_mapping:
