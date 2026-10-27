@@ -283,6 +283,20 @@ For datastore ISO paths, template mode, **keep base VM**, output directories, an
 This task targets vSphere only. It requires an image with Packer, <code>govc</code>, and a matching <strong>stembuild</strong> binary for <code>WINDOWS_VERSION</code>.
 </p>
 
+#### <a id='build-windows-stemcell-base-image'></a>Base image requirements
+
+- **Licensed media.** Use licensed (for example, volume-licensed) Windows Server media. Evaluation media is not supported for this task. Microsoft directs users of evaluation media to install the latest servicing package manually after installation. Installs converted from evaluation with `DISM /Set-Edition` are not recommended as a base.
+- **Recent media.** Prefer Microsoft's most recent updated media release. Microsoft periodically raises the minimum prior update a server needs before it can install new cumulative updates. Older images might need prerequisite servicing before Windows Update offers current updates.
+- **Task success does not verify patch level.** The task treats Windows Update offering no updates, or an update installation that completes with errors, as success. Updates are skipped entirely when `ENABLE_WINDOWS_UPDATES` is `false`. The task does not check the resulting OS build.
+- **Templates and existing VMs age.** In template and existing-VM modes, the build clones the source and updates the clone, not the source, so the source template or VM falls further behind over time. If verification shows the result is behind, refresh or replace the source.
+- **Verify each stemcell.** On a disposable VM deployed from the built stemcell, run this command using any access method available in your environment:
+
+  ```powershell
+  Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' | Select-Object CurrentBuild,UBR
+  ```
+
+  Compare `CurrentBuild.UBR` with the latest cumulative update for that Windows Server version, using the update-history links on Microsoft's [Windows Server release information](https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info) page. If the build is behind, start from newer media (or refresh the template) and rebuild.
+
 **Task**
 
 <%= partial "tasks/build-windows-stemcell" %>

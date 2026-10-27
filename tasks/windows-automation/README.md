@@ -171,6 +171,17 @@ Only **VMware Tools install** uses **govc vm.keystrokes** (unattend handles auto
 
 **Alternatives:** Once VMware Tools is installed and the user is logged in, all further steps use **guest.start** (PowerShell) and do not rely on keystrokes. Template mode skips first-boot wait and Tools install entirely.
 
+## Base image requirements
+
+- **Licensed media.** Use licensed Windows Server media; evaluation media is unsupported because Microsoft directs users to install the latest servicing package manually after installation. Installs converted from evaluation with `DISM /Set-Edition` are not recommended as a base.
+- **Recent media.** Prefer Microsoft's most recent updated media; older images might need prerequisite servicing before Windows Update offers current updates.
+- **Task success does not verify patch level.** The task treats Windows Update offering no updates, or an update installation that completes with errors, as success. Updates are skipped entirely when `ENABLE_WINDOWS_UPDATES` is `false`; the task does not check the resulting OS build.
+- **Templates and existing VMs age.** In template and existing-VM modes, the build clones the source and updates the clone, not the source, so the source template or VM falls further behind over time. If verification shows the result is behind, refresh or replace the source.
+- **Verify each stemcell.** On a disposable VM deployed from the built stemcell, compare `CurrentBuild.UBR` with the latest cumulative update for that Windows Server version via Microsoft's [Windows Server release information](https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info); if behind, start from newer media or refresh the template and rebuild.
+  ```powershell
+  Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' | Select-Object CurrentBuild,UBR
+  ```
+
 ## Requirements
 
 - Packer 1.7.0+
