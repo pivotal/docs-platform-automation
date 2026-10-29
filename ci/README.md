@@ -1,5 +1,3 @@
 # Platform Automation CI
 
-Our internal ci is hosted on https://platform-automation.ci.cf-app.com/
-
-There are also pipelines on the TPE concourse under the `ppe` team: https://tpe-concourse-rock.acc.broadcom.net/
+Our internal CI runs on the TPE Concourse under the `ppe` team: https://tpe-concourse-rock.acc.broadcom.net/teams/ppe/pipelines/platform-automation-ci

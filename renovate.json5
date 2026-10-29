@@ -26,10 +26,6 @@
       matchUpdateTypes: ["minor", "patch"],
       automerge: false,
     },
-    {
-      matchManagers: ["bundler"],
-      groupName: "ruby dependencies (secrets-verifier)",
-    },
     // CLI/binary tools pulled via custom regex managers — group per pipeline concern
     {
       matchManagers: ["regex"],
