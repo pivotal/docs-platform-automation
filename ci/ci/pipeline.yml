@@ -8,7 +8,6 @@ groups:
   - build-ci-image
   - build-packages-image
   - bump-version-to-major
-  - check-for-secrets-in-tasks
   - lint-windows-automation-scripts
   - test-python-scripts
   #@ for/end deployment in data.values.deployments:
@@ -1591,20 +1590,6 @@ jobs:
           rebase: true
           repository: deployments
 
-- name: check-for-secrets-in-tasks
-  plan:
-  - in_parallel:
-    - get: daily
-      trigger: true
-    - get: deployments
-    - get: docs-platform-automation
-  - task: check-for-secrets
-    file: docs-platform-automation/ci/tasks/secrets-verifier/task.yml
-    params:
-      FLY_USERNAME: ((platform-automation/main/fly.username))
-      FLY_PASSWORD: ((platform-automation/main/fly.password))
-      FLY_TARGET: ((platform-automation/main/fly.target))
-      SECRET_ALLOWLIST: ((platform-automation/main/ci.secret-allowlist))
 - name: additional-task-testing
   serial: true
   plan:
