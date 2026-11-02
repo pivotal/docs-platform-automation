@@ -54,7 +54,7 @@ RUN chmod +x \
 ENV CHECKPOINT_DISABLE=1
 ENV PACKER_PLUGIN_PATH=/root/.packer.d/plugins
 # renovate: datasource=github-releases depName=hashicorp/packer versioning=semver
-ENV PACKER_VERSION=1.16.1
+ENV PACKER_VERSION=1.16.2
 RUN wget -q https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
     && unzip -o packer_${PACKER_VERSION}_linux_amd64.zip \
     && chmod +x packer \
