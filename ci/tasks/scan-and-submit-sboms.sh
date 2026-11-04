@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -euxo pipefail
 
 VERSION="$(cat version/version)"
 RELEASE_LINE="$(echo $VERSION | rev | cut -d'.' -f2- | rev)"
@@ -22,6 +22,11 @@ BLACKDUCK_PROJECT_URL="$(curl -sf -G "${BLACKDUCK_PROJECT_HREF}/versions" \
   -H "Authorization: Bearer ${BLACKDUCK_BEARER_TOKEN}" \
   -H "Accept: application/json" \
   | jq -r --arg name "$VERSION" '.items[] | select(.versionName == $name) | ._meta.href')"
+
+if [[ -z "$BLACKDUCK_PROJECT_URL" || "$BLACKDUCK_PROJECT_URL" == "null" ]]; then
+  echo "ERROR: Black Duck version '${VERSION}' not found in project '${BLACKDUCK_PROJECT_NAME}'. It is created by the paired blackduck-scan job; run that job for this version first." >&2
+  exit 1
+fi
 
 echo "BlackDuck URL: $BLACKDUCK_PROJECT_URL"
 echo "GitHub repo: $GITHUB_REPO_URL"
