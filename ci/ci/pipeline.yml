@@ -1882,12 +1882,14 @@ jobs:
   - in_parallel:
     - get: #@ "rc-artifacts-s3-" + version.number
       passed:
-      - #@ "update-" + version.number
+      - #@ "blackduck-scan-" + version.number
       trigger: true
     - get: docs-platform-automation-with-docs
     - get: tvs-cli
     - get: version
       resource: #@ "version-" + version.number
+      passed:
+      - #@ "blackduck-scan-" + version.number
       params:
         bump: patch
   - task: submit-release-sbom
@@ -2056,13 +2058,13 @@ jobs:
       steps:
       - get: rc-artifacts-s3-v5
         passed:
-        - bump-minor
+        - blackduck-scan-v5.x
         trigger: true
       - get: docs-platform-automation-with-docs
       - get: tvs-cli
       - get: version
         resource: version-v5.x
-        passed: [bump-minor]
+        passed: [blackduck-scan-v5.x]
   - task: submit-release-sbom
     file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
     input_mapping:
@@ -2152,10 +2154,11 @@ jobs:
       - get: rc-artifacts-s3
         trigger: true
         passed:
-        - build-binaries-image-combined
+        - blackduck-scan-rc
       - get: docs-platform-automation-with-docs
       - get: tvs-cli
       - get: version
+        passed: [blackduck-scan-rc]
   - task: submit-sbom-rc
     file: docs-platform-automation-with-docs/ci/tasks/scan-and-submit-sboms.yml
     input_mapping:
