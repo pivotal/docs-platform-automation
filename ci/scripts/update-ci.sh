@@ -25,9 +25,9 @@ which fly || (
 
 echo "Setting CI pipeline..."
 
+# No --check-creds: ((.:version-number)) refs are load_var build-time locals, which credential validation rejects (TNZ-185686).
 fly -t $TARGET sp -p platform-automation-ci -c <(ytt -f $WORKING_DIR/../ci/) \
-  -v exception="$EXCEPTION" \
-  --check-creds
+  -v exception="$EXCEPTION"
 
 echo "Setting support pipeline..."
 
