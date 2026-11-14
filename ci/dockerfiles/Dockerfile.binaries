@@ -8,14 +8,14 @@ COPY isolation-segment-replicator/replicator-linux* /usr/bin/iso-replicator
 COPY om-cli/om /usr/bin/om
 COPY winfs-injector/winfs-injector-linux* /usr/bin/winfs-injector
 COPY govc-cli/*Linux* /tmp
-COPY credhub-cli/*linux* /tmp
+COPY credhub-cli/*linux-amd64* /tmp
 # stembuild 2019 binary (cloudfoundry/bosh-windows-stemcell-builder): install as stembuild-2019
 COPY stembuild-cli/stembuild-linux* /tmp/stembuild-2019
 # stembuild 2022 binary (TNZ/bosh-windows-stemcell-builder tag 2022.0 on GHE): install as stembuild-2022
 COPY stembuild-cli-2022/stembuild-linux* /tmp/stembuild-2022
 
 RUN tar xvf /tmp/govc* && mv govc /usr/bin/govc
-RUN tar xvf /tmp/credhub* && mv credhub /usr/bin/credhub
+RUN tar xvf /tmp/credhub*amd64*.tgz &&mv credhub /usr/bin/credhub
 # stembuild binaries (not tarballs): install as stembuild-2019 and stembuild-2022
 RUN chmod +x /tmp/stembuild-2019 /tmp/stembuild-2022 && mv /tmp/stembuild-2019 /usr/bin/stembuild-2019 && mv /tmp/stembuild-2022 /usr/bin/stembuild-2022
 # build.sh uses STEMBUILD_BIN_DIR to find stembuild-2019 / stembuild-2022 (and future stembuild-2025) by windows_version
